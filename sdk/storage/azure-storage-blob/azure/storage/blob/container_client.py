@@ -449,6 +449,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Acquiring a lease on the container.
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
+        kwargs.setdefault('merge_span', True)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
@@ -855,6 +856,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Upload blob to the container.
         """
         blob = self.get_blob_client(name)
+        kwargs.setdefault('merge_span', True)
         blob.upload_blob(
             data,
             blob_type=blob_type,
@@ -934,6 +936,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: None
         """
         blob = self.get_blob_client(blob) # type: ignore
+        kwargs.setdefault('merge_span', True)
         blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             lease=lease,

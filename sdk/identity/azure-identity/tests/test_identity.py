@@ -25,7 +25,7 @@ from azure.identity import (
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._managed_identity import ImdsCredential
+from azure.identity._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
@@ -94,7 +94,7 @@ def test_client_secret_credential():
     assert token.token == access_token
 
 
-def test_client_secret_environment_credential(monkeypatch):
+def test_client_secret_environment_credential():
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
@@ -114,11 +114,13 @@ def test_client_secret_environment_credential(monkeypatch):
         ],
     )
 
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    token = EnvironmentCredential(transport=transport).get_token("scope")
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_CLIENT_SECRET: secret,
+        EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=transport).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
@@ -236,7 +238,7 @@ def test_imds_credential_retries():
         assert mock_send.call_count == 2 + total_retries
 
 
-@patch("azure.identity.SharedTokenCacheCredential")
+@patch("azure.identity._credentials.default.SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
 
@@ -341,7 +343,9 @@ def test_device_code_credential_timeout():
     assert "timed out" in ex.value.message.lower()
 
 
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch(
+    "azure.identity._credentials.browser.webbrowser.open", lambda _: None
+)  # prevent the credential opening a browser
 def test_interactive_credential():
     oauth_state = "state"
     expected_token = "access-token"
@@ -375,12 +379,14 @@ def test_interactive_credential():
     )
 
     # ensure the request beginning the flow has a known state value
-    with patch("azure.identity._browser_auth.uuid.uuid4", lambda: oauth_state):
+    with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
         token = credential.get_token("scope")
     assert token.token == expected_token
 
 
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch(
+    "azure.identity._credentials.browser.webbrowser.open", lambda _: None
+)  # prevent the credential opening a browser
 def test_interactive_credential_timeout():
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
@@ -441,7 +447,7 @@ def test_username_password_credential():
     assert token.token == expected_token
 
 
-def test_username_password_environment_credential(monkeypatch):
+def test_username_password_environment_credential():
     client_id = "fake-client-id"
     username = "foo@bar.com"
     password = "password"
@@ -467,18 +473,25 @@ def test_username_password_environment_credential(monkeypatch):
         ],
     )
 
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_USERNAME, username)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_PASSWORD, password)
-
-    token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_USERNAME: username,
+        EnvironmentVariables.AZURE_PASSWORD: password,
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == expected_token
 
     # now with a tenant id
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, "tenant_id")
-
-    token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_USERNAME: username,
+        EnvironmentVariables.AZURE_PASSWORD: password,
+        EnvironmentVariables.AZURE_TENANT_ID: "tenant_id",
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
 
     assert token.token == expected_token

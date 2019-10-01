@@ -12,6 +12,9 @@ from typing import Iterable, Union
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClient  # type: ignore
 
+from azure.core.tracing import SpanKind
+from azure.core.settings import settings
+
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ._consumer_producer_mixin import ConsumerProducerMixin
@@ -29,6 +32,13 @@ def _set_partition_key(event_datas, partition_key):
     ed_iter = iter(event_datas)
     for ed in ed_iter:
         ed._set_partition_key(partition_key)  # pylint:disable=protected-access
+        yield ed
+
+
+def _set_trace_message(event_datas, parent_span=None):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._trace_message(parent_span)  # pylint:disable=protected-access
         yield ed
 
 
@@ -218,12 +228,19 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        # Tracing code
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        child = None
+        if span_impl_type is not None:
+            child = span_impl_type(name="Azure.EventHubs.send")
+            child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
+            wrapper_event_data._trace_message(child)  # pylint: disable=protected-access
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -232,10 +249,17 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
+                event_data = _set_trace_message(event_data, child)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
-        self._send_event_data_with_retry(timeout=timeout)
+
+        if span_impl_type is not None:
+            with child:
+                self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
+                self._send_event_data_with_retry(timeout=timeout)
+        else:
+            self._send_event_data_with_retry(timeout=timeout)
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None
