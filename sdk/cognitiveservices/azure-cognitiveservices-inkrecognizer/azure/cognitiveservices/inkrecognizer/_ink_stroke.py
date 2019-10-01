@@ -7,7 +7,7 @@
 import abc
 try:
     from abc import ABC
-except:
+except ImportError:
     # python <= 2.7
     from abc import ABCMeta
     class ABC(object):
