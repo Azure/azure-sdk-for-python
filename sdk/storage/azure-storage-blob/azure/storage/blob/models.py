@@ -882,8 +882,6 @@ class ContainerSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
-        if len(permission) > 4:
-            raise ValueError("Invalid Permission String")
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -931,8 +929,6 @@ class BlobSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
-        if len(permission) > 5:
-            raise ValueError("Invalid Permission String")
         p_read = 'r' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission

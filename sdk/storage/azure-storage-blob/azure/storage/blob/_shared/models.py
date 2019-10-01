@@ -333,9 +333,6 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
-        if len(permission) > 8:
-            raise ValueError("Invalid Permission String")
-
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
