@@ -137,8 +137,8 @@ class KeyClientTests(KeyVaultTestCase):
         created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
         # get the created key with version
-        key = client.get_key(created_rsa_key.name, created_rsa_key.version)
-        self.assertEqual(key.version, created_rsa_key.version)
+        key = client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
+        self.assertEqual(key.properties.version, created_rsa_key.properties.version)
         self._assert_key_attributes_equal(created_rsa_key.properties, key.properties)
 
         # get key without version

@@ -79,14 +79,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key = await key_client.get_key("key-name")
 
         # alternatively, specify a version
-        key_version = key.version
+        key_version = key.properties.version
         key = await key_client.get_key("key-name", key_version)
 
         print(key.id)
         print(key.name)
-        print(key.version)
+        print(key.properties.version)
         print(key.key_material.kty)
-        print(key.vault_url)
+        print(key.properties.vault_url)
 
         # [END get_key]
         # [START update_key]
@@ -96,7 +96,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         tags = {"foo": "updated tag"}
         updated_key = await key_client.update_key_properties(key.name, expires=expires, tags=tags)
 
-        print(updated_key.version)
+        print(updated_key.properties.version)
         print(updated_key.properties.updated)
         print(updated_key.properties.expires)
         print(updated_key.properties.tags)
@@ -150,7 +150,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         async for key in key_versions:
             print(key.id)
             print(key.updated)
-            print(key.version)
+            print(key.properties.version)
             print(key.expires)
 
         # [END list_key_versions]
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         restored_key = await key_client.restore_key(key_backup)
         print(restored_key.id)
         print(restored_key.name)
-        print(restored_key.version)
+        print(restored_key.properties.version)
 
         # [END restore_key]
 

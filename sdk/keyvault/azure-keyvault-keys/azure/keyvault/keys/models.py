@@ -216,26 +216,10 @@ class Key(object):
         return self._properties.id
 
     @property
-    def vault_url(self):
-        # type: () -> str
-        """
-        URL of the vault containing the key
-
-        :rtype: str
-        """
-        return self._properties.vault_url
-
-    @property
     def name(self):
         # type: () -> str
         """:rtype: str"""
         return self._properties.name
-
-    @property
-    def version(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._properties.version
 
     @property
     def properties(self):
