@@ -1273,6 +1273,23 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
 
+    def test_set_container_permission_from_string(self):
+        # Arrange
+        permission1 = ContainerSasPermissions(read=True, write=True)
+        permission2 = ContainerSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
+
+    def test_set_container_permission_from_string_fails(self):
+        # Arrange
+        with self.assertRaises(ValueError):
+            permission = ContainerSasPermissions.from_string('wrx')
+
+    def test_set_container_permission_long_from_string_fails(self):
+        # Arrange
+        with self.assertRaises(ValueError):
+            permission = ContainerSasPermissions.from_string('wrrrrrwwwdd')
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     import unittest

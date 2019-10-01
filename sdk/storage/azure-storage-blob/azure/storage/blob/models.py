@@ -849,21 +849,6 @@ class ContainerSasPermissions(object):
     for the AccessPolicies used with
     :func:`~azure.storage.blob.container_client.ContainerClient.set_container_access_policy`.
 
-    :cvar ContainerSasPermissions ContainerSasPermissions.DELETE:
-        Delete any blob in the container. Note: You cannot grant permissions to
-        delete a container with a container SAS. Use an account SAS instead.
-    :cvar ContainerSasPermissions ContainerSasPermissions.LIST:
-        List blobs in the container.
-    :cvar ContainerSasPermissions ContainerSasPermissions.READ:
-        Read the content, properties, metadata or block list of any blob in the
-        container. Use any blob in the container as the source of a copy operation.
-    :cvar ContainerSasPermissions ContainerSasPermissions.WRITE:
-        For any blob in the container, create or write content, properties,
-        metadata, or block list. Snapshot or lease the blob. Resize the blob
-        (page blob only). Use the blob as the destination of a copy operation
-        within the same account. Note: You cannot grant permissions to read or
-        write container properties or metadata, nor to lease a container, with
-        a container SAS. Use an account SAS instead.
     :param bool read:
         Read the content, properties, metadata or block list of any blob in the
         container. Use any blob in the container as the source of a copy operation.
@@ -896,6 +881,8 @@ class ContainerSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        if len(permission) > 4:
+            raise ValueError("Invalid Permission String")
         read, write, delete, list = False, False, False, False
         curr = 0
         while curr < len(permission):
@@ -917,18 +904,6 @@ class BlobSasPermissions(object):
     """BlobSasPermissions class to be used with
     :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
 
-    :cvar BlobSasPermissions BlobSasPermissions.ADD:
-        Add a block to an append blob.
-    :cvar BlobSasPermissions BlobSasPermissions.CREATE:
-        Write a new blob, snapshot a blob, or copy a blob to a new blob.
-    :cvar BlobSasPermissions BlobSasPermissions.DELETE:
-        Delete the blob.
-    :cvar BlobSasPermissions BlobSasPermissions.READ:
-        Read the content, properties, metadata and block list. Use the blob as the source of a copy operation.
-    :cvar BlobSasPermissions BlobSasPermissions.WRITE:
-        Create or write content, properties, metadata, or block list. Snapshot or lease
-        the blob. Resize the blob (page blob only). Use the blob as the destination of a
-        copy operation within the same account.
     :param bool read:
         Read the content, properties, metadata and block list. Use the blob as
         the source of a copy operation.
@@ -962,6 +937,8 @@ class BlobSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        if len(permission) > 5:
+            raise ValueError("Invalid Permission String")
         read, add, create, write, delete = False, False, False, False, False
         curr = 0
         while curr < len(permission):

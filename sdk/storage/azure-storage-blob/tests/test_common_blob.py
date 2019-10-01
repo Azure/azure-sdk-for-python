@@ -1820,7 +1820,22 @@ class StorageCommonBlobTest(StorageTestCase):
         content = blob.download_blob().content_as_bytes()
         self.assertEqual(data, content)
 
+    def test_set_blob_permission_from_string(self):
+        # Arrange
+        permission1 = BlobSasPermissions(read=True, write=True)
+        permission2 = BlobSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
 
+    def test_set_blob_permission_from_string_fails(self):
+        # Arrange
+        with self.assertRaises(ValueError):
+            permission = BlobSasPermissions.from_string('wrx')
+
+    def test_set_blob_permission_long_from_string_fails(self):
+        # Arrange
+        with self.assertRaises(ValueError):
+            permission = BlobSasPermissions.from_string('wrrrrrwwwdd')
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

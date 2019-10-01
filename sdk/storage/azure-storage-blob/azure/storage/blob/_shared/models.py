@@ -286,25 +286,6 @@ class AccountSasPermissions(object):
     entire service for a specific account and allow certain operations based on
     perms found here.
 
-    :cvar AccountSasPermissions AccountSasPermissions.ADD:
-        Valid for the following Object resource types only: queue messages and append blobs.
-    :cvar AccountSasPermissions AccountSasPermissions.CREATE:
-        Valid for the following Object resource types only: blobs and files. Users
-        can create new blobs or files, but may not overwrite existing blobs or files.
-    :cvar AccountSasPermissions AccountSasPermissions.DELETE:
-        Valid for Container and Object resource types, except for queue messages.
-    :cvar AccountSasPermissions AccountSasPermissions.LIST:
-        Valid for Service and Container resource types only.
-    :cvar AccountSasPermissions AccountSasPermissions.PROCESS:
-        Valid for the following Object resource type only: queue messages.
-    :cvar AccountSasPermissions AccountSasPermissions.READ:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type.
-    :cvar AccountSasPermissions AccountSasPermissions.UPDATE:
-        Valid for the following Object resource types only: queue messages.
-    :cvar AccountSasPermissions AccountSasPermissions.WRITE:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type.
     :param bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
@@ -351,6 +332,8 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        if len(permission) > 8:
+            raise ValueError("Invalid Permission String")
         read, write, delete, list = False, False, False, False
         add, create, update, process = False, False, False, False
         curr = 0
