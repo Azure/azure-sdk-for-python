@@ -810,7 +810,7 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
      applied to this backup item.
     :type policy_state: str
     :param resource_state: Indicates the state of this resource. Possible
-     values are from enum ResourceState {Invalid, Active, SoftDeletd, Deleted}
+     values are from enum ResourceState {Invalid, Active, SoftDeleted, Deleted}
     :type resource_state: str
     :param resource_state_sync_time: The resource state sync time for this
      backup item.
@@ -3295,11 +3295,6 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -3320,7 +3315,6 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     _subtype_map = {
@@ -3337,7 +3331,6 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
         self.subinquireditemcount = kwargs.get('subinquireditemcount', None)
         self.subprotectableitemcount = kwargs.get('subprotectableitemcount', None)
         self.prebackupvalidation = kwargs.get('prebackupvalidation', None)
-        self.is_protectable = kwargs.get('is_protectable', None)
         self.protectable_item_type = 'AzureVmWorkloadProtectableItem'
 
 
@@ -3609,11 +3602,6 @@ class AzureVmWorkloadSAPAseDatabaseProtectableItem(AzureVmWorkloadProtectableIte
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -3634,7 +3622,6 @@ class AzureVmWorkloadSAPAseDatabaseProtectableItem(AzureVmWorkloadProtectableIte
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3869,11 +3856,6 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(AzureVmWorkloadProtectableItem)
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -3894,7 +3876,6 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(AzureVmWorkloadProtectableItem)
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3999,11 +3980,6 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(AzureVmWorkloadProtectableIt
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -4024,7 +4000,6 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(AzureVmWorkloadProtectableIt
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -4259,11 +4234,6 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(AzureVmWorkloadProtectableItem
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -4284,7 +4254,6 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(AzureVmWorkloadProtectableItem
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -4390,11 +4359,6 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(AzureVmWorkloadProtecta
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -4415,7 +4379,6 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(AzureVmWorkloadProtecta
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -4465,11 +4428,6 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -4490,7 +4448,6 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -4725,11 +4682,6 @@ class AzureVmWorkloadSQLInstanceProtectableItem(AzureVmWorkloadProtectableItem):
     :param prebackupvalidation: Pre-backup validation for protectable objects
     :type prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :param is_protectable: Indicated if item present in inquiry is
-     protectable.
-     If this is unprotectable, preBackupValidation will have the additional
-     details why its unprotectable.
-    :type is_protectable: bool
     """
 
     _validation = {
@@ -4750,7 +4702,6 @@ class AzureVmWorkloadSQLInstanceProtectableItem(AzureVmWorkloadProtectableItem):
         'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
         'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
         'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-        'is_protectable': {'key': 'IsProtectable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
