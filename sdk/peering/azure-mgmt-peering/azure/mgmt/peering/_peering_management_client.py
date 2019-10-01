@@ -20,7 +20,6 @@ from .operations import PeerAsnsOperations
 from .operations import PeeringLocationsOperations
 from .operations import PeeringsOperations
 from .operations import PeeringServiceLocationsOperations
-from .operations import PeeringServicePrefixesOperations
 from .operations import PrefixesOperations
 from .operations import PeeringServiceProvidersOperations
 from .operations import PeeringServicesOperations
@@ -45,8 +44,6 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
     :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
     :ivar peering_service_locations: PeeringServiceLocations operations
     :vartype peering_service_locations: azure.mgmt.peering.operations.PeeringServiceLocationsOperations
-    :ivar peering_service_prefixes: PeeringServicePrefixes operations
-    :vartype peering_service_prefixes: azure.mgmt.peering.operations.PeeringServicePrefixesOperations
     :ivar prefixes: Prefixes operations
     :vartype prefixes: azure.mgmt.peering.operations.PrefixesOperations
     :ivar peering_service_providers: PeeringServiceProviders operations
@@ -84,8 +81,6 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
         self.peerings = PeeringsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.peering_service_locations = PeeringServiceLocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.peering_service_prefixes = PeeringServicePrefixesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.prefixes = PrefixesOperations(
             self._client, self.config, self._serialize, self._deserialize)

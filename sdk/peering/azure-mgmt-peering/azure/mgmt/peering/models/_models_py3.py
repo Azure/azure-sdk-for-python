@@ -907,6 +907,9 @@ class PeeringServicePrefix(Resource):
     :vartype learned_type: str or ~azure.mgmt.peering.models.LearnedType
     :ivar error_message: The error message for validation state
     :vartype error_message: str
+    :ivar events: The list of events for peering service prefix
+    :vartype events:
+     list[~azure.mgmt.peering.models.PeeringServicePrefixEvent]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
@@ -920,6 +923,7 @@ class PeeringServicePrefix(Resource):
         'prefix_validation_state': {'readonly': True},
         'learned_type': {'readonly': True},
         'error_message': {'readonly': True},
+        'events': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -931,6 +935,7 @@ class PeeringServicePrefix(Resource):
         'prefix_validation_state': {'key': 'properties.prefixValidationState', 'type': 'str'},
         'learned_type': {'key': 'properties.learnedType', 'type': 'str'},
         'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        'events': {'key': 'properties.events', 'type': '[PeeringServicePrefixEvent]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -940,7 +945,54 @@ class PeeringServicePrefix(Resource):
         self.prefix_validation_state = None
         self.learned_type = None
         self.error_message = None
+        self.events = None
         self.provisioning_state = None
+
+
+class PeeringServicePrefixEvent(Model):
+    """The peering service prefix event class.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar event_type: The event type of the peering service prefix event
+    :vartype event_type: str
+    :ivar event_time_stamp: The event timestamp of the peering service prefix
+     event
+    :vartype event_time_stamp: datetime
+    :ivar description: The event description of the peering service prefix
+     event
+    :vartype description: str
+    :ivar event_level: The event level of the peering service prefix event
+    :vartype event_level: str
+    :ivar additional_info: Additional information for the peering service
+     prefix event
+    :vartype additional_info: str
+    """
+
+    _validation = {
+        'event_type': {'readonly': True},
+        'event_time_stamp': {'readonly': True},
+        'description': {'readonly': True},
+        'event_level': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'event_type': {'key': 'eventType', 'type': 'str'},
+        'event_time_stamp': {'key': 'eventTimeStamp', 'type': 'iso-8601'},
+        'description': {'key': 'description', 'type': 'str'},
+        'event_level': {'key': 'eventLevel', 'type': 'str'},
+        'additional_info': {'key': 'additionalInfo', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PeeringServicePrefixEvent, self).__init__(**kwargs)
+        self.event_type = None
+        self.event_time_stamp = None
+        self.description = None
+        self.event_level = None
+        self.additional_info = None
 
 
 class PeeringServiceProvider(Resource):
