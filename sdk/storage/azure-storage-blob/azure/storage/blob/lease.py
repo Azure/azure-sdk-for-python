@@ -84,7 +84,8 @@ class LeaseClient(object):
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
-        lease on the container and returns a new lease ID.
+        lease on the container. The lease id is available in the ``id`` property
+        of this instance. 
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
@@ -194,9 +195,8 @@ class LeaseClient(object):
         # type: (Optional[int], Any) -> None
         """Release the lease.
 
-        The lease may be released if the client lease id specified matches
-        that associated with the container or blob. Releasing the lease allows another client
-        to immediately acquire the lease for the container or blob as soon as the release is complete.
+        Releasing the lease allows another client to immediately acquire the lease
+        for the container or blob as soon as the release is complete.
 
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
