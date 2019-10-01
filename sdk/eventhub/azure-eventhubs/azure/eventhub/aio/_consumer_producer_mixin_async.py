@@ -56,7 +56,8 @@ class ConsumerProducerMixin(object):
             self._running = True
 
     async def _close_handler(self):
-        await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
+        if self._handler:
+            await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
         self._running = False
 
     async def _close_connection(self):

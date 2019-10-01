@@ -54,7 +54,8 @@ class ConsumerProducerMixin(object):
             self._running = True
 
     def _close_handler(self):
-        self._handler.close()  # close the link (sharing connection) or connection (not sharing)
+        if self._handler:
+            self._handler.close()  # close the link (sharing connection) or connection (not sharing)
         self._running = False
 
     def _close_connection(self):
