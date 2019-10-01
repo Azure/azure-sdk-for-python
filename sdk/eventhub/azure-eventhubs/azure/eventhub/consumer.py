@@ -9,6 +9,7 @@ import logging
 import time
 from typing import List
 
+import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
@@ -127,10 +128,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-        desired_capabilities = None
-        if self._track_last_enqueued_event_properties:
-            symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+        if uamqp.__version__ <= "1.2.2":  # backward compatible until uamqp 1.2.3 is released
+            desired_capabilities = {}
+        elif self._track_last_enqueued_event_properties:
+                symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
+                desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
+        else:
+            desired_capabilities = {"desired_capabilities": None}
 
         self._handler = ReceiveClient(
             source,
@@ -144,7 +148,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             client_name=self._name,
             properties=self._client._create_properties(  # pylint:disable=protected-access
             self._client._config.user_agent),  # pylint:disable=protected-access
-            desired_capabilities=desired_capabilities)  # pylint:disable=protected-access
+            **desired_capabilities)  # pylint:disable=protected-access
         self._messages_iter = None
 
     def _open_with_retry(self):
