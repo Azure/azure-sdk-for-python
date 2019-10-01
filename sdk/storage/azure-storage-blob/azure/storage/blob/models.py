@@ -872,32 +872,25 @@ class ContainerSasPermissions(object):
         self.write = write
         self.delete = delete
         self.list = list
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else ''))
+        return self._str
 
     @classmethod
     def from_string(cls, permission):
         if len(permission) > 4:
             raise ValueError("Invalid Permission String")
-        read, write, delete, list = False, False, False, False
-        curr = 0
-        while curr < len(permission):
-            if permission[curr] =='r':
-                read = True
-            elif permission[curr] == 'w':
-                write = True
-            elif permission[curr] == 'd':
-                delete = True
-            elif permission[curr] == 'l':
-                list = True
-            else:
-                raise ValueError("Invalid Permission String")
-            curr += 1
-        return cls(read, write, delete, list)
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed._str = permission
+        return parsed
 
 
 class BlobSasPermissions(object):
@@ -927,35 +920,28 @@ class BlobSasPermissions(object):
         self.create = create
         self.write = write
         self.delete = delete
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else ''))
+        return self._str
 
     @classmethod
     def from_string(cls, permission):
         if len(permission) > 5:
             raise ValueError("Invalid Permission String")
-        read, add, create, write, delete = False, False, False, False, False
-        curr = 0
-        while curr < len(permission):
-            if permission[curr] =='r':
-                read = True
-            elif permission[curr] == 'a':
-                add = True
-            elif permission[curr] == 'c':
-                create = True
-            elif permission[curr] == 'w':
-                write = True
-            elif permission[curr] == 'd':
-                delete = True
-            else:
-                raise ValueError("Invalid Permission String")
-            curr += 1
-        return cls(read, add, create, write, delete)
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+
+        parsed = cls(p_read, p_add, p_create, p_write, p_delete)
+        parsed._str = permission
+        return parsed
 
 
 class CustomerProvidedEncryptionKey(object):

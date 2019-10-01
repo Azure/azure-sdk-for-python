@@ -1233,7 +1233,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
 
         token = blob_snapshot_client.generate_shared_access_signature(
-            permission=BlobSasPermissions(read=True, write=True),
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1827,10 +1827,13 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission1.read, permission2.read)
         self.assertEqual(permission1.write, permission2.write)
 
-    def test_set_blob_permission_from_string_fails(self):
+    def test_set_blob_permission(self):
         # Arrange
-        with self.assertRaises(ValueError):
-            permission = BlobSasPermissions.from_string('wrx')
+        permission = BlobSasPermissions.from_string('wrdx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.delete, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrdx')
 
     def test_set_blob_permission_long_from_string_fails(self):
         # Arrange

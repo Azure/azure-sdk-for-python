@@ -1280,10 +1280,13 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission1.read, permission2.read)
         self.assertEqual(permission1.write, permission2.write)
 
-    def test_set_container_permission_from_string_fails(self):
+    def test_set_container_permission(self):
         # Arrange
-        with self.assertRaises(ValueError):
-            permission = ContainerSasPermissions.from_string('wrx')
+        permission = ContainerSasPermissions.from_string('wrlx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.list, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrlx')
 
     def test_set_container_permission_long_from_string_fails(self):
         # Arrange

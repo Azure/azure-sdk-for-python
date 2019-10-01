@@ -27,7 +27,7 @@ class StorageErrorCode(str, Enum):
     condition_headers_not_supported = "ConditionHeadersNotSupported"
     condition_not_met = "ConditionNotMet"
     empty_metadata_key = "EmptyMetadataKey"
-    insufficient_account_permissions = "InsufficientAccountSasPermissions"
+    insufficient_account_permissions = "InsufficientAccountPermissions"
     internal_error = "InternalError"
     invalid_authentication_info = "InvalidAuthenticationInfo"
     invalid_header_value = "InvalidHeaderValue"
@@ -311,53 +311,43 @@ class AccountSasPermissions(object):
     """
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  add=False, create=False, update=False, process=False):
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.update = update or ('u' in _str)
-        self.process = process or ('p' in _str)
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.add = add
+        self.create = create
+        self.update = update
+        self.process = process
+        self._str = (('r' if self.read else '') +
+                     ('w' if  self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('u' if self.update else '') +
-                ('p' if self.process else ''))
+        return self._str
 
     @classmethod
     def from_string(cls, permission):
         if len(permission) > 8:
             raise ValueError("Invalid Permission String")
-        read, write, delete, list = False, False, False, False
-        add, create, update, process = False, False, False, False
-        curr = 0
-        while curr < len(permission):
-            if permission[curr] =='r':
-                read = True
-            elif permission[curr] == 'w':
-                write = True
-            elif permission[curr] == 'd':
-                delete = True
-            elif permission[curr] == 'l':
-                list = True
-            elif permission[curr] =='a':
-                add = True
-            elif permission[curr] == 'c':
-                create = True
-            elif permission[curr] == 'u':
-                update = True
-            elif permission[curr] == 'p':
-                process = True
-            else:
-                raise ValueError("Invalid Permission String")
-            curr += 1
-        return cls(read, write, delete, list, add, create, update, process)
+
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+
+        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
+        parsed._str = permission
+        return parsed
 
 
 class Services(object):
