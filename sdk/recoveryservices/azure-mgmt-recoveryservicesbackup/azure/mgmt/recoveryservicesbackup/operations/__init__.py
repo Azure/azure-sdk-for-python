@@ -10,17 +10,16 @@
 # --------------------------------------------------------------------------
 
 from ._protected_items_operations import ProtectedItemsOperations
-from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._restores_operations import RestoresOperations
 from ._backup_jobs_operations import BackupJobsOperations
-from ._jobs_operations import JobsOperations
 from ._backup_protected_items_operations import BackupProtectedItemsOperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
 from ._job_details_operations import JobDetailsOperations
 from ._export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
+from ._jobs_operations import JobsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._protection_policies_operations import ProtectionPoliciesOperations
 from ._backup_protection_intent_operations import BackupProtectionIntentOperations
@@ -34,6 +33,7 @@ from ._protection_containers_operations import ProtectionContainersOperations
 from ._backup_workload_items_operations import BackupWorkloadItemsOperations
 from ._protection_container_operation_results_operations import ProtectionContainerOperationResultsOperations
 from ._backups_operations import BackupsOperations
+from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._protected_item_operation_statuses_operations import ProtectedItemOperationStatusesOperations
 from ._item_level_recovery_connections_operations import ItemLevelRecoveryConnectionsOperations
 from ._job_cancellations_operations import JobCancellationsOperations
@@ -50,17 +50,16 @@ from ._operations import Operations
 
 __all__ = [
     'ProtectedItemsOperations',
-    'ProtectedItemOperationResultsOperations',
     'RecoveryPointsOperations',
     'RestoresOperations',
     'BackupJobsOperations',
-    'JobsOperations',
     'BackupProtectedItemsOperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
     'JobDetailsOperations',
     'ExportJobsOperationResultsOperations',
+    'JobsOperations',
     'BackupPoliciesOperations',
     'ProtectionPoliciesOperations',
     'BackupProtectionIntentOperations',
@@ -74,6 +73,7 @@ __all__ = [
     'BackupWorkloadItemsOperations',
     'ProtectionContainerOperationResultsOperations',
     'BackupsOperations',
+    'ProtectedItemOperationResultsOperations',
     'ProtectedItemOperationStatusesOperations',
     'ItemLevelRecoveryConnectionsOperations',
     'JobCancellationsOperations',

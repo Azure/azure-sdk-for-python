@@ -42,7 +42,6 @@ class JobOperationResultsOperations(object):
     def get(
             self, vault_name, resource_group_name, job_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Fetches the result of any operation.
-        the operation.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

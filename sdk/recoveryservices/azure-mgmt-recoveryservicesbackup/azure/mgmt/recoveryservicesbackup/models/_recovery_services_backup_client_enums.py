@@ -170,6 +170,7 @@ class JobOperationType(str, Enum):
     restore = "Restore"
     disable_backup = "DisableBackup"
     delete_backup_data = "DeleteBackupData"
+    cross_region_restore = "CrossRegionRestore"
     undelete = "Undelete"
 
 
@@ -245,15 +246,6 @@ class HealthState(str, Enum):
     invalid = "Invalid"
 
 
-class PolicyType(str, Enum):
-
-    invalid = "Invalid"
-    full = "Full"
-    differential = "Differential"
-    log = "Log"
-    copy_only_full = "CopyOnlyFull"
-
-
 class SupportStatus(str, Enum):
 
     invalid = "Invalid"
@@ -261,6 +253,15 @@ class SupportStatus(str, Enum):
     default_off = "DefaultOFF"
     default_on = "DefaultON"
     not_supported = "NotSupported"
+
+
+class PolicyType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    differential = "Differential"
+    log = "Log"
+    copy_only_full = "CopyOnlyFull"
 
 
 class WorkloadItemType(str, Enum):

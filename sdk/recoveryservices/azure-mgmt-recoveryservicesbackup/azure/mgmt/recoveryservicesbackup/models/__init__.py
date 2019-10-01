@@ -18,6 +18,7 @@ try:
     from ._models_py3 import AzureFileshareProtectedItem
     from ._models_py3 import AzureFileshareProtectedItemExtendedInfo
     from ._models_py3 import AzureFileShareProtectionPolicy
+    from ._models_py3 import AzureFileShareProvisionILRRequest
     from ._models_py3 import AzureFileShareRecoveryPoint
     from ._models_py3 import AzureFileShareRestoreRequest
     from ._models_py3 import AzureIaaSClassicComputeVMContainer
@@ -160,6 +161,7 @@ try:
     from ._models_py3 import InquiryInfo
     from ._models_py3 import InquiryValidation
     from ._models_py3 import InstantItemRecoveryTarget
+    from ._models_py3 import InstantRPAdditionalDetails
     from ._models_py3 import Job
     from ._models_py3 import JobQueryObject
     from ._models_py3 import JobResource
@@ -189,6 +191,7 @@ try:
     from ._models_py3 import OperationStatusJobExtendedInfo
     from ._models_py3 import OperationStatusJobsExtendedInfo
     from ._models_py3 import OperationStatusProvisionILRExtendedInfo
+    from ._models_py3 import OperationStatusRecoveryPointExtendedInfo
     from ._models_py3 import OperationWorkerResponse
     from ._models_py3 import PointInTimeRange
     from ._models_py3 import PreBackupValidation
@@ -207,6 +210,7 @@ try:
     from ._models_py3 import ProtectionPolicy
     from ._models_py3 import ProtectionPolicyQueryObject
     from ._models_py3 import ProtectionPolicyResource
+    from ._models_py3 import PublicUri
     from ._models_py3 import RecoveryPoint
     from ._models_py3 import RecoveryPointDiskConfiguration
     from ._models_py3 import RecoveryPointResource
@@ -250,6 +254,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileshareProtectedItem
     from ._models import AzureFileshareProtectedItemExtendedInfo
     from ._models import AzureFileShareProtectionPolicy
+    from ._models import AzureFileShareProvisionILRRequest
     from ._models import AzureFileShareRecoveryPoint
     from ._models import AzureFileShareRestoreRequest
     from ._models import AzureIaaSClassicComputeVMContainer
@@ -392,6 +397,7 @@ except (SyntaxError, ImportError):
     from ._models import InquiryInfo
     from ._models import InquiryValidation
     from ._models import InstantItemRecoveryTarget
+    from ._models import InstantRPAdditionalDetails
     from ._models import Job
     from ._models import JobQueryObject
     from ._models import JobResource
@@ -421,6 +427,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationStatusJobExtendedInfo
     from ._models import OperationStatusJobsExtendedInfo
     from ._models import OperationStatusProvisionILRExtendedInfo
+    from ._models import OperationStatusRecoveryPointExtendedInfo
     from ._models import OperationWorkerResponse
     from ._models import PointInTimeRange
     from ._models import PreBackupValidation
@@ -439,6 +446,7 @@ except (SyntaxError, ImportError):
     from ._models import ProtectionPolicy
     from ._models import ProtectionPolicyQueryObject
     from ._models import ProtectionPolicyResource
+    from ._models import PublicUri
     from ._models import RecoveryPoint
     from ._models import RecoveryPointDiskConfiguration
     from ._models import RecoveryPointResource
@@ -509,8 +517,8 @@ from ._recovery_services_backup_client_enums import (
     DataSourceType,
     CreateMode,
     HealthState,
-    PolicyType,
     SupportStatus,
+    PolicyType,
     WorkloadItemType,
     UsagesUnit,
     ProtectionStatus,
@@ -546,6 +554,7 @@ __all__ = [
     'AzureFileshareProtectedItem',
     'AzureFileshareProtectedItemExtendedInfo',
     'AzureFileShareProtectionPolicy',
+    'AzureFileShareProvisionILRRequest',
     'AzureFileShareRecoveryPoint',
     'AzureFileShareRestoreRequest',
     'AzureIaaSClassicComputeVMContainer',
@@ -688,6 +697,7 @@ __all__ = [
     'InquiryInfo',
     'InquiryValidation',
     'InstantItemRecoveryTarget',
+    'InstantRPAdditionalDetails',
     'Job',
     'JobQueryObject',
     'JobResource',
@@ -717,6 +727,7 @@ __all__ = [
     'OperationStatusJobExtendedInfo',
     'OperationStatusJobsExtendedInfo',
     'OperationStatusProvisionILRExtendedInfo',
+    'OperationStatusRecoveryPointExtendedInfo',
     'OperationWorkerResponse',
     'PointInTimeRange',
     'PreBackupValidation',
@@ -735,6 +746,7 @@ __all__ = [
     'ProtectionPolicy',
     'ProtectionPolicyQueryObject',
     'ProtectionPolicyResource',
+    'PublicUri',
     'RecoveryPoint',
     'RecoveryPointDiskConfiguration',
     'RecoveryPointResource',
@@ -804,8 +816,8 @@ __all__ = [
     'DataSourceType',
     'CreateMode',
     'HealthState',
-    'PolicyType',
     'SupportStatus',
+    'PolicyType',
     'WorkloadItemType',
     'UsagesUnit',
     'ProtectionStatus',

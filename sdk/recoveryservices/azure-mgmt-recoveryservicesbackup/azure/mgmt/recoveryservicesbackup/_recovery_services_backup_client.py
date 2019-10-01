@@ -14,17 +14,16 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import ProtectedItemsOperations
-from .operations import ProtectedItemOperationResultsOperations
 from .operations import RecoveryPointsOperations
 from .operations import RestoresOperations
 from .operations import BackupJobsOperations
-from .operations import JobsOperations
 from .operations import BackupProtectedItemsOperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
 from .operations import JobDetailsOperations
 from .operations import ExportJobsOperationResultsOperations
+from .operations import JobsOperations
 from .operations import BackupPoliciesOperations
 from .operations import ProtectionPoliciesOperations
 from .operations import BackupProtectionIntentOperations
@@ -38,6 +37,7 @@ from .operations import ProtectionContainersOperations
 from .operations import BackupWorkloadItemsOperations
 from .operations import ProtectionContainerOperationResultsOperations
 from .operations import BackupsOperations
+from .operations import ProtectedItemOperationResultsOperations
 from .operations import ProtectedItemOperationStatusesOperations
 from .operations import ItemLevelRecoveryConnectionsOperations
 from .operations import JobCancellationsOperations
@@ -62,16 +62,12 @@ class RecoveryServicesBackupClient(SDKClient):
 
     :ivar protected_items: ProtectedItems operations
     :vartype protected_items: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemsOperations
-    :ivar protected_item_operation_results: ProtectedItemOperationResults operations
-    :vartype protected_item_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationResultsOperations
     :ivar recovery_points: RecoveryPoints operations
     :vartype recovery_points: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations
     :ivar restores: Restores operations
     :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
     :ivar backup_jobs: BackupJobs operations
     :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.recoveryservicesbackup.operations.JobsOperations
     :ivar backup_protected_items: BackupProtectedItems operations
     :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
     :ivar protection_intent: ProtectionIntent operations
@@ -84,6 +80,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype job_details: azure.mgmt.recoveryservicesbackup.operations.JobDetailsOperations
     :ivar export_jobs_operation_results: ExportJobsOperationResults operations
     :vartype export_jobs_operation_results: azure.mgmt.recoveryservicesbackup.operations.ExportJobsOperationResultsOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.recoveryservicesbackup.operations.JobsOperations
     :ivar backup_policies: BackupPolicies operations
     :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
     :ivar protection_policies: ProtectionPolicies operations
@@ -110,6 +108,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype protection_container_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerOperationResultsOperations
     :ivar backups: Backups operations
     :vartype backups: azure.mgmt.recoveryservicesbackup.operations.BackupsOperations
+    :ivar protected_item_operation_results: ProtectedItemOperationResults operations
+    :vartype protected_item_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationResultsOperations
     :ivar protected_item_operation_statuses: ProtectedItemOperationStatuses operations
     :vartype protected_item_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationStatusesOperations
     :ivar item_level_recovery_connections: ItemLevelRecoveryConnections operations
@@ -157,15 +157,11 @@ class RecoveryServicesBackupClient(SDKClient):
 
         self.protected_items = ProtectedItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.recovery_points = RecoveryPointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restores = RestoresOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_jobs = BackupJobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_protected_items = BackupProtectedItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -178,6 +174,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self.job_details = JobDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.export_jobs_operation_results = ExportJobsOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -204,6 +202,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self.protection_container_operation_results = ProtectionContainerOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_item_operation_statuses = ProtectedItemOperationStatusesOperations(
             self._client, self.config, self._serialize, self._deserialize)
