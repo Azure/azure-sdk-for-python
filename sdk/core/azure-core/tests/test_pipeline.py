@@ -58,7 +58,7 @@ from azure.core.pipeline.transport import (
     RequestsTransport
 )
 
-from azure.core.configuration import Configuration
+from azure.core.exceptions import ServiceRequestError
 
 
 def test_sans_io_exception():
@@ -106,6 +106,17 @@ class TestRequestsTransport(unittest.TestCase):
 
         assert pipeline._transport.session is None
         assert response.http_response.status_code == 200
+
+    def test_requests_socket_timeout(self):
+        conf = Configuration()
+        request = HttpRequest("GET", "https://bing.com")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        with pytest.raises(ServiceRequestError):
+            with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+                response = pipeline.run(request, connection_timeout=0.000001)
 
     def test_basic_requests_separate_session(self):
 
