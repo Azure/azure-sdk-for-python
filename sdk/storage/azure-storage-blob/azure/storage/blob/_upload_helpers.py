@@ -68,7 +68,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -121,7 +121,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
@@ -133,7 +133,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
                 **kwargs
@@ -165,7 +165,7 @@ def upload_page_blob(
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -203,7 +203,7 @@ def upload_page_blob(
             total_size=length,
             chunk_size=blob_settings.max_page_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
             **kwargs)
@@ -224,7 +224,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -248,7 +248,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 **kwargs)
@@ -274,7 +274,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 **kwargs)

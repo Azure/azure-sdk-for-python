@@ -699,7 +699,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        await blob.upload_blob(data, length=LARGE_BLOB_SIZE, max_connections=1)
+        await blob.upload_blob(data, length=LARGE_BLOB_SIZE, max_concurrency=1)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -768,7 +768,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            create_resp = await blob.upload_blob(stream, length=100, max_connections=1)
+            create_resp = await blob.upload_blob(stream, length=100, max_concurrency=1)
         props = await blob.get_blob_properties()
 
         # Assert
@@ -792,7 +792,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         blob_tier = StandardBlobTier.Cool
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(stream, length=100, max_connections=1, standard_blob_tier=blob_tier)
+            await blob.upload_blob(stream, length=100, max_concurrency=1, standard_blob_tier=blob_tier)
         props = await blob.get_blob_properties()
 
         # Assert
@@ -912,7 +912,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageBlockBlobTestAsync.NonSeekableFile(stream)
-            await blob.upload_blob(non_seekable_file, length=blob_size, max_connections=1)
+            await blob.upload_blob(non_seekable_file, length=blob_size, max_concurrency=1)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -938,7 +938,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageBlockBlobTestAsync.NonSeekableFile(stream)
-            await blob.upload_blob(non_seekable_file, max_connections=1)
+            await blob.upload_blob(non_seekable_file, max_concurrency=1)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
@@ -1089,7 +1089,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(stream, content_settings=content_settings, max_connections=2,
+            await blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2,
                                    standard_blob_tier=blob_tier)
 
         properties = await blob.get_blob_properties()

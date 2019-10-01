@@ -1612,7 +1612,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            max_connections=2,
+            max_concurrency=2,
             credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
@@ -1633,7 +1633,7 @@ class StorageCommonBlobTest(StorageTestCase):
         with open(FILE_PATH, 'wb') as stream:
             download_blob_from_url(
                 source_blob.url, stream,
-                max_connections=2,
+                max_concurrency=2,
                 credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert

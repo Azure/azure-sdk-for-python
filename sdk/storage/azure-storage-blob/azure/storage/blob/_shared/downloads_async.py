@@ -328,32 +328,32 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             self._download_complete = True
         return response
 
-    async def content_as_bytes(self, max_connections=1):
+    async def content_as_bytes(self, max_concurrency=1):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_connections:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: bytes
         """
         stream = BytesIO()
-        await self.download_to_stream(stream, max_connections=max_connections)
+        await self.download_to_stream(stream, max_concurrency=max_concurrency)
         return stream.getvalue()
 
-    async def content_as_text(self, max_connections=1, encoding='UTF-8'):
+    async def content_as_text(self, max_concurrency=1, encoding='UTF-8'):
         """Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_connections:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: str
         """
-        content = await self.content_as_bytes(max_connections=max_connections)
+        content = await self.content_as_bytes(max_concurrency=max_concurrency)
         return content.decode(encoding)
 
-    async def download_to_stream(self, stream, max_connections=1):
+    async def download_to_stream(self, stream, max_concurrency=1):
         """Download the contents of this file to a stream.
 
         :param stream:
@@ -367,7 +367,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             raise ValueError("Stream is currently being iterated.")
 
         # the stream must be seekable if parallel download is required
-        parallel = max_connections > 1
+        parallel = max_concurrency > 1
         if parallel:
             error_message = "Target stream handle must be seekable."
             if sys.version_info >= (3,) and not stream.seekable():
@@ -412,7 +412,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         dl_tasks = downloader.get_chunk_offsets()
         running_futures = [
             asyncio.ensure_future(downloader.process_chunk(d))
-            for d in islice(dl_tasks, 0, max_connections)
+            for d in islice(dl_tasks, 0, max_concurrency)
         ]
         while running_futures:
             # Wait for some download to finish before adding a new one

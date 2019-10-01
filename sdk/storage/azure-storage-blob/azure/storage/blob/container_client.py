@@ -765,7 +765,7 @@ class ContainerClient(StorageAccountHostsMixin):
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
-            max_connections=1,  # type: int
+            max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
         ):
@@ -842,7 +842,7 @@ class ContainerClient(StorageAccountHostsMixin):
             to exceed that limit or if the blob size is already greater than the
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
         :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
@@ -875,7 +875,7 @@ class ContainerClient(StorageAccountHostsMixin):
             validate_content=validate_content,
             lease=lease,
             timeout=timeout,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs
         )

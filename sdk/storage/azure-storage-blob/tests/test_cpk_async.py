@@ -87,11 +87,11 @@ class StorageCPKAsyncTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    async def _create_block_blob(self, blob_name=None, data=None, cpk=None, max_connections=1):
+    async def _create_block_blob(self, blob_name=None, data=None, cpk=None, max_concurrency=1):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
-        resp = await blob_client.upload_blob(data, cpk=cpk, max_connections=max_connections)
+        resp = await blob_client.upload_blob(data, cpk=cpk, max_concurrency=max_concurrency)
         return blob_client, resp
 
     async def _create_append_blob(self, cpk=None):
@@ -159,7 +159,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
         blob_client, upload_response = await self._create_block_blob(data=self.byte_data, cpk=TEST_ENCRYPTION_KEY,
-                                                                     max_connections=2)
+                                                                     max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
@@ -192,7 +192,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
         blob_client, upload_response = await self._create_block_blob(data=self.byte_data, cpk=TEST_ENCRYPTION_KEY,
-                                                                     max_connections=2)
+                                                                     max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
@@ -496,7 +496,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         blob_client = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         page_blob_prop = await blob_client.upload_blob(self.byte_data,
                                                        blob_type=BlobType.PageBlob,
-                                                       max_connections=2,
+                                                       max_concurrency=2,
                                                        cpk=TEST_ENCRYPTION_KEY)
 
         # Assert

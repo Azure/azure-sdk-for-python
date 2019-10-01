@@ -1454,7 +1454,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
             await blob.upload_blob(
                 non_seekable_file,
                 length=blob_size,
-                max_connections=1,
+                max_concurrency=1,
                 blob_type=BlobType.PageBlob)
 
         # Assert
