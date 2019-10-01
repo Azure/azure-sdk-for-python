@@ -768,7 +768,7 @@ class BlobBlock(DictMixin):
         Block size in bytes.
     """
 
-    def __init__(self, block_id=None, state=BlockState.Latest):
+    def __init__(self, block_id, state=BlockState.Latest):
         self.id = block_id
         self.state = state
         self.size = None

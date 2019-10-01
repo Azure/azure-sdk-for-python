@@ -1534,7 +1534,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _abort_copy_options(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], **Any) -> Dict[str, Any]
+        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             copy_id = copy_id.copy.id
@@ -1552,7 +1552,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, BlobProperties], **Any) -> None
+        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -2758,7 +2758,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _append_block_options( # type: ignore
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
@@ -2816,7 +2816,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def append_block( # type: ignore
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]

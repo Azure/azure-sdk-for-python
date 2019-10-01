@@ -945,7 +945,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, BlobProperties], Any) -> None
+        # type: (Union[str, Dict[str, Any], BlobProperties], Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -1744,7 +1744,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def append_block( # type: ignore
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
