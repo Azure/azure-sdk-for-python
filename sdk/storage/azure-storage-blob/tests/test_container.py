@@ -21,7 +21,9 @@ from azure.storage.blob import (
     ContainerPermissions,
     PublicAccess,
     ContainerPermissions,
-    AccessPolicy
+    AccessPolicy,
+    StandardBlobTier,
+    PremiumPageBlobTier
 )
 
 from azure.identity import ClientSecretCredential
@@ -1016,6 +1018,104 @@ class StorageContainerTest(StorageTestCase):
 
         blobs = list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 3  # 3 blobs
+
+    @record
+    def test_standard_blob_tier_set_tier_api_batch(self):
+        container = self._create_container()
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        )
+
+        for tier in tiers:
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            blob.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = blob.get_blob_properties()
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+            assert blob_ref.blob_tier_change_time is None
+
+            parts = container.set_standard_blob_tier_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                standard_blob_tier=tier
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+    @record
+    @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    def test_premium_tier_set_tier_api_batch(self):
+        url = self._get_premium_account_url()
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
+
+        try:
+            container_name = self.get_resource_name('utpremiumcontainer')
+            container = pbs.get_container_client(container_name)
+
+            if not self.is_playback():
+                try:
+                    container.create_container()
+                except ResourceExistsError:
+                    pass
+
+            pblob = container.get_blob_client('blob1')
+            pblob.create_page_blob(1024)
+            container.get_blob_client('blob2').create_page_blob(1024)
+            container.get_blob_client('blob3').create_page_blob(1024)
+
+            blob_ref = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P10 == blob_ref.blob_tier
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+
+            parts = container.set_premium_page_blob_tier_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                premium_page_blob_tier=PremiumPageBlobTier.P50
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+
+            blob_ref2 = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+
+        finally:
+            container.delete_container()
+
 
     @record
     def test_walk_blobs_with_delimiter(self):

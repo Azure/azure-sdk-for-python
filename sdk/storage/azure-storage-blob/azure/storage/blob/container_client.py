@@ -1131,7 +1131,6 @@ class ContainerClient(StorageAccountHostsMixin):
         header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')
         if rehydrate_priority is not None:
             header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header("rehydrate_priority", rehydrate_priority, 'str')
-        header_parameters['x-ms-version'] = self._client._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._client._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
@@ -1183,7 +1182,7 @@ class ContainerClient(StorageAccountHostsMixin):
         for blob in blobs:
             req = HttpRequest(
                 "PUT",
-                "/{}/{}?comp=tier".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
