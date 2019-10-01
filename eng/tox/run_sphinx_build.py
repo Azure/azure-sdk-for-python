@@ -13,11 +13,25 @@ import argparse
 import os
 import logging
 import sys
+from prep_sphinx_env import get_package_details
+from pkg_resources import Requirement
+import ast
+import os
+import textwrap
+import io
 
 logging.getLogger().setLevel(logging.INFO)
 
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", "_docs"))
+
 def in_ci():
     return os.getenv('TF_BUILD', False)
+
+def move_output_and_zip(target_dir, package_dir):
+    pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
+
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -40,11 +54,26 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "-r",
+        "--root",
+        dest="package_root",
+        help="",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--inci",
+        dest="in_ci",
+        action="store_true",
+        default=False
+    )
+
     args = parser.parse_args()
 
     output_dir = os.path.abspath(args.output_directory)
     target_dir = os.path.abspath(args.working_directory)
-
+    package_dir = os.path.abspath(args.package_root)
 
     # sphinx-build -b html {distdir}/unzipped/docgen {distdir}/site
     command_array = [
@@ -68,3 +97,6 @@ if __name__ == "__main__":
             )
         )
         exit(1)
+
+    if in_ci() or args.in_ci:
+        move_output_and_zip(target_dir, package_dir)
