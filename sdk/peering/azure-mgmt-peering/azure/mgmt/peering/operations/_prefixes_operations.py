@@ -237,7 +237,7 @@ class PrefixesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}/prefixes/{prefixName}'}
 
     def list_by_peering_service(
-            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, peering_service_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all prefixes under the given subscription, resource group and
         peering service.
 
@@ -245,6 +245,8 @@ class PrefixesOperations(object):
         :type resource_group_name: str
         :param peering_service_name: The name of the peering service.
         :type peering_service_name: str
+        :param expand: The properties to be expanded.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -269,6 +271,8 @@ class PrefixesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

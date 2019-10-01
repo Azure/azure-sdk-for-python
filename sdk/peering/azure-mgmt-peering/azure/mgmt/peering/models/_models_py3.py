@@ -950,49 +950,48 @@ class PeeringServicePrefix(Resource):
 
 
 class PeeringServicePrefixEvent(Model):
-    """The peering service prefix event class.
+    """The details of the event associated with a prefix.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar event_type: The event type of the peering service prefix event
+    :ivar event_timestamp: The timestamp of the event associated with a
+     prefix.
+    :vartype event_timestamp: datetime
+    :ivar event_type: The type of the event associated with a prefix.
     :vartype event_type: str
-    :ivar event_time_stamp: The event timestamp of the peering service prefix
-     event
-    :vartype event_time_stamp: datetime
-    :ivar description: The event description of the peering service prefix
-     event
-    :vartype description: str
-    :ivar event_level: The event level of the peering service prefix event
+    :ivar event_summary: The summary of the event associated with a prefix.
+    :vartype event_summary: str
+    :ivar event_level: The level of the event associated with a prefix.
     :vartype event_level: str
-    :ivar additional_info: Additional information for the peering service
-     prefix event
-    :vartype additional_info: str
+    :ivar event_description: The description of the event associated with a
+     prefix.
+    :vartype event_description: str
     """
 
     _validation = {
+        'event_timestamp': {'readonly': True},
         'event_type': {'readonly': True},
-        'event_time_stamp': {'readonly': True},
-        'description': {'readonly': True},
+        'event_summary': {'readonly': True},
         'event_level': {'readonly': True},
-        'additional_info': {'readonly': True},
+        'event_description': {'readonly': True},
     }
 
     _attribute_map = {
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'iso-8601'},
         'event_type': {'key': 'eventType', 'type': 'str'},
-        'event_time_stamp': {'key': 'eventTimeStamp', 'type': 'iso-8601'},
-        'description': {'key': 'description', 'type': 'str'},
+        'event_summary': {'key': 'eventSummary', 'type': 'str'},
         'event_level': {'key': 'eventLevel', 'type': 'str'},
-        'additional_info': {'key': 'additionalInfo', 'type': 'str'},
+        'event_description': {'key': 'eventDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(PeeringServicePrefixEvent, self).__init__(**kwargs)
+        self.event_timestamp = None
         self.event_type = None
-        self.event_time_stamp = None
-        self.description = None
+        self.event_summary = None
         self.event_level = None
-        self.additional_info = None
+        self.event_description = None
 
 
 class PeeringServiceProvider(Resource):
