@@ -794,35 +794,22 @@ class AmlInstanceCustomScriptSettingsStartupScript(Model):
     """Specifies properties of initialization script to be run during every start
     of this instance.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param script_location: The location of customization script. Could be a
-     URI or a relative file path in the default fileshare in the parent
-     workspace.
+    :param script_location: The location of customization script. This is a
+     relative file path in the default fileshare in the parent workspace.
     :type script_location: str
     :param script_parameters: Parameters required for this script if any.
     :type script_parameters: str
-    :ivar script_log_location: Location of the script's output logs in the
-     default fileshare.
-    :vartype script_log_location: str
     """
-
-    _validation = {
-        'script_log_location': {'readonly': True},
-    }
 
     _attribute_map = {
         'script_location': {'key': 'scriptLocation', 'type': 'str'},
         'script_parameters': {'key': 'scriptParameters', 'type': 'str'},
-        'script_log_location': {'key': 'scriptLogLocation', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
         self.script_location = kwargs.get('script_location', None)
         self.script_parameters = kwargs.get('script_parameters', None)
-        self.script_log_location = None
 
 
 class AmlInstanceDatastore(Model):
@@ -861,32 +848,32 @@ class AmlInstanceDatastore(Model):
         self.error = None
 
 
-class AmlInstanceDataStoresMountSettings(Model):
+class AmlInstanceDatastoresMountSettings(Model):
     """Describes what data stores will be mounted on this compute instance.
 
-    :param data_store_selection: Allows users to select between mounting All
-     vs Selected datastores from the parent workspace. The 'All' setting also
+    :param datastore_selection: Allows users to select between mounting All vs
+     Selected datastores from the parent workspace. The 'All' setting also
      implies that any datastores that later become part of the workspace will
      be automatically mounted to the compute instance on next start. Possible
      values include: 'All', 'UserSpecified'. Default value: "All" .
-    :type data_store_selection: str or
-     ~azure.mgmt.machinelearningservices.models.DataStoreSelection
-    :param data_stores: Specifies the set of data stores that will be mounted
+    :type datastore_selection: str or
+     ~azure.mgmt.machinelearningservices.models.DatastoreSelection
+    :param datastores: Specifies the set of data stores that will be mounted
      on this compute instance. This should only be specified if
      dataStoreSelection is set to 'UserSpecified'.
-    :type data_stores:
+    :type datastores:
      list[~azure.mgmt.machinelearningservices.models.AmlInstanceDatastore]
     """
 
     _attribute_map = {
-        'data_store_selection': {'key': 'dataStoreSelection', 'type': 'str'},
-        'data_stores': {'key': 'dataStores', 'type': '[AmlInstanceDatastore]'},
+        'datastore_selection': {'key': 'datastoreSelection', 'type': 'str'},
+        'datastores': {'key': 'datastores', 'type': '[AmlInstanceDatastore]'},
     }
 
     def __init__(self, **kwargs):
-        super(AmlInstanceDataStoresMountSettings, self).__init__(**kwargs)
-        self.data_store_selection = kwargs.get('data_store_selection', "All")
-        self.data_stores = kwargs.get('data_stores', None)
+        super(AmlInstanceDatastoresMountSettings, self).__init__(**kwargs)
+        self.datastore_selection = kwargs.get('datastore_selection', "All")
+        self.datastores = kwargs.get('datastores', None)
 
 
 class AmlInstanceOSUpdateSettings(Model):
@@ -898,17 +885,19 @@ class AmlInstanceOSUpdateSettings(Model):
     :type os_update_type: str or
      ~azure.mgmt.machinelearningservices.models.OsUpdateType
     :param update_frequency_in_days: Frequency of update checks and
-     installation. Maximum allowable frequency is 30 days.
-    :type update_frequency_in_days: long
+     installation. Maximum allowable frequency is 30 days. Default frequency
+     will be 14 days.
+    :type update_frequency_in_days: int
     :param update_hour_in_utc: Hour of the day (0-23) in Universal Time at
      which software updates can be installed, potentially requiring VM reboot.
-    :type update_hour_in_utc: long
+     Default update hour will be 2 AM UTC.
+    :type update_hour_in_utc: int
     """
 
     _attribute_map = {
         'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
-        'update_frequency_in_days': {'key': 'updateFrequencyInDays', 'type': 'long'},
-        'update_hour_in_utc': {'key': 'updateHourInUtc', 'type': 'long'},
+        'update_frequency_in_days': {'key': 'updateFrequencyInDays', 'type': 'int'},
+        'update_hour_in_utc': {'key': 'updateHourInUtc', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -929,10 +918,10 @@ class AmlInstanceProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
-    :param data_stores_mount_settings: Describes what data stores will be
+    :param datastores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
-    :type data_stores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceDataStoresMountSettings
+    :type datastores_mount_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceDatastoresMountSettings
     :param custom_script_settings: Specification for initialization scripts to
      customize this AmlInstance.
     :type custom_script_settings:
@@ -957,19 +946,12 @@ class AmlInstanceProperties(Model):
     :vartype errors:
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
     :ivar state: The current state of this AmlInstance. Possible values
-     include: 'Creating', 'Deleting', 'Ready', 'Restarting', 'Running',
-     'SettingUp', 'SetupFailed', 'Starting', 'Stopped', 'Stopping',
-     'UserSettingUp', 'UserSetupFailed', 'Unknown', 'Unusable'
+     include: 'Creating', 'CreateFailed', 'Deleting', 'Ready', 'Restarting',
+     'RestartFailed', 'Running', 'SettingUp', 'Starting', 'StartFailed',
+     'StopFailed', 'Stopped', 'Stopping', 'UserSettingUp', 'Unknown',
+     'Unusable'
     :vartype state: str or
      ~azure.mgmt.machinelearningservices.models.AmlInstanceState
-    :ivar last_operation: Last operation performed on this AmlInstance.
-     Possible values include: 'Create', 'Delete', 'Restart', 'Start', 'Stop'
-    :vartype last_operation: str or
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceLastOperation
-    :ivar last_operation_status: Status of last operation performed on this
-     AmlInstance. Possible values include: 'Failed', 'InProgress', 'Succeeded'
-    :vartype last_operation_status: str or
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceLastOperationStatus
     """
 
     _validation = {
@@ -977,14 +959,12 @@ class AmlInstanceProperties(Model):
         'created_by': {'readonly': True},
         'errors': {'readonly': True},
         'state': {'readonly': True},
-        'last_operation': {'readonly': True},
-        'last_operation_status': {'readonly': True},
     }
 
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'data_stores_mount_settings': {'key': 'dataStoresMountSettings', 'type': 'AmlInstanceDataStoresMountSettings'},
+        'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'AmlInstanceDatastoresMountSettings'},
         'custom_script_settings': {'key': 'customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
         'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'AmlInstanceSshSettings'},
@@ -992,15 +972,13 @@ class AmlInstanceProperties(Model):
         'created_by': {'key': 'createdBy', 'type': 'AmlInstanceCreatedBy'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
-        'last_operation': {'key': 'lastOperation', 'type': 'str'},
-        'last_operation_status': {'key': 'lastOperationStatus', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlInstanceProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
         self.subnet = kwargs.get('subnet', None)
-        self.data_stores_mount_settings = kwargs.get('data_stores_mount_settings', None)
+        self.datastores_mount_settings = kwargs.get('datastores_mount_settings', None)
         self.custom_script_settings = kwargs.get('custom_script_settings', None)
         self.software_update_settings = kwargs.get('software_update_settings', None)
         self.ssh_settings = kwargs.get('ssh_settings', None)
@@ -1008,8 +986,6 @@ class AmlInstanceProperties(Model):
         self.created_by = None
         self.errors = None
         self.state = None
-        self.last_operation = None
-        self.last_operation_status = None
 
 
 class AmlInstanceSdkUpdate(Model):
@@ -1020,17 +996,21 @@ class AmlInstanceSdkUpdate(Model):
     :param update_description: Detailed description of the available SDK
      update.
     :type update_description: str
+    :param update_version: Version of this available update.
+    :type update_version: str
     """
 
     _attribute_map = {
         'update_name': {'key': 'updateName', 'type': 'str'},
         'update_description': {'key': 'updateDescription', 'type': 'str'},
+        'update_version': {'key': 'updateVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlInstanceSdkUpdate, self).__init__(**kwargs)
         self.update_name = kwargs.get('update_name', None)
         self.update_description = kwargs.get('update_description', None)
+        self.update_version = kwargs.get('update_version', None)
 
 
 class AmlInstanceSdkUpdateSettings(Model):
@@ -1133,10 +1113,10 @@ class ClusterUpdateParameters(Model):
      amlCompute.
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
-    :param data_stores_mount_settings: Describes what data stores will be
+    :param datastores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
-    :type data_stores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceDataStoresMountSettings
+    :type datastores_mount_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceDatastoresMountSettings
     :param custom_script_settings: Specification for initialization scripts to
      customize this AmlInstance.
     :type custom_script_settings:
@@ -1152,7 +1132,7 @@ class ClusterUpdateParameters(Model):
 
     _attribute_map = {
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
-        'data_stores_mount_settings': {'key': 'properties.dataStoresMountSettings', 'type': 'AmlInstanceDataStoresMountSettings'},
+        'datastores_mount_settings': {'key': 'properties.datastoresMountSettings', 'type': 'AmlInstanceDatastoresMountSettings'},
         'custom_script_settings': {'key': 'properties.customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
         'software_update_settings': {'key': 'properties.softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
         'ssh_settings': {'key': 'properties.sshSettings', 'type': 'AmlInstanceSshSettings'},
@@ -1161,7 +1141,7 @@ class ClusterUpdateParameters(Model):
     def __init__(self, **kwargs):
         super(ClusterUpdateParameters, self).__init__(**kwargs)
         self.scale_settings = kwargs.get('scale_settings', None)
-        self.data_stores_mount_settings = kwargs.get('data_stores_mount_settings', None)
+        self.datastores_mount_settings = kwargs.get('datastores_mount_settings', None)
         self.custom_script_settings = kwargs.get('custom_script_settings', None)
         self.software_update_settings = kwargs.get('software_update_settings', None)
         self.ssh_settings = kwargs.get('ssh_settings', None)

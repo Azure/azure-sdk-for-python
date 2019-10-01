@@ -73,7 +73,7 @@ class AllocationState(str, Enum):
     resizing = "Resizing"
 
 
-class DataStoreSelection(str, Enum):
+class DatastoreSelection(str, Enum):
 
     all = "All"
     user_specified = "UserSpecified"
@@ -107,35 +107,21 @@ class SshPublicAccess(str, Enum):
 class AmlInstanceState(str, Enum):
 
     creating = "Creating"
+    create_failed = "CreateFailed"
     deleting = "Deleting"
     ready = "Ready"
     restarting = "Restarting"
+    restart_failed = "RestartFailed"
     running = "Running"
     setting_up = "SettingUp"
-    setup_failed = "SetupFailed"
     starting = "Starting"
+    start_failed = "StartFailed"
+    stop_failed = "StopFailed"
     stopped = "Stopped"
     stopping = "Stopping"
     user_setting_up = "UserSettingUp"
-    user_setup_failed = "UserSetupFailed"
     unknown = "Unknown"
     unusable = "Unusable"
-
-
-class AmlInstanceLastOperation(str, Enum):
-
-    create = "Create"
-    delete = "Delete"
-    restart = "Restart"
-    start = "Start"
-    stop = "Stop"
-
-
-class AmlInstanceLastOperationStatus(str, Enum):
-
-    failed = "Failed"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
 
 
 class NodeState(str, Enum):

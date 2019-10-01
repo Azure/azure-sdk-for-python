@@ -25,7 +25,7 @@ try:
     from ._models_py3 import AmlInstanceCustomScriptSettings
     from ._models_py3 import AmlInstanceCustomScriptSettingsStartupScript
     from ._models_py3 import AmlInstanceDatastore
-    from ._models_py3 import AmlInstanceDataStoresMountSettings
+    from ._models_py3 import AmlInstanceDatastoresMountSettings
     from ._models_py3 import AmlInstanceOSUpdateSettings
     from ._models_py3 import AmlInstanceProperties
     from ._models_py3 import AmlInstanceSdkUpdate
@@ -94,7 +94,7 @@ except (SyntaxError, ImportError):
     from ._models import AmlInstanceCustomScriptSettings
     from ._models import AmlInstanceCustomScriptSettingsStartupScript
     from ._models import AmlInstanceDatastore
-    from ._models import AmlInstanceDataStoresMountSettings
+    from ._models import AmlInstanceDatastoresMountSettings
     from ._models import AmlInstanceOSUpdateSettings
     from ._models import AmlInstanceProperties
     from ._models import AmlInstanceSdkUpdate
@@ -162,14 +162,12 @@ from ._azure_machine_learning_workspaces_enums import (
     OsType,
     RemoteLoginPortPublicAccess,
     AllocationState,
-    DataStoreSelection,
+    DatastoreSelection,
     DatastoreState,
     OsUpdateType,
     UpdateOnNextStart,
     SshPublicAccess,
     AmlInstanceState,
-    AmlInstanceLastOperation,
-    AmlInstanceLastOperationStatus,
     NodeState,
     ComputeType,
     UnderlyingResourceAction,
@@ -191,7 +189,7 @@ __all__ = [
     'AmlInstanceCustomScriptSettings',
     'AmlInstanceCustomScriptSettingsStartupScript',
     'AmlInstanceDatastore',
-    'AmlInstanceDataStoresMountSettings',
+    'AmlInstanceDatastoresMountSettings',
     'AmlInstanceOSUpdateSettings',
     'AmlInstanceProperties',
     'AmlInstanceSdkUpdate',
@@ -258,14 +256,12 @@ __all__ = [
     'OsType',
     'RemoteLoginPortPublicAccess',
     'AllocationState',
-    'DataStoreSelection',
+    'DatastoreSelection',
     'DatastoreState',
     'OsUpdateType',
     'UpdateOnNextStart',
     'SshPublicAccess',
     'AmlInstanceState',
-    'AmlInstanceLastOperation',
-    'AmlInstanceLastOperationStatus',
     'NodeState',
     'ComputeType',
     'UnderlyingResourceAction',
