@@ -245,6 +245,15 @@ class HealthState(str, Enum):
     invalid = "Invalid"
 
 
+class PolicyType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    differential = "Differential"
+    log = "Log"
+    copy_only_full = "CopyOnlyFull"
+
+
 class SupportStatus(str, Enum):
 
     invalid = "Invalid"
@@ -304,15 +313,6 @@ class RetentionDurationType(str, Enum):
     weeks = "Weeks"
     months = "Months"
     years = "Years"
-
-
-class PolicyType(str, Enum):
-
-    invalid = "Invalid"
-    full = "Full"
-    differential = "Differential"
-    log = "Log"
-    copy_only_full = "CopyOnlyFull"
 
 
 class DayOfWeek(str, Enum):

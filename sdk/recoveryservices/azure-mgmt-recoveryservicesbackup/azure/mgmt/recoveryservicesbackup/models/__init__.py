@@ -55,6 +55,7 @@ try:
     from ._models_py3 import AzureVmWorkloadProtectableItem
     from ._models_py3 import AzureVmWorkloadProtectedItem
     from ._models_py3 import AzureVmWorkloadProtectedItemExtendedInfo
+    from ._models_py3 import AzureVmWorkloadProtectionPolicy
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseWorkloadItem
@@ -286,6 +287,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureVmWorkloadProtectableItem
     from ._models import AzureVmWorkloadProtectedItem
     from ._models import AzureVmWorkloadProtectedItemExtendedInfo
+    from ._models import AzureVmWorkloadProtectionPolicy
     from ._models import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models import AzureVmWorkloadSAPAseDatabaseWorkloadItem
@@ -507,6 +509,7 @@ from ._recovery_services_backup_client_enums import (
     DataSourceType,
     CreateMode,
     HealthState,
+    PolicyType,
     SupportStatus,
     WorkloadItemType,
     UsagesUnit,
@@ -514,7 +517,6 @@ from ._recovery_services_backup_client_enums import (
     FabricName,
     Type,
     RetentionDurationType,
-    PolicyType,
     DayOfWeek,
     RetentionScheduleFormat,
     WeekOfMonth,
@@ -581,6 +583,7 @@ __all__ = [
     'AzureVmWorkloadProtectableItem',
     'AzureVmWorkloadProtectedItem',
     'AzureVmWorkloadProtectedItemExtendedInfo',
+    'AzureVmWorkloadProtectionPolicy',
     'AzureVmWorkloadSAPAseDatabaseProtectableItem',
     'AzureVmWorkloadSAPAseDatabaseProtectedItem',
     'AzureVmWorkloadSAPAseDatabaseWorkloadItem',
@@ -801,6 +804,7 @@ __all__ = [
     'DataSourceType',
     'CreateMode',
     'HealthState',
+    'PolicyType',
     'SupportStatus',
     'WorkloadItemType',
     'UsagesUnit',
@@ -808,7 +812,6 @@ __all__ = [
     'FabricName',
     'Type',
     'RetentionDurationType',
-    'PolicyType',
     'DayOfWeek',
     'RetentionScheduleFormat',
     'WeekOfMonth',

@@ -840,8 +840,8 @@ class ProtectionPolicy(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileShareProtectionPolicy,
-    AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy,
-    GenericProtectionPolicy, MabProtectionPolicy
+    AzureVmWorkloadProtectionPolicy, AzureIaaSVMProtectionPolicy,
+    AzureSqlProtectionPolicy, GenericProtectionPolicy, MabProtectionPolicy
 
     All required parameters must be populated in order to send to Azure.
 
@@ -861,7 +861,7 @@ class ProtectionPolicy(Model):
     }
 
     _subtype_map = {
-        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
+        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
     def __init__(self, *, protected_items_count: int=None, **kwargs) -> None:
@@ -3443,6 +3443,50 @@ class AzureVmWorkloadProtectedItemExtendedInfo(Model):
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
+
+
+class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
+    """Azure VM (Mercury) workload-specific backup policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param protected_items_count: Number of items associated with this policy.
+    :type protected_items_count: int
+    :param backup_management_type: Required. Constant filled by server.
+    :type backup_management_type: str
+    :param work_load_type: Type of workload for the backup management.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
+    :type work_load_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
+    :param settings: Common settings for the backup management
+    :type settings: ~azure.mgmt.recoveryservicesbackup.models.Settings
+    :param sub_protection_policy: List of sub-protection policies which
+     includes schedule and retention
+    :type sub_protection_policy:
+     list[~azure.mgmt.recoveryservicesbackup.models.SubProtectionPolicy]
+    """
+
+    _validation = {
+        'backup_management_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'work_load_type': {'key': 'workLoadType', 'type': 'str'},
+        'settings': {'key': 'settings', 'type': 'Settings'},
+        'sub_protection_policy': {'key': 'subProtectionPolicy', 'type': '[SubProtectionPolicy]'},
+    }
+
+    def __init__(self, *, protected_items_count: int=None, work_load_type=None, settings=None, sub_protection_policy=None, **kwargs) -> None:
+        super(AzureVmWorkloadProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+        self.work_load_type = work_load_type
+        self.settings = settings
+        self.sub_protection_policy = sub_protection_policy
+        self.backup_management_type = 'AzureWorkload'
 
 
 class AzureVmWorkloadSAPAseDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
