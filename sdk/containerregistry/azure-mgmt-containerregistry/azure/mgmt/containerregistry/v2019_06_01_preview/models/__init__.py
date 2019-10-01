@@ -87,7 +87,7 @@ try:
     from ._models_py3 import SourceTriggerUpdateParameters
     from ._models_py3 import SourceUpdateParameters
     from ._models_py3 import SourceUploadDefinition
-    from ._models_py3 import Status1
+    from ._models_py3 import Status
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
@@ -189,7 +189,7 @@ except (SyntaxError, ImportError):
     from ._models import SourceTriggerUpdateParameters
     from ._models import SourceUpdateParameters
     from ._models import SourceUploadDefinition
-    from ._models import Status1
+    from ._models import Status
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
@@ -254,7 +254,6 @@ from ._container_registry_management_client_enums import (
     TokenCertificateName,
     TokenPasswordName,
     TokenStatus,
-    Status,
 )
 
 __all__ = [
@@ -335,7 +334,7 @@ __all__ = [
     'SourceTriggerUpdateParameters',
     'SourceUpdateParameters',
     'SourceUploadDefinition',
-    'Status1',
+    'Status',
     'StorageAccountProperties',
     'Target',
     'Task',
@@ -399,5 +398,4 @@ __all__ = [
     'TokenCertificateName',
     'TokenPasswordName',
     'TokenStatus',
-    'Status',
 ]
