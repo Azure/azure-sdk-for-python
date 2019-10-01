@@ -61,7 +61,7 @@ class CertificateClient(KeyVaultClientBase):
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> CertificateOperation
+        # type: (...) -> LROPoller
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -74,8 +74,10 @@ class CertificateClient(KeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: An LROPoller for the create certificate operation. Waiting on the poller
+         gives you the certificate if creation is successful, the CertificateOperation if not.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -104,7 +106,7 @@ class CertificateClient(KeyVaultClientBase):
                                                                     key_size=2048,
                                                                     reuse_key=True,
                                                                     key_usage=[
-                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.crl_sign,
                                                                         KeyUsageType.data_encipherment,
                                                                         KeyUsageType.digital_signature,
                                                                         KeyUsageType.key_agreement,
@@ -117,7 +119,7 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = self._client.create_certificate(
+        cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -126,17 +128,24 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
+
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
         return LROPoller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )

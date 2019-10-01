@@ -19,13 +19,19 @@ pip install azure-keyvault-certificates
 ```
 
 ### Prerequisites
-* An [Azure subscription][azure_sub].
-* Python 2.7, 3.5.3, or later to use this package.
-* A Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command.
- Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own unique names:
-
+* An [Azure subscription][azure_sub]
+* Python 2.7, 3.5.3, or later
+* A Key Vault. If you need to create one, you can use the
+[Azure Cloud Shell][azure_cloud_shell] to create one with these commands
+(replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
+names):
+  * (Optional) if you want a new resource group to hold the Key Vault:
+    ```sh
+    az group create --name my-resource-group --location westus2
+    ```
+  * Create the Key Vault:
     ```Bash
-    az keyvault create --resource-group <your resource group name> --name <your key vault name>
+    az keyvault create --resource-group my-resource-group --name my-key-vault
     ```
 
     Output:
@@ -33,7 +39,7 @@ pip install azure-keyvault-certificates
     {
         "id": "...",
         "location": "westus2",
-        "name": "<your key vault name>",
+        "name": "my-key-vault",
         "properties": {
             "accessPolicies": [...],
             "createMode": null,
@@ -46,44 +52,46 @@ pip install azure-keyvault-certificates
             "provisioningState": "Succeeded",
             "sku": { "name": "standard" },
             "tenantId": "...",
-            "vaultUri": "https://<your key vault name>.vault.azure.net/"
+            "vaultUri": "https://my-key-vault.vault.azure.net/"
         },
-        "resourceGroup": "<your resource group name>",
+        "resourceGroup": "my-resource-group",
         "type": "Microsoft.KeyVault/vaults"
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`.
+    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`
 
 ### Authenticate the client
-In order to interact with a Key Vault's certificates, you'll need an instance of the [CertificateClient][certificate_client_docs]
-class. Creating one requires a **vault url** and
-**credential**. This document demonstrates using `DefaultAzureCredential` as
-the credential, authenticating with a service principal's client id, secret,
-and tenant id. Other authentication methods are supported. See the
-[azure-identity][azure_identity] documentation for more details.
+In order to interact with a Key Vault's certificates, you'll need an instance
+of the [CertificateClient][certificate_client_docs] class. Creating one
+requires a **vault url** and **credential**. This document demonstrates using
+`DefaultAzureCredential` as the credential, authenticating with a service
+principal's client id, secret, and tenant id. Other authentication methods are
+supported. See the [azure-identity][azure_identity] documentation for more
+details.
 
- #### Create a service principal
-Use this [Azure Cloud Shell][azure_cloud_shell] snippet to create a
-service principal:
+#### Create a service principal
+This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+a more appropriate name for your service principal.
 
- * Create a service principal and configure its access to Azure resources:
+ * Create a service principal:
     ```Bash
-    az ad sp create-for-rbac -n <your-application-name> --skip-assignment
+    az ad sp create-for-rbac --name http://my-application --skip-assignment
     ```
     Output:
     ```json
     {
         "appId": "generated app id",
-        "displayName": "your-application-name",
-        "name": "http://your-application-name",
+        "displayName": "my-application",
+        "name": "http://my-application",
         "password": "random password",
         "tenant": "tenant id"
     }
     ```
 
-* Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
-(password), and **AZURE_TENANT_ID** (tenant) environment variables. The
+    * Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
+(password) and **AZURE_TENANT_ID** (tenant) environment variables. The
 following example shows a way to do this in Bash:
   ```Bash
    export AZURE_CLIENT_ID="generated app id"
@@ -93,7 +101,7 @@ following example shows a way to do this in Bash:
 
 * Authorize the service principal to perform certificate operations in your Key Vault:
     ```Bash
-    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --certificate-permissions backup create delete get import list purge recover restore update
+    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --certificate-permissions backup create delete get import list purge recover restore update
     ```
     > Possible certificate permissions: backup, create, delete, deleteissuers, get, getissuers, import, list, listissuers, managecontacts, manageissuers, purge, recover, restore, setissuers, update
 
