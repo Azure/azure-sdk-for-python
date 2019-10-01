@@ -69,7 +69,7 @@ def stress_send_sync(producer: EventHubProducer, args, logger):
         return len(batch)
 
 
-async def stress_send_async(producer: EventHubProducer, args, logger):
+async def stress_send_async(producer, args, logger):
     batch = await producer.create_batch()
     try:
         while True:
@@ -178,7 +178,7 @@ class StressTestRunner(object):
         threads = []
         for pid in partitions:
             if "receive" in method_name:
-                worker = client.create_consumer(consumer_group=self.args.consumer,
+                worker = client.create_consumer(consumer_group_name=self.args.consumer,
                                                   partition_id=pid,
                                                   event_position=EventPosition(self.args.offset),
                                                   prefetch=300)
@@ -228,7 +228,7 @@ class StressTestRunner(object):
         tasks = []
         for pid in partitions:
             if "receive" in method_name:
-                worker = client.create_consumer(consumer_group=self.args.consumer,
+                worker = client.create_consumer(consumer_group_name=self.args.consumer,
                                                      partition_id=pid,
                                                      event_position=EventPosition(self.args.offset),
                                                      prefetch=300)
