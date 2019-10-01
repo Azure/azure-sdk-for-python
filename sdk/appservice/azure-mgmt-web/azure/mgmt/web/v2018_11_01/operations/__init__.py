@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import WebSiteManagementClientConfiguration
-from ._web_site_management_client import WebSiteManagementClient
-__all__ = ['WebSiteManagementClient', 'WebSiteManagementClientConfiguration']
+from ._certificates_operations import CertificatesOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'CertificatesOperations',
+]
