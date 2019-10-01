@@ -288,28 +288,27 @@ class CheckOCIDriverTaskOutput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar installed_driver: Information about the installed driver if found
+    :param installed_driver: Information about the installed driver if found
      and valid.
-    :vartype installed_driver: dict[str,
-     list[~azure.mgmt.datamigration.models.OracleOCIDriverInfo]]
+    :type installed_driver:
+     ~azure.mgmt.datamigration.models.OracleOCIDriverInfo
     :ivar validation_errors: Validation errors
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
     """
 
     _validation = {
-        'installed_driver': {'readonly': True},
         'validation_errors': {'readonly': True},
     }
 
     _attribute_map = {
-        'installed_driver': {'key': 'installedDriver', 'type': '{[OracleOCIDriverInfo]}'},
+        'installed_driver': {'key': 'installedDriver', 'type': 'OracleOCIDriverInfo'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, installed_driver=None, **kwargs) -> None:
         super(CheckOCIDriverTaskOutput, self).__init__(**kwargs)
-        self.installed_driver = None
+        self.installed_driver = installed_driver
         self.validation_errors = None
 
 
