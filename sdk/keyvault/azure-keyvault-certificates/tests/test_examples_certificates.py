@@ -79,7 +79,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = certificate_client.update_certificate(name=certificate.name, tags=tags)
+        updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
         print(updated_certificate.version)
         print(updated_certificate.properties.updated)

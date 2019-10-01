@@ -72,7 +72,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
+        updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
 
         print(updated_certificate.version)
         print(updated_certificate.properties.updated)

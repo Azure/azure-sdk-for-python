@@ -74,7 +74,7 @@ try:
     # After one year, the bank account is still active, and we have decided to update the tags.
     print("\n.. Update a Certificate by name")
     tags = {"a": "b"}
-    updated_certificate = client.update_certificate(name=bank_certificate.name, tags=tags)
+    updated_certificate = client.update_certificate_properties(name=bank_certificate.name, tags=tags)
     print("Certificate with name '{0}' was updated on date '{1}'".format(
         bank_certificate.name,
         updated_certificate.properties.updated)

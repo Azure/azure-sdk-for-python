@@ -183,7 +183,7 @@ print(certificate.version)
 # You can specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_certificate= certificate_client.update_certificate(name="cert-name", tags=tags)
+updated_certificate= certificate_client.update_certificate_properties(name="cert-name", tags=tags)
 
 print(updated_certificate.name)
 print(updated_certificate.version)

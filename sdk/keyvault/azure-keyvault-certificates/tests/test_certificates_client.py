@@ -232,7 +232,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # update certificate
         tags = {'tag1': 'updated_value1'}
-        cert_bundle = client.update_certificate(name=cert_name, tags=tags)
+        cert_bundle = client.update_certificate_properties(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
             cert=cert_bundle,
             cert_name=cert_name,

@@ -435,7 +435,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_certificate(
+    def update_certificate_properties(
             self,
             name,  # type: str
             version=None,   # type: Optional[str]
