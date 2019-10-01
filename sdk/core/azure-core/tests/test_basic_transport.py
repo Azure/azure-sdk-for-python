@@ -16,7 +16,7 @@ from azure.core.pipeline import Pipeline
 import pytest
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
 def test_http_request_serialization():
     # Method + Url
     request = HttpRequest("DELETE", "/container0/blob0")
