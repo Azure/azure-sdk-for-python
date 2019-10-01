@@ -9,15 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._protected_items_operations import ProtectedItemsOperations
+from ._recovery_points_operations import RecoveryPointsOperations
+from ._restores_operations import RestoresOperations
+from ._backup_jobs_operations import BackupJobsOperations
+from ._backup_protected_items_operations import BackupProtectedItemsOperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
-from ._backup_jobs_operations import BackupJobsOperations
 from ._job_details_operations import JobDetailsOperations
 from ._export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
 from ._jobs_operations import JobsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
-from ._backup_protected_items_operations import BackupProtectedItemsOperations
+from ._protection_policies_operations import ProtectionPoliciesOperations
 from ._backup_protection_intent_operations import BackupProtectionIntentOperations
 from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
 from ._operation_operations import OperationOperations
@@ -28,18 +32,14 @@ from ._protectable_containers_operations import ProtectableContainersOperations
 from ._protection_containers_operations import ProtectionContainersOperations
 from ._backup_workload_items_operations import BackupWorkloadItemsOperations
 from ._protection_container_operation_results_operations import ProtectionContainerOperationResultsOperations
-from ._protected_items_operations import ProtectedItemsOperations
 from ._backups_operations import BackupsOperations
 from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._protected_item_operation_statuses_operations import ProtectedItemOperationStatusesOperations
-from ._recovery_points_operations import RecoveryPointsOperations
 from ._item_level_recovery_connections_operations import ItemLevelRecoveryConnectionsOperations
-from ._restores_operations import RestoresOperations
 from ._job_cancellations_operations import JobCancellationsOperations
 from ._job_operation_results_operations import JobOperationResultsOperations
 from ._backup_operation_results_operations import BackupOperationResultsOperations
 from ._backup_operation_statuses_operations import BackupOperationStatusesOperations
-from ._protection_policies_operations import ProtectionPoliciesOperations
 from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._protection_policy_operation_statuses_operations import ProtectionPolicyOperationStatusesOperations
 from ._backup_protectable_items_operations import BackupProtectableItemsOperations
@@ -49,15 +49,19 @@ from ._backup_resource_storage_configs_operations import BackupResourceStorageCo
 from ._operations import Operations
 
 __all__ = [
+    'ProtectedItemsOperations',
+    'RecoveryPointsOperations',
+    'RestoresOperations',
+    'BackupJobsOperations',
+    'BackupProtectedItemsOperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
-    'BackupJobsOperations',
     'JobDetailsOperations',
     'ExportJobsOperationResultsOperations',
     'JobsOperations',
     'BackupPoliciesOperations',
-    'BackupProtectedItemsOperations',
+    'ProtectionPoliciesOperations',
     'BackupProtectionIntentOperations',
     'BackupUsageSummariesOperations',
     'OperationOperations',
@@ -68,18 +72,14 @@ __all__ = [
     'ProtectionContainersOperations',
     'BackupWorkloadItemsOperations',
     'ProtectionContainerOperationResultsOperations',
-    'ProtectedItemsOperations',
     'BackupsOperations',
     'ProtectedItemOperationResultsOperations',
     'ProtectedItemOperationStatusesOperations',
-    'RecoveryPointsOperations',
     'ItemLevelRecoveryConnectionsOperations',
-    'RestoresOperations',
     'JobCancellationsOperations',
     'JobOperationResultsOperations',
     'BackupOperationResultsOperations',
     'BackupOperationStatusesOperations',
-    'ProtectionPoliciesOperations',
     'ProtectionPolicyOperationResultsOperations',
     'ProtectionPolicyOperationStatusesOperations',
     'BackupProtectableItemsOperations',
