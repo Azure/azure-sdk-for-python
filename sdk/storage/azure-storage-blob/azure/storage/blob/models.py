@@ -775,8 +775,7 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        block = cls()
-        block.id = decode_base64_to_text(generated.name)
+        block = cls(decode_base64_to_text(generated.name))
         block.size = generated.size
         return block
 
