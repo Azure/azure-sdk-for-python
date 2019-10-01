@@ -19,6 +19,9 @@ try:
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
     from ._models_py3 import AmlInstance
+    from ._models_py3 import AmlInstanceApplicationUri
+    from ._models_py3 import AmlInstanceConnectivityEndpoints
+    from ._models_py3 import AmlInstanceCreatedBy
     from ._models_py3 import AmlInstanceCustomScriptSettings
     from ._models_py3 import AmlInstanceCustomScriptSettingsStartupScript
     from ._models_py3 import AmlInstanceDatastore
@@ -85,6 +88,9 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodesInformation
     from ._models import AmlComputeProperties
     from ._models import AmlInstance
+    from ._models import AmlInstanceApplicationUri
+    from ._models import AmlInstanceConnectivityEndpoints
+    from ._models import AmlInstanceCreatedBy
     from ._models import AmlInstanceCustomScriptSettings
     from ._models import AmlInstanceCustomScriptSettingsStartupScript
     from ._models import AmlInstanceDatastore
@@ -179,6 +185,9 @@ __all__ = [
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
     'AmlInstance',
+    'AmlInstanceApplicationUri',
+    'AmlInstanceConnectivityEndpoints',
+    'AmlInstanceCreatedBy',
     'AmlInstanceCustomScriptSettings',
     'AmlInstanceCustomScriptSettingsStartupScript',
     'AmlInstanceDatastore',

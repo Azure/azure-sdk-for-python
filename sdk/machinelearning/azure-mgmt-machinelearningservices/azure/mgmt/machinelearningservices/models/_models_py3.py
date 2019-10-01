@@ -687,6 +687,91 @@ class AmlInstance(Compute):
         self.compute_type = 'AmlInstance'
 
 
+class AmlInstanceApplicationUri(Model):
+    """Defines an Aml Instance application and its connectivity endpoint URI.
+
+    :param application_name: Name of the AmlInstance application.
+    :type application_name: str
+    :param application_uri: Application' endpoint URI.
+    :type application_uri: str
+    """
+
+    _attribute_map = {
+        'application_name': {'key': 'applicationName', 'type': 'str'},
+        'application_uri': {'key': 'applicationUri', 'type': 'str'},
+    }
+
+    def __init__(self, *, application_name: str=None, application_uri: str=None, **kwargs) -> None:
+        super(AmlInstanceApplicationUri, self).__init__(**kwargs)
+        self.application_name = application_name
+        self.application_uri = application_uri
+
+
+class AmlInstanceConnectivityEndpoints(Model):
+    """Defines all connectivity endpoints and properties for an AmlInstance
+    compute.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar public_ip_address: Public IP Address of this AmlInstance.
+    :vartype public_ip_address: str
+    :ivar application_uris: Describes available applications and their
+     connectivity endpoint URIs.
+    :vartype application_uris:
+     list[~azure.mgmt.machinelearningservices.models.AmlInstanceApplicationUri]
+    """
+
+    _validation = {
+        'public_ip_address': {'readonly': True},
+        'application_uris': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
+        'application_uris': {'key': 'applicationUris', 'type': '[AmlInstanceApplicationUri]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AmlInstanceConnectivityEndpoints, self).__init__(**kwargs)
+        self.public_ip_address = None
+        self.application_uris = None
+
+
+class AmlInstanceCreatedBy(Model):
+    """Describes information on user who created this AmlInstance compute.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar user_name: Name of the user.
+    :vartype user_name: str
+    :ivar user_org_id: Uniquely identifies user' Azure Active Directory
+     organization.
+    :vartype user_org_id: str
+    :ivar user_id: Uniquely identifies the user within his/her organization.
+    :vartype user_id: str
+    """
+
+    _validation = {
+        'user_name': {'readonly': True},
+        'user_org_id': {'readonly': True},
+        'user_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'user_name': {'key': 'userName', 'type': 'str'},
+        'user_org_id': {'key': 'userOrgId', 'type': 'str'},
+        'user_id': {'key': 'userId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AmlInstanceCreatedBy, self).__init__(**kwargs)
+        self.user_name = None
+        self.user_org_id = None
+        self.user_id = None
+
+
 class AmlInstanceCustomScriptSettings(Model):
     """Specification for initialization scripts to customize this AmlInstance.
 
@@ -859,6 +944,14 @@ class AmlInstanceProperties(Model):
     :param ssh_settings: Specifies policy and settings for SSH access.
     :type ssh_settings:
      ~azure.mgmt.machinelearningservices.models.AmlInstanceSshSettings
+    :ivar connectivity_endpoints: Describes all connectivity endpoints
+     available for this AmlInstance compute.
+    :vartype connectivity_endpoints:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceConnectivityEndpoints
+    :ivar created_by: Describes information on user who created this
+     AmlInstance compute.
+    :vartype created_by:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceCreatedBy
     :ivar errors: Errors. Collection of errors encountered by various compute
      nodes during node setup.
     :vartype errors:
@@ -880,6 +973,8 @@ class AmlInstanceProperties(Model):
     """
 
     _validation = {
+        'connectivity_endpoints': {'readonly': True},
+        'created_by': {'readonly': True},
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
@@ -893,6 +988,8 @@ class AmlInstanceProperties(Model):
         'custom_script_settings': {'key': 'customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
         'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'AmlInstanceSshSettings'},
+        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'AmlInstanceConnectivityEndpoints'},
+        'created_by': {'key': 'createdBy', 'type': 'AmlInstanceCreatedBy'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
         'last_operation': {'key': 'lastOperation', 'type': 'str'},
@@ -907,6 +1004,8 @@ class AmlInstanceProperties(Model):
         self.custom_script_settings = custom_script_settings
         self.software_update_settings = software_update_settings
         self.ssh_settings = ssh_settings
+        self.connectivity_endpoints = None
+        self.created_by = None
         self.errors = None
         self.state = None
         self.last_operation = None
