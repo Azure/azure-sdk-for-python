@@ -49,6 +49,7 @@ from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any,
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
 from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
+from ..base import _await_result
 
 
 if TYPE_CHECKING:
@@ -693,12 +694,15 @@ class MultiPartHelper(object):
             context = PipelineContext(None)
             pipeline_request = PipelineRequest(request, context)
             for policy in self.policies:
-                policy.on_request(pipeline_request)
+                _await_result(policy.on_request, pipeline_request)
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened
             [_ for _ in executor.map(prepare_requests, self.requests)]  # pylint: disable=expression-not-assigned
 
+        self._build_final_request()
+
+    def _build_final_request(self):
         # Update the main request with the body
         main_message = Message()
         main_message.add_header("Content-Type", "multipart/mixed")
@@ -726,7 +730,7 @@ class MultiPartHelper(object):
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 
-    def parse_response(self, response):
+    def _get_raw_parts(self, response):
         body_as_bytes = response.body()
         # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
         http_body = (
@@ -749,6 +753,10 @@ class MultiPartHelper(object):
                 ))
             else:
                 raise ValueError("Multipart doesn't support part other than application/http for now")
+        return responses
+
+    def parse_response(self, response):
+        responses = self._get_raw_parts(response)
 
         # Apply on_response concurrently to all requests
         import concurrent.futures
@@ -764,7 +772,7 @@ class MultiPartHelper(object):
             )
 
             for policy in self.policies:
-                policy.on_response(pipeline_request, pipeline_response)
+                _await_result(policy.on_response, pipeline_request, pipeline_response)
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened

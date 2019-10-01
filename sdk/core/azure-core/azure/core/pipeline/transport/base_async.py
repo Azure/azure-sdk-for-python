@@ -28,12 +28,21 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 
-from typing import AsyncIterator as AsyncIteratorType, Iterator, Generic, TypeVar
-from .base import _HttpResponseBase, _HttpClientTransportResponse, MultiPartHelper
+from typing import AsyncIterator as AsyncIteratorType, Generic, TypeVar
+from .base import (
+    _HttpResponseBase,
+    _HttpClientTransportResponse,
+    MultiPartHelper,
+    PipelineContext,
+    PipelineRequest,
+    PipelineResponse,
+)
+from ..base_async import _await_result
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
-except ImportError: # Python <= 3.7
+except ImportError:  # Python <= 3.7
+
     class AbstractAsyncContextManager(object):  # type: ignore
         async def __aenter__(self):
             """Return `self` upon entering the runtime context."""
@@ -69,12 +78,24 @@ class _PartGenerator(AsyncIterator):
 
     :param parts: An iterable of parts
     """
-    def __init__(self, parts: Iterator) -> None:
-        self.parts = iter(parts)
+
+    def __init__(self, response) -> None:
+        self._response = response
+        self._multipart_helper = None
+        self._parts = None
 
     async def __anext__(self):
+        if not self._multipart_helper:
+            self._multipart_helper = AsyncMultipartHelper(
+                self._response.request,
+                http_response_type=AsyncHttpClientTransportResponse,
+            )
+            self._parts = iter(
+                await self._multipart_helper.parse_response(self._response)
+            )
+
         try:
-            return next(self.parts)
+            return next(self._parts)
         except StopIteration:
             raise StopAsyncIteration()
 
@@ -84,6 +105,7 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     Allows for the asynchronous streaming of data from the response.
     """
+
     def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
@@ -101,10 +123,10 @@ class AsyncHttpResponse(_HttpResponseBase):
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError("You can't get parts if the response is not multipart/mixed")
-
-        multipart_helper = MultiPartHelper(self.request, http_response_type=AsyncHttpClientTransportResponse)
-        return _PartGenerator(multipart_helper.parse_response(self))
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
+        return _PartGenerator(self)
 
 
 class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
@@ -117,7 +139,11 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
     """
 
 
-class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncHttpTransport(
+    AbstractAsyncContextManager,
+    abc.ABC,
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
+):
     """An http sender ABC.
     """
 
@@ -143,3 +169,40 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
     def __exit__(self, exc_type, exc_val, exc_tb):
         # __exit__ should exist in pair with __enter__ but never executed
         pass  # pragma: no cover
+
+
+class AsyncMultipartHelper(MultiPartHelper):
+    async def prepare_request(self):
+        async def prepare_requests(request):
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(request, context)
+            for policy in self.policies:
+                await _await_result(policy.on_request, pipeline_request)
+
+        # Not happy to make this code asyncio specific, but that's multipart only for now
+        # If we need trio and multipart, let's reinvesitgate that later
+        await asyncio.gather(*[prepare_requests(req) for req in self.requests])
+
+        self._build_final_request()
+
+    async def parse_response(self, response):
+        responses = self._get_raw_parts(response)
+
+        async def parse_responses(response):
+            http_request = response.request
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(http_request, context)
+            pipeline_response = PipelineResponse(
+                http_request, response, context=context
+            )
+
+            for policy in self.policies:
+                await _await_result(
+                    policy.on_response, pipeline_request, pipeline_response
+                )
+
+        # Not happy to make this code asyncio specific, but that's multipart only for now
+        # If we need trio and multipart, let's reinvesitgate that later
+        await asyncio.gather(*[parse_responses(res) for res in responses])
+
+        return responses

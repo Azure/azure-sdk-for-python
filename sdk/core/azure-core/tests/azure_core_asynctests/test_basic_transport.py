@@ -30,6 +30,11 @@ async def test_multipart_receive():
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers['x-ms-fun'] = 'true'
 
+    class AsyncResponsePolicy(object):
+        async def on_response(self, request, response):
+            # type: (PipelineRequest, PipelineResponse) -> None
+            response.http_response.headers['x-ms-async-fun'] = 'true'
+
     req0 = HttpRequest("DELETE", "/container0/blob0")
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
@@ -37,7 +42,7 @@ async def test_multipart_receive():
     request.set_multipart_mixed(
         req0,
         req1,
-        policies=[ResponsePolicy()]
+        policies=[ResponsePolicy(), AsyncResponsePolicy()]
     )
 
     body_as_str = (
@@ -82,10 +87,12 @@ async def test_multipart_receive():
     res0 = parts[0]
     assert res0.status_code == 202
     assert res0.headers['x-ms-fun'] == 'true'
+    assert res0.headers['x-ms-async-fun'] == 'true'
 
     res1 = parts[1]
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
+    assert res1.headers['x-ms-async-fun'] == 'true'
 
 
 @pytest.mark.asyncio
