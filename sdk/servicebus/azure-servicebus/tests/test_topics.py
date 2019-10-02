@@ -11,11 +11,13 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
+from devtools_testutils import AzureTestCase
+
 from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
-
+from servicebus_namespace_preparer import ServiceBusNamespacePreparer
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
@@ -33,9 +35,22 @@ def get_logger(level):
 
 _logger = get_logger(logging.DEBUG)
 
+
+class ServiceBusTest(AzureTestCase):
+    @pytest.mark.liveTest
+    @ServiceBusNamespacePreparer()
+    def test_topic_by_topic_client_conn_str_send_basic_KTEST(servicebus_namespace, standard_topic):
+    
+        topic_client = TopicClient.from_connection_string(servicebus_namespace, name=standard_topic, debug=False)
+        with topic_client.get_sender() as sender:
+            message = Message(b"Sample topic message")
+            sender.send(message)
+        message = Message(b"Another sample topic message")
+        topic_client.send(message)
+
 @pytest.mark.liveTest
 def test_topic_by_topic_client_conn_str_send_basic(live_servicebus_config, standard_topic):
-
+    
     topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=False)
     with topic_client.get_sender() as sender:
         message = Message(b"Sample topic message")
