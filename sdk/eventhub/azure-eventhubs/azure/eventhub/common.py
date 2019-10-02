@@ -58,38 +58,28 @@ class EventData(object):
     PROP_PARTITION_KEY = b"x-opt-partition-key"
     PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    PROP_DEVICE_ID = b"iothub-connection-device-id"
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
     PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
     PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
-    def __init__(self, body=None, to_device=None):
+    def __init__(self, body=None):
         """
         Initialize EventData.
 
         :param body: The data to send in a single message.
         :type body: str, bytes or list
-        :param to_device: An IoT device to route to.
-        :type to_device: str
         """
 
-        self._annotations = {}
-        self._delivery_annotations = {}
-        self._app_properties = {}
-        self._msg_properties = MessageProperties()
         self._last_enqueued_event_properties = {}
-        self._need_further_parse = False
-        if to_device:
-            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
-            self.message = Message(body[0], properties=self._msg_properties)
+            self.message = Message(body[0])
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("EventData cannot be None.")
         else:
-            self.message = Message(body, properties=self._msg_properties)
+            self.message = Message(body)
 
     def __str__(self):
         dic = {
@@ -103,8 +93,6 @@ class EventData(object):
             dic['offset'] = str(self.offset)
         if self.enqueued_time:
             dic['enqueued_time'] = str(self.enqueued_time)
-        if self.device_id:
-            dic['device_id'] = str(self.device_id)
         if self.partition_key:
             dic['partition_key'] = str(self.partition_key)
         return str(dic)
@@ -116,13 +104,12 @@ class EventData(object):
         :param value: The partition key to set.
         :type value: str or bytes
         """
-        annotations = dict(self._annotations)
+        annotations = dict(self.message.annotations)
         annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL] = value
         header = MessageHeader()
         header.durable = True
         self.message.annotations = annotations
         self.message.header = header
-        self._annotations = annotations
 
     def _trace_message(self, parent_span=None):
         """Add tracing information to this message.
@@ -172,20 +159,12 @@ class EventData(object):
 
         return None
 
-    @staticmethod
-    def _from_message(message):
+    @classmethod
+    def _from_message(cls, message):
         # pylint:disable=protected-access
-        event_data = EventData(body='')
+        event_data = cls(body='')
         event_data.message = message
-        event_data._need_further_parse = True
         return event_data
-
-    def _parse_message_properties(self):
-        self._msg_properties = self.message.properties
-        self._annotations = self.message.annotations
-        self._app_properties = self.message.application_properties
-        self._delivery_annotations = self.message.delivery_annotations
-        self._need_further_parse = False
 
     @property
     def sequence_number(self):
@@ -194,9 +173,7 @@ class EventData(object):
 
         :rtype: int or long
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
-        return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
+        return self.message.annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
@@ -205,10 +182,8 @@ class EventData(object):
 
         :rtype: str
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
         try:
-            return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
+            return self.message.annotations[EventData.PROP_OFFSET].decode('UTF-8')
         except (KeyError, AttributeError):
             return None
 
@@ -219,24 +194,10 @@ class EventData(object):
 
         :rtype: datetime.datetime
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
-        timestamp = self._annotations.get(EventData.PROP_TIMESTAMP, None)
+        timestamp = self.message.annotations.get(EventData.PROP_TIMESTAMP, None)
         if timestamp:
             return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
-
-    @property
-    def device_id(self):
-        """
-        The device ID of the event data object. This is only used for
-        IoT Hub implementations.
-
-        :rtype: bytes
-        """
-        if self._need_further_parse:
-            self._parse_message_properties()
-        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
     def partition_key(self):
@@ -245,12 +206,10 @@ class EventData(object):
 
         :rtype: bytes
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
         try:
-            return self._annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
+            return self.message.annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
-            return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
+            return self.message.annotations.get(EventData.PROP_PARTITION_KEY, None)
 
     @property
     def application_properties(self):
@@ -259,9 +218,7 @@ class EventData(object):
 
         :rtype: dict
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
-        return self._app_properties
+        return self.message.application_properties
 
     @application_properties.setter
     def application_properties(self, value):
@@ -271,8 +228,7 @@ class EventData(object):
         :param value: The application properties for the EventData.
         :type value: dict
         """
-        self._app_properties = value
-        properties = None if value is None else dict(self._app_properties)
+        properties = None if value is None else dict(value)
         self.message.application_properties = properties
 
     @property
@@ -282,9 +238,7 @@ class EventData(object):
 
         :rtype: dict
         """
-        if self._need_further_parse:
-            self._parse_message_properties()
-        return self._annotations
+        return self.message.annotations
 
     @property
     def body(self):
