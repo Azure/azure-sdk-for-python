@@ -12,19 +12,32 @@
 from msrest.paging import Paged
 
 
-class ReservationOrderResponsePaged(Paged):
+class CurrentQuotaLimitPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ReservationOrderResponse <azure.mgmt.reservations.models.ReservationOrderResponse>` object
+    A paging container for iterating over a list of :class:`CurrentQuotaLimit <azure.mgmt.reservations.models.CurrentQuotaLimit>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ReservationOrderResponse]'}
+        'current_page': {'key': 'value', 'type': '[CurrentQuotaLimit]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ReservationOrderResponsePaged, self).__init__(*args, **kwargs)
+        super(CurrentQuotaLimitPaged, self).__init__(*args, **kwargs)
+class QuotaRequestDetailsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`QuotaRequestDetails <azure.mgmt.reservations.models.QuotaRequestDetails>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[QuotaRequestDetails]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(QuotaRequestDetailsPaged, self).__init__(*args, **kwargs)
 class ReservationResponsePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ReservationResponse <azure.mgmt.reservations.models.ReservationResponse>` object
@@ -38,6 +51,19 @@ class ReservationResponsePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ReservationResponsePaged, self).__init__(*args, **kwargs)
+class ReservationOrderResponsePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ReservationOrderResponse <azure.mgmt.reservations.models.ReservationOrderResponse>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ReservationOrderResponse]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ReservationOrderResponsePaged, self).__init__(*args, **kwargs)
 class OperationResponsePaged(Paged):
     """
     A paging container for iterating over a list of :class:`OperationResponse <azure.mgmt.reservations.models.OperationResponse>` object
