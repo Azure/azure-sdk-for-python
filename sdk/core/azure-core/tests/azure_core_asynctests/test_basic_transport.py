@@ -7,10 +7,58 @@ from six.moves.http_client import HTTPConnection
 import time
 
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
+from azure.core.pipeline.transport.base_async import AsyncMultipartHelper
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 
 import pytest
+
+
+@pytest.mark.asyncio
+async def test_multipart_send():
+
+    class RequestPolicy(object):
+        async def on_request(self, request):
+            # type: (PipelineRequest) -> None
+            request.http_request.headers['x-ms-date'] = 'Thu, 14 Jun 2018 16:46:54 GMT'
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[RequestPolicy()]
+    )
+
+    helper = AsyncMultipartHelper(
+        request,
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525" # Fix it so test are deterministic
+    )
+    await helper.prepare_request()
+
+    assert request.body == (
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
+    )
 
 
 @pytest.mark.asyncio
