@@ -27,7 +27,7 @@ class FieldValue(Model):
     :param value_date: Date value.
     :type value_date: datetime
     :param value_time: Time value.
-    :type value_time: str
+    :type value_time: datetime
     :param value_phone_number: Phone number value.
     :type value_phone_number: str
     :param value_number: Floating point value.
@@ -60,7 +60,7 @@ class FieldValue(Model):
         'type': {'key': 'type', 'type': 'FieldValueType'},
         'value_string': {'key': 'valueString', 'type': 'str'},
         'value_date': {'key': 'valueDate', 'type': 'iso-8601'},
-        'value_time': {'key': 'valueTime', 'type': 'str'},
+        'value_time': {'key': 'valueTime', 'type': 'iso-8601'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},
         'value_integer': {'key': 'valueInteger', 'type': 'int'},
@@ -72,7 +72,7 @@ class FieldValue(Model):
         'elements': {'key': 'elements', 'type': '[str]'},
     }
 
-    def __init__(self, *, type, text: str, confidence: float, value_string: str=None, value_date=None, value_time: str=None, value_phone_number: str=None, value_number: float=None, value_integer: int=None, value_array=None, value_object=None, bounding_box=None, elements=None, **kwargs) -> None:
+    def __init__(self, *, type, text: str, confidence: float, value_string: str=None, value_date=None, value_time=None, value_phone_number: str=None, value_number: float=None, value_integer: int=None, value_array=None, value_object=None, bounding_box=None, elements=None, **kwargs) -> None:
         super(FieldValue, self).__init__(**kwargs)
         self.type = type
         self.value_string = value_string

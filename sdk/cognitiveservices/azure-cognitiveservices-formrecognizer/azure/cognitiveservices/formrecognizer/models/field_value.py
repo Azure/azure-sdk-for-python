@@ -27,7 +27,7 @@ class FieldValue(Model):
     :param value_date: Date value.
     :type value_date: datetime
     :param value_time: Time value.
-    :type value_time: str
+    :type value_time: datetime
     :param value_phone_number: Phone number value.
     :type value_phone_number: str
     :param value_number: Floating point value.
@@ -60,7 +60,7 @@ class FieldValue(Model):
         'type': {'key': 'type', 'type': 'FieldValueType'},
         'value_string': {'key': 'valueString', 'type': 'str'},
         'value_date': {'key': 'valueDate', 'type': 'iso-8601'},
-        'value_time': {'key': 'valueTime', 'type': 'str'},
+        'value_time': {'key': 'valueTime', 'type': 'iso-8601'},
         'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
         'value_number': {'key': 'valueNumber', 'type': 'float'},
         'value_integer': {'key': 'valueInteger', 'type': 'int'},
