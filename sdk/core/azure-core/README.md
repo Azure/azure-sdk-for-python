@@ -241,6 +241,11 @@ class HttpRequest(object):
 
     def set_bytes_body(self, data):
         """Set generic bytes as the body of the request."""
+
+    def set_multipart_mixed(self, *requests, **kwargs):
+        """Set requests for a multipart/mixed body.
+        Optionally apply "policies" in kwargs to each request.
+        """
 ```
 
 The HttpResponse object on the other hand will generally have a transport-specific derivative.
@@ -283,6 +288,12 @@ class HttpResponse(object):
         is supported.
         For the AsyncHttpResponse object this function will return
         and asynchronous generator.
+        """
+
+    def parts(self):
+        """An iterator of parts if content-type is multipart/mixed.
+        For the AsyncHttpResponse object this function will return
+        and asynchronous iterator.
         """
 
 ```
@@ -343,6 +354,8 @@ def on_exception(self, request):
     be forwarded to the caller.
     """
 ```
+
+SansIOHTTPPolicy methods can be declared as coroutines, but then they can only be used with a AsyncPipeline.
 
 Current provided sans IO policies include:
 ```python
