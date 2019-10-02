@@ -1568,9 +1568,15 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(data, content[start: end + 1])
         # assert all unlisted ranges are empty
         for byte in content[:start-1]:
-            self.assertEqual(byte, 0)
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
         for byte in content[end+1:]:
-            self.assertEqual(byte, 0)
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
 
     def test_download_sparse_page_blob_parallel(self):
         # parallel tests introduce random order of requests, can only run live
@@ -1598,10 +1604,15 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(data, content[start: end + 1])
         # assert all unlisted ranges are empty
         for byte in content[:start - 1]:
-            self.assertEqual(byte, 0)
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
         for byte in content[end + 1:]:
-            self.assertEqual(byte, 0)
-
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
