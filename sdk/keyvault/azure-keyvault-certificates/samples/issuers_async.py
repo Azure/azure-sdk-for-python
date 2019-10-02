@@ -83,7 +83,7 @@ async def run_sample():
 
         async for issuer in issuers:
             print(issuer.name)
-            print(issuer.provider)
+            print(issuer.properties.provider)
 
         # Finally, we delete our first issuer by name.
         await client.delete_issuer(name="issuer1")
