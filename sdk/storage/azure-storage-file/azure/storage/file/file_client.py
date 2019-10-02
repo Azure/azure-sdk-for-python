@@ -39,7 +39,7 @@ from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .models import ShareProperties, FilePermissions, ContentSettings, FileProperties
+    from .models import ShareProperties, FileSasPermissions, ContentSettings, FileProperties
     from ._generated.models import HandleItem
 
 
@@ -238,7 +238,7 @@ class FileClient(StorageAccountHostsMixin):
             account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[FilePermissions, str]]
+            self, permission=None,  # type: Optional[Union[FileSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -256,7 +256,7 @@ class FileClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.FilePermissions permission:
+        :param ~azure.storage.file.models.FileSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.

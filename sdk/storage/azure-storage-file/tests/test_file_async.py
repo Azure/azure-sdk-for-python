@@ -22,10 +22,10 @@ from azure.storage.file.aio import (
     FileClient,
     FileServiceClient,
     ContentSettings,
-    FilePermissions,
+    FileSasPermissions,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from filetestcase import (
@@ -768,7 +768,7 @@ class StorageFileAsyncTest(FileTestCase):
         # generate SAS for the source file
         sas_token_for_source_file = \
             source_file_client.generate_shared_access_signature(
-                                                          FilePermissions.READ,
+                                                          FileSasPermissions(read=True),
                                                           expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
@@ -805,7 +805,7 @@ class StorageFileAsyncTest(FileTestCase):
         # generate SAS for the source file
         sas_token_for_source_file = \
             source_file_client.generate_shared_access_signature(
-                                                          FilePermissions.READ,
+                                                          FileSasPermissions(read=True),
                                                           expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
@@ -1062,7 +1062,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
         sas_token = source_file.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_file.url + '?' + sas_token
@@ -1097,7 +1097,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
         sas_token = source_file.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_file.url + '?' + sas_token
@@ -1734,7 +1734,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client = await self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1767,7 +1767,7 @@ class StorageFileAsyncTest(FileTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = FilePermissions.READ
+        access_policy.permission = FileSasPermissions(read=True)
         identifiers = {'testid': access_policy}
         await share_client.set_share_access_policy(identifiers)
 
@@ -1798,7 +1798,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_client = await self._create_file()
         token = self.fsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1828,7 +1828,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client = await self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1857,7 +1857,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client = await self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
             content_disposition='inline',
@@ -1896,7 +1896,7 @@ class StorageFileAsyncTest(FileTestCase):
         updated_data = b'updated file data'
         file_client_admin = await self._create_file()
         token = file_client_admin.generate_shared_access_signature(
-            permission=FilePermissions.WRITE,
+            permission=FileSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         file_client = FileClient(
@@ -1928,7 +1928,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client_admin = await self._create_file()
         token = file_client_admin.generate_shared_access_signature(
-            permission=FilePermissions.DELETE,
+            permission=FileSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         file_client = FileClient(
