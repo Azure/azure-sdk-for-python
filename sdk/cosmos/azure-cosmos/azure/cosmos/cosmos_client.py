@@ -26,10 +26,10 @@ from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List  # 
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
-from azure.core.pipeline.policies import RetryPolicy
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
+from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .errors import CosmosResourceNotFoundError
@@ -106,7 +106,7 @@ def _build_connection_policy(kwargs):
     policy.RetryOptions = retry
     connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
     if not connection_retry:
-        connection_retry = RetryPolicy(
+        connection_retry = ConnectionRetryPolicy(
             retry_total=total_retries,
             retry_connect=kwargs.pop('retry_connect', None),
             retry_read=kwargs.pop('retry_read', None),

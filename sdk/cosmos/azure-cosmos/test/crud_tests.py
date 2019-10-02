@@ -2043,6 +2043,15 @@ class CRUDTests(unittest.TestCase):
             end_time = time.time()
             return end_time - start_time
 
+    def test_absolute_client_timeout(self):
+        with self.assertRaises(errors.ClientTimeoutError):
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=3,
+                timeout=1)
+
     def test_query_iterable_functionality(self):
         def __create_resources(client):
             """Creates resources for this test.

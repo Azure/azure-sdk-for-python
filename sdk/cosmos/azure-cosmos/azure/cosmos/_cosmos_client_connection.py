@@ -36,7 +36,6 @@ from azure.core.pipeline.policies import (  # type: ignore
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
-    RetryPolicy,
     ProxyPolicy)
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
@@ -51,6 +50,7 @@ from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider
+from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
@@ -155,10 +155,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
             retry_policy = self.connection_policy.ConnectionRetryConfiguration
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
-            retry_policy = RetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
+            retry_policy = ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
             # Convert a urllib3 retry policy to a Pipeline policy
-            retry_policy = RetryPolicy(
+            retry_policy = ConnectionRetryPolicy(
                 retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
@@ -168,7 +168,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
         else:
-            TypeError("Unsupported retry policy. Must be an azure.core.RetryPolicy, integer, or urllib3.Retry")
+            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
@@ -199,7 +199,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount()
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
 
     @property

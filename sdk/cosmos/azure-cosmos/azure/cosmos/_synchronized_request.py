@@ -23,6 +23,7 @@
 """
 
 import json
+import time
 
 from six.moves.urllib.parse import urlparse
 import six
@@ -96,7 +97,13 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
-    global_endpoint_manager.refresh_endpoint_list(None)
+    client_timeout = kwargs.get('timeout')
+    start_time = time.time()
+    global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    if client_timeout is not None:
+        kwargs['timeout'] = client_timeout - (time.time() - start_time)
+        if kwargs['timeout'] <= 0:
+            raise errors.ClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
