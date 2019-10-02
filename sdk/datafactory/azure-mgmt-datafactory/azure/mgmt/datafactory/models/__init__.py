@@ -152,6 +152,7 @@ try:
     from ._models_py3 import DataFlowDebugCommandResponse
     from ._models_py3 import DataFlowDebugPackage
     from ._models_py3 import DataFlowDebugPackageDebugSettings
+    from ._models_py3 import DataFlowDebugResource
     from ._models_py3 import DataFlowDebugSessionInfo
     from ._models_py3 import DataFlowFolder
     from ._models_py3 import DataFlowReference
@@ -164,6 +165,7 @@ try:
     from ._models_py3 import Dataset
     from ._models_py3 import DatasetBZip2Compression
     from ._models_py3 import DatasetCompression
+    from ._models_py3 import DatasetDebugResource
     from ._models_py3 import DatasetDeflateCompression
     from ._models_py3 import DatasetFolder
     from ._models_py3 import DatasetGZipCompression
@@ -291,6 +293,7 @@ try:
     from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from ._models_py3 import IntegrationRuntimeDataFlowProperties
     from ._models_py3 import IntegrationRuntimeDataProxyProperties
+    from ._models_py3 import IntegrationRuntimeDebugResource
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
     from ._models_py3 import IntegrationRuntimeNodeMonitoringData
@@ -317,6 +320,7 @@ try:
     from ._models_py3 import LinkedIntegrationRuntimeRequest
     from ._models_py3 import LinkedIntegrationRuntimeType
     from ._models_py3 import LinkedService
+    from ._models_py3 import LinkedServiceDebugResource
     from ._models_py3 import LinkedServiceReference
     from ._models_py3 import LinkedServiceResource
     from ._models_py3 import LogStorageSettings
@@ -519,6 +523,7 @@ try:
     from ._models_py3 import StoreReadSettings
     from ._models_py3 import StoreWriteSettings
     from ._models_py3 import SubResource
+    from ._models_py3 import SubResourceDebugResource
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
@@ -709,6 +714,7 @@ except (SyntaxError, ImportError):
     from ._models import DataFlowDebugCommandResponse
     from ._models import DataFlowDebugPackage
     from ._models import DataFlowDebugPackageDebugSettings
+    from ._models import DataFlowDebugResource
     from ._models import DataFlowDebugSessionInfo
     from ._models import DataFlowFolder
     from ._models import DataFlowReference
@@ -721,6 +727,7 @@ except (SyntaxError, ImportError):
     from ._models import Dataset
     from ._models import DatasetBZip2Compression
     from ._models import DatasetCompression
+    from ._models import DatasetDebugResource
     from ._models import DatasetDeflateCompression
     from ._models import DatasetFolder
     from ._models import DatasetGZipCompression
@@ -848,6 +855,7 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeCustomSetupScriptProperties
     from ._models import IntegrationRuntimeDataFlowProperties
     from ._models import IntegrationRuntimeDataProxyProperties
+    from ._models import IntegrationRuntimeDebugResource
     from ._models import IntegrationRuntimeMonitoringData
     from ._models import IntegrationRuntimeNodeIpAddress
     from ._models import IntegrationRuntimeNodeMonitoringData
@@ -874,6 +882,7 @@ except (SyntaxError, ImportError):
     from ._models import LinkedIntegrationRuntimeRequest
     from ._models import LinkedIntegrationRuntimeType
     from ._models import LinkedService
+    from ._models import LinkedServiceDebugResource
     from ._models import LinkedServiceReference
     from ._models import LinkedServiceResource
     from ._models import LogStorageSettings
@@ -1076,6 +1085,7 @@ except (SyntaxError, ImportError):
     from ._models import StoreReadSettings
     from ._models import StoreWriteSettings
     from ._models import SubResource
+    from ._models import SubResourceDebugResource
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
@@ -1353,6 +1363,7 @@ __all__ = [
     'DataFlowDebugCommandResponse',
     'DataFlowDebugPackage',
     'DataFlowDebugPackageDebugSettings',
+    'DataFlowDebugResource',
     'DataFlowDebugSessionInfo',
     'DataFlowFolder',
     'DataFlowReference',
@@ -1365,6 +1376,7 @@ __all__ = [
     'Dataset',
     'DatasetBZip2Compression',
     'DatasetCompression',
+    'DatasetDebugResource',
     'DatasetDeflateCompression',
     'DatasetFolder',
     'DatasetGZipCompression',
@@ -1492,6 +1504,7 @@ __all__ = [
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeDataFlowProperties',
     'IntegrationRuntimeDataProxyProperties',
+    'IntegrationRuntimeDebugResource',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
@@ -1518,6 +1531,7 @@ __all__ = [
     'LinkedIntegrationRuntimeRequest',
     'LinkedIntegrationRuntimeType',
     'LinkedService',
+    'LinkedServiceDebugResource',
     'LinkedServiceReference',
     'LinkedServiceResource',
     'LogStorageSettings',
@@ -1720,6 +1734,7 @@ __all__ = [
     'StoreReadSettings',
     'StoreWriteSettings',
     'SubResource',
+    'SubResourceDebugResource',
     'SybaseLinkedService',
     'SybaseSource',
     'SybaseTableDataset',
