@@ -114,8 +114,8 @@ class Error(object):
         return self._inner_error
 
 
-class CertificateBase(object):
-    """Certificate base consists of a certificates metadata.
+class CertificateProperties(object):
+    """Certificate properties consists of a certificates metadata.
 
     :param attributes: The certificate management attributes.
     :type attributes: ~azure.keyvault.certificates.CertificateAttributes
@@ -132,8 +132,8 @@ class CertificateBase(object):
 
     @classmethod
     def _from_certificate_item(cls, certificate_item):
-        # type: (models.CertificateItem) -> CertificateBase
-        """Construct a CertificateBase from an autorest-generated CertificateItem"""
+        # type: (models.CertificateItem) -> CertificateProperties
+        """Construct a CertificateProperties from an autorest-generated CertificateItem"""
         return cls(
             attributes=certificate_item.attributes,
             cert_id=certificate_item.id,
@@ -250,32 +250,27 @@ class CertificateBase(object):
         return self._vault_id.version
 
 
-class Certificate(CertificateBase):
+class Certificate(object):
     """Consists of a certificate and its attributes
 
     :param policy: The management policy for the certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :paramstr cert_id: The certificate id.
-    :param bytes thumbprint: Thumpbrint of the certificate
+    :param properties: The certificate's properties.
+    :type properties: ~azure.keyvault.certificates.CertificateProperties
     :param str key_id: The key id.
     :param str secret_id: The secret id.
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.certificates.CertificateAttributes
     :param bytearray cer: CER contents of the X509 certificate.
     """
     def __init__(
         self,
-        policy,  # type: models.CertificatePolicy
-        cert_id,  # type: Optional[str]
-        thumbprint=None,  # type:  Optional[bytes]
+        policy,  # type: CertificatePolicy
+        properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
-        attributes=None,  # type: Optional[CertificateAttributes]
-        cer=None,  # type: Optional[bytes]
-        **kwargs  # type: **Any
+        cer=None  # type: Optional[bytes]
     ):
         # type: (...) -> None
-        super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
+        self._properties = properties
         self._key_id = key_id
         self._secret_id = secret_id
         self._policy = policy
@@ -287,15 +282,39 @@ class Certificate(CertificateBase):
         """Construct a certificate from an autorest-generated certificateBundle"""
         # pylint:disable=protected-access
         return cls(
-            attributes=certificate_bundle.attributes,
-            cert_id=certificate_bundle.id,
-            thumbprint=certificate_bundle.x509_thumbprint,
+            properties=CertificateProperties._from_certificate_item(certificate_bundle),
             key_id=certificate_bundle.kid,
             secret_id=certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
-            cer=certificate_bundle.cer,
-            tags=certificate_bundle.tags,
+            cer=certificate_bundle.cer
         )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """Certificate identifier.
+
+        :rtype: str
+        """
+        return self._properties.id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """The name of the certificate.
+
+        :rtype: str
+        """
+        return self._properties.name
+
+    @property
+    def properties(self):
+        # type: () -> CertificateProperties
+        """The certificate's properties
+
+        :rtype: ~azure.keyvault.certificates.models.CertificateAttributes
+        """
+        return self._properties
 
     @property
     def key_id(self):
@@ -950,10 +969,11 @@ class Contact(object):
         return self._phone
 
 
-class IssuerBase(object):
-    """The base for the issuer containing the issuer metadata.
+class IssuerProperties(object):
+    """The properties of an issuer containing the issuer metadata.
 
     :param str issuer_id: the ID of the issuer.
+    :param str provider: The issuer provider.
     """
     def __init__(self, issuer_id=None, provider=None):
         # type: (Optional[str], Optional[str]) -> None
@@ -963,8 +983,8 @@ class IssuerBase(object):
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
-        # type: (models.CertificateIssuerItem) -> IssuerBase
-        """Construct a IssuerBase from an autorest-generated CertificateIssuerItem"""
+        # type: (models.CertificateIssuerItem) -> IssuerProperties
+        """Construct a IssuerProperties from an autorest-generated CertificateIssuerItem"""
         return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
@@ -996,13 +1016,13 @@ class IssuerBase(object):
         return self._vault_id.vault_url
 
 
-class Issuer(IssuerBase):
+class Issuer(object):
     """The issuer for a Key Vault certificate.
 
+    :param properties: The issuer's properties
+    :type properties: ~azure.keyvault.certificates.IssuerProperties
     :param attributes: Attributes of the issuer object. Only populated by server.
     :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
-    :param str provider: The issuer provider.
-    :param str issuer_id: The ID of the issuer.
     :param str account_id: The username / account name / account id.
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
@@ -1011,17 +1031,15 @@ class Issuer(IssuerBase):
     """
     def __init__(
         self,
+        properties=None,  # type: Optional[IssuerProperties]
         attributes=None,  # type: Optional[models.IssuerAttributes]
-        provider=None,  # type: Optional[str]
-        issuer_id=None,  # type: Optional[str]
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        **kwargs  # type: **Any
+        admin_details=None  # type: Optional[List[AdministratorDetails]]
     ):
         # type: (...) -> None
-        super(Issuer, self).__init__(issuer_id=issuer_id, provider=provider, **kwargs)
+        self._properties = properties
         self._attributes = attributes
         self._account_id = account_id
         self._password = password
@@ -1040,14 +1058,35 @@ class Issuer(IssuerBase):
             for admin_detail in admin_details_service:
                 admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
         return cls(
+            properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,
-            issuer_id=issuer_bundle.id,
-            provider=issuer_bundle.provider,
             account_id=issuer_bundle.credentials.account_id if issuer_bundle.credentials else None,
             password=issuer_bundle.credentials.password if issuer_bundle.credentials else None,
             organization_id=issuer_bundle.organization_details.id if issuer_bundle.organization_details else None,
             admin_details=admin_details
         )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
+
+    @property
+    def name(self):
+        # type: () -> str
+        # Issuer name is listed under version under vault_id
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def properties(self):
+        # type: () -> IssuerProperties
+        """The properties of the issuer.
+
+        :rtype: ~azure.keyvault.certificates.models.IssuerProperties
+        """
+        return self._properties
 
     @property
     def enabled(self):
@@ -1283,9 +1322,7 @@ class DeletedCertificate(Certificate):
 
     def __init__(
         self,
-        attributes=None,  # type: Optional[CertificateAttributes]
-        cert_id=None,  # type: Optional[str]
-        thumbprint=None,  # type: Optional[bytes]
+        properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
         policy=None,  # type: Optional[CertificatePolicy]
@@ -1297,12 +1334,10 @@ class DeletedCertificate(Certificate):
     ):
         # type: (...) -> None
         super(DeletedCertificate, self).__init__(
+            properties=properties,
             policy=policy,
-            cert_id=cert_id,
-            thumbprint=thumbprint,
             key_id=key_id,
             secret_id=secret_id,
-            attributes=attributes,
             cer=cer,
             **kwargs
         )
@@ -1315,17 +1350,15 @@ class DeletedCertificate(Certificate):
         # type: (models.DeletedCertificateItem) -> DeletedCertificate
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         return cls(
-            attributes=deleted_certificate_item.attributes,
-            cert_id=deleted_certificate_item.id,
-            thumbprint=deleted_certificate_item.x509_thumbprint,
+            properties=CertificateProperties._from_certificate_item(  # pylint: disable=protected-access
+                deleted_certificate_item),
             key_id=None,
             secret_id=None,
             policy=None,
             cer=None,
             deleted_date=deleted_certificate_item.deleted_date,
             recovery_id=deleted_certificate_item.recovery_id,
-            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
-            tags=deleted_certificate_item.tags,
+            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date
         )
 
     @classmethod
@@ -1334,17 +1367,15 @@ class DeletedCertificate(Certificate):
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         # pylint:disable=protected-access
         return cls(
-            attributes=deleted_certificate_bundle.attributes,
-            cert_id=deleted_certificate_bundle.id,
-            thumbprint=deleted_certificate_bundle.x509_thumbprint,
+            properties=CertificateProperties._from_certificate_item(
+                deleted_certificate_bundle),
             key_id=deleted_certificate_bundle.kid,
             secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
             deleted_date=deleted_certificate_bundle.deleted_date,
             recovery_id=deleted_certificate_bundle.recovery_id,
-            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
-            tags=deleted_certificate_bundle.tags,
+            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date
         )
 
     @property

@@ -165,7 +165,7 @@ having to specify version.
 certificate = certificate_client.get_certificate_with_policy(name="cert-name")
 
 print(certificate.name)
-print(certificate.version)
+print(certificate.properties.version)
 print(certificate.policy.id)
 ```
 
@@ -174,7 +174,7 @@ Version is required.
 ```python
 certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
 print(certificate.name)
-print(certificate.version)
+print(certificate.properties.version)
 ```
 
 ### Update an existing Certificate
@@ -183,12 +183,12 @@ print(certificate.version)
 # You can specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_certificate= certificate_client.update_certificate(name="cert-name", tags=tags)
+updated_certificate= certificate_client.update_certificate_properties(name="cert-name", tags=tags)
 
 print(updated_certificate.name)
-print(updated_certificate.version)
-print(updated_certificate.updated)
-print(updated_certificate.tags)
+print(updated_certificate.properties.version)
+print(updated_certificate.properties.updated)
+print(updated_certificate.properties.tags)
 
 ```
 

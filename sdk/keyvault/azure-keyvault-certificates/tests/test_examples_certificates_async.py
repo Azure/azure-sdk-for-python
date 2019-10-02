@@ -72,11 +72,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
+        updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
 
-        print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.version)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -140,8 +140,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
-            print(certificate.version)
+            print(certificate.properties.updated)
+            print(certificate.properties.version)
 
         # [END list_certificate_versions]
         # [START list_deleted_certificates]
@@ -201,7 +201,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         restored_certificate = await certificate_client.restore_certificate(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 
@@ -328,7 +328,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -344,7 +344,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         issuer = await certificate_client.get_issuer(name="issuer1")
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -377,7 +377,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_issuer = await certificate_client.delete_issuer(name="issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.provider)
+        print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
         for admin_detail in deleted_issuer.admin_details:
