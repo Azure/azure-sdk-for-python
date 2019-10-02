@@ -8,7 +8,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:51 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa4e127a?restype=container
+    uri: https://storagename.blob.core.windows.net/containeraa4e127a?restype=container
   response:
     body: {string: ''}
     headers:
@@ -42,7 +42,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:51 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa4e127a/blob1
+    uri: https://storagename.blob.core.windows.net/containeraa4e127a/blob1
   response:
     body: {string: ''}
     headers:
@@ -80,7 +80,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa4e127a/blob2
+    uri: https://storagename.blob.core.windows.net/containeraa4e127a/blob2
   response:
     body: {string: ''}
     headers:
@@ -118,7 +118,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa4e127a/blob3
+    uri: https://storagename.blob.core.windows.net/containeraa4e127a/blob3
   response:
     body: {string: ''}
     headers:
@@ -148,15 +148,15 @@ interactions:
     body: "--===============4338717865813308986==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /containeraa4e127a/blob1? HTTP/1.1\r\nx-ms-date:
       Tue, 01 Oct 2019 19:15:52 GMT\r\nx-ms-client-request-id: e25e255c-e47f-11e9-9b22-ecb1d756380e\r\ncontent-type:
-      application/xml; charset=utf-8\r\nAuthorization: SharedKey blobstoragename:cz7HxeQca7rCQr4UGmyVb6Sk7etfsf+g/5G4N0qBEG8=\r\n\r\n\r\n--===============4338717865813308986==\r\nContent-Type:
+      application/xml; charset=utf-8\r\nAuthorization: SharedKey storagename:cz7HxeQca7rCQr4UGmyVb6Sk7etfsf+g/5G4N0qBEG8=\r\n\r\n\r\n--===============4338717865813308986==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /containeraa4e127a/blob2? HTTP/1.1\r\nx-ms-date: Tue, 01 Oct 2019 19:15:52 GMT\r\nx-ms-client-request-id:
       e25e4c6c-e47f-11e9-b016-ecb1d756380e\r\ncontent-type: application/xml; charset=utf-8\r\nAuthorization:
-      SharedKey blobstoragename:xjN0K+e1FUSJ5yKqM4kQoCF23kNPdo62yK/IVqGzirI=\r\n\r\n\r\n--===============4338717865813308986==\r\nContent-Type:
+      SharedKey storagename:xjN0K+e1FUSJ5yKqM4kQoCF23kNPdo62yK/IVqGzirI=\r\n\r\n\r\n--===============4338717865813308986==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /containeraa4e127a/blob3? HTTP/1.1\r\nx-ms-date: Tue, 01 Oct 2019 19:15:52 GMT\r\nx-ms-client-request-id:
       e25e9ab0-e47f-11e9-aa25-ecb1d756380e\r\ncontent-type: application/xml; charset=utf-8\r\nAuthorization:
-      SharedKey blobstoragename:LE44bIZNxnHVSXSYciRvZFXLfmKpBNFJ1J5mu1xjJU4=\r\n\r\n\r\n--===============4338717865813308986==--\r\n"
+      SharedKey storagename:LE44bIZNxnHVSXSYciRvZFXLfmKpBNFJ1J5mu1xjJU4=\r\n\r\n\r\n--===============4338717865813308986==--\r\n"
     headers:
       Content-Length: ['1245']
       Content-Type: [multipart/mixed; boundary================4338717865813308986==]
@@ -165,7 +165,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body: {string: "--batchresponse_63429a4f-edfb-4ce7-8fa4-642a5ac93dc4\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:

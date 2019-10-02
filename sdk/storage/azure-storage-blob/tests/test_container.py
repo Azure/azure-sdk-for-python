@@ -1067,8 +1067,8 @@ class StorageContainerTest(StorageTestCase):
                 'blob3',
             )
 
-    @record
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    @record
     def test_premium_tier_set_tier_api_batch(self):
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()

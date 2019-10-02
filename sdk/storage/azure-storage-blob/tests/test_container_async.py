@@ -1312,8 +1312,8 @@ class StorageContainerTestAsync(StorageTestCase):
                     'blob3',
                 )
 
-    @record
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    @record
     def test_premium_tier_set_tier_api_batch(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_premium_tier_set_tier_api_batch())

@@ -8,7 +8,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360?restype=container
+    uri: https://storagename.blob.core.windows.net/containerd0941360?restype=container
   response:
     body: {string: ''}
     headers:
@@ -42,7 +42,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360/blob1
+    uri: https://storagename.blob.core.windows.net/containerd0941360/blob1
   response:
     body: {string: ''}
     headers:
@@ -77,7 +77,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360/blob1?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/containerd0941360/blob1?comp=snapshot
   response:
     body: {string: ''}
     headers:
@@ -113,7 +113,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360/blob2
+    uri: https://storagename.blob.core.windows.net/containerd0941360/blob2
   response:
     body: {string: ''}
     headers:
@@ -151,7 +151,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360/blob3
+    uri: https://storagename.blob.core.windows.net/containerd0941360/blob3
   response:
     body: {string: ''}
     headers:
@@ -187,10 +187,10 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:52 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containerd0941360?include=snapshots&restype=container&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containerd0941360\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-01T19:15:52.8769067Z</Snapshot><Properties><Creation-Time>Tue,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containerd0941360\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-01T19:15:52.8769067Z</Snapshot><Properties><Creation-Time>Tue,
         01 Oct 2019 19:15:52 GMT</Creation-Time><Last-Modified>Tue, 01 Oct 2019 19:15:52
         GMT</Last-Modified><Etag>0x8D746A3C6FDEF75</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -232,15 +232,15 @@ interactions:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /containerd0941360/blob1? HTTP/1.1\r\nx-ms-delete-snapshots:
       only\r\nx-ms-date: Tue, 01 Oct 2019 19:15:53 GMT\r\nx-ms-client-request-id:
       e2e8fd1a-e47f-11e9-bfdf-ecb1d756380e\r\ncontent-type: application/xml; charset=utf-8\r\nAuthorization:
-      SharedKey blobstoragename:S+8BgLJf52HwiMkHh2qnWXH9b77FOivsZtl0XlnjHsM=\r\n\r\n\r\n--===============5205559421113998234==\r\nContent-Type:
+      SharedKey storagename:S+8BgLJf52HwiMkHh2qnWXH9b77FOivsZtl0XlnjHsM=\r\n\r\n\r\n--===============5205559421113998234==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /containerd0941360/blob2? HTTP/1.1\r\nx-ms-delete-snapshots: only\r\nx-ms-date:
       Tue, 01 Oct 2019 19:15:53 GMT\r\nx-ms-client-request-id: e2e92570-e47f-11e9-a5bb-ecb1d756380e\r\ncontent-type:
-      application/xml; charset=utf-8\r\nAuthorization: SharedKey blobstoragename:t0TjuoPt1st1H15u4jQGhqTfy64dEnKPWAMK3zSZro8=\r\n\r\n\r\n--===============5205559421113998234==\r\nContent-Type:
+      application/xml; charset=utf-8\r\nAuthorization: SharedKey storagename:t0TjuoPt1st1H15u4jQGhqTfy64dEnKPWAMK3zSZro8=\r\n\r\n\r\n--===============5205559421113998234==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /containerd0941360/blob3? HTTP/1.1\r\nx-ms-delete-snapshots: only\r\nx-ms-date:
       Tue, 01 Oct 2019 19:15:53 GMT\r\nx-ms-client-request-id: e2e94b70-e47f-11e9-8a5f-ecb1d756380e\r\ncontent-type:
-      application/xml; charset=utf-8\r\nAuthorization: SharedKey blobstoragename:XqIZ5POvKJzcBcIFeOX5LWkRsPamE83mlSNjTqZi2ZU=\r\n\r\n\r\n--===============5205559421113998234==--\r\n"
+      application/xml; charset=utf-8\r\nAuthorization: SharedKey storagename:XqIZ5POvKJzcBcIFeOX5LWkRsPamE83mlSNjTqZi2ZU=\r\n\r\n\r\n--===============5205559421113998234==--\r\n"
     headers:
       Content-Length: ['1332']
       Content-Type: [multipart/mixed; boundary================5205559421113998234==]
@@ -249,7 +249,7 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:53 GMT']
       x-ms-version: ['2019-02-02']
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body: {string: "--batchresponse_8f16aadd-db74-4ca1-b6ae-089abbeebf63\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
@@ -295,10 +295,10 @@ interactions:
       x-ms-date: ['Tue, 01 Oct 2019 19:15:53 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containerd0941360?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containerd0941360?include=snapshots&restype=container&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containerd0941360\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Tue,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containerd0941360\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Tue,
         01 Oct 2019 19:15:52 GMT</Creation-Time><Last-Modified>Tue, 01 Oct 2019 19:15:52
         GMT</Last-Modified><Etag>0x8D746A3C6FDEF75</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
