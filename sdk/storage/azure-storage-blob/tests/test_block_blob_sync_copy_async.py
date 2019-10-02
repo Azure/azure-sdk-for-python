@@ -72,7 +72,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     def tearDown(self):
         if not self.is_playback():
@@ -98,7 +98,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     async def _test_put_block_from_url_and_commit_async(self):
         # Arrange

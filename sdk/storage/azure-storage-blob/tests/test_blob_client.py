@@ -56,7 +56,7 @@ class StorageClientTest(StorageTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self._get_account_url(), credential=self.account_key, container='foo', blob='bar')
+                self._get_account_url(), credential=self.account_key, container_name='foo', blob_name='bar')
 
             # Assert
             self.validate_standard_account_endpoints(service, url)
@@ -67,7 +67,7 @@ class StorageClientTest(StorageTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string, container="test", blob="test")
+                self.connection_string, container_name="test", blob_name="test")
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -79,7 +79,7 @@ class StorageClientTest(StorageTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_account_url(), credential=self.sas_token, container='foo', blob='bar')
+                self._get_account_url(), credential=self.sas_token, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -91,7 +91,7 @@ class StorageClientTest(StorageTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_account_url(), credential=self.token_credential, container='foo', blob='bar')
+                self._get_account_url(), credential=self.token_credential, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -105,7 +105,7 @@ class StorageClientTest(StorageTestCase):
             # Act
             with self.assertRaises(ValueError):
                 url = self._get_account_url().replace('https', 'http')
-                service_type(url, credential=self.token_credential, container='foo', blob='bar')
+                service_type(url, credential=self.token_credential, container_name='foo', blob_name='bar')
 
     def test_create_service_china(self):
         # Arrange
@@ -114,7 +114,7 @@ class StorageClientTest(StorageTestCase):
             # Act
             url = self._get_account_url().replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=self.account_key, container='foo', blob='bar')
+                url, credential=self.account_key, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -132,7 +132,7 @@ class StorageClientTest(StorageTestCase):
             # Act
             url = self._get_account_url().replace('https', 'http')
             service = service_type[0](
-                url, credential=self.account_key, container='foo', blob='bar')
+                url, credential=self.account_key, container_name='foo', blob_name='bar')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -144,7 +144,7 @@ class StorageClientTest(StorageTestCase):
 
         for service_type in BLOB_SERVICES:
             # Act
-            service = service_type(self._get_account_url(), container='foo', blob='bar')
+            service = service_type(self._get_account_url(), container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -160,8 +160,8 @@ class StorageClientTest(StorageTestCase):
             service = service_type(
                 'www.mydomain.com',
                 credential={'account_name': self.account_name, 'account_key':self.account_key},
-                container='foo',
-                blob='bar')
+                container_name='foo',
+                blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -170,16 +170,6 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.blob.core.windows.net'))
 
-    def test_create_service_missing_arguments(self):
-        # Arrange
-
-        for service_type in SERVICES:
-            # Act
-            with self.assertRaises(ValueError):
-                service = service_type(None)
-
-                # Assert
-
     def test_create_service_with_socket_timeout(self):
         # Arrange
 
@@ -187,10 +177,10 @@ class StorageClientTest(StorageTestCase):
             # Act
             default_service = service_type[0](
                 self._get_account_url(), credential=self.account_key,
-                container='foo', blob='bar')
+                container_name='foo', blob_name='bar')
             service = service_type[0](
                 self._get_account_url(), credential=self.account_key,
-                container='foo', blob='bar', connection_timeout=22)
+                container_name='foo', blob_name='bar', connection_timeout=22)
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -206,7 +196,7 @@ class StorageClientTest(StorageTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, container='foo', blob='bar')
+                conn_string, container_name='foo', blob_name='bar')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -219,7 +209,7 @@ class StorageClientTest(StorageTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type.from_connection_string(
-                conn_string, container='foo', blob='bar')
+                conn_string, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -234,7 +224,7 @@ class StorageClientTest(StorageTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+            service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
             # Assert
             self.assertIsNotNone(service)
@@ -255,7 +245,7 @@ class StorageClientTest(StorageTestCase):
 
             # Act
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+                service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
     def test_create_service_with_connection_string_anonymous(self):
         # Arrange
@@ -263,7 +253,7 @@ class StorageClientTest(StorageTestCase):
             conn_string = 'BlobEndpoint=www.mydomain.com;'
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+            service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
         # Assert
         self.assertIsNotNone(service)
@@ -279,7 +269,7 @@ class StorageClientTest(StorageTestCase):
                 self.account_name, self.account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+            service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
             # Assert
             self.assertIsNotNone(service)
@@ -295,7 +285,7 @@ class StorageClientTest(StorageTestCase):
                 self.account_name, self.account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+            service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
             # Assert
             self.assertIsNotNone(service)
@@ -313,7 +303,7 @@ class StorageClientTest(StorageTestCase):
 
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, secondary_hostname="www-sec.mydomain.com", container="foo", blob="bar")
+                conn_string, secondary_hostname="www-sec.mydomain.com", container_name="foo", blob_name="bar")
 
             # Assert
             self.assertIsNotNone(service)
@@ -334,7 +324,7 @@ class StorageClientTest(StorageTestCase):
 
             # Fails if primary excluded
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+                service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
         for service_type in SERVICES.items():
@@ -346,7 +336,7 @@ class StorageClientTest(StorageTestCase):
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
+            service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
             # Assert
             self.assertIsNotNone(service)

@@ -58,7 +58,7 @@ class StorageBlockBlobTest(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     def tearDown(self):
         if not self.is_playback():

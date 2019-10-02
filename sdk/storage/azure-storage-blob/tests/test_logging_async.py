@@ -91,7 +91,7 @@ class StorageLoggingTestAsync(StorageTestCase):
                     permission=BlobPermissions.READ,
                     expiry=datetime.utcnow() + timedelta(hours=1),
                 )
-                sas_source = BlobClient(source_blob.url, credential=sas_token)
+                sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
                 self.source_blob_url = sas_source.url
             except:
                 pass

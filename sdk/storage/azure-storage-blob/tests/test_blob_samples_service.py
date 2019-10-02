@@ -139,7 +139,7 @@ class TestBlobServiceSamples(StorageTestCase):
             container_client.create_container()
 
             # [START bsc_get_blob_client]
-            blob_client = blob_service_client.get_blob_client(container="containertest", blob="my_blob")
+            blob_client = blob_service_client.get_blob_client(container_name="containertest", blob_name="my_blob")
             try:
                 stream = blob_client.download_blob()
             except ResourceNotFoundError:

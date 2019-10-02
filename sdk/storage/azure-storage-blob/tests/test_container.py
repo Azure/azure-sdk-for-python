@@ -133,8 +133,8 @@ class StorageContainerTest(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -1036,7 +1036,7 @@ class StorageContainerTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerPermissions.READ,
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)
@@ -1102,7 +1102,7 @@ class StorageContainerTest(StorageTestCase):
         blob_client.upload_blob(blob_content, length=len(blob_content))
 
         # Act
-        new_blob_client = BlobClient(blob_client.url, credential=token)
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
         content = new_blob_client.download_blob()
 
         # Assert

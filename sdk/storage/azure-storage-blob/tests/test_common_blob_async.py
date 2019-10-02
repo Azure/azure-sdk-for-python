@@ -1252,7 +1252,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
         target_blob_name = 'targetblob'
@@ -1577,7 +1577,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         blob = await container.upload_blob(blob_name, data)
 
         # Act
-        service = BlobClient(blob.url)
+        service = BlobClient.from_blob_url(blob.url)
         # self._set_test_proxy(service, self.settings)
         content = await (await service.download_blob()).content_as_bytes()
 
@@ -1605,7 +1605,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         )
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
         content = await (await service.download_blob()).content_as_bytes()
 
@@ -1639,7 +1639,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         token = blob.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
         result = await (await service.download_blob()).content_as_bytes()
 
@@ -1668,9 +1668,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         blob = BlobClient(
-            self.bsc.url, container=self.container_name, blob=blob_name, credential=token)
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
         container = ContainerClient(
-            self.bsc.url, container=self.container_name, credential=token)
+            self.bsc.url, container_name=self.container_name, credential=token)
         await container.get_container_properties()
         blob_response = requests.get(blob.url)
         container_response = requests.get(container.url, params={'restype': 'container'})
@@ -1769,7 +1769,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         )
 
         # Act
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
         response = requests.get(sas_blob.url)
 
         # Assert
@@ -1801,7 +1801,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             content_language='fr',
             content_type='text',
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(sas_blob.url)
@@ -1835,7 +1835,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.WRITE,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
@@ -1866,7 +1866,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.delete(sas_blob.url)
@@ -1968,7 +1968,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         info = await sas_blob.get_account_information()
@@ -1994,7 +1994,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
         download_blob_from_url(blob.url, FILE_PATH)
@@ -2132,7 +2132,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             permission=BlobPermissions.WRITE,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         uploaded = upload_blob_to_url(sas_blob.url, data)

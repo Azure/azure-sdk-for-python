@@ -72,7 +72,7 @@ class TestCommonBlobSamples(StorageTestCase):
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get a BlobClient for a specific blob
-        blob_client = blob_service_client.get_blob_client(container="containerformyblobs", blob="my_blob")
+        blob_client = blob_service_client.get_blob_client(container_name="containerformyblobs", blob_name="my_blob")
 
         # [START create_blob_snapshot]
         # Create a read-only snapshot of the blob at this point in time
