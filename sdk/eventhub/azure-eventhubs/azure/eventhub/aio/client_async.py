@@ -58,23 +58,19 @@ class EventHubClient(EventHubClientAbstract):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def _create_auth(self, username=None, password=None):
+    def _create_auth(self):
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
 
-        :param username: The name of the shared access policy.
-        :type username: str
-        :param password: The shared access key.
-        :type password: str
         """
         http_proxy = self._config.http_proxy
         transport_type = self._config.transport_type
         auth_timeout = self._config.auth_timeout
 
         if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = username or self._auth_config['username']
-            password = password or self._auth_config['password']
+            username = self._credential.policy
+            password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
                     self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
@@ -117,14 +113,10 @@ class EventHubClient(EventHubClientAbstract):
             raise last_exception
 
     async def _management_request(self, mgmt_msg, op_type):
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")
-        }
-
         retried_times = 0
+        last_exception = None
         while retried_times <= self._config.max_retries:
-            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
@@ -142,18 +134,8 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 await mgmt_client.close_async()
-
-    async def _iothub_redirect(self):
-        async with self._lock:
-            if self._is_iothub and not self._iothub_redirect_info:
-                if not self._redirect_consumer:
-                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
-                                                                   partition_id='0',
-                                                                   event_position=EventPosition('-1'),
-                                                                   operation='/messages/events')
-                async with self._redirect_consumer:
-                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
-                self._redirect_consumer = None
+        log.info("%r returns an exception %r", self._container_id, last_exception)
+        raise last_exception
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -168,8 +150,6 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.EventHubError
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -209,8 +189,6 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.EventHubError
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
@@ -246,9 +224,6 @@ class EventHubClient(EventHubClientAbstract):
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
         :type owner_level: int
-        :param operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :type track_last_enqueued_event_properties: bool
@@ -272,14 +247,12 @@ class EventHubClient(EventHubClientAbstract):
 
         """
         owner_level = kwargs.get("owner_level")
-        operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         loop = kwargs.get("loop")
 
-        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch,
@@ -289,7 +262,6 @@ class EventHubClient(EventHubClientAbstract):
     def create_producer(
             self, *,
             partition_id: str = None,
-            operation: str = None,
             send_timeout: float = None,
             loop: asyncio.AbstractEventLoop = None
     ) -> EventHubProducer:
@@ -300,9 +272,6 @@ class EventHubClient(EventHubClientAbstract):
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type partition_id: str
-        :param operation: An optional operation to be appended to the hostname in the target URL.
-         The value must start with `/` character.
-        :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
@@ -320,8 +289,6 @@ class EventHubClient(EventHubClientAbstract):
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        if operation:
-            target = target + operation
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(

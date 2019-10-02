@@ -82,12 +82,10 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         super(EventHubProducer, self).__init__()
         self._max_message_size_on_link = None
-        self._running = False
         self._client = client
         self._target = target
         self._partition = partition
         self._timeout = send_timeout
-        self._redirected = None
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
@@ -106,7 +104,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     def _create_handler(self):
         self._handler = SendClient(
             self._target,
-            auth=self._client._get_auth(),  # pylint:disable=protected-access
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout,
             error_policy=self._retry_policy,
@@ -114,18 +112,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             client_name=self._name,
             link_properties=self._link_properties,
             properties=self._client._create_properties(self._client._config.user_agent))  # pylint: disable=protected-access
-
-    def _open(self):
-        """
-        Open the EventHubProducer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
-
-        """
-        if not self._running and self._redirected:
-            self._client._process_redirect_uri(self._redirected)  # pylint: disable=protected-access
-            self._target = self._redirected.address
-        super(EventHubProducer, self)._open()
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
@@ -261,16 +247,11 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         else:
             self._send_event_data_with_retry(timeout=timeout)
 
-    def close(self, exception=None):  # pylint:disable=useless-super-delegation
-        # type:(Exception) -> None
+    def close(self):  # pylint:disable=useless-super-delegation
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
+        this will be a no op.
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -281,4 +262,4 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Close down the handler.
 
         """
-        super(EventHubProducer, self).close(exception)
+        super(EventHubProducer, self).close()

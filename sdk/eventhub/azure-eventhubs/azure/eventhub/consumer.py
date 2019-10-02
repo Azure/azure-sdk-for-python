@@ -9,6 +9,7 @@ import logging
 import time
 from typing import List
 
+import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 import uamqp
@@ -73,7 +74,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
 
         super(EventHubConsumer, self).__init__()
-        self._running = False
         self._client = client
         self._source = source
         self._offset = event_position
@@ -85,7 +85,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._link_properties = {}
-        self._redirected = None
         self._error = None
         partition = self._source.split('/')[-1]
         self._partition = partition
@@ -126,23 +125,21 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         raise last_exception
 
     def _create_handler(self):
-        alt_creds = {
-            "username": self._client._auth_config.get("iot_username") if self._redirected else None,  # pylint:disable=protected-access
-            "password": self._client._auth_config.get("iot_password") if self._redirected else None  # pylint:disable=protected-access
-        }
-
         source = Source(self._source)
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-        desired_capabilities = None
-        if self._track_last_enqueued_event_properties:
-            symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+        if uamqp.__version__ <= "1.2.2":  # backward compatible until uamqp 1.2.3 is released
+            desired_capabilities = {}
+        elif self._track_last_enqueued_event_properties:
+                symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
+                desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
+        else:
+            desired_capabilities = {"desired_capabilities": None}
 
         self._handler = ReceiveClient(
             source,
-            auth=self._client._get_auth(**alt_creds),  # pylint:disable=protected-access
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             prefetch=self._prefetch,
             link_properties=self._link_properties,
@@ -154,27 +151,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             auto_complete=False,
             properties=self._client._create_properties(  # pylint:disable=protected-access
             self._client._config.user_agent),  # pylint:disable=protected-access
-            desired_capabilities=desired_capabilities)  # pylint:disable=protected-access
+            **desired_capabilities)  # pylint:disable=protected-access
         self._messages_iter = None
-
-    def _redirect(self, redirect):
-        self._messages_iter = None
-        super(EventHubConsumer, self)._redirect(redirect)
-
-    def _open(self):
-        """
-        Open the EventHubConsumer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
-
-        """
-        # pylint: disable=protected-access
-        self._redirected = self._redirected or self._client._iothub_redirect_info
-
-        if not self._running and self._redirected:
-            self._client._process_redirect_uri(self._redirected)
-            self._source = self._redirected.address
-        super(EventHubConsumer, self)._open()
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
@@ -274,16 +252,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
-    def close(self, exception=None):
-        # type:(Exception) -> None
+    def close(self):
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
+        this will be a no op.
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -294,9 +267,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Close down the handler.
 
         """
-        if self._messages_iter:
-            self._messages_iter.close()
-            self._messages_iter = None
-        super(EventHubConsumer, self).close(exception)
+        super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7
