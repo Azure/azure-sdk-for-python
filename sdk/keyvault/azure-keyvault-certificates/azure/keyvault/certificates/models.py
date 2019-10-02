@@ -558,6 +558,31 @@ class CertificatePolicy(object):
         if len([x for x in sans if x is not None]) > 1:
             raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
 
+    @classmethod
+    def _get_default_certificate_policy(cls):
+        lifetime_actions = [LifetimeAction(
+            days_before_expiry=90,
+            action_type="AutoRenew"
+        )]
+        return cls(key_properties=KeyProperties(exportable=True,
+                                                key_type='RSA',
+                                                key_size=2048,
+                                                reuse_key=True,
+                                                key_usage=[
+                                                    KeyUsageType.crl_sign,
+                                                    KeyUsageType.data_encipherment,
+                                                    KeyUsageType.digital_signature,
+                                                    KeyUsageType.key_agreement,
+                                                    KeyUsageType.key_cert_sign,
+                                                    KeyUsageType.key_encipherment
+                                                ]),
+                                       issuer_name="Self",
+                                       lifetime_actions=lifetime_actions,
+                                       content_type=SecretContentType.PKCS12,
+                                       subject_name="CN=DefaultPolicy",
+                                       validity_in_months=12)
+
+
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
 

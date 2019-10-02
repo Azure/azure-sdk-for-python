@@ -20,11 +20,7 @@ from .models import (
     Issuer,
     IssuerBase,
     Contact,
-    CertificateOperation,
-    LifetimeAction,
-    KeyProperties,
-    KeyUsageType,
-    SecretContentType
+    CertificateOperation
 )
 from ._polling import CreateCertificatePoller
 
@@ -97,27 +93,8 @@ class CertificateClient(KeyVaultClientBase):
             attributes = None
 
         if not policy:
-            lifetime_actions = [LifetimeAction(
-                days_before_expiry=90,
-                action_type="AutoRenew"
-            )]
-            policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                    key_type='RSA',
-                                                                    key_size=2048,
-                                                                    reuse_key=True,
-                                                                    key_usage=[
-                                                                        KeyUsageType.crl_sign,
-                                                                        KeyUsageType.data_encipherment,
-                                                                        KeyUsageType.digital_signature,
-                                                                        KeyUsageType.key_agreement,
-                                                                        KeyUsageType.key_cert_sign,
-                                                                        KeyUsageType.key_encipherment
-                                                                    ]),
-                                       issuer_name="Self",
-                                       lifetime_actions=lifetime_actions,
-                                       content_type=SecretContentType.PKCS12,
-                                       subject_name="CN=DefaultPolicy",
-                                       validity_in_months=12)
+            # pylint: disable=protected-access
+            policy = CertificatePolicy._get_default_certificate_policy()
 
         cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
