@@ -6,8 +6,7 @@
 
 from datetime import datetime
 import re
-from requests.structures import CaseInsensitiveDict
-
+from azure.core import MatchConditions
 
 def escape_reserved(value):
     """
@@ -27,34 +26,40 @@ def escape_reserved(value):
     # But if a * is at the beginning or the end, don't add the backslash
     return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
 
-
-def escape_and_tolist(value):
-    if value is not None:
-        if isinstance(value, str):
-            value = [value]
-        value = escape_reserved(value)
-    return value
-
+def escape_and_tostr(value):
+    if value is None:
+        return None
+    if value == [None]:
+        return None
+    value = escape_reserved(value)
+    return ','.join(value)
 
 def quote_etag(etag):
-    if etag != "*" and etag is not None:
-        return '"' + etag + '"'
-    return etag
+    if not etag or etag == "*":
+        return etag
+    if etag.startswith('"') and etag.endswith('"'):
+        return etag
+    if etag.startswith("'") and etag.endswith("'"):
+        return etag
+    return '"' + etag + '"'
 
+def prep_if_match(etag, match_condition):
+    # type: (str, MatchConditions) -> str
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = quote_etag(etag) if etag else None
+        return if_match
+    if match_condition == MatchConditions.IfPresent:
+        return "*"
+    return None
 
-def prep_update_configuration_setting(key, etag=None, **kwargs):
-    # type: (str, str, dict) -> CaseInsensitiveDict
-    if not key:
-        raise ValueError("key is mandatory to update a ConfigurationSetting")
-
-    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-    if etag:
-        custom_headers["if-match"] = quote_etag(etag)
-    elif "if-match" not in custom_headers:
-        custom_headers["if-match"] = "*"
-
-    return custom_headers
-
+def prep_if_none_match(etag, match_condition):
+    # type: (str, MatchConditions) -> str
+    if match_condition == MatchConditions.IfModified:
+        if_none_match = quote_etag(etag) if etag else None
+        return if_none_match
+    if match_condition == MatchConditions.IfMissing:
+        return "*"
+    return None
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)
