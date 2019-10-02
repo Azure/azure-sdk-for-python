@@ -19,16 +19,31 @@ import ast
 import os
 import textwrap
 import io
+import zipfile
+import shutil
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+ci_doc_dir = os.path.join(root_dir, '_docs')
 
 def in_ci():
     return os.getenv('TF_BUILD', False)
 
 def move_output_and_zip(target_dir, package_dir):
     pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
+    individual_zip_location = os.path.join(ci_doc_dir, "{}.zip".format(pkg_name))
+
+    new_zip = zipfile.ZipFile(individual_zip_location, 'w', zipfile.ZIP_DEFLATED)
+
+    for root, dirs, files in os.walk(target_dir):
+        for file in files:
+            new_zip.write(os.path.join(root, file))
+
+def cleanup_previous_artifacts():
+    if os.path.exists(ci_doc_dir):
+        shutil.rmtree(ci_doc_dir)
+    os.mkdir(ci_doc_dir)
 
 def sphinx_build(target_dir, output_dir):
     command_array = [
@@ -90,6 +105,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    cleanup_previous_artifacts()
+
     output_dir = os.path.abspath(args.output_directory)
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
@@ -97,4 +114,4 @@ if __name__ == "__main__":
     sphinx_build(target_dir, output_dir)
 
     if in_ci() or args.in_ci:
-        move_output_and_zip(target_dir, target_dir)
+        move_output_and_zip(output_dir, package_dir)
