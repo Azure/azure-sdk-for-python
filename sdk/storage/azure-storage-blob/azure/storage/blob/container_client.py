@@ -82,9 +82,9 @@ class ContainerClient(StorageAccountHostsMixin):
     :param str container_url:
         The full URI to the container. This can also be a URL to the storage
         account, in which case the blob container must also be specified.
-    :param container:
+    :param container_name:
         The container for the blob.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
+    :type container_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -108,7 +108,7 @@ class ContainerClient(StorageAccountHostsMixin):
     """
     def __init__(
             self, container_url,  # type: str
-            container=None,  # type: Optional[Union[ContainerProperties, str]]
+            container_name=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
@@ -120,7 +120,7 @@ class ContainerClient(StorageAccountHostsMixin):
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url.rstrip('/'))
 
-        if not parsed_url.path and not container:
+        if not parsed_url.path and not container_name:
             raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
@@ -129,10 +129,7 @@ class ContainerClient(StorageAccountHostsMixin):
         if parsed_url.path:
             path_container = parsed_url.path.lstrip('/').partition('/')[0]
         _, sas_token = parse_query(parsed_url.query)
-        try:
-            self.container_name = container.name # type: ignore
-        except AttributeError:
-            self.container_name = container or unquote(path_container) # type: ignore
+        self.container_name = container_name or unquote(path_container) # type: ignore
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -150,7 +147,7 @@ class ContainerClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            container,  # type: Union[str, ContainerProperties]
+            container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):  # type: (...) -> ContainerClient
@@ -158,9 +155,9 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param container:
+        :param container_name:
             The container for the blob.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :type container_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -180,7 +177,7 @@ class ContainerClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, credential=credential, **kwargs)
+            account_url, container_name=container_name, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
@@ -952,7 +949,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
 
     def get_blob_client(
-            self, blob,  # type: Union[str, BlobProperties]
+            self, blob_name,  # type: str
             snapshot=None  # type: str
         ):
         # type: (...) -> BlobClient
@@ -960,10 +957,9 @@ class ContainerClient(StorageAccountHostsMixin):
 
         The blob need not already exist.
 
-        :param blob:
-            The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param blob_name:
+            The name of the blob with which to interact.
+        :type blob_name: str
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
@@ -978,7 +974,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Get the blob client.
         """
         return BlobClient(
-            self.url, container=self.container_name, blob=blob, snapshot=snapshot,
+            self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

@@ -90,14 +90,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str blob_url: The full URI to the blob. This can also be a URL to the storage account
+    :param str account_url: The full URI to the account. This can also be a URL to the storage account
         or container, in which case the blob and/or container must also be specified.
-    :param container: The container for the blob. If specified, this value will override
-        a container value specified in the blob URL.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
-    :param blob: The blob with which to interact. If specified, this value will override
+    :param container_name: The container for the blob.
+    :type container_name: str
+    :param blob_name: The blob with which to interact. If specified, this value will override
         a blob value specified in the blob URL.
-    :type blob: str or ~azure.storage.blob.models.BlobProperties
+    :type blob_name: str
     :param str snapshot:
         The optional blob snapshot on which to operate.
     :param credential:
@@ -122,37 +121,30 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, blob_url,  # type: str
-            container=None,  # type: Optional[Union[str, ContainerProperties]]
-            blob=None,  # type: Optional[Union[str, BlobProperties]]
+            self, account_url,  # type: str
+            container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         try:
-            if not blob_url.lower().startswith('http'):
-                blob_url = "https://" + blob_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("Blob URL must be a string.")
-        parsed_url = urlparse(blob_url.rstrip('/'))
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
 
-        if not parsed_url.path and not (container and blob):
-            raise ValueError("Please specify a container and blob name.")
+        if not (container_name and blob_name):
+            raise ValueError("Please specify a container name and blob name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(blob_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
 
-        path_container = ""
-        path_blob = ""
-        path_snapshot = None
-        if parsed_url.path:
-            path_container, _, path_blob = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
-        try:
-            self.container_name = container.name # type: ignore
-        except AttributeError:
-            self.container_name = container or unquote(path_container) # type: ignore
+        self.container_name = container_name
+        self.blob_name = blob_name
         try:
             self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
@@ -160,15 +152,39 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
-        try:
-            self.blob_name = blob.name # type: ignore
-            if not snapshot:
-                self.snapshot = blob.snapshot # type: ignore
-        except AttributeError:
-            self.blob_name = blob or unquote(path_blob)
+
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
+        try:
+            if not blob_url.lower().startswith('http'):
+                blob_url = "https://" + blob_url
+        except AttributeError:
+            raise ValueError("Blob URL must be a string.")
+        parsed_url = urlparse(blob_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(blob_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        container_name, _, blob_name = parsed_url.path.lstrip('/').partition('/')
+
+        path_snapshot, sas_token = parse_query(parsed_url.query)
+        if snapshot is not None:
+            try:
+                path_snapshot = snapshot.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    path_snapshot = snapshot['snapshot'] # type: ignore
+                except TypeError:
+                    path_snapshot = snapshot
+
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=path_snapshot, credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -184,8 +200,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            container,  # type: Union[str, ContainerProperties]
-            blob,  # type: Union[str, BlobProperties]
+            container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
@@ -195,12 +211,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param container: The container for the blob. This can either be the name of the container,
-            or an instance of ContainerProperties
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param blob: The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param container_name: The container name for the blob.
+        :type container_name: str
+        :param blob_name: The name of the blob with which to interact/
+        :type blob_name: str
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :param credential:
@@ -222,7 +236,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, container_name=container_name, blob_name=blob_name, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]

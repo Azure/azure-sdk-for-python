@@ -572,16 +572,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
-    def get_container_client(self, container):
-        # type: (Union[ContainerProperties, str]) -> ContainerClient
+    def get_container_client(self, container_name):
+        # type: (str) -> ContainerClient
         """Get a client to interact with the specified container.
 
         The container need not already exist.
 
-        :param container:
-            The container. This can either be the name of the container,
-            or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :param container_name:
+            The name of the container.
+        :type container_name: str
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
 
@@ -594,15 +593,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the container client to interact with a specific container.
         """
         return ContainerClient(
-            self.url, container=container,
+            self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container,  # type: Union[ContainerProperties, str]
-            blob,  # type: Union[BlobProperties, str]
+            self, container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
         ):
         # type: (...) -> BlobClient
@@ -610,14 +609,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         The blob need not already exist.
 
-        :param container:
-            The container that the blob is in. This can either be the name of the container,
-            or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param blob:
-            The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param container_name:
+            The name of the container that the blob is in.
+        :type container_name: str
+        :param blob_name:
+            The name of the blob with which to interact.
+        :type blob: str
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by :func:`~azure.storage.blob.blob_client.BlobClient.create_snapshot()`.
@@ -634,7 +631,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the blob client to interact with a specific blob.
         """
         return BlobClient( # type: ignore
-            self.url, container=container, blob=blob, snapshot=snapshot,
+            self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
