@@ -26,6 +26,7 @@ except ImportError:
 import six
 
 from azure.core import Configuration
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -46,6 +47,8 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
+from .._generated.models import StorageErrorException
+from .response_handlers import process_storage_error
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -179,6 +182,38 @@ class StorageAccountHostsMixin(object):
             DistributedTracingPolicy(),
         ]
         return config, Pipeline(config.transport, policies=policies)
+
+    def _batch_send(
+        self, *reqs  # type: HttpRequest
+    ):
+        """Given a series of request, do a Storage batch call.
+        """
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+            }
+        )
+
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[
+                StorageHeadersPolicy(),
+                self._credential_policy
+            ]
+        )
+
+        pipeline_response = self._pipeline.run(
+            request,
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            return response.parts()
+        except StorageErrorException as error:
+            process_storage_error(error)
 
 
 def format_shared_key_credential(account, credential):

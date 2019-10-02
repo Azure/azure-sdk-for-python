@@ -14,10 +14,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.exceptions import HttpResponseError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.policies import StorageHeadersPolicy
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
@@ -777,39 +775,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             lease=lease,
             timeout=timeout,
             **kwargs)
-
-    async def _batch_send(
-        self, *reqs  # type: HttpRequest
-    ):
-        """Given a series of request, do a Storage batch call.
-        """
-        request = self._client._client.post(
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
-            headers={
-                'x-ms-version': self._client._config.version
-            }
-        )
-
-        request.set_multipart_mixed(
-            *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ]
-        )
-
-        pipeline_response = await self._pipeline.run(
-            request,
-        )
-        response = pipeline_response.http_response
-
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            return response.parts()  # Return an AsyncIterator
-        except StorageErrorException as error:
-            process_storage_error(error)
-
 
     @distributed_trace_async
     async def delete_blobs(

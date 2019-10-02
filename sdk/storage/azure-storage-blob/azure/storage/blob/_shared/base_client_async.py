@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
 import logging
 
 from azure.core.pipeline import AsyncPipeline
-
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -25,8 +25,12 @@ from .policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
+    StorageHeadersPolicy,
     QueueMessagePolicy)
 from .policies_async import AsyncStorageResponseHook
+
+from .._generated.models import StorageErrorException
+from .response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -86,3 +90,35 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(),
         ]
         return config, AsyncPipeline(config.transport, policies=policies)
+
+    async def _batch_send(
+        self, *reqs  # type: HttpRequest
+    ):
+        """Given a series of request, do a Storage batch call.
+        """
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+            }
+        )
+
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[
+                StorageHeadersPolicy(),
+                self._credential_policy
+            ]
+        )
+
+        pipeline_response = await self._pipeline.run(
+            request,
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            return response.parts()  # Return an AsyncIterator
+        except StorageErrorException as error:
+            process_storage_error(error)

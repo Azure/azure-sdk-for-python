@@ -21,11 +21,9 @@ import six
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.exceptions import HttpResponseError
 
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.policies import StorageHeadersPolicy
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
@@ -997,39 +995,6 @@ class ContainerClient(StorageAccountHostsMixin):
             header_parameters['If-None-Match'] = self._client._serialize.header("if_none_match", if_none_match, 'str')
 
         return query_parameters, header_parameters
-
-    def _batch_send(
-        self, *reqs  # type: HttpRequest
-    ):
-        """Given a series of request, do a Storage batch call.
-        """
-        request = self._client._client.post(
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
-            headers={
-                'x-ms-version': self._client._config.version
-            }
-        )
-
-        request.set_multipart_mixed(
-            *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ]
-        )
-
-        pipeline_response = self._pipeline.run(
-            request,
-        )
-        response = pipeline_response.http_response
-
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            return response.parts()
-        except StorageErrorException as error:
-            process_storage_error(error)
-
 
     @distributed_trace
     def delete_blobs(
