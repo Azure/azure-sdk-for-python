@@ -12,7 +12,7 @@ from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
-from prep_sphinx_env import get_package_details
+from prep_sphinx_env import get_package_details, should_build_docs
 import sys
 
 logging.getLogger().setLevel(logging.INFO)
@@ -104,7 +104,10 @@ if __name__ == "__main__":
 
     pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
-    if is_mgmt_package(pkg_name):
-        mgmt_apidoc(output_directory, pkg_name)
+    if should_build_docs(pkg_name):
+        if is_mgmt_package(pkg_name):
+            mgmt_apidoc(output_directory, pkg_name)
+        else:
+            sphinx_apidoc(args.working_directory)
     else:
-        sphinx_apidoc(args.working_directory)
+        logging.info("Skipping sphinx source generation for {}".format(pkg_name))

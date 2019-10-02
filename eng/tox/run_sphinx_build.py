@@ -13,7 +13,7 @@ import argparse
 import os
 import logging
 import sys
-from prep_sphinx_env import get_package_details
+from prep_sphinx_env import get_package_details, should_build_docs
 from pkg_resources import Requirement
 import ast
 import os
@@ -30,9 +30,8 @@ ci_doc_dir = os.path.join(root_dir, '_docs')
 def in_ci():
     return os.getenv('TF_BUILD', False)
 
-def move_output_and_zip(target_dir, package_dir):
-    pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
-    individual_zip_location = os.path.join(ci_doc_dir, "{}.zip".format(pkg_name))
+def move_output_and_zip(target_dir, package_dir, package_name):
+    individual_zip_location = os.path.join(ci_doc_dir, "{}.zip".format(package_name))
 
     new_zip = zipfile.ZipFile(individual_zip_location, 'w', zipfile.ZIP_DEFLATED)
 
@@ -105,13 +104,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    cleanup_previous_artifacts()
-
+    
     output_dir = os.path.abspath(args.output_directory)
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
 
-    sphinx_build(target_dir, output_dir)
+    package_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
-    if in_ci() or args.in_ci:
-        move_output_and_zip(output_dir, package_dir)
+    if should_build_docs(package_name):
+        cleanup_previous_artifacts()
+        sphinx_build(target_dir, output_dir)
+
+        if in_ci() or args.in_ci:
+            move_output_and_zip(output_dir, package_dir)
+    else:
+        logging.info("Skipping sphinx build for {}".format(package_name))

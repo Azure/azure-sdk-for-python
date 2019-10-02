@@ -43,6 +43,8 @@ Indices and tables
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py")
 
+def should_build_docs(package_name):
+    return not ("nspkg" in package_name or "azure-mgmt" == package_name)
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -187,11 +189,14 @@ if __name__ == "__main__":
         os.path.join(package_path, "setup.py")
     )
 
-    source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
-    doc_folder = os.path.join(source_location, "docgen")
+    if should_build_docs(package_name):
+        source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
+        doc_folder = os.path.join(source_location, "docgen")
 
-    copy_conf(doc_folder)
-    create_index(doc_folder, source_location, package_name)
+        copy_conf(doc_folder)
+        create_index(doc_folder, source_location, package_name)
 
-    site_folder = os.path.join(args.dist_dir, "site")
-    write_version(site_folder, package_version)
+        site_folder = os.path.join(args.dist_dir, "site")
+        write_version(site_folder, package_version)
+    else:
+        logging.info("Skipping sphinx prep for {}".format(package_name))

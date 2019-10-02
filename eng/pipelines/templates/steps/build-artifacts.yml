@@ -64,4 +64,4 @@ steps:
     displayName: 'Publish Artifacts'
     inputs:
       artifactName: 'docs'
-      pathtoPublish: '$(Build.SourcesDirectory)/_'
+      pathtoPublish: '$(Build.SourcesDirectory)/_docs'
