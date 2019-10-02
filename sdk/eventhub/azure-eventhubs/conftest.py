@@ -153,22 +153,6 @@ def invalid_policy(live_eventhub_config):
 
 
 @pytest.fixture()
-def iot_connection_str():
-    try:
-        return os.environ['IOTHUB_CONNECTION_STR']
-    except KeyError:
-        pytest.skip("No IotHub connection string found.")
-
-
-@pytest.fixture()
-def device_id():
-    try:
-        return os.environ['IOTHUB_DEVICE']
-    except KeyError:
-        pytest.skip("No Iothub device ID found.")
-
-
-@pytest.fixture()
 def aad_credential():
     try:
         return os.environ['AAD_CLIENT_ID'], os.environ['AAD_SECRET'], os.environ['AAD_TENANT_ID']

@@ -58,20 +58,17 @@ class EventData(object):
     PROP_PARTITION_KEY = b"x-opt-partition-key"
     PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    PROP_DEVICE_ID = b"iothub-connection-device-id"
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
     PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
     PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
-    def __init__(self, body=None, to_device=None):
+    def __init__(self, body=None):
         """
         Initialize EventData.
 
         :param body: The data to send in a single message.
         :type body: str, bytes or list
-        :param to_device: An IoT device to route to.
-        :type to_device: str
         """
 
         self._annotations = {}
@@ -79,8 +76,6 @@ class EventData(object):
         self._app_properties = {}
         self._msg_properties = MessageProperties()
         self._runtime_info = {}
-        if to_device:
-            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
             self.message = Message(body[0], properties=self._msg_properties)
             for more in body[1:]:
@@ -102,8 +97,6 @@ class EventData(object):
             dic['offset'] = str(self.offset)
         if self.enqueued_time:
             dic['enqueued_time'] = str(self.enqueued_time)
-        if self.device_id:
-            dic['device_id'] = str(self.device_id)
         if self.partition_key:
             dic['partition_key'] = str(self.partition_key)
         return str(dic)
@@ -154,7 +147,6 @@ class EventData(object):
 
     @staticmethod
     def _from_message(message):
-        # pylint:disable=protected-access
         event_data = EventData(body='')
         event_data.message = message
         event_data._msg_properties = message.properties
@@ -206,16 +198,6 @@ class EventData(object):
         if timestamp:
             return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
-
-    @property
-    def device_id(self):
-        """
-        The device ID of the event data object. This is only used for
-        IoT Hub implementations.
-
-        :rtype: bytes
-        """
-        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
     def partition_key(self):
