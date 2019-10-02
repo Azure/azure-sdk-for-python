@@ -331,21 +331,12 @@ class QueuePropertiesPaged(PageIterator):
         return self._response.next_marker or None, props_list
 
 
-class QueuePermissions(object):
-    """QueuePermissions class to be used with
+class QueueSasPermissions(object):
+    """QueueSasPermissions class to be used with
     :func:`~azure.storage.queue.queue_client.QueueClient.generate_shared_access_signature`
     method and for the AccessPolicies used with
     :func:`~azure.storage.queue.queue_client.QueueClient.set_queue_access_policy`.
 
-    :ivar QueuePermissions QueuePermissions.READ:
-        Read metadata and properties, including message count. Peek at messages.
-    :ivar QueuePermissions QueuePermissions.ADD:
-        Add messages to the queue.
-    :ivar QueuePermissions QueuePermissions.UPDATE:
-        Update messages in the queue. Note: Use the Process permission with
-        Update so you can first get the message you want to update.
-    :ivar QueuePermissions QueuePermissions.PROCESS: Delete entities.
-        Get and delete messages from the queue.
     :param bool read:
         Read metadata and properties, including message count. Peek at messages.
     :param bool add:
@@ -355,37 +346,27 @@ class QueuePermissions(object):
         Update so you can first get the message you want to update.
     :param bool process:
         Get and delete messages from the queue.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    READ = None # type: QueuePermissions
-    ADD = None # type: QueuePermissions
-    UPDATE = None # type: QueuePermissions
-    PROCESS = None # type: QueuePermissions
-
-    def __init__(self, read=False, add=False, update=False, process=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.update = update or ('u' in _str)
-        self.process = process or ('p' in _str)
-
-    def __or__(self, other):
-        return QueuePermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return QueuePermissions(_str=str(self) + str(other))
+    def __init__(self, read=False, add=False, update=False, process=False):
+        self.read = read
+        self.add = add
+        self.update = update
+        self.process = process
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('a' if self.add else '') +
-                ('u' if self.update else '') +
-                ('p' if self.process else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
 
-QueuePermissions.READ = QueuePermissions(read=True)
-QueuePermissions.ADD = QueuePermissions(add=True)
-QueuePermissions.UPDATE = QueuePermissions(update=True)
-QueuePermissions.PROCESS = QueuePermissions(process=True)
+        parsed = cls(p_read, p_add, p_update, p_process)
+        parsed._str = permission
+        return parsed

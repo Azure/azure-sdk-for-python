@@ -50,7 +50,7 @@ from ..queue_client import QueueClient as QueueClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue.models import QueuePermissions, QueueProperties
+    from azure.storage.queue.models import QueueSasPermissions, QueueProperties
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
