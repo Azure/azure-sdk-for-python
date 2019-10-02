@@ -30,8 +30,32 @@ def in_ci():
 def move_output_and_zip(target_dir, package_dir):
     pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
+def is_mgmt_package(package_dir):
+    pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
+    return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
+def sphinx_build(target_dir, output_dir):
+    command_array = [
+                "sphinx-build",
+                "-b",
+                "html",
+                target_dir,
+                output_dir
+            ]
+
+    try:
+        logging.info("Sphinx build command: {}".format(command_array))
+        check_call(
+            command_array
+        )
+    except CalledProcessError as e:
+        logging.error(
+            "sphinx-apidoc failed for path {} exited with error {}".format(
+                args.working_directory, e.returncode
+            )
+        )
+        exit(1)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -50,7 +74,7 @@ if __name__ == "__main__":
         "-o",
         "--outputdir",
         dest="output_directory",
-        help="",
+        help="The output location for the generated site. Usually {distdir}/site",
         required=True,
     )
 
@@ -75,28 +99,7 @@ if __name__ == "__main__":
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
 
-    # sphinx-build -b html {distdir}/unzipped/docgen {distdir}/site
-    command_array = [
-                "sphinx-build",
-                "-b",
-                "html",
-                target_dir,
-                output_dir
-            ]
-
-    try:
-        logging.info("Sphinx build command: {}".format(command_array))
-
-        check_call(
-            command_array
-        )
-    except CalledProcessError as e:
-        logging.error(
-            "sphinx-apidoc failed for path {} exited with error {}".format(
-                args.working_directory, e.returncode
-            )
-        )
-        exit(1)
+    sphinx_build(target_dir, package_dir)
 
     if in_ci() or args.in_ci:
-        move_output_and_zip(target_dir, package_dir)
+        move_output_and_zip(target_dir, target_dir)
