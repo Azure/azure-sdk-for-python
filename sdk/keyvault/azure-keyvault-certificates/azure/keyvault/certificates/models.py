@@ -1316,7 +1316,7 @@ class LifetimeAction(object):
 
     def __repr__(self):
         # type () -> str
-        return "LifetitmeAction(action_type={}, lifetime_percentage={}, days_before_expiry={})".format(
+        return "LifetimeAction(action_type={}, lifetime_percentage={}, days_before_expiry={})".format(
             self.action_type, self.lifetime_percentage, self.days_before_expiry
         )[:1024]
 
@@ -1389,7 +1389,7 @@ class DeletedCertificate(Certificate):
 
     def __repr__(self):
         # type () -> str
-        return "<DeletedCertificatte [{}]>".format(self.id)[:1024]
+        return "<DeletedCertificate [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_deleted_certificate_item(cls, deleted_certificate_item):
