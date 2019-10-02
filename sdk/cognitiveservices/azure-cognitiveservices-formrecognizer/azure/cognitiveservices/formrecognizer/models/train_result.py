@@ -15,26 +15,35 @@ from msrest.serialization import Model
 class TrainResult(Model):
     """Response of the Train API call.
 
-    :param model_id: Identifier of the model.
-    :type model_id: str
-    :param training_documents: List of documents used to train the model and
-     the
+    All required parameters must be populated in order to send to Azure.
+
+    :param training_documents: Required. List of documents used to train the
+     model and the
      train operation error reported by each.
     :type training_documents:
      list[~azure.cognitiveservices.formrecognizer.models.FormDocumentReport]
-    :param errors: Errors returned during the training operation.
+    :param training_fields: Required. Training Fields.
+    :type training_fields:
+     ~azure.cognitiveservices.formrecognizer.models.TrainingFields
+    :param errors: Required. Errors returned during the training operation.
     :type errors:
      list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
     """
 
+    _validation = {
+        'training_documents': {'required': True},
+        'training_fields': {'required': True},
+        'errors': {'required': True},
+    }
+
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
         'training_documents': {'key': 'trainingDocuments', 'type': '[FormDocumentReport]'},
+        'training_fields': {'key': 'trainingFields', 'type': 'TrainingFields'},
         'errors': {'key': 'errors', 'type': '[FormOperationError]'},
     }
 
     def __init__(self, **kwargs):
         super(TrainResult, self).__init__(**kwargs)
-        self.model_id = kwargs.get('model_id', None)
         self.training_documents = kwargs.get('training_documents', None)
+        self.training_fields = kwargs.get('training_fields', None)
         self.errors = kwargs.get('errors', None)

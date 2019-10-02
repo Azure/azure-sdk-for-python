@@ -16,16 +16,22 @@ from msrest.exceptions import HttpOperationError
 class ErrorResponse(Model):
     """ErrorResponse.
 
-    :param error:
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required.
     :type error:
      ~azure.cognitiveservices.formrecognizer.models.ErrorInformation
     """
+
+    _validation = {
+        'error': {'required': True},
+    }
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorInformation'},
     }
 
-    def __init__(self, *, error=None, **kwargs) -> None:
+    def __init__(self, *, error, **kwargs) -> None:
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 

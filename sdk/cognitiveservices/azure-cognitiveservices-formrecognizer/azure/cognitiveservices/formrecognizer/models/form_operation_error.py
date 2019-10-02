@@ -15,9 +15,16 @@ from msrest.serialization import Model
 class FormOperationError(Model):
     """Error reported during an operation.
 
-    :param error_message: Message reported during the train operation.
+    All required parameters must be populated in order to send to Azure.
+
+    :param error_message: Required. Message reported during the train
+     operation.
     :type error_message: str
     """
+
+    _validation = {
+        'error_message': {'required': True},
+    }
 
     _attribute_map = {
         'error_message': {'key': 'errorMessage', 'type': 'str'},

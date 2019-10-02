@@ -13,17 +13,22 @@ from msrest.serialization import Model
 
 
 class KeysResult(Model):
-    """Result of an operation to get
-    the keys extracted by a model.
+    """Keys extracted by a model.
 
-    :param clusters: Object mapping ClusterIds to Key lists.
+    All required parameters must be populated in order to send to Azure.
+
+    :param clusters: Required. Object mapping ClusterIds to Key lists.
     :type clusters: dict[str, list[str]]
     """
+
+    _validation = {
+        'clusters': {'required': True},
+    }
 
     _attribute_map = {
         'clusters': {'key': 'clusters', 'type': '{[str]}'},
     }
 
-    def __init__(self, *, clusters=None, **kwargs) -> None:
+    def __init__(self, *, clusters, **kwargs) -> None:
         super(KeysResult, self).__init__(**kwargs)
         self.clusters = clusters

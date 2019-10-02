@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class InnerError(Model):
     """InnerError.
 
-    :param request_id:
+    All required parameters must be populated in order to send to Azure.
+
+    :param request_id: Required.
     :type request_id: str
     """
+
+    _validation = {
+        'request_id': {'required': True},
+    }
 
     _attribute_map = {
         'request_id': {'key': 'requestId', 'type': 'str'},

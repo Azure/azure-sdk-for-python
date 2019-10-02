@@ -10,99 +10,123 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .text_word_py3 import TextWord
+    from .text_line_py3 import TextLine
+    from .read_result_py3 import ReadResult
+    from .key_value_element_py3 import KeyValueElement
+    from .key_value_pair_py3 import KeyValuePair
+    from .data_table_cell_py3 import DataTableCell
+    from .data_table_py3 import DataTable
+    from .page_result_py3 import PageResult
+    from .field_value_py3 import FieldValue
+    from .document_result_py3 import DocumentResult
+    from .form_operation_error_py3 import FormOperationError
+    from .analyze_result_py3 import AnalyzeResult
+    from .analyze_operation_result_py3 import AnalyzeOperationResult
     from .train_source_filter_py3 import TrainSourceFilter
     from .train_request_py3 import TrainRequest
     from .form_document_report_py3 import FormDocumentReport
-    from .form_operation_error_py3 import FormOperationError
+    from .form_fields_report_py3 import FormFieldsReport
+    from .training_fields_py3 import TrainingFields
     from .train_result_py3 import TrainResult
+    from .source_path_py3 import SourcePath
+    from .model_info_py3 import ModelInfo
+    from .models_summary_py3 import ModelsSummary
+    from .models_model_py3 import ModelsModel
     from .keys_result_py3 import KeysResult
-    from .model_result_py3 import ModelResult
-    from .models_result_py3 import ModelsResult
+    from .model_py3 import Model
     from .inner_error_py3 import InnerError
     from .error_information_py3 import ErrorInformation
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .extracted_token_py3 import ExtractedToken
-    from .extracted_key_value_pair_py3 import ExtractedKeyValuePair
-    from .extracted_table_column_py3 import ExtractedTableColumn
-    from .extracted_table_py3 import ExtractedTable
-    from .extracted_page_py3 import ExtractedPage
-    from .analyze_result_py3 import AnalyzeResult
-    from .word_py3 import Word
-    from .line_py3 import Line
-    from .text_recognition_result_py3 import TextRecognitionResult
-    from .element_reference_py3 import ElementReference
-    from .field_value_py3 import FieldValue
-    from .understanding_result_py3 import UnderstandingResult
-    from .read_receipt_result_py3 import ReadReceiptResult
-    from .string_value_py3 import StringValue
-    from .number_value_py3 import NumberValue
-    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
-    from .image_url_py3 import ImageUrl
+    from .copy_request_target_information_py3 import CopyRequestTargetInformation
+    from .copy_request_copy_config_target_model_metadata_py3 import CopyRequestCopyConfigTargetModelMetadata
+    from .copy_request_copy_config_py3 import CopyRequestCopyConfig
+    from .copy_request_py3 import CopyRequest
+    from .copy_result_py3 import CopyResult
+    from .copy_operation_result_py3 import CopyOperationResult
 except (SyntaxError, ImportError):
+    from .text_word import TextWord
+    from .text_line import TextLine
+    from .read_result import ReadResult
+    from .key_value_element import KeyValueElement
+    from .key_value_pair import KeyValuePair
+    from .data_table_cell import DataTableCell
+    from .data_table import DataTable
+    from .page_result import PageResult
+    from .field_value import FieldValue
+    from .document_result import DocumentResult
+    from .form_operation_error import FormOperationError
+    from .analyze_result import AnalyzeResult
+    from .analyze_operation_result import AnalyzeOperationResult
     from .train_source_filter import TrainSourceFilter
     from .train_request import TrainRequest
     from .form_document_report import FormDocumentReport
-    from .form_operation_error import FormOperationError
+    from .form_fields_report import FormFieldsReport
+    from .training_fields import TrainingFields
     from .train_result import TrainResult
+    from .source_path import SourcePath
+    from .model_info import ModelInfo
+    from .models_summary import ModelsSummary
+    from .models_model import ModelsModel
     from .keys_result import KeysResult
-    from .model_result import ModelResult
-    from .models_result import ModelsResult
+    from .model import Model
     from .inner_error import InnerError
     from .error_information import ErrorInformation
     from .error_response import ErrorResponse, ErrorResponseException
-    from .extracted_token import ExtractedToken
-    from .extracted_key_value_pair import ExtractedKeyValuePair
-    from .extracted_table_column import ExtractedTableColumn
-    from .extracted_table import ExtractedTable
-    from .extracted_page import ExtractedPage
-    from .analyze_result import AnalyzeResult
-    from .word import Word
-    from .line import Line
-    from .text_recognition_result import TextRecognitionResult
-    from .element_reference import ElementReference
-    from .field_value import FieldValue
-    from .understanding_result import UnderstandingResult
-    from .read_receipt_result import ReadReceiptResult
-    from .string_value import StringValue
-    from .number_value import NumberValue
-    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
-    from .image_url import ImageUrl
+    from .copy_request_target_information import CopyRequestTargetInformation
+    from .copy_request_copy_config_target_model_metadata import CopyRequestCopyConfigTargetModelMetadata
+    from .copy_request_copy_config import CopyRequestCopyConfig
+    from .copy_request import CopyRequest
+    from .copy_result import CopyResult
+    from .copy_operation_result import CopyOperationResult
 from .form_recognizer_client_enums import (
-    TextOperationStatusCodes,
-    TextRecognitionResultDimensionUnit,
-    TextRecognitionResultConfidenceClass,
+    OperationStatus,
+    LengthUnit,
+    Language,
+    FieldValueType,
+    TrainStatus,
+    ModelStatus,
 )
 
 __all__ = [
+    'TextWord',
+    'TextLine',
+    'ReadResult',
+    'KeyValueElement',
+    'KeyValuePair',
+    'DataTableCell',
+    'DataTable',
+    'PageResult',
+    'FieldValue',
+    'DocumentResult',
+    'FormOperationError',
+    'AnalyzeResult',
+    'AnalyzeOperationResult',
     'TrainSourceFilter',
     'TrainRequest',
     'FormDocumentReport',
-    'FormOperationError',
+    'FormFieldsReport',
+    'TrainingFields',
     'TrainResult',
+    'SourcePath',
+    'ModelInfo',
+    'ModelsSummary',
+    'ModelsModel',
     'KeysResult',
-    'ModelResult',
-    'ModelsResult',
+    'Model',
     'InnerError',
     'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
-    'ExtractedToken',
-    'ExtractedKeyValuePair',
-    'ExtractedTableColumn',
-    'ExtractedTable',
-    'ExtractedPage',
-    'AnalyzeResult',
-    'Word',
-    'Line',
-    'TextRecognitionResult',
-    'ElementReference',
-    'FieldValue',
-    'UnderstandingResult',
-    'ReadReceiptResult',
-    'StringValue',
-    'NumberValue',
-    'ComputerVisionError', 'ComputerVisionErrorException',
-    'ImageUrl',
-    'TextOperationStatusCodes',
-    'TextRecognitionResultDimensionUnit',
-    'TextRecognitionResultConfidenceClass',
+    'CopyRequestTargetInformation',
+    'CopyRequestCopyConfigTargetModelMetadata',
+    'CopyRequestCopyConfig',
+    'CopyRequest',
+    'CopyResult',
+    'CopyOperationResult',
+    'OperationStatus',
+    'LengthUnit',
+    'Language',
+    'FieldValueType',
+    'TrainStatus',
+    'ModelStatus',
 ]

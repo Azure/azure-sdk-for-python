@@ -15,23 +15,30 @@ from msrest.serialization import Model
 class ErrorInformation(Model):
     """ErrorInformation.
 
-    :param code:
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required.
     :type code: str
-    :param inner_error:
-    :type inner_error:
+    :param innererror:
+    :type innererror:
      ~azure.cognitiveservices.formrecognizer.models.InnerError
-    :param message:
+    :param message: Required.
     :type message: str
     """
 
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, inner_error=None, message: str=None, **kwargs) -> None:
+    def __init__(self, *, code: str, message: str, innererror=None, **kwargs) -> None:
         super(ErrorInformation, self).__init__(**kwargs)
         self.code = code
-        self.inner_error = inner_error
+        self.innererror = innererror
         self.message = message

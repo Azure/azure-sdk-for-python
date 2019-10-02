@@ -15,22 +15,33 @@ from msrest.serialization import Model
 class FormDocumentReport(Model):
     """FormDocumentReport.
 
-    :param document_name: Reference to the data that the report is for.
+    All required parameters must be populated in order to send to Azure.
+
+    :param document_name: Required. Reference to the data that the report is
+     for.
     :type document_name: str
-    :param pages: Total number of pages trained on.
+    :param pages: Required. Total number of pages trained on.
     :type pages: int
-    :param errors: List of errors per page.
+    :param errors: Required. List of errors per page.
     :type errors: list[str]
-    :param status: Status of the training operation. Possible values include:
-     'success', 'partialSuccess', 'failure'
-    :type status: str or ~azure.cognitiveservices.formrecognizer.models.enum
+    :param status: Required. Status of the training operation. Possible values
+     include: 'succeeded', 'partiallySucceeded', 'failed'
+    :type status: str or
+     ~azure.cognitiveservices.formrecognizer.models.TrainStatus
     """
+
+    _validation = {
+        'document_name': {'required': True},
+        'pages': {'required': True},
+        'errors': {'required': True},
+        'status': {'required': True},
+    }
 
     _attribute_map = {
         'document_name': {'key': 'documentName', 'type': 'str'},
         'pages': {'key': 'pages', 'type': 'int'},
         'errors': {'key': 'errors', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'TrainStatus'},
     }
 
     def __init__(self, **kwargs):
