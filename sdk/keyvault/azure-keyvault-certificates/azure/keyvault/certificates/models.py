@@ -253,18 +253,18 @@ class CertificateProperties(object):
 class Certificate(object):
     """Consists of a certificate and its attributes
 
-    :param properties: The certificate's properties.
-    :type properties: ~azure.keyvault.certificates.CertificateProperties
     :param policy: The management policy for the certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
+    :param properties: The certificate's properties.
+    :type properties: ~azure.keyvault.certificates.CertificateProperties
     :param str key_id: The key id.
     :param str secret_id: The secret id.
     :param bytearray cer: CER contents of the X509 certificate.
     """
     def __init__(
         self,
-        properties,  # type: CertificateProperties
         policy,  # type: CertificatePolicy
+        properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
         cer=None  # type: Optional[bytes]
@@ -1019,7 +1019,8 @@ class IssuerProperties(object):
 class Issuer(object):
     """The issuer for a Key Vault certificate.
 
-    :param properties:
+    :param properties: The issuer's properties
+    :type properties: ~azure.keyvault.certificates.IssuerProperties
     :param attributes: Attributes of the issuer object. Only populated by server.
     :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
     :param str account_id: The username / account name / account id.
@@ -1030,7 +1031,7 @@ class Issuer(object):
     """
     def __init__(
         self,
-        properties,
+        properties=None,  # type: Optional[IssuerProperties]
         attributes=None,  # type: Optional[models.IssuerAttributes]
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
@@ -1321,7 +1322,7 @@ class DeletedCertificate(Certificate):
 
     def __init__(
         self,
-        properties,  # type: CertificateProperties
+        properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
         policy=None,  # type: Optional[CertificatePolicy]
