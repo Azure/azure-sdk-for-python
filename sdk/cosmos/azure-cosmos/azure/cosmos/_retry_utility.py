@@ -126,11 +126,17 @@ def ExecuteFunction(function, *args, **kwargs):
 
 def _configure_timeout(request, absolute, per_request):
     # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
-    if absolute is not None and absolute < per_request:
+    if absolute is not None:
         if absolute <= 0:
             raise errors.ClientTimeoutError()
-        request.context.options['connection_timeout'] = absolute
+        if per_request:
+            # Both socket timeout and client timeout have been provided - use the shortest value.
+            request.context.options['connection_timeout'] = min(per_request, absolute)
+        else:
+            # Only client timeout provided.
+            request.context.options['connection_timeout'] = absolute
     elif per_request:
+        # Only socket timeout provided.
         request.context.options['connection_timeout'] = per_request
 
 
@@ -139,8 +145,6 @@ class ConnectionRetryPolicy(RetryPolicy):
     def __init__(self, **kwargs):
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
         super(ConnectionRetryPolicy, self).__init__(**clean_kwargs)
-
-
 
     def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
