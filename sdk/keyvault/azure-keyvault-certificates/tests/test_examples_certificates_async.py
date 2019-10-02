@@ -33,7 +33,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates.aio import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         # specify the certificate policy
         cert_policy = CertificatePolicy(exportable=True,
                                         key_type='RSA',
@@ -98,7 +98,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -162,7 +162,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         import asyncio
         certificate_client = vault_client.certificates
 
@@ -209,7 +209,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         from azure.core.exceptions import HttpResponseError
         certificate_client = vault_client.certificates
 
@@ -254,7 +254,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, Contact
 
         certificate_client = vault_client.certificates
 

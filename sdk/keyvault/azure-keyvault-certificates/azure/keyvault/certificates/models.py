@@ -305,8 +305,8 @@ class CertificatePolicy(object):
         reuse_key=None,  # type: Optional[bool]
         curve=None,  # type: Optional[KeyCurveName]
         ekus=None,  # type: Optional[list[str]]
-        key_usage=None,  # type: Optional[list[KeyUsageType]]
-        content_type=None,  # type: Optional[models.SecretContentType] or str
+        key_usage=None,  # type: Optional[list[Union[KeyUsageType, str]]]
+        content_type=None,  # type: Optional[Union[SecretContentType, str]]
         validity_in_months=None,  # type: Optional[int]
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
         certificate_type=None,  # type: Optional[str]
