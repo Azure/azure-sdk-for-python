@@ -8,13 +8,13 @@ import itertools
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy, KeyProperties
+from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
-    SecretProperties, IssuerParameters, X509CertificateProperties,
+    SecretProperties, IssuerParameters, X509CertificateProperties, KeyProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates.models import Issuer, IssuerBase
 from certificates_async_preparer import AsyncVaultClientPreparer
@@ -74,13 +74,12 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_policy.issuer_parameters.name, cert.policy.issuer_name)
         self.assertEqual(cert_policy.secret_properties.content_type, cert.policy.content_type)
         if cert_policy.x509_certificate_properties.ekus:
-            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.key_properties.ekus)
+            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.ekus)
         if cert_policy.x509_certificate_properties.key_usage:
-            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_properties.key_usage)
+            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_usage)
         if cert_policy.x509_certificate_properties:
             self._validate_x509_properties(cert_bundle_policy=cert.policy, cert_policy_x509_props=cert_policy.x509_certificate_properties)
-        if cert_policy.key_properties:
-            self._validate_key_properties(cert_bundle_key_props=cert.policy.key_properties, cert_policy_key_props=cert_policy.key_properties)
+        self._validate_key_properties(cert_bundle_key_props=cert.policy, cert_policy_key_props=cert_policy.key_properties)
         if cert_policy.lifetime_actions:
             self._validate_lifetime_actions(cert_bundle_lifetime_actions=cert.policy.lifetime_actions, cert_policy_lifetime_actions=cert_policy.lifetime_actions)
 

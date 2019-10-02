@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -51,10 +51,10 @@ async def run_sample():
 
         # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
         # our certificate creation method
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
+        cert_policy = CertificatePolicy(exportable=True,
+                                        key_type='RSA',
+                                        key_size=2048,
+                                        reuse_key=False,
                                         content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',

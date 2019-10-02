@@ -7,14 +7,14 @@ import time
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
-from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy, KeyProperties
+from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
-    SecretProperties, IssuerParameters, X509CertificateProperties,
+    SecretProperties, IssuerParameters, X509CertificateProperties, KeyProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates.models import Issuer, IssuerBase
 
@@ -79,24 +79,23 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_policy.issuer_parameters.name, cert.policy.issuer_name)
         self.assertEqual(cert_policy.secret_properties.content_type, cert.policy.content_type)
         if cert_policy.x509_certificate_properties.ekus:
-            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.key_properties.ekus)
+            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.ekus)
         if cert_policy.x509_certificate_properties.key_usage:
-            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_properties.key_usage)
+            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_usage)
         if cert_policy.x509_certificate_properties:
-            self._validate_x509_properties(cert_bundle_policy=cert.policy, cert_policy_x509_props=cert_policy.x509_certificate_properties)
-        if cert_policy.key_properties:
-            self._validate_key_properties(cert_bundle_key_props=cert.policy.key_properties, cert_policy_key_props=cert_policy.key_properties)
+            self._validate_x509_properties(policy=cert.policy, cert_policy_x509_props=cert_policy.x509_certificate_properties)
+        self._validate_key_properties(policy=cert.policy, cert_policy_key_props=cert_policy.key_properties)
         if cert_policy.lifetime_actions:
             self._validate_lifetime_actions(cert_bundle_lifetime_actions=cert.policy.lifetime_actions, cert_policy_lifetime_actions=cert_policy.lifetime_actions)
 
-    def _validate_x509_properties(self, cert_bundle_policy, cert_policy_x509_props):
-        self.assertIsNotNone(cert_bundle_policy)
+    def _validate_x509_properties(self, policy, cert_policy_x509_props):
+        self.assertIsNotNone(policy)
         self.assertEqual(cert_policy_x509_props.subject,
-                         cert_bundle_policy.subject_name)
+                         policy.subject_name)
         if not cert_policy_x509_props.subject_alternative_names:
             return
         if cert_policy_x509_props.subject_alternative_names.emails:
-            policy_emails = cert_bundle_policy.san_emails
+            policy_emails = policy.san_emails
             for san_email in cert_policy_x509_props.subject_alternative_names.emails:
                 for policy_email in policy_emails:
                     if (san_email == policy_email):
@@ -104,7 +103,7 @@ class CertificateClientTests(KeyVaultTestCase):
                         break
             self.assertFalse(policy_emails)
         if cert_policy_x509_props.subject_alternative_names.upns:
-            policy_upns_list = cert_bundle_policy.san_upns
+            policy_upns_list = policy.san_upns
             for san_upns in cert_policy_x509_props.subject_alternative_names.upns:
                 for policy_upns in policy_upns_list:
                     if san_upns == policy_upns:
@@ -112,7 +111,7 @@ class CertificateClientTests(KeyVaultTestCase):
                         break
             self.assertFalse(policy_upns_list)
         if cert_policy_x509_props.subject_alternative_names.dns_names:
-            policy_dns_names = cert_bundle_policy.san_dns_names
+            policy_dns_names = policy.san_dns_names
             for san_dns_name in cert_policy_x509_props.subject_alternative_names.dns_names:
                 for policy_dns_name in policy_dns_names:
                     if san_dns_name == policy_dns_name:
@@ -120,14 +119,14 @@ class CertificateClientTests(KeyVaultTestCase):
                         break
             self.assertFalse(policy_dns_names)
 
-    def _validate_key_properties(self, cert_bundle_key_props, cert_policy_key_props):
-        self.assertIsNotNone(cert_bundle_key_props)
-        if cert_policy_key_props:
-            self.assertEqual(cert_policy_key_props.exportable, cert_bundle_key_props.exportable)
-            self.assertEqual(cert_policy_key_props.key_type, cert_bundle_key_props.key_type)
-            self.assertEqual(cert_policy_key_props.key_size, cert_bundle_key_props.key_size)
-            self.assertEqual(cert_policy_key_props.reuse_key, cert_bundle_key_props.reuse_key)
-            self.assertEqual(cert_policy_key_props.curve, cert_bundle_key_props.curve)
+    def _validate_key_properties(self, policy, cert_policy_key_props):
+        self.assertIsNotNone(policy)
+        if policy:
+            self.assertEqual(policy.exportable, cert_policy_key_props.exportable)
+            self.assertEqual(policy.key_type, cert_policy_key_props.key_type)
+            self.assertEqual(policy.key_size, cert_policy_key_props.key_size)
+            self.assertEqual(policy.reuse_key, cert_policy_key_props.reuse_key)
+            self.assertEqual(policy.curve, cert_policy_key_props.curve)
 
     def _validate_lifetime_actions(self, cert_bundle_lifetime_actions, cert_policy_lifetime_actions):
         self.assertIsNotNone(cert_bundle_lifetime_actions)

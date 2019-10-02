@@ -8,7 +8,6 @@ from .models import (
     AdministratorDetails,
     CertificatePolicy,
     Contact,
-    KeyProperties,
     LifetimeAction
 )
 
@@ -20,7 +19,6 @@ __all__ = [
     "Contact",
     "KeyCurveName",
     "KeyType",
-    "KeyProperties",
     "KeyUsageType",
     "LifetimeAction",
     "SecretContentType"

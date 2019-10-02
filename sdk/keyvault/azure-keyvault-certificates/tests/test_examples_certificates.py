@@ -36,12 +36,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
+        cert_policy = CertificatePolicy(exportable=True,
+                                        key_type='RSA',
+                                        key_size=2048,
+                                        reuse_key=False,
                                         content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
@@ -104,14 +104,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
+        cert_policy = CertificatePolicy(exportable=True,
+                                        key_type='RSA',
+                                        key_size=2048,
+                                        reuse_key=False,
                                         content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
@@ -163,14 +163,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
+        cert_policy = CertificatePolicy(exportable=True,
+                                        key_type='RSA',
+                                        key_size=2048,
+                                        reuse_key=False,
                                         content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
@@ -207,15 +207,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         from azure.core.exceptions import HttpResponseError
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
+        cert_policy = CertificatePolicy(exportable=True,
+                                        key_type='RSA',
+                                        key_size=2048,
+                                        reuse_key=False,
                                         content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
