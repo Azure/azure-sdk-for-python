@@ -58,7 +58,7 @@ from azure.core.pipeline.transport import (
     RequestsTransport
 )
 
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import AzureError
 
 
 def test_sans_io_exception():
@@ -114,7 +114,10 @@ class TestRequestsTransport(unittest.TestCase):
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
         ]
-        with pytest.raises(ServiceRequestError):
+        # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
+        # Either way, the error should always be wrapped as an AzureError to ensure it's caught
+        # by the retry policy.
+        with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
                 response = pipeline.run(request, connection_timeout=0.000001)
 
