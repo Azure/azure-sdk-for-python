@@ -71,19 +71,15 @@ class EventData(object):
         :type body: str, bytes or list
         """
 
-        self._annotations = {}
-        self._delivery_annotations = {}
-        self._app_properties = {}
-        self._msg_properties = MessageProperties()
-        self._runtime_info = {}
+        self._last_enqueued_event_properties = {}
         if body and isinstance(body, list):
-            self.message = Message(body[0], properties=self._msg_properties)
+            self.message = Message(body[0])
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("EventData cannot be None.")
         else:
-            self.message = Message(body, properties=self._msg_properties)
+            self.message = Message(body)
 
     def __str__(self):
         dic = {
@@ -108,13 +104,12 @@ class EventData(object):
         :param value: The partition key to set.
         :type value: str or bytes
         """
-        annotations = dict(self._annotations)
+        annotations = dict(self.message.annotations)
         annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL] = value
         header = MessageHeader()
         header.durable = True
         self.message.annotations = annotations
         self.message.header = header
-        self._annotations = annotations
 
     def _trace_message(self, parent_span=None):
         """Add tracing information to this message.
@@ -145,25 +140,30 @@ class EventData(object):
                 if traceparent:
                     current_span.link(traceparent)
 
-    @staticmethod
-    def _from_message(message):
-        event_data = EventData(body='')
-        event_data.message = message
-        event_data._msg_properties = message.properties
-        event_data._annotations = message.annotations
-        event_data._app_properties = message.application_properties
-        event_data._delivery_annotations = message.delivery_annotations
-        if event_data._delivery_annotations:
-            event_data._runtime_info = {
+    def _get_last_enqueued_event_properties(self):
+        if self._last_enqueued_event_properties:
+            return self._last_enqueued_event_properties
+
+        if self.message.delivery_annotations:
+            self._last_enqueued_event_properties = {
                 "sequence_number":
-                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
+                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
                 "offset":
-                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
+                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
                 "enqueued_time":
-                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
+                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
                 "retrieval_time":
-                    event_data._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+                    self.message.delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             }
+            return self._last_enqueued_event_properties
+
+        return None
+
+    @classmethod
+    def _from_message(cls, message):
+        # pylint:disable=protected-access
+        event_data = cls(body='')
+        event_data.message = message
         return event_data
 
     @property
@@ -173,7 +173,7 @@ class EventData(object):
 
         :rtype: int or long
         """
-        return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
+        return self.message.annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
@@ -183,7 +183,7 @@ class EventData(object):
         :rtype: str
         """
         try:
-            return self._annotations[EventData.PROP_OFFSET].decode('UTF-8')
+            return self.message.annotations[EventData.PROP_OFFSET].decode('UTF-8')
         except (KeyError, AttributeError):
             return None
 
@@ -194,7 +194,7 @@ class EventData(object):
 
         :rtype: datetime.datetime
         """
-        timestamp = self._annotations.get(EventData.PROP_TIMESTAMP, None)
+        timestamp = self.message.annotations.get(EventData.PROP_TIMESTAMP, None)
         if timestamp:
             return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
@@ -207,9 +207,9 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self._annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
+            return self.message.annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
-            return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
+            return self.message.annotations.get(EventData.PROP_PARTITION_KEY, None)
 
     @property
     def application_properties(self):
@@ -218,7 +218,7 @@ class EventData(object):
 
         :rtype: dict
         """
-        return self._app_properties
+        return self.message.application_properties
 
     @application_properties.setter
     def application_properties(self, value):
@@ -228,8 +228,7 @@ class EventData(object):
         :param value: The application properties for the EventData.
         :type value: dict
         """
-        self._app_properties = value
-        properties = None if value is None else dict(self._app_properties)
+        properties = None if value is None else dict(value)
         self.message.application_properties = properties
 
     @property
@@ -239,7 +238,7 @@ class EventData(object):
 
         :rtype: dict
         """
-        return self._annotations
+        return self.message.annotations
 
     @property
     def body(self):

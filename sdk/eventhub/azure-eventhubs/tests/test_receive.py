@@ -214,6 +214,12 @@ def test_receive_batch(connstr_senders):
         received = receiver.receive(max_batch_size=5, timeout=5)
         assert len(received) == 5
 
+        for event in received:
+            assert event.system_properties
+            assert event.sequence_number is not None
+            assert event.offset
+            assert event.enqueued_time
+
 
 @pytest.mark.liveTest
 def test_receive_batch_with_app_prop_sync(connstr_senders):
