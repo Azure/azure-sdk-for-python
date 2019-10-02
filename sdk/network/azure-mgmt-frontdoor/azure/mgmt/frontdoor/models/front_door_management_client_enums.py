@@ -234,6 +234,23 @@ class ActionType(str, Enum):
     redirect = "Redirect"
 
 
+class ManagedRuleExclusionMatchVariable(str, Enum):
+
+    request_header_names = "RequestHeaderNames"
+    request_cookie_names = "RequestCookieNames"
+    query_string_arg_names = "QueryStringArgNames"
+    request_body_post_arg_names = "RequestBodyPostArgNames"
+
+
+class ManagedRuleExclusionSelectorMatchOperator(str, Enum):
+
+    equals = "Equals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+    equals_any = "EqualsAny"
+
+
 class ManagedRuleEnabledState(str, Enum):
 
     disabled = "Disabled"

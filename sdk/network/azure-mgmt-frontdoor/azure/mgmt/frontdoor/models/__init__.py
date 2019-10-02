@@ -51,6 +51,7 @@ try:
     from .match_condition_py3 import MatchCondition
     from .custom_rule_py3 import CustomRule
     from .custom_rule_list_py3 import CustomRuleList
+    from .managed_rule_exclusion_py3 import ManagedRuleExclusion
     from .managed_rule_override_py3 import ManagedRuleOverride
     from .managed_rule_group_override_py3 import ManagedRuleGroupOverride
     from .managed_rule_set_py3 import ManagedRuleSet
@@ -102,6 +103,7 @@ except (SyntaxError, ImportError):
     from .match_condition import MatchCondition
     from .custom_rule import CustomRule
     from .custom_rule_list import CustomRuleList
+    from .managed_rule_exclusion import ManagedRuleExclusion
     from .managed_rule_override import ManagedRuleOverride
     from .managed_rule_group_override import ManagedRuleGroupOverride
     from .managed_rule_set import ManagedRuleSet
@@ -146,6 +148,8 @@ from .front_door_management_client_enums import (
     Operator,
     TransformType,
     ActionType,
+    ManagedRuleExclusionMatchVariable,
+    ManagedRuleExclusionSelectorMatchOperator,
     ManagedRuleEnabledState,
     PolicyResourceState,
 )
@@ -192,6 +196,7 @@ __all__ = [
     'MatchCondition',
     'CustomRule',
     'CustomRuleList',
+    'ManagedRuleExclusion',
     'ManagedRuleOverride',
     'ManagedRuleGroupOverride',
     'ManagedRuleSet',
@@ -235,6 +240,8 @@ __all__ = [
     'Operator',
     'TransformType',
     'ActionType',
+    'ManagedRuleExclusionMatchVariable',
+    'ManagedRuleExclusionSelectorMatchOperator',
     'ManagedRuleEnabledState',
     'PolicyResourceState',
 ]
