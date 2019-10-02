@@ -26,8 +26,8 @@ async def test_multipart_send():
     # https://github.com/python/cpython/pull/9296
 
     class MockAsyncHttpTransport(AsyncHttpTransport):
-        async def aenter(self): return self
-        async def aexit(self, *args): pass
+        async def __aenter__(self): return self
+        async def __aexit__(self, *args): pass
         async def open(self): pass
         async def close(self): pass
         async def send(self, request, **kwargs): pass
