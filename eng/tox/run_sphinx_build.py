@@ -112,7 +112,6 @@ if __name__ == "__main__":
     package_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
     if should_build_docs(package_name):
-        cleanup_previous_artifacts()
         sphinx_build(target_dir, output_dir)
 
         if in_ci() or args.in_ci:
