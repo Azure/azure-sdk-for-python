@@ -28,7 +28,7 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
-        self.assertTrue(key_attributes.created and key_attributes.updated, "Missing required date attributes.")
+        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
 
     def _import_test_key(self, client, name):
         def _to_bytes(hex):
