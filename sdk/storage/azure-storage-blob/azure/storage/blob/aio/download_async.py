@@ -130,12 +130,12 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             return False
 
         for source_range in self.non_empty_ranges:
-            if given_range_end < source_range['start']:
+            if given_range_end < source_range['start']:  # pylint:disable=no-else-return
                 return True
             elif source_range['end'] < given_range_start:
                 pass
-
-            return False
+            else:
+                return False
 
         return True
 

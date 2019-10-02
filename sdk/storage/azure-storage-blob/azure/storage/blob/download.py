@@ -60,7 +60,7 @@ def process_content(data, start_offset, end_offset, encryption):
     return content
 
 
-class _ChunkDownloader(object):
+class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client=None,
@@ -137,12 +137,12 @@ class _ChunkDownloader(object):
             return False
 
         for source_range in self.non_empty_ranges:
-            if given_range_end < source_range['start']:
+            if given_range_end < source_range['start']:  # pylint:disable=no-else-return
                 return True
             elif source_range['end'] < given_range_start:
                 pass
-
-            return False
+            else:
+                return False
 
         return True
 
