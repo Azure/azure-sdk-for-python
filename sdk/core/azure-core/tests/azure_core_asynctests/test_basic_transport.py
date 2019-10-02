@@ -6,8 +6,12 @@
 from six.moves.http_client import HTTPConnection
 import time
 
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
-from azure.core.pipeline.transport.base_async import AsyncMultipartHelper
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 
@@ -16,6 +20,19 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_multipart_send():
+
+    # transport = mock.MagicMock(spec=AsyncHttpTransport)
+    # MagicMock support async cxt manager only after 3.8
+    # https://github.com/python/cpython/pull/9296
+
+    class MockAsyncHttpTransport(AsyncHttpTransport):
+        async def aenter(self): return self
+        async def aexit(self, *args): pass
+        async def open(self): pass
+        async def close(self): pass
+        async def send(self, request, **kwargs): pass
+
+    transport = MockAsyncHttpTransport()
 
     class RequestPolicy(object):
         async def on_request(self, request):
@@ -29,14 +46,12 @@ async def test_multipart_send():
     request.set_multipart_mixed(
         req0,
         req1,
-        policies=[RequestPolicy()]
-    )
-
-    helper = AsyncMultipartHelper(
-        request,
+        policies=[RequestPolicy()],
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525" # Fix it so test are deterministic
     )
-    await helper.prepare_request()
+
+    async with AsyncPipeline(transport) as pipeline:
+        await pipeline.run(request)
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'

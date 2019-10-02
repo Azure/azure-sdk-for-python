@@ -26,29 +26,50 @@
 from __future__ import absolute_import
 import abc
 from email.message import Message
+
 try:
     from email import message_from_bytes as message_parser
-except ImportError: # 2.7
+except ImportError:  # 2.7
     from email import message_from_string as message_parser  # type: ignore
 from io import BytesIO
 import json
 import logging
 import os
 import time
+
 try:
     binary_type = str
-    from urlparse import urlparse # type: ignore
+    from urlparse import urlparse  # type: ignore
 except ImportError:
-    binary_type = bytes # type: ignore
+    binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
-from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
-                    Optional, Tuple, Callable, Iterator, Iterable, Type)
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    TypeVar,
+    cast,
+    IO,
+    List,
+    Union,
+    Any,
+    Mapping,
+    Dict,
+    Optional,
+    Tuple,
+    Iterator,
+)
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
-from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
+from azure.core.pipeline import (
+    ABC,
+    AbstractContextManager,
+    PipelineRequest,
+    PipelineResponse,
+    PipelineContext,
+)
 from ..base import _await_result
 
 
@@ -73,12 +94,14 @@ def _case_insensitive_dict(*args, **kwargs):
     """
     try:
         from requests.structures import CaseInsensitiveDict
+
         return CaseInsensitiveDict(*args, **kwargs)
     except ImportError:
         pass
     try:
         # multidict is installed by aiohttp
         from multidict import CIMultiDict
+
         return CIMultiDict(*args, **kwargs)
     except ImportError:
         raise ValueError(
@@ -93,7 +116,9 @@ def _format_url_section(template, **kwargs):
             return template.format(**kwargs)
         except KeyError as key:
             formatted_components = template.split("/")
-            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+            components = [
+                c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c
+            ]
             template = "/".join(components)
     # No URL sections left - returning None
 
@@ -108,15 +133,16 @@ def _urljoin(base_url, stub_url):
     :rtype: str
     """
     parsed = urlparse(base_url)
-    parsed = parsed._replace(path=parsed.path + '/' + stub_url)
+    parsed = parsed._replace(path=parsed.path + "/" + stub_url)
     return parsed.geturl()
 
 
 class _HTTPSerializer(HTTPConnection, object):
     """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
     """
+
     def __init__(self, *args, **kwargs):
-        self.buffer = b''
+        self.buffer = b""
         kwargs.setdefault("host", "fakehost")
         super(_HTTPSerializer, self).__init__(*args, **kwargs)
 
@@ -128,18 +154,21 @@ class _HTTPSerializer(HTTPConnection, object):
     def send(self, data):
         self.buffer += data
 
+
 def _serialize_request(http_request):
     serializer = _HTTPSerializer()
     serializer.request(
         method=http_request.method,
         url=http_request.url,
         body=http_request.body,
-        headers=http_request.headers
+        headers=http_request.headers,
     )
     return serializer.buffer
 
 
-class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
+class HttpTransport(
+    AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
+):  # type: ignore
     """An http sender ABC.
     """
 
@@ -157,7 +186,7 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
     def close(self):
         """Close the session if it is not externally owned."""
 
-    def sleep(self, duration): #pylint: disable=no-self-use
+    def sleep(self, duration):  # pylint: disable=no-self-use
         time.sleep(duration)
 
 
@@ -173,6 +202,7 @@ class HttpRequest(object):
     :param data: Body to be sent.
     :type data: bytes or str.
     """
+
     def __init__(self, method, url, headers=None, files=None, data=None):
         # type: (str, str, Mapping[str, str], Any, Any) -> None
         self.method = method
@@ -183,14 +213,14 @@ class HttpRequest(object):
         self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
-        return '<HttpRequest [%s]>' % (self.method)
+        return "<HttpRequest [%s]>" % (self.method)
 
     @property
     def query(self):
         """The query parameters of the request as a dict."""
         query = urlparse(self.url).query
         if query:
-            return {p[0]: p[-1] for p in [p.partition('=') for p in query.split('&')]}
+            return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
         return {}
 
     @property
@@ -211,11 +241,11 @@ class HttpRequest(object):
         :param data: The request field data.
         :type data: str or file-like object.
         """
-        if hasattr(data, 'read'):
+        if hasattr(data, "read"):
             data = cast(IO, data)
             data_name = None
             try:
-                if data.name[0] != '<' and data.name[-1] != '>':
+                if data.name[0] != "<" and data.name[-1] != ">":
                     data_name = os.path.basename(data.name)
             except (AttributeError, TypeError):
                 pass
@@ -232,14 +262,13 @@ class HttpRequest(object):
         """
         query = urlparse(self.url).query
         if query:
-            self.url = self.url.partition('?')[0]
+            self.url = self.url.partition("?")[0]
             existing_params = {
-                p[0]: p[-1]
-                for p in [p.partition('=') for p in query.split('&')]
+                p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
             }
             params.update(existing_params)
         query_params = ["{}={}".format(k, v) for k, v in params.items()]
-        query = '?' + '&'.join(query_params)
+        query = "?" + "&".join(query_params)
         self.url = self.url + query
 
     def set_streamed_data_body(self, data):
@@ -247,9 +276,12 @@ class HttpRequest(object):
 
         :param data: The request field data.
         """
-        if not isinstance(data, binary_type) and \
-                not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
-            raise TypeError("A streamable data source must be an open file-like object or iterable.")
+        if not isinstance(data, binary_type) and not any(
+            hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
+        ):
+            raise TypeError(
+                "A streamable data source must be an open file-like object or iterable."
+            )
         self.data = data
         self.files = None
 
@@ -263,7 +295,7 @@ class HttpRequest(object):
         else:
             bytes_data = ET.tostring(data, encoding="utf8")
             self.data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
-            self.headers['Content-Length'] = str(len(self.data))
+            self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
     def set_json_body(self, data):
@@ -275,7 +307,7 @@ class HttpRequest(object):
             self.data = None
         else:
             self.data = json.dumps(data)
-            self.headers['Content-Length'] = str(len(self.data))
+            self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
     def set_formdata_body(self, data=None):
@@ -285,13 +317,15 @@ class HttpRequest(object):
         """
         if data is None:
             data = {}
-        content_type = self.headers.pop('Content-Type', None) if self.headers else None
+        content_type = self.headers.pop("Content-Type", None) if self.headers else None
 
-        if content_type and content_type.lower() == 'application/x-www-form-urlencoded':
+        if content_type and content_type.lower() == "application/x-www-form-urlencoded":
             self.data = {f: d for f, d in data.items() if d is not None}
             self.files = None
-        else: # Assume "multipart/form-data"
-            self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
+        else:  # Assume "multipart/form-data"
+            self.files = {
+                f: self._format_data(d) for f, d in data.items() if d is not None
+            }
             self.data = None
 
     def set_bytes_body(self, data):
@@ -300,7 +334,7 @@ class HttpRequest(object):
         :param data: The request field data.
         """
         if data:
-            self.headers['Content-Length'] = str(len(data))
+            self.headers["Content-Length"] = str(len(data))
         self.data = data
         self.files = None
 
@@ -310,25 +344,68 @@ class HttpRequest(object):
 
         Only support args for now are HttpRequest objects.
 
+        boundary is optional, and one will be generated if you don't provide one.
+        Note that no verification are made on the boundary, this is considered advanced
+        enough so you know how to respect RFC1341 7.2.1 and provide a correct boundary.
+
         kwargs:
         - policies: SansIOPolicy to apply at preparation time
+        - boundary: Optional boundary
 
         :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
-            kwargs.pop("policies", [])
+            kwargs.pop("policies", []),
+            kwargs.pop("boundary", []),
         )
 
-    def prepare_multipart_mixed(self):
+    def prepare_multipart_body(self):
         # type: () -> None
         """Will prepare the body of this request according to the multipart information.
 
+        This call assumes the on_request policies have been applied already in their
+        correct context (sync/async)
+
         Does nothing if "set_multipart_mixed" was never called.
         """
-        if self.multipart_mixed_info:
-            multipart_helper = MultiPartHelper(self)
-            multipart_helper.prepare_request()
+        if not self.multipart_mixed_info:
+            return
+
+        requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
+        boundary = self.multipart_mixed_info[2]  # type: Optional[str]
+
+        # Update the main request with the body
+        main_message = Message()
+        main_message.add_header("Content-Type", "multipart/mixed")
+        if boundary:
+            main_message.set_boundary(boundary)
+        for i, req in enumerate(requests):
+            part_message = Message()
+            part_message.add_header("Content-Type", "application/http")
+            part_message.add_header("Content-Transfer-Encoding", "binary")
+            part_message.add_header("Content-ID", str(i))
+            part_message.set_payload(req.serialize())
+            main_message.attach(part_message)
+
+        try:
+            from email.policy import HTTP
+
+            full_message = main_message.as_bytes(policy=HTTP)
+            eol = b"\r\n"
+        except ImportError:  # Python 2.7
+            # Right now we decide to not support Python 2.7 on serialization, since
+            # it doesn't serialize a valid HTTP request (and our main scenario Storage refuses it)
+            raise NotImplementedError(
+                "Multipart request are not supported on Python 2.7"
+            )
+            # full_message = main_message.as_string()
+            # eol = b'\n'
+        _, _, body = full_message.split(eol, 2)
+        self.set_bytes_body(body)
+        self.headers["Content-Type"] = (
+            "multipart/mixed; boundary=" + main_message.get_boundary()
+        )
 
     def serialize(self):
         # type: () -> bytes
@@ -353,6 +430,7 @@ class _HttpResponseBase(object):
     :param str content_type: The content type.
     :param int block_size: Defaults to 4096 bytes.
     """
+
     def __init__(self, request, internal_response, block_size=None):
         # type: (HttpRequest, Any, Optional[int]) -> None
         self.request = request
@@ -363,11 +441,11 @@ class _HttpResponseBase(object):
         self.content_type = None  # type: Optional[str]
         self.block_size = block_size or 4096  # Default to same as Requests
 
-
     def body(self):
         # type: () -> bytes
         """Return the whole body as bytes in memory.
         """
+        raise NotImplementedError()
 
     def text(self, encoding=None):
         # type: (str) -> str
@@ -378,8 +456,47 @@ class _HttpResponseBase(object):
         """
         return self.body().decode(encoding or "utf-8")
 
+    def _get_raw_parts(self, http_response_type=None):
+        # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
+        """Assuming this body is multipart, return the iterator or parts.
 
-class HttpResponse(_HttpResponseBase):
+        If parts are application/http use http_response_type or HttpClientTransportResponse
+        as enveloppe.
+        """
+        if http_response_type is None:
+            http_response_type = HttpClientTransportResponse
+
+        body_as_bytes = self.body()
+        # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
+        http_body = (
+            b"Content-Type: "
+            + self.content_type.encode("ascii")
+            + b"\r\n\r\n"
+            + body_as_bytes
+        )
+
+        message = message_parser(http_body)  # type: Message
+
+        # Rebuild an HTTP response from pure string
+        requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
+        responses = []
+        for request, raw_reponse in zip(requests, message.get_payload()):
+            if raw_reponse.get_content_type() == "application/http":
+                responses.append(
+                    _deserialize_response(
+                        raw_reponse.get_payload(decode=True),
+                        request,
+                        http_response_type=http_response_type,
+                    )
+                )
+            else:
+                raise ValueError(
+                    "Multipart doesn't support part other than application/http for now"
+                )
+        return responses
+
+
+class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def stream_download(self, pipeline):
         # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data.
@@ -389,17 +506,42 @@ class HttpResponse(_HttpResponseBase):
         """
 
     def parts(self):
-        # type: () -> Iterator
+        # type: () -> Iterator[HttpResponse]
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError("You can't get parts if the response is not multipart/mixed")
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
 
-        multipart_helper = MultiPartHelper(self.request)
-        return multipart_helper.parse_response(self)
+        responses = self._get_raw_parts()
+        if self.request.multipart_mixed_info:
+            policies = self.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+
+            # Apply on_response concurrently to all requests
+            import concurrent.futures
+
+            def parse_responses(response):
+                http_request = response.request
+                context = PipelineContext(None)
+                pipeline_request = PipelineRequest(http_request, context)
+                pipeline_response = PipelineResponse(
+                    http_request, response, context=context
+                )
+
+                for policy in policies:
+                    _await_result(policy.on_response, pipeline_request, pipeline_response)
+
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                # List comprehension to raise exceptions if happened
+                [  # pylint: disable=expression-not-assigned
+                    _ for _ in executor.map(parse_responses, responses)
+                ]
+
+        return responses
 
 
 class _HttpClientTransportResponse(_HttpResponseBase):
@@ -410,12 +552,13 @@ class _HttpClientTransportResponse(_HttpResponseBase):
     :param HttpRequest request: The request.
     :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
     """
+
     def __init__(self, request, httpclient_response):
         super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
         self.status_code = httpclient_response.status
         self.headers = _case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
-        self.content_type = self.headers.get('Content-Type')
+        self.content_type = self.headers.get("Content-Type")
         self.data = None
 
     def body(self):
@@ -440,6 +583,7 @@ class BytesIOSocket(object):
     This can be used to create a http.client.HTTPResponse object
     based on bytes and not a real socket.
     """
+
     def __init__(self, bytes_data):
         self.bytes_data = bytes_data
 
@@ -447,12 +591,11 @@ class BytesIOSocket(object):
         return BytesIO(self.bytes_data)
 
 
-def _deserialize_response(http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse):
+def _deserialize_response(
+    http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse
+):
     local_socket = BytesIOSocket(http_response_as_bytes)
-    response = _HTTPResponse(
-        local_socket,
-        method=http_request.method
-    )
+    response = _HTTPResponse(local_socket, method=http_request.method)
     response.begin()
     return http_response_type(http_request, response)
 
@@ -467,14 +610,15 @@ class PipelineClientBase(object):
         self._base_url = base_url
 
     def _request(
-            self, method, # type: str
-            url, # type: str
-            params, # type: Optional[Dict[str, str]]
-            headers, # type: Optional[Dict[str, str]]
-            content, # type: Any
-            form_content, # type: Optional[Dict[str, Any]]
-            stream_content, # type: Any
-        ):
+        self,
+        method,  # type: str
+        url,  # type: str
+        params,  # type: Optional[Dict[str, str]]
+        headers,  # type: Optional[Dict[str, str]]
+        content,  # type: Any
+        form_content,  # type: Optional[Dict[str, Any]]
+        stream_content,  # type: Any
+    ):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
@@ -521,20 +665,21 @@ class PipelineClientBase(object):
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
-                url = url.lstrip('/')
-                base = self._base_url.format(**kwargs).rstrip('/')
+                url = url.lstrip("/")
+                base = self._base_url.format(**kwargs).rstrip("/")
                 url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
         return url
 
     def get(
-            self, url, # type: str
-            params=None, # type: Optional[Dict[str, str]]
-            headers=None, # type: Optional[Dict[str, str]]
-            content=None, # type: Any
-            form_content=None # type: Optional[Dict[str, Any]]
-        ):
+        self,
+        url,  # type: str
+        params=None,  # type: Optional[Dict[str, str]]
+        headers=None,  # type: Optional[Dict[str, str]]
+        content=None,  # type: Any
+        form_content=None,  # type: Optional[Dict[str, Any]]
+    ):
         # type: (...) -> HttpRequest
         """Create a GET request object.
 
@@ -545,18 +690,21 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('GET', url, params, headers, content, form_content, None)
-        request.method = 'GET'
+        request = self._request(
+            "GET", url, params, headers, content, form_content, None
+        )
+        request.method = "GET"
         return request
 
     def put(
-            self, url, # type: str
-            params=None, # type: Optional[Dict[str, str]]
-            headers=None, # type: Optional[Dict[str, str]]
-            content=None, # type: Any
-            form_content=None, # type: Optional[Dict[str, Any]]
-            stream_content=None # type: Any
-        ):
+        self,
+        url,  # type: str
+        params=None,  # type: Optional[Dict[str, str]]
+        headers=None,  # type: Optional[Dict[str, str]]
+        content=None,  # type: Any
+        form_content=None,  # type: Optional[Dict[str, Any]]
+        stream_content=None,  # type: Any
+    ):
         # type: (...) -> HttpRequest
         """Create a PUT request object.
 
@@ -567,17 +715,20 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('PUT', url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "PUT", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def post(
-            self, url, # type: str
-            params=None, # type: Optional[Dict[str, str]]
-            headers=None, # type: Optional[Dict[str, str]]
-            content=None, # type: Any
-            form_content=None, # type: Optional[Dict[str, Any]]
-            stream_content=None # type: Any
-        ):
+        self,
+        url,  # type: str
+        params=None,  # type: Optional[Dict[str, str]]
+        headers=None,  # type: Optional[Dict[str, str]]
+        content=None,  # type: Any
+        form_content=None,  # type: Optional[Dict[str, Any]]
+        stream_content=None,  # type: Any
+    ):
         # type: (...) -> HttpRequest
         """Create a POST request object.
 
@@ -588,17 +739,20 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('POST', url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "POST", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def head(
-            self, url, # type: str
-            params=None, # type: Optional[Dict[str, str]]
-            headers=None, # type: Optional[Dict[str, str]]
-            content=None, # type: Any
-            form_content=None, # type: Optional[Dict[str, Any]]
-            stream_content=None # type: Any
-        ):
+        self,
+        url,  # type: str
+        params=None,  # type: Optional[Dict[str, str]]
+        headers=None,  # type: Optional[Dict[str, str]]
+        content=None,  # type: Any
+        form_content=None,  # type: Optional[Dict[str, Any]]
+        stream_content=None,  # type: Any
+    ):
         # type: (...) -> HttpRequest
         """Create a HEAD request object.
 
@@ -609,17 +763,20 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('HEAD', url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "HEAD", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def patch(
-            self, url, # type: str
-            params=None, # type: Optional[Dict[str, str]]
-            headers=None, # type: Optional[Dict[str, str]]
-            content=None, # type: Any
-            form_content=None, # type: Optional[Dict[str, Any]]
-            stream_content=None # type: Any
-        ):
+        self,
+        url,  # type: str
+        params=None,  # type: Optional[Dict[str, str]]
+        headers=None,  # type: Optional[Dict[str, str]]
+        content=None,  # type: Any
+        form_content=None,  # type: Optional[Dict[str, Any]]
+        stream_content=None,  # type: Any
+    ):
         # type: (...) -> HttpRequest
         """Create a PATCH request object.
 
@@ -630,7 +787,9 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('PATCH', url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "PATCH", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def delete(self, url, params=None, headers=None, content=None, form_content=None):
@@ -644,7 +803,9 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('DELETE', url, params, headers, content, form_content, None)
+        request = self._request(
+            "DELETE", url, params, headers, content, form_content, None
+        )
         return request
 
     def merge(self, url, params=None, headers=None, content=None, form_content=None):
@@ -658,124 +819,7 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request('MERGE', url, params, headers, content, form_content, None)
-        return request
-
-
-class MultiPartHelper(object):
-    def __init__(
-        self,
-        main_request,  # type: HttpRequest
-        boundary=None, # type: str
-        http_response_type=HttpClientTransportResponse,  # type: Type[_HttpResponseBase]
-    ):
-        """Create a multipart helper to serialize and parse multipart/mixed payload.
-
-        boundary is optional, and one will be generate if you don't provide one.
-        Note that no verification are made on the boundary, this is considered advanced
-        enough so you know how to respect RFC1341 7.2.1 and provide a correct boundary.
-
-        :param HttpRequest main_request: The request.
-        :param str boundary: Optional boundary
-        """
-        self.main_request = main_request
-        if self.main_request.multipart_mixed_info is None:
-            raise ValueError("This request doesn't have multipart information available")
-        self.requests = self.main_request.multipart_mixed_info[0]  # type: List[HttpRequest]
-        self.policies = self.main_request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-        self._boundary = boundary
-        self._http_response_type = http_response_type
-
-    def prepare_request(self):
-        # Apply on_requests concurrently to all requests
-        import concurrent.futures
-
-        def prepare_requests(request):
-            context = PipelineContext(None)
-            pipeline_request = PipelineRequest(request, context)
-            for policy in self.policies:
-                _await_result(policy.on_request, pipeline_request)
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # List comprehension to raise exceptions if happened
-            [_ for _ in executor.map(prepare_requests, self.requests)]  # pylint: disable=expression-not-assigned
-
-        self._build_final_request()
-
-    def _build_final_request(self):
-        # Update the main request with the body
-        main_message = Message()
-        main_message.add_header("Content-Type", "multipart/mixed")
-        if self._boundary:
-            main_message.set_boundary(self._boundary)
-        for i, req in enumerate(self.requests):
-            part_message = Message()
-            part_message.add_header('Content-Type', 'application/http')
-            part_message.add_header('Content-Transfer-Encoding', 'binary')
-            part_message.add_header('Content-ID', str(i))
-            part_message.set_payload(req.serialize())
-            main_message.attach(part_message)
-
-        try:
-            from email.policy import HTTP
-            full_message = main_message.as_bytes(policy=HTTP)
-            eol = b'\r\n'
-        except ImportError: # Python 2.7
-            # Right now we decide to not support Python 2.7 on serialization, since
-            # it doesn't serialize a valid HTTP request (and our main scenario Storage refuses it)
-            raise NotImplementedError("Multipart request are not supported on Python 2.7")
-            # full_message = main_message.as_string()
-            # eol = b'\n'
-        _, _, body = full_message.split(eol, 2)
-        self.main_request.set_bytes_body(body)
-        self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
-
-    def _get_raw_parts(self, response):
-        body_as_bytes = response.body()
-        # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
-        http_body = (
-            b'Content-Type: ' +
-            response.content_type.encode('ascii') +
-            b'\r\n\r\n' +
-            body_as_bytes
+        request = self._request(
+            "MERGE", url, params, headers, content, form_content, None
         )
-
-        message = message_parser(http_body)  # type: Message
-
-        # Rebuild an HTTP response from pure string
-        responses = []
-        for request, raw_reponse in zip(self.requests, message.get_payload()):
-            if raw_reponse.get_content_type() == "application/http":
-                responses.append(_deserialize_response(
-                    raw_reponse.get_payload(decode=True),
-                    request,
-                    http_response_type=self._http_response_type
-                ))
-            else:
-                raise ValueError("Multipart doesn't support part other than application/http for now")
-        return responses
-
-    def parse_response(self, response):
-        responses = self._get_raw_parts(response)
-
-        # Apply on_response concurrently to all requests
-        import concurrent.futures
-
-        def parse_responses(response):
-            http_request = response.request
-            context = PipelineContext(None)
-            pipeline_request = PipelineRequest(http_request, context)
-            pipeline_response = PipelineResponse(
-                http_request,
-                response,
-                context=context
-            )
-
-            for policy in self.policies:
-                _await_result(policy.on_response, pipeline_request, pipeline_response)
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # List comprehension to raise exceptions if happened
-            [_ for _ in executor.map(parse_responses, responses)]  # pylint: disable=expression-not-assigned
-
-        return responses
+        return request

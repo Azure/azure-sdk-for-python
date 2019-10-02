@@ -8,8 +8,13 @@ from collections import OrderedDict
 import time
 import sys
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport.base import HttpClientTransportResponse, _deserialize_response, MultiPartHelper
+from azure.core.pipeline.transport.base import HttpClientTransportResponse, HttpTransport, _deserialize_response
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 
@@ -162,6 +167,8 @@ def test_response_deserialization_utf8_bom():
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 def test_multipart_send():
 
+    transport = mock.MagicMock(spec=HttpTransport)
+
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
@@ -173,14 +180,12 @@ def test_multipart_send():
     request.set_multipart_mixed(
         req0,
         req1,
-        policies=[header_policy]
-    )
-
-    helper = MultiPartHelper(
-        request,
+        policies=[header_policy],
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525" # Fix it so test are deterministic
     )
-    helper.prepare_request()
+
+    with Pipeline(transport) as pipeline:
+        pipeline.run(request)
 
     assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
