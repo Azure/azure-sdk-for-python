@@ -11,7 +11,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, ResourceGroupPreparer
 
 from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
@@ -38,8 +38,9 @@ _logger = get_logger(logging.DEBUG)
 
 class ServiceBusTest(AzureTestCase):
     @pytest.mark.liveTest
+    @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer()
-    def test_topic_by_topic_client_conn_str_send_basic_KTEST(servicebus_namespace, standard_topic):
+    def test_topic_by_topic_client_conn_str_send_basic_KTEST(servicebus_namespace, standard_topic, **kwargs):
     
         topic_client = TopicClient.from_connection_string(servicebus_namespace, name=standard_topic, debug=False)
         with topic_client.get_sender() as sender:

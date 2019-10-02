@@ -29,7 +29,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         self.service_bus_key = ''
-        print("WTF")
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
