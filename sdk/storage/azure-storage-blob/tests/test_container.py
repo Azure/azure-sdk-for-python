@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import unittest
+import re
 from dateutil.tz import tzutc
 
 import requests

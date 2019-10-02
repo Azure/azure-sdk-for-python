@@ -10,6 +10,7 @@ import copy
 import inspect
 import os
 import os.path
+import re
 import time
 from unittest import SkipTest
 
@@ -347,6 +348,12 @@ class StorageTestCase(unittest.TestCase):
                 body_str = body.get('string')
                 if body_str:
                     response['body']['string'] = self._scrub(body_str)
+
+                    content_type = response.get('headers', {}).get('Content-Type', '')
+                    if content_type:
+                        content_type = (content_type[0] if isinstance(content_type, list) else content_type).lower()
+                        if 'multipart/mixed' in content_type:
+                            response['body']['string'] = re.sub("x-ms-client-request-id: [a-f0-9-]+\r\n", "", body_str.decode()).encode()
 
         return response
 
