@@ -306,8 +306,6 @@ class AccountSasPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
-    :param str _str:
-        A string representing the permissions.
     """
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  add=False, create=False, update=False, process=False):

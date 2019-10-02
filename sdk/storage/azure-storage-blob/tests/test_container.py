@@ -1288,11 +1288,6 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrlx')
 
-    def test_set_container_permission_long_from_string_fails(self):
-        # Arrange
-        with self.assertRaises(ValueError):
-            permission = ContainerSasPermissions.from_string('wrrrrrwwwdd')
-
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     import unittest

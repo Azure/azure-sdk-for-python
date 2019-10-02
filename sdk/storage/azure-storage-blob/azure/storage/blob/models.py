@@ -864,8 +864,6 @@ class ContainerSasPermissions(object):
         delete a container with a container SAS. Use an account SAS instead.
     :param bool list:
         List blobs in the container.
-    :param str _str:
-        A string representing the permissions.
     """
     def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
         self.read = read
@@ -908,8 +906,6 @@ class BlobSasPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
-    :param str _str:
-        A string representing the permissions.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
                  delete=False):

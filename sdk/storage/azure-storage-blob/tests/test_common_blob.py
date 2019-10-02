@@ -1835,10 +1835,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrdx')
 
-    def test_set_blob_permission_long_from_string_fails(self):
-        # Arrange
-        with self.assertRaises(ValueError):
-            permission = BlobSasPermissions.from_string('wrrrrrwwwdd')
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
