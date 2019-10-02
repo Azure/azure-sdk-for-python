@@ -128,7 +128,7 @@ def _configure_timeout(request, absolute, per_request):
     # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
     if absolute is not None:
         if absolute <= 0:
-            raise errors.ClientTimeoutError()
+            raise errors.CosmosClientTimeoutError()
         if per_request:
             # Both socket timeout and client timeout have been provided - use the shortest value.
             request.context.options['connection_timeout'] = min(per_request, absolute)
@@ -155,7 +155,7 @@ class ConnectionRetryPolicy(RetryPolicy):
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raises: ~azure.cosmos.ClientTimeoutError if specified timeout exceeded.
+        :raises: ~azure.cosmos.CosmosClientTimeoutError if specified timeout exceeded.
         :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
         """
         absolute_timeout = request.context.options.pop('timeout', None)
@@ -181,7 +181,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
-            except errors.ClientTimeoutError as timeout_error:
+            except errors.CosmosClientTimeoutError as timeout_error:
                 timeout_error.inner_exception = retry_error
                 timeout_error.response = response
                 timeout_error.history = retry_settings['history']

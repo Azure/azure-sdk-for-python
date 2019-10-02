@@ -2044,7 +2044,7 @@ class CRUDTests(unittest.TestCase):
             return end_time - start_time
 
     def test_absolute_client_timeout(self):
-        with self.assertRaises(errors.ClientTimeoutError):
+        with self.assertRaises(errors.CosmosClientTimeoutError):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,

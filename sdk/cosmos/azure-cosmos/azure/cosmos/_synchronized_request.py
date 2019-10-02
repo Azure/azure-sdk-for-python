@@ -103,7 +103,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:
-            raise errors.ClientTimeoutError()
+            raise errors.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
