@@ -997,13 +997,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return query_parameters, header_parameters
 
     @distributed_trace
-    def delete_blobs(
-            self, *blobs,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
+    def delete_blobs(self, *blobs, **kwargs):
         # type: (...) -> None
         """Marks the specified blobs or snapshots for deletion.
 
@@ -1057,7 +1051,10 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        options = BlobClient._generic_delete_blob_options(
+        delete_snapshots = kwargs.get('delete_snapshots', None)
+        lease = kwargs.get('lease', None)
+        timeout = kwargs.get('timeout', None)
+        options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             delete_snapshots=delete_snapshots,
             lease=lease,
             timeout=timeout,
@@ -1105,11 +1102,12 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_standard_blob_tier_blobs(
-        self, *blobs,  # type: Union[str, BlobProperties]
-        standard_blob_tier,
+        self,
+        standard_blob_tier,  # type: Union[str, StandardBlobTier]
+        *blobs,  # type: Union[str, BlobProperties]
         **kwargs
     ):
-        # type: (Union[str, BlobProperties], Union[str, StandardBlobTier], Any) -> None
+        # type: (...) -> Iterator[HttpResponse]
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1157,11 +1155,12 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
-        self, *blobs,  # type: Union[str, BlobProperties]
-        premium_page_blob_tier,
+        self,
+        premium_page_blob_tier,  # type: Union[str, PremiumPageBlobTier]
+        *blobs,  # type: Union[str, BlobProperties]
         **kwargs
     ):
-        # type: (Union[str, BlobProperties], Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
+        # type: (...) -> Iterator[HttpResponse]
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         :param blobs: The blobs with which to interact.

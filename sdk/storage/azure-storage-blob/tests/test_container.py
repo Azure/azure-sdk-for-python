@@ -864,7 +864,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_metadata(self):
         # Arrange
-        
+
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1043,10 +1043,10 @@ class StorageContainerTest(StorageTestCase):
             assert blob_ref.blob_tier_change_time is None
 
             parts = container.set_standard_blob_tier_blobs(
+                tier,
                 'blob1',
                 'blob2',
                 'blob3',
-                standard_blob_tier=tier
             )
 
             parts = list(parts)
@@ -1095,10 +1095,10 @@ class StorageContainerTest(StorageTestCase):
             assert blob_ref.blob_tier_inferred
 
             parts = container.set_premium_page_blob_tier_blobs(
+                PremiumPageBlobTier.P50,
                 'blob1',
                 'blob2',
                 'blob3',
-                premium_page_blob_tier=PremiumPageBlobTier.P50
             )
 
             parts = list(parts)
@@ -1146,7 +1146,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_multiple(self):
         # Arrange
-        
+
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')

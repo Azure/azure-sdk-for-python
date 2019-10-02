@@ -1288,10 +1288,10 @@ class StorageContainerTestAsync(StorageTestCase):
                 assert blob_ref.blob_tier_change_time is None
 
                 parts = await _to_list(await container.set_standard_blob_tier_blobs(
+                    tier,
                     'blob1',
                     'blob2',
                     'blob3',
-                    standard_blob_tier=tier
                 ))
 
                 assert len(parts) == 3
@@ -1344,10 +1344,10 @@ class StorageContainerTestAsync(StorageTestCase):
             assert blob_ref.blob_tier_inferred
 
             parts = await _to_list(container.set_premium_page_blob_tier_blobs(
+                PremiumPageBlobTier.P50,
                 'blob1',
                 'blob2',
                 'blob3',
-                premium_page_blob_tier=PremiumPageBlobTier.P50
             ))
 
             assert len(parts) == 3

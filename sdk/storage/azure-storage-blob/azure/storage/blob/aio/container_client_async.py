@@ -6,14 +6,14 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, AsyncIterator,
     TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
@@ -43,6 +43,7 @@ if TYPE_CHECKING:
     from ..models import ( # pylint: disable=unused-import
         AccessPolicy,
         ContentSettings,
+        StandardBlobTier,
         PremiumPageBlobTier)
 
 
@@ -860,11 +861,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace
     async def set_standard_blob_tier_blobs(
-        self, *blobs,  # type: Union[str, BlobProperties]
-        standard_blob_tier,
+        self,
+        standard_blob_tier: Union[str, 'StandardBlobTier'],
+        *blobs: Union[str, BlobProperties],
         **kwargs
-    ):
-        # type: (Union[str, BlobProperties], Union[str, StandardBlobTier], Any) -> None
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -912,11 +913,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
-        self, *blobs,  # type: Union[str, BlobProperties]
-        premium_page_blob_tier,
+        self,
+        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
+        *blobs: Union[str, BlobProperties],
         **kwargs
-    ):
-        # type: (Union[str, BlobProperties], Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
+    ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         :param blobs: The blobs with which to interact.
