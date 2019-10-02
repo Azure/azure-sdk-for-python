@@ -1051,13 +1051,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        delete_snapshots = kwargs.get('delete_snapshots', None)
-        lease = kwargs.get('lease', None)
-        timeout = kwargs.get('timeout', None)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
-            delete_snapshots=delete_snapshots,
-            lease=lease,
-            timeout=timeout,
             **kwargs
         )
         query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
