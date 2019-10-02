@@ -3,6 +3,21 @@
 Release History
 ===============
 
+5.0.0 (2019-09-22)
+++++++++++++++++++
+
+**Features**
+
+- Model DeploymentValidateResult has a new parameter error
+- Model Subscription has a new parameter managed_by_tenants
+
+**Breaking changes**
+
+- Model Application no longer has parameter ui_definition_uri
+- Model ApplicationPatchable no longer has parameter ui_definition_uri
+- Model TenantIdDescription no longer has parameter display_name
+- Model TenantIdDescription no longer has parameter domains
+
 4.0.0 (2019-09-03)
 ++++++++++++++++++
 

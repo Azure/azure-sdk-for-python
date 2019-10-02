@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
-__version__ = "5.0.0b3"
+__version__ = "5.0.0b4"
 from uamqp import constants  # type: ignore
 from azure.eventhub.common import EventData, EventDataBatch, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \

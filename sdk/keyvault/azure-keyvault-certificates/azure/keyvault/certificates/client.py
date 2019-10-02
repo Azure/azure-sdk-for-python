@@ -14,11 +14,11 @@ from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map
 from .models import (
     Certificate,
-    CertificateBase,
+    CertificateProperties,
     CertificatePolicy,
     DeletedCertificate,
     Issuer,
-    IssuerBase,
+    IssuerProperties,
     Contact,
     CertificateOperation,
     LifetimeAction,
@@ -61,7 +61,7 @@ class CertificateClient(KeyVaultClientBase):
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> CertificateOperation
+        # type: (...) -> LROPoller
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -74,8 +74,10 @@ class CertificateClient(KeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: An LROPoller for the create certificate operation. Waiting on the poller
+         gives you the certificate if creation is successful, the CertificateOperation if not.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -104,7 +106,7 @@ class CertificateClient(KeyVaultClientBase):
                                                                     key_size=2048,
                                                                     reuse_key=True,
                                                                     key_usage=[
-                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.crl_sign,
                                                                         KeyUsageType.data_encipherment,
                                                                         KeyUsageType.digital_signature,
                                                                         KeyUsageType.key_agreement,
@@ -117,7 +119,7 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = self._client.create_certificate(
+        cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -126,17 +128,24 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
+
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
         return LROPoller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )
@@ -426,7 +435,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_certificate(
+    def update_certificate_properties(
             self,
             name,  # type: str
             version=None,   # type: Optional[str]
@@ -576,7 +585,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], **Any) -> Iterable[CertificateBase]
+        # type: (Optional[bool], **Any) -> Iterable[CertificateProperties]
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -585,9 +594,9 @@ class CertificateClient(KeyVaultClientBase):
 
         :param bool include_pending: Specifies whether to include certificates
             which are not completely provisioned.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -603,13 +612,13 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
-            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def list_certificate_versions(self, name, **kwargs):
-        # type: (str, **Any) -> Iterable[CertificateBase]
+        # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -617,9 +626,9 @@ class CertificateClient(KeyVaultClientBase):
         certificates/list permission.
 
         :param str name: The name of the certificate.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -635,7 +644,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
-            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs)
 
     @distributed_trace
@@ -1083,7 +1092,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_issuers(self, **kwargs):
-        # type: (**Any) -> Iterable[IssuerBase]
+        # type: (**Any) -> Iterable[IssuerProperties]
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
@@ -1106,6 +1115,6 @@ class CertificateClient(KeyVaultClientBase):
         return self._client.get_certificate_issuers(
             vault_base_url=self.vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [IssuerBase._from_issuer_item(issuer_item=x) for x in objs],
+            cls=lambda objs: [IssuerProperties._from_issuer_item(issuer_item=x) for x in objs],
             **kwargs
         )

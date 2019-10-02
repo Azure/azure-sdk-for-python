@@ -98,6 +98,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     self._messages_iter = self._handler.receive_messages_iter()
                 message = next(self._messages_iter)
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
+                event_data._trace_link_message()  # pylint:disable=protected-access
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
                 return event_data
@@ -173,6 +174,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
             self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
+            event_data._trace_link_message()  # pylint:disable=protected-access
+
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):

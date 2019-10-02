@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Coroutine
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -18,10 +18,10 @@ from azure.keyvault.certificates.models import(
     CertificateOperation,
     Certificate,
     DeletedCertificate,
-    CertificateBase,
+    CertificateProperties,
     Contact,
     Issuer,
-    IssuerBase,
+    IssuerProperties,
     KeyProperties,
     SecretContentType,
     LifetimeAction,
@@ -53,7 +53,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
-    ) -> CertificateOperation:
+    ) -> Coroutine:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -66,8 +66,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
-        :rtype: coroutine
+        :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
+         returns the created Certificate if creation is successful, the CertificateOperation if not.
+        :rtype: coroutine[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -95,7 +97,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                                                     key_size=2048,
                                                                     reuse_key=True,
                                                                     key_usage=[
-                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.crl_sign,
                                                                         KeyUsageType.data_encipherment,
                                                                         KeyUsageType.digital_signature,
                                                                         KeyUsageType.key_agreement,
@@ -107,8 +109,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                        content_type=SecretContentType.PKCS12,
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
-
-        create_certificate_operation = await self._client.create_certificate(
+        cert_bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -116,19 +117,24 @@ class CertificateClient(AsyncKeyVaultClientBase):
             tags=tags,
             **kwargs
         )
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePollerAsync(
-            unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
         return async_poller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )
@@ -421,7 +427,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_certificate(
+    async def update_certificate_properties(
         self,
         name: str,
         version: Optional[str] = None,
@@ -570,7 +576,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         self,
         include_pending: Optional[bool] = None,
         **kwargs: "**Any"
-    ) -> AsyncIterable[CertificateBase]:
+    ) -> AsyncIterable[CertificateProperties]:
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -579,9 +585,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :param bool include_pending: Specifies whether to include certificates
          which are not completely provisioned.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -597,12 +603,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
-            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateBase]:
+    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateProperties]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -610,9 +616,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificates/list permission.
 
         :param str name: The name of the certificate.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -628,7 +634,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
-            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs)
 
     @distributed_trace_async
@@ -1080,7 +1086,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerBase]:
+    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerProperties]:
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
@@ -1103,6 +1109,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return self._client.get_certificate_issuers(
             vault_base_url=self.vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [IssuerBase._from_issuer_item(x) for x in objs],
+            cls=lambda objs: [IssuerProperties._from_issuer_item(x) for x in objs],
             **kwargs
         )

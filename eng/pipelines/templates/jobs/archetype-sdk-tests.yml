@@ -4,6 +4,7 @@ parameters:
   MaxParallel: 0
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
+  AdditionalTestArgs: ''
   TestMarkArgument: ''
   Matrix:
     Linux_Python35:
@@ -18,6 +19,10 @@ parameters:
       OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
+    Linux_PyPy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
 
 jobs:
   - job: 'Test'
@@ -45,4 +50,5 @@ jobs:
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
           ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}

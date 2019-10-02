@@ -129,7 +129,7 @@ def get_opencensus_span():
     try:
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
-        return OpenCensusSpan
+        return OpenCensusSpan  # type: ignore
     except ImportError:
         return None
 

@@ -37,6 +37,14 @@ _LOGGER = logging.getLogger(__name__)
 PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
+def _await_result(func, *args, **kwargs):
+    """If func returns an awaitable, raise that this runner can't handle it."""
+    result = func(*args, **kwargs)
+    if hasattr(result, '__await__'):
+        raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
+    return result
+
+
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
 
@@ -60,14 +68,14 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        self._policy.on_request(request)
+        _await_result(self._policy.on_request, request)
         try:
             response = self.next.send(request)
         except Exception: #pylint: disable=broad-except
-            if not self._policy.on_exception(request):
+            if not _await_result(self._policy.on_exception, request):
                 raise
         else:
-            self._policy.on_response(request, response)
+            _await_result(self._policy.on_response, request, response)
         return response
 
 
@@ -150,6 +158,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(request, context) # type: PipelineRequest
+        pipeline_request = PipelineRequest(request, context) # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)  # type: ignore

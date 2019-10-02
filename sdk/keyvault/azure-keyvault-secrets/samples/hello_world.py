@@ -45,7 +45,7 @@ def run_sample():
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
-        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.expires))
+        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires))
 
         # Let's get the bank secret using its name
         print("\n.. Get a Secret by name")
@@ -56,10 +56,10 @@ def run_sample():
         # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
         # the value of the secret.
         print("\n.. Update a Secret by name")
-        expires = bank_secret.expires + datetime.timedelta(days=365)
-        updated_secret = client.update_secret(secret.name, expires=expires)
-        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret.updated))
-        print("Secret with name '{0}' was updated to expire on '{1}'".format(secret.name, updated_secret.expires))
+        expires = bank_secret.properties.expires + datetime.timedelta(days=365)
+        updated_secret_properties = client.update_secret_properties(secret.name, expires=expires)
+        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated))
+        print("Secret with name '{0}' was updated to expire on '{1}'".format(secret.name, updated_secret_properties.expires))
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the Key Vault.
         # To achieve this, we need to create a new version of the secret in the Key Vault. The update operation cannot

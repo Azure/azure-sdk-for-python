@@ -59,9 +59,12 @@ try:
                                     san_dns_names=['sdk.azure-int.net']
                                     )
     cert_name = "HelloWorldCertificate"
-    create_certificate_poller = client.create_certificate(name=cert_name, policy=cert_policy)
-    create_certificate_poller.wait()
-    print("Certificate with name '{0}' created".format(cert_name))
+
+    # create_certificate returns a poller. Calling result() on the poller will return the certificate
+    # if creation is successful, and the CertificateOperation if not. The wait() call on the poller will
+    # wait until the long running operation is complete.
+    certificate = client.create_certificate(name=cert_name, policy=cert_policy).result()
+    print("Certificate with name '{0}' created".format(certificate.name))
 
     # Let's get the bank certificate using its name
     print("\n.. Get a Certificate by name")
@@ -71,14 +74,14 @@ try:
     # After one year, the bank account is still active, and we have decided to update the tags.
     print("\n.. Update a Certificate by name")
     tags = {"a": "b"}
-    updated_certificate = client.update_certificate(name=bank_certificate.name, tags=tags)
+    updated_certificate = client.update_certificate_properties(name=bank_certificate.name, tags=tags)
     print("Certificate with name '{0}' was updated on date '{1}'".format(
         bank_certificate.name,
-        updated_certificate.updated)
+        updated_certificate.properties.updated)
     )
     print("Certificate with name '{0}' was updated with tags '{1}'".format(
         bank_certificate.name,
-        updated_certificate.tags)
+        updated_certificate.properties.tags)
     )
 
     # The bank account was closed, need to delete its credentials from the Key Vault.

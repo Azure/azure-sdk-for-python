@@ -3,6 +3,25 @@
 
 -------------------
 
+## 2019-XX-XX Version 1.0.0b4
+
+### Features
+
+- Tracing: network span context is available with the TRACING_CONTEXT in pipeline response  #7252
+- Tracing: Span contract now has `kind`, `traceparent` and is a context manager  #7252
+
+### Bug fixes
+
+- Tracing: policy cannot fail the pipeline, even in the worst condition  #7252
+- Tracing: policy pass correctly status message if exception  #7252
+- Tracing: incorrect span if exception raised from decorated function  #7133
+
+### Breaking changes
+
+- Tracing: `azure.core.tracing.context` removed
+- Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
+- Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
+
 ## 2019-09-09 Version 1.0.0b3
 
 ### Bug fixes
