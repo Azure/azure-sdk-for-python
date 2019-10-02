@@ -41,7 +41,7 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import AzureError
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -1994,7 +1994,7 @@ class CRUDTests(unittest.TestCase):
                                                             backoff_factor=0.3,
                                                             status_forcelist=(500, 502, 504)
                                                         )
-        with self.assertRaises(ServiceRequestError):
+        with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
@@ -2023,7 +2023,7 @@ class CRUDTests(unittest.TestCase):
                 "Session",
                 connection_retry_policy=retry_policy)
             self.fail()
-        except ServiceRequestError as e:
+        except AzureError as e:
             end_time = time.time()
             return end_time - start_time
 
@@ -2039,7 +2039,7 @@ class CRUDTests(unittest.TestCase):
                 retry_connect=retries,
                 retry_status=retries)
             self.fail()
-        except ServiceRequestError as e:
+        except AzureError as e:
             end_time = time.time()
             return end_time - start_time
 
