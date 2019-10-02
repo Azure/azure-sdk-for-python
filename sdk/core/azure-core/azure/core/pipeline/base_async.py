@@ -33,8 +33,10 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 ImplPoliciesType = List[
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-]  # pylint: disable=unsubscriptable-object
+    AsyncHTTPPolicy[  # pylint: disable=unsubscriptable-object
+        HTTPRequestType, AsyncHTTPResponseType
+    ]
+]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
