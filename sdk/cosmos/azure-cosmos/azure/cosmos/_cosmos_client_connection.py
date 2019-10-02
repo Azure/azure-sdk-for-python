@@ -26,11 +26,9 @@
 """
 from typing import Dict, Any, Optional
 import six
-import requests
-from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (  # type: ignore
     HTTPPolicy,
     ContentDecodePolicy,
@@ -158,7 +156,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             retry_policy = self.connection_policy.ConnectionRetryConfiguration
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
             retry_policy = RetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
-        elif self.connection_policy.ConnectionRetryConfiguration is not None:
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
             # Convert a urllib3 retry policy to a Pipeline policy
             retry_policy = RetryPolicy(
                 retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
@@ -169,6 +167,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
+        else:
+            TypeError("Unsupported retry policy. Must be an azure.core.RetryPolicy, integer, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
