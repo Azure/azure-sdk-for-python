@@ -25,7 +25,7 @@ from azure.eventhub import EventHubClient, EventPosition
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--sleep", action="store", default="True", help="sleep on reconnect test: True or False"
+        "--sleep", action="store", default="False", help="sleep on reconnect test: True or False"
     )
 
 
@@ -82,7 +82,7 @@ def cleanup_eventhub(eventhub_config, hub_name, client=None):
     client.delete_event_hub(hub_name)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def live_eventhub_config():
     try:
         config = {}
