@@ -41,7 +41,8 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -54,6 +55,7 @@ from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
 from azure.cosmos import _retry_utility
+import requests
 from requests.packages.urllib3.util.retry import Retry
 from requests.exceptions import ConnectionError
 
@@ -66,6 +68,27 @@ pytestmark = pytest.mark.cosmosEmulator
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+
+class TimeoutTransport(RequestsTransport):
+
+    def __init__(self, response):
+        self._response = response
+        super(TimeoutTransport, self).__init__()
+
+    def send(self, *args, **kwargs):
+        if kwargs.pop("passthrough", False):
+            return super(TimeoutTransport, self).send(*args, **kwargs)
+
+        time.sleep(5)
+        if isinstance(self._response, Exception):
+            raise self._response
+        output = requests.Response()
+        output.headers = {"x-ms-substatus": 10014}
+        output.status_code = self._response
+        response = RequestsTransportResponse(None, output)
+        return response
+
 
 @pytest.mark.usefixtures("teardown")
 class CRUDTests(unittest.TestCase):
@@ -2051,6 +2074,37 @@ class CRUDTests(unittest.TestCase):
                 "Session",
                 retry_total=3,
                 timeout=1)
+
+        error_response = ServiceResponseError("Read timeout")
+        timeout_transport = TimeoutTransport(error_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        status_response = 500  # Users connection level retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            list(databases)
+
+        status_response = 409  # Uses Cosmos custom retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            list(databases)
+
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):

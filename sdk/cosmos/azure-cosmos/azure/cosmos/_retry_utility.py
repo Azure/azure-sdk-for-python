@@ -67,6 +67,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     )
     while True:
         try:
+            client_timeout = kwargs.get('timeout')
+            start_time = time.time()
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
@@ -116,6 +118,10 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+            if client_timeout:
+                kwargs['timeout'] = client_timeout - (time.time() - start_time)
+                if kwargs['timeout'] <= 0:
+                    raise errors.CosmosClientTimeoutError()
 
 
 def ExecuteFunction(function, *args, **kwargs):

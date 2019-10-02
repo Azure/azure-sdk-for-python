@@ -156,7 +156,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         return (response.stream_download(pipeline_client._pipeline), headers)
 
     data = response.body()
-    if not six.PY2:
+    if data and not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode("utf-8")
 
