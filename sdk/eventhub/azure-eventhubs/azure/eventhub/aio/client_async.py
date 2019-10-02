@@ -114,6 +114,7 @@ class EventHubClient(EventHubClientAbstract):
 
     async def _management_request(self, mgmt_msg, op_type):
         retried_times = 0
+        last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
@@ -133,6 +134,8 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 await mgmt_client.close_async()
+        log.info("%r returns an exception %r", self._container_id, last_exception)
+        raise last_exception
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]

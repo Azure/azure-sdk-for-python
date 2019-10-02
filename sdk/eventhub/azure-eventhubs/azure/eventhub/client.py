@@ -120,6 +120,7 @@ class EventHubClient(EventHubClientAbstract):
 
     def _management_request(self, mgmt_msg, op_type):
         retried_times = 0
+        last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = uamqp.AMQPClient(self._mgmt_target)
@@ -139,6 +140,8 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 mgmt_client.close()
+        log.info("%r returns an exception %r", self._container_id, last_exception)
+        raise last_exception
 
 
     def get_properties(self):
