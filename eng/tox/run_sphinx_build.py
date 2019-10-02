@@ -116,6 +116,6 @@ if __name__ == "__main__":
         sphinx_build(target_dir, output_dir)
 
         if in_ci() or args.in_ci:
-            move_output_and_zip(output_dir, package_dir)
+            move_output_and_zip(output_dir, package_dir, package_name)
     else:
         logging.info("Skipping sphinx build for {}".format(package_name))
