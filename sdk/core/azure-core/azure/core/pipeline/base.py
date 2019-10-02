@@ -25,10 +25,15 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, # pylint: disable=unused-import
-                    Tuple, Callable, Iterator)
-from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
+from typing import Generic, TypeVar, List, Union, Any
+from azure.core.pipeline import (
+    AbstractContextManager,
+    PipelineRequest,
+    PipelineResponse,
+    PipelineContext,
+)
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 HttpTransportType = TypeVar("HttpTransportType")
@@ -40,8 +45,10 @@ PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 def _await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
     result = func(*args, **kwargs)
-    if hasattr(result, '__await__'):
-        raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
+    if hasattr(result, "__await__"):
+        raise TypeError(
+            "Policy {} returned awaitable object in non-async pipeline.".format(func)
+        )
     return result
 
 
@@ -71,7 +78,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         _await_result(self._policy.on_request, request)
         try:
             response = self.next.send(request)
-        except Exception: #pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             if not _await_result(self._policy.on_exception, request):
                 raise
         else:
@@ -86,6 +93,7 @@ class _TransportRunner(HTTPPolicy):
 
     :param sender: The Http Transport instance.
     """
+
     def __init__(self, sender):
         # type: (HttpTransportType) -> None
         super(_TransportRunner, self).__init__()
@@ -102,7 +110,7 @@ class _TransportRunner(HTTPPolicy):
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
-            context=request.context
+            context=request.context,
         )
 
 
@@ -123,28 +131,58 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             :dedent: 4
             :caption: Builds the pipeline for synchronous transport.
     """
+
     def __init__(self, transport, policies=None):
         # type: (HttpTransportType, PoliciesType) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
         self._transport = transport  # type: ignore
 
-        for policy in (policies or []):
+        for policy in policies or []:
             if isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
             elif policy:
                 self._impl_policies.append(policy)
-        for index in range(len(self._impl_policies)-1):
-            self._impl_policies[index].next = self._impl_policies[index+1]
+        for index in range(len(self._impl_policies) - 1):
+            self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:
             self._impl_policies[-1].next = _TransportRunner(self._transport)
 
     def __enter__(self):
         # type: () -> Pipeline
-        self._transport.__enter__() # type: ignore
+        self._transport.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
         self._transport.__exit__(*exc_details)
+
+    @staticmethod
+    def _prepare_multipart_mixed_request(request):
+        # type: (HTTPRequestType) -> None
+        """Will execute the multipart policies.
+
+        Does nothing if "set_multipart_mixed" was never called.
+        """
+        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        if not multipart_mixed_info:
+            return
+
+        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
+        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+
+        # Apply on_requests concurrently to all requests
+        import concurrent.futures
+
+        def prepare_requests(req):
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(req, context)
+            for policy in policies:
+                _await_result(policy.on_request, pipeline_request)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # List comprehension to raise exceptions if happened
+            [  # pylint: disable=expression-not-assigned
+                _ for _ in executor.map(prepare_requests, requests)
+            ]
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
@@ -155,7 +193,15 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        self._prepare_multipart_mixed_request(request)
+        request.prepare_multipart_body()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(request, context) # type: PipelineRequest[HTTPRequestType]
-        first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
+        pipeline_request = PipelineRequest(
+            request, context
+        )  # type: PipelineRequest[HTTPRequestType]
+        first_node = (
+            self._impl_policies[0]
+            if self._impl_policies
+            else _TransportRunner(self._transport)
+        )
         return first_node.send(pipeline_request)  # type: ignore
