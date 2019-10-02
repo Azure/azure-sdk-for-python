@@ -36,7 +36,7 @@ pr:
     - sdk/advisor/
 
 
-jobs:
+stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: advisor
