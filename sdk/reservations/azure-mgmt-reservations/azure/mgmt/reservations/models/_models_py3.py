@@ -349,6 +349,9 @@ class CreateGenericQuotaRequestParameters(Model):
 class CurrentQuotaLimit(Model):
     """Quota limits.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param limit: The quota limit.
     :type limit: int
     :param current_value: The current resource usages information.
@@ -366,10 +369,18 @@ class CurrentQuotaLimit(Model):
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
     :type quota_period: str
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: A user friendly message.
+    :vartype message: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
     """
+
+    _validation = {
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'limit': {'key': 'limit', 'type': 'int'},
@@ -378,10 +389,12 @@ class CurrentQuotaLimit(Model):
         'resource_type': {'key': 'resourceType', 'type': 'object'},
         'unit': {'key': 'unit', 'type': 'str'},
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
+        'provisioning_state': {'key': 'additionalProperties.provisioningState', 'type': 'object'},
+        'message': {'key': 'additionalProperties.message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, *, limit: int=None, current_value: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, limit: int=None, current_value: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, provisioning_state=None, properties=None, **kwargs) -> None:
         super(CurrentQuotaLimit, self).__init__(**kwargs)
         self.limit = limit
         self.current_value = current_value
@@ -389,6 +402,8 @@ class CurrentQuotaLimit(Model):
         self.resource_type = resource_type
         self.unit = unit
         self.quota_period = quota_period
+        self.provisioning_state = provisioning_state
+        self.message = None
         self.properties = properties
 
 
@@ -1014,8 +1029,8 @@ class QuotaRequestSubmitResponse201(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
-        'message': {'key': 'message', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
     }
 
     def __init__(self, *, provisioning_state=None, **kwargs) -> None:

@@ -349,6 +349,9 @@ class CreateGenericQuotaRequestParameters(Model):
 class CurrentQuotaLimit(Model):
     """Quota limits.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param limit: The quota limit.
     :type limit: int
     :param current_value: The current resource usages information.
@@ -366,10 +369,18 @@ class CurrentQuotaLimit(Model):
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
     :type quota_period: str
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: A user friendly message.
+    :vartype message: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
     """
+
+    _validation = {
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'limit': {'key': 'limit', 'type': 'int'},
@@ -378,6 +389,8 @@ class CurrentQuotaLimit(Model):
         'resource_type': {'key': 'resourceType', 'type': 'object'},
         'unit': {'key': 'unit', 'type': 'str'},
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
+        'provisioning_state': {'key': 'additionalProperties.provisioningState', 'type': 'object'},
+        'message': {'key': 'additionalProperties.message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
@@ -389,6 +402,8 @@ class CurrentQuotaLimit(Model):
         self.resource_type = kwargs.get('resource_type', None)
         self.unit = kwargs.get('unit', None)
         self.quota_period = kwargs.get('quota_period', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.message = None
         self.properties = kwargs.get('properties', None)
 
 
@@ -1014,8 +1029,8 @@ class QuotaRequestSubmitResponse201(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
-        'message': {'key': 'message', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
