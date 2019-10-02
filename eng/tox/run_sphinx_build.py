@@ -22,18 +22,13 @@ import io
 
 logging.getLogger().setLevel(logging.INFO)
 
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", "_docs"))
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 def in_ci():
     return os.getenv('TF_BUILD', False)
 
 def move_output_and_zip(target_dir, package_dir):
     pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
-
-def is_mgmt_package(package_dir):
-    pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
-
-    return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
 def sphinx_build(target_dir, output_dir):
     command_array = [
