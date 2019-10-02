@@ -43,13 +43,6 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
 
-
-  - task: PythonScript@0
-    displayName: 'Generate Docs'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
-
   - task: PythonScript@0
     displayName: 'Generate Docs'
     inputs:
