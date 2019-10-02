@@ -49,9 +49,9 @@ class Operations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.managednetwork.v2019_06_01_preview.models.OperationPaged[~azure.mgmt.managednetwork.v2019_06_01_preview.models.Operation]
+         ~managednetwork.models.OperationPaged[~managednetwork.models.Operation]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<managednetwork.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
