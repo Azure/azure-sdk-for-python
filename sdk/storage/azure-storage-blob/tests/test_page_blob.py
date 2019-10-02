@@ -1590,7 +1590,7 @@ class StoragePageBlobTest(StorageTestCase):
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
-        content = blob_client.download_blob().content_as_bytes(max_connections=3)
+        content = blob_client.download_blob().content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(sparse_page_blob_size, len(content))

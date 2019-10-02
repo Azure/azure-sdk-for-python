@@ -418,32 +418,32 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         return response
 
-    def content_as_bytes(self, max_connections=1):
+    def content_as_bytes(self, max_concurrency=1):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_connections:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: bytes
         """
         stream = BytesIO()
-        self.download_to_stream(stream, max_connections=max_connections)
+        self.download_to_stream(stream, max_concurrency=max_concurrency)
         return stream.getvalue()
 
-    def content_as_text(self, max_connections=1, encoding="UTF-8"):
+    def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
         """Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_connections:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: str
         """
-        content = self.content_as_bytes(max_connections=max_connections)
+        content = self.content_as_bytes(max_concurrency=max_concurrency)
         return content.decode(encoding)
 
-    def download_to_stream(self, stream, max_connections=1):
+    def download_to_stream(self, stream, max_concurrency=1):
         """Download the contents of this file to a stream.
 
         :param stream:
@@ -454,7 +454,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :rtype: Any
         """
         # the stream must be seekable if parallel download is required
-        if max_connections > 1:
+        if max_concurrency > 1:
             error_message = "Target stream handle must be seekable."
             if sys.version_info >= (3,) and not stream.seekable():
                 raise ValueError(error_message)
@@ -482,7 +482,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Use the length unless it is over the end of the file
             data_end = min(self.file_size, self.length + 1)
 
-        downloader_class = ParallelChunkDownloader if max_connections > 1 else SequentialChunkDownloader
+        downloader_class = ParallelChunkDownloader if max_concurrency > 1 else SequentialChunkDownloader
         downloader = downloader_class(
             client=self.client,
             non_empty_ranges=self.non_empty_ranges,
@@ -498,9 +498,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             **self.request_options
         )
 
-        if max_connections > 1:
+        if max_concurrency > 1:
             import concurrent.futures
-            executor = concurrent.futures.ThreadPoolExecutor(max_connections)
+            executor = concurrent.futures.ThreadPoolExecutor(max_concurrency)
             list(executor.map(
                     with_current_context(downloader.process_chunk),
                     downloader.get_chunk_offsets()
