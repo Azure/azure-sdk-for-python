@@ -51,7 +51,6 @@ steps:
         "${{ parameters.BuildTargetingString }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
-    env: ${{ parameters.EnvVars }}
 
   - ${{ parameters.BeforePublishSteps }}
 
