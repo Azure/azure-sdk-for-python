@@ -78,7 +78,7 @@ class EventData(object):
         self._delivery_annotations = {}
         self._app_properties = {}
         self._msg_properties = MessageProperties()
-        self._runtime_info = {}
+        self._last_enqueued_event_properties = {}
         self._need_further_parse = False
         if to_device:
             self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
@@ -153,12 +153,12 @@ class EventData(object):
                 if traceparent:
                     current_span.link(traceparent)
 
-    def _get_runtime_info(self):
-        if self._runtime_info:
-            return self._runtime_info
+    def _get_last_enqueued_event_properties(self):
+        if self._last_enqueued_event_properties:
+            return self._last_enqueued_event_properties
 
         if self.message.delivery_annotations:
-            self._runtime_info = {
+            self._last_enqueued_event_properties = {
                 "sequence_number":
                     self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
                 "offset":
@@ -168,7 +168,7 @@ class EventData(object):
                 "retrieval_time":
                     self.message.delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             }
-            return self._runtime_info
+            return self._last_enqueued_event_properties
 
         return None
 
@@ -185,17 +185,6 @@ class EventData(object):
         self._annotations = self.message.annotations
         self._app_properties = self.message.application_properties
         self._delivery_annotations = self.message.delivery_annotations
-        if self._delivery_annotations:
-            self._runtime_info = {
-                "sequence_number":
-                    self._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
-                "offset":
-                    self._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
-                "enqueued_time":
-                    self._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
-                "retrieval_time":
-                    self._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
-            }
         self._need_further_parse = False
 
     @property

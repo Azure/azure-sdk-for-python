@@ -119,7 +119,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
                 if self._track_last_enqueued_event_properties:
-                    self._last_enqueued_event_properties = event_data._get_runtime_info()  # pylint:disable=protected-access
+                    self._last_enqueued_event_properties = event_data._get_last_enqueued_event_properties()  # pylint:disable=protected-access
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
@@ -209,7 +209,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._offset = EventPosition(data_batch[-1].offset)
 
         if self._track_last_enqueued_event_properties and len(data_batch):
-            self._last_enqueued_event_properties = data_batch[-1]._get_runtime_info()  # pylint:disable=protected-access
+            self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
 
         return data_batch
 
