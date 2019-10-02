@@ -24,26 +24,11 @@
 #
 # --------------------------------------------------------------------------
 
-from .version import VERSION
-__version__ = VERSION
+from enum import Enum
 
-from .configuration import Configuration
-from .pipeline_client import PipelineClient
-from .pipeline.transport import HttpRequest
-from .exceptions import HttpResponseError
-from .match_conditions import MatchConditions
-
-
-__all__ = [
-    "Configuration",
-    "PipelineClient",
-    "HttpResponseError",
-    "HttpRequest",
-    "MatchConditions"
-]
-
-try:
-    from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
-    __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError): # Python <= 3.5
-    pass
+class MatchConditions(Enum):
+    Unconditionally = 1
+    IfNotModified = 2
+    IfModified = 3
+    IfPresent = 4
+    IfMissing = 5

@@ -23,13 +23,7 @@ pip install azure-appconfiguration
 
 To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
 
-You need to install the Azure App Configuration CLI extension first by executing the following command:
-
 After that, create the Configuration Store:
-```Powershell
-az extension add -n appconfig
-```
-
 
 
 ```Powershell
