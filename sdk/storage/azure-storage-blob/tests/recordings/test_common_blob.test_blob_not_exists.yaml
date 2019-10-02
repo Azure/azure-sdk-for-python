@@ -159,4 +159,44 @@ interactions:
     status:
       code: 404
       message: The specified blob does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 96b45a38-e557-11e9-92d1-2816a845e8c6
+      x-ms-date:
+      - Wed, 02 Oct 2019 20:59:56 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer20760f42/blob20760f42
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Wed, 02 Oct 2019 20:59:56 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - 0a879fd0-001e-0023-2664-790bcb000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified blob does not exist.
 version: 1

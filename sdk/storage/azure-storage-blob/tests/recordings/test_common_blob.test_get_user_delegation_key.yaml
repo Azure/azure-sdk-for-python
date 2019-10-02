@@ -138,4 +138,59 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: client_id=68390a19-a897-236b-b453-488abf67b4fc&client_secret=3Ujhg7pzkOeE7flc6Z187ugf5%2FcJnszGPjAiXmcwhaY%3D&grant_type=client_credentials&scope=https%3A%2F%2Fstorage.azure.com%2F.default
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '188'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/32f988bf-54f1-15af-36ab-2d7cd364db47/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"error":"invalid_request","error_description":"AADSTS90002: Tenant
+        ''32f988bf-54f1-15af-36ab-2d7cd364db47'' not found. This may happen if there
+        are no active subscriptions for the tenant. Check with your subscription administrator.\r\nTrace
+        ID: 1c4c7241-bcb0-4a00-867a-253d547e8f00\r\nCorrelation ID: 31ddb892-4f13-485e-881d-468acce71bcc\r\nTimestamp:
+        2019-10-02 21:01:11Z","error_codes":[90002],"timestamp":"2019-10-02 21:01:11Z","trace_id":"1c4c7241-bcb0-4a00-867a-253d547e8f00","correlation_id":"31ddb892-4f13-485e-881d-468acce71bcc","error_uri":"https://login.microsoftonline.com/error?code=90002"}'
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Content-Length:
+      - '601'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 02 Oct 2019 21:01:10 GMT
+      Expires:
+      - '-1'
+      P3P:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - fpc=Agtg9XA5GHNJklgRAgZJw4aJ2v6pAQAAABcHJ9UOAAAA; expires=Fri, 01-Nov-2019
+        21:01:11 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=corp; path=/; secure; HttpOnly
+      - stsservicecookie=estscorp; path=/; secure; HttpOnly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9485.10 - SAN ProdSlices
+      x-ms-request-id:
+      - 1c4c7241-bcb0-4a00-867a-253d547e8f00
+    status:
+      code: 400
+      message: Bad Request
 version: 1

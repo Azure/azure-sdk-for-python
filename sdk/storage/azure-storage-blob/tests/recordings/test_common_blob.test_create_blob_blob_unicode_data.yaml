@@ -99,4 +99,58 @@ interactions:
     status:
       code: 201
       message: Created
+- request:
+    body: "hello world\u554A\u9F44\u4E02\u72DB\u72DC"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - adb10576-e557-11e9-ba4d-2816a845e8c6
+      x-ms-date:
+      - Wed, 02 Oct 2019 21:00:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1c0014a3/blob1c0014a3
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - aFkhSeVIRnJoB2MmKjC25w==
+      Date:
+      - Wed, 02 Oct 2019 21:00:34 GMT
+      ETag:
+      - '"0x8D7477B91F32DA8"'
+      Last-Modified:
+      - Wed, 02 Oct 2019 21:00:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - hP31XHHFURE=
+      x-ms-request-id:
+      - 1f5b300f-201e-007b-6f64-790fb0000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
 version: 1
