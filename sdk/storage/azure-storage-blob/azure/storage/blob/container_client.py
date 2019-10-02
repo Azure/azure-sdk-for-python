@@ -1055,6 +1055,10 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs
         )
         query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'delete_snapshots', 'lease_access_conditions', 'modified_access_conditions']:
+            options.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -1066,7 +1070,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs)
+        return self._batch_send(*reqs, **options)
 
     def _generate_set_tier_options(self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None):
         """This code is a copy from _generated. Once Autorest is able to provide request preparation this code should be removed"""
@@ -1134,6 +1138,10 @@ class ContainerClient(StorageAccountHostsMixin):
             lease_access_conditions=access_conditions,
             **kwargs
         )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -1145,7 +1153,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs)
+        return self._batch_send(*reqs, **kwargs)
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
@@ -1183,6 +1191,10 @@ class ContainerClient(StorageAccountHostsMixin):
             lease_access_conditions=access_conditions,
             **kwargs
         )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -1194,7 +1206,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs)
+        return self._batch_send(*reqs, **kwargs)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

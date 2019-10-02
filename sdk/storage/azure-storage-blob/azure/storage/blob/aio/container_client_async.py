@@ -846,6 +846,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             **kwargs
         )
         query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'delete_snapshots', 'lease_access_conditions', 'modified_access_conditions']:
+            options.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -857,7 +861,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs)
+        return await self._batch_send(*reqs, **options)
 
     @distributed_trace
     async def set_standard_blob_tier_blobs(
@@ -898,6 +902,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             lease_access_conditions=access_conditions,
             **kwargs
         )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -909,7 +917,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs)
+        return await self._batch_send(*reqs, **kwargs)
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
@@ -946,6 +954,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             lease_access_conditions=access_conditions,
             **kwargs
         )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
 
         reqs = []
         for blob in blobs:
@@ -957,7 +969,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs)
+        return await self._batch_send(*reqs, **kwargs)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

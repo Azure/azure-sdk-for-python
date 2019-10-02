@@ -34,6 +34,7 @@ from .response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.transport import HttpRequest
     from azure.core import Configuration
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,7 +93,8 @@ class AsyncStorageAccountHostsMixin(object):
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs  # type: HttpRequest
+        self, *reqs: 'HttpRequest',
+        **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
@@ -112,7 +114,7 @@ class AsyncStorageAccountHostsMixin(object):
         )
 
         pipeline_response = await self._pipeline.run(
-            request,
+            request, **kwargs
         )
         response = pipeline_response.http_response
 

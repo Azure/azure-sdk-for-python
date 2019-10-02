@@ -184,7 +184,8 @@ class StorageAccountHostsMixin(object):
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs  # type: HttpRequest
+        self, *reqs,  # type: HttpRequest
+        **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
@@ -204,7 +205,7 @@ class StorageAccountHostsMixin(object):
         )
 
         pipeline_response = self._pipeline.run(
-            request,
+            request, **kwargs
         )
         response = pipeline_response.http_response
 
