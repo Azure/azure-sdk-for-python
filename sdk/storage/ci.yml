@@ -15,6 +15,10 @@ trigger:
   branches:
     include:
     - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
   paths:
     include:
     - sdk/storage/
