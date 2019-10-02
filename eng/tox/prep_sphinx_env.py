@@ -44,7 +44,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py")
 
 def should_build_docs(package_name):
-    return not ("nspkg" in package_name or "azure-mgmt" == package_name)
+    return not ("nspkg" in package_name or "azure-mgmt" == package_name or "azure" == package_name)
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
