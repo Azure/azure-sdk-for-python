@@ -19,6 +19,10 @@ parameters:
       OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
+    Linux_PyPy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
 
 jobs:
   - job: 'Test'
