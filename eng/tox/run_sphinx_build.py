@@ -94,7 +94,7 @@ if __name__ == "__main__":
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
 
-    sphinx_build(target_dir, package_dir)
+    sphinx_build(target_dir, output_dir)
 
     if in_ci() or args.in_ci:
         move_output_and_zip(target_dir, target_dir)
