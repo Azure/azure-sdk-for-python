@@ -22,7 +22,8 @@ try:
     from ._models_py3 import CatalogBillingPlansItem
     from ._models_py3 import CreateGenericQuotaRequestParameters
     from ._models_py3 import CurrentQuotaLimit
-    from ._models_py3 import CurrentQuotaLimitName
+    from ._models_py3 import CurrentQuotaLimitBase
+    from ._models_py3 import CurrentQuotaLimitBaseName
     from ._models_py3 import EmailAction
     from ._models_py3 import EmailActions
     from ._models_py3 import Error, ErrorException
@@ -81,7 +82,8 @@ except (SyntaxError, ImportError):
     from ._models import CatalogBillingPlansItem
     from ._models import CreateGenericQuotaRequestParameters
     from ._models import CurrentQuotaLimit
-    from ._models import CurrentQuotaLimitName
+    from ._models import CurrentQuotaLimitBase
+    from ._models import CurrentQuotaLimitBaseName
     from ._models import EmailAction
     from ._models import EmailActions
     from ._models import Error, ErrorException
@@ -156,7 +158,8 @@ __all__ = [
     'CatalogBillingPlansItem',
     'CreateGenericQuotaRequestParameters',
     'CurrentQuotaLimit',
-    'CurrentQuotaLimitName',
+    'CurrentQuotaLimitBase',
+    'CurrentQuotaLimitBaseName',
     'EmailAction',
     'EmailActions',
     'Error', 'ErrorException',

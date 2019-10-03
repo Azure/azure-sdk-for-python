@@ -352,13 +352,42 @@ class CurrentQuotaLimit(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param quota_information: Quota information detail.
+    :type quota_information:
+     ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: A user friendly message.
+    :vartype message: str
+    """
+
+    _validation = {
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'quota_information': {'key': 'quotaInformation', 'type': 'CurrentQuotaLimitBase'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CurrentQuotaLimit, self).__init__(**kwargs)
+        self.quota_information = kwargs.get('quota_information', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.message = None
+
+
+class CurrentQuotaLimitBase(Model):
+    """Quota limits.
+
     :param limit: The quota limit.
     :type limit: int
     :param current_value: The current resource usages information.
     :type current_value: int
     :param name: Name of the resource provide by the resource Provider. Please
      use this name property for quotaRequests.
-    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitName
+    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
     :param resource_type: The Resource Type Name.
     :type resource_type: object
     :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
@@ -369,45 +398,33 @@ class CurrentQuotaLimit(Model):
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
     :type quota_period: str
-    :param provisioning_state: The quota request status.
-    :type provisioning_state: object
-    :ivar message: A user friendly message.
-    :vartype message: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
     """
 
-    _validation = {
-        'message': {'readonly': True},
-    }
-
     _attribute_map = {
         'limit': {'key': 'limit', 'type': 'int'},
         'current_value': {'key': 'currentValue', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'CurrentQuotaLimitName'},
+        'name': {'key': 'name', 'type': 'CurrentQuotaLimitBaseName'},
         'resource_type': {'key': 'resourceType', 'type': 'object'},
         'unit': {'key': 'unit', 'type': 'str'},
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'provisioning_state': {'key': 'additionalProperties.provisioningState', 'type': 'object'},
-        'message': {'key': 'additionalProperties.message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CurrentQuotaLimit, self).__init__(**kwargs)
+        super(CurrentQuotaLimitBase, self).__init__(**kwargs)
         self.limit = kwargs.get('limit', None)
         self.current_value = kwargs.get('current_value', None)
         self.name = kwargs.get('name', None)
         self.resource_type = kwargs.get('resource_type', None)
         self.unit = kwargs.get('unit', None)
         self.quota_period = kwargs.get('quota_period', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.message = None
         self.properties = kwargs.get('properties', None)
 
 
-class CurrentQuotaLimitName(Model):
+class CurrentQuotaLimitBaseName(Model):
     """Name of the resource provide by the resource Provider. Please use this name
     property for quotaRequests.
 
@@ -423,7 +440,7 @@ class CurrentQuotaLimitName(Model):
     }
 
     def __init__(self, **kwargs):
-        super(CurrentQuotaLimitName, self).__init__(**kwargs)
+        super(CurrentQuotaLimitBaseName, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.localized_value = kwargs.get('localized_value', None)
 
@@ -1014,8 +1031,10 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :vartype id: str
     :ivar name: The name of the quota request.
     :vartype name: str
-    :param provisioning_state: The quota request status.
-    :type provisioning_state: object
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type: str
+    :ivar provisioning_state: The quota request status.
+    :vartype provisioning_state: object
     :ivar message: User friendly status message.
     :vartype message: str
     :ivar request_submit_time: The quota request submit time. The date
@@ -1028,7 +1047,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :type current_value: int
     :param name1: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
-    :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitName
+    :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
     :param resource_type: The Resource Type Name.
     :type resource_type: object
     :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
@@ -1039,49 +1058,42 @@ class QuotaRequestOneResourceSubmitResponse(Model):
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
     :type quota_period: str
-    :param provisioning_state1: The quota request status.
-    :type provisioning_state1: object
-    :ivar message1: A user friendly message.
-    :vartype message1: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
-    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
-    :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
-        'message1': {'readonly': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
         'limit': {'key': 'properties.properties.limit', 'type': 'int'},
         'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
-        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitName'},
+        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
         'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
         'unit': {'key': 'properties.properties.unit', 'type': 'str'},
         'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
-        'provisioning_state1': {'key': 'properties.properties.additionalProperties.provisioningState', 'type': 'object'},
-        'message1': {'key': 'properties.properties.additionalProperties.message', 'type': 'str'},
         'properties': {'key': 'properties.properties.properties', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.type = None
+        self.provisioning_state = None
         self.message = None
         self.request_submit_time = None
         self.limit = kwargs.get('limit', None)
@@ -1090,10 +1102,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.resource_type = kwargs.get('resource_type', None)
         self.unit = kwargs.get('unit', None)
         self.quota_period = kwargs.get('quota_period', None)
-        self.provisioning_state1 = kwargs.get('provisioning_state1', None)
-        self.message1 = None
         self.properties = kwargs.get('properties', None)
-        self.type = None
 
 
 class QuotaRequestProperties(Model):
@@ -1146,7 +1155,7 @@ class QuotaRequestSubmitResponse(Model):
     :vartype name: str
     :param properties: The quota request details.
     :type properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
-    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :ivar type: Type of resource. "Microsoft.Capacity/serviceLimits"
     :vartype type: str
     """
 
