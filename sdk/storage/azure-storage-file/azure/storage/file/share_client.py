@@ -64,7 +64,7 @@ class ShareClient(StorageAccountHostsMixin):
     :param str share_url: The full URI to the share.
     :param share: The share with which to interact. If specified, this value will override
         a share value specified in the share URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str snapshot:
         An optional share snapshot on which to operate.
     :param credential:
@@ -145,7 +145,7 @@ class ShareClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param share: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.ShareProperties
         :param str snapshot:
             The optional share snapshot on which to operate.
         :param credential:
@@ -185,7 +185,7 @@ class ShareClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.SharePermissions permission:
+        :param ~azure.storage.file.SharePermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, create, write, delete, list.
@@ -421,7 +421,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: The share properties.
-        :rtype: ~azure.storage.file.models.ShareProperties
+        :rtype: ~azure.storage.file.ShareProperties
 
         .. admonition:: Example:
 
@@ -546,7 +546,7 @@ class ShareClient(StorageAccountHostsMixin):
             A dictionary of access policies to associate with the share. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.file.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`~azure.storage.file.AccessPolicy`)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
@@ -650,8 +650,8 @@ class ShareClient(StorageAccountHostsMixin):
                                     **kwargs  # type: Any
                                     ):
         # type: (...) -> str
-        """
-        Create a permission(a security descriptor) at the share level.
+        """Create a permission(a security descriptor) at the share level.
+
         This 'permission' can be used for the files/directories in the share.
         If a 'permission' already exists, it shall return the key of it, else
         creates a new permission at the share level and return its key.
@@ -660,8 +660,8 @@ class ShareClient(StorageAccountHostsMixin):
             File permission, a Portable SDDL
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns a file permission key
-        :rtype str
+        :returns: a file permission key
+        :rtype: str
         """
         options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
@@ -676,16 +676,16 @@ class ShareClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> str
-        """
-        Get a permission(a security descriptor) for a given key.
+        """Get a permission(a security descriptor) for a given key.
+
         This 'permission' can be used for the files/directories in the share.
 
         :param str file_permission_key:
             Key of the file permission to retrieve
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns a file permission(a portable SDDL)
-        :rtype str
+        :returns: a file permission(a portable SDDL)
+        :rtype: str
         """
         try:
             return self._client.share.get_permission(  # type: ignore

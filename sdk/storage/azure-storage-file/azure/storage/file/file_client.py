@@ -118,7 +118,7 @@ class FileClient(StorageAccountHostsMixin):
         or share, in which case the file and/or share must also be specified.
     :param share: The share for the file. If specified, this value will override
         a share value specified in the file URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str file_path:
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
@@ -213,7 +213,7 @@ class FileClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param share: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.ShareProperties
         :param str file_path:
             The file path.
         :param str snapshot:
@@ -257,7 +257,7 @@ class FileClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.FilePermissions permission:
+        :param ~azure.storage.file.FilePermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.
@@ -351,7 +351,7 @@ class FileClient(StorageAccountHostsMixin):
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
@@ -363,7 +363,7 @@ class FileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -453,7 +453,7 @@ class FileClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -473,7 +473,7 @@ class FileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -594,7 +594,7 @@ class FileClient(StorageAccountHostsMixin):
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.file.models.FileProperties
+        :type copy_id: str or ~azure.storage.file.FileProperties
         :rtype: None
         """
         try:
@@ -702,7 +702,7 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
-        :rtype: ~azure.storage.file.models.FileProperties
+        :rtype: ~azure.storage.file.FileProperties
         """
         try:
             file_props = self._client.file.get_properties(
@@ -731,7 +731,7 @@ class FileClient(StorageAccountHostsMixin):
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -739,7 +739,7 @@ class FileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -1070,7 +1070,7 @@ class FileClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.Handle]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.Handle]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -1097,7 +1097,7 @@ class FileClient(StorageAccountHostsMixin):
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
-        :type handle: str or ~azure.storage.file.models.Handle
+        :type handle: str or ~azure.storage.file.Handle
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A long-running poller to get operation status.
