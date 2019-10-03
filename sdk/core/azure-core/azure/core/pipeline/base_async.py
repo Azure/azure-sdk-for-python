@@ -137,7 +137,8 @@ class AsyncPipeline(
     :param transport: The async Http Transport instance.
     :param list policies: List of configured policies.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START build_async_pipeline]
             :end-before: [END build_async_pipeline]
