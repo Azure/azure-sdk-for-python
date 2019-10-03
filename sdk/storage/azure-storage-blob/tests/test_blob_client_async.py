@@ -233,6 +233,16 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
+    def test_create_blob_client_with_complete_blob_url_async(self):
+        # Arrange
+        blob_url = self._get_account_url() + "/foourl/barurl"
+        service = BlobClient(blob_url, credential=self.account_key, container_name='foo', blob_name='bar')
+
+            # Assert
+        self.assertEqual(service.scheme, 'https')
+        self.assertEqual(service.container_name, 'foo')
+        self.assertEqual(service.blob_name, 'bar')
+
     def test_create_service_with_connection_string_endpoint_protocol_async(self):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(

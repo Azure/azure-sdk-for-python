@@ -62,6 +62,16 @@ class StorageClientTest(StorageTestCase):
             self.validate_standard_account_endpoints(service, url)
             self.assertEqual(service.scheme, 'https')
 
+    def test_create_blob_client_with_complete_blob_url(self):
+        # Arrange
+        blob_url = self._get_account_url() + "/foourl/barurl"
+        service = BlobClient(blob_url, credential=self.account_key, container_name='foo', blob_name='bar')
+
+            # Assert
+        self.assertEqual(service.scheme, 'https')
+        self.assertEqual(service.container_name, 'foo')
+        self.assertEqual(service.blob_name, 'bar')
+
     def test_create_service_with_connection_string(self):
 
         for service_type in SERVICES.items():
