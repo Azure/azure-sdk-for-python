@@ -5,9 +5,8 @@
 import codecs
 import hashlib
 
-from azure.keyvault.keys import KeyCurveName
+from azure.keyvault.keys import JsonWebKey, KeyCurveName
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys.models import JsonWebKey
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
