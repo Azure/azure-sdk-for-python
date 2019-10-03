@@ -354,8 +354,8 @@ class CurrentQuotaLimit(Model):
 
     :param limit: The quota limit.
     :type limit: int
-    :param current_value: The current resource usages information.
-    :type current_value: int
+    :ivar current_value: The current resource usages information.
+    :vartype current_value: int
     :param name: Name of the resource provide by the resource Provider. Please
      use this name property for quotaRequests.
     :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
@@ -379,6 +379,7 @@ class CurrentQuotaLimit(Model):
     """
 
     _validation = {
+        'current_value': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
     }
@@ -395,10 +396,10 @@ class CurrentQuotaLimit(Model):
         'message': {'key': 'properties.message', 'type': 'str'},
     }
 
-    def __init__(self, *, limit: int=None, current_value: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, limit: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
         super(CurrentQuotaLimit, self).__init__(**kwargs)
         self.limit = limit
-        self.current_value = current_value
+        self.current_value = None
         self.name = name
         self.resource_type = resource_type
         self.unit = unit
@@ -411,10 +412,13 @@ class CurrentQuotaLimit(Model):
 class CurrentQuotaLimitBase(Model):
     """Quota limits.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param limit: The quota limit.
     :type limit: int
-    :param current_value: The current resource usages information.
-    :type current_value: int
+    :ivar current_value: The current resource usages information.
+    :vartype current_value: int
     :param name: Name of the resource provide by the resource Provider. Please
      use this name property for quotaRequests.
     :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
@@ -433,6 +437,10 @@ class CurrentQuotaLimitBase(Model):
     :type properties: object
     """
 
+    _validation = {
+        'current_value': {'readonly': True},
+    }
+
     _attribute_map = {
         'limit': {'key': 'limit', 'type': 'int'},
         'current_value': {'key': 'currentValue', 'type': 'int'},
@@ -443,10 +451,10 @@ class CurrentQuotaLimitBase(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, *, limit: int=None, current_value: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, limit: int=None, name=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
         super(CurrentQuotaLimitBase, self).__init__(**kwargs)
         self.limit = limit
-        self.current_value = current_value
+        self.current_value = None
         self.name = name
         self.resource_type = resource_type
         self.unit = unit
@@ -1094,8 +1102,8 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :vartype request_submit_time: datetime
     :param limit: The quota limit.
     :type limit: int
-    :param current_value: The current resource usages information.
-    :type current_value: int
+    :ivar current_value: The current resource usages information.
+    :vartype current_value: int
     :param name1: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
     :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
@@ -1121,6 +1129,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
+        'current_value': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1139,7 +1148,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'properties': {'key': 'properties.properties.properties', 'type': 'object'},
     }
 
-    def __init__(self, *, limit: int=None, current_value: int=None, name1=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, limit: int=None, name1=None, resource_type=None, unit: str=None, quota_period: str=None, properties=None, **kwargs) -> None:
         super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1148,7 +1157,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.message = None
         self.request_submit_time = None
         self.limit = limit
-        self.current_value = current_value
+        self.current_value = None
         self.name1 = name1
         self.resource_type = resource_type
         self.unit = unit
