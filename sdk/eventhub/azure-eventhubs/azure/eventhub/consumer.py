@@ -12,6 +12,7 @@ from typing import List
 import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
+import uamqp
 
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import _error_handler
@@ -113,7 +114,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
                 if self._track_last_enqueued_event_properties:
-                    self._last_enqueued_event_properties = event_data._runtime_info  # pylint:disable=protected-access
+                    self._last_enqueued_event_properties = event_data._get_last_enqueued_event_properties()  # pylint:disable=protected-access
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
@@ -146,6 +147,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
+            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
+            auto_complete=False,
             properties=self._client._create_properties(  # pylint:disable=protected-access
             self._client._config.user_agent),  # pylint:disable=protected-access
             **desired_capabilities)  # pylint:disable=protected-access
@@ -171,12 +174,14 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             timeout=remaining_time_ms)
         for message in message_batch:
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
-            self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
             event_data._trace_link_message()  # pylint:disable=protected-access
 
+        if data_batch:
+            self._offset = EventPosition(data_batch[-1].offset)
+
         if self._track_last_enqueued_event_properties and len(data_batch):
-            self._last_enqueued_event_properties = data_batch[-1]._runtime_info  # pylint:disable=protected-access
+            self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
 
         return data_batch
 

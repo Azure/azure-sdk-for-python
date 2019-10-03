@@ -156,6 +156,12 @@ async def test_receive_batch_async(connstr_senders):
         received = await receiver.receive(max_batch_size=5, timeout=5)
         assert len(received) == 5
 
+        for event in received:
+            assert event.system_properties
+            assert event.sequence_number is not None
+            assert event.offset
+            assert event.enqueued_time
+
 
 async def pump(receiver, sleep=None):
     messages = 0
