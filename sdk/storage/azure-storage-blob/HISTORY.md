@@ -1,6 +1,22 @@
 # Change Log azure-storage-blob
 
 
+## Version 12.0.0b4:
+
+**New features**
+
+- Add support for delete_blobs API to ContainerClient (Python 3 only)
+- Add support for set_standard_blob_tier_blobs to ContainerClient (Python 3 only)
+- Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b4
+  - If you later want to revert to previous versions of azure-storage-blob, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-blob==12.0.0b2`
+
 ## Version 12.0.0b3:
 
 **New features**
