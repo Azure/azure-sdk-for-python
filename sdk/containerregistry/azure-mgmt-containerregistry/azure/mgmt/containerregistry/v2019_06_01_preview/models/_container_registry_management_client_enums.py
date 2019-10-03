@@ -219,9 +219,3 @@ class TokenStatus(str, Enum):
 
     enabled = "enabled"
     disabled = "disabled"
-
-
-class Status(str, Enum):
-
-    enabled = "enabled"
-    disabled = "disabled"

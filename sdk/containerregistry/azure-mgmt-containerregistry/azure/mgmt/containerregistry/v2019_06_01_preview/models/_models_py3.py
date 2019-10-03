@@ -1945,7 +1945,7 @@ class Registry(Resource):
     :ivar status: The status of the container registry at the time the
      operation was called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status1
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
@@ -1983,7 +1983,7 @@ class Registry(Resource):
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status1'},
+        'status': {'key': 'properties.status', 'type': 'Status'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
@@ -2215,7 +2215,7 @@ class Replication(Resource):
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status1
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
     """
 
     _validation = {
@@ -2234,7 +2234,7 @@ class Replication(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status1'},
+        'status': {'key': 'properties.status', 'type': 'Status'},
     }
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
@@ -2988,7 +2988,7 @@ class SourceUploadDefinition(Model):
         self.relative_path = relative_path
 
 
-class Status1(Model):
+class Status(Model):
     """The status of an Azure resource at the time the operation was called.
 
     Variables are only populated by the server, and will be ignored when
@@ -3017,7 +3017,7 @@ class Status1(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(Status1, self).__init__(**kwargs)
+        super(Status, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None
@@ -3540,7 +3540,7 @@ class TokenUpdateParameters(Model):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
