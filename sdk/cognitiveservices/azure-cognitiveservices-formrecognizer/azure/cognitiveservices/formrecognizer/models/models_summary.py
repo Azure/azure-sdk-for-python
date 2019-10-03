@@ -16,18 +16,18 @@ class ModelsSummary(Model):
     """Result of query operation to fetch summery of models.
 
     :param count: Current count of trained models.
-    :type count: str
+    :type count: int
     :param limit: Max number of models that can be trained for this
      subscription.
-    :type limit: str
+    :type limit: int
     :param last_updated_date_time: Get or set the summary last updated
      datetime.
     :type last_updated_date_time: datetime
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'int'},
         'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
     }
 
