@@ -19,7 +19,6 @@ import ast
 import os
 import textwrap
 import io
-import zipfile
 import shutil
 
 logging.getLogger().setLevel(logging.INFO)
@@ -34,13 +33,9 @@ def move_output_and_zip(target_dir, package_dir, package_name):
     if not os.path.exists(ci_doc_dir):
         os.mkdir(ci_doc_dir)
 
-    individual_zip_location = os.path.join(ci_doc_dir, "{}.zip".format(package_name))
+    individual_zip_location = os.path.join(ci_doc_dir, package_name)
+    shutil.make_archive(individual_zip_location, 'zip', target_dir)
 
-    new_zip = zipfile.ZipFile(individual_zip_location, 'w', zipfile.ZIP_DEFLATED)
-
-    for root, dirs, files in os.walk(target_dir):
-        for file in files:
-            new_zip.write(os.path.join(root, file))
 
 
 def sphinx_build(target_dir, output_dir):
