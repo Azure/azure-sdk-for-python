@@ -52,7 +52,7 @@ def test_send_and_receive_large_body_size(connstr_receivers):
 
     received = []
     for r in receivers:
-        received.extend(r.receive(timeout=4))
+        received.extend(r.receive(timeout=10))
 
     assert len(received) == 1
     assert len(list(received[0].body)[0]) == payload

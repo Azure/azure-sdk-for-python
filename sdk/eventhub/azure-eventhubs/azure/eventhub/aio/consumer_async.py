@@ -7,6 +7,7 @@ import uuid
 import logging
 from typing import List, Any
 import time
+from distutils.version import StrictVersion
 
 import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore
@@ -132,7 +133,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-        if uamqp.__version__ <= "1.2.2":  # backward compatible until uamqp 1.2.3 is released
+        if StrictVersion(uamqp.__version__) < StrictVersion("1.2.3"):  # backward compatible until uamqp 1.2.3 is released
             desired_capabilities = {}
         elif self._track_last_enqueued_event_properties:
                 symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
