@@ -31,6 +31,9 @@ def in_ci():
     return os.getenv('TF_BUILD', False)
 
 def move_output_and_zip(target_dir, package_dir, package_name):
+    if not os.path.exists(ci_doc_dir):
+        os.mkdir(ci_doc_dir)
+
     individual_zip_location = os.path.join(ci_doc_dir, "{}.zip".format(package_name))
 
     new_zip = zipfile.ZipFile(individual_zip_location, 'w', zipfile.ZIP_DEFLATED)
@@ -39,10 +42,6 @@ def move_output_and_zip(target_dir, package_dir, package_name):
         for file in files:
             new_zip.write(os.path.join(root, file))
 
-def cleanup_previous_artifacts():
-    if os.path.exists(ci_doc_dir):
-        shutil.rmtree(ci_doc_dir)
-    os.mkdir(ci_doc_dir)
 
 def sphinx_build(target_dir, output_dir):
     command_array = [
