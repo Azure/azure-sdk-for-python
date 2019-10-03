@@ -29,7 +29,7 @@ from azure.storage.blob.aio import (
     BlobType,
     ContentSettings,
     BlobProperties,
-    ContainerPermissions,
+    ContainerSasPermissions,
     StandardBlobTier,
     PremiumPageBlobTier
 )

@@ -22,7 +22,7 @@ from azure.storage.blob import (
     LeaseClient,
     ContainerSasPermissions,
     PublicAccess,
-    ContainerPermissions,
+    ContainerSasPermissions,
     AccessPolicy,
     StandardBlobTier,
     PremiumPageBlobTier
