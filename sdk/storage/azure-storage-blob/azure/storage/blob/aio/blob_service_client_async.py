@@ -482,7 +482,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             container_name = container.name
         except AttributeError:
             container_name = container
-    
+
         return ContainerClient(
             self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,

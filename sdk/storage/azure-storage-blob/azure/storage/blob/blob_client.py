@@ -159,6 +159,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
+        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
         try:
             if not blob_url.lower().startswith('http'):
                 blob_url = "https://" + blob_url
@@ -169,7 +170,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
         account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        container_name, _, blob_name = parsed_url.path.lstrip('/').partition('/')
+        path_blob = parsed_url.path.lstrip('/').partition('/')
+        container_name, blob_name = unquote(path_blob[0]), unquote(path_blob[2])
         if not container_name or not blob_name:
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
 
@@ -238,7 +240,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container_name=container_name, blob_name=blob_name, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=snapshot, credential=credential, **kwargs
+            )
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]

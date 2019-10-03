@@ -639,7 +639,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             container_name = container.name
         except AttributeError:
             container_name = container
-        
         try:
             blob_name = blob.name
         except AttributeError:

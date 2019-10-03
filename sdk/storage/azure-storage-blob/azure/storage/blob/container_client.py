@@ -79,9 +79,8 @@ class ContainerClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str container_url:
-        The full URI to the container. This can also be a URL to the storage
-        account, in which case the blob container must also be specified.
+    :param str account_url:
+        The full URI to the storage account.
     :param container_name:
         The container for the blob.
     :type container_name: str
@@ -119,7 +118,6 @@ class ContainerClient(StorageAccountHostsMixin):
         except AttributeError:
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
-
         if not container_name:
             raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
@@ -133,13 +131,13 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> ContainerClient
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
         except AttributeError:
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url.rstrip('/'))
-
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
         account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
@@ -994,7 +992,6 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
