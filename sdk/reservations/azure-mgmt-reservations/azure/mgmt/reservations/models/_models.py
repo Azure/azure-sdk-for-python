@@ -1144,9 +1144,8 @@ class QuotaRequestSubmitResponse(Model):
     :vartype id: str
     :ivar name: The name of the quota request.
     :vartype name: str
-    :param quota_request_properties: The quota request details.
-    :type quota_request_properties:
-     ~azure.mgmt.reservations.models.QuotaRequestProperties
+    :param properties: The quota request details.
+    :type properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
     :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
     :vartype type: str
     """
@@ -1160,7 +1159,7 @@ class QuotaRequestSubmitResponse(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'quota_request_properties': {'key': 'quotaRequestProperties', 'type': 'QuotaRequestProperties'},
+        'properties': {'key': 'properties', 'type': 'QuotaRequestProperties'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -1168,7 +1167,7 @@ class QuotaRequestSubmitResponse(Model):
         super(QuotaRequestSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.quota_request_properties = kwargs.get('quota_request_properties', None)
+        self.properties = kwargs.get('properties', None)
         self.type = None
 
 
