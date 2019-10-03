@@ -2072,8 +2072,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _get_page_ranges_options( # type: ignore
-            self, start_range=None, # type: Optional[int]
-            end_range=None, # type: Optional[int]
+            self, offset=None, # type: Optional[int]
+            length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
@@ -2085,10 +2085,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
         page_range = None # type: ignore
-        if start_range is not None and end_range is None:
-            page_range = str(start_range)
-        elif start_range is not None and end_range is not None:
-            page_range = str(end_range - start_range + 1)
+        if offset is not None and length is None:
+            page_range = str(offset)
+        elif offset is not None and length is not None:
+            page_range = str(length - offset + 1)
         options = {
             'snapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
@@ -2118,8 +2118,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def get_page_ranges( # type: ignore
-            self, start_range=None, # type: Optional[int]
-            end_range=None, # type: Optional[int]
+            self, offset=None, # type: Optional[int]
+            length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
@@ -2127,15 +2127,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for getting valid page ranges.
-            If no end_range is given, all bytes after the start_range will be searched.
+            If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for getting valid page ranges.
-            If end_range is given, start_range must be provided.
+            If length is given, offset must be provided.
             This range will return valid page ranges for from the offset start up to
             offset end.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -2178,8 +2178,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = self._get_page_ranges_options(
-            start_range=start_range,
-            end_range=end_range,
+            offset=offset,
+            length=length,
             previous_snapshot_diff=previous_snapshot_diff,
             **kwargs)
         try:
@@ -2340,9 +2340,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _upload_page_options( # type: ignore
             self, page,  # type: bytes
-            start_range,  # type: int
-            end_range,  # type: int
-            length=None,  # type: Optional[int]
+            offset,  # type: int
+            length,  # type: int
             validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
@@ -2356,11 +2355,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length = get_length(page)
             if length is None:
                 raise ValueError("Please specifiy content length.")
-        if start_range is None or start_range % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 page size")
-        if end_range is None or end_range % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range) # type: ignore
+        if offset is None or offset % 512 != 0:
+            raise ValueError("offset must be an integer that aligns with 512 page size")
+        if length is None or length % 512 != 511:
+            raise ValueError("length must be an integer that aligns with 512 page size")
+        content_range = 'bytes={0}-{1}'.format(offset, length) # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -2398,9 +2397,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @distributed_trace
     def upload_page( # type: ignore
             self, page,  # type: bytes
-            start_range,  # type: int
-            end_range,  # type: int
-            length=None,  # type: Optional[int]
+            offset,  # type: int
+            length,  # type: int
             validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
@@ -2409,18 +2407,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param bytes page:
             Content of the page.
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int length:
-            Length of the page
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -2476,8 +2472,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._upload_page_options(
             page=page,
-            start_range=start_range,
-            end_range=end_range,
+            offset=offset,
             length=length,
             validate_content=validate_content,
             **kwargs)
@@ -2488,9 +2483,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _upload_pages_from_url_options(  # type: ignore
             self, source_url,  # type: str
-            range_start,  # type: int
-            range_end,  # type: int
-            source_range_start,  # type: int
+            offset,  # type: int
+            length,  # type: int
+            source_offset,  # type: int
             source_content_md5=None,  # type: Optional[bytes]
             **kwargs
     ):
@@ -2499,16 +2494,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # TODO: extract the code to a method format_range
-        if range_start is None or range_start % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 page size")
-        if range_end is None or range_end % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 page size")
-        if source_range_start is None or range_start % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 page size")
+        if offset is None or offset % 512 != 0:
+            raise ValueError("offset must be an integer that aligns with 512 page size")
+        if length is None or length % 512 != 511:
+            raise ValueError("length must be an integer that aligns with 512 page size")
+        if source_offset is None or offset % 512 != 0:
+            raise ValueError("offset must be an integer that aligns with 512 page size")
 
         # Format range
-        destination_range = 'bytes={0}-{1}'.format(range_start, range_end)
-        source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_start+(range_end-range_start))
+        destination_range = 'bytes={0}-{1}'.format(offset, length)
+        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset+(length-offset))
 
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -2553,9 +2548,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def upload_pages_from_url(self, source_url,  # type: str
-                              range_start,  # type: int
-                              range_end,  # type: int
-                              source_range_start,  # type: int
+                              offset,  # type: int
+                              length,  # type: int
+                              source_offset,  # type: int
                               source_content_md5=None,  # type: Optional[bytes]
                               **kwargs
                               ):
@@ -2566,19 +2561,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param str source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
-        :param int range_start:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int range_end:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int source_range_start:
+        :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
-            The service will read the same number of bytes as the destination range (end_range-start_range).
+            The service will read the same number of bytes as the destination range (length-offset).
         :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :param datetime source_if_modified_since:
@@ -2645,9 +2640,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         options = self._upload_pages_from_url_options(
             source_url=source_url,
-            range_start=range_start,
-            range_end=range_end,
-            source_range_start=source_range_start,
+            offset=offset,
+            length=length,
+            source_offset=source_offset,
             source_content_md5=source_content_md5,
             **kwargs
         )
@@ -2656,7 +2651,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def _clear_page_options(self, start_range, end_range, **kwargs):
+    def _clear_page_options(self, offset, length, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2672,11 +2667,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None)
         )
-        if start_range is None or start_range % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 page size")
-        if end_range is None or end_range % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        if offset is None or offset % 512 != 0:
+            raise ValueError("offset must be an integer that aligns with 512 page size")
+        if length is None or length % 512 != 511:
+            raise ValueError("length must be an integer that aligns with 512 page size")
+        content_range = 'bytes={0}-{1}'.format(offset, length)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -2699,16 +2694,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def clear_page(self, start_range, end_range, **kwargs):
+    def clear_page(self, offset, length, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
@@ -2757,7 +2752,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._clear_page_options(start_range, end_range, **kwargs)
+        options = self._clear_page_options(offset, length, **kwargs)
         try:
             return self._client.page_blob.clear_pages(**options)  # type: ignore
         except StorageErrorException as error:
@@ -2907,8 +2902,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _append_block_from_url_options(  # type: ignore
             self, copy_source_url,  # type: str
-            source_range_start=None,  # type Optional[int]
-            source_range_end=None,  # type Optional[int]
+            source_offset=None,  # type Optional[int]
+            source_length=None,  # type Optional[int]
             source_content_md5=None,  # type: Optional[bytearray]
             maxsize_condition=None,  # type: Optional[int]
             appendpos_condition=None,  # type: Optional[int]
@@ -2919,14 +2914,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # If end range is provided, start range must be provided
-        if source_range_end is not None and source_range_start is None:
-            raise ValueError("source_range_start should also be specified if source_range_end is specified")
-        # Format based on whether end_range is present
+        if source_length is not None and source_offset is None:
+            raise ValueError("source_offset should also be specified if source_length is specified")
+        # Format based on whether length is present
         source_range = None
-        if source_range_end is not None:
-            source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_end)
-        elif source_range_start is not None:
-            source_range = "bytes={0}-".format(source_range_start)
+        if source_length is not None:
+            source_range = 'bytes={0}-{1}'.format(source_offset, source_length)
+        elif source_offset is not None:
+            source_range = "bytes={0}-".format(source_offset)
 
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
@@ -2972,8 +2967,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def append_block_from_url(self, copy_source_url,  # type: str
-                              source_range_start=None,  # type Optional[int]
-                              source_range_end=None,  # type Optional[int]
+                              source_offset=None,  # type Optional[int]
+                              source_length=None,  # type Optional[int]
                               source_content_md5=None,  # type: Optional[bytearray]
                               maxsize_condition=None,  # type: Optional[int]
                               appendpos_condition=None,  # type: Optional[int]
@@ -2985,9 +2980,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param str copy_source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
-        :param int source_range_start:
+        :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
-        :param int source_range_end:
+        :param int source_length:
             This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
         :param bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
@@ -3059,8 +3054,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._append_block_from_url_options(
             copy_source_url,
-            source_range_start=source_range_start,
-            source_range_end=source_range_end,
+            source_offset=source_offset,
+            source_length=source_length,
             source_content_md5=source_content_md5,
             maxsize_condition=maxsize_condition,
             appendpos_condition=appendpos_condition,

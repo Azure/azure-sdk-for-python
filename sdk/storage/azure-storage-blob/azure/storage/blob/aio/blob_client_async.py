@@ -1306,8 +1306,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def get_page_ranges( # type: ignore
-            self, start_range=None, # type: Optional[int]
-            end_range=None, # type: Optional[int]
+            self, offset=None, # type: Optional[int]
+            length=None, # type: Optional[int]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
@@ -1315,15 +1315,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for getting valid page ranges.
-            If no end_range is given, all bytes after the start_range will be searched.
+            If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for getting valid page ranges.
-            If end_range is given, start_range must be provided.
+            If length is given, offset must be provided.
             This range will return valid page ranges for from the offset start up to
             offset end.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -1366,8 +1366,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = self._get_page_ranges_options(
-            start_range=start_range,
-            end_range=end_range,
+            offset=offset,
+            length=length,
             previous_snapshot_diff=previous_snapshot_diff,
             **kwargs)
         try:
@@ -1485,9 +1485,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     @distributed_trace_async
     async def upload_page( # type: ignore
             self, page,  # type: bytes
-            start_range,  # type: int
-            end_range,  # type: int
-            length=None,  # type: Optional[int]
+            offset,  # type: int
+            length,  # type: int
             validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
@@ -1496,12 +1495,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :param bytes page:
             Content of the page.
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
@@ -1563,8 +1562,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._upload_page_options(
             page=page,
-            start_range=start_range,
-            end_range=end_range,
+            offset=offset,
             length=length,
             validate_content=validate_content,
             **kwargs)
@@ -1575,9 +1573,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def upload_pages_from_url(self, source_url,  # type: str
-                                    range_start,  # type: int
-                                    range_end,  # type: int
-                                    source_range_start,  # type: int
+                                    offset,  # type: int
+                                    length,  # type: int
+                                    source_offset,  # type: int
                                     source_content_md5=None,  # type: Optional[bytes]
                                     **kwargs
                                     ):
@@ -1588,19 +1586,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param str source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
-        :param int range_start:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int range_end:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int source_range_start:
+        :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
-            The service will read the same number of bytes as the destination range (end_range-start_range).
+            The service will read the same number of bytes as the destination range (length-offset).
         :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :param datetime source_if_modified_since:
@@ -1667,9 +1665,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         options = self._upload_pages_from_url_options(
             source_url=source_url,
-            range_start=range_start,
-            range_end=range_end,
-            source_range_start=source_range_start,
+            offset=offset,
+            length=length,
+            source_offset=source_offset,
             source_content_md5=source_content_md5,
             **kwargs
         )
@@ -1679,16 +1677,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_page(self, start_range, end_range, **kwargs):
+    async def clear_page(self, offset, length, **kwargs):
         # type: (int, int) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :param int end_range:
+        :param int length:
             End of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
@@ -1736,7 +1734,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._clear_page_options(start_range, end_range, **kwargs)
+        options = self._clear_page_options(offset, length, **kwargs)
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
         except StorageErrorException as error:
@@ -1829,8 +1827,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async()
     async def append_block_from_url(self, copy_source_url,  # type: str
-                                    source_range_start=None,  # type Optional[int]
-                                    source_range_end=None,  # type Optional[int]
+                                    source_offset=None,  # type Optional[int]
+                                    source_length=None,  # type Optional[int]
                                     source_content_md5=None,  # type: Optional[bytearray]
                                     maxsize_condition=None,  # type: Optional[int]
                                     appendpos_condition=None,  # type: Optional[int]
@@ -1842,9 +1840,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param str copy_source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
-        :param int source_range_start:
+        :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
-        :param int source_range_end:
+        :param int source_length:
             This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
         :param bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
@@ -1916,8 +1914,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._append_block_from_url_options(
             copy_source_url,
-            source_range_start=source_range_start,
-            source_range_end=source_range_end,
+            source_offset=source_offset,
+            source_length=source_length,
             source_content_md5=source_content_md5,
             maxsize_condition=maxsize_condition,
             appendpos_condition=appendpos_condition,
