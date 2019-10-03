@@ -7,7 +7,7 @@ import hashlib
 
 from azure.keyvault.keys import KeyCurveName
 from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys._shared._generated.v7_0.models import JsonWebKey
+from azure.keyvault.keys.models import JsonWebKey
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer
 from keys_preparer import VaultClientPreparer

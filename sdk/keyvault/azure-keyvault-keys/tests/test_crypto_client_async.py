@@ -7,7 +7,7 @@ import hashlib
 
 from azure.keyvault.keys import KeyCurveName
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys._shared._generated.v7_0.models import JsonWebKey
+from azure.keyvault.keys.models import JsonWebKey
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
@@ -28,7 +28,9 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
-        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+        )
 
     async def _import_test_key(self, client, name):
         def _to_bytes(hex):
