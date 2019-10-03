@@ -82,7 +82,7 @@ class QuotaRequestOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CurrentQuotaLimit', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceSubmitResponse', response)
         if response.status_code == 201:
             deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
 

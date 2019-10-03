@@ -971,6 +971,8 @@ class QuotaRequestDetails(Model):
     :vartype request_submit_time: datetime
     :param value: The quotaRequests.
     :type value: list[~azure.mgmt.reservations.models.SubRequest]
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type: str
     """
 
     _validation = {
@@ -978,6 +980,7 @@ class QuotaRequestDetails(Model):
         'name': {'readonly': True},
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -987,6 +990,7 @@ class QuotaRequestDetails(Model):
         'message': {'key': 'properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
         'value': {'key': 'properties.value', 'type': '[SubRequest]'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, provisioning_state=None, value=None, **kwargs) -> None:
@@ -997,6 +1001,113 @@ class QuotaRequestDetails(Model):
         self.message = None
         self.request_submit_time = None
         self.value = value
+        self.type = None
+
+
+class QuotaRequestOneResourceSubmitResponse(Model):
+    """Quota submit request response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The quota request Id.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: User friendly status message.
+    :vartype message: str
+    :ivar request_submit_time: The quota request submit time. The date
+     conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
+     ISO 8601 standard.
+    :vartype request_submit_time: datetime
+    :param properties: The quota request addition properties.
+    :type properties: ~azure.mgmt.reservations.models.CurrentQuotaLimit
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'message': {'readonly': True},
+        'request_submit_time': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties.properties', 'type': 'CurrentQuotaLimit'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, provisioning_state=None, properties=None, **kwargs) -> None:
+        super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.provisioning_state = provisioning_state
+        self.message = None
+        self.request_submit_time = None
+        self.properties = properties
+        self.type = None
+
+
+class QuotaRequestSubmitResponse(Model):
+    """Quota submit request response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The quota request Id.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: User friendly status message.
+    :vartype message: str
+    :ivar request_submit_time: The quota request submit time. The date
+     conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
+     ISO 8601 standard.
+    :vartype request_submit_time: datetime
+    :param value: The quotaRequests.
+    :type value: list[~azure.mgmt.reservations.models.SubRequest]
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'message': {'readonly': True},
+        'request_submit_time': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
+        'value': {'key': 'properties.value', 'type': '[SubRequest]'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, provisioning_state=None, value=None, **kwargs) -> None:
+        super(QuotaRequestSubmitResponse, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.provisioning_state = provisioning_state
+        self.message = None
+        self.request_submit_time = None
+        self.value = value
+        self.type = None
 
 
 class QuotaRequestSubmitResponse201(Model):

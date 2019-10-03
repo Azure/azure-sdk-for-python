@@ -83,7 +83,7 @@ class QuotaRequestsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CreateGenericQuotaRequestParameters', response)
+            deserialized = self._deserialize('QuotaRequestSubmitResponse', response)
         if response.status_code == 201:
             deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
 
@@ -204,7 +204,7 @@ class QuotaRequestsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CreateGenericQuotaRequestParameters', response)
+            deserialized = self._deserialize('QuotaRequestSubmitResponse', response)
         if response.status_code == 201:
             deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
 
