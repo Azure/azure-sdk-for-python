@@ -260,8 +260,8 @@ class ContainerProperties(DictMixin):
     :param dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
 
-    Returned ``ContainerProperties`` instances expose these values through a 
-    dictionary interface, for example: ``container_props["last_modified"]``. 
+    Returned ``ContainerProperties`` instances expose these values through a
+    dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
     """
 

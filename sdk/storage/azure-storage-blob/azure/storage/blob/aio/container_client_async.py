@@ -781,9 +781,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace_async
     async def delete_blobs(  # pylint: disable=arguments-differ
             self, *blobs: Union[str, BlobProperties],
-            delete_snapshots: Optional[str]=None,
-            lease: Optional[Union[str, LeaseClient]]=None,
-            timeout: Optional[int]=None,
+            delete_snapshots: Optional[str] = None,
+            lease: Optional[Union[str, LeaseClient]] = None,
+            timeout: Optional[int] = None,
             **kwargs
         ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
