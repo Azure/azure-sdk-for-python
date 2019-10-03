@@ -10,7 +10,7 @@ import time
 from typing import List
 from distutils.version import StrictVersion
 
-import uamqp
+import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 

@@ -5,14 +5,14 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union
+from typing import Iterable, Union, Type
 import time
 
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClientAsync  # type: ignore
 
-from azure.core.tracing import SpanKind
-from azure.core.settings import settings
+from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
+from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError

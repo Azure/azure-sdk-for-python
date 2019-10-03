@@ -11,10 +11,7 @@ import asyncio
 from typing import Any, List, Dict, Union, TYPE_CHECKING
 
 from uamqp import authentication, constants  # type: ignore
-from uamqp import (
-    Message,
-    AMQPClientAsync,
-)  # type: ignore
+from uamqp import Message, AMQPClientAsync  # type: ignore
 
 from azure.eventhub.common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential

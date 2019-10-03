@@ -12,7 +12,7 @@ import time
 from abc import abstractmethod
 from typing import Union, Any, TYPE_CHECKING
 
-from uamqp import types
+from uamqp import types  # type: ignore
 from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
