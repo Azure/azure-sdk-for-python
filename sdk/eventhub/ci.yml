@@ -41,7 +41,7 @@ stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
-    Artifacts
+    Artifacts:
     - name: azure_eventhubs
       safeName: azureeventhubs
     - name: azure_eventhubs_checkpointstoreblob-aio
