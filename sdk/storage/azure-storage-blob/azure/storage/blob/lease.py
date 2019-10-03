@@ -196,7 +196,7 @@ class LeaseClient(object):
         """Release the lease.
 
         Releasing the lease allows another client to immediately acquire the lease
-        for the container or blob as soon as the release is complete.
+        for the container or blob as soon as the release is completed.
 
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
