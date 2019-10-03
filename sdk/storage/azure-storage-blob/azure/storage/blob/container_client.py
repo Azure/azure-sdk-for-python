@@ -949,7 +949,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
 
     def get_blob_client(
-            self, blob_name,  # type: str
+            self, blob,  # type: Union[str, BlobProperties]
             snapshot=None  # type: str
         ):
         # type: (...) -> BlobClient
@@ -957,9 +957,9 @@ class ContainerClient(StorageAccountHostsMixin):
 
         The blob need not already exist.
 
-        :param blob_name:
-            The name of the blob with which to interact.
-        :type blob_name: str
+        :param blob:
+            The blob with which to interact.
+        :type blob: Union[str, BlobProperties]
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
@@ -973,6 +973,11 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        try:
+            blob_name = blob.name
+        except AttributeError:
+            blob_name = blob
+
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
