@@ -67,10 +67,13 @@ class AsyncPipelineClient(PipelineClientBase):
     **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
+
     *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
+
     *transport* - The HTTP Transport instance. If omitted, AioHttpTransport is use for asynchronous transport.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START build_async_pipeline_client]
             :end-before: [END build_async_pipeline_client]

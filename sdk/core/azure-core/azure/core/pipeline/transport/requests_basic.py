@@ -162,10 +162,13 @@ class RequestsTransport(HttpTransport):
     **Keyword argument:**
 
     *session (requests.Session)* - Request session to use instead of the default one.
+
     *session_owner (bool)* - Decide if the session provided by user is owned by this transport. Default to True.
+
     *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START requests]
             :end-before: [END requests]
@@ -227,6 +230,7 @@ class RequestsTransport(HttpTransport):
 
         *session* - will override the driver session and use yours. Should NOT be done unless really required.
         Anything else is sent straight to requests.
+
         *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
