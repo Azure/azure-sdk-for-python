@@ -52,7 +52,9 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages='azure.core.tracing.ext.opencensus_span',
+    py_modules=[
+        'azure.core.tracing.ext.opencensus_span',
+    ],
     install_requires=[
         'opencensus>=0.6.0',
         'opencensus-ext-azure>=0.3.1',
