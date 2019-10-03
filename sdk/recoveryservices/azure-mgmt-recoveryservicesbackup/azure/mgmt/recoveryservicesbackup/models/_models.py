@@ -3248,8 +3248,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     """Azure VM workload-specific protectable item.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSAPAseDatabaseProtectableItem,
-    AzureVmWorkloadSAPAseSystemProtectableItem,
+    sub-classes are: AzureVmWorkloadSAPAseSystemProtectableItem,
     AzureVmWorkloadSAPHanaDatabaseProtectableItem,
     AzureVmWorkloadSAPHanaSystemProtectableItem,
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem,
@@ -3318,7 +3317,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):
     }
 
     _subtype_map = {
-        'protectable_item_type': {'SAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectableItem', 'SAPAseSystem': 'AzureVmWorkloadSAPAseSystemProtectableItem', 'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectableItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemProtectableItem', 'SQLAvailabilityGroupContainer': 'AzureVmWorkloadSQLAvailabilityGroupProtectableItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseProtectableItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceProtectableItem'}
+        'protectable_item_type': {'SAPAseSystem': 'AzureVmWorkloadSAPAseSystemProtectableItem', 'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectableItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemProtectableItem', 'SQLAvailabilityGroupContainer': 'AzureVmWorkloadSQLAvailabilityGroupProtectableItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseProtectableItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceProtectableItem'}
     }
 
     def __init__(self, **kwargs):
@@ -3558,75 +3557,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
         self.sub_protection_policy = kwargs.get('sub_protection_policy', None)
         self.make_policy_consistent = kwargs.get('make_policy_consistent', None)
         self.backup_management_type = 'AzureWorkload'
-
-
-class AzureVmWorkloadSAPAseDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
-    """Azure VM workload-specific protectable item representing SAP ASE Database.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param backup_management_type: Type of backup management to backup an
-     item.
-    :type backup_management_type: str
-    :param workload_type: Type of workload for the backup management
-    :type workload_type: str
-    :param friendly_name: Friendly name of the backup item.
-    :type friendly_name: str
-    :param protection_state: State of the back up item. Possible values
-     include: 'Invalid', 'NotProtected', 'Protecting', 'Protected',
-     'ProtectionFailed'
-    :type protection_state: str or
-     ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
-    :param protectable_item_type: Required. Constant filled by server.
-    :type protectable_item_type: str
-    :param parent_name: Name for instance or AG
-    :type parent_name: str
-    :param parent_unique_name: Parent Unique Name is added to provide the
-     service formatted URI Name of the Parent
-     Only Applicable for data bases where the parent would be either Instance
-     or a SQL AG.
-    :type parent_unique_name: str
-    :param server_name: Host/Cluster Name for instance or AG
-    :type server_name: str
-    :param is_auto_protectable: Indicates if protectable item is
-     auto-protectable
-    :type is_auto_protectable: bool
-    :param is_auto_protected: Indicates if protectable item is auto-protected
-    :type is_auto_protected: bool
-    :param subinquireditemcount: For instance or AG, indicates number of DB's
-     present
-    :type subinquireditemcount: int
-    :param subprotectableitemcount: For instance or AG, indicates number of
-     DB's to be protected
-    :type subprotectableitemcount: int
-    :param prebackupvalidation: Pre-backup validation for protectable objects
-    :type prebackupvalidation:
-     ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    """
-
-    _validation = {
-        'protectable_item_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'protectable_item_type': {'key': 'protectableItemType', 'type': 'str'},
-        'parent_name': {'key': 'parentName', 'type': 'str'},
-        'parent_unique_name': {'key': 'parentUniqueName', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'is_auto_protectable': {'key': 'isAutoProtectable', 'type': 'bool'},
-        'is_auto_protected': {'key': 'isAutoProtected', 'type': 'bool'},
-        'subinquireditemcount': {'key': 'subinquireditemcount', 'type': 'int'},
-        'subprotectableitemcount': {'key': 'subprotectableitemcount', 'type': 'int'},
-        'prebackupvalidation': {'key': 'prebackupvalidation', 'type': 'PreBackupValidation'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzureVmWorkloadSAPAseDatabaseProtectableItem, self).__init__(**kwargs)
-        self.protectable_item_type = 'SAPAseDatabase'
 
 
 class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
@@ -5148,8 +5078,10 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     """
 
     _validation = {
@@ -5201,8 +5133,10 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5286,8 +5220,10 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     """
 
     _validation = {
@@ -5334,8 +5270,10 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5562,8 +5500,10 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -5625,8 +5565,10 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_mode: Defines whether the current recovery mode is file
-     restore or database restore
-    :type recovery_mode: str
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -6089,15 +6031,12 @@ class BackupStatusRequest(Model):
     :type resource_id: str
     :param po_logical_name: Protectable Item Logical Name
     :type po_logical_name: str
-    :param po_public_uri: Public URI of the resource if available.
-    :type po_public_uri: ~azure.mgmt.recoveryservicesbackup.models.PublicUri
     """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'po_logical_name': {'key': 'poLogicalName', 'type': 'str'},
-        'po_public_uri': {'key': 'poPublicUri', 'type': 'PublicUri'},
     }
 
     def __init__(self, **kwargs):
@@ -6105,7 +6044,6 @@ class BackupStatusRequest(Model):
         self.resource_type = kwargs.get('resource_type', None)
         self.resource_id = kwargs.get('resource_id', None)
         self.po_logical_name = kwargs.get('po_logical_name', None)
-        self.po_public_uri = kwargs.get('po_public_uri', None)
 
 
 class BackupStatusResponse(Model):
@@ -7728,8 +7666,8 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type original_storage_account_option: bool
     :param os_type: OS type
     :type os_type: str
-    :param rp_disk_configuration: Disk configuration
-    :type rp_disk_configuration:
+    :param recovery_point_disk_configuration: Disk configuration
+    :type recovery_point_disk_configuration:
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointDiskConfiguration
     """
 
@@ -7751,7 +7689,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'os_type': {'key': 'osType', 'type': 'str'},
-        'rp_disk_configuration': {'key': 'rpDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
+        'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -7768,7 +7706,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.virtual_machine_size = kwargs.get('virtual_machine_size', None)
         self.original_storage_account_option = kwargs.get('original_storage_account_option', None)
         self.os_type = kwargs.get('os_type', None)
-        self.rp_disk_configuration = kwargs.get('rp_disk_configuration', None)
+        self.recovery_point_disk_configuration = kwargs.get('recovery_point_disk_configuration', None)
         self.object_type = 'IaasVMRecoveryPoint'
 
 
@@ -8035,9 +7973,6 @@ class JobQueryObject(Model):
     :type start_time: datetime
     :param end_time: Job has ended at this time. Value is in UTC.
     :type end_time: datetime
-    :param generate_excel_file_for_export_jobs: True if excel file should be
-     generated.
-    :type generate_excel_file_for_export_jobs: bool
     """
 
     _attribute_map = {
@@ -8047,7 +7982,6 @@ class JobQueryObject(Model):
         'job_id': {'key': 'jobId', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'generate_excel_file_for_export_jobs': {'key': 'generateExcelFileForExportJobs', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -8058,7 +7992,6 @@ class JobQueryObject(Model):
         self.job_id = kwargs.get('job_id', None)
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
-        self.generate_excel_file_for_export_jobs = kwargs.get('generate_excel_file_for_export_jobs', None)
 
 
 class JobResource(Resource):
@@ -9026,8 +8959,7 @@ class OperationStatusExtendedInfo(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: OperationStatusJobExtendedInfo,
-    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo,
-    OperationStatusRecoveryPointExtendedInfo
+    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9044,7 +8976,7 @@ class OperationStatusExtendedInfo(Model):
     }
 
     _subtype_map = {
-        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo', 'OperationStatusRecoveryPointExtendedInfo': 'OperationStatusRecoveryPointExtendedInfo'}
+        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo'}
     }
 
     def __init__(self, **kwargs):
@@ -9134,39 +9066,6 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         super(OperationStatusProvisionILRExtendedInfo, self).__init__(**kwargs)
         self.recovery_target = kwargs.get('recovery_target', None)
         self.object_type = 'OperationStatusProvisionILRExtendedInfo'
-
-
-class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
-    """Operation status extended info for Updated Recovery Point.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param updated_recovery_point: Recovery Point info with updated source
-     snapshot URI
-    :type updated_recovery_point:
-     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPoint
-    :param deleted_backup_item_version: In case the share is in soft-deleted
-     state, populate this field with deleted backup item
-    :type deleted_backup_item_version: str
-    """
-
-    _validation = {
-        'object_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'updated_recovery_point': {'key': 'updatedRecoveryPoint', 'type': 'RecoveryPoint'},
-        'deleted_backup_item_version': {'key': 'deletedBackupItemVersion', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(OperationStatusRecoveryPointExtendedInfo, self).__init__(**kwargs)
-        self.updated_recovery_point = kwargs.get('updated_recovery_point', None)
-        self.deleted_backup_item_version = kwargs.get('deleted_backup_item_version', None)
-        self.object_type = 'OperationStatusRecoveryPointExtendedInfo'
 
 
 class PointInTimeRange(Model):
@@ -9647,22 +9546,6 @@ class ProtectionPolicyResource(Resource):
         self.properties = kwargs.get('properties', None)
 
 
-class PublicUri(Model):
-    """Base class for Public Uri.
-
-    :param public_uri_type: public uri type.
-    :type public_uri_type: str
-    """
-
-    _attribute_map = {
-        'public_uri_type': {'key': 'publicUriType', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PublicUri, self).__init__(**kwargs)
-        self.public_uri_type = kwargs.get('public_uri_type', None)
-
-
 class RecoveryPointDiskConfiguration(Model):
     """Disk configuration.
 
@@ -10091,16 +9974,12 @@ class TargetRestoreInfo(Model):
     :param database_name: Database name InstanceName/DataBaseName for SQL or
      System/DbName for SAP Hana
     :type database_name: str
-    :param target_directory_mapping: This will contain the target folder
-     mapping for the Full/Diff/Log/Incremental pits.
-    :type target_directory_mapping: dict[str, str]
     """
 
     _attribute_map = {
         'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
-        'target_directory_mapping': {'key': 'targetDirectoryMapping', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -10108,7 +9987,6 @@ class TargetRestoreInfo(Model):
         self.overwrite_option = kwargs.get('overwrite_option', None)
         self.container_id = kwargs.get('container_id', None)
         self.database_name = kwargs.get('database_name', None)
-        self.target_directory_mapping = kwargs.get('target_directory_mapping', None)
 
 
 class TokenInformation(Model):

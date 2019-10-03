@@ -104,6 +104,13 @@ class OverwriteOptions(str, Enum):
     overwrite = "Overwrite"
 
 
+class RecoveryMode(str, Enum):
+
+    invalid = "Invalid"
+    file_recovery = "FileRecovery"
+    workload_recovery = "WorkloadRecovery"
+
+
 class SQLDataDirectoryType(str, Enum):
 
     invalid = "Invalid"

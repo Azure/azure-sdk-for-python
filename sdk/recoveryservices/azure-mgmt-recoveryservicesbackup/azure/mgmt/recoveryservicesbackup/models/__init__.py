@@ -57,7 +57,6 @@ try:
     from ._models_py3 import AzureVmWorkloadProtectedItem
     from ._models_py3 import AzureVmWorkloadProtectedItemExtendedInfo
     from ._models_py3 import AzureVmWorkloadProtectionPolicy
-    from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseWorkloadItem
     from ._models_py3 import AzureVmWorkloadSAPAseSystemProtectableItem
@@ -191,7 +190,6 @@ try:
     from ._models_py3 import OperationStatusJobExtendedInfo
     from ._models_py3 import OperationStatusJobsExtendedInfo
     from ._models_py3 import OperationStatusProvisionILRExtendedInfo
-    from ._models_py3 import OperationStatusRecoveryPointExtendedInfo
     from ._models_py3 import OperationWorkerResponse
     from ._models_py3 import PointInTimeRange
     from ._models_py3 import PreBackupValidation
@@ -210,7 +208,6 @@ try:
     from ._models_py3 import ProtectionPolicy
     from ._models_py3 import ProtectionPolicyQueryObject
     from ._models_py3 import ProtectionPolicyResource
-    from ._models_py3 import PublicUri
     from ._models_py3 import RecoveryPoint
     from ._models_py3 import RecoveryPointDiskConfiguration
     from ._models_py3 import RecoveryPointResource
@@ -293,7 +290,6 @@ except (SyntaxError, ImportError):
     from ._models import AzureVmWorkloadProtectedItem
     from ._models import AzureVmWorkloadProtectedItemExtendedInfo
     from ._models import AzureVmWorkloadProtectionPolicy
-    from ._models import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models import AzureVmWorkloadSAPAseDatabaseWorkloadItem
     from ._models import AzureVmWorkloadSAPAseSystemProtectableItem
@@ -427,7 +423,6 @@ except (SyntaxError, ImportError):
     from ._models import OperationStatusJobExtendedInfo
     from ._models import OperationStatusJobsExtendedInfo
     from ._models import OperationStatusProvisionILRExtendedInfo
-    from ._models import OperationStatusRecoveryPointExtendedInfo
     from ._models import OperationWorkerResponse
     from ._models import PointInTimeRange
     from ._models import PreBackupValidation
@@ -446,7 +441,6 @@ except (SyntaxError, ImportError):
     from ._models import ProtectionPolicy
     from ._models import ProtectionPolicyQueryObject
     from ._models import ProtectionPolicyResource
-    from ._models import PublicUri
     from ._models import RecoveryPoint
     from ._models import RecoveryPointDiskConfiguration
     from ._models import RecoveryPointResource
@@ -505,6 +499,7 @@ from ._recovery_services_backup_client_enums import (
     ProtectedItemHealthStatus,
     RestorePointType,
     OverwriteOptions,
+    RecoveryMode,
     SQLDataDirectoryType,
     RestorePointQueryType,
     RecoveryPointTierType,
@@ -593,7 +588,6 @@ __all__ = [
     'AzureVmWorkloadProtectedItem',
     'AzureVmWorkloadProtectedItemExtendedInfo',
     'AzureVmWorkloadProtectionPolicy',
-    'AzureVmWorkloadSAPAseDatabaseProtectableItem',
     'AzureVmWorkloadSAPAseDatabaseProtectedItem',
     'AzureVmWorkloadSAPAseDatabaseWorkloadItem',
     'AzureVmWorkloadSAPAseSystemProtectableItem',
@@ -727,7 +721,6 @@ __all__ = [
     'OperationStatusJobExtendedInfo',
     'OperationStatusJobsExtendedInfo',
     'OperationStatusProvisionILRExtendedInfo',
-    'OperationStatusRecoveryPointExtendedInfo',
     'OperationWorkerResponse',
     'PointInTimeRange',
     'PreBackupValidation',
@@ -746,7 +739,6 @@ __all__ = [
     'ProtectionPolicy',
     'ProtectionPolicyQueryObject',
     'ProtectionPolicyResource',
-    'PublicUri',
     'RecoveryPoint',
     'RecoveryPointDiskConfiguration',
     'RecoveryPointResource',
@@ -804,6 +796,7 @@ __all__ = [
     'ProtectedItemHealthStatus',
     'RestorePointType',
     'OverwriteOptions',
+    'RecoveryMode',
     'SQLDataDirectoryType',
     'RestorePointQueryType',
     'RecoveryPointTierType',
