@@ -11,10 +11,9 @@ from itertools import islice
 
 from azure.core import HttpResponseError
 from .._shared.encryption import decrypt_blob
-from .._shared.parser import get_empty_chunk
 from .._shared.request_handlers import validate_and_format_range_headers
-from .._shared.response_handlers import process_storage_error, parse_length_from_content_range, \
-    get_page_ranges_result
+from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from .._deserialize import get_page_ranges_result
 from ..download import process_range_and_offset
 
 
@@ -144,7 +143,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             chunk_start, chunk_end, chunk_end, self.encryption_options)
 
         if self._do_optimize(download_range[0], download_range[1] - 1):
-            chunk_data = get_empty_chunk(self.chunk_size)
+            chunk_data = b"\x00" * self.chunk_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
@@ -179,7 +178,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     """
 
     def __init__(
-            self, client=None,
+            self,
             clients=None,
             config=None,
             offset=None,
@@ -187,7 +186,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=None,
             encryption_options=None,
             **kwargs):
-        self.client = client
         self.clients = clients
         self.config = config
         self.offset = offset
@@ -243,7 +241,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     # Use the length unless it is over the end of the file
                     data_end = min(self.file_size, self.length + 1)
                 self._iter_downloader = _AsyncChunkDownloader(
-                    client=self.client,
+                    client=self.clients.blob,
                     non_empty_ranges=self.non_empty_ranges,
                     total_size=self.download_size,
                     chunk_size=self.config.max_chunk_get_size,
@@ -300,7 +298,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self.validate_content)
 
         try:
-            location_mode, response = await self.client.download(
+            location_mode, response = await self.clients.blob.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -329,7 +327,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = await self.client.download(
+                    _, response = await self.clients.blob.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -430,7 +428,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self.file_size, self.length + 1)
 
         downloader = _AsyncChunkDownloader(
-            client=self.client,
+            client=self.clients.blob,
             non_empty_ranges=self.non_empty_ranges,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,

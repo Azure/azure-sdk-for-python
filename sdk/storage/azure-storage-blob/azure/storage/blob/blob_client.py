@@ -26,7 +26,8 @@ from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, process_storage_error, get_page_ranges_result
+from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._deserialize import get_page_ranges_result
 from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -579,7 +580,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'client': self._client.blob,
             'clients': self._client,
             'config': self._config,
             'offset': offset,

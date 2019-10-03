@@ -11,13 +11,13 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.storage.blob._generated.models import CpkInfo
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import return_response_headers, process_storage_error, get_page_ranges_result
+from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._deserialize import get_page_ranges_result
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import ModifiedAccessConditions, StorageErrorException
+from .._generated.models import ModifiedAccessConditions, StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
 from ..blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (

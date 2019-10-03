@@ -11,10 +11,9 @@ from io import BytesIO
 from azure.core import HttpResponseError
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
-from ._shared.parser import get_empty_chunk
 from ._shared.request_handlers import validate_and_format_range_headers
-from ._shared.response_handlers import process_storage_error, parse_length_from_content_range, \
-    get_page_ranges_result
+from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from ._deserialize import get_page_ranges_result
 
 
 def process_range_and_offset(start_range, end_range, length, encryption):
@@ -133,17 +132,28 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         pass
 
     def _do_optimize(self, given_range_start, given_range_end):
+        # if we have no page range list stored, then assume there's data everywhere for that page blob
+        # or it's a block blob or append blob
         if self.non_empty_ranges is None:
             return False
 
         for source_range in self.non_empty_ranges:
+            # case 1: As the range list is sorted, if we've reached such a source_range
+            # we've checked all the appropriate source_range already and haven't found any overlapping.
+            # so the given range doesn't have any data and download optimization could be applied.
+            # given range:		|   |
+            # source range:			       |   |
             if given_range_end < source_range['start']:  # pylint:disable=no-else-return
                 return True
+            # case 2: the given range comes after source_range, continue checking.
+            # given range:				|   |
+            # source range:	|   |
             elif source_range['end'] < given_range_start:
                 pass
+            # case 3: source_range and given range overlap somehow, no need to optimize.
             else:
                 return False
-
+        # went through all src_ranges, but nothing overlapped. Optimization will be applied.
         return True
 
     def _download_chunk(self, chunk_start, chunk_end):
@@ -151,8 +161,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             chunk_start, chunk_end, chunk_end, self.encryption_options
         )
 
+        # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
+        # Do optimize and create empty chunk locally if condition is met.
         if self._do_optimize(download_range[0], download_range[1] - 1):
-            chunk_data = get_empty_chunk(self.chunk_size)
+            chunk_data = b"\x00" * self.chunk_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0], download_range[1] - 1, check_content_md5=self.validate_content
@@ -244,7 +256,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     def __init__(
         self,
-        client=None,
         clients=None,
         config=None,
         offset=None,
@@ -254,7 +265,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         extra_properties=None,
         **kwargs
     ):
-        self.client = client
         self.clients = clients
         self.config = config
         self.offset = offset
@@ -326,7 +336,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self.file_size, self.length + 1)
 
         downloader = SequentialChunkDownloader(
-            client=self.client,
+            client=self.clients.blob,
             non_empty_ranges=self.non_empty_ranges,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
@@ -353,7 +363,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
 
         try:
-            location_mode, response = self.client.download(
+            location_mode, response = self.clients.blob.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -383,7 +393,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = self.client.download(
+                    _, response = self.clients.blob.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -403,6 +413,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             try:
                 page_ranges = self.clients.page_blob.get_page_ranges()
                 self.non_empty_ranges = get_page_ranges_result(page_ranges)[0]
+            # according to the REST API documentation:
+            # in a highly fragmented page blob with a large number of writes,
+            # a Get Page Ranges request can fail due to an internal server timeout.
+            # thus, if the page blob is not sparse, it's ok for it to fail
             except HttpResponseError:
                 pass
 
@@ -484,7 +498,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         downloader_class = ParallelChunkDownloader if max_concurrency > 1 else SequentialChunkDownloader
         downloader = downloader_class(
-            client=self.client,
+            client=self.clients.blob,
             non_empty_ranges=self.non_empty_ranges,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,

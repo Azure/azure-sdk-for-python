@@ -12,6 +12,7 @@ from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
+from .download import StorageStreamDownloader
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
 from ._shared.models import(
     LocationMode,
@@ -85,6 +86,7 @@ __all__ = [
     'BlobPermissions',
     'ResourceTypes',
     'AccountPermissions',
+    'StorageStreamDownloader',
 ]
 
 
