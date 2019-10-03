@@ -1096,16 +1096,12 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.type = None
 
 
-class QuotaRequestSubmitResponse(Model):
-    """Quota submit request response.
+class QuotaRequestProperties(Model):
+    """The details of quota request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The quota request Id.
-    :vartype id: str
-    :ivar name: The name of the quota request.
-    :vartype name: str
     :param provisioning_state: The quota request status.
     :type provisioning_state: object
     :ivar message: User friendly status message.
@@ -1116,6 +1112,41 @@ class QuotaRequestSubmitResponse(Model):
     :vartype request_submit_time: datetime
     :param value: The quotaRequests.
     :type value: list[~azure.mgmt.reservations.models.SubRequest]
+    """
+
+    _validation = {
+        'message': {'readonly': True},
+        'request_submit_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
+        'message': {'key': 'message', 'type': 'str'},
+        'request_submit_time': {'key': 'requestSubmitTime', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': '[SubRequest]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaRequestProperties, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.message = None
+        self.request_submit_time = None
+        self.value = kwargs.get('value', None)
+
+
+class QuotaRequestSubmitResponse(Model):
+    """Quota submit request response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The quota request Id.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :param quota_request_properties: The quota request details.
+    :type quota_request_properties:
+     ~azure.mgmt.reservations.models.QuotaRequestProperties
     :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
     :vartype type: str
     """
@@ -1123,18 +1154,13 @@ class QuotaRequestSubmitResponse(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'quotaRequestProperties.provisioningState', 'type': 'object'},
-        'message': {'key': 'quotaRequestProperties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'quotaRequestProperties.requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'quotaRequestProperties.value', 'type': '[SubRequest]'},
+        'quota_request_properties': {'key': 'quotaRequestProperties', 'type': 'QuotaRequestProperties'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -1142,10 +1168,7 @@ class QuotaRequestSubmitResponse(Model):
         super(QuotaRequestSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.message = None
-        self.request_submit_time = None
-        self.value = kwargs.get('value', None)
+        self.quota_request_properties = kwargs.get('quota_request_properties', None)
         self.type = None
 
 
