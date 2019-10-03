@@ -16,7 +16,7 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import Certifica
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties, KeyProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
-from azure.keyvault.certificates.models import Issuer, IssuerBase
+from azure.keyvault.certificates.models import Issuer, IssuerProperties
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -148,8 +148,7 @@ class CertificateClientTests(KeyVaultTestCase):
                admin_detail.phone == exp_admin_detail.phone)
 
     def _validate_certificate_issuer(self, issuer, expected):
-        self.assertEqual(issuer.name, expected.name)
-        self.assertEqual(issuer.provider, expected.provider)
+        self._validate_certificate_issuer_properties(issuer.properties, expected.properties)
         self.assertEqual(issuer.account_id, expected.account_id)
         self.assertEqual(len(issuer.admin_details), len(expected.admin_details))
         for admin_detail in issuer.admin_details:
@@ -157,9 +156,8 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertIsNotNone(exp_admin_detail)
         self.assertEqual(issuer.password, expected.password)
         self.assertEqual(issuer.organization_id, expected.organization_id)
-        self.assertEqual(issuer.vault_url, expected.vault_url)
 
-    def _validate_certificate_issuer_base(self, issuer, expected):
+    def _validate_certificate_issuer_properties(self, issuer, expected):
         self.assertEqual(issuer.id, expected.id)
         self.assertEqual(issuer.name, expected.name)
         self.assertEqual(issuer.provider, expected.provider)
@@ -220,16 +218,16 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # update certificate
         tags = {'tag1': 'updated_value1'}
-        cert_bundle = await client.update_certificate(name=cert_name, tags=tags)
+        cert_bundle = await client.update_certificate_properties(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
             cert=cert_bundle,
             vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy
         )
-        self.assertEqual(tags, cert_bundle.tags)
+        self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
-        self.assertNotEqual(cert.updated, cert_bundle.updated)
+        self.assertNotEqual(cert.properties.updated, cert_bundle.properties.updated)
 
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name)
@@ -242,7 +240,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            await client.get_certificate(name=cert_name, version=deleted_cert_bundle.version)
+            await client.get_certificate(name=cert_name, version=deleted_cert_bundle.properties.version)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
@@ -650,9 +648,13 @@ class CertificateClientTests(KeyVaultTestCase):
             enabled=True
         )
 
-        expected = Issuer(
-            provider="Test",
+        properties = IssuerProperties(
             issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
+            provider="Test"
+        )
+
+        expected = Issuer(
+            properties=properties,
             account_id="keyvaultuser",
             admin_details=admin_details,
             attributes=IssuerAttributes(enabled=True)
@@ -674,12 +676,12 @@ class CertificateClientTests(KeyVaultTestCase):
             enabled=True
         )
 
-        expected_base_1 = IssuerBase(
+        expected_base_1 = IssuerProperties(
             issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
             provider="Test"
         )
 
-        expected_base_2 = IssuerBase(
+        expected_base_2 = IssuerProperties(
             issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name + "2",
             provider="Test"
         )
@@ -689,7 +691,7 @@ class CertificateClientTests(KeyVaultTestCase):
         async for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)
-            self._validate_certificate_issuer_base(issuer=issuer, expected=exp_issuer)
+            self._validate_certificate_issuer_properties(issuer=issuer, expected=exp_issuer)
             expected_issuers.remove(exp_issuer)
         self.assertEqual(len(expected_issuers), 0)
 
@@ -702,8 +704,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )]
 
         expected = Issuer(
-            provider="Test",
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
+            properties=properties,
             account_id="keyvaultuser",
             admin_details=admin_details,
             attributes=IssuerAttributes(enabled=True)

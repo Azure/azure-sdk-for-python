@@ -53,7 +53,8 @@ class RedirectPolicy(HTTPPolicy):
 
     *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START redirect_policy]
             :end-before: [END redirect_policy]

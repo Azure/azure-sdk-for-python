@@ -79,11 +79,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = certificate_client.update_certificate(name=certificate.name, tags=tags)
+        updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
-        print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.version)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -200,7 +200,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 
@@ -329,7 +329,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -345,7 +345,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         issuer = certificate_client.get_issuer(name="issuer1")
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -378,7 +378,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_issuer = certificate_client.delete_issuer(name="issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.provider)
+        print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
         for admin_detail in deleted_issuer.admin_details:

@@ -18,10 +18,10 @@ from azure.keyvault.certificates.models import(
     CertificateOperation,
     CertificatePolicy,
     DeletedCertificate,
-    CertificateBase,
+    CertificateProperties,
     Contact,
     Issuer,
-    IssuerBase
+    IssuerProperties
 )
 from ._polling_async import CreateCertificatePollerAsync
 from .._shared import AsyncKeyVaultClientBase
@@ -404,7 +404,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_certificate(
+    async def update_certificate_properties(
         self,
         name: str,
         version: Optional[str] = None,
@@ -553,7 +553,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         self,
         include_pending: Optional[bool] = None,
         **kwargs: "**Any"
-    ) -> AsyncIterable[CertificateBase]:
+    ) -> AsyncIterable[CertificateProperties]:
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -562,9 +562,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :param bool include_pending: Specifies whether to include certificates
          which are not completely provisioned.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -580,12 +580,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
-            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateBase]:
+    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateProperties]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -593,9 +593,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificates/list permission.
 
         :param str name: The name of the certificate.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -611,7 +611,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
-            cls=lambda objs: [CertificateBase._from_certificate_item(x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs)
 
     @distributed_trace_async
@@ -1063,7 +1063,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerBase]:
+    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerProperties]:
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
@@ -1086,6 +1086,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return self._client.get_certificate_issuers(
             vault_base_url=self.vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [IssuerBase._from_issuer_item(x) for x in objs],
+            cls=lambda objs: [IssuerProperties._from_issuer_item(x) for x in objs],
             **kwargs
         )

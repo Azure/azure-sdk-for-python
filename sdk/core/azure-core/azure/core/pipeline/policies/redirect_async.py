@@ -41,7 +41,8 @@ class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
 
     *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START async_redirect_policy]
             :end-before: [END async_redirect_policy]

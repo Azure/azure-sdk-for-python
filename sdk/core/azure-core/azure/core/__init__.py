@@ -31,6 +31,7 @@ from .configuration import Configuration
 from .pipeline_client import PipelineClient
 from .pipeline.transport import HttpRequest
 from .exceptions import HttpResponseError
+from .match_conditions import MatchConditions
 
 
 __all__ = [
@@ -38,6 +39,7 @@ __all__ = [
     "PipelineClient",
     "HttpResponseError",
     "HttpRequest",
+    "MatchConditions"
 ]
 
 try:
