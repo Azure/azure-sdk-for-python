@@ -22,6 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+# pylint: disable=unused-import
 from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List
 
 import six
