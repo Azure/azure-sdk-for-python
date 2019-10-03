@@ -85,7 +85,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_containers_async.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
@@ -135,7 +136,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
@@ -195,7 +197,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
@@ -264,7 +267,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A LeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
@@ -307,7 +311,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.models.ContainerProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
@@ -357,7 +362,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
@@ -394,7 +400,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: Access policy information in a dict.
         :rtype: dict[str, str]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
@@ -455,7 +462,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
@@ -510,7 +518,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.BlobProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
@@ -682,7 +691,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
@@ -990,7 +1000,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]

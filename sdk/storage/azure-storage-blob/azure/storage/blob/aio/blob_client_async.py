@@ -80,7 +80,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
             :start-after: [START create_blob_client]
             :end-before: [END create_blob_client]
@@ -229,7 +230,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
                 :start-after: [START upload_a_blob]
                 :end-before: [END upload_a_blob]
@@ -310,7 +312,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: A iterable data generator (stream)
         :rtype: ~azure.storage.blob._blob_utils.StorageStreamDownloader
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
                 :start-after: [START download_a_blob]
                 :end-before: [END download_a_blob]
@@ -380,7 +383,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
                 :start-after: [START delete_blob]
                 :end-before: [END delete_blob]
@@ -406,7 +410,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START undelete_blob]
                 :end-before: [END undelete_blob]
@@ -460,7 +465,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: BlobProperties
         :rtype: ~azure.storage.blob.models.BlobProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START get_blob_properties]
                 :end-before: [END get_blob_properties]
@@ -772,7 +778,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START create_blob_snapshot]
                 :end-before: [END create_blob_snapshot]
@@ -923,7 +930,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: Dict[str, Union[str, datetime]]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START copy_blob_from_url]
                 :end-before: [END copy_blob_from_url]
@@ -957,7 +965,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :type copy_id: str or ~azure.storage.blob.models.BlobProperties
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START abort_copy_blob_from_url]
                 :end-before: [END abort_copy_blob_from_url]
@@ -1014,7 +1023,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: A LeaseClient object.
         :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common_async.py
                 :start-after: [START acquire_lease_on_blob]
                 :end-before: [END acquire_lease_on_blob]

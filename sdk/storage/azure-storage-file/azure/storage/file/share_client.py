@@ -153,7 +153,8 @@ class ShareClient(StorageAccountHostsMixin):
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_client_from_conn_string]
                 :end-before: [END create_share_client_from_conn_string]
@@ -305,7 +306,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
@@ -352,7 +354,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
@@ -387,7 +390,8 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
@@ -419,7 +423,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: The share properties.
         :rtype: ~azure.storage.file.models.ShareProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
@@ -452,7 +457,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
@@ -486,7 +492,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
@@ -612,7 +619,8 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
