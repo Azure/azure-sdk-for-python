@@ -22,6 +22,7 @@ trigger:
   paths:
     include:
     - sdk/storage/
+    - sdk/core/
 
 pr:
   branches:
@@ -34,6 +35,7 @@ pr:
   paths:
     include:
     - sdk/storage/
+    - sdk/core/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
