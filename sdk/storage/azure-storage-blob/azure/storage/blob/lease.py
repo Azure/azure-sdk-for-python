@@ -85,7 +85,7 @@ class LeaseClient(object):
 
         If the container does not have an active lease, the Blob service creates a
         lease on the container. The lease id is available in the ``id`` property
-        of this instance. 
+        of this instance.
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
