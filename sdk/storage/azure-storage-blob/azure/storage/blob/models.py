@@ -244,7 +244,7 @@ class CorsRule(GeneratedCorsRule):
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
-    :param datetime last_modified:
+    :param ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :param str etag:
         The ETag contains a value that you can use to perform operations
@@ -260,8 +260,8 @@ class ContainerProperties(DictMixin):
     :param dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
 
-    Returned ``ContainerProperties`` instances expose these values through a 
-    dictionary interface, for example: ``container_props["last_modified"]``. 
+    Returned ``ContainerProperties`` instances expose these values through a
+    dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
     """
 
@@ -720,7 +720,7 @@ class CopyProperties(DictMixin):
         Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy Blob operation where this blob was the destination blob. Can show
         between 0 and Content-Length bytes copied.
-    :param datetime completion_time:
+    :param ~datetime.datetime completion_time:
         Conclusion time of the last attempted Copy Blob operation where this blob was the
         destination blob. This value can specify the time of a completed, aborted, or
         failed copy attempt.
@@ -731,7 +731,7 @@ class CopyProperties(DictMixin):
         Copies the snapshot of the source page blob to a destination page blob.
         The snapshot is copied such that only the differential changes between
         the previously copied snapshot are transferred to the destination
-    :param datetime destination_snapshot:
+    :param ~datetime.datetime destination_snapshot:
         Included if the blob is incremental copy blob or incremental copy snapshot,
         if x-ms-copy-status is success. Snapshot time of the last successful
         incremental copy snapshot for this blob.
@@ -849,9 +849,9 @@ class AccessPolicy(GenAccessPolicy):
 
 class ContainerPermissions(object):
     """ContainerPermissions class to be used with
-    :func:`~azure.storage.blob.container_client.ContainerClient.generate_shared_access_signature` API and
+    :func:`~azure.storage.blob.ContainerClient.generate_shared_access_signature` API and
     for the AccessPolicies used with
-    :func:`~azure.storage.blob.container_client.ContainerClient.set_container_access_policy`.
+    :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
 
     :cvar ContainerPermissions ContainerPermissions.DELETE:
         Delete any blob in the container. Note: You cannot grant permissions to
