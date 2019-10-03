@@ -1131,10 +1131,10 @@ class QuotaRequestSubmitResponse(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'properties.value', 'type': '[SubRequest]'},
+        'provisioning_state': {'key': 'quotaRequestProperties.provisioningState', 'type': 'object'},
+        'message': {'key': 'quotaRequestProperties.message', 'type': 'str'},
+        'request_submit_time': {'key': 'quotaRequestProperties.requestSubmitTime', 'type': 'iso-8601'},
+        'value': {'key': 'quotaRequestProperties.value', 'type': '[SubRequest]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
