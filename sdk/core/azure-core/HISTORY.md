@@ -29,6 +29,7 @@
 - Tracing: `azure.core.tracing.context` removed
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
+- Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
 
 ## 2019-09-09 Version 1.0.0b3
 
