@@ -3,6 +3,26 @@
 Release History
 ===============
 
+6.0.0 (2019-10-03)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetworkGateway has a new parameter vpn_gateway_generation
+- Model ExpressRoutePort has a new parameter identity
+- Model VirtualNetworkGatewayConnection has a new parameter traffic_selector_policies
+- Model ExpressRouteLink has a new parameter mac_sec_config
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter traffic_selector_policies
+- Model NetworkInterfaceIPConfiguration has a new parameter private_link_connection_properties
+- Model ApplicationGatewayRequestRoutingRule has a new parameter priority
+- Added operation VirtualNetworkGatewayConnectionsOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewayConnectionsOperations.start_packet_capture
+- Added operation ConnectionMonitorsOperations.update_tags
+- Added operation VirtualNetworkGatewaysOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewaysOperations.start_packet_capture
+- Added operation group VirtualRoutersOperations
+- Added operation group VirtualRouterPeeringsOperations
+
 5.0.0 (2019-08-27)
 ++++++++++++++++++
 
