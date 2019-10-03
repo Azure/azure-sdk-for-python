@@ -114,8 +114,8 @@ class Error(object):
         return self._inner_error
 
 
-class CertificateBase(object):
-    """Certificate base consists of a certificates metadata.
+class CertificateProperties(object):
+    """Certificate properties consists of a certificates metadata.
 
     :param attributes: The certificate management attributes.
     :type attributes: ~azure.keyvault.certificates.CertificateAttributes
@@ -132,8 +132,8 @@ class CertificateBase(object):
 
     @classmethod
     def _from_certificate_item(cls, certificate_item):
-        # type: (models.CertificateItem) -> CertificateBase
-        """Construct a CertificateBase from an autorest-generated CertificateItem"""
+        # type: (models.CertificateItem) -> CertificateProperties
+        """Construct a CertificateProperties from an autorest-generated CertificateItem"""
         return cls(
             attributes=certificate_item.attributes,
             cert_id=certificate_item.id,
@@ -250,32 +250,27 @@ class CertificateBase(object):
         return self._vault_id.version
 
 
-class Certificate(CertificateBase):
+class Certificate(object):
     """Consists of a certificate and its attributes
 
     :param policy: The management policy for the certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :paramstr cert_id: The certificate id.
-    :param bytes thumbprint: Thumpbrint of the certificate
+    :param properties: The certificate's properties.
+    :type properties: ~azure.keyvault.certificates.CertificateProperties
     :param str key_id: The key id.
     :param str secret_id: The secret id.
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.certificates.CertificateAttributes
     :param bytearray cer: CER contents of the X509 certificate.
     """
     def __init__(
         self,
-        policy,  # type: models.CertificatePolicy
-        cert_id,  # type: Optional[str]
-        thumbprint=None,  # type:  Optional[bytes]
+        policy,  # type: CertificatePolicy
+        properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
-        attributes=None,  # type: Optional[CertificateAttributes]
-        cer=None,  # type: Optional[bytes]
-        **kwargs  # type: **Any
+        cer=None  # type: Optional[bytes]
     ):
         # type: (...) -> None
-        super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
+        self._properties = properties
         self._key_id = key_id
         self._secret_id = secret_id
         self._policy = policy
@@ -287,15 +282,39 @@ class Certificate(CertificateBase):
         """Construct a certificate from an autorest-generated certificateBundle"""
         # pylint:disable=protected-access
         return cls(
-            attributes=certificate_bundle.attributes,
-            cert_id=certificate_bundle.id,
-            thumbprint=certificate_bundle.x509_thumbprint,
+            properties=CertificateProperties._from_certificate_item(certificate_bundle),
             key_id=certificate_bundle.kid,
             secret_id=certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
-            cer=certificate_bundle.cer,
-            tags=certificate_bundle.tags,
+            cer=certificate_bundle.cer
         )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """Certificate identifier.
+
+        :rtype: str
+        """
+        return self._properties.id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """The name of the certificate.
+
+        :rtype: str
+        """
+        return self._properties.name
+
+    @property
+    def properties(self):
+        # type: () -> CertificateProperties
+        """The certificate's properties
+
+        :rtype: ~azure.keyvault.certificates.models.CertificateAttributes
+        """
+        return self._properties
 
     @property
     def key_id(self):
