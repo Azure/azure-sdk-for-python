@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -40,6 +39,7 @@ from .models import (
     BlobPropertiesPaged,
     BlobPrefix
 )
+from .download_async import StorageStreamDownloader
 from .blob_client_async import BlobClient
 from .container_client_async import ContainerClient
 from .blob_service_client_async import BlobServiceClient

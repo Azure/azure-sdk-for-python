@@ -112,6 +112,18 @@ class StoragePageBlobTest(StorageTestCase):
             props = blob.get_blob_properties()
         return props
 
+    def _create_sparse_page_blob(self, size=1024*1024, data=''):
+        blob_client = self._get_blob_reference()
+        blob_client.create_page_blob(size=size)
+
+        range_start = 8*1024 + 512
+        range_end = range_start + len(data) - 1
+
+        # the page blob will be super sparse like this:'                         some data                      '
+        blob_client.upload_page(data, range_start, range_end)
+
+        return blob_client
+
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
@@ -1533,7 +1545,74 @@ class StoragePageBlobTest(StorageTestCase):
         finally:
             container.delete_container()
 
+    @record
+    def test_download_sparse_page_blob_non_parallel(self):
+        # Arrange
+        self.config.max_single_get_size = 4*1024
+        self.config.max_chunk_get_size = 1024
 
+        sparse_page_blob_size = 1024 * 1024
+        data = self.get_random_bytes(2048)
+        blob_client = self._create_sparse_page_blob(size=sparse_page_blob_size, data=data)
+
+        # Act
+        page_ranges, cleared = blob_client.get_page_ranges()
+        start = page_ranges[0]['start']
+        end = page_ranges[0]['end']
+
+        content = blob_client.download_blob().content_as_bytes()
+
+        # Assert
+        self.assertEqual(sparse_page_blob_size, len(content))
+        # make sure downloaded data is the same as the uploaded data
+        self.assertEqual(data, content[start: end + 1])
+        # assert all unlisted ranges are empty
+        for byte in content[:start-1]:
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
+        for byte in content[end+1:]:
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
+
+    def test_download_sparse_page_blob_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        self.config.max_single_get_size = 4 * 1024
+        self.config.max_chunk_get_size = 1024
+
+        sparse_page_blob_size = 1024 * 1024
+        data = self.get_random_bytes(2048)
+        blob_client = self._create_sparse_page_blob(size=sparse_page_blob_size, data=data)
+
+        # Act
+        page_ranges, cleared = blob_client.get_page_ranges()
+        start = page_ranges[0]['start']
+        end = page_ranges[0]['end']
+
+        content = blob_client.download_blob().content_as_bytes(max_concurrency=3)
+
+        # Assert
+        self.assertEqual(sparse_page_blob_size, len(content))
+        # make sure downloaded data is the same as the uploaded data
+        self.assertEqual(data, content[start: end + 1])
+        # assert all unlisted ranges are empty
+        for byte in content[:start - 1]:
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
+        for byte in content[end + 1:]:
+            try:
+                self.assertEqual(byte, '\x00')
+            except:
+                self.assertEqual(byte, 0)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

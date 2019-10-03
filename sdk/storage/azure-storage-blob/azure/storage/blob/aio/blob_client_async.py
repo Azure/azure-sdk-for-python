@@ -11,14 +11,13 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.storage.blob._generated.models import CpkInfo
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._deserialize import get_page_ranges_result
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import ModifiedAccessConditions, StorageErrorException
+from .._generated.models import ModifiedAccessConditions, StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
 from ..blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
@@ -28,6 +27,7 @@ from ._upload_helpers import (
 from ..models import BlobType, BlobBlock
 from ..lease import get_access_conditions
 from .lease_async import LeaseClient
+from .download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -1387,7 +1387,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 ranges = await self._client.page_blob.get_page_ranges(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return self._get_page_ranges_result(ranges)
+        return get_page_ranges_result(ranges)
 
     @distributed_trace_async
     async def set_sequence_number( # type: ignore
