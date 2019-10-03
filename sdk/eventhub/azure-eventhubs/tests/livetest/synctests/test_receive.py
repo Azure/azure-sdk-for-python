@@ -283,7 +283,8 @@ def test_receive_over_websocket_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_run_time_metric(connstr_senders):
     from uamqp import __version__ as uamqp_version
-    if uamqp_version < "1.2.3":
+    from distutils.version import StrictVersion
+    if StrictVersion(uamqp_version) < StrictVersion('1.2.3'):
         pytest.skip("Disabled for uamqp 1.2.2. Will enable after uamqp 1.2.3 is released.")
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
