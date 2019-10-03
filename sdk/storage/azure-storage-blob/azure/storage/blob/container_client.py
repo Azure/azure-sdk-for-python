@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,6 +21,7 @@ import six
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.transport import HttpRequest
 
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -950,6 +952,286 @@ class ContainerClient(StorageAccountHostsMixin):
             lease=lease,
             timeout=timeout,
             **kwargs)
+
+    def _generate_delete_blobs_options(
+        self, snapshot=None,
+        timeout=None,
+        delete_snapshots=None,
+        request_id=None,
+        lease_access_conditions=None,
+        modified_access_conditions=None
+    ):
+        """This code is a copy from _generated.
+
+        Once Autorest is able to provide request preparation this code should be removed.
+        """
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+
+        # Construct parameters
+        query_parameters = {}
+        if snapshot is not None:
+            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if timeout is not None:
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
+
+        # Construct headers
+        header_parameters = {}
+        if delete_snapshots is not None:
+            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "lease_id", lease_id, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_none_match", if_none_match, 'str')
+
+        return query_parameters, header_parameters
+
+    @distributed_trace
+    def delete_blobs(self, *blobs, **kwargs):
+        # type: (...) -> None
+        """Marks the specified blobs or snapshots for deletion.
+
+        The blob is later deleted during garbage collection.
+        Note that in order to delete a blob, you must delete all of its
+        snapshots. You can delete both at the same time with the Delete
+        Blob operation.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
+        and retains the blob or snapshot for specified number of days.
+        After specified number of days, blob's data is removed from the service during garbage collection.
+        Soft deleted blob or snapshot is accessible through List Blobs API specifying `include="deleted"` option.
+        Soft-deleted blob or snapshot can be restored using Undelete API.
+
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
+        :param lease:
+            Required if the blob has an active lease. Value can be a Lease object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
+            **kwargs
+        )
+        query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'delete_snapshots', 'lease_access_conditions', 'modified_access_conditions']:
+            options.pop(possible_param, None)
+
+        reqs = []
+        for blob in blobs:
+            req = HttpRequest(
+                "DELETE",
+                "/{}/{}".format(self.container_name, blob),
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
+
+        return self._batch_send(*reqs, **options)
+
+    def _generate_set_tier_options(
+        self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None
+    ):
+        """This code is a copy from _generated.
+
+        Once Autorest is able to provide request preparation this code should be removed.
+        """
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
+        comp = "tier"
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
+        query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
+        if rehydrate_priority is not None:
+            header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "rehydrate_priority", rehydrate_priority, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')  # pylint: disable=protected-access
+
+        return query_parameters, header_parameters
+
+    @distributed_trace
+    def set_standard_blob_tier_blobs(
+        self,
+        standard_blob_tier,  # type: Union[str, StandardBlobTier]
+        *blobs,  # type: Union[str, BlobProperties]
+        **kwargs
+    ):
+        # type: (...) -> Iterator[HttpResponse]
+        """This operation sets the tier on block blobs.
+
+        A block blob's tier determines Hot/Cool/Archive storage type.
+        This operation does not update the blob's ETag.
+
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :param standard_blob_tier:
+            Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
+            'Archive'. The hot tier is optimized for storing data that is accessed
+            frequently. The cool storage tier is optimized for storing data that
+            is infrequently accessed and stored for at least a month. The archive
+            tier is optimized for storing data that is rarely accessed and stored
+            for at least six months with flexible latency requirements.
+        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        if standard_blob_tier is None:
+            raise ValueError("A StandardBlobTier must be specified")
+
+        query_parameters, header_parameters = self._generate_set_tier_options(
+            tier=standard_blob_tier,
+            lease_access_conditions=access_conditions,
+            **kwargs
+        )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
+
+        reqs = []
+        for blob in blobs:
+            req = HttpRequest(
+                "PUT",
+                "/{}/{}".format(self.container_name, blob),
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
+
+        return self._batch_send(*reqs, **kwargs)
+
+    @distributed_trace
+    def set_premium_page_blob_tier_blobs(
+        self,
+        premium_page_blob_tier,  # type: Union[str, PremiumPageBlobTier]
+        *blobs,  # type: Union[str, BlobProperties]
+        **kwargs
+    ):
+        # type: (...) -> Iterator[HttpResponse]
+        """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
+
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :param premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
+        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
+        :param int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
+        :param lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        if premium_page_blob_tier is None:
+            raise ValueError("A PremiumPageBlobTier must be specified")
+
+        query_parameters, header_parameters = self._generate_set_tier_options(
+            tier=premium_page_blob_tier,
+            lease_access_conditions=access_conditions,
+            **kwargs
+        )
+        # To pass kwargs to "_batch_send", we need to remove anything that was
+        # in the Autorest signature for Autorest, otherwise transport will be upset
+        for possible_param in ['timeout', 'lease']:
+            kwargs.pop(possible_param, None)
+
+        reqs = []
+        for blob in blobs:
+            req = HttpRequest(
+                "PUT",
+                "/{}/{}".format(self.container_name, blob),
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
+
+        return self._batch_send(*reqs, **kwargs)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

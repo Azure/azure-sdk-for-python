@@ -673,7 +673,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         }
         return StorageStreamDownloader(extra_properties=extra_properties, **options)
 
-    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
+    @staticmethod
+    def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
         # type: (bool, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = ModifiedAccessConditions(
@@ -681,17 +682,22 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
-        if self.snapshot and delete_snapshots:
-            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         if delete_snapshots:
             delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         options = {
             'timeout': kwargs.pop('timeout', None),
             'delete_snapshots': delete_snapshots or None,
-            'snapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions}
         options.update(kwargs)
+        return options
+
+    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Any]
+        if self.snapshot and delete_snapshots:
+            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
+        options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
+        options['snapshot'] = self.snapshot
         return options
 
     @distributed_trace
