@@ -60,8 +60,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:42 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - d21435c6-d665-11e9-b9d1-001a7dda7113
       x-ms-content-crc64:
       - 4bB1b9Tg10g=
       x-ms-request-id:
@@ -112,8 +110,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:42 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - d2631a4c-d665-11e9-8f9e-001a7dda7113
       x-ms-copy-id:
       - d1a1dcf0-c877-4190-8d2c-5cdbc4d82c61
       x-ms-copy-status:
@@ -172,8 +168,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:42 GMT
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - d2799a64-d665-11e9-9f73-001a7dda7113
       x-ms-copy-completion-time:
       - Tue, 01 Oct 2019 21:16:42 GMT
       x-ms-copy-id:

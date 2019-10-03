@@ -60,8 +60,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:49 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a2dc601c-d67d-11e9-9abd-001a7dda7113
       x-ms-content-crc64:
       - 3MqQYTPeZoA=
       x-ms-request-id:
@@ -114,8 +112,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:50 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a31e4c1e-d67d-11e9-91fa-001a7dda7113
       x-ms-copy-id:
       - ff0bb517-774c-4a3b-a49b-1ae6e5db37ea
       x-ms-copy-status:
@@ -174,8 +170,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:50 GMT
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - a335bea8-d67d-11e9-b8b2-001a7dda7113
       x-ms-copy-completion-time:
       - Tue, 01 Oct 2019 21:16:50 GMT
       x-ms-copy-id:
@@ -234,8 +228,6 @@ interactions:
       - Tue, 01 Oct 2019 21:16:49 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a348fbc2-d67d-11e9-aa7b-001a7dda7113
       x-ms-request-id:
       - 92913816-901e-002b-7e9d-7812f7000000
       x-ms-version:
@@ -292,8 +284,6 @@ interactions:
       - rehydrate-pending-to-hot
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - a35c0f24-d67d-11e9-93e0-001a7dda7113
       x-ms-copy-completion-time:
       - Tue, 01 Oct 2019 21:16:50 GMT
       x-ms-copy-id:

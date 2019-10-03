@@ -105,7 +105,6 @@ interactions:
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 528f66a6-d665-11e9-ba57-001a7dda7113
       x-ms-content-crc64: YRdEw5iFHtQ=
       x-ms-request-id: be5a10a3-601e-0010-4c9d-785753000000
       x-ms-request-server-encrypted: 'true'
