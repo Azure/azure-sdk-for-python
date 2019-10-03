@@ -1,8 +1,14 @@
 # Release History
 
 ## 4.0.0b4
+### Breaking changes:
 - Enums 'JsonWebKeyCurveName', 'JsonWebKeyOperation', and 'JsonWebKeyType' have
 been renamed to 'KeyCurveName', 'KeyOperation', and 'KeyType', respectively.
+
+### Fixes and improvements:
+- The `key` argument to `import_key` should be an instance of `azure.keyvault.keys.JsonWebKey`
+([#7590](https://github.com/Azure/azure-sdk-for-python/pull/7590))
+
 
 ## 4.0.0b3 (2019-09-11)
 ### Breaking changes:
