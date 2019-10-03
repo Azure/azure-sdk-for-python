@@ -134,7 +134,7 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 await mgmt_client.close_async()
-        log.info("%r returns an exception %r", self._container_id, last_exception)
+        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
     async def get_properties(self):

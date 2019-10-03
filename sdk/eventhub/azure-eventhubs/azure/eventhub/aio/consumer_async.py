@@ -12,10 +12,9 @@ from distutils.version import StrictVersion
 import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
-import uamqp
 
 from azure.eventhub import EventData, EventPosition
-from azure.eventhub.error import EventHubError, ConnectError, _error_handler
+from azure.eventhub.error import _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -133,11 +132,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-        if StrictVersion(uamqp.__version__) < StrictVersion("1.2.3"):  # backward compatible until uamqp 1.2.3 is released
+        if StrictVersion(uamqp.__version__) < StrictVersion("1.2.3"):  # backward compatible until uamqp 1.2.3 released
             desired_capabilities = {}
         elif self._track_last_enqueued_event_properties:
-                symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
-                desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
+            symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
+            desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
         else:
             desired_capabilities = {"desired_capabilities": None}
 
@@ -186,7 +185,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if data_batch:
             self._offset = EventPosition(data_batch[-1].offset)
 
-        if self._track_last_enqueued_event_properties and len(data_batch):
+        if self._track_last_enqueued_event_properties and data_batch:
             self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
 
         return data_batch

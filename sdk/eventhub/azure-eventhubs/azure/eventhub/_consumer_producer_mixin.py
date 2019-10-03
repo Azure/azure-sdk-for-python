@@ -108,4 +108,3 @@ class ConsumerProducerMixin(object):
             self._handler.close()  # this will close link if sharing connection. Otherwise close connection
         self._running = False
         self._closed = True
-

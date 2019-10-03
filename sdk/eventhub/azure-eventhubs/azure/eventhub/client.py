@@ -140,7 +140,7 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 mgmt_client.close()
-        log.info("%r returns an exception %r", self._container_id, last_exception)
+        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
 
