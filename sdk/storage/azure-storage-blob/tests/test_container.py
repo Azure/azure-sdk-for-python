@@ -8,6 +8,7 @@
 import pytest
 import unittest
 import re
+import sys
 from dateutil.tz import tzutc
 
 import requests
@@ -29,6 +30,8 @@ from azure.storage.blob import (
 
 from azure.identity import ClientSecretCredential
 from testcase import StorageTestCase, TestMode, record, LogCaptured
+
+import pytest
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -964,6 +967,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @record
     def test_delete_blobs_simple(self):
         # Arrange
@@ -988,6 +992,7 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @record
     def test_delete_blobs_snapshot(self):
         # Arrange
@@ -1020,6 +1025,7 @@ class StorageContainerTest(StorageTestCase):
         blobs = list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 3  # 3 blobs
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @record
     def test_standard_blob_tier_set_tier_api_batch(self):
         container = self._create_container()
@@ -1069,6 +1075,8 @@ class StorageContainerTest(StorageTestCase):
             )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    # once we have premium tests, still we don't want to test Py 2.7
+    # @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @record
     def test_premium_tier_set_tier_api_batch(self):
         url = self._get_premium_account_url()
