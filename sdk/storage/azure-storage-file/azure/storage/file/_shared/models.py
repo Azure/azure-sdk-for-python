@@ -340,7 +340,7 @@ class AccountSasPermissions(object):
         p_process = 'p' in permission
 
         parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
-        parsed._str = permission
+        parsed._str = permission # pylint: disable = protected-access
         return parsed
 
 class Services(object):
