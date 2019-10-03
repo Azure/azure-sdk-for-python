@@ -1200,7 +1200,7 @@ class ContainerClient(StorageAccountHostsMixin):
         for blob in blobs:
             req = HttpRequest(
                 "PUT",
-                "/{}/{}?comp=tier".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
