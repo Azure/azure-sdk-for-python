@@ -83,7 +83,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_authentication.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
@@ -142,7 +143,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
@@ -204,7 +206,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_authentication.py
                 :start-after: [START create_sas_token]
                 :end-before: [END create_sas_token]
@@ -267,7 +270,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :returns: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
@@ -306,7 +310,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :return: The blob service stats.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
@@ -330,7 +335,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
@@ -398,7 +404,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
@@ -448,7 +455,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.core.blob.models.ContainerProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
@@ -497,7 +505,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.container_client.ContainerClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
@@ -557,7 +566,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
@@ -585,7 +595,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
@@ -625,7 +636,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.blob_client.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]

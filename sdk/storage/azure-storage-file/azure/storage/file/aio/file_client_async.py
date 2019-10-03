@@ -195,7 +195,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
@@ -306,7 +307,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
@@ -374,7 +376,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
@@ -449,7 +452,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
@@ -488,7 +492,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]

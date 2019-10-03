@@ -223,7 +223,8 @@ class FileClient(StorageAccountHostsMixin):
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START create_file_client]
                 :end-before: [END create_file_client]
@@ -383,7 +384,8 @@ class FileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
@@ -492,7 +494,8 @@ class FileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
@@ -558,7 +561,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
@@ -635,7 +639,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
@@ -674,7 +679,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]

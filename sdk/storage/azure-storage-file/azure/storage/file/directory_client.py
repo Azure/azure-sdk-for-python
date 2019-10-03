@@ -200,7 +200,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
@@ -231,7 +232,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
@@ -260,7 +262,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
@@ -286,7 +289,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.DirectoryProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
@@ -498,7 +502,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
@@ -525,7 +530,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
@@ -580,7 +586,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :returns: FileClient
         :rtype: ~azure.storage.file.file_client.FileClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
@@ -617,7 +624,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
