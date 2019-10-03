@@ -105,7 +105,7 @@ class TokenPasswordName(str, Enum):
     password2 = "password2"
 
 
-class Status(str, Enum):
+class TokenStatus(str, Enum):
 
     enabled = "enabled"
     disabled = "disabled"
