@@ -174,7 +174,7 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
             await container_client.create_container()
 
             # [START bsc_get_blob_client]
-            blob_client = blob_service_client.get_blob_client(container_name="containertestasync", blob_name="my_blob")
+            blob_client = blob_service_client.get_blob_client(container="containertestasync", blob="my_blob")
             try:
                 stream = await blob_client.download_blob()
             except ResourceNotFoundError:
