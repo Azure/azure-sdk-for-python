@@ -14,22 +14,22 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"866d6cf8-dac3-49ef-86c0-699c05436b70\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"a50c06e5-c2c7-441a-9601-cbab64b34e5f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"344374b3-df45-4bb0-aa35-31a7419481e6\",\r\n    \"\
+        \   \"resourceGuid\": \"cf0f1318-0c09-412b-9fd1-8bdee3bad44d\",\r\n    \"\
         disableBgpRoutePropagation\": false,\r\n    \"routes\": []\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/1b212182-0e6d-44ce-8174-e690241780f2?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/35d7a264-a75f-4ea8-9489-d55c7dcb3dae?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:43:56 GMT
+      - Thu, 03 Oct 2019 16:20:33 GMT
       expires:
       - '-1'
       pragma:
@@ -50,9 +50,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b1ea5a39-63a2-4c86-834d-f04ac9b1faee
+      - 1b715ae4-ccf6-4792-85c3-9a3fc36984b8
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1190'
     status:
       code: 201
       message: Created
@@ -67,9 +67,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/1b212182-0e6d-44ce-8174-e690241780f2?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/35d7a264-a75f-4ea8-9489-d55c7dcb3dae?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:07 GMT
+      - Thu, 03 Oct 2019 16:20:45 GMT
       expires:
       - '-1'
       pragma:
@@ -98,7 +98,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 263f04b4-c4a9-4b18-a9b9-114ad66166e5
+      - a81461ae-0e1c-4b17-8d5c-9e3530cc4b08
     status:
       code: 200
       message: OK
@@ -113,16 +113,16 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"0337417a-b7ec-4128-8005-72d8f28829e4\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"6439f27a-4ea0-4625-a513-becf81bb1618\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"344374b3-df45-4bb0-aa35-31a7419481e6\",\r\n    \"\
+        \    \"resourceGuid\": \"cf0f1318-0c09-412b-9fd1-8bdee3bad44d\",\r\n    \"\
         disableBgpRoutePropagation\": false,\r\n    \"routes\": []\r\n  }\r\n}"
     headers:
       cache-control:
@@ -132,9 +132,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:08 GMT
+      - Thu, 03 Oct 2019 16:20:45 GMT
       etag:
-      - W/"0337417a-b7ec-4128-8005-72d8f28829e4"
+      - W/"6439f27a-4ea0-4625-a513-becf81bb1618"
       expires:
       - '-1'
       pragma:
@@ -151,7 +151,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 91be2027-25a1-4b6c-a00c-f708e837acbe
+      - 0a8a5b58-0708-4186-ba9b-0214e0157a9e
     status:
       code: 200
       message: OK
@@ -166,18 +166,18 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"0337417a-b7ec-4128-8005-72d8f28829e4\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"6439f27a-4ea0-4625-a513-becf81bb1618\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"344374b3-df45-4bb0-aa35-31a7419481e6\",\r\n    \"\
+        \    \"resourceGuid\": \"cf0f1318-0c09-412b-9fd1-8bdee3bad44d\",\r\n    \"\
         disableBgpRoutePropagation\": false,\r\n    \"routes\": []\r\n  }\r\n}"
     headers:
       cache-control:
@@ -187,9 +187,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:08 GMT
+      - Thu, 03 Oct 2019 16:20:45 GMT
       etag:
-      - W/"0337417a-b7ec-4128-8005-72d8f28829e4"
+      - W/"6439f27a-4ea0-4625-a513-becf81bb1618"
       expires:
       - '-1'
       pragma:
@@ -206,7 +206,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6515ca7b-2572-49d2-ae18-f8bdf476b4a3
+      - 81c5ee15-66a3-4a77-805a-fd48a4083b5f
     status:
       code: 200
       message: OK
@@ -221,19 +221,19 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\"\
-        ,\r\n      \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
-        ,\r\n      \"etag\": \"W/\\\"0337417a-b7ec-4128-8005-72d8f28829e4\\\"\",\r\
+        ,\r\n      \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"6439f27a-4ea0-4625-a513-becf81bb1618\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/routeTables\",\r\n      \"location\"\
         : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"344374b3-df45-4bb0-aa35-31a7419481e6\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"cf0f1318-0c09-412b-9fd1-8bdee3bad44d\"\
         ,\r\n        \"disableBgpRoutePropagation\": false,\r\n        \"routes\"\
         : []\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
@@ -244,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:09 GMT
+      - Thu, 03 Oct 2019 16:20:45 GMT
       expires:
       - '-1'
       pragma:
@@ -261,7 +261,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7a6bdd60-31b4-446b-b6fd-37dcd5ddebff
+      - 73067d55-4a7b-499f-8768-8b9e3d6407a1
     status:
       code: 200
       message: OK
@@ -276,19 +276,19 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions//providers/Microsoft.Network/routeTables?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/routeTables?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\"\
-        ,\r\n      \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
-        ,\r\n      \"etag\": \"W/\\\"0337417a-b7ec-4128-8005-72d8f28829e4\\\"\",\r\
+        ,\r\n      \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"6439f27a-4ea0-4625-a513-becf81bb1618\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/routeTables\",\r\n      \"location\"\
         : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"344374b3-df45-4bb0-aa35-31a7419481e6\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"cf0f1318-0c09-412b-9fd1-8bdee3bad44d\"\
         ,\r\n        \"disableBgpRoutePropagation\": false,\r\n        \"routes\"\
         : []\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
@@ -299,7 +299,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:09 GMT
+      - Thu, 03 Oct 2019 16:20:46 GMT
       expires:
       - '-1'
       pragma:
@@ -316,7 +316,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 23f5aa21-d9fa-4204-a2ae-340d50a0a9ec
+      - 338b80e8-b2e3-433e-9791-ef72585ef33b
     status:
       code: 200
       message: OK
@@ -335,21 +335,21 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"3c861bdd-8746-4a91-a4c2-ec4deda789d4\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"8daf70a2-35f1-4d26-8b9b-ec275f241baf\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  },\r\
         \n  \"type\": \"Microsoft.Network/routeTables/routes\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/591c66c6-fd33-4afa-a1a5-772cc4c2157a?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/3d6a3d70-e22b-4d60-9c3a-35a5fd187c1b?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -357,7 +357,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:09 GMT
+      - Thu, 03 Oct 2019 16:20:46 GMT
       expires:
       - '-1'
       pragma:
@@ -370,9 +370,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3f120d30-2b0d-442c-8c8c-7d595df0b3e2
+      - 531eb9a4-e3e3-4574-a1cd-87f071c41bd0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1189'
     status:
       code: 201
       message: Created
@@ -387,9 +387,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/591c66c6-fd33-4afa-a1a5-772cc4c2157a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/3d6a3d70-e22b-4d60-9c3a-35a5fd187c1b?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -401,7 +401,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:21 GMT
+      - Thu, 03 Oct 2019 16:20:58 GMT
       expires:
       - '-1'
       pragma:
@@ -418,7 +418,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - da828743-13bc-4ecd-b5ff-678fe995b9a3
+      - 48185dc8-f012-4be5-a5e8-ba6a733e0aa6
     status:
       code: 200
       message: OK
@@ -433,13 +433,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"7bc57823-de1a-4634-b796-7801a1aea595\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"8a561bd7-8fb7-4f17-9bf3-f6c09759259e\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  },\r\
         \n  \"type\": \"Microsoft.Network/routeTables/routes\"\r\n}"
@@ -451,9 +451,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:21 GMT
+      - Thu, 03 Oct 2019 16:20:59 GMT
       etag:
-      - W/"7bc57823-de1a-4634-b796-7801a1aea595"
+      - W/"8a561bd7-8fb7-4f17-9bf3-f6c09759259e"
       expires:
       - '-1'
       pragma:
@@ -470,7 +470,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 70c309e7-c9a0-43dc-9353-c2c4ff8a3663
+      - 04e9ae7f-4fd2-4b95-87ec-7732914b33c2
     status:
       code: 200
       message: OK
@@ -485,15 +485,15 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
-        ,\r\n  \"etag\": \"W/\\\"7bc57823-de1a-4634-b796-7801a1aea595\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"8a561bd7-8fb7-4f17-9bf3-f6c09759259e\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  },\r\
         \n  \"type\": \"Microsoft.Network/routeTables/routes\"\r\n}"
@@ -505,9 +505,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:21 GMT
+      - Thu, 03 Oct 2019 16:20:59 GMT
       etag:
-      - W/"7bc57823-de1a-4634-b796-7801a1aea595"
+      - W/"8a561bd7-8fb7-4f17-9bf3-f6c09759259e"
       expires:
       - '-1'
       pragma:
@@ -524,7 +524,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 52833cc5-5d2a-4e76-b507-e1e22356fbbc
+      - d806be2f-5565-4662-8e4d-024f046e5349
     status:
       code: 200
       message: OK
@@ -539,16 +539,16 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyrouteb6760c2d\"\
-        ,\r\n      \"id\": \"/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
-        ,\r\n      \"etag\": \"W/\\\"7bc57823-de1a-4634-b796-7801a1aea595\\\"\",\r\
+        ,\r\n      \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"8a561bd7-8fb7-4f17-9bf3-f6c09759259e\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.1.0.0/16\",\r\n        \"nextHopType\"\
         : \"None\"\r\n      },\r\n      \"type\": \"Microsoft.Network/routeTables/routes\"\
@@ -561,7 +561,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:21 GMT
+      - Thu, 03 Oct 2019 16:20:59 GMT
       expires:
       - '-1'
       pragma:
@@ -578,7 +578,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 78f7f190-9988-4545-a9a9-9ad854dc5228
+      - 89dc1629-e488-456d-a6a5-168da9e5046b
     status:
       code: 200
       message: OK
@@ -595,27 +595,27 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2019-07-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/921615ac-f8a5-4ed3-b050-88fb156a4afb?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/131ba8c8-f7c7-4d37-90ea-d8ae47951524?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 03 Oct 2019 10:44:23 GMT
+      - Thu, 03 Oct 2019 16:21:00 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operationResults/921615ac-f8a5-4ed3-b050-88fb156a4afb?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operationResults/131ba8c8-f7c7-4d37-90ea-d8ae47951524?api-version=2019-07-01
       pragma:
       - no-cache
       server:
@@ -626,9 +626,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 4057a173-0392-410a-bbf6-d3059757355c
+      - 75315697-7f48-4456-98a3-68b9e3344326
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14990'
     status:
       code: 202
       message: Accepted
@@ -643,9 +643,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/921615ac-f8a5-4ed3-b050-88fb156a4afb?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/131ba8c8-f7c7-4d37-90ea-d8ae47951524?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -657,7 +657,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:32 GMT
+      - Thu, 03 Oct 2019 16:21:11 GMT
       expires:
       - '-1'
       pragma:
@@ -674,7 +674,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0d417f67-27d7-4352-9d5a-8c14ae63cbe4
+      - ffbd808d-9cea-48b2-8905-78a0d2bffad8
     status:
       code: 200
       message: OK
@@ -691,27 +691,27 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions//resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2019-07-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/ce8c0924-bdc0-411d-baf7-55916a672735?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/8c6e276e-538f-47a2-9c76-599c8cd9b4eb?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Thu, 03 Oct 2019 10:44:34 GMT
+      - Thu, 03 Oct 2019 16:21:12 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operationResults/ce8c0924-bdc0-411d-baf7-55916a672735?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operationResults/8c6e276e-538f-47a2-9c76-599c8cd9b4eb?api-version=2019-07-01
       pragma:
       - no-cache
       server:
@@ -722,9 +722,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f589ae9b-90ab-4c90-9f42-3a0d7a29cdb4
+      - ec32f467-5953-4324-b088-72bb12507b54
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14989'
     status:
       code: 202
       message: Accepted
@@ -739,9 +739,9 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions//providers/Microsoft.Network/locations/westus/operations/ce8c0924-bdc0-411d-baf7-55916a672735?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/8c6e276e-538f-47a2-9c76-599c8cd9b4eb?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -753,7 +753,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 10:44:44 GMT
+      - Thu, 03 Oct 2019 16:21:23 GMT
       expires:
       - '-1'
       pragma:
@@ -770,7 +770,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f09a8ddc-6db2-48b0-9062-216391c778c6
+      - 039b8c94-02e6-4972-b72f-a4fd92589035
     status:
       code: 200
       message: OK
