@@ -5955,6 +5955,10 @@ class BackupResourceVaultConfig(Model):
      include: 'Invalid', 'Enabled', 'Disabled'
     :type enhanced_security_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.EnhancedSecurityState
+    :param soft_delete_state: Soft Delete feature state. Possible values
+     include: 'Invalid', 'Enabled', 'Disabled'
+    :type soft_delete_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.SoftDeleteState
     """
 
     _attribute_map = {
@@ -5962,14 +5966,16 @@ class BackupResourceVaultConfig(Model):
         'storage_type': {'key': 'storageType', 'type': 'str'},
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
         'enhanced_security_state': {'key': 'enhancedSecurityState', 'type': 'str'},
+        'soft_delete_state': {'key': 'softDeleteState', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, enhanced_security_state=None, **kwargs) -> None:
+    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, enhanced_security_state=None, soft_delete_state=None, **kwargs) -> None:
         super(BackupResourceVaultConfig, self).__init__(**kwargs)
         self.storage_model_type = storage_model_type
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state
         self.enhanced_security_state = enhanced_security_state
+        self.soft_delete_state = soft_delete_state
 
 
 class BackupResourceVaultConfigResource(Resource):

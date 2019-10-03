@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._protected_items_operations import ProtectedItemsOperations
 from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._recovery_points_operations import RecoveryPointsOperations
@@ -27,7 +28,6 @@ from ._protection_policies_operations import ProtectionPoliciesOperations
 from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._backup_protection_intent_operations import BackupProtectionIntentOperations
 from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
-from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._backup_engines_operations import BackupEnginesOperations
 from ._protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
 from ._protectable_containers_operations import ProtectableContainersOperations
@@ -49,6 +49,7 @@ from ._backup_resource_storage_configs_operations import BackupResourceStorageCo
 from ._operations import Operations
 
 __all__ = [
+    'BackupResourceVaultConfigsOperations',
     'ProtectedItemsOperations',
     'ProtectedItemOperationResultsOperations',
     'RecoveryPointsOperations',
@@ -67,7 +68,6 @@ __all__ = [
     'ProtectionPolicyOperationResultsOperations',
     'BackupProtectionIntentOperations',
     'BackupUsageSummariesOperations',
-    'BackupResourceVaultConfigsOperations',
     'BackupEnginesOperations',
     'ProtectionContainerRefreshOperationResultsOperations',
     'ProtectableContainersOperations',

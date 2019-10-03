@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
+from .operations import BackupResourceVaultConfigsOperations
 from .operations import ProtectedItemsOperations
 from .operations import ProtectedItemOperationResultsOperations
 from .operations import RecoveryPointsOperations
@@ -31,7 +32,6 @@ from .operations import ProtectionPoliciesOperations
 from .operations import ProtectionPolicyOperationResultsOperations
 from .operations import BackupProtectionIntentOperations
 from .operations import BackupUsageSummariesOperations
-from .operations import BackupResourceVaultConfigsOperations
 from .operations import BackupEnginesOperations
 from .operations import ProtectionContainerRefreshOperationResultsOperations
 from .operations import ProtectableContainersOperations
@@ -60,6 +60,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
+    :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar protected_items: ProtectedItems operations
     :vartype protected_items: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemsOperations
     :ivar protected_item_operation_results: ProtectedItemOperationResults operations
@@ -96,8 +98,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
     :ivar backup_usage_summaries: BackupUsageSummaries operations
     :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
-    :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
-    :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar backup_engines: BackupEngines operations
     :vartype backup_engines: azure.mgmt.recoveryservicesbackup.operations.BackupEnginesOperations
     :ivar protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResults operations
@@ -155,6 +155,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.protected_items = ProtectedItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
@@ -190,8 +192,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self.backup_protection_intent = BackupProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_engines = BackupEnginesOperations(
             self._client, self.config, self._serialize, self._deserialize)
