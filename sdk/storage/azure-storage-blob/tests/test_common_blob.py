@@ -1544,7 +1544,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=ContainerPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_container = ContainerClient(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         info = sas_container.get_account_information()
