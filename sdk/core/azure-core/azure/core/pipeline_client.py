@@ -68,10 +68,13 @@ class PipelineClient(PipelineClientBase):
     **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
+
     *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
+
     *transport* - The HTTP Transport instance. If omitted, RequestsTransport is used for synchronous transport.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START build_pipeline_client]
             :end-before: [END build_pipeline_client]
