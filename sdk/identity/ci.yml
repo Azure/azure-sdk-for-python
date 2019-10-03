@@ -8,6 +8,7 @@ trigger:
   paths:
     include:
     - sdk/identity/
+    - sdk/core/
 
 pr:
   branches:
@@ -20,6 +21,7 @@ pr:
   paths:
     include:
     - sdk/identity/
+    - sdk/core/
 
 resources:
   repositories:
