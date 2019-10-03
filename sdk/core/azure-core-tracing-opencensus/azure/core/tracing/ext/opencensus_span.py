@@ -10,7 +10,7 @@ from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
-from .. import SpanKind
+from azure.core.tracing import SpanKind
 
 try:
     from typing import TYPE_CHECKING
