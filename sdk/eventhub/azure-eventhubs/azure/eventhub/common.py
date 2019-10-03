@@ -80,6 +80,7 @@ class EventData(object):
             raise ValueError("EventData cannot be None.")
         else:
             self.message = Message(body)
+        self.message.annotations = {}
 
     def __str__(self):
         dic = {
