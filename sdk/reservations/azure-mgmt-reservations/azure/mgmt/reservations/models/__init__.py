@@ -44,6 +44,7 @@ try:
     from ._models_py3 import Properties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models_py3 import QuotaLimitsResponse
     from ._models_py3 import QuotaRequestDetails
     from ._models_py3 import QuotaRequestOneResourceSubmitResponse
     from ._models_py3 import QuotaRequestProperties
@@ -104,6 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import Properties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models import QuotaLimitsResponse
     from ._models import QuotaRequestDetails
     from ._models import QuotaRequestOneResourceSubmitResponse
     from ._models import QuotaRequestProperties
@@ -129,7 +131,7 @@ except (SyntaxError, ImportError):
     from ._models import SubRequestName
     from ._models import SubscriptionScopeProperties
     from ._models import SupportRequestAction
-from ._paged_models import CurrentQuotaLimitPaged
+from ._paged_models import CurrentQuotaLimitBasePaged
 from ._paged_models import OperationResponsePaged
 from ._paged_models import QuotaRequestDetailsPaged
 from ._paged_models import ReservationOrderResponsePaged
@@ -180,6 +182,7 @@ __all__ = [
     'Properties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
+    'QuotaLimitsResponse',
     'QuotaRequestDetails',
     'QuotaRequestOneResourceSubmitResponse',
     'QuotaRequestProperties',
@@ -205,7 +208,7 @@ __all__ = [
     'SubRequestName',
     'SubscriptionScopeProperties',
     'SupportRequestAction',
-    'CurrentQuotaLimitPaged',
+    'CurrentQuotaLimitBasePaged',
     'QuotaRequestDetailsPaged',
     'ReservationResponsePaged',
     'ReservationOrderResponsePaged',

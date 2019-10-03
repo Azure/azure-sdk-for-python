@@ -119,7 +119,8 @@ class QuotaRequestsOperations(object):
          be * for unconditional update.
         :type if_match: str
         :param value: Quota change requests.
-        :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+        :type value:
+         list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -240,7 +241,8 @@ class QuotaRequestsOperations(object):
          be * for unconditional update.
         :type if_match: str
         :param value: Quota change requests.
-        :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+        :type value:
+         list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

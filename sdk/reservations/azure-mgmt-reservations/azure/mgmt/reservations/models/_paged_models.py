@@ -12,19 +12,19 @@
 from msrest.paging import Paged
 
 
-class CurrentQuotaLimitPaged(Paged):
+class CurrentQuotaLimitBasePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CurrentQuotaLimit <azure.mgmt.reservations.models.CurrentQuotaLimit>` object
+    A paging container for iterating over a list of :class:`CurrentQuotaLimitBase <azure.mgmt.reservations.models.CurrentQuotaLimitBase>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[CurrentQuotaLimit]'}
+        'current_page': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(CurrentQuotaLimitPaged, self).__init__(*args, **kwargs)
+        super(CurrentQuotaLimitBasePaged, self).__init__(*args, **kwargs)
 class QuotaRequestDetailsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`QuotaRequestDetails <azure.mgmt.reservations.models.QuotaRequestDetails>` object

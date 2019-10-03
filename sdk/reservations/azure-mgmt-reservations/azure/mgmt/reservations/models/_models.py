@@ -334,11 +334,11 @@ class CreateGenericQuotaRequestParameters(Model):
     """Quota change requests information.
 
     :param value: Quota change requests.
-    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimit]'},
+        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
     }
 
     def __init__(self, **kwargs):
@@ -352,29 +352,59 @@ class CurrentQuotaLimit(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param quota_information: Quota information detail.
-    :type quota_information:
-     ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
-    :param provisioning_state: The quota request status.
-    :type provisioning_state: object
+    :param limit: The quota limit.
+    :type limit: int
+    :param current_value: The current resource usages information.
+    :type current_value: int
+    :param name: Name of the resource provide by the resource Provider. Please
+     use this name property for quotaRequests.
+    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
+    :param resource_type: The Resource Type Name.
+    :type resource_type: object
+    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+     unit field provided in the Get quota response.
+    :type unit: str
+    :param quota_period: The quota period over which the usage values are
+     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
+     one second). This parameter is optional because, for some resources like
+     compute, the period doesn’t matter.
+    :type quota_period: str
+    :param properties: Additional properties for the specific resource
+     provider.
+    :type properties: object
+    :ivar provisioning_state: The quota request status.
+    :vartype provisioning_state: object
     :ivar message: A user friendly message.
     :vartype message: str
     """
 
     _validation = {
+        'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'quota_information': {'key': 'quotaInformation', 'type': 'CurrentQuotaLimitBase'},
+        'limit': {'key': 'quotaInformation.limit', 'type': 'int'},
+        'current_value': {'key': 'quotaInformation.currentValue', 'type': 'int'},
+        'name': {'key': 'quotaInformation.name', 'type': 'CurrentQuotaLimitBaseName'},
+        'resource_type': {'key': 'quotaInformation.resourceType', 'type': 'object'},
+        'unit': {'key': 'quotaInformation.unit', 'type': 'str'},
+        'quota_period': {'key': 'quotaInformation.quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'quotaInformation.properties', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(CurrentQuotaLimit, self).__init__(**kwargs)
-        self.quota_information = kwargs.get('quota_information', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.limit = kwargs.get('limit', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.name = kwargs.get('name', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.unit = kwargs.get('unit', None)
+        self.quota_period = kwargs.get('quota_period', None)
+        self.properties = kwargs.get('properties', None)
+        self.provisioning_state = None
         self.message = None
 
 
@@ -968,6 +998,27 @@ class PurchaseRequestPropertiesReservedResourceProperties(Model):
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
 
 
+class QuotaLimitsResponse(Model):
+    """Quota limits request response.
+
+    :param value: List of Quota limits with the quota request status.
+    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+    :param next_link: The uri to fetch the next page of quota limits. When
+     there are no more pages, this is null.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CurrentQuotaLimit]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaLimitsResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class QuotaRequestDetails(Model):
     """The details of the quota Request.
 
@@ -1193,8 +1244,8 @@ class QuotaRequestSubmitResponse201(Model):
     :vartype name: str
     :ivar type: The resource type
     :vartype type: str
-    :param provisioning_state: The quota request status.
-    :type provisioning_state: object
+    :ivar provisioning_state: The quota request status.
+    :vartype provisioning_state: object
     :ivar message: A user friendly message.
     :vartype message: str
     """
@@ -1203,6 +1254,7 @@ class QuotaRequestSubmitResponse201(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
     }
 
@@ -1219,7 +1271,7 @@ class QuotaRequestSubmitResponse201(Model):
         self.id = None
         self.name = None
         self.type = None
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None
         self.message = None
 
 
@@ -1798,44 +1850,44 @@ class SubRequest(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar sub_request_id: Sub request id for individual request.
-    :vartype sub_request_id: str
     :ivar limit: The Resource limit.
     :vartype limit: int
-    :ivar message: User friendly status message.
-    :vartype message: str
     :param name: The Resource name.
     :type name: ~azure.mgmt.reservations.models.SubRequestName
     :ivar resource_type: Resource type for which the quota check was made.
     :vartype resource_type: str
-    :param request_status: The quota request status.
-    :type request_status: object
+    :param provisioning_state: The quota request status.
+    :type provisioning_state: object
+    :ivar message: User friendly status message.
+    :vartype message: str
+    :ivar sub_request_id: Sub request id for individual request.
+    :vartype sub_request_id: str
     """
 
     _validation = {
-        'sub_request_id': {'readonly': True},
         'limit': {'readonly': True},
-        'message': {'readonly': True},
         'resource_type': {'readonly': True},
+        'message': {'readonly': True},
+        'sub_request_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'sub_request_id': {'key': 'subRequestId', 'type': 'str'},
         'limit': {'key': 'limit', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'SubRequestName'},
         'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'request_status': {'key': 'requestStatus', 'type': 'object'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
+        'message': {'key': 'message', 'type': 'str'},
+        'sub_request_id': {'key': 'subRequestId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SubRequest, self).__init__(**kwargs)
-        self.sub_request_id = None
         self.limit = None
-        self.message = None
         self.name = kwargs.get('name', None)
         self.resource_type = None
-        self.request_status = kwargs.get('request_status', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.message = None
+        self.sub_request_id = None
 
 
 class SubRequestName(Model):

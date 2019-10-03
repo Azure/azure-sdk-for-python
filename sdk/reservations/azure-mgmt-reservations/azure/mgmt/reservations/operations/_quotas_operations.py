@@ -58,9 +58,9 @@ class QuotasOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of CurrentQuotaLimit
+        :return: An iterator like instance of CurrentQuotaLimitBase
         :rtype:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitPaged[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+         ~azure.mgmt.reservations.models.CurrentQuotaLimitBasePaged[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
@@ -111,7 +111,7 @@ class QuotasOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.CurrentQuotaLimitPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.CurrentQuotaLimitBasePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits'}

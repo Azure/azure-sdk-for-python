@@ -42,9 +42,7 @@ class QuotaRequestOperations(object):
 
 
     def _create_initial(
-            self, subscription_id, provider_id, location, if_match, quota_information=None, provisioning_state=None, custom_headers=None, raw=False, **operation_config):
-        create_quota_request = models.CurrentQuotaLimit(quota_information=quota_information, provisioning_state=provisioning_state)
-
+            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -72,7 +70,7 @@ class QuotaRequestOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimit')
+        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimitBase')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -95,7 +93,7 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def create(
-            self, subscription_id, provider_id, location, if_match, quota_information=None, provisioning_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
@@ -116,15 +114,13 @@ class QuotaRequestOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
+        :param create_quota_request: Quota requests payload.
+        :type create_quota_request:
+         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
-        :param quota_information: Quota information detail.
-        :type quota_information:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
-        :param provisioning_state: The quota request status.
-        :type provisioning_state: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -141,9 +137,8 @@ class QuotaRequestOperations(object):
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
+            create_quota_request=create_quota_request,
             if_match=if_match,
-            quota_information=quota_information,
-            provisioning_state=provisioning_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
