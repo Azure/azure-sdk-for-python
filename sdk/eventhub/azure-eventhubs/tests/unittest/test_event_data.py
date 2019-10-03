@@ -1,5 +1,6 @@
 import pytest
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventDataBatch
+from uamqp import Message
 
 
 @pytest.mark.parametrize("test_input, expected_result",
@@ -28,4 +29,15 @@ def test_body_json():
 
 
 def test_app_properties():
-    pass
+    app_props = {"a": "b"}
+    event_data = EventData("")
+    event_data.application_properties = app_props
+    assert event_data.application_properties["a"] == "b"
+
+
+def test_evetn_data_batch():
+    batch = EventDataBatch(max_size=100, partition_key="par")
+    batch.try_add(EventData("A"))
+    assert batch.size == 89 and len(batch) == 1
+    with pytest.raises(ValueError):
+        batch.try_add(EventData("A"))
