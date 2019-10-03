@@ -84,7 +84,6 @@ class TimeoutTransport(RequestsTransport):
         if isinstance(self._response, Exception):
             raise self._response
         output = requests.Response()
-        output.headers = {"x-ms-substatus": 10014}
         output.status_code = self._response
         response = RequestsTransportResponse(None, output)
         return response
@@ -2094,7 +2093,7 @@ class CRUDTests(unittest.TestCase):
         with self.assertRaises(errors.CosmosClientTimeoutError):
             list(databases)
 
-        status_response = 409  # Uses Cosmos custom retry
+        status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)

@@ -73,7 +73,7 @@ class DefaultRetryPolicy(object):
 
         """
         if (self.current_retry_attempt_count < self._max_retry_attempt_count) and self.needsRetry(
-            exception.sub_status
+            exception.status_code
         ):
             self.current_retry_attempt_count += 1
             return True
