@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -952,8 +953,18 @@ class ContainerClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
-    def _generate_delete_blobs_options(self, snapshot=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None):
-        """This code is a copy from _generated. Once Autorest is able to provide request preparation this code should be removed"""
+    def _generate_delete_blobs_options(
+        self, snapshot=None,
+        timeout=None,
+        delete_snapshots=None,
+        request_id=None,
+        lease_access_conditions=None,
+        modified_access_conditions=None
+    ):
+        """This code is a copy from _generated.
+
+        Once Autorest is able to provide request preparation this code should be removed.
+        """
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -973,26 +984,33 @@ class ContainerClient(StorageAccountHostsMixin):
         # Construct parameters
         query_parameters = {}
         if snapshot is not None:
-            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')
+            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
         if timeout is not None:
-            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
 
         # Construct headers
         header_parameters = {}
         if delete_snapshots is not None:
-            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header("delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
+            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
         if request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._client._serialize.header("request_id", request_id, 'str')
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "request_id", request_id, 'str')
         if lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "lease_id", lease_id, 'str')
         if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._client._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+            header_parameters['If-Modified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._client._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+            header_parameters['If-Unmodified-Since'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_unmodified_since", if_unmodified_since, 'rfc-1123')
         if if_match is not None:
-            header_parameters['If-Match'] = self._client._serialize.header("if_match", if_match, 'str')
+            header_parameters['If-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._client._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "if_none_match", if_none_match, 'str')
 
         return query_parameters, header_parameters
 
@@ -1072,8 +1090,13 @@ class ContainerClient(StorageAccountHostsMixin):
 
         return self._batch_send(*reqs, **options)
 
-    def _generate_set_tier_options(self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None):
-        """This code is a copy from _generated. Once Autorest is able to provide request preparation this code should be removed"""
+    def _generate_set_tier_options(
+        self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None
+    ):
+        """This code is a copy from _generated.
+
+        Once Autorest is able to provide request preparation this code should be removed.
+        """
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -1083,18 +1106,20 @@ class ContainerClient(StorageAccountHostsMixin):
         # Construct parameters
         query_parameters = {}
         if timeout is not None:
-            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)
-        query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
+        query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
 
         # Construct headers
         header_parameters = {}
-        header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')
+        header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
         if rehydrate_priority is not None:
-            header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header("rehydrate_priority", rehydrate_priority, 'str')
+            header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "rehydrate_priority", rehydrate_priority, 'str')
         if request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._client._serialize.header("request_id", request_id, 'str')
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header(  # pylint: disable=protected-access
+                "request_id", request_id, 'str')
         if lease_id is not None:
-            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')  # pylint: disable=protected-access
 
         return query_parameters, header_parameters
 

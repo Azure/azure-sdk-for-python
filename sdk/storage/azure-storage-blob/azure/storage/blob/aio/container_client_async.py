@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -778,7 +779,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def delete_blobs(
+    async def delete_blobs(  # pylint: disable=arguments-differ
             self, *blobs,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -839,7 +840,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        options = BlobClient._generic_delete_blob_options(
+        options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             delete_snapshots=delete_snapshots,
             lease=lease,
             timeout=timeout,
