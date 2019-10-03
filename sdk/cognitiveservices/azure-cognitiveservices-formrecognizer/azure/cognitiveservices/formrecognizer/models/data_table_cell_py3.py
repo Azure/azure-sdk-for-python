@@ -34,8 +34,6 @@ class DataTableCell(Model):
     :type confidence: float
     :param elements: List element references.
     :type elements: list[str]
-    :param words: List of words in the text content of the cell.
-    :type words: list[~azure.cognitiveservices.formrecognizer.models.TextWord]
     :param is_header: Is the current cell a header cell?. Default value: False
      .
     :type is_header: bool
@@ -63,12 +61,11 @@ class DataTableCell(Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
         'elements': {'key': 'elements', 'type': '[str]'},
-        'words': {'key': 'words', 'type': '[TextWord]'},
         'is_header': {'key': 'isHeader', 'type': 'bool'},
         'is_footer': {'key': 'isFooter', 'type': 'bool'},
     }
 
-    def __init__(self, *, row_index: int, column_index: int, text: str, bounding_box, confidence: float, row_span: int=1, column_span: int=1, elements=None, words=None, is_header: bool=False, is_footer: bool=False, **kwargs) -> None:
+    def __init__(self, *, row_index: int, column_index: int, text: str, bounding_box, confidence: float, row_span: int=1, column_span: int=1, elements=None, is_header: bool=False, is_footer: bool=False, **kwargs) -> None:
         super(DataTableCell, self).__init__(**kwargs)
         self.row_index = row_index
         self.column_index = column_index
@@ -78,6 +75,5 @@ class DataTableCell(Model):
         self.bounding_box = bounding_box
         self.confidence = confidence
         self.elements = elements
-        self.words = words
         self.is_header = is_header
         self.is_footer = is_footer

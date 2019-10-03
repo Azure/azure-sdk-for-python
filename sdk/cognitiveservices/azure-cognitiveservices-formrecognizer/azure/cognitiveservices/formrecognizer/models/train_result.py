@@ -22,7 +22,7 @@ class TrainResult(Model):
      train operation error reported by each.
     :type training_documents:
      list[~azure.cognitiveservices.formrecognizer.models.FormDocumentReport]
-    :param training_fields: Required. Training Fields.
+    :param training_fields: Training Fields.
     :type training_fields:
      ~azure.cognitiveservices.formrecognizer.models.TrainingFields
     :param errors: Required. Errors returned during the training operation.
@@ -32,7 +32,6 @@ class TrainResult(Model):
 
     _validation = {
         'training_documents': {'required': True},
-        'training_fields': {'required': True},
         'errors': {'required': True},
     }
 

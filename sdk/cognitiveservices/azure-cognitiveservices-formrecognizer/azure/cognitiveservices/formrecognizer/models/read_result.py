@@ -33,8 +33,8 @@ class ReadResult(Model):
      Possible values include: 'pixel', 'inch'
     :type unit: str or
      ~azure.cognitiveservices.formrecognizer.models.LengthUnit
-    :param language: Required. The detected language on the page overall.
-     Possible values include: 'en', 'es'
+    :param language: The detected language on the page overall. Possible
+     values include: 'en', 'es'
     :type language: str or
      ~azure.cognitiveservices.formrecognizer.models.Language
     :param lines: A list of recognized text lines. The maximum number of lines
@@ -53,7 +53,6 @@ class ReadResult(Model):
         'width': {'required': True, 'minimum': 0},
         'height': {'required': True, 'minimum': 0},
         'unit': {'required': True},
-        'language': {'required': True},
     }
 
     _attribute_map = {

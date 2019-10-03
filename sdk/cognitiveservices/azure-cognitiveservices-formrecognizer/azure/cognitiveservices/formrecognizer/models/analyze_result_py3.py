@@ -19,7 +19,7 @@ class AnalyzeResult(Model):
 
     :param version: Required. Version of schema used for this result.
     :type version: str
-    :param read_results: Text extracted from the input.
+    :param read_results: Required. Text extracted from the input.
     :type read_results:
      list[~azure.cognitiveservices.formrecognizer.models.ReadResult]
     :param page_results: Required. Page-level information extracted from the
@@ -38,6 +38,7 @@ class AnalyzeResult(Model):
 
     _validation = {
         'version': {'required': True},
+        'read_results': {'required': True},
         'page_results': {'required': True},
         'document_results': {'required': True},
     }
@@ -50,7 +51,7 @@ class AnalyzeResult(Model):
         'errors': {'key': 'errors', 'type': '[FormOperationError]'},
     }
 
-    def __init__(self, *, version: str, page_results, document_results, read_results=None, errors=None, **kwargs) -> None:
+    def __init__(self, *, version: str, read_results, page_results, document_results, errors=None, **kwargs) -> None:
         super(AnalyzeResult, self).__init__(**kwargs)
         self.version = version
         self.read_results = read_results

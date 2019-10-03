@@ -33,8 +33,8 @@ class ReadResult(Model):
      Possible values include: 'pixel', 'inch'
     :type unit: str or
      ~azure.cognitiveservices.formrecognizer.models.LengthUnit
-    :param language: Required. The detected language on the page overall.
-     Possible values include: 'en', 'es'
+    :param language: The detected language on the page overall. Possible
+     values include: 'en', 'es'
     :type language: str or
      ~azure.cognitiveservices.formrecognizer.models.Language
     :param lines: A list of recognized text lines. The maximum number of lines
@@ -53,7 +53,6 @@ class ReadResult(Model):
         'width': {'required': True, 'minimum': 0},
         'height': {'required': True, 'minimum': 0},
         'unit': {'required': True},
-        'language': {'required': True},
     }
 
     _attribute_map = {
@@ -66,7 +65,7 @@ class ReadResult(Model):
         'lines': {'key': 'lines', 'type': '[TextLine]'},
     }
 
-    def __init__(self, *, page: int, angle: float, width: float, height: float, unit, language, lines=None, **kwargs) -> None:
+    def __init__(self, *, page: int, angle: float, width: float, height: float, unit, language=None, lines=None, **kwargs) -> None:
         super(ReadResult, self).__init__(**kwargs)
         self.page = page
         self.angle = angle

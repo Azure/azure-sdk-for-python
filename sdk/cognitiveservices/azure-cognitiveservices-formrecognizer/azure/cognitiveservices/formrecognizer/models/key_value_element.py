@@ -19,24 +19,20 @@ class KeyValueElement(Model):
 
     :param text: Required. The text content of the key or value.
     :type text: str
-    :param bounding_box: Required. Bounding box of the key or value.
+    :param bounding_box: Bounding box of the key or value.
     :type bounding_box: list[float]
     :param elements: List of element references.
     :type elements: list[str]
-    :param words: List of words in the text content of the key or value.
-    :type words: list[~azure.cognitiveservices.formrecognizer.models.TextWord]
     """
 
     _validation = {
         'text': {'required': True},
-        'bounding_box': {'required': True},
     }
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'elements': {'key': 'elements', 'type': '[str]'},
-        'words': {'key': 'words', 'type': '[TextWord]'},
     }
 
     def __init__(self, **kwargs):
@@ -44,4 +40,3 @@ class KeyValueElement(Model):
         self.text = kwargs.get('text', None)
         self.bounding_box = kwargs.get('bounding_box', None)
         self.elements = kwargs.get('elements', None)
-        self.words = kwargs.get('words', None)

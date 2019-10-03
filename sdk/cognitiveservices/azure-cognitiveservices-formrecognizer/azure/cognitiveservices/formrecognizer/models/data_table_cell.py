@@ -34,8 +34,6 @@ class DataTableCell(Model):
     :type confidence: float
     :param elements: List element references.
     :type elements: list[str]
-    :param words: List of words in the text content of the cell.
-    :type words: list[~azure.cognitiveservices.formrecognizer.models.TextWord]
     :param is_header: Is the current cell a header cell?. Default value: False
      .
     :type is_header: bool
@@ -63,7 +61,6 @@ class DataTableCell(Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
         'elements': {'key': 'elements', 'type': '[str]'},
-        'words': {'key': 'words', 'type': '[TextWord]'},
         'is_header': {'key': 'isHeader', 'type': 'bool'},
         'is_footer': {'key': 'isFooter', 'type': 'bool'},
     }
@@ -78,6 +75,5 @@ class DataTableCell(Model):
         self.bounding_box = kwargs.get('bounding_box', None)
         self.confidence = kwargs.get('confidence', None)
         self.elements = kwargs.get('elements', None)
-        self.words = kwargs.get('words', None)
         self.is_header = kwargs.get('is_header', False)
         self.is_footer = kwargs.get('is_footer', False)

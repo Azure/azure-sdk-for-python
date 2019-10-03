@@ -19,7 +19,7 @@ class AnalyzeResult(Model):
 
     :param version: Required. Version of schema used for this result.
     :type version: str
-    :param read_results: Text extracted from the input.
+    :param read_results: Required. Text extracted from the input.
     :type read_results:
      list[~azure.cognitiveservices.formrecognizer.models.ReadResult]
     :param page_results: Required. Page-level information extracted from the
@@ -38,6 +38,7 @@ class AnalyzeResult(Model):
 
     _validation = {
         'version': {'required': True},
+        'read_results': {'required': True},
         'page_results': {'required': True},
         'document_results': {'required': True},
     }
