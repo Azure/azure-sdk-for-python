@@ -94,11 +94,11 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(size=length, sequence_number=sequence_number)
         return blob
 
-    def _create_source_blob(self, data, start_range, end_range):
+    def _create_source_blob(self, data, offset, length):
         blob_client = self.bs.get_blob_client(self.source_container_name,
                                               self.get_resource_name(TEST_BLOB_PREFIX))
-        blob_client.create_page_blob(size=end_range - start_range + 1)
-        blob_client.upload_page(data, start_range, end_range)
+        blob_client.create_page_blob(size=length)
+        blob_client.upload_page(data, offset=offset, length=length)
         return blob_client
 
     def _wait_for_async_copy(self, blob):
@@ -117,9 +117,9 @@ class StoragePageBlobTest(StorageTestCase):
         actual_data = blob.download_blob()
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
-    def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
+    def assertRangeEqual(self, container_name, blob_name, expected_data, offset, length):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        actual_data = blob.download_blob(offset=start_range, length=end_range)
+        actual_data = blob.download_blob(offset=offset, length=length)
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
     class NonSeekableFile(object):
@@ -222,9 +222,9 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        start_range = EIGHT_TB - 512
-        end_range = EIGHT_TB - 1
-        resp = blob.upload_page(data, start_range, end_range)
+        start_offset = EIGHT_TB - 512
+        length = 512
+        resp = blob.upload_page(data, offset=start_offset, length=length)
         props = blob.get_blob_properties()
         page_ranges, cleared = blob.get_page_ranges()
 
@@ -232,11 +232,11 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertIsNotNone(resp.get('blob_sequence_number'))
-        self.assertRangeEqual(self.container_name, blob.blob_name, data, start_range, end_range)
+        self.assertRangeEqual(self.container_name, blob.blob_name, data, start_offset, length)
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(1, len(page_ranges))
-        self.assertEqual(page_ranges[0]['start'], start_range)
-        self.assertEqual(page_ranges[0]['end'], end_range)
+        self.assertEqual(page_ranges[0]['start'], start_offset)
+        self.assertEqual(page_ranges[0]['end'], start_offset + length)
 
     @record
     def test_update_page_with_md5(self):
@@ -245,7 +245,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        resp = blob.upload_page(data, 0, 511, validate_content=True)
+        resp = blob.upload_page(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -255,7 +255,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob = self._create_blob()
 
         # Act
-        resp = blob.clear_page(0, 511)
+        resp = blob.clear_page(offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -273,7 +273,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        blob.upload_page(data, 0, 511, if_sequence_number_lt=start_sequence + 1)
+        blob.upload_page(data, offset=0, length=512, if_sequence_number_lt=start_sequence + 1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -288,7 +288,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            blob.upload_page(data, 0, 511, if_sequence_number_lt=start_sequence)
+            blob.upload_page(data, offset=0, length=512, if_sequence_number_lt=start_sequence)
 
         # Assert
 
@@ -301,7 +301,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        blob.upload_page(data, 0, 511, if_sequence_number_lte=start_sequence)
+        blob.upload_page(data, offset=0, length=512, if_sequence_number_lte=start_sequence)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -316,7 +316,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            blob.upload_page(data, 0, 511, if_sequence_number_lte=start_sequence - 1)
+            blob.upload_page(data, offset=0, length=512, if_sequence_number_lte=start_sequence - 1)
 
         # Assert
 
@@ -329,7 +329,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        blob.upload_page(data, 0, 511, if_sequence_number_eq=start_sequence)
+        blob.upload_page(data, offset=0, length=512, if_sequence_number_eq=start_sequence)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -344,7 +344,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            blob.upload_page(data, 0, 511, if_sequence_number_eq=start_sequence - 1)
+            blob.upload_page(data, offset=0, length=512, if_sequence_number_eq=start_sequence - 1)
 
         # Assert
 
@@ -355,7 +355,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        resp = blob.upload_page(data, 0, 511)
+        resp = blob.upload_page(data, offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -842,8 +842,8 @@ class StoragePageBlobTest(StorageTestCase):
         # Arrange
         blob = self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, 0, 511)
-        resp2 = blob.upload_page(data, 1024, 1535)
+        resp1 = blob.upload_page(data, offset=0, length=512)
+        resp2 = blob.upload_page(data, offset=1024, length=512)
 
         # Act
         ranges, cleared = blob.get_page_ranges()
@@ -863,9 +863,9 @@ class StoragePageBlobTest(StorageTestCase):
         blob = self._create_blob(2048)
         data = self.get_random_bytes(1536)
         snapshot1 = blob.create_snapshot()
-        blob.upload_page(data, 0, 1535)
+        blob.upload_page(data, offset=0, length=1536)
         snapshot2 = blob.create_snapshot()
-        blob.clear_page(512, 1023)
+        blob.clear_page(offset=512, length=1024)
 
         # Act
         ranges1, cleared1 = blob.get_page_ranges(previous_snapshot_diff=snapshot1)
@@ -897,11 +897,11 @@ class StoragePageBlobTest(StorageTestCase):
         # Arrange
         blob = self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, 0, 511)
+        resp1 = blob.upload_page(data, offset=0, length=512)
 
         # Act
         try:
-            blob.upload_page(data, 1024, 1536)
+            blob.upload_page(data, offset=1024, length=513)
         except ValueError as e:
             self.assertEqual(str(e), 'end_range must be an integer that aligns with 512 page size')
             return
@@ -1335,8 +1335,8 @@ class StoragePageBlobTest(StorageTestCase):
         # Arrange
         source_blob = self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = source_blob.upload_page(data, 0, 511)
-        resp2 = source_blob.upload_page(data, 1024, 1535)
+        resp1 = source_blob.upload_page(data, offset=0, length=512)
+        resp2 = source_blob.upload_page(data, offset=1024, length=512)
         source_snapshot_blob = source_blob.create_snapshot()
 
         snapshot_blob = BlobClient(

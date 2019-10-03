@@ -230,10 +230,10 @@ class StorageCPKTest(StorageTestCase):
 
         # Act part 1: make put block from url calls
         destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url,
-                                                     source_offset=0, source_length=4 * 1024 - 1,
+                                                     source_offset=0, source_length=4 * 1024,
                                                      cpk=TEST_ENCRYPTION_KEY)
         destination_blob_client.stage_block_from_url(block_id=2, source_url=source_blob_url,
-                                                     source_offset=4 * 1024, source_length=8 * 1024,
+                                                     source_offset=4 * 1024, source_length=4 * 1024,
                                                      cpk=TEST_ENCRYPTION_KEY)
 
         # Assert blocks
@@ -260,7 +260,7 @@ class StorageCPKTest(StorageTestCase):
         blob = destination_blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data[0: 8 * 1024 + 1])
+        self.assertEqual(blob.content_as_bytes(), self.byte_data[0: 8 * 1024])
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -308,8 +308,8 @@ class StorageCPKTest(StorageTestCase):
 
         # Act
         append_blob_prop = destination_blob_client.append_block_from_url(source_blob_url,
-                                                                         source_range_start=0,
-                                                                         source_range_end=4 * 1024 - 1,
+                                                                         source_offset=0,
+                                                                         source_length=4 * 1024,
                                                                          cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -363,8 +363,8 @@ class StorageCPKTest(StorageTestCase):
 
         # Act
         page_blob_prop = blob_client.upload_page(self.byte_data,
-                                                 start_range=0,
-                                                 end_range=len(self.byte_data) - 1,
+                                                 offset=0,
+                                                 length=len(self.byte_data),
                                                  cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -379,7 +379,7 @@ class StorageCPKTest(StorageTestCase):
 
         # Act get the blob content
         blob = blob_client.download_blob(offset=0,
-                                         length=len(self.byte_data) - 1,
+                                         length=len(self.byte_data),
                                          cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
@@ -403,9 +403,9 @@ class StorageCPKTest(StorageTestCase):
 
         # Act
         page_blob_prop = blob_client.upload_pages_from_url(source_blob_url,
-                                                           range_start=0,
-                                                           range_end=len(self.byte_data) - 1,
-                                                           source_range_start=0,
+                                                           offset=0,
+                                                           length=len(self.byte_data),
+                                                           source_offset=0,
                                                            cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -421,7 +421,7 @@ class StorageCPKTest(StorageTestCase):
 
         # Act get the blob content
         blob = blob_client.download_blob(offset=0,
-                                         length=len(self.byte_data) - 1,
+                                         length=len(self.byte_data),
                                          cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
