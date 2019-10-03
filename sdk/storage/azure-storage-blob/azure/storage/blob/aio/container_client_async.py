@@ -98,7 +98,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, container_url,  # type: str
+            self, account_url,  # type: str
             container_name=None,  # type: str
             credential=None,  # type: Optional[Any]
             loop=None,  # type: Any
@@ -107,7 +107,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(ContainerClient, self).__init__(
-            container_url,
+            account_url,
             container_name=container_name,
             credential=credential,
             loop=loop,
