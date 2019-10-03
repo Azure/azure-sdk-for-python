@@ -3,7 +3,7 @@
 
 -------------------
 
-## 2019-XX-XX Version 1.0.0b4
+## 2019-10-07 Version 1.0.0b4
 
 ### Features
 
@@ -16,7 +16,7 @@
   - HttpRequest now has a "prepare_multipart_body" method to build final body.
   - HttpResponse now has a "parts" method to return an iterator of parts
   - AsyncHttpResponse now has a "parts" methods to return an async iterator of parts
-  - Note that multipart/MIXED is a Python 3.x only feature
+  - Note that multipart/mixed is a Python 3.x only feature
 
 ### Bug fixes
 
