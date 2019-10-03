@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: disable=too-many-lines,too-many-public-methods
 from datetime import datetime
 
 from ._shared import parse_vault_id
@@ -247,6 +248,249 @@ class CertificateBase(object):
         :rtype: str
         """
         return self._vault_id.version
+
+
+class Certificate(CertificateBase):
+    """Consists of a certificate and its attributes
+
+    :param policy: The management policy for the certificate.
+    :type policy: ~azure.keyvault.certificates.CertificatePolicy
+    :paramstr cert_id: The certificate id.
+    :param bytes thumbprint: Thumpbrint of the certificate
+    :param str key_id: The key id.
+    :param str secret_id: The secret id.
+    :param attributes: The certificate attributes.
+    :type attributes: ~azure.keyvault.certificates.CertificateAttributes
+    :param bytearray cer: CER contents of the X509 certificate.
+    """
+    def __init__(
+        self,
+        policy,  # type: models.CertificatePolicy
+        cert_id,  # type: Optional[str]
+        thumbprint=None,  # type:  Optional[bytes]
+        key_id=None,  # type: Optional[str]
+        secret_id=None,  # type: Optional[str]
+        attributes=None,  # type: Optional[CertificateAttributes]
+        cer=None,  # type: Optional[bytes]
+        **kwargs  # type: **Any
+    ):
+        # type: (...) -> None
+        super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
+        self._key_id = key_id
+        self._secret_id = secret_id
+        self._policy = policy
+        self._cer = cer
+
+    @classmethod
+    def _from_certificate_bundle(cls, certificate_bundle):
+        # type: (models.CertificateBundle) -> Certificate
+        """Construct a certificate from an autorest-generated certificateBundle"""
+        # pylint:disable=protected-access
+        return cls(
+            attributes=certificate_bundle.attributes,
+            cert_id=certificate_bundle.id,
+            thumbprint=certificate_bundle.x509_thumbprint,
+            key_id=certificate_bundle.kid,
+            secret_id=certificate_bundle.sid,
+            policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
+            cer=certificate_bundle.cer,
+            tags=certificate_bundle.tags,
+        )
+
+    @property
+    def key_id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._key_id
+
+    @property
+    def secret_id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._secret_id
+
+    @property
+    def policy(self):
+        # type: () -> CertificatePolicy
+        """The management policy of the certificate.
+
+        :rtype: ~azure.keyvault.certificates.CertificatePolicy
+        """
+        return self._policy
+
+    @property
+    def cer(self):
+        # type: () -> bytes
+        """The CER contents of the certificate.
+
+        :rtype: bytes
+        """
+        return self._cer
+
+
+class CertificateOperation(object):
+    # pylint:disable=too-many-instance-attributes
+    """A certificate operation is returned in case of asynchronous requests.
+
+    :param str cert_operation_id: The certificate id.
+    :param str issuer_name: Name of the operation's issuer object or reserved names;
+        for example, 'Self' or 'Unknown
+    :param str certificate_type: Type of certificate requested from the issuer provider.
+    :param bool certificate_transparency: Indicates if the certificate this operation is
+        running for is published to certificate transparency logs.
+    :param bytearray csr: The certificate signing request (CSR) that is being used in the certificate
+        operation.
+    :param bool cancellation_requested: Indicates if cancellation was requested on the certificate
+        operation.
+    :param str status: Status of the certificate operation.
+    :param str status_details: The status details of the certificate operation
+    :param error: Error encountered, if any, during the certificate operation.
+    :type error: ~azure.keyvault.certificates.Error
+    :param str target: Location which contains the result of the certificate operation.
+    :param str request_id: Identifier for the certificate operation.
+    """
+    def __init__(
+        self,
+        cert_operation_id=None,  # type: Optional[str]
+        issuer_name=None,  # type: Optional[str]
+        certificate_type=None,  # type: Optional[str]
+        certificate_transparency=False,  # type: Optional[bool]
+        csr=None,  # type: Optional[bytes]
+        cancellation_requested=False,  # type: Optional[bool]
+        status=None,  # type: Optional[str]
+        status_details=None,  # type: Optional[str]
+        error=None,  # type: Optional[models.Error]
+        target=None,  # type: Optional[str]
+        request_id=None  # type: Optional[str]
+    ):
+        # type: (...) -> None
+        self._id = cert_operation_id
+        self._vault_id = parse_vault_id(cert_operation_id)
+        self._issuer_name = issuer_name
+        self._certificate_type = certificate_type
+        self._certificate_transparency = certificate_transparency
+        self._csr = csr
+        self._cancellation_requested = cancellation_requested
+        self._status = status
+        self._status_details = status_details
+        self._error = error
+        self._target = target
+        self._request_id = request_id
+
+    @classmethod
+    def _from_certificate_operation_bundle(cls, certificate_operation_bundle):
+        # type: (models.CertificateOperation) -> CertificateOperation
+        """Construct a CertificateOperation from an autorest-generated CertificateOperation"""
+        return cls(
+            cert_operation_id=certificate_operation_bundle.id,
+            issuer_name=(certificate_operation_bundle.issuer_parameters.name
+                         if certificate_operation_bundle.issuer_parameters else None),
+            certificate_type=(certificate_operation_bundle.issuer_parameters.certificate_type
+                              if certificate_operation_bundle.issuer_parameters else None),
+            certificate_transparency=(certificate_operation_bundle.issuer_parameters.certificate_transparency
+                                      if certificate_operation_bundle.issuer_parameters else None),
+            csr=certificate_operation_bundle.csr,
+            cancellation_requested=certificate_operation_bundle.cancellation_requested,
+            status=certificate_operation_bundle.status,
+            status_details=certificate_operation_bundle.status_details,
+            error=certificate_operation_bundle.error,
+            target=certificate_operation_bundle.target,
+            request_id=certificate_operation_bundle.request_id,
+        )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._vault_id.name
+
+    @property
+    def issuer_name(self):
+        # type: () -> str
+        """The name of the issuer of the certificate.
+
+        :rtype: str
+        """
+        return self._issuer_name
+
+    @property
+    def certificate_type(self):
+        # type: () -> str
+        """Type of certificate to be requested from the issuer provider.
+
+        :rtype: str
+        """
+        return self._certificate_type
+
+    @property
+    def certificate_transparency(self):
+        # type: () -> bool
+        """Whether certificates generated under this policy should be published to certificate
+        transparency logs.
+
+        :rtype: bool
+        """
+        return self._certificate_transparency
+
+    @property
+    def csr(self):
+        # type: () -> bytes
+        """The certificate signing request that is being used in this certificate operation.
+
+        :rtype: bytes
+        """
+        return self._csr
+
+    @property
+    def cancellation_requested(self):
+        # type: () -> bool
+        """Whether cancellation was requested on the certificate operation.
+
+        :rtype: bool
+        """
+        return self._cancellation_requested
+
+    @property
+    def status(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._status
+
+    @property
+    def status_details(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._status_details
+
+    @property
+    def error(self):
+        # type: () -> models.Error
+        """:rtype: models.Error"""
+        return self._error
+
+    @property
+    def target(self):
+        # type: () -> str
+        """Location which contains the result of the certificate operation.
+
+        :rtype: str
+        """
+        return self._target
+
+    @property
+    def request_id(self):
+        # type: () -> str
+        """Identifier for the certificate operation.
+
+        :rtype: str
+        """
+        return self._request_id
 
 
 class CertificatePolicy(object):
@@ -746,249 +990,6 @@ class CertificatePolicy(object):
         :rtype: DeletionRecoveryLevel
         """
         return self._attributes.recovery_level if self._attributes else None
-
-
-class Certificate(CertificateBase):
-    """Consists of a certificate and its attributes
-
-    :param policy: The management policy for the certificate.
-    :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :paramstr cert_id: The certificate id.
-    :param bytes thumbprint: Thumpbrint of the certificate
-    :param str key_id: The key id.
-    :param str secret_id: The secret id.
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.certificates.CertificateAttributes
-    :param bytearray cer: CER contents of the X509 certificate.
-    """
-    def __init__(
-        self,
-        policy,  # type: models.CertificatePolicy
-        cert_id,  # type: Optional[str]
-        thumbprint=None,  # type:  Optional[bytes]
-        key_id=None,  # type: Optional[str]
-        secret_id=None,  # type: Optional[str]
-        attributes=None,  # type: Optional[CertificateAttributes]
-        cer=None,  # type: Optional[bytes]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> None
-        super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
-        self._key_id = key_id
-        self._secret_id = secret_id
-        self._policy = policy
-        self._cer = cer
-
-    @classmethod
-    def _from_certificate_bundle(cls, certificate_bundle):
-        # type: (models.CertificateBundle) -> Certificate
-        """Construct a certificate from an autorest-generated certificateBundle"""
-        # pylint:disable=protected-access
-        return cls(
-            attributes=certificate_bundle.attributes,
-            cert_id=certificate_bundle.id,
-            thumbprint=certificate_bundle.x509_thumbprint,
-            key_id=certificate_bundle.kid,
-            secret_id=certificate_bundle.sid,
-            policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
-            cer=certificate_bundle.cer,
-            tags=certificate_bundle.tags,
-        )
-
-    @property
-    def key_id(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._key_id
-
-    @property
-    def secret_id(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._secret_id
-
-    @property
-    def policy(self):
-        # type: () -> CertificatePolicy
-        """The management policy of the certificate.
-
-        :rtype: ~azure.keyvault.certificates.CertificatePolicy
-        """
-        return self._policy
-
-    @property
-    def cer(self):
-        # type: () -> bytes
-        """The CER contents of the certificate.
-
-        :rtype: bytes
-        """
-        return self._cer
-
-
-class CertificateOperation(object):
-    # pylint:disable=too-many-instance-attributes
-    """A certificate operation is returned in case of asynchronous requests.
-
-    :param str cert_operation_id: The certificate id.
-    :param str issuer_name: Name of the operation's issuer object or reserved names;
-        for example, 'Self' or 'Unknown
-    :param str certificate_type: Type of certificate requested from the issuer provider.
-    :param bool certificate_transparency: Indicates if the certificate this operation is
-        running for is published to certificate transparency logs.
-    :param bytearray csr: The certificate signing request (CSR) that is being used in the certificate
-        operation.
-    :param bool cancellation_requested: Indicates if cancellation was requested on the certificate
-        operation.
-    :param str status: Status of the certificate operation.
-    :param str status_details: The status details of the certificate operation
-    :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.certificates.Error
-    :param str target: Location which contains the result of the certificate operation.
-    :param str request_id: Identifier for the certificate operation.
-    """
-    def __init__(
-        self,
-        cert_operation_id=None,  # type: Optional[str]
-        issuer_name=None,  # type: Optional[str]
-        certificate_type=None,  # type: Optional[str]
-        certificate_transparency=False,  # type: Optional[bool]
-        csr=None,  # type: Optional[bytes]
-        cancellation_requested=False,  # type: Optional[bool]
-        status=None,  # type: Optional[str]
-        status_details=None,  # type: Optional[str]
-        error=None,  # type: Optional[models.Error]
-        target=None,  # type: Optional[str]
-        request_id=None  # type: Optional[str]
-    ):
-        # type: (...) -> None
-        self._id = cert_operation_id
-        self._vault_id = parse_vault_id(cert_operation_id)
-        self._issuer_name = issuer_name
-        self._certificate_type = certificate_type
-        self._certificate_transparency = certificate_transparency
-        self._csr = csr
-        self._cancellation_requested = cancellation_requested
-        self._status = status
-        self._status_details = status_details
-        self._error = error
-        self._target = target
-        self._request_id = request_id
-
-    @classmethod
-    def _from_certificate_operation_bundle(cls, certificate_operation_bundle):
-        # type: (models.CertificateOperation) -> CertificateOperation
-        """Construct a CertificateOperation from an autorest-generated CertificateOperation"""
-        return cls(
-            cert_operation_id=certificate_operation_bundle.id,
-            issuer_name=(certificate_operation_bundle.issuer_parameters.name
-                         if certificate_operation_bundle.issuer_parameters else None),
-            certificate_type=(certificate_operation_bundle.issuer_parameters.certificate_type
-                              if certificate_operation_bundle.issuer_parameters else None),
-            certificate_transparency=(certificate_operation_bundle.issuer_parameters.certificate_transparency
-                                      if certificate_operation_bundle.issuer_parameters else None),
-            csr=certificate_operation_bundle.csr,
-            cancellation_requested=certificate_operation_bundle.cancellation_requested,
-            status=certificate_operation_bundle.status,
-            status_details=certificate_operation_bundle.status_details,
-            error=certificate_operation_bundle.error,
-            target=certificate_operation_bundle.target,
-            request_id=certificate_operation_bundle.request_id,
-        )
-
-    @property
-    def id(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._id
-
-    @property
-    def name(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._vault_id.name
-
-    @property
-    def issuer_name(self):
-        # type: () -> str
-        """The name of the issuer of the certificate.
-
-        :rtype: str
-        """
-        return self._issuer_name
-
-    @property
-    def certificate_type(self):
-        # type: () -> str
-        """Type of certificate to be requested from the issuer provider.
-
-        :rtype: str
-        """
-        return self._certificate_type
-
-    @property
-    def certificate_transparency(self):
-        # type: () -> bool
-        """Whether certificates generated under this policy should be published to certificate
-        transparency logs.
-
-        :rtype: bool
-        """
-        return self._certificate_transparency
-
-    @property
-    def csr(self):
-        # type: () -> bytes
-        """The certificate signing request that is being used in this certificate operation.
-
-        :rtype: bytes
-        """
-        return self._csr
-
-    @property
-    def cancellation_requested(self):
-        # type: () -> bool
-        """Whether cancellation was requested on the certificate operation.
-
-        :rtype: bool
-        """
-        return self._cancellation_requested
-
-    @property
-    def status(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._status
-
-    @property
-    def status_details(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._status_details
-
-    @property
-    def error(self):
-        # type: () -> models.Error
-        """:rtype: models.Error"""
-        return self._error
-
-    @property
-    def target(self):
-        # type: () -> str
-        """Location which contains the result of the certificate operation.
-
-        :rtype: str
-        """
-        return self._target
-
-    @property
-    def request_id(self):
-        # type: () -> str
-        """Identifier for the certificate operation.
-
-        :rtype: str
-        """
-        return self._request_id
 
 
 class Contact(object):
