@@ -1022,8 +1022,30 @@ class QuotaRequestOneResourceSubmitResponse(Model):
      conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
      ISO 8601 standard.
     :vartype request_submit_time: datetime
-    :param properties: The quota request addition properties.
-    :type properties: ~azure.mgmt.reservations.models.CurrentQuotaLimit
+    :param limit: The quota limit.
+    :type limit: int
+    :param current_value: The current resource usages information.
+    :type current_value: int
+    :param name1: Name of the resource provide by the resource Provider.
+     Please use this name property for quotaRequests.
+    :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitName
+    :param resource_type: The Resource Type Name.
+    :type resource_type: object
+    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+     unit field provided in the Get quota response.
+    :type unit: str
+    :param quota_period: The quota period over which the usage values are
+     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
+     one second). This parameter is optional because, for some resources like
+     compute, the period doesn’t matter.
+    :type quota_period: str
+    :param provisioning_state1: The quota request status.
+    :type provisioning_state1: object
+    :ivar message1: A user friendly message.
+    :vartype message1: str
+    :param properties: Additional properties for the specific resource
+     provider.
+    :type properties: object
     :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
     :vartype type: str
     """
@@ -1033,6 +1055,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'name': {'readonly': True},
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
+        'message1': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -1042,7 +1065,15 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'properties': {'key': 'properties.properties', 'type': 'CurrentQuotaLimit'},
+        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
+        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
+        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitName'},
+        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
+        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
+        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
+        'provisioning_state1': {'key': 'properties.properties.additionalProperties.provisioningState', 'type': 'object'},
+        'message1': {'key': 'properties.properties.additionalProperties.message', 'type': 'str'},
+        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -1053,6 +1084,14 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.message = None
         self.request_submit_time = None
+        self.limit = kwargs.get('limit', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.name1 = kwargs.get('name1', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.unit = kwargs.get('unit', None)
+        self.quota_period = kwargs.get('quota_period', None)
+        self.provisioning_state1 = kwargs.get('provisioning_state1', None)
+        self.message1 = None
         self.properties = kwargs.get('properties', None)
         self.type = None
 
