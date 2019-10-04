@@ -36,12 +36,8 @@ client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # First we create a list of Contacts that we would like to make the certificate contacts for this key vault.
     contact_list = [
-        Contact(email='admin@contoso.com',
-                name='John Doe',
-                phone='1111111111'),
-        Contact(email='admin2@contoso.com',
-                name='John Doe2',
-                phone='2222222222')
+        Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+        Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
     ]
 
     # Creates and sets the certificate contacts for this key vault.
