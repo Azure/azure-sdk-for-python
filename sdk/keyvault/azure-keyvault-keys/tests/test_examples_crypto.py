@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
+import os
+
 from devtools_testutils import ResourceGroupPreparer
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
@@ -10,7 +13,10 @@ from keys_test_case import KeyVaultTestCase
 class TestCryptoExamples(KeyVaultTestCase):
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer()
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_encrypt_decrypt(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -38,7 +44,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         pass
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_wrap_unwrap(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -65,7 +71,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         # [END unwrap]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_sign_verify(self, vault_client, **kwargs):
         key_client = vault_client.keys

@@ -4,6 +4,7 @@
 # ------------------------------------
 import codecs
 import hashlib
+import os
 
 from azure.keyvault.keys import KeyCurveName
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
@@ -19,6 +20,9 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 class CryptoClientTests(AsyncKeyVaultTestCase):
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
@@ -66,7 +70,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(permissions=NO_GET)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_encrypt_and_decrypt(self, vault_client, **kwargs):
@@ -86,7 +90,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         result = await crypto_client.decrypt(algorithm, ciphertext)
         self.assertEqual(self.plaintext, result.decrypted_bytes)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(permissions=NO_GET)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_sign_and_verify(self, vault_client, **kwargs):
@@ -107,7 +111,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         verified = await crypto_client.verify(algorithm, digest, signature)
         self.assertTrue(verified.result)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(permissions=NO_GET)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_wrap_and_unwrap(self, vault_client, **kwargs):
@@ -126,7 +130,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         result = await crypto_client.unwrap_key(wrap_algorithm, wrapped_bytes)
         self.assertEqual(key_bytes, result.unwrapped_bytes)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_encrypt_local(self, vault_client, **kwargs):
@@ -143,7 +147,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
             result = await crypto_client.decrypt(algorithm, ciphertext)
             self.assertEqual(result.decrypted_bytes, self.plaintext)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_wrap_local(self, vault_client, **kwargs):
@@ -160,7 +164,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
             result = await crypto_client.unwrap_key(algorithm, encrypted_key)
             self.assertEqual(result.unwrapped_bytes, self.plaintext)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_rsa_verify_local(self, vault_client, **kwargs):
@@ -187,7 +191,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
                 result = await crypto_client.verify(algorithm, digest, signature)
                 self.assertTrue(result.result)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_ec_verify_local(self, vault_client, **kwargs):

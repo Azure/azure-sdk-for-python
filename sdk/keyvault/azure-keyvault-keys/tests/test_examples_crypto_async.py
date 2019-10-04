@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
+import os
+
 from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
@@ -10,7 +13,10 @@ from keys_async_test_case import AsyncKeyVaultTestCase
 class TestCryptoExamples(AsyncKeyVaultTestCase):
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer()
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_encrypt_decrypt_async(self, vault_client, **kwargs):
@@ -41,7 +47,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
 
         pass
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_wrap_unwrap_async(self, vault_client, **kwargs):
@@ -68,7 +74,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
 
         # [END unwrap]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_sign_verify_async(self, vault_client, **kwargs):
