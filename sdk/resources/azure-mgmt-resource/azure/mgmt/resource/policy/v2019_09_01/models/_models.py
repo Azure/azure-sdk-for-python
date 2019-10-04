@@ -351,9 +351,9 @@ class PolicyDefinitionReference(Model):
     :param policy_definition_reference_id: A unique id (within the policy set
      definition) for this policy definition reference.
     :type policy_definition_reference_id: str
-    :param group_name: The name of the group that this policy definition
+    :param group_names: The name of the groups that this policy definition
      reference belongs to.
-    :type group_name: str
+    :type group_names: list[str]
     """
 
     _validation = {
@@ -364,7 +364,7 @@ class PolicyDefinitionReference(Model):
         'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'object'},
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
-        'group_name': {'key': 'groupName', 'type': 'str'},
+        'group_names': {'key': 'groupNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -372,7 +372,7 @@ class PolicyDefinitionReference(Model):
         self.policy_definition_id = kwargs.get('policy_definition_id', None)
         self.parameters = kwargs.get('parameters', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
-        self.group_name = kwargs.get('group_name', None)
+        self.group_names = kwargs.get('group_names', None)
 
 
 class PolicySetDefinition(Model):
