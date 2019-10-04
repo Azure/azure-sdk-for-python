@@ -127,7 +127,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     error = OperationTimeoutError("send operation timed out")
                 log.info("%r send operation timed out. (%r)", self._name, error)
                 raise error
-            self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
+            self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
             self._handler.queue_message(*self._unsent_events)
             self._handler.wait()
             self._unsent_events = self._handler.pending_messages
