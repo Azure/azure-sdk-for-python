@@ -51,7 +51,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_secret(
+<<<<<<< HEAD
             self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
+=======
+            self.vault_endpoint, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+>>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -219,7 +223,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_secret(
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
+=======
+            self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
+>>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return backup_result.value
 
@@ -243,7 +251,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_secret(
+<<<<<<< HEAD
             self.vault_endpoint, backup, error_map=_error_map, **kwargs
+=======
+            self.vault_endpoint, backup, error_map={409: ResourceExistsError}, **kwargs
+>>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -266,7 +278,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_secret(
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
+=======
+            self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
+>>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -290,7 +306,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_secret(
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
+=======
+            self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
+>>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
