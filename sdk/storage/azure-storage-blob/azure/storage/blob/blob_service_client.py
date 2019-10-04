@@ -163,7 +163,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
-            protocol=None  # type: Optional[str]
         ):  # type: (...) -> str
         """Generates a shared access signature for the blob service.
 
@@ -215,6 +214,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Generating a shared access signature.
         """
+        protocol = kwargs.pop('protocol', None)
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
 

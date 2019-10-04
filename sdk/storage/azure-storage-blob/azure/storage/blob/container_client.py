@@ -192,13 +192,6 @@ class ContainerClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            account_name=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None,  # type: Optional[str]
             user_delegation_key=None  # type Optional[]
         ):
         # type: (...) -> Any
@@ -274,6 +267,13 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Generating a sas token.
         """
+        protocol = kwargs.pop('protocol', None)
+        account_name = kwargs.pop('account_name', None)
+        cache_control = kwargs.pop('cache_control', None)
+        content_disposition = kwargs.pop('content_disposition', None)
+        content_encoding = kwargs.pop('content_encoding', None)
+        content_language = kwargs.pop('content_language', None)
+        content_type = kwargs.pop('content_type', None)
         if user_delegation_key is not None:
             if not hasattr(self.credential, 'account_name') and not account_name:
                 raise ValueError("No account_name available. Please provide account_name parameter.")
@@ -775,11 +775,8 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
@@ -886,11 +883,11 @@ class ContainerClient(StorageAccountHostsMixin):
         blob.upload_blob(
             data,
             blob_type=blob_type,
-            overwrite=overwrite,
+            overwrite=kwargs.pop('overwrite', False),
             length=length,
             metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
+            content_settings=kwargs.pop('content_settings', None),
+            validate_content=kwargs.pop('validate_content', False),
             lease=lease,
             timeout=timeout,
             max_concurrency=max_concurrency,
@@ -974,7 +971,8 @@ class ContainerClient(StorageAccountHostsMixin):
         delete_snapshots=None,
         request_id=None,
         lease_access_conditions=None,
-        modified_access_conditions=None
+        modified_access_conditions=None,
+        **kwargs
     ):
         """This code is a copy from _generated.
 
