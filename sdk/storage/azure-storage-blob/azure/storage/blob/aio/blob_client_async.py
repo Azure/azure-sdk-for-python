@@ -102,7 +102,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -113,10 +112,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob=blob,
             snapshot=snapshot,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore

@@ -105,7 +105,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             self, container_url,  # type: str
             container=None,  # type: Optional[Union[ContainerProperties, str]]
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -114,10 +113,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             container_url,
             container=container,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):

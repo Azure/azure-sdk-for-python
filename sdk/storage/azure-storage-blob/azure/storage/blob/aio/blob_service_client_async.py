@@ -100,7 +100,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -108,10 +107,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         super(BlobServiceClient, self).__init__(
             account_url,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
