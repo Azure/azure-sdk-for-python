@@ -168,7 +168,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs): # type: ignore
-        # type: (**Any) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
         It is only available when read-access geo-redundant replication is enabled for
