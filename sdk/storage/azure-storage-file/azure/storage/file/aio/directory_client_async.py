@@ -477,7 +477,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None, # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
-            max_connections=1,  # type: Optional[int]
+            max_concurrency=1,  # type: Optional[int]
             timeout=None, # type: Optional[int]
             encoding='UTF-8',  # type: str
             **kwargs # type: Any
@@ -504,7 +504,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -529,7 +529,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             metadata=metadata,
             content_settings=content_settings,
             validate_content=validate_content,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             timeout=timeout,
             encoding=encoding,
             **kwargs)

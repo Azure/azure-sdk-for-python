@@ -1020,7 +1020,7 @@ class StorageFileTest(FileTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        response = file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
+        response = file_client.upload_file(data, max_concurrency=2, raw_response_hook=callback)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1045,7 +1045,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        response = file_client.upload_file(data[index:], max_connections=2)
+        response = file_client.upload_file(data[index:], max_concurrency=2)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1071,7 +1071,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        response = file_client.upload_file(data[index:], length=count, max_connections=2)
+        response = file_client.upload_file(data[index:], length=count, max_concurrency=2)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1098,7 +1098,7 @@ class StorageFileTest(FileTestCase):
 
         # Act
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1132,7 +1132,7 @@ class StorageFileTest(FileTestCase):
                 progress.append((current, total))
 
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            response = file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1164,7 +1164,7 @@ class StorageFileTest(FileTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1193,7 +1193,7 @@ class StorageFileTest(FileTestCase):
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageFileTest.NonSeekableFile(stream)
-            file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
+            file_client.upload_file(non_seekable_file, length=file_size, max_concurrency=1)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1225,7 +1225,7 @@ class StorageFileTest(FileTestCase):
 
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1254,7 +1254,7 @@ class StorageFileTest(FileTestCase):
         # Act
         file_size = len(data) - 512
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, length=file_size, max_connections=2)
+            file_client.upload_file(stream, length=file_size, max_concurrency=2)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1286,7 +1286,7 @@ class StorageFileTest(FileTestCase):
 
         file_size = len(data) - 5
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, length=file_size, max_connections=2, raw_response_hook=callback)
+            file_client.upload_file(stream, length=file_size, max_concurrency=2, raw_response_hook=callback)
 
 
         # Assert
@@ -1389,7 +1389,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        file_client.upload_file(data, validate_content=True, max_connections=2)
+        file_client.upload_file(data, validate_content=True, max_concurrency=2)
 
         # Assert
 
