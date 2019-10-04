@@ -40,24 +40,3 @@ async def test_send_with_long_interval_async(connstr_receivers, sleep):
         received.extend(r.receive(timeout=5))
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
-
-
-@pytest.mark.liveTest
-@pytest.mark.asyncio
-async def test_send_with_forced_conn_close_async(connstr_receivers, sleep):
-    connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
-    try:
-        await sender.send(EventData(b"A single event"))
-        sender._handler._connection._conn.destroy()
-        await sender.send(EventData(b"A single event"))
-    finally:
-        await sender.close()
-    
-    received = []
-    for r in receivers:
-        r._handler._connection._conn.destroy()
-        received.extend(r.receive(timeout=5))
-    assert len(received) == 2
-    assert list(received[0].body)[0] == b"A single event"

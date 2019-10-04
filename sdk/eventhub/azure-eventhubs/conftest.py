@@ -25,7 +25,7 @@ from azure.eventhub import EventHubClient, EventPosition
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--sleep", action="store", default="False", help="sleep on reconnect test: True or False"
+        "--sleep", action="store", default="True", help="sleep on reconnect test: True or False"
     )
 
 
