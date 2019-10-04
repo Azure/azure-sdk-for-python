@@ -1103,7 +1103,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return self._batch_send(*reqs, **options)
 
     def _generate_set_tier_options(
-        self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None
+        self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None, **kwargs
     ):
         """This code is a copy from _generated.
 
