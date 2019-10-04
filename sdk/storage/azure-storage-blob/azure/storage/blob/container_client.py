@@ -300,8 +300,8 @@ class ContainerClient(StorageAccountHostsMixin):
         )
 
     @distributed_trace
-    def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
+    def create_container(self, metadata=None, public_access=None, **kwargs):
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -326,6 +326,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
+        timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
             return self._client.container.create( # type: ignore
@@ -340,7 +341,6 @@ class ContainerClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_container(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -392,6 +392,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+        timeout = kwargs.pop('timeout', None)
         try:
             self._client.container.delete(
                 timeout=timeout,
@@ -405,7 +406,6 @@ class ContainerClient(StorageAccountHostsMixin):
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> LeaseClient
         """
@@ -458,6 +458,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
@@ -478,8 +479,8 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_properties(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
+    def get_container_properties(self, lease=None, **kwargs):
+        # type: (Optional[Union[LeaseClient, str]], **Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
@@ -501,6 +502,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Getting properties on the container.
         """
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             response = self._client.container.get_properties(
                 timeout=timeout,
@@ -516,7 +518,6 @@ class ContainerClient(StorageAccountHostsMixin):
     def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -555,6 +556,7 @@ class ContainerClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
         mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
@@ -567,8 +569,8 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
+    def get_container_access_policy(self, lease=None, **kwargs):
+        # type: (Optional[Union[LeaseClient, str]], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -590,6 +592,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Getting the access policy on the container.
         """
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
@@ -608,7 +611,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
@@ -668,6 +670,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_modified_since=kwargs.pop('if_modified_since', None),
             if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
@@ -681,8 +684,8 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> ItemPaged[BlobProperties]
+    def list_blobs(self, name_starts_with=None, include=None, **kwargs):
+        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -711,6 +714,7 @@ class ContainerClient(StorageAccountHostsMixin):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
@@ -725,7 +729,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
             delimiter="/", # type: str
-            timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> ItemPaged[BlobProperties]
@@ -754,6 +757,7 @@ class ContainerClient(StorageAccountHostsMixin):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
@@ -777,7 +781,6 @@ class ContainerClient(StorageAccountHostsMixin):
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
@@ -879,6 +882,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         blob.upload_blob(
             data,
             blob_type=blob_type,
@@ -900,7 +904,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -959,6 +962,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         blob = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             lease=lease,
@@ -967,7 +971,6 @@ class ContainerClient(StorageAccountHostsMixin):
 
     def _generate_delete_blobs_options(
         self, snapshot=None,
-        timeout=None,
         delete_snapshots=None,
         request_id=None,
         lease_access_conditions=None,
@@ -994,6 +997,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_none_match = modified_access_conditions.if_none_match
 
         # Construct parameters
+        timeout = kwargs.pop('timeout', None)
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
@@ -1104,7 +1108,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return self._batch_send(*reqs, **options)
 
     def _generate_set_tier_options(
-        self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None
+        self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None
     ):
         """This code is a copy from _generated.
 
@@ -1115,7 +1119,7 @@ class ContainerClient(StorageAccountHostsMixin):
             lease_id = lease_access_conditions.lease_id
 
         comp = "tier"
-
+        timeout = kwargs.pop('timeout', None)
         # Construct parameters
         query_parameters = {}
         if timeout is not None:

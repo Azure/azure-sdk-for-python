@@ -659,7 +659,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._create_page_blob_options(
             size,
-            content_settings=content_settings,,
+            content_settings=content_settings,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
@@ -1577,7 +1577,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                                     range_start,  # type: int
                                     range_end,  # type: int
                                     source_range_start,  # type: int
-                                    source_content_md5=None,  # type: Optional[bytes]
                                     **kwargs
                                     ):
         # type: (...) -> Dict[str, Any]
@@ -1669,7 +1668,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             range_start=range_start,
             range_end=range_end,
             source_range_start=source_range_start,
-            source_content_md5=source_content_md5,
             **kwargs
         )
         try:

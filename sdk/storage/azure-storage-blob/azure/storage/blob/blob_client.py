@@ -232,7 +232,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            user_delegation_key=None  # type: Optional[UserDelegationKey]
+            user_delegation_key=None,  # type: Optional[UserDelegationKey]
+            **kwargs # type: Any
             ):
         # type: (...) -> Any
         """
@@ -2483,7 +2484,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             range_start,  # type: int
             range_end,  # type: int
             source_range_start,  # type: int
-            source_content_md5=None,  # type: Optional[bytes]
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -2519,6 +2519,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_if_match=kwargs.pop('source_if_match', None),
             source_if_none_match=kwargs.pop('source_if_none_match', None))
 
+        source_content_md5 = kwargs.pop('source_content_md5', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2548,7 +2549,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                               range_start,  # type: int
                               range_end,  # type: int
                               source_range_start,  # type: int
-                              source_content_md5=None,  # type: Optional[bytes]
                               **kwargs
                               ):
         # type: (...) -> Dict[str, Any]
@@ -2640,7 +2640,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             range_start=range_start,
             range_end=range_end,
             source_range_start=source_range_start,
-            source_content_md5=source_content_md5,
             **kwargs
         )
         try:

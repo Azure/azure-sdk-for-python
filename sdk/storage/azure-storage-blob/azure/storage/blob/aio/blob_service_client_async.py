@@ -116,7 +116,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
-                                      timeout=None,  # type: Optional[int]
                                       **kwargs  # type: Any
                                       ):
         # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
@@ -134,6 +133,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        timeout = kwargs.pop('timeout', None)
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                      timeout=timeout,
@@ -169,8 +169,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], **Any) -> Dict[str, Any]
+    async def get_service_stats(self, **kwargs): # type: ignore
+        # type: (**Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -203,6 +203,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 8
                 :caption: Getting service stats for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -210,8 +211,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -228,6 +229,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 8
                 :caption: Getting service properties for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -242,7 +244,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             target_version=None,  # type: Optional[str]
             delete_retention_policy=None,  # type: Optional[RetentionPolicy]
             static_website=None,  # type: Optional[StaticWebsite]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -306,6 +307,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
         )
+        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -316,7 +318,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             results_per_page=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> AsyncItemPaged[ContainerProperties]
@@ -349,6 +350,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Listing the containers in the blob service.
         """
         include = 'metadata' if include_metadata else None
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=name_starts_with,
@@ -367,7 +369,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             public_access=None,  # type: Optional[Union[PublicAccess, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerClient
@@ -399,6 +400,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Creating a container in the blob service.
         """
         container = self.get_container_client(name)
+        timeout = kwargs.pop('timeout', None)
         kwargs.setdefault('merge_span', True)
         await container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
@@ -408,7 +410,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     async def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -461,6 +462,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         container = self.get_container_client(container) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         await container.delete_container( # type: ignore
             lease=lease,
             timeout=timeout,

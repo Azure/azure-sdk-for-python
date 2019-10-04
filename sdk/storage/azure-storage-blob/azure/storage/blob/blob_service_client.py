@@ -232,7 +232,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_user_delegation_key(self, key_start_time,  # type: datetime
                                 key_expiry_time,  # type: datetime
-                                timeout=None,  # type: Optional[int]
                                 **kwargs  # type: Any
                                 ):
         # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
@@ -250,6 +249,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        timeout = kwargs.pop('timeout', None)
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                timeout=timeout,
@@ -285,8 +285,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], **Any) -> Dict[str, Any]
+    def get_service_stats(self, **kwargs): # type: ignore
+        # type: (**Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -319,6 +319,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting service stats for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -326,8 +327,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> Dict[str, Any]
+    def get_service_properties(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -344,6 +345,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting service properties for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -358,7 +360,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             target_version=None,  # type: Optional[str]
             delete_retention_policy=None,  # type: Optional[RetentionPolicy]
             static_website=None,  # type: Optional[StaticWebsite]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -422,6 +423,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
         )
+        timeout = kwargs.pop('timeout', None)
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -432,7 +434,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             results_per_page=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ItemPaged[ContainerProperties]
@@ -465,6 +466,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Listing the containers in the blob service.
         """
         include = 'metadata' if include_metadata else None
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=name_starts_with,
@@ -483,7 +485,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             public_access=None,  # type: Optional[Union[PublicAccess, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerClient
@@ -516,6 +517,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         container = self.get_container_client(name)
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
@@ -524,7 +526,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -577,6 +578,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         container = self.get_container_client(container) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         container.delete_container( # type: ignore
             lease=lease,
             timeout=timeout,
