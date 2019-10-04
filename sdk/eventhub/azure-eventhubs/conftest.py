@@ -15,8 +15,8 @@ from logging.handlers import RotatingFileHandler
 # Ignore async tests for Python < 3.5
 collect_ignore = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("tests/asynctests")
-    collect_ignore.append("tests/eventprocessor_tests")
+    collect_ignore.append("tests/livetest/asynctests")
+    collect_ignore.append("tests/eventprocessor")
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 
