@@ -134,29 +134,49 @@ class CosmosClient(object):
 
     **Keyword arguments:**
 
+    *timeout* - An absolute timeout in seconds, for the combined HTTP request and response processing.
+
     *request_timeout* - The HTTP request timeout in seconds.
+
     *media_request_timeout* - The media request timeout in seconds.
+
     *connection_mode* - The connection mode for the client - currently only supports 'Gateway'.
+
     *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
-    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration
-    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration
+
+    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration.
+
+    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration.
+
     *connection_verify* - Whether to verify the connection, default value is True.
+
     *connection_cert* - An alternative certificate to verify the connection.
+
     *retry_total* - Maximum retry attempts.
+
     *retry_backoff_max* - Maximum retry wait time in seconds.
+
     *retry_fixed_interval* - Fixed retry interval in milliseconds.
+
     *retry_read* - Maximum number of socket read retry attempts.
+
     *retry_connect* - Maximum number of connection error retry attempts.
+
     *retry_status* - Maximum number of retry attempts on error status codes.
+
     *retry_on_status_codes* - A list of specific status codes to retry on.
+
     *retry_backoff_factor* - Factor to calculate wait time between retry attempts.
+
     *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
+
     *preferred_locations* - The preferred locations for geo-replicated database accounts.
         When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
         the client will use this list to evaluate the final location, taking into consideration
         the order specified in `preferred_locations` list. The locations in this list are specified
         as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
         and so on.
+
     *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
 
     .. admonition:: Example:
