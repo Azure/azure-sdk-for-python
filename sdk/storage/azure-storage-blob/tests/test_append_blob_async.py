@@ -262,16 +262,17 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         destination_blob_client = await self._create_blob()
 
         # Act: make append block from url calls
+        split = 4 * 1024
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_range_start=0, source_range_end=4 * 1024 - 1)
+                                                                   source_offset=0, source_length=split)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_range_start=4 * 1024,
-                                                                   source_range_end=LARGE_BLOB_SIZE - 1)
+                                                                   source_offset=split,
+                                                                   source_length=LARGE_BLOB_SIZE - split)
         self.assertEqual(resp.get('blob_append_offset'), str(4 * 1024))
         self.assertEqual(resp.get('blob_committed_block_count'), 2)
         self.assertIsNotNone(resp.get('etag'))
@@ -282,11 +283,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(blob.get('etag'), resp.get('etag'))
         self.assertEqual(blob.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(blob.get('size'), LARGE_BLOB_SIZE)
 
         # Missing start range shouldn't pass the validation
         with self.assertRaises(ValueError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1)
+                                                                source_length=LARGE_BLOB_SIZE)
 
     @record
     def test_append_block_from_url_async(self):
@@ -346,8 +348,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Act part 1: make append block from url calls
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_range_start=0,
-                                                                   source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                   source_offset=0,
+                                                                   source_length=LARGE_BLOB_SIZE,
                                                                    source_if_modified_since=source_blob_properties.get(
                                                                        'last_modified') - timedelta(hours=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
@@ -364,8 +366,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceNotFoundError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 source_if_modified_since=source_blob_properties.get(
                                                                     'last_modified'))
 
@@ -389,8 +391,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Act part 1: make append block from url calls
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_range_start=0,
-                                                                   source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                   source_offset=0,
+                                                                   source_length=LARGE_BLOB_SIZE,
                                                                    source_if_unmodified_since=source_blob_properties.get(
                                                                        'last_modified'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
@@ -403,12 +405,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceModifiedError):
             await destination_blob_client \
                 .append_block_from_url(source_blob_client.url + '?' + sas,
-                                       source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                       source_offset=0, source_length=LARGE_BLOB_SIZE,
                                        if_unmodified_since=source_blob_properties.get('last_modified') - timedelta(
                                            hours=15))
 
@@ -433,7 +436,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   source_if_match=source_properties.get('etag'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -449,8 +452,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceNotFoundError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 source_if_match='0x111111111111111')
 
     @record
@@ -474,7 +477,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   source_if_none_match='0x111111111111111')
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -490,8 +493,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceNotFoundError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 source_if_none_match=source_properties.get('etag'))
 
     @record
@@ -518,7 +521,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_match=destination_blob_properties_on_creation.get('etag'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -534,8 +537,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceModifiedError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 if_match='0x111111111111111')
 
     @record
@@ -558,7 +561,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_none_match='0x111111111111111')
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -570,12 +573,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceModifiedError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 if_none_match=destination_blob_properties.get('etag'))
 
     @record
@@ -598,7 +602,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   maxsize_condition=LARGE_BLOB_SIZE + 1)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -610,12 +614,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 maxsize_condition=LARGE_BLOB_SIZE + 1)
 
     @record
@@ -638,7 +643,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   appendpos_condition=0)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -650,12 +655,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 appendpos_condition=0)
 
     @record
@@ -679,7 +685,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_modified_since=source_properties.get('last_modified') - timedelta(minutes=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -691,12 +697,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 if_modified_since=destination_blob_properties.get(
                                                                     'last_modified'))
 
@@ -721,7 +728,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
-                                  source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
+                                  source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_unmodified_since=source_properties.get('last_modified') + timedelta(minutes=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -733,12 +740,13 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceModifiedError):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_range_start=0,
-                                                                source_range_end=LARGE_BLOB_SIZE - 1,
+                                                                source_offset=0,
+                                                                source_length=LARGE_BLOB_SIZE,
                                                                 if_unmodified_since=destination_blob_properties.get(
                                                                     'last_modified') - timedelta(minutes=15))
 

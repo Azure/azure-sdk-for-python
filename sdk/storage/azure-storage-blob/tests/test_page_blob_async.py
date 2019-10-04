@@ -112,11 +112,11 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.create_page_blob(size=length, sequence_number=sequence_number)
         return blob
 
-    async def _create_source_blob(self, data, start_range, end_range):
+    async def _create_source_blob(self, data, offset, length):
         blob_client = self.bs.get_blob_client(self.source_container_name,
                                               self.get_resource_name(TEST_BLOB_PREFIX))
-        await blob_client.create_page_blob(size=end_range-start_range + 1)
-        await blob_client.upload_page(data, start_range, end_range)
+        await blob_client.create_page_blob(size=length)
+        await blob_client.upload_page(data, offset=offset, length=length)
         return blob_client
 
     async def _wait_for_async_copy(self, blob):
@@ -136,9 +136,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
         actual_data = await stream.content_as_bytes()
         self.assertEqual(actual_data, expected_data)
 
-    async def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
+    async def assertRangeEqual(self, container_name, blob_name, expected_data, offset, length):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        stream = await blob.download_blob(offset=start_range, length=end_range)
+        stream = await blob.download_blob(offset=offset, length=length)
         actual_data = await stream.content_as_bytes()
         self.assertEqual(actual_data, expected_data)
 
@@ -198,7 +198,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        await blob.upload_page(data, 0, 511, lease=lease)
+        await blob.upload_page(data, offset=0, length=512, lease=lease)
 
         # Assert
         content = await blob.download_blob(lease=lease)
@@ -217,7 +217,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        resp = await blob.upload_page(data, 0, 511)
+        resp = await blob.upload_page(data, offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -274,9 +274,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        start_range = EIGHT_TB - 512
-        end_range = EIGHT_TB - 1
-        resp = await blob.upload_page(data, start_range, end_range)
+        start_offset = EIGHT_TB - 512
+        length = 512
+        resp = await blob.upload_page(data, offset=start_offset, length=length)
         props = await blob.get_blob_properties()
         page_ranges, cleared = await blob.get_page_ranges()
 
@@ -284,11 +284,11 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertIsNotNone(resp.get('blob_sequence_number'))
-        await self.assertRangeEqual(self.container_name, blob.blob_name, data, start_range, end_range)
+        await self.assertRangeEqual(self.container_name, blob.blob_name, data, start_offset, length)
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(1, len(page_ranges))
-        self.assertEqual(page_ranges[0]['start'], start_range)
-        self.assertEqual(page_ranges[0]['end'], end_range)
+        self.assertEqual(page_ranges[0]['start'], start_offset)
+        self.assertEqual(page_ranges[0]['end'], start_offset + length)
 
     @record
     def test_update_8tb_blob_page(self):
@@ -302,7 +302,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        resp = await blob.upload_page(data, 0, 511, validate_content=True)
+        resp = await blob.upload_page(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -317,7 +317,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         blob = await self._create_blob()
 
         # Act
-        resp = await blob.clear_page(0, 511)
+        resp = await blob.clear_page(offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -340,7 +340,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        await blob.upload_page(data, 0, 511, if_sequence_number_lt=start_sequence + 1)
+        await blob.upload_page(data, offset=0, length=512, if_sequence_number_lt=start_sequence + 1)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -360,7 +360,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            await blob.upload_page(data, 0, 511, if_sequence_number_lt=start_sequence)
+            await blob.upload_page(data, offset=0, length=512, if_sequence_number_lt=start_sequence)
 
         # Assert
 
@@ -378,7 +378,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        await blob.upload_page(data, 0, 511, if_sequence_number_lte=start_sequence)
+        await blob.upload_page(data, offset=0, length=512, if_sequence_number_lte=start_sequence)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -398,7 +398,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            await blob.upload_page(data, 0, 511, if_sequence_number_lte=start_sequence - 1)
+            await blob.upload_page(data, offset=0, length=512, if_sequence_number_lte=start_sequence - 1)
 
         # Assert
 
@@ -416,7 +416,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await blob.create_page_blob(512, sequence_number=start_sequence)
 
         # Act
-        await blob.upload_page(data, 0, 511, if_sequence_number_eq=start_sequence)
+        await blob.upload_page(data, offset=0, length=512, if_sequence_number_eq=start_sequence)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -436,7 +436,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            await blob.upload_page(data, 0, 511, if_sequence_number_eq=start_sequence - 1)
+            await blob.upload_page(data, offset=0, length=512, if_sequence_number_eq=start_sequence - 1)
 
         # Assert
 
@@ -452,7 +452,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        resp = await blob.upload_page(data, 0, 511)
+        resp = await blob.upload_page(data, offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -467,7 +467,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -475,13 +475,13 @@ class StoragePageBlobTestAsync(StorageTestCase):
         destination_blob_client = await self._create_blob(SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0, 4 * 1024 - 1,
+        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0, 4 * 1024,
                                                                    0)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 4 * 1024,
-                                                                   SOURCE_BLOB_SIZE - 1, 4 * 1024)
+                                                                   SOURCE_BLOB_SIZE, 4 * 1024)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -500,7 +500,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -511,7 +511,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    source_content_md5=src_md5)
         self.assertIsNotNone(resp.get('etag'))
@@ -526,7 +526,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 source_content_md5=StorageContentValidation.get_content_md5(
                                                                     b"POTATO"))
@@ -540,7 +540,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -551,7 +551,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    source_if_modified_since=source_properties.get(
                                                                        'last_modified') - timedelta(
@@ -568,7 +568,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 source_if_modified_since=source_properties.get(
                                                                     'last_modified'))
@@ -582,7 +582,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -593,7 +593,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    source_if_unmodified_since=source_properties.get(
                                                                        'last_modified'))
@@ -609,7 +609,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 source_if_unmodified_since=source_properties.get(
                                                                     'last_modified') - timedelta(
@@ -624,7 +624,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -635,7 +635,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    source_if_match=source_properties.get('etag'))
         self.assertIsNotNone(resp.get('etag'))
@@ -650,7 +650,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 source_if_match='0x111111111111111')
 
@@ -663,7 +663,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -674,7 +674,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    source_if_none_match='0x111111111111111')
         self.assertIsNotNone(resp.get('etag'))
@@ -689,7 +689,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 source_if_none_match=source_properties.get('etag'))
 
@@ -702,7 +702,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -713,7 +713,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_modified_since=source_properties.get(
                                                                        'last_modified') - timedelta(
@@ -730,7 +730,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_modified_since=blob_properties.get(
                                                                     'last_modified'))
@@ -744,7 +744,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -755,7 +755,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_unmodified_since=source_properties.get(
                                                                        'last_modified') + timedelta(minutes=15))
@@ -771,7 +771,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_unmodified_since=source_properties.get(
                                                                     'last_modified') - timedelta(
@@ -786,7 +786,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -797,7 +797,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_match=destination_blob_properties.get('etag'))
         self.assertIsNotNone(resp.get('etag'))
@@ -812,7 +812,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_match='0x111111111111111')
 
@@ -825,7 +825,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Arrange
         await self._setup()
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -835,7 +835,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_none_match='0x111111111111111')
         self.assertIsNotNone(resp.get('etag'))
@@ -850,7 +850,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_none_match=blob_properties.get('etag'))
 
@@ -864,7 +864,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -874,7 +874,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_sequence_number_lt=start_sequence + 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -889,7 +889,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_sequence_number_lt=start_sequence)
 
@@ -903,7 +903,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -913,7 +913,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_sequence_number_lte=start_sequence)
         self.assertIsNotNone(resp.get('etag'))
@@ -928,7 +928,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_sequence_number_lte=start_sequence - 1)
 
@@ -942,7 +942,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
+        source_blob_client = await self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1))
@@ -952,7 +952,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act: make update page from url calls
         resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
                                                                    0,
-                                                                   SOURCE_BLOB_SIZE - 1,
+                                                                   SOURCE_BLOB_SIZE,
                                                                    0,
                                                                    if_sequence_number_eq=start_sequence)
         self.assertIsNotNone(resp.get('etag'))
@@ -967,7 +967,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE - 1,
+                                                                SOURCE_BLOB_SIZE,
                                                                 0,
                                                                 if_sequence_number_eq=start_sequence + 1)
 
@@ -987,8 +987,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         blob = await self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = await blob.upload_page(data, 0, 511)
-        resp2 = await blob.upload_page(data, 1024, 1535)
+        resp1 = await blob.upload_page(data, offset=0, length=512)
+        resp2 = await blob.upload_page(data, offset=1024, length=512)
 
         # Act
         ranges, cleared = await blob.get_page_ranges()
@@ -1013,9 +1013,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
         blob = await self._create_blob(2048)
         data = self.get_random_bytes(1536)
         snapshot1 = await blob.create_snapshot()
-        await blob.upload_page(data, 0, 1535)
+        await blob.upload_page(data, 0, 1536)
         snapshot2 = await blob.create_snapshot()
-        await blob.clear_page(512, 1023)
+        await blob.clear_page(512, 1024)
 
         # Act
         ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot1)
@@ -1052,13 +1052,13 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         blob = await self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = await blob.upload_page(data, 0, 511)
+        resp1 = await blob.upload_page(data, offset=0, length=512)
 
         # Act
         try:
-            await blob.upload_page(data, 1024, 1536)
+            await blob.upload_page(data, offset=1024, length=513)
         except ValueError as e:
-            self.assertEqual(str(e), 'end_range must be an integer that aligns with 512 page size')
+            self.assertEqual(str(e), 'length must be an integer that aligns with 512 page size')
             return
 
         # Assert
@@ -1605,7 +1605,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob = await self._create_blob(2048)
         data = self.get_random_bytes(512)
-        resp1 = await source_blob.upload_page(data, 0, 511)
+        resp1 = await source_blob.upload_page(data, offset=0, length=512)
         resp2 = await source_blob.upload_page(data, 1024, 1535)
         source_snapshot_blob = await source_blob.create_snapshot()
 
