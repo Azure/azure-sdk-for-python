@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -17,7 +17,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['87']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:25:46 GMT']
+      date: ['Fri, 04 Oct 2019 18:51:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -43,15 +43,15 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+    body: {string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['231']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:25:46 GMT']
+      date: ['Fri, 04 Oct 2019 18:51:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -71,15 +71,15 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+    body: {string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['231']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:25:46 GMT']
+      date: ['Fri, 04 Oct 2019 18:51:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -100,15 +100,15 @@ interactions:
       Content-Length: ['0']
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault8bf41593cae5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+    body: {string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['231']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:25:46 GMT']
+      date: ['Fri, 04 Oct 2019 18:51:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
