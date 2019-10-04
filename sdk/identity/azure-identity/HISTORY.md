@@ -1,11 +1,20 @@
 # Release History
 
 ## 1.0.0b4
+### New features:
+- `AuthorizationCodeCredential` authenticates with a previously obtained
+authorization code. See Azure Active Directory's
+[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+for more information about this authentication flow.
+
+### Breaking changes:
+- Removed `client_secret` parameter from `InteractiveBrowserCredential`
+
 ### Fixes and improvements:
 - `UsernamePasswordCredential` correctly handles environment configuration with
 no tenant information (#7260)
-- MSAL's user realm discovery requests are sent through credential
-pipelines (#7260)
+- user realm discovery requests are sent through credential pipelines (#7260)
+
 
 ## 1.0.0b3 (2019-09-10)
 ### New features:

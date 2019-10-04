@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from ._credentials import (
+    AuthorizationCodeCredential,
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
@@ -14,6 +15,7 @@ from ._credentials import (
 
 
 __all__ = [
+    "AuthorizationCodeCredential",
     "CertificateCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",

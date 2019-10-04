@@ -275,10 +275,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-05-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2019_05_01_preview.operations.ScopeMapsOperations>`
+           * 2019-06-01-preview: :class:`ScopeMapsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.operations.ScopeMapsOperations>`
         """
         api_version = self._get_api_version('scope_maps')
         if api_version == '2019-05-01-preview':
             from .v2019_05_01_preview.operations import ScopeMapsOperations as OperationClass
+        elif api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import ScopeMapsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -310,10 +313,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2019-05-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2019_05_01_preview.operations.TokensOperations>`
+           * 2019-06-01-preview: :class:`TokensOperations<azure.mgmt.containerregistry.v2019_06_01_preview.operations.TokensOperations>`
         """
         api_version = self._get_api_version('tokens')
         if api_version == '2019-05-01-preview':
             from .v2019_05_01_preview.operations import TokensOperations as OperationClass
+        elif api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import TokensOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

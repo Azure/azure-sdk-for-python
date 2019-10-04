@@ -30,7 +30,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      pip install wheel setuptools pathlib twine readme-renderer[md] packaging
+      pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -43,6 +43,15 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
 
+  - task: PythonScript@0
+    displayName: 'Generate Docs'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv=sphinx
+
   - ${{ parameters.BeforePublishSteps }}
 
   - task: PublishPipelineArtifact@0
@@ -54,4 +63,5 @@ steps:
     condition: succeededOrFailed()
     displayName: 'Publish Artifacts'
     inputs:
-      artifactName: packages
+      artifactName: 'docs'
+      pathtoPublish: '$(Build.SourcesDirectory)/_docs'

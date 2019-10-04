@@ -11,7 +11,7 @@ from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.keys._shared._generated.v7_0.models import JsonWebKey
+from azure.keyvault.keys.models import JsonWebKey
 
 from dateutil import parser as date_parse
 
@@ -34,8 +34,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
         created_key = await client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_operations=key_ops, tags=tags)
-        self.assertTrue(created_key.tags, "Missing the optional key attributes.")
-        self.assertEqual(tags, created_key.tags)
+        self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
+        self.assertEqual(tags, created_key.properties.tags)
         key_type = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
         return created_key
@@ -45,9 +45,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
         created_key = await client.create_ec_key(key_name, hsm=hsm, enabled=enabled, tags=tags)
-        self.assertTrue(created_key.enabled, "Missing the optional key attributes.")
-        self.assertEqual(enabled, created_key.enabled)
-        self.assertEqual(tags, created_key.tags)
+        self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
+        self.assertEqual(enabled, created_key.properties.enabled)
+        self.assertEqual(tags, created_key.properties.tags)
         key_type = "EC-HSM" if hsm else "EC"
         self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
         return created_key
@@ -60,7 +60,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
-        self.assertTrue(key_attributes.created and key_attributes.updated, "Missing required date attributes.")
+        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
@@ -70,21 +70,21 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
-        self.assertTrue(key_attributes.created and key_attributes.updated, "Missing required date attributes.")
+        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
 
-    async def _update_key(self, client, key):
+    async def _update_key_properties(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key(key.name, expires=expires, tags=tags)
-        self.assertEqual(tags, key_bundle.tags)
+        key_bundle = await client.update_key_properties(key.name, expires=expires, tags=tags)
+        self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.updated, key_bundle.updated)
+        self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
         async for key in keys:
             if key.name in expected.keys():
-                self._assert_key_attributes_equal(expected[key.name], key)
+                self._assert_key_attributes_equal(expected[key.name].properties, key)
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
@@ -143,19 +143,19 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
         # get the created key with version
-        key = await client.get_key(created_rsa_key.name, created_rsa_key.version)
-        self.assertEqual(key.version, created_rsa_key.version)
-        self._assert_key_attributes_equal(created_rsa_key, key)
+        key = await client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
+        self.assertEqual(key.properties.version, created_rsa_key.properties.version)
+        self._assert_key_attributes_equal(created_rsa_key.properties, key.properties)
 
         # get key without version
-        self._assert_key_attributes_equal(created_rsa_key, await client.get_key(created_rsa_key.name))
+        self._assert_key_attributes_equal(created_rsa_key.properties, (await client.get_key(created_rsa_key.name)).properties)
 
         # update key with version
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             await asyncio.sleep(1)
 
-        await self._update_key(client, created_rsa_key)
+        await self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
         deleted_key = await client.delete_key(created_rsa_key.name)
@@ -194,7 +194,11 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
         # list keys
         result = client.list_keys(max_page_size=max_keys)
-        await self._validate_key_list(result, expected)
+        async for key in result:
+            if key.name in expected.keys():
+                self._assert_key_attributes_equal(expected[key.name].properties, key)
+                del expected[key.name]
+        self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -219,7 +223,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             if key.id in expected.keys():
                 expected_key = expected[key.id]
                 del expected[key.id]
-                self._assert_key_attributes_equal(expected_key, key)
+                self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer()
@@ -252,7 +256,11 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
         # validate all our deleted keys are returned by list_deleted_keys
         result = client.list_deleted_keys()
-        await self._validate_key_list(result, expected)
+        async for key in result:
+            if key.name in expected.keys():
+                self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
+                del expected[key.name]
+        self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -277,7 +285,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # restore key
         restored = await client.restore_key(key_backup)
         self.assertEqual(created_bundle.id, restored.id)
-        self._assert_key_attributes_equal(created_bundle, restored)
+        self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
@@ -303,7 +311,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         for key_name in keys.keys():
             recovered_key = await client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
-            self._assert_key_attributes_equal(expected_key, recovered_key)
+            self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items()}

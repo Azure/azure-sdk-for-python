@@ -156,6 +156,9 @@ class ResourceModifiedError(HttpResponseError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
+class ResourceNotModifiedError(HttpResponseError):
+    """An error response with status code 304.
+    This will not be raised directly by the Azure core pipeline."""
 
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts."""

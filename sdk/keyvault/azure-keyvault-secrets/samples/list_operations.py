@@ -72,7 +72,7 @@ def run_sample():
         print("\n.. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
         for secret_version in secret_versions:
-            print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.version))
+            print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.properties.version))
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
         client.delete_secret(bank_secret.name)

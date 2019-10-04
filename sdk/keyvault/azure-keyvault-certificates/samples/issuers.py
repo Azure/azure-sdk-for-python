@@ -61,7 +61,7 @@ try:
     issuer1 = client.get_issuer(name="issuer1")
 
     print(issuer1.name)
-    print(issuer1.provider)
+    print(issuer1.properties.provider)
     print(issuer1.account_id)
 
     for admin_detail in issuer1.admin_details:
@@ -82,7 +82,7 @@ try:
 
     for issuer in issuers:
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
 
     # Finally, we delete our first issuer by name.
     client.delete_issuer(name="issuer1")

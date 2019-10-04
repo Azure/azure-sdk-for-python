@@ -22,27 +22,35 @@ class AdultInfo(Model):
     :type is_adult_content: bool
     :param is_racy_content: A value indicating if the image is racy.
     :type is_racy_content: bool
+    :param is_gory_content: A value indicating if the image is gory.
+    :type is_gory_content: bool
     :param adult_score: Score from 0 to 1 that indicates how much the content
      is considered adult-oriented within the image.
     :type adult_score: float
     :param racy_score: Score from 0 to 1 that indicates how suggestive is the
      image.
     :type racy_score: float
+    :param gore_score: Score from 0 to 1 that indicates how gory is the image.
+    :type gore_score: float
     """
 
     _attribute_map = {
         'is_adult_content': {'key': 'isAdultContent', 'type': 'bool'},
         'is_racy_content': {'key': 'isRacyContent', 'type': 'bool'},
+        'is_gory_content': {'key': 'isGoryContent', 'type': 'bool'},
         'adult_score': {'key': 'adultScore', 'type': 'float'},
         'racy_score': {'key': 'racyScore', 'type': 'float'},
+        'gore_score': {'key': 'goreScore', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
         super(AdultInfo, self).__init__(**kwargs)
         self.is_adult_content = kwargs.get('is_adult_content', None)
         self.is_racy_content = kwargs.get('is_racy_content', None)
+        self.is_gory_content = kwargs.get('is_gory_content', None)
         self.adult_score = kwargs.get('adult_score', None)
         self.racy_score = kwargs.get('racy_score', None)
+        self.gore_score = kwargs.get('gore_score', None)
 
 
 class AreaOfInterestResult(Model):
@@ -912,7 +920,7 @@ class OcrResult(Model):
 
     :param language: The BCP-47 language code of the text in the image.
     :type language: str
-    :param text_angle: The angle, in degrees, of the detected text with
+    :param text_angle: The angle, in radians, of the detected text with
      respect to the closest horizontal or vertical direction. After rotating
      the input image clockwise by this angle, the recognized text lines become
      horizontal or vertical. In combination with the orientation property it
@@ -923,10 +931,13 @@ class OcrResult(Model):
      contains text at different angles, only part of the text will be
      recognized correctly.
     :type text_angle: float
-    :param orientation: Orientation of the text recognized in the image. The
-     value (up, down, left, or right) refers to the direction that the top of
-     the recognized text is facing, after the image has been rotated around its
-     center according to the detected text angle (see textAngle property).
+    :param orientation: Orientation of the text recognized in the image, if
+     requested. The value (up, down, left, or right) refers to the direction
+     that the top of the recognized text is facing, after the image has been
+     rotated around its center according to the detected text angle (see
+     textAngle property).
+     If detection of the orientation was not requested, or no text is detected,
+     the value is 'NotDetected'.
     :type orientation: str
     :param regions: An array of objects, where each object represents a region
      of recognized text.

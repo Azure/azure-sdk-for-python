@@ -4,6 +4,7 @@
 # ------------------------------------
 import six
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from ._internal import EllipticCurveKey, RsaKey
@@ -102,8 +103,9 @@ class CryptographyClient(KeyVaultClientBase):
         """
         return "/".join(self._key_id)
 
-    def get_key(self):
-        # type: () -> Optional[Key]
+    @distributed_trace
+    def get_key(self, **kwargs):
+        # type: (**Any) -> Optional[Key]
         """
         Get the client's :class:`~azure.keyvault.keys.models.Key`.
         Can be ``None``, if the client lacks keys/get permission.
@@ -113,7 +115,9 @@ class CryptographyClient(KeyVaultClientBase):
 
         if not (self._key or self._keys_get_forbidden):
             try:
-                self._key = self._client.get_key(self._key_id.vault_url, self._key_id.name, self._key_id.version)
+                self._key = self._client.get_key(
+                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
+                )
                 self._allowed_ops = frozenset(self._key.key_material.key_ops)
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
@@ -121,13 +125,13 @@ class CryptographyClient(KeyVaultClientBase):
                 self._keys_get_forbidden = ex.status_code == 403
         return self._key
 
-    def _get_local_key(self):
+    def _get_local_key(self, **kwargs):
         # type: () -> Optional[_Key]
         """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
         id and lacks keys/get permission."""
 
         if not self._internal_key:
-            key = self.get_key()
+            key = self.get_key(**kwargs)
             if not key:
                 return None
 
@@ -138,6 +142,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         return self._internal_key
 
+    @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
         # pylint:disable=line-too-long
@@ -163,7 +168,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
 
-        local_key = self._get_local_key()
+        local_key = self._get_local_key(**kwargs)
         if local_key:
             if "encrypt" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/encrypt' permission")
@@ -179,6 +184,7 @@ class CryptographyClient(KeyVaultClientBase):
             ).result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
 
+    @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
         """
@@ -217,6 +223,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
         return DecryptResult(decrypted_bytes=result.result)
 
+    @distributed_trace
     def wrap_key(self, algorithm, key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> WrapKeyResult
         """
@@ -238,7 +245,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
 
-        local_key = self._get_local_key()
+        local_key = self._get_local_key(**kwargs)
         if local_key:
             if "wrapKey" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/wrapKey' permission")
@@ -255,6 +262,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
+    @distributed_trace
     def unwrap_key(self, algorithm, encrypted_key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> UnwrapKeyResult
         """
@@ -286,6 +294,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
         return UnwrapKeyResult(unwrapped_bytes=result.result)
 
+    @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
         # type: (SignatureAlgorithm, bytes, **Any) -> SignResult
         """
@@ -320,6 +329,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
+    @distributed_trace
     def verify(self, algorithm, digest, signature, **kwargs):
         # type: (SignatureAlgorithm, bytes, bytes, **Any) -> VerifyResult
         """
@@ -343,7 +353,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
         #    def verify(self, vault_base_url, key_name, key_version, algorithm, digest, signature, cls=None, **kwargs):
 
-        local_key = self._get_local_key()
+        local_key = self._get_local_key(**kwargs)
         if local_key:
             if "verify" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/verify' permission")

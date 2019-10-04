@@ -9,6 +9,14 @@
 
 - Tracing: network span context is available with the TRACING_CONTEXT in pipeline response  #7252
 - Tracing: Span contract now has `kind`, `traceparent` and is a context manager  #7252
+- SansIOHTTPPolicy methods can now be coroutines #7497
+- Add multipart/mixed support #7083:
+
+  - HttpRequest now has a "set_multipart_mixed" method to set the parts of this request
+  - HttpRequest now has a "prepare_multipart_body" method to build final body.
+  - HttpResponse now has a "parts" method to return an iterator of parts
+  - AsyncHttpResponse now has a "parts" methods to return an async iterator of parts
+  - Note that multipart/MIXED is a Python 3.x only feature
 
 ### Bug fixes
 
