@@ -53,8 +53,6 @@ class CertificateClient(KeyVaultClientBase):
         self,
         name,  # type: str
         policy=None,  # type: Optional[CertificatePolicy]
-        enabled=None,  # type: Optional[bool]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
@@ -67,14 +65,15 @@ class CertificateClient(KeyVaultClientBase):
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :param bool enabled: Determines whether the object is enabled.
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict(str, str)
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
          gives you the certificate if creation is successful, the CertificateOperation if not.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
          ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -84,6 +83,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
+
+        enabled = kwargs.pop('enabled', None)
+        tags = kwargs.pop('enabled', None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -288,8 +290,6 @@ class CertificateClient(KeyVaultClientBase):
         certificate_bytes,  # type: bytes
         password=None,  # type: Optional[str]
         policy=None,  # type: Optional[CertificatePolicy]
-        enabled=None,  # type: Optional[bool]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
         # type: (...) -> Certificate
@@ -309,14 +309,18 @@ class CertificateClient(KeyVaultClientBase):
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :param bool enabled: Determines whether the object is enabled.
-        :param tags: Application specific metadata in the form of key-value
-            pairs.
-        :type tags: dict[str, str]
         :returns: The imported Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
+
+        enabled = kwargs.pop('enabled', None)
+        tags = kwargs.pop('tags', None)
+
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
         else:
@@ -378,8 +382,6 @@ class CertificateClient(KeyVaultClientBase):
         self,
         name,  # type: str
         version=None,  # type: Optional[str]
-        enabled=None,  # type: Optional[bool]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
         # type: (...) -> Certificate
@@ -392,12 +394,13 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate in the given key
             vault.
         :param str version: The version of the certificate.
-        :param bool enabled: Determines whether the object is enabled.
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict(str, str)
         :returns: The updated Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -407,6 +410,10 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Update a certificate's attributes
                 :dedent: 8
         """
+
+        enabled = kwargs.pop('enabled', None)
+        tags = kwargs.pop('tags', None)
+
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
         else:
@@ -716,8 +723,6 @@ class CertificateClient(KeyVaultClientBase):
         self,
         name,  # type: str
         x509_certificates,  # type: List[bytearray]
-        enabled=None,  # type: Optional[bool]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
         # type: (...) -> Certificate
@@ -732,13 +737,18 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytearray]
-        :param bool enabled: Determines whether the object is enabled.
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
         :return: The merged certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
+
+        enabled = kwargs.pop('enabled', None)
+        tags = kwargs.pop('tags', None)
+
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
         else:
@@ -843,7 +853,6 @@ class CertificateClient(KeyVaultClientBase):
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
         admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        enabled=None,  # type: Optional[bool]
         **kwargs  # type: **Any
     ):
         # type: (...) -> Issuer
@@ -860,10 +869,12 @@ class CertificateClient(KeyVaultClientBase):
         :param str organization_id: Id of the organization.
         :param admin_details: Details of the organization administrators of the certificate issuer.
         :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
-        :param bool enabled: Determines whether the object is enabled.
         :returns: The created Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -873,6 +884,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create an issuer
                 :dedent: 8
         """
+
+        enabled = kwargs.pop('enabled', None)
+
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
@@ -919,7 +933,6 @@ class CertificateClient(KeyVaultClientBase):
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
         admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        enabled=None,  # type: Optional[bool]
         **kwargs  # type: **Any
     ):
         # type: (...) -> Issuer
@@ -939,7 +952,13 @@ class CertificateClient(KeyVaultClientBase):
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Determines whether the object is enabled.
         """
+
+        enabled = kwargs.pop('enabled', None)
+
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
