@@ -8,7 +8,7 @@ from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
 from .._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from ..models import (
@@ -31,8 +31,8 @@ from ..models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
 )
 from .models import (
     ContainerPropertiesPaged,
@@ -78,9 +78,9 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
-    'ContainerPermissions',
-    'BlobPermissions',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageStreamDownloader',
 ]

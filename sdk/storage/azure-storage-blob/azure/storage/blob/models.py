@@ -244,6 +244,10 @@ class CorsRule(GeneratedCorsRule):
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
+    Returned ``ContainerProperties`` instances expose these values through a
+    dictionary interface, for example: ``container_props["last_modified"]``.
+    Additionally, the container name is available as ``container_props["name"]``.
+
     :param ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :param str etag:
@@ -259,10 +263,6 @@ class ContainerProperties(DictMixin):
         Represents whether the container has a legal hold.
     :param dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
-
-    Returned ``ContainerProperties`` instances expose these values through a
-    dictionary interface, for example: ``container_props["last_modified"]``.
-    Additionally, the container name is available as ``container_props["name"]``.
     """
 
     def __init__(self, **kwargs):
@@ -824,7 +824,7 @@ class AccessPolicy(GenAccessPolicy):
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.blob.models.ContainerPermissions
+    :type permission: str or ~azure.storage.blob.models.ContainerSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -847,27 +847,12 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
-class ContainerPermissions(object):
-    """ContainerPermissions class to be used with
+class ContainerSasPermissions(object):
+    """ContainerSasPermissions class to be used with
     :func:`~azure.storage.blob.ContainerClient.generate_shared_access_signature` API and
     for the AccessPolicies used with
     :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
 
-    :cvar ContainerPermissions ContainerPermissions.DELETE:
-        Delete any blob in the container. Note: You cannot grant permissions to
-        delete a container with a container SAS. Use an account SAS instead.
-    :cvar ContainerPermissions ContainerPermissions.LIST:
-        List blobs in the container.
-    :cvar ContainerPermissions ContainerPermissions.READ:
-        Read the content, properties, metadata or block list of any blob in the
-        container. Use any blob in the container as the source of a copy operation.
-    :cvar ContainerPermissions ContainerPermissions.WRITE:
-        For any blob in the container, create or write content, properties,
-        metadata, or block list. Snapshot or lease the blob. Resize the blob
-        (page blob only). Use the blob as the destination of a copy operation
-        within the same account. Note: You cannot grant permissions to read or
-        write container properties or metadata, nor to lease a container, with
-        a container SAS. Use an account SAS instead.
     :param bool read:
         Read the content, properties, metadata or block list of any blob in the
         container. Use any blob in the container as the source of a copy operation.
@@ -883,58 +868,35 @@ class ContainerPermissions(object):
         delete a container with a container SAS. Use an account SAS instead.
     :param bool list:
         List blobs in the container.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    DELETE = None  # type: ContainerPermissions
-    LIST = None  # type: ContainerPermissions
-    READ = None  # type: ContainerPermissions
-    WRITE = None  # type: ContainerPermissions
-
-    def __init__(self, read=False, write=False, delete=False, list=False, _str=None):  # pylint: disable=redefined-builtin
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-
-    def __or__(self, other):
-        return ContainerPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ContainerPermissions(_str=str(self) + str(other))
+    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else ''))
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
-ContainerPermissions.DELETE = ContainerPermissions(delete=True)
-ContainerPermissions.LIST = ContainerPermissions(list=True)
-ContainerPermissions.READ = ContainerPermissions(read=True)
-ContainerPermissions.WRITE = ContainerPermissions(write=True)
-
-
-class BlobPermissions(object):
-    """BlobPermissions class to be used with
+class BlobSasPermissions(object):
+    """BlobSasPermissions class to be used with
     :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
 
-    :cvar BlobPermissions BlobPermissions.ADD:
-        Add a block to an append blob.
-    :cvar BlobPermissions BlobPermissions.CREATE:
-        Write a new blob, snapshot a blob, or copy a blob to a new blob.
-    :cvar BlobPermissions BlobPermissions.DELETE:
-        Delete the blob.
-    :cvar BlobPermissions BlobPermissions.READ:
-        Read the content, properties, metadata and block list. Use the blob as the source of a copy operation.
-    :cvar BlobPermissions BlobPermissions.WRITE:
-        Create or write content, properties, metadata, or block list. Snapshot or lease
-        the blob. Resize the blob (page blob only). Use the blob as the destination of a
-        copy operation within the same account.
     :param bool read:
         Read the content, properties, metadata and block list. Use the blob as
         the source of a copy operation.
@@ -948,45 +910,34 @@ class BlobPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
-    :param str _str:
-        A string representing the permissions.
     """
-    ADD = None  # type: BlobPermissions
-    CREATE = None  # type: BlobPermissions
-    DELETE = None  # type: BlobPermissions
-    READ = None  # type: BlobPermissions
-    WRITE = None  # type: BlobPermissions
-
-
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-
-    def __or__(self, other):
-        return BlobPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return BlobPermissions(_str=str(self) + str(other))
+                 delete=False):
+        self.read = read
+        self.add = add
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
 
-BlobPermissions.ADD = BlobPermissions(add=True)
-BlobPermissions.CREATE = BlobPermissions(create=True)
-BlobPermissions.DELETE = BlobPermissions(delete=True)
-BlobPermissions.READ = BlobPermissions(read=True)
-BlobPermissions.WRITE = BlobPermissions(write=True)
+        parsed = cls(p_read, p_add, p_create, p_write, p_delete)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
 class CustomerProvidedEncryptionKey(object):

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._shared.models import AccountPermissions, ResourceTypes
+    from ._shared.models import AccountSasPermissions, ResourceTypes
     from .models import (
         QueueProperties,
         Logging,
@@ -151,7 +151,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
+            permission,  # type: Union[AccountSasPermissions, str]
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
@@ -163,7 +163,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         :param ~azure.storage.queue._shared.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.queue._shared.models.AccountPermissions permission:
+        :param ~azure.storage.queue._shared.models.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
         :param expiry:

@@ -26,7 +26,7 @@ from .models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .._shared.models import ResourceTypes, AccountPermissions
+    from .._shared.models import ResourceTypes, AccountSasPermissions
     from ..models import Metrics, CorsRule, ShareProperties
 
 

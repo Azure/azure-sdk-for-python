@@ -57,7 +57,7 @@ if TYPE_CHECKING:
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
-        BlobPermissions,
+        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -227,7 +227,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
+            self, permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -254,7 +254,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.BlobPermissions
+        :type permission: str or ~azure.storage.blob.BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy

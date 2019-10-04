@@ -25,14 +25,14 @@ from azure.storage.blob import (
     BlobClient,
     BlobType,
     StorageErrorCode,
-    BlobPermissions,
-    ContainerPermissions,
+    BlobSasPermissions,
+    ContainerSasPermissions,
     ContentSettings,
     BlobProperties,
     RetentionPolicy,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StandardBlobTier)
 from azure.storage.blob._generated.models import RehydratePriority
 from testcase import (
@@ -946,7 +946,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(source_blob.url, credential=sas_token)
@@ -1209,7 +1209,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1233,7 +1233,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
 
         token = blob_snapshot_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1266,7 +1266,7 @@ class StorageCommonBlobTest(StorageTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = BlobPermissions.READ
+        access_policy.permission = BlobSasPermissions(read=True)
         identifiers = {'testid': access_policy}
 
         resp = container.set_container_access_policy(identifiers)
@@ -1292,7 +1292,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         token = self.bsc.generate_shared_access_signature(
             ResourceTypes(container=True, object=True),
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1358,7 +1358,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
 
         token = blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest',
@@ -1404,7 +1404,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1428,7 +1428,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
             content_disposition='inline',
@@ -1462,7 +1462,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1488,7 +1488,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.DELETE,
+            permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1542,7 +1542,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
         token = container.generate_shared_access_signature(
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_container = ContainerClient(container.url, credential=token)
@@ -1565,7 +1565,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1586,7 +1586,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(source_blob.url, credential=sas_token)
@@ -1700,7 +1700,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1820,6 +1820,20 @@ class StorageCommonBlobTest(StorageTestCase):
         content = blob.download_blob().content_as_bytes()
         self.assertEqual(data, content)
 
+    def test_set_blob_permission_from_string(self):
+        # Arrange
+        permission1 = BlobSasPermissions(read=True, write=True)
+        permission2 = BlobSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
+
+    def test_set_blob_permission(self):
+        # Arrange
+        permission = BlobSasPermissions.from_string('wrdx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.delete, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrdx')
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

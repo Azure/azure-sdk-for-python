@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
     TYPE_CHECKING
 )
 
@@ -46,9 +46,9 @@ from .blob_client import BlobClient
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
-    from .models import ContainerPermissions, PublicAccess
+    from .models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
     from .models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -187,7 +187,7 @@ class ContainerClient(StorageAccountHostsMixin):
             account_url, container=container, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
+            self, permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -213,7 +213,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.ContainerPermissions
+        :type permission: str or ~azure.storage.blob.ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -1028,7 +1028,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_blobs(self, *blobs, **kwargs):
-        # type: (...) -> None
+        # type: (...) -> Iterator[HttpResponse]
         """Marks the specified blobs or snapshots for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1079,7 +1079,8 @@ class ContainerClient(StorageAccountHostsMixin):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             **kwargs

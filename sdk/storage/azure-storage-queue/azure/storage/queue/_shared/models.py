@@ -277,7 +277,7 @@ ResourceTypes.CONTAINER = ResourceTypes(container=True)
 ResourceTypes.OBJECT = ResourceTypes(object=True)
 
 
-class AccountPermissions(object):
+class AccountSasPermissions(object):
     """
     :class:`~ResourceTypes` class to be used with generate_shared_access_signature
     method and for the AccessPolicies used with set_*_acl. There are two types of
@@ -285,26 +285,6 @@ class AccountPermissions(object):
     specific resource (resource-specific). Another is to grant access to the
     entire service for a specific account and allow certain operations based on
     perms found here.
-
-    :cvar AccountPermissions AccountPermissions.ADD:
-        Valid for the following Object resource types only: queue messages and append blobs.
-    :cvar AccountPermissions AccountPermissions.CREATE:
-        Valid for the following Object resource types only: blobs and files. Users
-        can create new blobs or files, but may not overwrite existing blobs or files.
-    :cvar AccountPermissions AccountPermissions.DELETE:
-        Valid for Container and Object resource types, except for queue messages.
-    :cvar AccountPermissions AccountPermissions.LIST:
-        Valid for Service and Container resource types only.
-    :cvar AccountPermissions AccountPermissions.PROCESS:
-        Valid for the following Object resource type only: queue messages.
-    :cvar AccountPermissions AccountPermissions.READ:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type.
-    :cvar AccountPermissions AccountPermissions.UPDATE:
-        Valid for the following Object resource types only: queue messages.
-    :cvar AccountPermissions AccountPermissions.WRITE:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type.
     :param bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
@@ -325,57 +305,43 @@ class AccountPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    READ = None  # type: AccountPermissions
-    WRITE = None  # type: AccountPermissions
-    DELETE = None  # type: AccountPermissions
-    LIST = None  # type: AccountPermissions
-    ADD = None  # type: AccountPermissions
-    CREATE = None  # type: AccountPermissions
-    UPDATE = None  # type: AccountPermissions
-    PROCESS = None  # type: AccountPermissions
-
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.update = update or ('u' in _str)
-        self.process = process or ('p' in _str)
-
-    def __or__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
+                 add=False, create=False, update=False, process=False):
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.add = add
+        self.create = create
+        self.update = update
+        self.process = process
+        self._str = (('r' if self.read else '') +
+                     ('w' if  self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('u' if self.update else '') +
-                ('p' if self.process else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
 
-AccountPermissions.READ = AccountPermissions(read=True)
-AccountPermissions.WRITE = AccountPermissions(write=True)
-AccountPermissions.DELETE = AccountPermissions(delete=True)
-AccountPermissions.LIST = AccountPermissions(list=True)
-AccountPermissions.ADD = AccountPermissions(add=True)
-AccountPermissions.CREATE = AccountPermissions(create=True)
-AccountPermissions.UPDATE = AccountPermissions(update=True)
-AccountPermissions.PROCESS = AccountPermissions(process=True)
+        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
 class Services(object):

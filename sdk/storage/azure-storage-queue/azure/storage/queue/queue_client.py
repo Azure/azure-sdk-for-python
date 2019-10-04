@@ -36,7 +36,7 @@ from .models import QueueMessage, AccessPolicy, MessagesPaged
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from .models import QueuePermissions, QueueProperties
+    from .models import QueueSasPermissions, QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin):
@@ -164,7 +164,7 @@ class QueueClient(StorageAccountHostsMixin):
         return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
+            self, permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -175,7 +175,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         Use the returned signature with the credential parameter of any Queue Service.
 
-        :param ~azure.storage.queue.QueuePermissions permission:
+        :param ~azure.storage.queue.QueueSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless a policy_id is given referencing a stored access policy

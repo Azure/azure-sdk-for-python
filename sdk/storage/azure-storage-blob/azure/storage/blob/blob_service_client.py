@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._shared.models import AccountPermissions, ResourceTypes
+    from ._shared.models import AccountSasPermissions, ResourceTypes
     from .lease import LeaseClient
     from .models import (
         BlobProperties,
@@ -159,7 +159,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
+            permission,  # type: Union[AccountSasPermissions, str]
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
@@ -179,7 +179,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.AccountPermissions
+        :type permission: str or ~azure.storage.blob.AccountSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
