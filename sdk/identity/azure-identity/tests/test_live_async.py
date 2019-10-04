@@ -21,27 +21,25 @@ async def get_token(credential):
 
 
 @pytest.mark.asyncio
-async def test_certificate_credential(live_certificate_settings):
+async def test_certificate_credential(live_certificate):
     credential = CertificateCredential(
-        live_certificate_settings["tenant_id"],
-        live_certificate_settings["client_id"],
-        live_certificate_settings["cert_path"],
+        live_certificate["client_id"], live_certificate["tenant_id"], live_certificate["cert_path"]
     )
     await get_token(credential)
 
 
 @pytest.mark.asyncio
-async def test_client_secret_credential(live_identity_settings):
+async def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
-        live_identity_settings["tenant_id"],
-        live_identity_settings["client_id"],
-        live_identity_settings["client_secret"],
+        live_service_principal["client_id"],
+        live_service_principal["client_secret"],
+        live_service_principal["tenant_id"],
     )
     await get_token(credential)
 
 
 @pytest.mark.asyncio
-async def test_default_credential(live_identity_settings):
+async def test_default_credential(live_service_principal):
     credential = DefaultAzureCredential()
     await get_token(credential)
 

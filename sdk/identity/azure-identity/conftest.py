@@ -14,7 +14,7 @@ if sys.version_info < (3, 5):
 
 
 @pytest.fixture()
-def live_identity_settings():  # pylint:disable=inconsistent-return-statements
+def live_service_principal():  # pylint:disable=inconsistent-return-statements
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
 
     missing_variables = [
@@ -37,9 +37,7 @@ def live_identity_settings():  # pylint:disable=inconsistent-return-statements
 
 
 @pytest.fixture()
-def live_certificate_settings(
-    live_identity_settings
-):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
+def live_certificate(live_service_principal):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
     """Fixture for live tests needing a certificate.
     Skips them when environment configuration is incomplete.
     """
@@ -53,6 +51,6 @@ def live_certificate_settings(
     try:
         with open(pem_path, "w") as pem_file:
             pem_file.write(pem_content)
-        return dict(live_identity_settings, cert_path=pem_path)
+        return dict(live_service_principal, cert_path=pem_path)
     except IOError as ex:
         pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
