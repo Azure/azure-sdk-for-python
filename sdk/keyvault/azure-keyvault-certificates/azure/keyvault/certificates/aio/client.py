@@ -322,30 +322,30 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_policy(self, name: str, **kwargs: "**Any") -> CertificatePolicy:
+    async def get_policy(self, certificate_name: str, **kwargs: "**Any") -> CertificatePolicy:
         """Gets the policy for a certificate.
 
         Returns the specified certificate policy resources in the key
         vault. This operation requires the certificates/get permission.
 
-        :param str name: The name of the certificate in a given key vault.
+        :param str certificate_name: The name of the certificate in a given key vault.
         :return: The certificate policy
         :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.get_certificate_policy(
-            vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs
+            vault_base_url=self.vault_endpoint, certificate_name=certificate_name, **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(self, name: str, policy: CertificatePolicy, **kwargs: "**Any") -> CertificatePolicy:
+    async def update_policy(self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any") -> CertificatePolicy:
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leaves others as null.
         This operation requries the certificates/update permission.
 
-        :param str name: The name of the certificate in the given vault.
+        :param str certificate_name: The name of the certificate in the given vault.
         :param policy: The policy for the certificate.
         :type policy: ~azure.keyvault.certificates.models.CertificatePolicy
         :return: The certificate policy
@@ -354,7 +354,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.update_certificate_policy(
             vault_base_url=self.vault_endpoint,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_policy=policy._to_certificate_policy_bundle(),
             **kwargs
         )
