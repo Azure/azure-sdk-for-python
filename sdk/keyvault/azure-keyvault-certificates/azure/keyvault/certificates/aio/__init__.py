@@ -18,5 +18,5 @@ __all__ = [
     "KeyProperties",
     "KeyUsageType",
     "LifetimeAction",
-    "SecretContentType"
+    "SecretContentType",
 ]
