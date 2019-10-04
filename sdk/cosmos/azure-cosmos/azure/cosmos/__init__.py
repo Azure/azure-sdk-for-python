@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
@@ -56,5 +57,6 @@ __all__ = (
     "SSLConfiguration",
     "TriggerOperation",
     "TriggerType",
+    "ConnectionRetryPolicy",
 )
 __version__ = VERSION

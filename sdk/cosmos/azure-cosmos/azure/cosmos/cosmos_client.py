@@ -22,13 +22,14 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List
+from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
+from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .errors import CosmosResourceNotFoundError
@@ -96,11 +97,25 @@ def _build_connection_policy(kwargs):
 
     # Retry config
     retry = kwargs.pop('retry_options', None) or policy.RetryOptions
-    retry._max_retry_attempt_count = kwargs.pop('retry_total', None) or retry._max_retry_attempt_count
+    total_retries = kwargs.pop('retry_total', None)
+    retry._max_retry_attempt_count = total_retries or retry._max_retry_attempt_count
     retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
         retry._fixed_retry_interval_in_milliseconds
-    retry._max_wait_time_in_seconds = kwargs.pop('retry_backoff_max', None) or retry._max_wait_time_in_seconds
+    max_backoff = kwargs.pop('retry_backoff_max', None)
+    retry._max_wait_time_in_seconds = max_backoff or retry._max_wait_time_in_seconds
     policy.RetryOptions = retry
+    connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
+    if not connection_retry:
+        connection_retry = ConnectionRetryPolicy(
+            retry_total=total_retries,
+            retry_connect=kwargs.pop('retry_connect', None),
+            retry_read=kwargs.pop('retry_read', None),
+            retry_status=kwargs.pop('retry_status', None),
+            retry_backoff_max=max_backoff,
+            retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
+            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
+        )
+    policy.ConnectionRetryConfiguration = connection_retry
 
     return policy
 
@@ -130,6 +145,11 @@ class CosmosClient(object):
     *retry_total* - Maximum retry attempts.
     *retry_backoff_max* - Maximum retry wait time in seconds.
     *retry_fixed_interval* - Fixed retry interval in milliseconds.
+    *retry_read* - Maximum number of socket read retry attempts.
+    *retry_connect* - Maximum number of connection error retry attempts.
+    *retry_status* - Maximum number of retry attempts on error status codes.
+    *retry_on_status_codes* - A list of specific status codes to retry on.
+    *retry_backoff_factor* - Factor to calculate wait time between retry attempts.
     *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
     *preferred_locations* - The preferred locations for geo-replicated database accounts.
         When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
