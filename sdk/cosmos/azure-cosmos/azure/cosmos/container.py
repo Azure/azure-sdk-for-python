@@ -176,14 +176,15 @@ class ContainerProxy(object):
         :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
         :rtype: dict[str, Any]
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START update_item]
-            :end-before: [END update_item]
-            :language: python
-            :dedent: 0
-            :caption: Get an item from the database and update one of its properties:
-            :name: update_item
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START update_item]
+                :end-before: [END update_item]
+                :language: python
+                :dedent: 0
+                :caption: Get an item from the database and update one of its properties:
+                :name: update_item
         """
         doc_link = self._get_document_link(item)
         request_options = build_options(kwargs)
@@ -320,22 +321,23 @@ class ContainerProxy(object):
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START query_items]
-            :end-before: [END query_items]
-            :language: python
-            :dedent: 0
-            :caption: Get all products that have not been discontinued:
-            :name: query_items
+        .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START query_items_param]
-            :end-before: [END query_items_param]
-            :language: python
-            :dedent: 0
-            :caption: Parameterized query to get all products that have been discontinued:
-            :name: query_items_param
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+                :name: query_items
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+                :name: query_items_param
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)

@@ -159,13 +159,15 @@ class CosmosClient(object):
         and so on.
     *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
 
-    .. literalinclude:: ../../samples/examples.py
-        :start-after: [START create_client]
-        :end-before: [END create_client]
-        :language: python
-        :dedent: 0
-        :caption: Create a new instance of the Cosmos DB client:
-        :name: create_client
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../samples/examples.py
+            :start-after: [START create_client]
+            :end-before: [END create_client]
+            :language: python
+            :dedent: 0
+            :caption: Create a new instance of the Cosmos DB client:
+            :name: create_client
     """
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
@@ -243,14 +245,15 @@ class CosmosClient(object):
         :rtype: ~azure.cosmos.database.DatabaseProxy
         :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_database]
-            :end-before: [END create_database]
-            :language: python
-            :dedent: 0
-            :caption: Create a database in the Cosmos DB account:
-            :name: create_database
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
         """
 
         request_options = build_options(kwargs)
