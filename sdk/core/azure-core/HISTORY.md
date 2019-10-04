@@ -3,7 +3,7 @@
 
 -------------------
 
-## 2019-XX-XX Version 1.0.0b4
+## 2019-10-07 Version 1.0.0b4
 
 ### Features
 
@@ -16,7 +16,7 @@
   - HttpRequest now has a "prepare_multipart_body" method to build final body.
   - HttpResponse now has a "parts" method to return an iterator of parts
   - AsyncHttpResponse now has a "parts" methods to return an async iterator of parts
-  - Note that multipart/MIXED is a Python 3.x only feature
+  - Note that multipart/mixed is a Python 3.x only feature
 
 ### Bug fixes
 
@@ -29,6 +29,7 @@
 - Tracing: `azure.core.tracing.context` removed
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
+- Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
 
 ## 2019-09-09 Version 1.0.0b3
 
