@@ -4,5 +4,6 @@
 # -------------------------------------
 from .client import KeyClient
 from .enums import KeyCurveName, KeyOperation, KeyType
+from .models import JsonWebKey
 
-__all__ = ["KeyCurveName", "KeyOperation", "KeyType", "KeyClient"]
+__all__ = ["JsonWebKey", "KeyCurveName", "KeyOperation", "KeyType", "KeyClient"]
