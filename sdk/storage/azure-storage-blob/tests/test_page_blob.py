@@ -117,10 +117,9 @@ class StoragePageBlobTest(StorageTestCase):
         blob_client.create_page_blob(size=size)
 
         range_start = 8*1024 + 512
-        range_end = range_start + len(data) - 1
 
         # the page blob will be super sparse like this:'                         some data                      '
-        blob_client.upload_page(data, range_start, range_end)
+        blob_client.upload_page(data, offset=range_start, length=len(data))
 
         return blob_client
 
