@@ -192,7 +192,8 @@ class ContainerClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            user_delegation_key=None  # type Optional[]
+            user_delegation_key=None,  # type: Optional[Any]
+            **kwargs # type: Any
         ):
         # type: (...) -> Any
         """Generates a shared access signature for the container.

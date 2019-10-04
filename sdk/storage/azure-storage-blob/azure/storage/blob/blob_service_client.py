@@ -163,6 +163,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
+            **kwargs # type: Any
         ):  # type: (...) -> str
         """Generates a shared access signature for the blob service.
 
