@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:disable=too-many-lines
 
+# pylint: disable=too-many-lines,too-many-public-methods
 from datetime import datetime
 
 from ._shared import parse_vault_id
@@ -43,7 +43,7 @@ class AdministratorDetails(object):
             email=admin_details_bundle.email_address,
             first_name=admin_details_bundle.first_name,
             last_name=admin_details_bundle.last_name,
-            phone=admin_details_bundle.phone
+            phone=admin_details_bundle.phone,
         )
 
     @property
@@ -117,11 +117,9 @@ class Error(object):
 class CertificateProperties(object):
     """Certificate properties consists of a certificates metadata.
 
-    :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.certificates.CertificateAttributes
-    :param str cert_id: The certificate id.
     :param bytes thumbprint: Thumpbrint of the certificate
     """
+
     def __init__(self, attributes=None, cert_id=None, thumbprint=None, **kwargs):
         # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], **Any) -> None
         self._attributes = attributes
@@ -261,13 +259,14 @@ class Certificate(object):
     :param str secret_id: The secret id.
     :param bytearray cer: CER contents of the X509 certificate.
     """
+
     def __init__(
         self,
         policy,  # type: CertificatePolicy
         properties=None,  # type: Optional[CertificateProperties]
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
-        cer=None  # type: Optional[bytes]
+        cer=None,  # type: Optional[bytes]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -286,7 +285,7 @@ class Certificate(object):
             key_id=certificate_bundle.kid,
             secret_id=certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
-            cer=certificate_bundle.cer
+            cer=certificate_bundle.cer,
         )
 
     @property
@@ -368,6 +367,7 @@ class CertificateOperation(object):
     :param str target: Location which contains the result of the certificate operation.
     :param str request_id: Identifier for the certificate operation.
     """
+
     def __init__(
         self,
         cert_operation_id=None,  # type: Optional[str]
@@ -380,7 +380,7 @@ class CertificateOperation(object):
         status_details=None,  # type: Optional[str]
         error=None,  # type: Optional[models.Error]
         target=None,  # type: Optional[str]
-        request_id=None  # type: Optional[str]
+        request_id=None,  # type: Optional[str]
     ):
         # type: (...) -> None
         self._id = cert_operation_id
@@ -402,12 +402,21 @@ class CertificateOperation(object):
         """Construct a CertificateOperation from an autorest-generated CertificateOperation"""
         return cls(
             cert_operation_id=certificate_operation_bundle.id,
-            issuer_name=(certificate_operation_bundle.issuer_parameters.name
-                         if certificate_operation_bundle.issuer_parameters else None),
-            certificate_type=(certificate_operation_bundle.issuer_parameters.certificate_type
-                              if certificate_operation_bundle.issuer_parameters else None),
-            certificate_transparency=(certificate_operation_bundle.issuer_parameters.certificate_transparency
-                                      if certificate_operation_bundle.issuer_parameters else None),
+            issuer_name=(
+                certificate_operation_bundle.issuer_parameters.name
+                if certificate_operation_bundle.issuer_parameters
+                else None
+            ),
+            certificate_type=(
+                certificate_operation_bundle.issuer_parameters.certificate_type
+                if certificate_operation_bundle.issuer_parameters
+                else None
+            ),
+            certificate_transparency=(
+                certificate_operation_bundle.issuer_parameters.certificate_transparency
+                if certificate_operation_bundle.issuer_parameters
+                else None
+            ),
             csr=certificate_operation_bundle.csr,
             cancellation_requested=certificate_operation_bundle.cancellation_requested,
             status=certificate_operation_bundle.status,
@@ -515,12 +524,22 @@ class CertificateOperation(object):
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
-    :param attributes: the certificate attributes.
-    :type attributes: ~azure.keyvault.certificates.models.CertificateAttributes
-    :param str cert_policy_id: The certificate id.
-    :param key_properties: Properties of the key backing the certificate.
-    :type key_properties: ~azure.keyvault.certificates.models.KeyProperties
+    :param bool exportable: Indicates if the private key can be exported. For valid values,
+        see KeyType.
+    :param key_type: The type of key pair to be used for the certificate.
+    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
+    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
+        for RSA.
+    :param bool reuse_key: Indicates if the same key pair will be used on certificate
+        renewal.
+    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
+    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
+    :param ekus: The enhanced key usages.
+    :type ekus: list[str]
+    :param key_usage: List of key usages.
+    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
     :param content_type: The media type (MIME type) of the secret backing the certificate.
+        For valid values, see SecretContentType.
     :type content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
     :param str subject_name: The subject name of the certificate. Should be a valid X509
         distinguished name.
@@ -533,49 +552,84 @@ class CertificatePolicy(object):
     :param str certificate_type: Type of certificate to be requested from the issuer provider.
     :param bool certificate_transparency: Indicates if the certificates generated under this policy
         should be published to certificate transparency logs.
-    :param san_emails: Subject alternative emails of the X509 object. Only one out of san_emails,
-        san_dns_names, and san_upns may be set.
-    :type san_emails: Iterable[str]
-    :param san_dns_names: Subject alternative DNS names of the X509 object. Only one out of
-        san_emails, san_dns_names, and san_upns may be set.
-    :type san_dns_names: Iterable[str]
-    :param san_upns: Subject alternative user principal names. Only one out of san_emails,
-        san_dns_names, and san_upns may be set.
-    :type san_upns: Iterable[str]
+
+    Keyword arguments
+        - *san_emails(Iterable[str])* - Subject alternative emails of the X509 object. Only one out
+            of san_emails, san_dns_names, and san_upns may be set.
+        - *san_dns_names(Iterable[str])* - Subject alternative DNS names of the X509 object. Only one out
+            of san_emails, san_dns_names, and san_upns may be set.
+        - *san_upns(Iterable[str])* - Subject alternative user principal names of the X509 object. Only one out
+            of san_emails, san_dns_names, and san_upns may be set.
     """
+
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
-        attributes=None,  # type: Optional[models.CertificateAttributes]
+        issuer_name,  # type: str
+        subject_name,  # type: str
         cert_policy_id=None,  # type: Optional[str]
-        key_properties=None,  # type: Optional[KeyProperties]
-        content_type=None,  # type: Optional[models.SecretContentType] or str
-        subject_name=None,  # type: Optional[str]
+        exportable=None,  # type: Optional[bool]
+        key_type=None,  # type: Optional[KeyType]
+        key_size=None,  # type: Optional[str]
+        reuse_key=None,  # type: Optional[bool]
+        curve=None,  # type: Optional[KeyCurveName]
+        ekus=None,  # type: Optional[list[str]]
+        key_usage=None,  # type: Optional[list[Union[KeyUsageType, str]]]
+        content_type=None,  # type: Optional[Union[SecretContentType, str]]
         validity_in_months=None,  # type: Optional[int]
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
-        issuer_name=None,  # type: Optional[str]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
+        attributes=None,  # type: Optional[models.CertificateAttributes]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
+        self._subject_name = subject_name
         self._attributes = attributes
         self._id = cert_policy_id
-        self._key_properties = key_properties
+        self._exportable = exportable
+        self._key_type = key_type
+        self._key_size = key_size
+        self._reuse_key = reuse_key
+        self._curve = curve
+        self._ekus = ekus
+        self._key_usage = key_usage
         self._content_type = content_type
-        self._subject_name = subject_name
         self._validity_in_months = validity_in_months
         self._lifetime_actions = lifetime_actions
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
-        self._san_emails = kwargs.pop('san_emails', None)
-        self._san_dns_names = kwargs.pop('san_dns_names', None)
-        self._san_upns = kwargs.pop('san_upns', None)
+        self._san_emails = kwargs.pop("san_emails", None)
+        self._san_dns_names = kwargs.pop("san_dns_names", None)
+        self._san_upns = kwargs.pop("san_upns", None)
 
         sans = [self._san_emails, self._san_upns, self._san_dns_names]
         if len([x for x in sans if x is not None]) > 1:
             raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
+
+    @classmethod
+    def _get_default_certificate_policy(cls):
+        lifetime_actions = [LifetimeAction(days_before_expiry=90, action_type=ActionType.auto_renew)]
+        return cls(
+            issuer_name="Self",
+            subject_name="CN=DefaultPolicy",
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=True,
+            key_usage=[
+                KeyUsageType.crl_sign,
+                KeyUsageType.data_encipherment,
+                KeyUsageType.digital_signature,
+                KeyUsageType.key_agreement,
+                KeyUsageType.key_cert_sign,
+                KeyUsageType.key_encipherment,
+            ],
+            lifetime_actions=lifetime_actions,
+            content_type=SecretContentType.PKCS12,
+            validity_in_months=12,
+        )
 
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
@@ -585,25 +639,27 @@ class CertificatePolicy(object):
             issuer_parameters = models.IssuerParameters(
                 name=self.issuer_name,
                 certificate_type=self.certificate_type,
-                certificate_transparency=self.certificate_transparency
+                certificate_transparency=self.certificate_transparency,
             )
         else:
             issuer_parameters = None
 
         # pylint:disable=too-many-boolean-expressions
-        if (self.enabled is not None or
-                self.not_before is not None or
-                self.expires is not None or
-                self.created is not None or
-                self.updated is not None
-                or self.recovery_level):
+        if (
+            self.enabled is not None
+            or self.not_before is not None
+            or self.expires is not None
+            or self.created is not None
+            or self.updated is not None
+            or self.recovery_level
+        ):
             attributes = models.CertificateAttributes(
                 enabled=self.enabled,
                 not_before=self.not_before,
                 expires=self.expires,
                 created=self.enabled,
                 updated=self.updated,
-                recovery_level=self.recovery_level
+                recovery_level=self.recovery_level,
             )
         else:
             attributes = None
@@ -615,27 +671,30 @@ class CertificatePolicy(object):
                     models.LifetimeAction(
                         trigger=models.Trigger(
                             lifetime_percentage=lifetime_action.lifetime_percentage,
-                            days_before_expiry=lifetime_action.days_before_expiry
+                            days_before_expiry=lifetime_action.days_before_expiry,
                         ),
-                        action=models.Action(action_type=lifetime_action.action_type.value
-                                             if not isinstance(lifetime_action.action_type, str)
-                                             and lifetime_action.action_type
-                                             else lifetime_action.action_type)
+                        action=models.Action(
+                            action_type=lifetime_action.action_type.value
+                            if not isinstance(lifetime_action.action_type, str) and lifetime_action.action_type
+                            else lifetime_action.action_type
+                        ),
                     )
                 )
         else:
             lifetime_actions = None
 
         # pylint:disable=too-many-boolean-expressions
-        if(self.subject_name or
-                (self.key_properties and self.key_properties.ekus) or
-                (self.key_properties and self.key_properties.key_usage) or
-                self.san_emails or
-                self.san_upns or
-                self.san_dns_names or
-                self.validity_in_months):
-            if self.key_properties and self.key_properties.key_usage:
-                key_usage = [k.value if not isinstance(k, str) else k for k in self.key_properties.key_usage]
+        if (
+            self.subject_name
+            or self.ekus
+            or self.key_usage
+            or self.san_emails
+            or self.san_upns
+            or self.san_dns_names
+            or self.validity_in_months
+        ):
+            if self.key_usage:
+                key_usage = [k.value if not isinstance(k, str) else k for k in self.key_usage]
             else:
                 key_usage = None
 
@@ -645,42 +704,35 @@ class CertificatePolicy(object):
 
             x509_certificate_properties = models.X509CertificateProperties(
                 subject=self.subject_name,
-                ekus=self.key_properties.ekus if self.key_properties else None,
+                ekus=self.ekus,
                 subject_alternative_names=models.SubjectAlternativeNames(
-                    emails=self.san_emails,
-                    upns=self.san_upns,
-                    dns_names=self.san_dns_names
+                    emails=self.san_emails, upns=self.san_upns, dns_names=self.san_dns_names
                 ),
                 key_usage=key_usage,
-                validity_in_months=self.validity_in_months
+                validity_in_months=self.validity_in_months,
             )
         else:
             x509_certificate_properties = None
 
-        if (self.key_properties and
-                (self.key_properties.exportable or
-                self.key_properties.key_type or
-                self.key_properties.key_size or
-                self.key_properties.reuse_key or
-                self.key_properties.curve)):
+        if self.exportable or self.key_type or self.key_size or self.reuse_key or self.curve:
             key_properties = models.KeyProperties(
-                exportable=self.key_properties.exportable,
-                key_type=(self.key_properties.key_type.value
-                          if not isinstance(self.key_properties.key_type, str) and self.key_properties.key_type
-                          else self.key_properties.key_type),
-                key_size=self.key_properties.key_size,
-                reuse_key=self.key_properties.reuse_key,
-                curve=(self.key_properties.curve.value
-                       if not isinstance(self.key_properties.curve, str) and self.key_properties.curve
-                       else self.key_properties.curve)
+                exportable=self.exportable,
+                key_type=(
+                    self.key_type.value if not isinstance(self.key_type, str) and self.key_type else self.key_type
+                ),
+                key_size=self.key_size,
+                reuse_key=self.reuse_key,
+                curve=(self.curve.value if not isinstance(self.curve, str) and self.curve else self.curve),
             )
         else:
             key_properties = None
 
         if self.content_type:
-            secret_properties = models.SecretProperties(content_type=self.content_type.value
-                                                        if not isinstance(self.content_type, str) and self.content_type
-                                                        else self.content_type)
+            secret_properties = models.SecretProperties(
+                content_type=self.content_type.value
+                if not isinstance(self.content_type, str) and self.content_type
+                else self.content_type
+            )
         else:
             secret_properties = None
 
@@ -691,7 +743,7 @@ class CertificatePolicy(object):
             x509_certificate_properties=x509_certificate_properties,
             lifetime_actions=lifetime_actions,
             issuer_parameters=issuer_parameters,
-            attributes=attributes
+            attributes=attributes,
         )
         return policy_bundle
 
@@ -702,8 +754,7 @@ class CertificatePolicy(object):
         if certificate_policy_bundle.lifetime_actions:
             lifetime_actions = [
                 LifetimeAction(
-                    action_type=(ActionType(item.action.action_type)
-                                 if item.action.action_type else None),
+                    action_type=(ActionType(item.action.action_type) if item.action.action_type else None),
                     lifetime_percentage=item.trigger.lifetime_percentage,
                     days_before_expiry=item.trigger.days_before_expiry,
                 )
@@ -711,55 +762,62 @@ class CertificatePolicy(object):
             ]
         else:
             lifetime_actions = None
-        key_properties_bundle = certificate_policy_bundle.key_properties
-        # pylint:disable=too-many-boolean-expressions
-        if key_properties_bundle:
-            if certificate_policy_bundle.x509_certificate_properties and \
-                    certificate_policy_bundle.x509_certificate_properties.key_usage:
-                key_usage = [KeyUsageType(k) for k in certificate_policy_bundle.x509_certificate_properties.key_usage]
-            else:
-                key_usage = None
-
-            key_properties = KeyProperties(
-                exportable=certificate_policy_bundle.key_properties.exportable,
-                key_type=(KeyType(certificate_policy_bundle.key_properties.key_type)
-                          if certificate_policy_bundle.key_properties.key_type else None),
-                key_size=certificate_policy_bundle.key_properties.key_size,
-                reuse_key=certificate_policy_bundle.key_properties.reuse_key,
-                curve=(KeyCurveName(certificate_policy_bundle.key_properties.curve)
-                       if certificate_policy_bundle.key_properties.curve else None),
-                ekus=(certificate_policy_bundle.x509_certificate_properties.ekus
-                      if certificate_policy_bundle.x509_certificate_properties else None),
-                key_usage=key_usage,
-            )
+        x509_certificate_properties = certificate_policy_bundle.x509_certificate_properties
+        if x509_certificate_properties and x509_certificate_properties.key_usage:
+            key_usage = [KeyUsageType(k) for k in x509_certificate_properties.key_usage]
         else:
-            key_properties = None
+            key_usage = None
+        key_properties = certificate_policy_bundle.key_properties
         return cls(
-            attributes=certificate_policy_bundle.attributes,
+            issuer_name=(
+                certificate_policy_bundle.issuer_parameters.name
+                if certificate_policy_bundle.issuer_parameters
+                else None
+            ),
+            subject_name=(x509_certificate_properties.subject if x509_certificate_properties else None),
             cert_policy_id=certificate_policy_bundle.id,
-            issuer_name=(certificate_policy_bundle.issuer_parameters.name
-                         if certificate_policy_bundle.issuer_parameters else None),
-            certificate_type=(certificate_policy_bundle.issuer_parameters.certificate_type
-                              if certificate_policy_bundle.issuer_parameters else None),
-            certificate_transparency=(certificate_policy_bundle.issuer_parameters.certificate_transparency
-                                      if certificate_policy_bundle.issuer_parameters else None),
+            certificate_type=(
+                certificate_policy_bundle.issuer_parameters.certificate_type
+                if certificate_policy_bundle.issuer_parameters
+                else None
+            ),
+            certificate_transparency=(
+                certificate_policy_bundle.issuer_parameters.certificate_transparency
+                if certificate_policy_bundle.issuer_parameters
+                else None
+            ),
             lifetime_actions=lifetime_actions,
-            subject_name=(certificate_policy_bundle.x509_certificate_properties.subject
-                          if certificate_policy_bundle.x509_certificate_properties else None),
-            key_properties=key_properties,
-            content_type=(SecretContentType(certificate_policy_bundle.secret_properties.content_type)
-                          if certificate_policy_bundle.secret_properties else None),
-            san_emails=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails
-                        if certificate_policy_bundle.x509_certificate_properties and
-                        certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            san_upns=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns
-                      if certificate_policy_bundle.x509_certificate_properties and
-                      certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            san_dns_names=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names
-                           if certificate_policy_bundle.x509_certificate_properties and
-                           certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            validity_in_months=(certificate_policy_bundle.x509_certificate_properties.validity_in_months
-                                if certificate_policy_bundle.x509_certificate_properties else None)
+            exportable=key_properties.exportable if key_properties else None,
+            key_type=KeyType(key_properties.key_type) if key_properties and key_properties else None,
+            key_size=key_properties.key_size if key_properties else None,
+            reuse_key=key_properties.reuse_key if key_properties else None,
+            curve=KeyCurveName(key_properties) if key_properties and key_properties.curve else None,
+            ekus=x509_certificate_properties.ekus if x509_certificate_properties else None,
+            key_usage=key_usage,
+            content_type=(
+                SecretContentType(certificate_policy_bundle.secret_properties.content_type)
+                if certificate_policy_bundle.secret_properties
+                else None
+            ),
+            attributes=certificate_policy_bundle.attributes,
+            san_emails=(
+                x509_certificate_properties.subject_alternative_names.emails
+                if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
+                else None
+            ),
+            san_upns=(
+                x509_certificate_properties.subject_alternative_names.upns
+                if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
+                else None
+            ),
+            san_dns_names=(
+                x509_certificate_properties.subject_alternative_names.dns_names
+                if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
+                else None
+            ),
+            validity_in_months=(
+                x509_certificate_properties.validity_in_months if x509_certificate_properties else None
+            ),
         )
 
     @property
@@ -769,13 +827,67 @@ class CertificatePolicy(object):
         return self._id
 
     @property
-    def key_properties(self):
-        # type: () -> KeyProperties
-        """Properties of the key backing the certificate.
+    def exportable(self):
+        # type: () -> bool
+        """Whether the private key can be exported.
 
-        :rtype: ~azure.keyvault.certificates.models.KeyProperties
+        :rtype: bool
         """
-        return self._key_properties
+        return self._exportable
+
+    @property
+    def key_type(self):
+        # type: () -> KeyType
+        """The type of key pair to be used for the certificate.
+
+        :rtype: ~azure.keyvault.certificates.enums.KeyType
+        """
+        return self._key_type
+
+    @property
+    def key_size(self):
+        # type: () -> int
+        """The key size in bits.
+
+        :rtype: int
+        """
+        return self._key_size
+
+    @property
+    def reuse_key(self):
+        # type: () -> bool
+        """Whether the same key pair will be used on certificate renewal.
+
+        :rtype: bool
+        """
+        return self._reuse_key
+
+    @property
+    def curve(self):
+        # type: () -> KeyCurveName
+        """Elliptic curve name.
+
+        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
+        """
+        return self._curve
+
+    @property
+    def ekus(self):
+        # type: () -> list[str]
+        """The enhanced key usage.
+
+        :rtype: list[str]
+        """
+        return self._ekus
+
+    @property
+    def key_usage(self):
+        # type: () -> list[KeyUsageType]
+        """List of key usages.
+
+        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
+        """
+        return self._key_usage
 
     @property
     def content_type(self):
@@ -938,11 +1050,7 @@ class Contact(object):
 
     def _to_certificate_contacts_item(self):
         # type: (Contact) -> models.Contact
-        return models.Contact(
-            email_address=self.email,
-            name=self.name,
-            phone=self.phone
-        )
+        return models.Contact(email_address=self.email, name=self.name, phone=self.phone)
 
     @classmethod
     def _from_certificate_contacts_item(cls, contact_item):
@@ -975,6 +1083,7 @@ class IssuerProperties(object):
     :param str issuer_id: the ID of the issuer.
     :param str provider: The issuer provider.
     """
+
     def __init__(self, issuer_id=None, provider=None):
         # type: (Optional[str], Optional[str]) -> None
         self._id = issuer_id
@@ -1021,14 +1130,13 @@ class Issuer(object):
 
     :param properties: The issuer's properties
     :type properties: ~azure.keyvault.certificates.IssuerProperties
-    :param attributes: Attributes of the issuer object. Only populated by server.
-    :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
     :param str account_id: The username / account name / account id.
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
     :param admin_details: Details of the organization administrator.
     :type admin_details: list[~azure.keyvault.certificates.AdministratorDetails]
     """
+
     def __init__(
         self,
         properties=None,  # type: Optional[IssuerProperties]
@@ -1036,7 +1144,7 @@ class Issuer(object):
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
-        admin_details=None  # type: Optional[List[AdministratorDetails]]
+        admin_details=None,  # type: Optional[List[AdministratorDetails]]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -1051,8 +1159,9 @@ class Issuer(object):
         # type: (models.IssuerBundle) -> Issuer
         """Construct a Issuer from an autorest-generated IssuerBundle"""
         admin_details = []
-        admin_details_service = (issuer_bundle.organization_details.admin_details
-                                 if issuer_bundle.organization_details else None)
+        admin_details_service = (
+            issuer_bundle.organization_details.admin_details if issuer_bundle.organization_details else None
+        )
         if admin_details_service:
             # pylint:disable=protected-access
             for admin_detail in admin_details_service:
@@ -1063,7 +1172,7 @@ class Issuer(object):
             account_id=issuer_bundle.credentials.account_id if issuer_bundle.credentials else None,
             password=issuer_bundle.credentials.password if issuer_bundle.credentials else None,
             organization_id=issuer_bundle.organization_details.id if issuer_bundle.organization_details else None,
-            admin_details=admin_details
+            admin_details=admin_details,
         )
 
     @property
@@ -1149,114 +1258,11 @@ class Issuer(object):
         return self._admin_details
 
 
-class KeyProperties(object):
-    """Properties of the key pair backing a certificate.
-
-    :param bool exportable: Indicates if the private key can be exported.
-    :param key_type: The type of key pair to be used for the certificate.
-        Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
-    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
-    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
-        for RSA.
-    :param bool reuse_key: Indicates if the same key pair will be used on certificate
-        renewal.
-    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
-        Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
-    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
-    :param ekus: The enhanced key usages.
-    :type ekus: list[str]
-    :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
-    """
-    def __init__(
-        self,
-        exportable=None,  # type: Optional[bool]
-        key_type=None,  # type: Optional[KeyType]
-        key_size=None,  # type: Optional[str]
-        reuse_key=None,  # type: Optional[bool]
-        curve=None,  # type: Optional[KeyCurveName]
-        ekus=None,  # type: Optional[list[str]]
-        key_usage=None  # type: Optional[list[KeyUsageType]]
-    ):
-        # type: (...) -> None
-        self._exportable = exportable
-        self._key_type = key_type
-        self._key_size = key_size
-        self._reuse_key = reuse_key
-        self._curve = curve
-        self._ekus = ekus
-        self._key_usage = key_usage
-
-    @property
-    def exportable(self):
-        # type: () -> bool
-        """Whether the private key can be exported.
-
-        :rtype: bool
-        """
-        return self._exportable
-
-    @property
-    def key_type(self):
-        # type: () -> KeyType
-        """The type of key pair to be used for the certificate.
-
-        :rtype: ~azure.keyvault.certificates.enums.KeyType
-        """
-        return self._key_type
-
-    @property
-    def key_size(self):
-        # type: () -> int
-        """The key size in bits.
-
-        :rtype: int
-        """
-        return self._key_size
-
-    @property
-    def reuse_key(self):
-        # type: () -> bool
-        """Whether the same key pair will be used on certificate renewal.
-
-        :rtype: bool
-        """
-        return self._reuse_key
-
-    @property
-    def curve(self):
-        # type: () -> KeyCurveName
-        """Elliptic curve name.
-
-        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
-        """
-        return self._curve
-
-    @property
-    def ekus(self):
-        # type: () -> list[str]
-        """The enhanced key usage.
-
-        :rtype: list[str]
-        """
-        return self._ekus
-
-    @property
-    def key_usage(self):
-        # type: () -> list[KeyUsageType]
-        """List of key usages.
-
-        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
-        """
-        return self._key_usage
-
-
 class LifetimeAction(object):
     """Action and its trigger that will be performed by certificate Vault over the
     lifetime of a certificate.
 
-    :param action_type: The type of the action. Possible values include: 'EmailContacts',
-        'AutoRenew'
+    :param action_type: The type of the action. For valid values, see ActionType
     :type action_type: str or ~azure.keyvault.certificates.enums.ActionType
     :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value
         should be between 1 and 99.
@@ -1304,8 +1310,6 @@ class DeletedCertificate(Certificate):
     """A Deleted Certificate consisting of its previous id, attributes and its
     tags, as well as information on when it will be purged.
 
-    :param attributes: The certificate attributes
-    :type attributes: ~azure.keyvault.certifictaes.CertificateAttributes
     :param str cert_id: The certificate id.
     :param bytes thumbprint: Thumbprint of the certificate.
     :param str key_id: The key id.
@@ -1334,12 +1338,7 @@ class DeletedCertificate(Certificate):
     ):
         # type: (...) -> None
         super(DeletedCertificate, self).__init__(
-            properties=properties,
-            policy=policy,
-            key_id=key_id,
-            secret_id=secret_id,
-            cer=cer,
-            **kwargs
+            properties=properties, policy=policy, key_id=key_id, secret_id=secret_id, cer=cer, **kwargs
         )
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
@@ -1351,14 +1350,15 @@ class DeletedCertificate(Certificate):
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         return cls(
             properties=CertificateProperties._from_certificate_item(  # pylint: disable=protected-access
-                deleted_certificate_item),
+                deleted_certificate_item
+            ),
             key_id=None,
             secret_id=None,
             policy=None,
             cer=None,
             deleted_date=deleted_certificate_item.deleted_date,
             recovery_id=deleted_certificate_item.recovery_id,
-            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date
+            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
         )
 
     @classmethod
@@ -1367,15 +1367,14 @@ class DeletedCertificate(Certificate):
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         # pylint:disable=protected-access
         return cls(
-            properties=CertificateProperties._from_certificate_item(
-                deleted_certificate_bundle),
+            properties=CertificateProperties._from_certificate_item(deleted_certificate_bundle),
             key_id=deleted_certificate_bundle.kid,
             secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
             deleted_date=deleted_certificate_bundle.deleted_date,
             recovery_id=deleted_certificate_bundle.recovery_id,
-            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date
+            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
         )
 
     @property

@@ -40,7 +40,7 @@ credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     print("\n.. Create Certificate")
-    cert_name = 'BackupRestoreCertificate'
+    cert_name = "BackupRestoreCertificate"
 
     # Let's create a certificate for your key vault.
     # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
