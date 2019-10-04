@@ -598,11 +598,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
@@ -709,11 +706,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         await blob.upload_blob(
             data,
             blob_type=blob_type,
-            overwrite=overwrite,
             length=length,
             metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
             lease=lease,
             timeout=timeout,
             max_concurrency=max_concurrency,

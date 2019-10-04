@@ -433,7 +433,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            results_per_page=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ItemPaged[ContainerProperties]
@@ -467,6 +466,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         include = 'metadata' if include_metadata else None
         timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=name_starts_with,

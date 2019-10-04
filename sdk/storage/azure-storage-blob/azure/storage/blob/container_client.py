@@ -883,11 +883,8 @@ class ContainerClient(StorageAccountHostsMixin):
         blob.upload_blob(
             data,
             blob_type=blob_type,
-            overwrite=kwargs.pop('overwrite', False),
             length=length,
             metadata=metadata,
-            content_settings=kwargs.pop('content_settings', None),
-            validate_content=kwargs.pop('validate_content', False),
             lease=lease,
             timeout=timeout,
             max_concurrency=max_concurrency,

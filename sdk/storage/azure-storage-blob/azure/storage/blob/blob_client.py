@@ -392,6 +392,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
         validate_content = kwargs.pop('validate_content', False)
+        content_settings = kwargs.pop('content_settings', None)
+        overwrite = kwargs.pop('overwrite', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -544,10 +546,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._upload_blob_options(
             data,
             blob_type=blob_type,
-            overwrite=kwargs.pop('overwrite', False),
             length=length,
             metadata=metadata,
-            content_settings=kwargs.pop('content_settings', None),
             max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
