@@ -68,8 +68,7 @@ try:
     bank_certificate = client.create_certificate(name=bank_cert_name, tags=tags).result()
     print(
         "Certificate with name '{0}' was created again with tags '{1}'".format(
-            bank_certificate.name,
-            bank_certificate.tags
+            bank_certificate.name, bank_certificate.tags
         )
     )
 
@@ -78,10 +77,11 @@ try:
     print("\n.. List versions of the certificate using its name")
     certificate_versions = client.list_certificate_versions(bank_cert_name)
     for certificate_version in certificate_versions:
-        print("Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
-            certificate_version.name,
-            certificate_version.version,
-            certificate_version.tags))
+        print(
+            "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
+                certificate_version.name, certificate_version.version, certificate_version.tags
+            )
+        )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
     client.delete_certificate(name=bank_cert_name)
@@ -91,9 +91,11 @@ try:
     print("\n.. List deleted certificates from the Key Vault")
     deleted_certificates = client.list_deleted_certificates()
     for deleted_certificate in deleted_certificates:
-        print("Certificate with name '{0}' has recovery id '{1}'".format(
-                deleted_certificate.name,
-                deleted_certificate.recovery_id))
+        print(
+            "Certificate with name '{0}' has recovery id '{1}'".format(
+                deleted_certificate.name, deleted_certificate.recovery_id
+            )
+        )
 
 except HttpResponseError as e:
     if "(NotSupported)" in e.message:
