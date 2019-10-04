@@ -17,5 +17,5 @@ if not identifier:
     seed_filename = os.path.abspath(os.path.join(dirname, "tests", "seed.txt"))
 
     # definitely not running in pipeline
-    with open(seed_filename, 'r') as f:
-        os.environ['RUN_IDENTIFIER'] = f.read()
+    with open(seed_filename, "r") as f:
+        os.environ["RUN_IDENTIFIER"] = f.read()

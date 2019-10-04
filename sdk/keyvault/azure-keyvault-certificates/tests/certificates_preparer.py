@@ -42,7 +42,7 @@ DEFAULT_PERMISSIONS = Permissions(
     storage=[perm.value for perm in StoragePermissions],
 )
 DEFAULT_SKU = SkuName.premium.value
-CLIENT_OID = '00000000-0000-0000-0000-000000000000'
+CLIENT_OID = "00000000-0000-0000-0000-000000000000"
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
@@ -63,7 +63,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         client_kwargs=None,
     ):
         # incorporate md5 hashing of run identifier into key vault name for uniqueness
-        name_prefix += hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+        name_prefix += hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-10:]
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,
@@ -96,19 +96,19 @@ class VaultClientPreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
-        self.client_oid = self.test_class_instance.set_value_to_scrub('CLIENT_OID', CLIENT_OID)
+        self.client_oid = self.test_class_instance.set_value_to_scrub("CLIENT_OID", CLIENT_OID)
         if self.is_live:
             # create a vault with the management client
             group = self._get_resource_group(**kwargs).name
             access_policies = [
                 AccessPolicyEntry(
-                    tenant_id=self.test_class_instance.get_settings_value('TENANT_ID'),
+                    tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
                     object_id=self.client_oid,
                     permissions=self.permissions,
                 )
             ]
             properties = VaultProperties(
-                tenant_id=self.test_class_instance.get_settings_value('TENANT_ID'),
+                tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
                 sku=Sku(name=self.sku),
                 access_policies=access_policies,
                 vault_uri=None,

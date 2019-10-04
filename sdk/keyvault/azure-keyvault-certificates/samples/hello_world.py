@@ -48,16 +48,14 @@ try:
 
     # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
     # our certificate creation method
-    cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                 key_type='RSA',
-                                                                 key_size=2048,
-                                                                 reuse_key=False),
-                                    content_type=SecretContentType.PKCS12,
-                                    issuer_name='Self',
-                                    subject_name='CN=*.microsoft.com',
-                                    validity_in_months=24,
-                                    san_dns_names=['sdk.azure-int.net']
-                                    )
+    cert_policy = CertificatePolicy(
+        key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
+        content_type=SecretContentType.PKCS12,
+        issuer_name="Self",
+        subject_name="CN=*.microsoft.com",
+        validity_in_months=24,
+        san_dns_names=["sdk.azure-int.net"],
+    )
     cert_name = "HelloWorldCertificate"
 
     # create_certificate returns a poller. Calling result() on the poller will return the certificate
@@ -75,13 +73,15 @@ try:
     print("\n.. Update a Certificate by name")
     tags = {"a": "b"}
     updated_certificate = client.update_certificate_properties(name=bank_certificate.name, tags=tags)
-    print("Certificate with name '{0}' was updated on date '{1}'".format(
-        bank_certificate.name,
-        updated_certificate.properties.updated)
+    print(
+        "Certificate with name '{0}' was updated on date '{1}'".format(
+            bank_certificate.name, updated_certificate.properties.updated
+        )
     )
-    print("Certificate with name '{0}' was updated with tags '{1}'".format(
-        bank_certificate.name,
-        updated_certificate.properties.tags)
+    print(
+        "Certificate with name '{0}' was updated with tags '{1}'".format(
+            bank_certificate.name, updated_certificate.properties.tags
+        )
     )
 
     # The bank account was closed, need to delete its credentials from the Key Vault.

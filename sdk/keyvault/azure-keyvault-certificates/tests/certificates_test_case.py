@@ -18,8 +18,8 @@ class KeyVaultTestCase(AzureMgmtTestCase):
         if self.is_live:
             dirname = os.path.dirname(__file__)
             seed_filename = os.path.join(dirname, "seed.txt")
-            with open(seed_filename, 'w') as f:
-                f.write(os.environ['RUN_IDENTIFIER'])
+            with open(seed_filename, "w") as f:
+                f.write(os.environ["RUN_IDENTIFIER"])
 
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
