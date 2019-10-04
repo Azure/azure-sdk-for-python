@@ -1843,7 +1843,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
         :param int source_length:
-            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+            This indicates the end of the range of bytes that has to be taken from the copy source.
         :param bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :param int maxsize_condition:

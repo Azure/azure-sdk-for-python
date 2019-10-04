@@ -1782,6 +1782,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
+        elif source_length is not None:
+            source_length = source_offset + source_length - 1
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         range_header = None
@@ -2493,14 +2495,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # TODO: extract the code to a method format_range
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 511:
+        if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
         if source_offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
 
         # Format range
-        destination_range = 'bytes={0}-{1}'.format(offset, length)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset+(length-offset))
+        end_range = offset + length - 1
+        destination_range = 'bytes={0}-{1}'.format(offset, end_range)
+        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)  # should subtract 1 here?
 
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -2917,7 +2920,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # Format based on whether length is present
         source_range = None
         if source_length is not None:
-            source_range = 'bytes={0}-{1}'.format(source_offset, source_length)
+            end_range = source_offset + source_length - 1
+            source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
         elif source_offset is not None:
             source_range = "bytes={0}-".format(source_offset)
 
@@ -2981,7 +2985,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
         :param int source_length:
-            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+            This indicates the end of the range of bytes that has to be taken from the copy source.
         :param bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :param int maxsize_condition:
