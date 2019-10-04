@@ -335,7 +335,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace_async
     async def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -372,6 +371,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
         timeout = kwargs.pop('timeout', None)
