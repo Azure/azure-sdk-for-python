@@ -628,7 +628,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Assert
         with self.assertRaises(ValueError) as e:
-            blob.upload_page(urandom(512), 0, 511, blob_type=BlobType.PageBlob)
+            blob.upload_page(urandom(512), offset=0, length=512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         with self.assertRaises(ValueError) as e:

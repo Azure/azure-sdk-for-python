@@ -167,7 +167,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act        
         data = self.get_random_bytes(512)
-        blob.upload_page(data, 0, 511, lease=lease)
+        blob.upload_page(data, offset=0, length=512, lease=lease)
 
         # Assert
         content = blob.download_blob(lease=lease)
@@ -180,7 +180,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        resp = blob.upload_page(data, 0, 511)
+        resp = blob.upload_page(data, offset=0, length=512)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
