@@ -5,6 +5,4 @@
 
 from .client import CertificateClient
 
-__all__ = [
-    "CertificateClient"
-]
+__all__ = ["CertificateClient"]

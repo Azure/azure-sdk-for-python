@@ -59,9 +59,10 @@ async def run_sample():
         # To ensure certificate is deleted on the server side.
         await asyncio.sleep(30)
 
-        print("Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name,
-            deleted_bank_certificate.deleted_date)
+        print(
+            "Certificate with name '{0}' was deleted on date {1}.".format(
+                deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
+            )
         )
 
         # We accidentally deleted the bank account certificate. Let's recover it.
