@@ -344,9 +344,9 @@ class CosmosClient(object):
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, str] feed_options: Dictionary of additional properties to be used for the request.
+        :param dict(str, str) feed_options: Dictionary of additional properties to be used for the request.
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
