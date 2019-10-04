@@ -212,7 +212,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @record
-    def test_put_block_from_url_and_commit(self):
+    def test_put_block_from_url_and_commit_with_cpk(self):
         # Arrange
         # create source blob and get source blob url
         source_blob_name = self.get_resource_name("sourceblob")

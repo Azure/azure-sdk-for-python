@@ -442,7 +442,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob_content = blob.download_blob(offset=0, length=50).content_as_bytes(max_concurrency=1)
 
         # Assert
-        self.assertEqual(content[:51], blob_content)
+        self.assertEqual(content[:50], blob_content)
 
     @record
     def test_get_blob_range_middle_to_end(self):
@@ -524,7 +524,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob_content = blob.download_blob(offset=22, length=20).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[22:43], blob_content)
+        self.assertEqual(content[22:42], blob_content)
 
     @record
     def test_put_blob_strict_mode(self):

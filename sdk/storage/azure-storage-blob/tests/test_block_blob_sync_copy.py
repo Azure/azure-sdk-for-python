@@ -81,7 +81,7 @@ class StorageBlockBlobTest(StorageTestCase):
             block_id=1,
             source_url=self.source_blob_url,
             source_offset=0,
-            source_length=split - 1)
+            source_length=split)
         dest_blob.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url,
@@ -98,6 +98,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert destination blob has right content
         content = dest_blob.download_blob().content_as_bytes()
+        self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
 
     @record
