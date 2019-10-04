@@ -59,7 +59,7 @@ class StorageLoggingTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_source = BlobClient(source_blob.url, credential=sas_token)
+        sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
 
     def tearDown(self):
@@ -98,7 +98,7 @@ class StorageLoggingTest(StorageTestCase):
         token_components = parse_qs(token)
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
-        sas_service = ContainerClient(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         with LogCaptured(self) as log_captured:

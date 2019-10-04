@@ -64,14 +64,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str blob_url: The full URI to the blob. This can also be a URL to the storage account
-        or container, in which case the blob and/or container must also be specified.
-    :param container: The container for the blob. If specified, this value will override
-        a container value specified in the blob URL.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
-    :param blob: The blob with which to interact. If specified, this value will override
-        a blob value specified in the blob URL.
-    :type blob: str or ~azure.storage.blob.models.BlobProperties
+    :param str account_url: The full URI to the account.
+    :param container_name: The container for the blob.
+    :type container_name: str
+    :param blob_name: The mame of the blob with which to interact.
+    :type blob_name: str
     :param str snapshot:
         The optional blob snapshot on which to operate.
     :param credential:
@@ -97,9 +94,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, blob_url,  # type: str
-            container=None,  # type: Optional[Union[str, ContainerProperties]]
-            blob=None,  # type: Optional[Union[str, BlobProperties]]
+            self, account_url,  # type: str
+            container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             loop=None,  # type: Any
@@ -108,9 +105,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(BlobClient, self).__init__(
-            blob_url,
-            container=container,
-            blob=blob,
+            account_url,
+            container_name=container_name,
+            blob_name=blob_name,
             snapshot=snapshot,
             credential=credential,
             loop=loop,

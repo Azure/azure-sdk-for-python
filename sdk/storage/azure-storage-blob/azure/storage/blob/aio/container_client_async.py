@@ -76,9 +76,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     :param str container_url:
         The full URI to the container. This can also be a URL to the storage
         account, in which case the blob container must also be specified.
-    :param container:
-        The container for the blob.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
+    :param container_name:
+        The name of the container for the blob.
+    :type container_name: str or ~azure.storage.blob.ContainerProperties
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -102,8 +102,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, container_url,  # type: str
-            container=None,  # type: Optional[Union[ContainerProperties, str]]
+            self, account_url,  # type: str
+            container_name=None,  # type: str
             credential=None,  # type: Optional[Any]
             loop=None,  # type: Any
             **kwargs  # type: Any
@@ -111,8 +111,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(ContainerClient, self).__init__(
-            container_url,
-            container=container,
+            account_url,
+            container_name=container_name,
             credential=credential,
             loop=loop,
             **kwargs)
@@ -985,7 +985,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         return await self._batch_send(*reqs, **kwargs)
 
     def get_blob_client(
-            self, blob,  # type: Union[str, BlobProperties]
+            self, blob,  # type: Union[BlobProperties, str]
             snapshot=None  # type: str
         ):
         # type: (...) -> BlobClient
@@ -994,9 +994,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         The blob need not already exist.
 
         :param blob:
-            The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+            The blob with which to interact.
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
@@ -1011,8 +1010,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        try:
+            blob_name = blob.name
+        except AttributeError:
+            blob_name = blob
+
         return BlobClient(
-            self.url, container=self.container_name, blob=blob, snapshot=snapshot,
+            self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

@@ -120,7 +120,7 @@ def upload_blob_to_url(
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         return client.upload_blob(
             data=data,
             blob_type=BlobType.BlockBlob,
@@ -164,7 +164,7 @@ def download_blob_from_url(
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :rtype: None
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
             _download_to_stream(client, output, max_concurrency, **kwargs)
         else:

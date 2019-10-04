@@ -168,8 +168,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -1462,7 +1462,7 @@ class StorageContainerTestAsync(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)

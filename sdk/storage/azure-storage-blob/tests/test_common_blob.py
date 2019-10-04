@@ -474,7 +474,6 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_list_blobs_server_encryption(self):
         #Arrange
         self._create_block_blob()
-        self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs()
 
@@ -949,7 +948,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
         target_blob_name = 'targetblob'
@@ -1169,7 +1168,7 @@ class StorageCommonBlobTest(StorageTestCase):
             container = self.bsc.create_container(container_name, public_access='blob')
         except ResourceExistsError:
             container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data)
+        blob = container.upload_blob(blob_name, data, overwrite=True)
 
         # Act
         response = requests.get(blob.url)
@@ -1188,10 +1187,10 @@ class StorageCommonBlobTest(StorageTestCase):
             container = self.bsc.create_container(container_name, public_access='blob')
         except ResourceExistsError:
             container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data)
+        blob = container.upload_blob(blob_name, data, overwrite=True)
 
         # Act
-        service = BlobClient(blob.url)
+        service = BlobClient.from_blob_url(blob.url)
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().content_as_bytes()
 
@@ -1214,7 +1213,7 @@ class StorageCommonBlobTest(StorageTestCase):
         )
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().content_as_bytes()
 
@@ -1237,7 +1236,7 @@ class StorageCommonBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        service = BlobClient(blob_snapshot_client.url, credential=token)
+        service = BlobClient.from_blob_url(blob_snapshot_client.url, credential=token)
 
         # Act
         snapshot_content = service.download_blob().content_as_bytes()
@@ -1274,7 +1273,7 @@ class StorageCommonBlobTest(StorageTestCase):
         token = blob.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
         result = service.download_blob().content_as_bytes()
 
@@ -1298,9 +1297,9 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = BlobClient(
-            self.bsc.url, container=self.container_name, blob=blob_name, credential=token)
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
         container = ContainerClient(
-            self.bsc.url, container=self.container_name, credential=token)
+            self.bsc.url, container_name=self.container_name, credential=token)
         container.get_container_properties()
         blob_response = requests.get(blob.url)
         container_response = requests.get(container.url, params={'restype':'container'})
@@ -1366,7 +1365,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         # Use the generated identity sas
-        new_blob_client = BlobClient(blob_client.url, credential=token)
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
         content = new_blob_client.download_blob()
 
         # Assert
@@ -1409,7 +1408,7 @@ class StorageCommonBlobTest(StorageTestCase):
         )
 
         # Act
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
         response = requests.get(sas_blob.url)
 
         # Assert
@@ -1436,7 +1435,7 @@ class StorageCommonBlobTest(StorageTestCase):
             content_language='fr',
             content_type='text',
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(sas_blob.url)
@@ -1465,7 +1464,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
@@ -1491,7 +1490,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.delete(sas_blob.url)
@@ -1545,7 +1544,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_container = ContainerClient(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         info = sas_container.get_account_information()
@@ -1568,7 +1567,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         info = sas_blob.get_account_information()
@@ -1589,7 +1588,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
 
         # Act
@@ -1703,7 +1702,7 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         uploaded = upload_blob_to_url(sas_blob.url, data)
