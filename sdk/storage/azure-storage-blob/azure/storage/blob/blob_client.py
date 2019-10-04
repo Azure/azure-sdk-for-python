@@ -160,6 +160,22 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        """Create BlobClient from a blob url.
+
+        :param str blob_url:
+            The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type blob_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :param str snapshot:
+            The optional blob snapshot on which to operate. If specified, this will override the snapshot
+            in the url.
+        """
         try:
             if not blob_url.lower().startswith('http'):
                 blob_url = "https://" + blob_url

@@ -132,6 +132,19 @@ class ContainerClient(StorageAccountHostsMixin):
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> ContainerClient
+        """Create ContainerClient from a container url.
+
+        :param str container_url:
+            The full endpoint URL to the Container, including SAS token if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type container_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        """
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
