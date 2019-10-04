@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .availability_group_listeners_operations import AvailabilityGroupListenersOperations
-from .operations import Operations
-from .sql_virtual_machine_groups_operations import SqlVirtualMachineGroupsOperations
-from .sql_virtual_machines_operations import SqlVirtualMachinesOperations
+from ._availability_group_listeners_operations import AvailabilityGroupListenersOperations
+from ._operations import Operations
+from ._sql_virtual_machine_groups_operations import SqlVirtualMachineGroupsOperations
+from ._sql_virtual_machines_operations import SqlVirtualMachinesOperations
 
 __all__ = [
     'AvailabilityGroupListenersOperations',
