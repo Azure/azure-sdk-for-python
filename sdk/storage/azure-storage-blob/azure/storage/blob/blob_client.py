@@ -2351,15 +2351,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if length is None:
-            length = get_length(page)
-            if length is None:
-                raise ValueError("Please specifiy content length.")
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 511:
+        if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(offset, length) # type: ignore
+        end_range = offset + length - 1
+        content_range = 'bytes={0}-{1}'.format(offset, end_range) # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
