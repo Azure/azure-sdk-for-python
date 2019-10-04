@@ -290,7 +290,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.BlobSasPermissions
+        :type permission: str or ~azure.storage.blob.BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -298,14 +298,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
@@ -335,7 +335,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key.
@@ -491,7 +491,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
+        :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -505,7 +505,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -516,17 +516,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.LeaseClient lease:
             If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID.
             Required if the blob has an active lease.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -541,11 +541,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
         :param int maxsize_condition:
@@ -557,7 +557,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -659,14 +659,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             If specified, download_blob only succeeds if the blob's lease is active
             and matches this ID. Required if the blob has an active lease.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -681,7 +681,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -763,14 +763,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -839,14 +839,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -861,15 +861,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: BlobProperties
-        :rtype: ~azure.storage.blob.models.BlobProperties
+        :rtype: ~azure.storage.blob.BlobProperties
 
         .. admonition:: Example:
 
@@ -943,19 +942,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         If one property is set for the content_settings, all properties will be overriden.
 
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1022,14 +1021,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1044,7 +1043,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1132,7 +1131,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             This header specifies the maximum size
             for the page blob, up to 1 TB. The page blob size must be aligned
             to a 512-byte boundary.
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
         :param int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
@@ -1144,14 +1143,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1166,14 +1165,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -1240,7 +1239,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
 
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
@@ -1248,14 +1247,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1270,7 +1269,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1334,13 +1333,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1358,8 +1357,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1479,13 +1478,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             pairs are specified, the destination blob is created with the specified
             metadata, and metadata is not copied from the source blob or file.
         :type metadata: dict(str, str)
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source
             blob has been modified since the specified date/time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1503,7 +1502,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             specified. If the values are identical, the Blob service returns status
             code 412 (Precondition Failed). This header cannot be specified if the
             source is an Azure File.
-        :param datetime destination_if_modified_since:
+        :param ~datetime.datetime destination_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1511,7 +1510,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has been modified since the specified date/time.
             If the destination blob has not been modified, the Blob service returns
             status code 412 (Precondition Failed).
-        :param datetime destination_if_unmodified_since:
+        :param ~datetime.datetime destination_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1536,11 +1535,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
-        :type destination_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type destination_lease: ~azure.storage.blob.LeaseClient or str
         :param source_lease:
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
-        :type source_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type source_lease: ~azure.storage.blob.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param bool incremental_copy:
@@ -1549,19 +1548,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param :class:`~azure.storage.blob.models.RehydratePriority` rehydrate_priority:
+        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -1612,7 +1611,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of BlobProperties.
-        :type copy_id: str or ~azure.storage.blob.models.BlobProperties
+        :type copy_id: str or ~azure.storage.blob.BlobProperties
         :rtype: None
 
         .. admonition:: Example:
@@ -1647,13 +1646,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Proposed lease ID, in a GUID string format. The Blob Service
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1671,7 +1670,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.LeaseClient
 
         .. admonition:: Example:
 
@@ -1701,15 +1700,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
-        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
-        :param :class:`~azure.storage.blob._generated.models.RehydratePriority` rehydrate_priority:
+        :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1795,10 +1794,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1884,8 +1883,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1929,11 +1928,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
-        :rtype: tuple(list(~azure.storage.blob.models.BlobBlock), list(~azure.storage.blob.models.BlobBlock))
+        :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
@@ -2028,8 +2027,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
@@ -2041,13 +2040,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2062,10 +2061,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2095,7 +2094,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
+        :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -2103,7 +2102,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2181,18 +2180,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str previous_snapshot_diff:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2255,7 +2254,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str sequence_number_action:
             This property indicates how the service should modify the blob's sequence
-            number. See :class:`~azure.storage.blob.models.SequenceNumberAction` for more information.
+            number. See :class:`~azure.storage.blob.SequenceNumberAction` for more information.
         :param str sequence_number:
             This property sets the blob's sequence number. The sequence number is a
             user-controlled property that you can use to track requests and manage
@@ -2263,14 +2262,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2338,14 +2337,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2360,7 +2359,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -2461,7 +2460,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -2478,13 +2477,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2499,7 +2498,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2618,13 +2617,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The service will read the same number of bytes as the destination range (end_range-start_range).
         :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2650,13 +2649,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2671,7 +2670,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2753,7 +2752,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -2763,13 +2762,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2784,7 +2783,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2895,14 +2894,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2919,7 +2918,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -3041,16 +3040,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is not, the request will fail with the
             AppendPositionConditionNotMet error
             (HTTP status code 412 - Precondition Failed).
-        :param ~azure.storage.blob.lease.LeaseClient or str lease:
+        :param ~azure.storage.blob.LeaseClient or str lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -3065,13 +3064,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -3086,7 +3085,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the source resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,

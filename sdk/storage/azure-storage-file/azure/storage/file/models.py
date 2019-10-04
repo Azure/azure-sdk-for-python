@@ -37,7 +37,7 @@ class Metrics(GeneratedMetrics):
         statistics for called API operations.
     :ivar retention_policy: Required. Determines how long the associated data should
         persist.
-    :vartype retention_policy: ~azure.storage.file.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.file.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -138,14 +138,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
         self.start = start
@@ -252,7 +252,7 @@ class SharePropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.models.ShareProperties)
+    :vartype current_page: list(~azure.storage.file.ShareProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only shares whose names
@@ -319,9 +319,9 @@ class Handle(DictMixin):
     :type client_ip: str
     :param open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
-    :type open_time: datetime
+    :type open_time: ~datetime.datetime
     :param last_reconnect_time: Time handle was last connected to (UTC)
-    :type last_reconnect_time: datetime
+    :type last_reconnect_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):
@@ -357,7 +357,7 @@ class HandlesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.models.Handle)
+    :vartype current_page: list(~azure.storage.file.Handle)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
@@ -523,10 +523,10 @@ class FileProperties(DictMixin):
         Whether encryption is enabled.
     :ivar copy:
         The copy properties.
-    :vartype copy: ~azure.storage.file.models.CopyProperties
+    :vartype copy: ~azure.storage.file.CopyProperties
     :ivar content_settings:
         The content settings for the file.
-    :vartype content_settings: ~azure.storage.file.models.ContentSettings
+    :vartype content_settings: ~azure.storage.file.ContentSettings
     """
 
     def __init__(self, **kwargs):

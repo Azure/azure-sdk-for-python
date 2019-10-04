@@ -130,16 +130,16 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for files.
-        :type hour_metrics: ~azure.storage.file.models.Metrics
+        :type hour_metrics: ~azure.storage.file.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for files.
-        :type minute_metrics: ~azure.storage.file.models.Metrics
+        :type minute_metrics: ~azure.storage.file.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.file.models.CorsRule`)
+        :type cors: list(:class:`~azure.storage.file.CorsRule`)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -185,7 +185,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.ShareProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.ShareProperties]
 
         .. admonition:: Example:
 
@@ -233,7 +233,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             Quota in bytes.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.aio.share_client_async.ShareClient
+        :rtype: ~azure.storage.file.aio.ShareClient
 
         .. admonition:: Example:
 
@@ -263,7 +263,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :param share_name:
             The share to delete. This can either be the name of the share,
             or an instance of ShareProperties.
-        :type share_name: str or ~azure.storage.file.models.ShareProperties
+        :type share_name: str or ~azure.storage.file.ShareProperties
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
         :param int timeout:
@@ -292,11 +292,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :param share:
             The share. This can either be the name of the share,
             or an instance of ShareProperties.
-        :type share: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.ShareProperties
         :param str snapshot:
             An optional share snapshot on which to operate.
         :returns: A ShareClient.
-        :rtype: ~azure.storage.file.aio.share_client_async.ShareClient
+        :rtype: ~azure.storage.file.aio.ShareClient
 
         .. admonition:: Example:
 

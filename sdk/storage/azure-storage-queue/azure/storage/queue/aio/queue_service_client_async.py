@@ -181,20 +181,20 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.queue.models.Logging
+        :type logging: ~azure.storage.queue.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
-        :type hour_metrics: ~azure.storage.queue.models.Metrics
+        :type hour_metrics: ~azure.storage.queue.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for queues.
-        :type minute_metrics: ~azure.storage.queue.models.Metrics
+        :type minute_metrics: ~azure.storage.queue.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.queue.models.CorsRule`)
+        :type cors: list(~azure.storage.queue.CorsRule)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -288,7 +288,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:
 
@@ -325,7 +325,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :param queue:
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -352,9 +352,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :param queue:
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:
 

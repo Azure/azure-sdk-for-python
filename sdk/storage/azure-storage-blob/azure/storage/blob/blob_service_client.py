@@ -172,14 +172,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         :param resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :type resource_types: str or ~azure.storage.blob.models.ResourceTypes
+        :type resource_types: str or ~azure.storage.blob.ResourceTypes
         :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.AccountSasPermissions
+        :type permission: str or ~azure.storage.blob.AccountSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -187,14 +187,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
@@ -240,14 +240,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
 
-        :param datetime key_start_time:
+        :param ~datetime.datetime key_start_time:
             A DateTime value. Indicates when the key becomes valid.
-        :param datetime key_expiry_time:
+        :param ~datetime.datetime key_expiry_time:
             A DateTime value. Indicates when the key stops being valid.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The user delegation key.
-        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        :rtype: ~azure.storage.blob.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
         try:
@@ -370,36 +370,31 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging:
-            :class:`~azure.storage.blob.models.Logging`
+        :type logging: ~azure.storage.blob.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for blobs.
-        :type hour_metrics:
-            :class:`~azure.storage.blob.models.Metrics`
+        :type hour_metrics: ~azure.storage.blob.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for blobs.
-        :type minute_metrics:
-            :class:`~azure.storage.blob.models.Metrics`
+        :type minute_metrics: ~azure.storage.blob.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.blob.models.CorsRule`)
+        :type cors: list[~azure.storage.blob.CorsRule]
         :param str target_version:
             Indicates the default version to use for requests if an incoming
             request's version is not specified.
         :param delete_retention_policy:
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
-        :type delete_retention_policy:
-            :class:`~azure.storage.blob.models.RetentionPolicy`
+        :type delete_retention_policy: ~azure.storage.blob.RetentionPolicy
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
-        :type static_website:
-            :class:`~azure.storage.blob.models.StaticWebsite`
+        :type static_website: ~azure.storage.blob.StaticWebsite
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -453,7 +448,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.core.blob.models.ContainerProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.ContainerProperties]
 
         .. admonition:: Example:
 
@@ -500,10 +495,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param public_access:
             Possible values include: container, blob.
-        :type public_access: str or ~azure.storage.blob.models.PublicAccess
+        :type public_access: str or ~azure.storage.blob.PublicAccess
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob.container_client.ContainerClient
+        :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
 
@@ -536,18 +531,18 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :type container: str or ~azure.storage.blob.ContainerProperties
+        :param ~azure.storage.blob.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -589,10 +584,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
         The container need not already exist.
 
         :param container:
-            The container that the blob is in.
-        :type container: Union[ContainerProperties, str]
+            The container. This can either be the name of the container,
+            or an instance of ContainerProperties.
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
-        :rtype: ~azure.core.blob.container_client.ContainerClient
+        :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
 
@@ -626,17 +622,19 @@ class BlobServiceClient(StorageAccountHostsMixin):
         The blob need not already exist.
 
         :param container:
-            The container that the blob is in.
+            The container that the blob is in. This can either be the name of the container,
+            or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
         :param blob:
-            The blob with which to interact.
+            The blob with which to interact. This can either be the name of the blob,
+            or an instance of BlobProperties.
         :type blob: str or ~azure.storage.blob.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
-            or a dictionary output returned by :func:`~azure.storage.blob.blob_client.BlobClient.create_snapshot()`.
+            or a dictionary output returned by :func:`~azure.storage.blob.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 

@@ -46,14 +46,14 @@ class LeaseClient(object):
     :ivar str etag:
         The ETag of the lease currently being maintained. This will be `None` if no
         lease has yet been acquired or modified.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         The last modified timestamp of the lease currently being maintained.
         This will be `None` if no lease has yet been acquired or modified.
 
     :param client:
         The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.blob_client.BlobClient or
-        ~azure.storage.blob.container_client.ContainerClient
+    :type client: ~azure.storage.blob.BlobClient or
+        ~azure.storage.blob.ContainerClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
@@ -92,13 +92,13 @@ class LeaseClient(object):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -147,13 +147,13 @@ class LeaseClient(object):
         or blob has not been leased again since the expiration of that lease. When you
         renew a lease, the lease duration clock resets.
 
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -198,13 +198,13 @@ class LeaseClient(object):
         Releasing the lease allows another client to immediately acquire the lease
         for the container or blob as soon as the release is completed.
 
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -249,13 +249,13 @@ class LeaseClient(object):
         :param str proposed_lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -315,13 +315,13 @@ class LeaseClient(object):
             period. If this header does not appear with a break
             operation, a fixed-duration lease breaks after the remaining lease
             period elapses, and an infinite lease breaks immediately.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.

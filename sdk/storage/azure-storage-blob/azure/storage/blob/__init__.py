@@ -18,7 +18,11 @@ from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode
+    StorageErrorCode,
+    UserDelegationKey
+)
+from ._generated.models import (
+    RehydratePriority
 )
 from .models import (
     BlobType,
@@ -45,6 +49,7 @@ from .models import (
     AccessPolicy,
     ContainerSasPermissions,
     BlobSasPermissions,
+    CustomerProvidedEncryptionKey,
 )
 
 __version__ = VERSION
@@ -57,6 +62,7 @@ __all__ = [
     'BlobType',
     'LeaseClient',
     'StorageErrorCode',
+    'UserDelegationKey',
     'ExponentialRetry',
     'LinearRetry',
     'NoRetry',
@@ -87,6 +93,8 @@ __all__ = [
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageStreamDownloader',
+    'CustomerProvidedEncryptionKey',
+    'RehydratePriority'
 ]
 
 

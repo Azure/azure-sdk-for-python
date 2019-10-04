@@ -29,7 +29,7 @@ class Logging(GeneratedLogging):
     :ivar bool write: Required. Indicates whether all write requests should be logged.
     :ivar retention_policy: Required.
         The retention policy for the metrics.
-    :vartype retention_policy: ~azure.storage.queue.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -51,7 +51,7 @@ class Metrics(GeneratedMetrics):
         statistics for called API operations.
     :ivar retention_policy: Required.
         The retention policy for the metrics.
-    :vartype retention_policy: ~azure.storage.queue.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -223,7 +223,7 @@ class MessagesPaged(PageIterator):
 
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.models.QueueMessage)
+    :vartype current_page: list(~azure.storage.queue.QueueMessage)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
@@ -289,7 +289,7 @@ class QueuePropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.models.QueueProperties)
+    :vartype current_page: list(~azure.storage.queue.QueueProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names

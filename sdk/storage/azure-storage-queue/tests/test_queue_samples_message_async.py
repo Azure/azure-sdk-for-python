@@ -245,7 +245,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                     message,
                     visibility_timeout=0,
                     content=u"updated")
-            # [END update_message]
+            # [END async_update_message]
                 assert message.content == "updated"
                 break
 

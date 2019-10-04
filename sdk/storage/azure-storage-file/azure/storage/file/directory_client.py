@@ -67,7 +67,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         or share, in which case the directory and/or share must also be specified.
     :param share: The share for the directory. If specified, this value will override
         a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -157,7 +157,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param share: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.ShareProperties
         :param str directory_path:
             The directory path.
         :param credential:
@@ -180,7 +180,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param file_name:
             The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -287,7 +287,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.DirectoryProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.DirectoryProperties]
 
         .. admonition:: Example:
 
@@ -318,8 +318,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.Handles]
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -348,7 +348,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
-        :type handle: str or ~azure.storage.file.models.Handle
+        :type handle: str or ~azure.storage.file.Handle
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
@@ -390,8 +390,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DirectoryProperties
-        :rtype: ~azure.storage.file.models.DirectoryProperties
+        :rtype: ~azure.storage.file.DirectoryProperties
         """
         try:
             response = self._client.directory.get_properties(
@@ -447,7 +446,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -568,7 +567,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -584,7 +583,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: FileClient
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
 
         .. admonition:: Example:
 
