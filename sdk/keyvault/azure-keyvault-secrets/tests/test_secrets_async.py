@@ -14,6 +14,10 @@ from dateutil import parser as date_parse
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+
     def _assert_secret_attributes_equal(self, s1, s2):
         # self.assertEqual(s1.id , s2.id)
         self.assertEqual(s1.content_type, s2.content_type)
@@ -45,7 +49,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
@@ -107,7 +111,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         await self._poll_until_exception(client.get_secret, updated.name, expected_exception=ResourceNotFoundError)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_list(self, vault_client, **kwargs):
@@ -130,7 +134,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         result = client.list_secrets(max_results=max_secrets)
         await self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
@@ -162,7 +166,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # validate all the deleted secrets are returned by list_deleted_secrets
         await self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
@@ -192,7 +196,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
@@ -218,7 +222,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         result = client.list_deleted_secrets()
         await self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -242,7 +246,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle, restored)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -277,7 +281,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
         )
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):
