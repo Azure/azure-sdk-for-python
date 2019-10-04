@@ -26,9 +26,8 @@
 
 import logging
 from .pipeline import AsyncPipeline
-from .pipeline.transport.base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy
-from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from .pipeline.transport._base import PipelineClientBase
+from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy
 
 try:
     from typing import TYPE_CHECKING

@@ -44,7 +44,7 @@ from azure.core.exceptions import (
 )
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from .base import SansIOHTTPPolicy
+from ._base import SansIOHTTPPolicy
 
 
 _LOGGER = logging.getLogger(__name__)

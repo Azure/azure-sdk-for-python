@@ -27,7 +27,7 @@
 import pytest
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline_client_async import AsyncPipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import UserAgentPolicy, AsyncRedirectPolicy
 from azure.core.pipeline.transport import HttpRequest
 

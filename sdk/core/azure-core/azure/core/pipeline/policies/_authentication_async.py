@@ -7,7 +7,7 @@ import threading
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.policies.authentication import _BearerTokenCredentialPolicyBase
+from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
 
 class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPolicy):

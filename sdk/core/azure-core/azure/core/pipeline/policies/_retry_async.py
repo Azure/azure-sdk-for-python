@@ -31,9 +31,9 @@ import logging
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
-from .base import HTTPPolicy
-from .base_async import AsyncHTTPPolicy
-from .retry import RetryPolicy
+from ._base import HTTPPolicy
+from ._base_async import AsyncHTTPPolicy
+from ._retry import RetryPolicy
 
 _LOGGER = logging.getLogger(__name__)
 

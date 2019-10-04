@@ -26,10 +26,9 @@
 
 import logging
 from .pipeline import Pipeline
-from .pipeline.transport.base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy
+from .pipeline.transport._base import PipelineClientBase
+from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy
 from .pipeline.transport import RequestsTransport
-from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
 
 try:
     from typing import TYPE_CHECKING

@@ -38,7 +38,7 @@ from azure.core.exceptions import (
 )
 from . import HttpRequest # pylint: disable=unused-import
 
-from .base import (
+from ._base import (
     HttpTransport,
     HttpResponse,
     _HttpResponseBase

@@ -38,8 +38,8 @@ from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
 from azure.core.pipeline import Pipeline
 
-from .base import HttpRequest
-from .base_async import (
+from ._base import HttpRequest
+from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
