@@ -25,11 +25,16 @@ except ImportError:
 
 import six
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
+from azure.core.pipeline.policies import (
+    RedirectPolicy,
+    ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy
+)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .models import LocationMode

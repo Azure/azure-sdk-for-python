@@ -11,11 +11,13 @@ from typing import (  # pylint: disable=unused-import
 import logging
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
-    AsyncRedirectPolicy)
+    AsyncRedirectPolicy,
+    DistributedTracingPolicy
+)
 
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
@@ -29,7 +31,7 @@ from .policies_async import AsyncStorageResponseHook
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
