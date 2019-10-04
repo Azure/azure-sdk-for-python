@@ -770,6 +770,11 @@
     "service_name": "Other",
     "manually_generated": true
   },
+  "azure-core-tracing-opencensus": {
+    "category ": "Client",
+    "service_name": "Other",
+    "manually_generated": true
+  },
   "azure-identity": {
     "category ": "Client",
     "service_name": "Identity",

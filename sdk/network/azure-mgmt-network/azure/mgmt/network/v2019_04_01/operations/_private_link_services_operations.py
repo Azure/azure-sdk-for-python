@@ -243,7 +243,7 @@ class PrivateLinkServicesOperations(object):
         :param service_name: The name of the private link service.
         :type service_name: str
         :param parameters: Parameters supplied to the create or update private
-         link service operation
+         link service operation.
         :type parameters:
          ~azure.mgmt.network.v2019_04_01.models.PrivateLinkService
         :param dict custom_headers: headers that will be added to the request

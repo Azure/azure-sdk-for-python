@@ -11,6 +11,11 @@ through the `properties` property. See the updated [docs]
 for details.
 - `update_key` has been renamed to `update_key_properties`
 
+### Fixes and improvements:
+- The `key` argument to `import_key` should be an instance of `azure.keyvault.keys.JsonWebKey`
+([#7590](https://github.com/Azure/azure-sdk-for-python/pull/7590))
+
+
 ## 4.0.0b3 (2019-09-11)
 ### Breaking changes:
 - `CryptographyClient` methods `wrap` and `unwrap` are renamed `wrap_key` and
