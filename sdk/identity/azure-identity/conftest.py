@@ -8,12 +8,9 @@ import sys
 import pytest
 from azure.identity._constants import EnvironmentVariables
 
-# IMDS tests must be run explicitly
-collect_ignore_glob = ["*imds*"]  # pylint:disable=invalid-name
-
-# Ignore collection of async tests on unsupported platforms
+# Ignore async tests on unsupported platforms
 if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
+    collect_ignore_glob = ["*_async.py"]
 
 
 @pytest.fixture()
@@ -40,7 +37,9 @@ def live_identity_settings():  # pylint:disable=inconsistent-return-statements
 
 
 @pytest.fixture()
-def live_certificate_settings(live_identity_settings):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
+def live_certificate_settings(
+    live_identity_settings
+):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
     """Fixture for live tests needing a certificate.
     Skips them when environment configuration is incomplete.
     """
