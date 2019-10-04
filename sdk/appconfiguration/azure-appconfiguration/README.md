@@ -23,13 +23,7 @@ pip install azure-appconfiguration
 
 To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
 
-You need to install the Azure App Configuration CLI extension first by executing the following command:
-
 After that, create the Configuration Store:
-```Powershell
-az extension add -n appconfig
-```
-
 
 
 ```Powershell
@@ -93,10 +87,9 @@ The following sections provide several code snippets covering some of the most c
     - [Configuration Setting](#configuration-setting)
   - [Examples](#examples)
     - [Create a Configuration Setting](#create-a-configuration-setting)
-    - [Retrieve a Configuration Setting](#retrieve-a-configuration-setting)
-    - [Update a Configuration Setting](#update-a-configuration-setting)
+    - [Get a Configuration Setting](#get-a-configuration-setting)
     - [Delete a Configuration Setting](#delete-a-configuration-setting)
-    - [Query Configuration Settings](#query-configuration-settings)
+    - [List Configuration Settings](#list-configuration-settings)
   - [Async Client](#async-client)
   - [Troubleshooting](#troubleshooting)
     - [Logging](#logging)
@@ -126,26 +119,12 @@ config_setting = ConfigurationSetting(
 returned_config_setting = client.set_configuration_setting(config_setting)
 ```
 
-### Retrieve a Configuration Setting
-Retrieve a previously stored Configuration Setting.
+### Get a Configuration Setting
+Get a previously stored Configuration Setting.
 
 ```python
 fetched_config_setting = client.get_configuration_setting(
     key="MyKey", label="MyLabel"
-)
-```
-
-### Update a Configuration Setting
-Use set_configuration_setting if you want to update a whole Configuration Setting object to the store.
-
-Use update_configuration_setting if you want to only update some attributes and leave other attributes as what they're
-
-```python
-#  key and label are the identifier of the setting. Only value will be updated.
-updated_kv = client.update_configuration_setting(
-    key="MyKey",
-    label="MyLabel",
-    value="my updated value"
 )
 ```
 
@@ -158,7 +137,7 @@ deleted_config_setting = client.delete_configuration_setting(
 )
 ```
 
-### Query Configuration Settings
+### List Configuration Settings
 ```python
 
 filtered_listed = client.list_configuration_settings(

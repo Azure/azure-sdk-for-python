@@ -4,6 +4,7 @@
 # -------------------------------------
 from collections import namedtuple
 from ._shared import parse_vault_id
+from ._shared._generated.v7_0.models import JsonWebKey as _JsonWebKey
 
 try:
     from typing import TYPE_CHECKING
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
     from ._shared._generated.v7_0 import models as _models
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
+
 
 class JsonWebKey(object):
     # pylint:disable=too-many-instance-attributes
@@ -43,28 +45,22 @@ class JsonWebKey(object):
     :param bytes y: Y component of an EC public key.
     """
 
+    FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
+
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        super(JsonWebKey, self).__init__(**kwargs)
-        self.kid = kwargs.get("kid", None)
-        self.kty = kwargs.get("kty", None)
-        self.key_ops = kwargs.get("key_ops", None)
-        self.n = kwargs.get("n", None)
-        self.e = kwargs.get("e", None)
-        self.d = kwargs.get("d", None)
-        self.dp = kwargs.get("dp", None)
-        self.dq = kwargs.get("dq", None)
-        self.qi = kwargs.get("qi", None)
-        self.p = kwargs.get("p", None)
-        self.q = kwargs.get("q", None)
-        self.k = kwargs.get("k", None)
-        self.t = kwargs.get("t", None)
-        self.crv = kwargs.get("crv", None)
-        self.x = kwargs.get("x", None)
-        self.y = kwargs.get("y", None)
+        for field in self.FIELDS:
+            setattr(self, field, kwargs.get(field))
+
+    def _to_generated_model(self):
+        # type: () -> _JsonWebKey
+        jwk = _JsonWebKey()
+        for field in self.FIELDS:
+            setattr(jwk, field, getattr(self, field))
+        return jwk
 
 
-class KeyBase(object):
+class KeyProperties(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
@@ -77,14 +73,14 @@ class KeyBase(object):
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> KeyBase
-        """Construct a KeyBase from an autorest-generated KeyBundle"""
+        # type: (_models.KeyBundle) -> KeyProperties
+        """Construct a KeyProperties from an autorest-generated KeyBundle"""
         return cls(key_bundle.attributes, key_bundle.key.kid, managed=key_bundle.managed, tags=key_bundle.tags)
 
     @classmethod
     def _from_key_item(cls, key_item):
-        # type: (_models.KeyItem) -> KeyBase
-        """Construct a KeyBase from an autorest-generated KeyItem"""
+        # type: (_models.KeyItem) -> KeyProperties
+        """Construct a KeyProperties from an autorest-generated KeyItem"""
         return cls(key_item.attributes, key_item.kid, managed=key_item.managed, tags=key_item.tags)
 
     @property
@@ -181,13 +177,23 @@ class KeyBase(object):
         """
         return self._tags
 
+    @property
+    def managed(self):
+        # type: () -> bool
+        """
+        Returns if the key's lifetime is managed by key vault
 
-class Key(KeyBase):
+        :rtype: bool
+        """
+        return self._managed
+
+
+class Key(object):
     """A key's attributes and cryptographic material"""
 
-    def __init__(self, attributes, vault_id, key_material, **kwargs):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, **Any) -> None
-        super(Key, self).__init__(attributes, vault_id, **kwargs)
+    def __init__(self, properties, key_material):
+        # type: (KeyProperties, _models.JsonWebKey, **Any) -> None
+        self._properties = properties
         self._key_material = key_material
 
     @classmethod
@@ -195,12 +201,27 @@ class Key(KeyBase):
         # type: (_models.KeyBundle) -> Key
         """Construct a Key from an autorest-generated KeyBundle"""
         return cls(
-            attributes=key_bundle.attributes,
-            vault_id=key_bundle.key.kid,
+            properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
             key_material=key_bundle.key,
-            managed=key_bundle.managed,
-            tags=key_bundle.tags,
         )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def properties(self):
+        # type: () -> KeyProperties
+        """The key's properties"""
+        return self._properties
 
     @property
     def key_material(self):
@@ -214,16 +235,14 @@ class DeletedKey(Key):
 
     def __init__(
         self,
-        attributes,  # type: _models.KeyAttributes
-        vault_id,  # type: str
+        properties,  # type: KeyProperties
         key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
+        super(DeletedKey, self).__init__(properties, key_material)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -233,14 +252,11 @@ class DeletedKey(Key):
         # type: (_models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         return cls(
-            attributes=deleted_key_bundle.attributes,
-            vault_id=deleted_key_bundle.key.kid,
+            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  # pylint: disable=protected-access
             key_material=deleted_key_bundle.key,
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
             scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
-            managed=deleted_key_bundle.managed,
-            tags=deleted_key_bundle.tags,
         )
 
     @classmethod
@@ -248,13 +264,10 @@ class DeletedKey(Key):
         # type: (_models.DeletedKeyItem) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
-            attributes=deleted_key_item.attributes,
-            vault_id=deleted_key_item.kid,
+            properties=KeyProperties._from_key_item(deleted_key_item),  # pylint: disable=protected-access
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
             scheduled_purge_date=deleted_key_item.scheduled_purge_date,
-            managed=deleted_key_item.managed,
-            tags=deleted_key_item.tags,
         )
 
     @property
