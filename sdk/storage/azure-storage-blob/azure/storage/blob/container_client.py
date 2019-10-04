@@ -779,7 +779,6 @@ class ContainerClient(StorageAccountHostsMixin):
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
         ):
@@ -888,7 +887,6 @@ class ContainerClient(StorageAccountHostsMixin):
             metadata=metadata,
             lease=lease,
             timeout=timeout,
-            max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs
         )

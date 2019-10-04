@@ -138,7 +138,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Any
@@ -239,7 +238,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob_type=blob_type,
             length=length,
             metadata=metadata,
-            max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return await upload_block_blob(**options)

@@ -357,7 +357,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -394,6 +393,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         validate_content = kwargs.pop('validate_content', False)
         content_settings = kwargs.pop('content_settings', None)
         overwrite = kwargs.pop('overwrite', False)
+        max_concurrency = kwargs.pop('max_concurrency', 1)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -447,7 +447,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Any
@@ -548,7 +547,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_type=blob_type,
             length=length,
             metadata=metadata,
-            max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return upload_block_blob(**options)
