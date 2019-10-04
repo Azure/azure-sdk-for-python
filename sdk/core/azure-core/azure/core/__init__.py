@@ -31,7 +31,7 @@ from .configuration import Configuration
 from .pipeline_client import PipelineClient
 from .pipeline.transport import HttpRequest
 from .exceptions import HttpResponseError
-from .match_conditions import MatchConditions
+from ._match_conditions import MatchConditions
 
 
 __all__ = [
