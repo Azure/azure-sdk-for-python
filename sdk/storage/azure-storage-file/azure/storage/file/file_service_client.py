@@ -356,6 +356,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :caption: Create a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         share.create_share(metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
@@ -389,6 +390,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :caption: Delete a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 

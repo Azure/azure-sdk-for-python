@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ._shared._generated.v7_0 import models as _models
 
 
-class SecretAttributes(object):
+class SecretProperties(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
@@ -30,8 +30,8 @@ class SecretAttributes(object):
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
-        # type: (_models.SecretBundle) -> SecretAttributes
-        """Construct a SecretAttributes from an autorest-generated SecretBundle"""
+        # type: (_models.SecretBundle) -> SecretProperties
+        """Construct a SecretProperties from an autorest-generated SecretBundle"""
         return cls(
             secret_bundle.attributes,
             secret_bundle.id,
@@ -43,8 +43,8 @@ class SecretAttributes(object):
 
     @classmethod
     def _from_secret_item(cls, secret_item):
-        # type: (_models.SecretItem) -> SecretAttributes
-        """Construct a SecretAttributes from an autorest-generated SecretItem"""
+        # type: (_models.SecretItem) -> SecretProperties
+        """Construct a SecretProperties from an autorest-generated SecretItem"""
         return cls(
             secret_item.attributes,
             secret_item.id,
@@ -163,11 +163,12 @@ class SecretAttributes(object):
         return self._tags
 
 
-class Secret(SecretAttributes):
-    """All a secret's attributes, and its value."""
+class Secret(object):
+    """All of a secret's properties, and its value."""
 
-    def __init__(self, attributes, vault_id, value, **kwargs):
-        super(Secret, self).__init__(attributes, vault_id, **kwargs)
+    def __init__(self, properties, value):
+        # type: (SecretProperties, str) -> None
+        self._properties = properties
         self._value = value
 
     @classmethod
@@ -175,14 +176,31 @@ class Secret(SecretAttributes):
         # type: (_models.SecretBundle) -> Secret
         """Construct a Secret from an autorest-generated SecretBundle"""
         return cls(
-            secret_bundle.attributes,
-            secret_bundle.id,
-            secret_bundle.value,
-            content_type=secret_bundle.content_type,
-            key_id=secret_bundle.kid,
-            managed=secret_bundle.managed,
-            tags=secret_bundle.tags,
+            properties=SecretProperties._from_secret_bundle(secret_bundle),  #pylint: disable=protected-access
+            value=secret_bundle.value
         )
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
+
+    @property
+    def properties(self):
+        # type: () -> SecretProperties
+        """
+        The secret's properties
+
+        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        """
+        return self._properties
 
     @property
     def value(self):
@@ -195,20 +213,18 @@ class Secret(SecretAttributes):
         return self._value
 
 
-class DeletedSecret(SecretAttributes):
-    """A deleted secret's attributes, as well as when it will be purged, if soft-delete is enabled for its vault."""
+class DeletedSecret(object):
+    """A deleted secret's properties, as well as when it will be purged, if soft-delete is enabled for its vault."""
 
     def __init__(
         self,
-        attributes,  # type: _models.SecretAttributes
-        vault_id,  # type: str
+        properties, # type: SecretProperties
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
+        scheduled_purge_date=None  # type: Optional[datetime]
     ):
         # type: (...) -> None
-        super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
+        self._properties = properties
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -218,15 +234,10 @@ class DeletedSecret(SecretAttributes):
         # type: (_models.DeletedSecretBundle) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
-            deleted_secret_bundle.attributes,
-            deleted_secret_bundle.id,
+            properties=SecretProperties._from_secret_bundle(deleted_secret_bundle), #pylint: disable=protected-access
             deleted_date=deleted_secret_bundle.deleted_date,
-            content_type=deleted_secret_bundle.content_type,
             recovery_id=deleted_secret_bundle.recovery_id,
             scheduled_purge_date=deleted_secret_bundle.scheduled_purge_date,
-            key_id=deleted_secret_bundle.kid,
-            managed=deleted_secret_bundle.managed,
-            tags=deleted_secret_bundle.tags,
         )
 
     @classmethod
@@ -234,15 +245,33 @@ class DeletedSecret(SecretAttributes):
         # type: (_models.DeletedSecretItem) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
-            deleted_secret_item.attributes,
-            deleted_secret_item.id,
+            properties=SecretProperties._from_secret_item(deleted_secret_item), #pylint: disable=protected-access
             deleted_date=deleted_secret_item.deleted_date,
             recovery_id=deleted_secret_item.recovery_id,
             scheduled_purge_date=deleted_secret_item.scheduled_purge_date,
-            content_type=deleted_secret_item.content_type,
-            managed=deleted_secret_item.managed,
-            tags=deleted_secret_item.tags,
         )
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
+
+    @property
+    def properties(self):
+        # type: () -> SecretProperties
+        """
+        The properties of the deleted secret
+
+        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        """
+        return self._properties
 
     @property
     def deleted_date(self):

@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the distributed tracing policy."""
+import logging
 
-from azure.core.tracing.context import tracing_context
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies.universal import UserAgentPolicy
@@ -17,15 +17,12 @@ import time
 import pytest
 
 
-@pytest.mark.parametrize("should_set_sdk_context", [True, False])
-def test_distributed_tracing_policy_solo(should_set_sdk_context):
+def test_distributed_tracing_policy_solo():
     """Test policy with no other policy and happy path"""
     with ContextHelper():
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            if should_set_sdk_context:
-                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
@@ -72,15 +69,48 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
         assert network_span.span_data.attributes.get("http.status_code") == 504
 
 
-@pytest.mark.parametrize("should_set_sdk_context", [True, False])
-def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
+def test_distributed_tracing_policy_badurl(caplog):
+    """Test policy with a bad url that will throw, and be sure policy ignores it"""
+    with ContextHelper():
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+        with trace.span("parent"):
+            policy = DistributedTracingPolicy()
+
+            request = HttpRequest("GET", "http://[[[")
+            request.headers["x-ms-client-request-id"] = "some client request id"
+
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.policies.distributed_tracing"):
+                policy.on_request(pipeline_request)
+            assert "Unable to start network span" in caplog.text
+
+            response = HttpResponse(request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            response.headers["x-ms-request-id"] = "some request id"
+
+            ctx = trace.span_context
+            header = trace.propagator.to_headers(ctx)
+            assert request.headers.get("traceparent") is None  # Got not network trace
+
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+            time.sleep(0.001)
+            policy.on_request(pipeline_request)
+            policy.on_exception(pipeline_request)
+
+        trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 0
+
+
+def test_distributed_tracing_policy_with_user_agent():
     """Test policy working with user agent."""
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            if should_set_sdk_context:
-                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1")
@@ -106,7 +136,10 @@ def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
 
             time.sleep(0.001)
             policy.on_request(pipeline_request)
-            policy.on_exception(pipeline_request)
+            try:
+                raise ValueError("Transport trouble")
+            except:
+                policy.on_exception(pipeline_request)
 
             user_agent.on_response(pipeline_request, pipeline_response)
 
@@ -132,3 +165,6 @@ def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
         assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504
+        # Exception should propagate status for Opencensus
+        assert network_span.span_data.status.message == 'Transport trouble'
+

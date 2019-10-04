@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .iot_hub_resource_operations import IotHubResourceOperations
-from .resource_provider_common_operations import ResourceProviderCommonOperations
-from .certificates_operations import CertificatesOperations
-from .iot_hub_operations import IotHubOperations
+from ._operations import Operations
+from ._iot_hub_resource_operations import IotHubResourceOperations
+from ._resource_provider_common_operations import ResourceProviderCommonOperations
+from ._certificates_operations import CertificatesOperations
+from ._iot_hub_operations import IotHubOperations
 
 __all__ = [
     'Operations',

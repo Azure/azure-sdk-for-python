@@ -47,8 +47,9 @@ try:
     # A long running poller is returned for the create certificate operation.
     create_certificate_poller = client.create_certificate(name=cert_name)
 
-    # The wait call awaits the completion of the create certificate operation
-    create_certificate_poller.wait()
+    # The result call awaits the completion of the create certificate operation and returns the final result.
+    # It will return a certificate if creation is successful, and will return the CertificateOperation if not.
+    certificate = create_certificate_poller.result()
     print("Certificate with name '{0}' created.".format(cert_name))
 
     # Backups are good to have, if in case certificates gets deleted accidentally.

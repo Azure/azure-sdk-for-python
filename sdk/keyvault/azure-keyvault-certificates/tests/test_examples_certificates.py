@@ -54,10 +54,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_operation_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # Here we are waiting for the certificate creation operation to be completed
-        certificate_operation_poller.wait()
+        certificate = certificate_operation_poller.result()
 
         # You can get the final status of the certificate operation poller using .result()
         print(certificate_operation_poller.result())
+
+        print(certificate.id)
+        print(certificate.name)
+        print(certificate.policy.issuer_name)
 
         # [END create_certificate]
 
@@ -68,26 +72,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = certificate_client.update_certificate(name=certificate.name, tags=tags)
+        updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
-        print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.version)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -124,8 +120,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         for i in range(4):
-            create_certificate_poller = certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
-            create_certificate_poller.wait()
+            certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
 
         # [START list_certificates]
 
@@ -184,8 +179,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
-        create_certificate_poller.wait()
+        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
 
@@ -206,7 +200,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 
@@ -230,8 +224,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
-        create_certificate_poller.wait()
+        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
         certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
             functools.partial(certificate_client.get_deleted_certificate, cert_name),
@@ -336,7 +329,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -352,7 +345,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         issuer = certificate_client.get_issuer(name="issuer1")
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -385,7 +378,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_issuer = certificate_client.delete_issuer(name="issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.provider)
+        print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
         for admin_detail in deleted_issuer.admin_details:

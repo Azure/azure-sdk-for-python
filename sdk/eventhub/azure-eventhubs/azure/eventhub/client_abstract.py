@@ -214,6 +214,11 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         properties["user-agent"] = final_user_agent
         return properties
 
+    def _add_span_request_attributes(self, span):
+        span.add_attribute("component", "eventhubs")
+        span.add_attribute("message_bus.destination", self._address.path)
+        span.add_attribute("peer.address", self._address.hostname)
+
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')
         auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")

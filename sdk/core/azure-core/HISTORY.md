@@ -3,6 +3,33 @@
 
 -------------------
 
+## 2019-XX-XX Version 1.0.0b4
+
+### Features
+
+- Tracing: network span context is available with the TRACING_CONTEXT in pipeline response  #7252
+- Tracing: Span contract now has `kind`, `traceparent` and is a context manager  #7252
+- SansIOHTTPPolicy methods can now be coroutines #7497
+- Add multipart/mixed support #7083:
+
+  - HttpRequest now has a "set_multipart_mixed" method to set the parts of this request
+  - HttpRequest now has a "prepare_multipart_body" method to build final body.
+  - HttpResponse now has a "parts" method to return an iterator of parts
+  - AsyncHttpResponse now has a "parts" methods to return an async iterator of parts
+  - Note that multipart/MIXED is a Python 3.x only feature
+
+### Bug fixes
+
+- Tracing: policy cannot fail the pipeline, even in the worst condition  #7252
+- Tracing: policy pass correctly status message if exception  #7252
+- Tracing: incorrect span if exception raised from decorated function  #7133
+
+### Breaking changes
+
+- Tracing: `azure.core.tracing.context` removed
+- Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
+- Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
+
 ## 2019-09-09 Version 1.0.0b3
 
 ### Bug fixes

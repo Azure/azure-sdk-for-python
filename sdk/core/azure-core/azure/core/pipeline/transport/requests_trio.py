@@ -137,7 +137,8 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START trio]
             :end-before: [END trio]
@@ -167,6 +168,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
 
         *session* - will override the driver session and use yours. Should NOT be done unless really required.
         Anything else is sent straight to requests.
+
         *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()

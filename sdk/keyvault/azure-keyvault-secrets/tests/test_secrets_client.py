@@ -20,7 +20,8 @@ class SecretClientTests(KeyVaultTestCase):
     name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
 
     def _assert_secret_attributes_equal(self, s1, s2):
-        self.assertEqual(s1.id, s2.id)
+        self.assertEqual(s1.name, s2.name)
+        self.assertEqual(s1.vault_url, s2.vault_url)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -39,11 +40,13 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value,
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
-        self.assertTrue(secret_attributes.created and secret_attributes.updated, "Missing required date attributes.")
+        self.assertTrue(secret_attributes.properties.created and secret_attributes.properties.updated, "Missing required date attributes.")
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
             if secret.name in expected.keys():
+                expected_secret = expected[secret.name]
+                self._assert_secret_attributes_equal(expected_secret.properties, secret)
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
@@ -76,29 +79,29 @@ class SecretClientTests(KeyVaultTestCase):
             tags=tags,
         )
         self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
-        self.assertEqual(content_type, created.content_type)
-        self.assertEqual(enabled, created.enabled)
-        self.assertEqual(not_before, created.not_before)
-        self.assertEqual(expires, created.expires)
-        self.assertEqual(tags, created.tags)
+        self.assertEqual(content_type, created.properties.content_type)
+        self.assertEqual(enabled, created.properties.enabled)
+        self.assertEqual(not_before, created.properties.not_before)
+        self.assertEqual(expires, created.properties.expires)
+        self.assertEqual(tags, created.properties.tags)
 
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name))
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name, created.version))
+        self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
+        self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name, created.properties.version).properties)
 
         def _update_secret(secret):
             content_type = "text/plain"
             expires = date_parse.parse("2050-01-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            enabled = not secret.enabled
-            updated_secret = client.update_secret(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+            enabled = not secret.properties.enabled
+            updated_secret = client.update_secret_properties(
+                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)
             self.assertEqual(content_type, updated_secret.content_type)
             self.assertEqual(expires, updated_secret.expires)
-            self.assertNotEqual(secret.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.updated, updated_secret.updated)
+            self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.properties.updated, updated_secret.updated)
             return updated_secret
 
         if self.is_live:
@@ -163,7 +166,7 @@ class SecretClientTests(KeyVaultTestCase):
             if secret.id in expected.keys():
                 expected_secret = expected[secret.id]
                 del expected[secret.id]
-                self._assert_secret_attributes_equal(expected_secret, secret)
+                self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -193,9 +196,8 @@ class SecretClientTests(KeyVaultTestCase):
             self.assertIsNotNone(deleted_secret.deleted_date)
             self.assertIsNotNone(deleted_secret.scheduled_purge_date)
             self.assertIsNotNone(deleted_secret.recovery_id)
-
-        # validate all the deleted secrets are returned by list_deleted_secrets
-        self._validate_secret_list(list(client.list_deleted_secrets()), expected)
+            expected_secret = expected[deleted_secret.name]
+            self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -217,7 +219,7 @@ class SecretClientTests(KeyVaultTestCase):
 
         # restore secret
         restored = client.restore_secret(secret_backup)
-        self._assert_secret_attributes_equal(created_bundle, restored)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
@@ -254,7 +256,7 @@ class SecretClientTests(KeyVaultTestCase):
             secret = self._poll_until_no_exception(
                 functools.partial(client.get_secret, secret_name), ResourceNotFoundError
             )
-            self._assert_secret_attributes_equal(secret, secrets[secret.name])
+            self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
