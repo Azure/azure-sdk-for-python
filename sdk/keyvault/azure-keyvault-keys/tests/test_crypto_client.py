@@ -62,7 +62,7 @@ class CryptoClientTests(KeyVaultTestCase):
             ),
         )
         imported_key = client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_endpoint, name, key.kty, key.key_ops)
         return imported_key
 
     @ResourceGroupPreparer()

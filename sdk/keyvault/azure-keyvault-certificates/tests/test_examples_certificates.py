@@ -15,7 +15,7 @@ def print(*args):
 
 
 def test_create_certificate_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_certificate_client]
 
@@ -24,7 +24,7 @@ def test_create_certificate_client():
 
     # Create a CertificateClient using default Azure credentials
     credential = DefaultAzureCredential()
-    certificate_client = CertificateClient(vault_url, credential)
+    certificate_client = CertificateClient(vault_endpoint, credential)
 
     # [END create_certificate_client]
 

@@ -132,14 +132,14 @@ class SecretProperties(object):
         return self._attributes.recovery_level
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """
         URL of the vault containing the secret
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def name(self):
