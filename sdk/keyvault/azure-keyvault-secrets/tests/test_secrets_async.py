@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
