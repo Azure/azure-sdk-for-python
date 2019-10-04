@@ -78,7 +78,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         account, in which case the queue must also be specified.
     :param queue: The queue. If specified, this value will override
         a queue value specified in the queue URL.
-    :type queue: str or ~azure.storage.queue.models.QueueProperties
+    :type queue: str or ~azure.storage.queue.QueueProperties
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -193,7 +193,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
-        :rtype: ~azure.storage.queue.models.QueueProperties
+        :rtype: ~azure.storage.queue.QueueProperties
 
         .. admonition:: Example:
 
@@ -254,7 +254,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return: A dictionary of access policies associated with the queue.
-        :rtype: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
+        :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
         """
         try:
             _, identifiers = await self._client.queue.get_access_policy(
@@ -285,7 +285,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             A list of SignedIdentifier access policies to associate with the queue.
             The list may contain up to 5 elements. An empty list
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :param int timeout:
             The server timeout, expressed in seconds.
 
@@ -357,10 +357,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A :class:`~azure.storage.queue.models.QueueMessage` object.
+            A :class:`~azure.storage.queue.QueueMessage` object.
             This object is also populated with the content although it is not
             returned from the service.
-        :rtype: ~azure.storage.queue.models.QueueMessage
+        :rtype: ~azure.storage.queue.QueueMessage
 
         .. admonition:: Example:
 
@@ -427,7 +427,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.models.Message]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.Message]
 
         .. admonition:: Example:
 
@@ -498,9 +498,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A :class:`~azure.storage.queue.models.QueueMessage` object. For convenience,
+            A :class:`~azure.storage.queue.QueueMessage` object. For convenience,
             this object is also populated with the content, although it is not returned by the service.
-        :rtype: ~azure.storage.queue.models.QueueMessage
+        :rtype: ~azure.storage.queue.QueueMessage
 
         .. admonition:: Example:
 
@@ -581,10 +581,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A list of :class:`~azure.storage.queue.models.QueueMessage` objects. Note that
+            A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
             time_next_visible and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
-        :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
+        :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
 
         .. admonition:: Example:
 
