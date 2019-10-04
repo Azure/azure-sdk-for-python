@@ -138,14 +138,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
         self.start = start
@@ -319,9 +319,9 @@ class Handle(DictMixin):
     :type client_ip: str
     :param open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
-    :type open_time: datetime
+    :type open_time: ~datetime.datetime
     :param last_reconnect_time: Time handle was last connected to (UTC)
-    :type last_reconnect_time: datetime
+    :type last_reconnect_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):

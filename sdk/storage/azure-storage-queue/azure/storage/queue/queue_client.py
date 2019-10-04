@@ -251,7 +251,7 @@ class QueueClient(StorageAccountHostsMixin):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-            ~azure.storage.queue._generated.models._models.StorageErrorException
+            ~azure.storage.queue.StorageErrorException
 
         .. admonition:: Example:
 

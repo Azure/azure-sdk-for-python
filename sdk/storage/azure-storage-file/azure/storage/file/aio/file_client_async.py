@@ -856,8 +856,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.Handle]
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(

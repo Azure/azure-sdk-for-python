@@ -641,6 +641,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -866,7 +867,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 
@@ -1264,7 +1265,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 

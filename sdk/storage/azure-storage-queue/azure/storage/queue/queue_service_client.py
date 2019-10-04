@@ -231,7 +231,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
+        :rtype: ~azure.storage.queue.StorageServiceStats
         """
         try:
             return self._client.service.get_statistics( # type: ignore
@@ -247,7 +247,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
+        :rtype: ~azure.storage.queue.StorageServiceProperties
 
         .. admonition:: Example:
 

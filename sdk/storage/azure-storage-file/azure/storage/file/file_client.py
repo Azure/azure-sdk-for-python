@@ -271,14 +271,14 @@ class FileClient(StorageAccountHostsMixin):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy.
@@ -366,10 +366,10 @@ class FileClient(StorageAccountHostsMixin):
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -473,13 +473,13 @@ class FileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.file.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -701,7 +701,6 @@ class FileClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: FileProperties
         :rtype: ~azure.storage.file.FileProperties
         """
         try:
@@ -742,10 +741,10 @@ class FileClient(StorageAccountHostsMixin):
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -1069,8 +1068,8 @@ class FileClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.Handle]
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(

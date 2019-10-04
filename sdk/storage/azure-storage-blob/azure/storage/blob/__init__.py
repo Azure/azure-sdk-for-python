@@ -21,6 +21,9 @@ from ._shared.models import(
     StorageErrorCode,
     UserDelegationKey
 )
+from ._generated.models import (
+    RehydratePriority
+)
 from .models import (
     BlobType,
     BlockState,
@@ -46,6 +49,7 @@ from .models import (
     AccessPolicy,
     ContainerSasPermissions,
     BlobSasPermissions,
+    CustomerProvidedEncryptionKey,
 )
 
 __version__ = VERSION
@@ -89,6 +93,8 @@ __all__ = [
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageStreamDownloader',
+    'CustomerProvidedEncryptionKey',
+    'RehydratePriority'
 ]
 
 

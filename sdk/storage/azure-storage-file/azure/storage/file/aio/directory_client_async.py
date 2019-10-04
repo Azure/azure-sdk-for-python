@@ -244,8 +244,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.storage.file.HandlesPaged
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(

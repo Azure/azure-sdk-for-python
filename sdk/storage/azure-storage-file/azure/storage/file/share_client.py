@@ -199,14 +199,14 @@ class ShareClient(StorageAccountHostsMixin):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use :func:`~set_share_access_policy`.
@@ -264,7 +264,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param str directory_path:
             Path to the specified directory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
         """
         return DirectoryClient(
             self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
@@ -279,7 +279,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param str file_path:
             Path to the specified file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         return FileClient(
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,

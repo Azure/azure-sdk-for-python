@@ -128,7 +128,7 @@ class Logging(GeneratedLogging):
     :param retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -153,7 +153,7 @@ class Metrics(GeneratedMetrics):
     :param retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -253,7 +253,7 @@ class ContainerProperties(DictMixin):
     :param str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param ~azure.storage.blob.models.LeaseProperties lease:
+    :param ~azure.storage.blob.LeaseProperties lease:
         Stores all the lease information for the container.
     :param str public_access: Specifies whether data in the container may be accessed
         publicly and the level of access.
@@ -300,7 +300,7 @@ class ContainerPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.ContainerProperties)
+    :vartype current_page: list(~azure.storage.blob.ContainerProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only containers whose names
@@ -362,7 +362,7 @@ class BlobProperties(DictMixin):
         String indicating this blob's type.
     :ivar dict metadata:
         Name-value pairs associated with the blob as metadata.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the blob was modified.
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
@@ -381,31 +381,31 @@ class BlobProperties(DictMixin):
         concurrent writes.
     :ivar bool server_encrypted:
         Set to true if the blob is encrypted on the server.
-    :ivar ~azure.storage.blob.models.CopyProperties copy:
+    :ivar ~azure.storage.blob.CopyProperties copy:
         Stores all the copy properties for the blob.
-    :ivar ~azure.storage.blob.models.ContentSettings content_settings:
+    :ivar ~azure.storage.blob.ContentSettings content_settings:
         Stores all the content settings for the blob.
-    :ivar ~azure.storage.blob.models.LeaseProperties lease:
+    :ivar ~azure.storage.blob.LeaseProperties lease:
         Stores all the lease information for the blob.
-    :ivar ~azure.storage.blob.models.StandardBlobTier blob_tier:
+    :ivar ~azure.storage.blob.StandardBlobTier blob_tier:
         Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
         with flexible latency requirements.
-    :ivar datetime blob_tier_change_time:
+    :ivar ~datetime.datetime blob_tier_change_time:
         Indicates when the access tier was last changed.
     :ivar bool blob_tier_inferred:
         Indicates whether the access tier was inferred by the service.
         If false, it indicates that the tier was set explicitly.
     :ivar bool deleted:
         Whether this blob was deleted.
-    :ivar datetime deleted_time:
+    :ivar ~datetime.datetime deleted_time:
         A datetime object representing the time at which the blob was deleted.
     :ivar int remaining_retention_days:
         The number of days that the blob will be retained before being permanently deleted by the service.
-    :ivar datetime creation_time:
+    :ivar ~datetime.datetime creation_time:
         Indicates when the blob was created, in UTC.
     :ivar str archive_status:
         Archive status of blob.
@@ -478,7 +478,7 @@ class BlobPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
@@ -566,7 +566,7 @@ class BlobPrefix(ItemPaged, DictMixin):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
@@ -824,7 +824,7 @@ class AccessPolicy(GenAccessPolicy):
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.blob.models.ContainerSasPermissions
+    :type permission: str or ~azure.storage.blob.ContainerSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy

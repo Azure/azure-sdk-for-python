@@ -262,14 +262,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
@@ -832,7 +832,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: BlobProperties
         :rtype: ~azure.storage.blob.BlobProperties
 
         .. admonition:: Example:
@@ -1525,7 +1524,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -1666,7 +1665,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
-        :param ~azure.storage.blob._generated.models.RehydratePriority rehydrate_priority:
+        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :param int timeout:
             The timeout parameter is expressed in seconds.

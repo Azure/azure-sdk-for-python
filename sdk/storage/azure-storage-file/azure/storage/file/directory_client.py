@@ -180,7 +180,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param file_name:
             The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -318,8 +318,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.Handles]
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -390,7 +390,6 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DirectoryProperties
         :rtype: ~azure.storage.file.DirectoryProperties
         """
         try:
@@ -584,7 +583,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: FileClient
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
 
         .. admonition:: Example:
 
