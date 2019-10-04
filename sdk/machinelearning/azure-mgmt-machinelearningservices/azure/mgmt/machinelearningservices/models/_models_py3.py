@@ -17,8 +17,8 @@ class Compute(Model):
     """Machine Learning compute object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AKS, AmlCompute, AmlInstance, VirtualMachine, HDInsight,
-    DataFactory, Databricks, DataLakeAnalytics
+    sub-classes are: AKS, AmlCompute, ComputeInstance, VirtualMachine,
+    HDInsight, DataFactory, Databricks, DataLakeAnalytics
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -74,7 +74,7 @@ class Compute(Model):
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'AmlInstance': 'AmlInstance', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics'}
+        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'ComputeInstance': 'ComputeInstance', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics'}
     }
 
     def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, **kwargs) -> None:
@@ -621,7 +621,56 @@ class AmlComputeProperties(Model):
         self.node_state_counts = None
 
 
-class AmlInstance(Compute):
+class CloudError(Model):
+    """CloudError.
+    """
+
+    _attribute_map = {
+    }
+
+
+class ClusterUpdateParameters(Model):
+    """AmlCompute update parameters.
+
+    :param scale_settings: Scale settings. Desired scale settings for the
+     amlCompute.
+    :type scale_settings:
+     ~azure.mgmt.machinelearningservices.models.ScaleSettings
+    :param datastores_mount_settings: Describes what data stores will be
+     mounted on this compute instance.
+    :type datastores_mount_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastoresMountSettings
+    :param custom_script_settings: Specification for initialization scripts to
+     customize this ComputeInstance.
+    :type custom_script_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettings
+    :param software_update_settings: Specifies policies for operating system
+     and Azure ML environment (example packages and SDK) updates.
+    :type software_update_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSoftwareUpdateSettings
+    :param ssh_settings: Specifies policy and settings for SSH access.
+    :type ssh_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
+    """
+
+    _attribute_map = {
+        'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
+        'datastores_mount_settings': {'key': 'properties.datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
+        'custom_script_settings': {'key': 'properties.customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
+        'software_update_settings': {'key': 'properties.softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
+        'ssh_settings': {'key': 'properties.sshSettings', 'type': 'ComputeInstanceSshSettings'},
+    }
+
+    def __init__(self, *, scale_settings=None, datastores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
+        super(ClusterUpdateParameters, self).__init__(**kwargs)
+        self.scale_settings = scale_settings
+        self.datastores_mount_settings = datastores_mount_settings
+        self.custom_script_settings = custom_script_settings
+        self.software_update_settings = software_update_settings
+        self.ssh_settings = ssh_settings
+
+
+class ComputeInstance(Compute):
     """An Azure Machine Learning instance.
 
     Variables are only populated by the server, and will be ignored when
@@ -656,7 +705,7 @@ class AmlInstance(Compute):
     :type compute_type: str
     :param properties: AML Instance properties
     :type properties:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceProperties
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceProperties
     """
 
     _validation = {
@@ -678,19 +727,19 @@ class AmlInstance(Compute):
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AmlInstanceProperties'},
+        'properties': {'key': 'properties', 'type': 'ComputeInstanceProperties'},
     }
 
     def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(AmlInstance, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+        super(ComputeInstance, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
         self.properties = properties
-        self.compute_type = 'AmlInstance'
+        self.compute_type = 'ComputeInstance'
 
 
-class AmlInstanceApplicationUri(Model):
+class ComputeInstanceApplicationUri(Model):
     """Defines an Aml Instance application and its connectivity endpoint URI.
 
-    :param application_name: Name of the AmlInstance application.
+    :param application_name: Name of the ComputeInstance application.
     :type application_name: str
     :param application_uri: Application' endpoint URI.
     :type application_uri: str
@@ -702,24 +751,23 @@ class AmlInstanceApplicationUri(Model):
     }
 
     def __init__(self, *, application_name: str=None, application_uri: str=None, **kwargs) -> None:
-        super(AmlInstanceApplicationUri, self).__init__(**kwargs)
+        super(ComputeInstanceApplicationUri, self).__init__(**kwargs)
         self.application_name = application_name
         self.application_uri = application_uri
 
 
-class AmlInstanceConnectivityEndpoints(Model):
-    """Defines all connectivity endpoints and properties for an AmlInstance
-    compute.
+class ComputeInstanceConnectivityEndpoints(Model):
+    """Defines all connectivity endpoints and properties for an ComputeInstance.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar public_ip_address: Public IP Address of this AmlInstance.
+    :ivar public_ip_address: Public IP Address of this ComputeInstance.
     :vartype public_ip_address: str
     :ivar application_uris: Describes available applications and their
      connectivity endpoint URIs.
     :vartype application_uris:
-     list[~azure.mgmt.machinelearningservices.models.AmlInstanceApplicationUri]
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplicationUri]
     """
 
     _validation = {
@@ -729,17 +777,17 @@ class AmlInstanceConnectivityEndpoints(Model):
 
     _attribute_map = {
         'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'application_uris': {'key': 'applicationUris', 'type': '[AmlInstanceApplicationUri]'},
+        'application_uris': {'key': 'applicationUris', 'type': '[ComputeInstanceApplicationUri]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(AmlInstanceConnectivityEndpoints, self).__init__(**kwargs)
+        super(ComputeInstanceConnectivityEndpoints, self).__init__(**kwargs)
         self.public_ip_address = None
         self.application_uris = None
 
 
-class AmlInstanceCreatedBy(Model):
-    """Describes information on user who created this AmlInstance compute.
+class ComputeInstanceCreatedBy(Model):
+    """Describes information on user who created this ComputeInstance.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -766,31 +814,31 @@ class AmlInstanceCreatedBy(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(AmlInstanceCreatedBy, self).__init__(**kwargs)
+        super(ComputeInstanceCreatedBy, self).__init__(**kwargs)
         self.user_name = None
         self.user_org_id = None
         self.user_id = None
 
 
-class AmlInstanceCustomScriptSettings(Model):
-    """Specification for initialization scripts to customize this AmlInstance.
+class ComputeInstanceCustomScriptSettings(Model):
+    """Specification for initialization scripts to customize this ComputeInstance.
 
     :param startup_script: Specifies properties of initialization script to be
      run during every start of this instance.
     :type startup_script:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettingsStartupScript
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettingsStartupScript
     """
 
     _attribute_map = {
-        'startup_script': {'key': 'startupScript', 'type': 'AmlInstanceCustomScriptSettingsStartupScript'},
+        'startup_script': {'key': 'startupScript', 'type': 'ComputeInstanceCustomScriptSettingsStartupScript'},
     }
 
     def __init__(self, *, startup_script=None, **kwargs) -> None:
-        super(AmlInstanceCustomScriptSettings, self).__init__(**kwargs)
+        super(ComputeInstanceCustomScriptSettings, self).__init__(**kwargs)
         self.startup_script = startup_script
 
 
-class AmlInstanceCustomScriptSettingsStartupScript(Model):
+class ComputeInstanceCustomScriptSettingsStartupScript(Model):
     """Specifies properties of initialization script to be run during every start
     of this instance.
 
@@ -807,12 +855,12 @@ class AmlInstanceCustomScriptSettingsStartupScript(Model):
     }
 
     def __init__(self, *, script_location: str=None, script_parameters: str=None, **kwargs) -> None:
-        super(AmlInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
+        super(ComputeInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
         self.script_location = script_location
         self.script_parameters = script_parameters
 
 
-class AmlInstanceDatastore(Model):
+class ComputeInstanceDatastore(Model):
     """Represents specification for datastore requested to be mounted on an
     AzureML instance as well as its mounting status.
 
@@ -842,13 +890,13 @@ class AmlInstanceDatastore(Model):
     }
 
     def __init__(self, *, name: str=None, **kwargs) -> None:
-        super(AmlInstanceDatastore, self).__init__(**kwargs)
+        super(ComputeInstanceDatastore, self).__init__(**kwargs)
         self.name = name
         self.state = None
         self.error = None
 
 
-class AmlInstanceDatastoresMountSettings(Model):
+class ComputeInstanceDatastoresMountSettings(Model):
     """Describes what data stores will be mounted on this compute instance.
 
     :param datastore_selection: Allows users to select between mounting All vs
@@ -862,25 +910,25 @@ class AmlInstanceDatastoresMountSettings(Model):
      on this compute instance. This should only be specified if
      dataStoreSelection is set to 'UserSpecified'.
     :type datastores:
-     list[~azure.mgmt.machinelearningservices.models.AmlInstanceDatastore]
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastore]
     """
 
     _attribute_map = {
         'datastore_selection': {'key': 'datastoreSelection', 'type': 'str'},
-        'datastores': {'key': 'datastores', 'type': '[AmlInstanceDatastore]'},
+        'datastores': {'key': 'datastores', 'type': '[ComputeInstanceDatastore]'},
     }
 
     def __init__(self, *, datastore_selection="All", datastores=None, **kwargs) -> None:
-        super(AmlInstanceDatastoresMountSettings, self).__init__(**kwargs)
+        super(ComputeInstanceDatastoresMountSettings, self).__init__(**kwargs)
         self.datastore_selection = datastore_selection
         self.datastores = datastores
 
 
-class AmlInstanceOSUpdateSettings(Model):
+class ComputeInstanceOSUpdateSettings(Model):
     """Specifies policy for installing operation system updates.
 
     :param os_update_type: Type of automatic operating system updates to
-     install. Possible values include: 'Critical', 'Recommended'. Default
+     install. Possible values include: 'Security', 'Recommended'. Default
      value: "Recommended" .
     :type os_update_type: str or
      ~azure.mgmt.machinelearningservices.models.OsUpdateType
@@ -901,13 +949,13 @@ class AmlInstanceOSUpdateSettings(Model):
     }
 
     def __init__(self, *, os_update_type="Recommended", update_frequency_in_days: int=None, update_hour_in_utc: int=None, **kwargs) -> None:
-        super(AmlInstanceOSUpdateSettings, self).__init__(**kwargs)
+        super(ComputeInstanceOSUpdateSettings, self).__init__(**kwargs)
         self.os_update_type = os_update_type
         self.update_frequency_in_days = update_frequency_in_days
         self.update_hour_in_utc = update_hour_in_utc
 
 
-class AmlInstanceProperties(Model):
+class ComputeInstanceProperties(Model):
     """AML Instance properties.
 
     Variables are only populated by the server, and will be ignored when
@@ -921,37 +969,37 @@ class AmlInstanceProperties(Model):
     :param datastores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
     :type datastores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceDatastoresMountSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastoresMountSettings
     :param custom_script_settings: Specification for initialization scripts to
-     customize this AmlInstance.
+     customize this ComputeInstance.
     :type custom_script_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettings
     :param software_update_settings: Specifies policies for operating system
      and Azure ML environment (example packages and SDK) updates.
     :type software_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceSoftwareUpdateSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSoftwareUpdateSettings
     :param ssh_settings: Specifies policy and settings for SSH access.
     :type ssh_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceSshSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
     :ivar connectivity_endpoints: Describes all connectivity endpoints
-     available for this AmlInstance compute.
+     available for this ComputeInstance.
     :vartype connectivity_endpoints:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceConnectivityEndpoints
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceConnectivityEndpoints
     :ivar created_by: Describes information on user who created this
-     AmlInstance compute.
+     ComputeInstance.
     :vartype created_by:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceCreatedBy
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCreatedBy
     :ivar errors: Errors. Collection of errors encountered by various compute
      nodes during node setup.
     :vartype errors:
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
-    :ivar state: The current state of this AmlInstance. Possible values
+    :ivar state: The current state of this ComputeInstance. Possible values
      include: 'Creating', 'CreateFailed', 'Deleting', 'Ready', 'Restarting',
      'RestartFailed', 'Running', 'SettingUp', 'Starting', 'StartFailed',
      'StopFailed', 'Stopped', 'Stopping', 'UserSettingUp', 'Unknown',
      'Unusable'
     :vartype state: str or
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceState
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceState
     """
 
     _validation = {
@@ -964,18 +1012,18 @@ class AmlInstanceProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'AmlInstanceDatastoresMountSettings'},
-        'custom_script_settings': {'key': 'customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
-        'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
-        'ssh_settings': {'key': 'sshSettings', 'type': 'AmlInstanceSshSettings'},
-        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'AmlInstanceConnectivityEndpoints'},
-        'created_by': {'key': 'createdBy', 'type': 'AmlInstanceCreatedBy'},
+        'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
+        'custom_script_settings': {'key': 'customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
+        'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
+        'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
+        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
+        'created_by': {'key': 'createdBy', 'type': 'ComputeInstanceCreatedBy'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
     }
 
     def __init__(self, *, vm_size: str=None, subnet=None, datastores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
-        super(AmlInstanceProperties, self).__init__(**kwargs)
+        super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.subnet = subnet
         self.datastores_mount_settings = datastores_mount_settings
@@ -988,8 +1036,8 @@ class AmlInstanceProperties(Model):
         self.state = None
 
 
-class AmlInstanceSdkUpdate(Model):
-    """Describes a specific update for AmlInstance SDK.
+class ComputeInstanceSdkUpdate(Model):
+    """Describes a specific update for ComputeInstance SDK.
 
     :param update_name: Short name of the update.
     :type update_name: str
@@ -1007,13 +1055,13 @@ class AmlInstanceSdkUpdate(Model):
     }
 
     def __init__(self, *, update_name: str=None, update_description: str=None, update_version: str=None, **kwargs) -> None:
-        super(AmlInstanceSdkUpdate, self).__init__(**kwargs)
+        super(ComputeInstanceSdkUpdate, self).__init__(**kwargs)
         self.update_name = update_name
         self.update_description = update_description
         self.update_version = update_version
 
 
-class AmlInstanceSdkUpdateSettings(Model):
+class ComputeInstanceSdkUpdateSettings(Model):
     """Specifies policy for installing Azure ML environment (example packages and
     SDK) updates.
 
@@ -1028,7 +1076,7 @@ class AmlInstanceSdkUpdateSettings(Model):
     :ivar available_updates: Describes available SDK updates for this compute
      instance.
     :vartype available_updates:
-     list[~azure.mgmt.machinelearningservices.models.AmlInstanceSdkUpdate]
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceSdkUpdate]
     """
 
     _validation = {
@@ -1037,41 +1085,41 @@ class AmlInstanceSdkUpdateSettings(Model):
 
     _attribute_map = {
         'update_on_next_start': {'key': 'updateOnNextStart', 'type': 'str'},
-        'available_updates': {'key': 'availableUpdates', 'type': '[AmlInstanceSdkUpdate]'},
+        'available_updates': {'key': 'availableUpdates', 'type': '[ComputeInstanceSdkUpdate]'},
     }
 
     def __init__(self, *, update_on_next_start="Disabled", **kwargs) -> None:
-        super(AmlInstanceSdkUpdateSettings, self).__init__(**kwargs)
+        super(ComputeInstanceSdkUpdateSettings, self).__init__(**kwargs)
         self.update_on_next_start = update_on_next_start
         self.available_updates = None
 
 
-class AmlInstanceSoftwareUpdateSettings(Model):
+class ComputeInstanceSoftwareUpdateSettings(Model):
     """Specifies policies for operating system and Azure ML environment (example
     packages and SDK) updates.
 
     :param os_update_settings: Specifies policy for installing operation
      system updates.
     :type os_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceOSUpdateSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceOSUpdateSettings
     :param sdk_update_settings: Specifies policy for installing Azure ML
      environment (example packages and SDK) updates.
     :type sdk_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceSdkUpdateSettings
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSdkUpdateSettings
     """
 
     _attribute_map = {
-        'os_update_settings': {'key': 'osUpdateSettings', 'type': 'AmlInstanceOSUpdateSettings'},
-        'sdk_update_settings': {'key': 'sdkUpdateSettings', 'type': 'AmlInstanceSdkUpdateSettings'},
+        'os_update_settings': {'key': 'osUpdateSettings', 'type': 'ComputeInstanceOSUpdateSettings'},
+        'sdk_update_settings': {'key': 'sdkUpdateSettings', 'type': 'ComputeInstanceSdkUpdateSettings'},
     }
 
     def __init__(self, *, os_update_settings=None, sdk_update_settings=None, **kwargs) -> None:
-        super(AmlInstanceSoftwareUpdateSettings, self).__init__(**kwargs)
+        super(ComputeInstanceSoftwareUpdateSettings, self).__init__(**kwargs)
         self.os_update_settings = os_update_settings
         self.sdk_update_settings = sdk_update_settings
 
 
-class AmlInstanceSshSettings(Model):
+class ComputeInstanceSshSettings(Model):
     """Specifies policy and settings for SSH access.
 
     Variables are only populated by the server, and will be ignored when
@@ -1103,59 +1151,10 @@ class AmlInstanceSshSettings(Model):
     }
 
     def __init__(self, *, ssh_public_access="Disabled", admin_public_key: str=None, **kwargs) -> None:
-        super(AmlInstanceSshSettings, self).__init__(**kwargs)
+        super(ComputeInstanceSshSettings, self).__init__(**kwargs)
         self.ssh_public_access = ssh_public_access
         self.admin_user_name = None
         self.admin_public_key = admin_public_key
-
-
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
-class ClusterUpdateParameters(Model):
-    """AmlCompute update parameters.
-
-    :param scale_settings: Scale settings. Desired scale settings for the
-     amlCompute.
-    :type scale_settings:
-     ~azure.mgmt.machinelearningservices.models.ScaleSettings
-    :param datastores_mount_settings: Describes what data stores will be
-     mounted on this compute instance.
-    :type datastores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceDatastoresMountSettings
-    :param custom_script_settings: Specification for initialization scripts to
-     customize this AmlInstance.
-    :type custom_script_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettings
-    :param software_update_settings: Specifies policies for operating system
-     and Azure ML environment (example packages and SDK) updates.
-    :type software_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceSoftwareUpdateSettings
-    :param ssh_settings: Specifies policy and settings for SSH access.
-    :type ssh_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstanceSshSettings
-    """
-
-    _attribute_map = {
-        'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
-        'datastores_mount_settings': {'key': 'properties.datastoresMountSettings', 'type': 'AmlInstanceDatastoresMountSettings'},
-        'custom_script_settings': {'key': 'properties.customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
-        'software_update_settings': {'key': 'properties.softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
-        'ssh_settings': {'key': 'properties.sshSettings', 'type': 'AmlInstanceSshSettings'},
-    }
-
-    def __init__(self, *, scale_settings=None, datastores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
-        super(ClusterUpdateParameters, self).__init__(**kwargs)
-        self.scale_settings = scale_settings
-        self.datastores_mount_settings = datastores_mount_settings
-        self.custom_script_settings = custom_script_settings
-        self.software_update_settings = software_update_settings
-        self.ssh_settings = ssh_settings
 
 
 class Resource(Model):

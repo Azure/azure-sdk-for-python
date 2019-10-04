@@ -18,22 +18,22 @@ try:
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
-    from ._models_py3 import AmlInstance
-    from ._models_py3 import AmlInstanceApplicationUri
-    from ._models_py3 import AmlInstanceConnectivityEndpoints
-    from ._models_py3 import AmlInstanceCreatedBy
-    from ._models_py3 import AmlInstanceCustomScriptSettings
-    from ._models_py3 import AmlInstanceCustomScriptSettingsStartupScript
-    from ._models_py3 import AmlInstanceDatastore
-    from ._models_py3 import AmlInstanceDatastoresMountSettings
-    from ._models_py3 import AmlInstanceOSUpdateSettings
-    from ._models_py3 import AmlInstanceProperties
-    from ._models_py3 import AmlInstanceSdkUpdate
-    from ._models_py3 import AmlInstanceSdkUpdateSettings
-    from ._models_py3 import AmlInstanceSoftwareUpdateSettings
-    from ._models_py3 import AmlInstanceSshSettings
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import Compute
+    from ._models_py3 import ComputeInstance
+    from ._models_py3 import ComputeInstanceApplicationUri
+    from ._models_py3 import ComputeInstanceConnectivityEndpoints
+    from ._models_py3 import ComputeInstanceCreatedBy
+    from ._models_py3 import ComputeInstanceCustomScriptSettings
+    from ._models_py3 import ComputeInstanceCustomScriptSettingsStartupScript
+    from ._models_py3 import ComputeInstanceDatastore
+    from ._models_py3 import ComputeInstanceDatastoresMountSettings
+    from ._models_py3 import ComputeInstanceOSUpdateSettings
+    from ._models_py3 import ComputeInstanceProperties
+    from ._models_py3 import ComputeInstanceSdkUpdate
+    from ._models_py3 import ComputeInstanceSdkUpdateSettings
+    from ._models_py3 import ComputeInstanceSoftwareUpdateSettings
+    from ._models_py3 import ComputeInstanceSshSettings
     from ._models_py3 import ComputeNodesInformation
     from ._models_py3 import ComputeResource
     from ._models_py3 import ComputeSecrets
@@ -87,22 +87,22 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodeInformation
     from ._models import AmlComputeNodesInformation
     from ._models import AmlComputeProperties
-    from ._models import AmlInstance
-    from ._models import AmlInstanceApplicationUri
-    from ._models import AmlInstanceConnectivityEndpoints
-    from ._models import AmlInstanceCreatedBy
-    from ._models import AmlInstanceCustomScriptSettings
-    from ._models import AmlInstanceCustomScriptSettingsStartupScript
-    from ._models import AmlInstanceDatastore
-    from ._models import AmlInstanceDatastoresMountSettings
-    from ._models import AmlInstanceOSUpdateSettings
-    from ._models import AmlInstanceProperties
-    from ._models import AmlInstanceSdkUpdate
-    from ._models import AmlInstanceSdkUpdateSettings
-    from ._models import AmlInstanceSoftwareUpdateSettings
-    from ._models import AmlInstanceSshSettings
     from ._models import ClusterUpdateParameters
     from ._models import Compute
+    from ._models import ComputeInstance
+    from ._models import ComputeInstanceApplicationUri
+    from ._models import ComputeInstanceConnectivityEndpoints
+    from ._models import ComputeInstanceCreatedBy
+    from ._models import ComputeInstanceCustomScriptSettings
+    from ._models import ComputeInstanceCustomScriptSettingsStartupScript
+    from ._models import ComputeInstanceDatastore
+    from ._models import ComputeInstanceDatastoresMountSettings
+    from ._models import ComputeInstanceOSUpdateSettings
+    from ._models import ComputeInstanceProperties
+    from ._models import ComputeInstanceSdkUpdate
+    from ._models import ComputeInstanceSdkUpdateSettings
+    from ._models import ComputeInstanceSoftwareUpdateSettings
+    from ._models import ComputeInstanceSshSettings
     from ._models import ComputeNodesInformation
     from ._models import ComputeResource
     from ._models import ComputeSecrets
@@ -167,7 +167,7 @@ from ._azure_machine_learning_workspaces_enums import (
     OsUpdateType,
     UpdateOnNextStart,
     SshPublicAccess,
-    AmlInstanceState,
+    ComputeInstanceState,
     NodeState,
     ComputeType,
     UnderlyingResourceAction,
@@ -182,22 +182,22 @@ __all__ = [
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
-    'AmlInstance',
-    'AmlInstanceApplicationUri',
-    'AmlInstanceConnectivityEndpoints',
-    'AmlInstanceCreatedBy',
-    'AmlInstanceCustomScriptSettings',
-    'AmlInstanceCustomScriptSettingsStartupScript',
-    'AmlInstanceDatastore',
-    'AmlInstanceDatastoresMountSettings',
-    'AmlInstanceOSUpdateSettings',
-    'AmlInstanceProperties',
-    'AmlInstanceSdkUpdate',
-    'AmlInstanceSdkUpdateSettings',
-    'AmlInstanceSoftwareUpdateSettings',
-    'AmlInstanceSshSettings',
     'ClusterUpdateParameters',
     'Compute',
+    'ComputeInstance',
+    'ComputeInstanceApplicationUri',
+    'ComputeInstanceConnectivityEndpoints',
+    'ComputeInstanceCreatedBy',
+    'ComputeInstanceCustomScriptSettings',
+    'ComputeInstanceCustomScriptSettingsStartupScript',
+    'ComputeInstanceDatastore',
+    'ComputeInstanceDatastoresMountSettings',
+    'ComputeInstanceOSUpdateSettings',
+    'ComputeInstanceProperties',
+    'ComputeInstanceSdkUpdate',
+    'ComputeInstanceSdkUpdateSettings',
+    'ComputeInstanceSoftwareUpdateSettings',
+    'ComputeInstanceSshSettings',
     'ComputeNodesInformation',
     'ComputeResource',
     'ComputeSecrets',
@@ -261,7 +261,7 @@ __all__ = [
     'OsUpdateType',
     'UpdateOnNextStart',
     'SshPublicAccess',
-    'AmlInstanceState',
+    'ComputeInstanceState',
     'NodeState',
     'ComputeType',
     'UnderlyingResourceAction',

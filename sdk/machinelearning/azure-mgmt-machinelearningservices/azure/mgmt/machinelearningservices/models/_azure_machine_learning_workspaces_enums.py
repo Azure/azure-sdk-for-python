@@ -88,7 +88,7 @@ class DatastoreState(str, Enum):
 
 class OsUpdateType(str, Enum):
 
-    critical = "Critical"
+    security = "Security"
     recommended = "Recommended"
 
 
@@ -104,7 +104,7 @@ class SshPublicAccess(str, Enum):
     disabled = "Disabled"
 
 
-class AmlInstanceState(str, Enum):
+class ComputeInstanceState(str, Enum):
 
     creating = "Creating"
     create_failed = "CreateFailed"
@@ -138,7 +138,7 @@ class ComputeType(str, Enum):
 
     aks = "AKS"
     aml_compute = "AmlCompute"
-    aml_instance = "AmlInstance"
+    compute_instance = "ComputeInstance"
     data_factory = "DataFactory"
     virtual_machine = "VirtualMachine"
     hd_insight = "HDInsight"
