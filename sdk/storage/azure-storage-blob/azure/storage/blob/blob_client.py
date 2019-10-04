@@ -1784,7 +1784,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
-        elif source_length is not None:
+        if source_length is not None:
             source_length = source_offset + source_length - 1
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2089,7 +2089,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
         if length is not None:
-            length = offset + length - 1
+            length = offset + length - 1  # Reformat to an inclusive range index
         page_range, _ = validate_and_format_range_headers(offset, length, align_to_page=True)
         options = {
             'snapshot': self.snapshot,
@@ -2136,13 +2136,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-, etc.
         :param int length:
-            End of byte range to use for getting valid page ranges.
+            Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
-            This range will return valid page ranges for from the offset start up to
-            offset end.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            must be a modulus of 512 and the length must be a modulus of
+            512.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -2357,7 +2357,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("offset must be an integer that aligns with 512 page size")
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
-        end_range = offset + length - 1
+        end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range) # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
@@ -2412,10 +2412,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            512.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -2498,7 +2498,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
         if source_offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 page size")
+            raise ValueError("source_offset must be an integer that aligns with 512 page size")
 
         # Format range
         end_range = offset + length - 1
@@ -2567,10 +2567,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length must be a modulus of
+            512.
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
@@ -2671,7 +2671,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("offset must be an integer that aligns with 512 page size")
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
-        end_range = length + offset - 1
+        end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
 
         cpk = kwargs.pop('cpk', None)
