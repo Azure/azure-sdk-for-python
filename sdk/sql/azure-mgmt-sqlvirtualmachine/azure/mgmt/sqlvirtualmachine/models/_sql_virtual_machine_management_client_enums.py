@@ -108,3 +108,10 @@ class DiskConfigurationType(str, Enum):
     new = "NEW"
     extend = "EXTEND"
     add = "ADD"
+
+
+class StorageWorkloadType(str, Enum):
+
+    general = "GENERAL"
+    oltp = "OLTP"
+    dw = "DW"
