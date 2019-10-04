@@ -257,7 +257,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key.

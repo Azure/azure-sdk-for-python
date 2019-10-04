@@ -161,9 +161,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         Use the returned signature with the credential parameter of any Queue Service.
 
-        :param ~azure.storage.queue._shared.models.ResourceTypes resource_types:
+        :param ~azure.storage.queue.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.queue._shared.models.AccountSasPermissions permission:
+        :param ~azure.storage.queue.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
         :param expiry:

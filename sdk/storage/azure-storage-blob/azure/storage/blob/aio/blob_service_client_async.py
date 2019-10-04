@@ -131,7 +131,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The user delegation key.
-        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        :rtype: ~azure.storage.blob.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
         try:

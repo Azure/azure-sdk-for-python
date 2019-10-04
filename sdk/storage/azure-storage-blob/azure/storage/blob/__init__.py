@@ -18,7 +18,8 @@ from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode
+    StorageErrorCode,
+    UserDelegationKey
 )
 from .models import (
     BlobType,
@@ -57,6 +58,7 @@ __all__ = [
     'BlobType',
     'LeaseClient',
     'StorageErrorCode',
+    'UserDelegationKey',
     'ExponentialRetry',
     'LinearRetry',
     'NoRetry',

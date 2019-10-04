@@ -150,9 +150,9 @@ class FileServiceClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file._shared.models.ResourceTypes resource_types:
+        :param ~azure.storage.file.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.file._shared.models.AccountSasPermissions permission:
+        :param ~azure.storage.file.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
