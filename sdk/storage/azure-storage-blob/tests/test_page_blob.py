@@ -380,12 +380,13 @@ class StoragePageBlobTest(StorageTestCase):
 
         resp = destination_blob_client.upload_pages_from_url(
             source_blob_client.url + "?" + sas, offset=4 * 1024,
-            length=SOURCE_BLOB_SIZE, source_offset=4 * 1024)
+            length=4 * 1024, source_offset=4 * 1024)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
         # Assert the destination blob is constructed correctly
         blob_properties = destination_blob_client.get_blob_properties()
+        self.assertEqual(blob_properties.size, SOURCE_BLOB_SIZE)
         self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
@@ -869,7 +870,7 @@ class StoragePageBlobTest(StorageTestCase):
         snapshot1 = blob.create_snapshot()
         blob.upload_page(data, offset=0, length=1536)
         snapshot2 = blob.create_snapshot()
-        blob.clear_page(offset=512, length=1024)
+        blob.clear_page(offset=512, length=512)
 
         # Act
         ranges1, cleared1 = blob.get_page_ranges(previous_snapshot_diff=snapshot1)
