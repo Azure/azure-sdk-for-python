@@ -30,9 +30,9 @@ class BillingProfile(Resource):
     :type po_number: str
     :param address: Billing address.
     :type address: ~azure.mgmt.billing.models.AddressDetails
-    :ivar invoice_email_opt_in: If the billing profile is opted in to receive
+    :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
-    :vartype invoice_email_opt_in: bool
+    :type invoice_email_opt_in: bool
     :ivar invoice_day: Invoice day.
     :vartype invoice_day: int
     :ivar currency: The currency associated with the billing profile.
@@ -48,7 +48,6 @@ class BillingProfile(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'invoice_email_opt_in': {'readonly': True},
         'invoice_day': {'readonly': True},
         'currency': {'readonly': True},
     }
@@ -67,12 +66,12 @@ class BillingProfile(Resource):
         'invoice_sections': {'key': 'properties.invoiceSections', 'type': '[InvoiceSection]'},
     }
 
-    def __init__(self, *, display_name: str=None, po_number: str=None, address=None, enabled_azure_plans=None, invoice_sections=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, po_number: str=None, address=None, invoice_email_opt_in: bool=None, enabled_azure_plans=None, invoice_sections=None, **kwargs) -> None:
         super(BillingProfile, self).__init__(**kwargs)
         self.display_name = display_name
         self.po_number = po_number
         self.address = address
-        self.invoice_email_opt_in = None
+        self.invoice_email_opt_in = invoice_email_opt_in
         self.invoice_day = None
         self.currency = None
         self.enabled_azure_plans = enabled_azure_plans

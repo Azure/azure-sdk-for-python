@@ -30,9 +30,9 @@ class BillingProfile(Resource):
     :type po_number: str
     :param address: Billing address.
     :type address: ~azure.mgmt.billing.models.AddressDetails
-    :ivar invoice_email_opt_in: If the billing profile is opted in to receive
+    :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
-    :vartype invoice_email_opt_in: bool
+    :type invoice_email_opt_in: bool
     :ivar invoice_day: Invoice day.
     :vartype invoice_day: int
     :ivar currency: The currency associated with the billing profile.
@@ -48,7 +48,6 @@ class BillingProfile(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'invoice_email_opt_in': {'readonly': True},
         'invoice_day': {'readonly': True},
         'currency': {'readonly': True},
     }
@@ -72,7 +71,7 @@ class BillingProfile(Resource):
         self.display_name = kwargs.get('display_name', None)
         self.po_number = kwargs.get('po_number', None)
         self.address = kwargs.get('address', None)
-        self.invoice_email_opt_in = None
+        self.invoice_email_opt_in = kwargs.get('invoice_email_opt_in', None)
         self.invoice_day = None
         self.currency = None
         self.enabled_azure_plans = kwargs.get('enabled_azure_plans', None)
