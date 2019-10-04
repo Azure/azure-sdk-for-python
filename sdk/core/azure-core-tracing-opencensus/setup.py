@@ -15,10 +15,10 @@ from setuptools import find_packages, setup  # type: ignore
 PACKAGE_NAME = "azure-core-tracing-opencensus"
 PACKAGE_PPRINT_NAME = "Azure Core Opencensus plugin"
 
-package_folder_path = "azure/core/tracing/ext"
+package_folder_path = "azure/core/tracing/ext/opencensus_span"
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'opencensus_span.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
                         fd.read(), re.MULTILINE).group(1)
 
@@ -52,7 +52,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    py_modules=[
+    packages=[
         'azure.core.tracing.ext.opencensus_span',
     ],
     install_requires=[
