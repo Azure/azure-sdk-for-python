@@ -370,7 +370,7 @@ linked EventHub. The associated connection string will not have send claims, hen
   e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
 
 ```python
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventHubClient
 
 connection_str = 'Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name'
 client = EventHubClient.from_connection_string(connection_str)
