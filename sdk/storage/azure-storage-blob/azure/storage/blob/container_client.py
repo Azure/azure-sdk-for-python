@@ -48,7 +48,7 @@ from ._shared_access_signature import BlobSharedAccessSignature
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
-    from .models import ContainerPermissions, PublicAccess
+    from .models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
     from .models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -187,7 +187,7 @@ class ContainerClient(StorageAccountHostsMixin):
             account_url, container=container, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
+            self, permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -213,7 +213,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.ContainerPermissions
+        :type permission: str or ~azure.storage.blob.models.ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy

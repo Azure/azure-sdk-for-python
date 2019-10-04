@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
+    from azure.storage.queue._shared.models import AccountSasPermissions, ResourceTypes
     from azure.storage.queue.aio.models import (
         QueueProperties
     )

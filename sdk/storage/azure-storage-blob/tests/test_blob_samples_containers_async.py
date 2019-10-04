@@ -166,8 +166,8 @@ class TestContainerSamplesAsync(StorageTestCase):
 
             # [START set_container_access_policy]
             # Create access policy
-            from azure.storage.blob import AccessPolicy, ContainerPermissions
-            access_policy = AccessPolicy(permission=ContainerPermissions(read=True),
+            from azure.storage.blob import AccessPolicy, ContainerSasPermissions
+            access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                          expiry=datetime.utcnow() + timedelta(hours=1),
                                          start=datetime.utcnow() - timedelta(minutes=1))
 

@@ -39,7 +39,7 @@ from .blob_client_async import BlobClient
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import ContainerPermissions, PublicAccess
+    from ..models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
     from ..models import ( # pylint: disable=unused-import
         AccessPolicy,

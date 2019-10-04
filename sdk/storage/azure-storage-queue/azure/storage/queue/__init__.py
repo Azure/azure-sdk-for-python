@@ -11,7 +11,7 @@ from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from ._message_encoding import (
@@ -28,7 +28,7 @@ from .models import (
     QueueMessage,
     QueueProperties,
     QueuePropertiesPaged,
-    QueuePermissions,
+    QueueSasPermissions,
     AccessPolicy,
     Logging,
     Metrics,
@@ -47,12 +47,12 @@ __all__ = [
     'NoRetry',
     'LocationMode',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageErrorCode',
     'QueueMessage',
     'QueueProperties',
     'QueuePropertiesPaged',
-    'QueuePermissions',
+    'QueueSasPermissions',
     'AccessPolicy',
     'TextBase64EncodePolicy',
     'TextBase64DecodePolicy',

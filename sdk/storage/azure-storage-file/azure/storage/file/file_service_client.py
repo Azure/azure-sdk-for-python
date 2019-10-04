@@ -29,7 +29,7 @@ from .models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._shared.models import ResourceTypes, AccountPermissions
+    from ._shared.models import ResourceTypes, AccountSasPermissions
     from .models import Metrics, CorsRule, ShareProperties
 
 
@@ -139,7 +139,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
+            permission,  # type: Union[AccountSasPermissions, str]
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
@@ -152,7 +152,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         :param ~azure.storage.file._shared.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.file._shared.models.AccountPermissions permission:
+        :param ~azure.storage.file._shared.models.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
