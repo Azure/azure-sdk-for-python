@@ -599,8 +599,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting the container client to interact with a specific container.
         """
+        try:
+            container_name = container.name
+        except AttributeError:
+            container_name = container
+
         return ContainerClient(
-            self.url, container=container,
+            self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
@@ -640,8 +645,17 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        try:
+            container_name = container.name
+        except AttributeError:
+            container_name = container
+        try:
+            blob_name = blob.name
+        except AttributeError:
+            blob_name = blob
+
         return BlobClient( # type: ignore
-            self.url, container=container, blob=blob, snapshot=snapshot,
+            self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

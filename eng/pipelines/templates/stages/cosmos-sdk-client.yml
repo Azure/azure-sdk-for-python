@@ -42,3 +42,11 @@ stages:
               PythonVersion: $(PythonVersion)
               OSName: $(OSName)
               ToxTestEnv: 'whl,sdist'
+
+  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: pipelines/stages/archetype-python-release.yml@azure-sdk-build-tools
+      parameters:
+        DependsOn: Build
+        Artifacts: ${{parameters.Artifacts}}
+        ArtifactName: packages
