@@ -71,7 +71,9 @@ try:
     from ._models_py3 import AzureMariaDBSource
     from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMLBatchExecutionActivity
+    from ._models_py3 import AzureMLExecutePipelineActivity
     from ._models_py3 import AzureMLLinkedService
+    from ._models_py3 import AzureMLServiceLinkedService
     from ._models_py3 import AzureMLUpdateResourceActivity
     from ._models_py3 import AzureMLWebServiceFile
     from ._models_py3 import AzureMySqlLinkedService
@@ -633,7 +635,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureMariaDBSource
     from ._models import AzureMariaDBTableDataset
     from ._models import AzureMLBatchExecutionActivity
+    from ._models import AzureMLExecutePipelineActivity
     from ._models import AzureMLLinkedService
+    from ._models import AzureMLServiceLinkedService
     from ._models import AzureMLUpdateResourceActivity
     from ._models import AzureMLWebServiceFile
     from ._models import AzureMySqlLinkedService
@@ -1282,7 +1286,9 @@ __all__ = [
     'AzureMariaDBSource',
     'AzureMariaDBTableDataset',
     'AzureMLBatchExecutionActivity',
+    'AzureMLExecutePipelineActivity',
     'AzureMLLinkedService',
+    'AzureMLServiceLinkedService',
     'AzureMLUpdateResourceActivity',
     'AzureMLWebServiceFile',
     'AzureMySqlLinkedService',
