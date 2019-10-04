@@ -26,7 +26,7 @@
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline_client import PipelineClient
+from azure.core import PipelineClient
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
@@ -77,7 +77,8 @@ def test_example_pipeline():
 def test_example_pipeline_client():
     url = "https://bing.com"
     # [START build_pipeline_client]
-    from azure.core import Configuration, PipelineClient
+    from azure.core import PipelineClient
+    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
 
     # example configuration with some policies
