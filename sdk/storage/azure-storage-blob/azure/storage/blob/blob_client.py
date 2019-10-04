@@ -2666,9 +2666,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 511:
+        if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(offset, length)
+        end_range = length + offset - 1
+        content_range = 'bytes={0}-{1}'.format(offset, end_range)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
