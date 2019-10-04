@@ -204,14 +204,14 @@ class StorageGetBlobTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = await (await blob.download_blob(offset=0, length=0)).content_as_bytes()
+        content = await (await blob.download_blob(offset=0, length=1)).content_as_bytes()
 
         # Assert
         self.assertEqual(1, len(content))
         self.assertEqual(self.byte_data[0], content[0])
 
         # Act
-        content = await (await blob.download_blob(offset=5, length=5)).content_as_bytes()
+        content = await (await blob.download_blob(offset=5, length=1)).content_as_bytes()
 
         # Assert
         self.assertEqual(1, len(content))
@@ -515,14 +515,14 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         end_range = self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=end_range)
+            downloader = await blob.download_blob(offset=1, length=end_range-1)
             properties = await downloader.download_to_stream(stream, max_concurrency=2)
 
         # Assert
         self.assertIsInstance(properties, BlobProperties)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(self.byte_data[1:end_range + 1], actual)
+            self.assertEqual(self.byte_data[1:end_range], actual)
 
     @record
     def test_ranged_get_blob_to_path_async(self):
@@ -555,9 +555,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.assertIsInstance(properties, BlobProperties)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(self.byte_data[start_range:end_range + 1], actual)
+            self.assertEqual(self.byte_data[start_range:end_range + start_range], actual)
         self.assert_download_progress(
-            end_range - start_range + 1,
+            end_range,
             self.config.max_chunk_get_size,
             self.config.max_single_get_size,
             progress)
@@ -1053,6 +1053,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsInstance(properties, BlobProperties)
         self.assertEqual(b'MDAwMDAwMDA=', properties.content_settings.content_md5)
+        self.assertEqual(len(downloader), 1024)
 
     @record
     def test_get_blob_range_to_stream_with_overall_md5_async(self):
@@ -1078,6 +1079,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
+        elf.assertEqual(len(downloader), 1024)
 
     @record
     def test_get_blob_range_with_overall_md5_async(self):
