@@ -236,7 +236,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(1, len(page_ranges))
         self.assertEqual(page_ranges[0]['start'], start_offset)
-        self.assertEqual(page_ranges[0]['end'], start_offset + length)
+        self.assertEqual(page_ranges[0]['end'], start_offset + length - 1)
 
     @record
     def test_update_page_with_md5(self):
@@ -373,12 +373,14 @@ class StoragePageBlobTest(StorageTestCase):
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0, 4 * 1024 - 1, 0)
+        resp = destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, offset=0, length=4 * 1024, source_offset=0)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
-        resp = destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 4 * 1024,
-                                                             SOURCE_BLOB_SIZE, 4 * 1024)
+        resp = destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, offset=4 * 1024,
+            length=SOURCE_BLOB_SIZE, source_offset=4 * 1024)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -402,9 +404,9 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act: make update page from url calls
         resp = destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                             0,
-                                                             SOURCE_BLOB_SIZE,
-                                                             0,
+                                                             offset=0,
+                                                             length=SOURCE_BLOB_SIZE,
+                                                             source_offset=0,
                                                              source_content_md5=src_md5)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -417,9 +419,10 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                          SOURCE_BLOB_SIZE,
-                                                          0,
+            destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
+                                                          offset=0,
+                                                          length=SOURCE_BLOB_SIZE,
+                                                          source_offset=0,
                                                           source_content_md5=StorageContentValidation.get_content_md5(
                                                               b"POTATO"))
 
@@ -438,9 +441,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    source_if_modified_since=source_properties.get('last_modified') - timedelta(
                                        hours=15))
         self.assertIsNotNone(resp.get('etag'))
@@ -454,9 +457,10 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
-            destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                          SOURCE_BLOB_SIZE,
-                                                          0,
+            destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
+                                                          offset=0,
+                                                          length=SOURCE_BLOB_SIZE,
+                                                          source_offset=0,
                                                           source_if_modified_since=source_properties.get(
                                                               'last_modified'))
 
@@ -475,9 +479,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    source_if_unmodified_since=source_properties.get('last_modified'))
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -491,9 +495,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
+                .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
+                                       length=SOURCE_BLOB_SIZE,
+                                       source_offset=0,
                                        source_if_unmodified_since=source_properties.get('last_modified') - timedelta(
                                            hours=15))
 
@@ -512,9 +516,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    source_if_match=source_properties.get('etag'))
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -528,9 +532,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
+                .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
+                                       length=SOURCE_BLOB_SIZE,
+                                       source_offset=0,
                                        source_if_match='0x111111111111111')
 
     @record
@@ -548,9 +552,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    source_if_none_match='0x111111111111111')
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -564,9 +568,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
+                .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
+                                       length=SOURCE_BLOB_SIZE,
+                                       source_offset=0,
                                        source_if_none_match=source_properties.get('etag'))
 
     @record
@@ -584,9 +588,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    if_modified_since=source_properties.get('last_modified') - timedelta(
                                        minutes=15))
         self.assertIsNotNone(resp.get('etag'))
@@ -601,9 +605,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
             destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
+                .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
+                                       length=SOURCE_BLOB_SIZE,
+                                       source_offset=0,
                                        if_modified_since=blob_properties.get('last_modified'))
 
     @record
@@ -622,9 +626,9 @@ class StoragePageBlobTest(StorageTestCase):
         # Act: make update page from url calls
         resp = destination_blob_client \
             .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
+                                   offset=0,
+                                   length=SOURCE_BLOB_SIZE,
+                                   source_offset=0,
                                    if_unmodified_since=destination_blob_properties.get('last_modified'))
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -900,14 +904,11 @@ class StoragePageBlobTest(StorageTestCase):
         resp1 = blob.upload_page(data, offset=0, length=512)
 
         # Act
-        try:
+        with self.assertRaises(ValueError):
             blob.upload_page(data, offset=1024, length=513)
-        except ValueError as e:
-            self.assertEqual(str(e), 'end_range must be an integer that aligns with 512 page size')
-            return
 
-        # Assert
-        raise Exception('Page range validation failed to throw on failure case')
+        # TODO
+        # self.assertEqual(str(e), 'end_range must be an integer that aligns with 512 page size')
 
     @record
     def test_resize_blob(self):
