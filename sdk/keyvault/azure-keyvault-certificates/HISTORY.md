@@ -2,15 +2,16 @@
 
 ## 4.0.0b4
 ### Breaking changes
-- Enums 'JsonWebKeyCurveName' and 'JsonWebKeyType' have been renamed to 'KeyCurveName' and 'KeyType', respectively.
-- Both async and sync versions of create_certificate now return pollers that return the created Certificate if creation is successful,
-and the CertificateOperation if not.
-- Certificate now has attribute `properties`, which holds certain properties of the
-certificate, such as version. This changes the shape of the Certificate type,
-as certain properties of Certificate (such as version) have to be accessed
+- Enums `JsonWebKeyCurveName` and `JsonWebKeyType` have been renamed to `KeyCurveName` and `KeyType`, respectively.
+- Both async and sync versions of `create_certificate` now return pollers that return the created `Certificate` if creation is successful,
+and a `CertificateOperation` if not.
+- `Certificate` now has attribute `properties`, which holds certain properties of the
+certificate, such as `version`. This changes the shape of the `Certificate` type,
+as certain properties of `Certificate` (such as `version`) have to be accessed
 through the `properties` property. See the updated [docs]
 (https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html)
 for details.
+- `update_certificate` has been renamed to `update_certificate_propertie`
 
 ## 4.0.0b3 (2019-09-11)
 Version 4.0.0b3 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Key Vault's certificates.
