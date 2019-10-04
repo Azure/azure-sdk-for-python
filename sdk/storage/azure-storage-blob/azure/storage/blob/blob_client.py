@@ -232,13 +232,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            account_name=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None,  # type: Optional[str]
             user_delegation_key=None  # type: Optional[UserDelegationKey]
             ):
         # type: (...) -> Any
@@ -307,6 +300,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        protocol = kwargs.pop('protocol', None)
+        account_name = kwargs.pop('account_name', None)
+        cache_control = kwargs.pop('cache_control', None)
+        content_disposition = kwargs.pop('content_disposition', None)
+        content_encoding = kwargs.pop('content_encoding', None)
+        content_language = kwargs.pop('content_language', None)
+        content_type = kwargs.pop('content_type', None)
+
         if user_delegation_key is not None:
             if not hasattr(self.credential, 'account_name') and not account_name:
                 raise ValueError("No account_name available. Please provide account_name parameter.")
@@ -357,7 +358,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
             max_concurrency=1,  # type: int
             **kwargs
         ):
@@ -392,6 +392,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -447,7 +448,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
             max_concurrency=1,  # type: int
             **kwargs
         ):
@@ -551,7 +551,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             metadata=metadata,
             content_settings=content_settings,
-            validate_content=validate_content,
             max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
@@ -560,13 +559,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return upload_page_blob(**options)
         return upload_append_blob(**options)
 
-    def _download_blob_options(self, offset=None, length=None, validate_content=False, **kwargs):
+    def _download_blob_options(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], bool, **Any) -> Dict[str, Any]
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
 
+        validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
@@ -601,7 +601,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
+    def download_blob(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], bool, **Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
@@ -669,7 +669,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._download_blob_options(
             offset=offset,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         extra_properties = {
             'name': self.blob_name,
@@ -1026,7 +1025,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -1053,6 +1051,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
 
+        sequence_number = kwargs.pop('sequence_number', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1084,7 +1083,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -1147,7 +1145,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
-            sequence_number=sequence_number,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
@@ -1692,7 +1689,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1709,6 +1705,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if isinstance(data, bytes):
             data = data[:length]
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1735,7 +1732,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> None
@@ -1775,7 +1771,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             block_id,
             data,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             self._client.block_blob.stage_block(**options)
@@ -1915,7 +1910,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1951,6 +1945,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1980,7 +1975,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -2043,7 +2037,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             block_list,
             content_settings=content_settings,
             metadata=metadata,
-            validate_content=validate_content,
             **kwargs)
         try:
             return self._client.block_blob.commit_block_list(**options) # type: ignore
@@ -2344,7 +2337,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -2374,6 +2366,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2402,7 +2395,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -2480,7 +2472,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start_range=start_range,
             end_range=end_range,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             return self._client.page_blob.upload_pages(**options) # type: ignore
@@ -2767,9 +2758,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _append_block_options( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -2787,6 +2775,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if isinstance(data, bytes):
             data = data[:length]
 
+        appendpos_condition = kwargs.pop('appendpos_condition', None)
+        maxsize_condition = kwargs.pop('maxsize_condition', None)
+        validate_content = kwargs.pop('validate_content', False)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -2825,9 +2816,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def append_block( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
@@ -2896,9 +2884,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._append_block_options(
             data,
             length=length,
-            validate_content=validate_content,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:
@@ -2910,9 +2895,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, copy_source_url,  # type: str
             source_range_start=None,  # type Optional[int]
             source_range_end=None,  # type Optional[int]
-            source_content_md5=None,  # type: Optional[bytearray]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -2929,6 +2911,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         elif source_range_start is not None:
             source_range = "bytes={0}-".format(source_range_start)
 
+        appendpos_condition = kwargs.pop('appendpos_condition', None)
+        maxsize_condition = kwargs.pop('maxsize_condition', None)
+        source_content_md5 = kwargs.pop('source_content_md5', None)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -2975,9 +2960,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def append_block_from_url(self, copy_source_url,  # type: str
                               source_range_start=None,  # type Optional[int]
                               source_range_end=None,  # type Optional[int]
-                              source_content_md5=None,  # type: Optional[bytearray]
-                              maxsize_condition=None,  # type: Optional[int]
-                              appendpos_condition=None,  # type: Optional[int]
                               **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
@@ -3062,9 +3044,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             copy_source_url,
             source_range_start=source_range_start,
             source_range_end=source_range_end,
-            source_content_md5=source_content_md5,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:
