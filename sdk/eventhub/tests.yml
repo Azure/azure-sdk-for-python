@@ -11,10 +11,11 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub
-      Linux_Python35:
-        OSName: 'Linux'
-        OSVmImage: 'ubuntu-16.04'
-        PythonVersion: '3.5'
+      Matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
         MacOs_Python37:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.14'
