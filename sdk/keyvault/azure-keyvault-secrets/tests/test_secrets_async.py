@@ -18,7 +18,7 @@ from dateutil import parser as date_parse
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
 
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)

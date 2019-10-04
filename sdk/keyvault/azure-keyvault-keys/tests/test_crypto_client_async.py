@@ -22,7 +22,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])

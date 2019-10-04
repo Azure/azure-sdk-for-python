@@ -19,7 +19,7 @@ from devtools_testutils import ResourceGroupPreparer
 class KeyClientTests(KeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
 
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
