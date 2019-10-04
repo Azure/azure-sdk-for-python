@@ -12,10 +12,11 @@
 
 **Breaking changes**
 
-- Removed support for IoThHub direct connection.
-    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create EventHubClient.
+- Removed support for IoT Hub direct connection.
+    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and receive device-to-cloud IoT Hub messages.
+- Removed support for sending EventData to IoT Hub.
 - Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
-- Updated uAMQP dependency to 1.2.3
+- Updated uAMQP dependency to 1.2.3.
 
 ## 5.0.0b3 (2019-09-10)
 
