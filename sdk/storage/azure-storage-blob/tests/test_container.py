@@ -300,7 +300,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_metadata(metadata, lease_id)
+        container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = container.get_container_properties().metadata
@@ -340,7 +340,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        md = container.get_container_properties(lease_id).metadata
+        md = container.get_container_properties(lease=lease_id).metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
@@ -374,7 +374,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        props = container.get_container_properties(lease_id)
+        props = container.get_container_properties(lease=lease_id)
         lease_id.break_lease()
 
         # Assert
@@ -404,7 +404,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        acl = container.get_container_access_policy(lease_id)
+        acl = container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)

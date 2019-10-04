@@ -158,10 +158,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def delete_container(
-            self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            **kwargs
-        ):
-        # type: (...) -> None
+            self, **kwargs):
+        # type: (Any) -> None
         """
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
@@ -204,6 +202,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Delete a container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
@@ -297,8 +296,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_container_properties(self, lease=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], **Any) -> ContainerProperties
+    async def get_container_properties(self, **kwargs):
+        # type: (**Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
@@ -319,6 +318,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Getting properties on the container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
@@ -387,8 +387,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_container_access_policy(self, lease=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], **Any) -> Dict[str, Any]
+    async def get_container_access_policy(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -409,6 +409,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Getting the access policy on the container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
@@ -428,7 +429,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     async def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
             **kwargs  # type: Any
         ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
@@ -472,6 +472,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :caption: Setting access policy on the container.
         """
         timeout = kwargs.pop('timeout', None)
+        lease = kwargs.pop('lease', None)
         if signed_identifiers:
             if len(signed_identifiers) > 5:
                 raise ValueError(
@@ -598,7 +599,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
             encoding='UTF-8', # type: str
             **kwargs
         ):
@@ -705,7 +705,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             blob_type=blob_type,
             length=length,
             metadata=metadata,
-            lease=lease,
             timeout=timeout,
             encoding=encoding,
             **kwargs
@@ -716,7 +715,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     async def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
             **kwargs
         ):
         # type: (...) -> None
@@ -778,7 +776,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         timeout = kwargs.pop('timeout', None)
         await blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
-            lease=lease,
             timeout=timeout,
             **kwargs)
 
