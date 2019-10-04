@@ -6,7 +6,7 @@ import os
 import sys
 
 import pytest
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
 
 # Ignore async tests on unsupported platforms
 if sys.version_info < (3, 5):
@@ -54,3 +54,17 @@ def live_certificate(live_service_principal):  # pylint:disable=inconsistent-ret
         return dict(live_service_principal, cert_path=pem_path)
     except IOError as ex:
         pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
+
+
+@pytest.fixture()
+def live_user_details():
+    user_details = {
+        "client_id": AZURE_CLI_CLIENT_ID,
+        "username": os.environ.get(EnvironmentVariables.AZURE_USERNAME),
+        "password": os.environ.get(EnvironmentVariables.AZURE_PASSWORD),
+        "tenant": os.environ.get("USER_TENANT"),
+    }
+    if None in user_details.values():
+        pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
+    else:
+        return user_details

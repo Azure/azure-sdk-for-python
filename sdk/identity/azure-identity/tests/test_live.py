@@ -12,6 +12,7 @@ from azure.identity import (
     ClientSecretCredential,
     KnownAuthorities,
     ManagedIdentityCredential,
+    UsernamePasswordCredential,
 )
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential
@@ -77,3 +78,13 @@ def test_msi_legacy():
 )
 def test_msi_app_service():
     get_token(MsiCredential())
+
+
+def test_username_password_auth(live_user_details):
+    credential = UsernamePasswordCredential(
+        client_id=live_user_details["client_id"],
+        username=live_user_details["username"],
+        password=live_user_details["password"],
+        tenant=live_user_details["tenant"],
+    )
+    get_token(credential)
