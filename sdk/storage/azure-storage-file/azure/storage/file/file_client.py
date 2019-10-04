@@ -51,7 +51,7 @@ def _upload_file_helper(
         content_settings,
         validate_content,
         timeout,
-        max_connections,
+        max_concurrency,
         file_settings,
         file_attributes="none",
         file_creation_time="now",
@@ -83,7 +83,7 @@ def _upload_file_helper(
             total_size=size,
             chunk_size=file_settings.max_range_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             timeout=timeout,
             **kwargs
@@ -433,7 +433,7 @@ class FileClient(StorageAccountHostsMixin):
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
-            max_connections=1,  # type: Optional[int]
+            max_concurrency=1,  # type: Optional[int]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
@@ -462,7 +462,7 @@ class FileClient(StorageAccountHostsMixin):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -529,7 +529,7 @@ class FileClient(StorageAccountHostsMixin):
             content_settings,
             validate_content,
             timeout,
-            max_connections,
+            max_concurrency,
             self._config,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
