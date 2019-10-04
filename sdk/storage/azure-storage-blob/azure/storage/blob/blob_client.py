@@ -3077,3 +3077,4 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.append_blob.append_block_from_url(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+
