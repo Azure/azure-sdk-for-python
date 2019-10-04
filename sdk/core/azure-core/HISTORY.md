@@ -23,6 +23,7 @@
 - Tracing: policy cannot fail the pipeline, even in the worst condition  #7252
 - Tracing: policy pass correctly status message if exception  #7252
 - Tracing: incorrect span if exception raised from decorated function  #7133
+- Fixed urllib3 ConnectTimeoutError being raised by Requests during a socket timeout. Now this exception is caught and wrapped as a `ServiceRequestError`  #7542
 
 ### Breaking changes
 
