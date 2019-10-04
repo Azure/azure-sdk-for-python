@@ -25,6 +25,7 @@ class ProtectedItemsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2019-05-13".
     """
 
     models = models
@@ -34,6 +35,7 @@ class ProtectedItemsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-05-13"
 
         self.config = config
 
@@ -69,8 +71,6 @@ class ProtectedItemsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-05-13"
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -85,7 +85,7 @@ class ProtectedItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -151,8 +151,6 @@ class ProtectedItemsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-05-13"
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -167,7 +165,7 @@ class ProtectedItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -230,8 +228,6 @@ class ProtectedItemsOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-12-01"
-
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -246,7 +242,7 @@ class ProtectedItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

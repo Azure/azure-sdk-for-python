@@ -800,6 +800,9 @@ class AzureFileshareProtectedItem(ProtectedItem):
 class AzureFileshareProtectedItemExtendedInfo(Model):
     """Additional information about Azure File Share backup item.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param oldest_recovery_point: The oldest backup copy available for this
      item in the service.
     :type oldest_recovery_point: datetime
@@ -809,13 +812,18 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
     :param policy_state: Indicates consistency of policy object and policy
      applied to this backup item.
     :type policy_state: str
-    :param resource_state: Indicates the state of this resource. Possible
+    :ivar resource_state: Indicates the state of this resource. Possible
      values are from enum ResourceState {Invalid, Active, SoftDeleted, Deleted}
-    :type resource_state: str
-    :param resource_state_sync_time: The resource state sync time for this
+    :vartype resource_state: str
+    :ivar resource_state_sync_time: The resource state sync time for this
      backup item.
-    :type resource_state_sync_time: datetime
+    :vartype resource_state_sync_time: datetime
     """
+
+    _validation = {
+        'resource_state': {'readonly': True},
+        'resource_state_sync_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
@@ -825,13 +833,13 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
         'resource_state_sync_time': {'key': 'resourceStateSyncTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, oldest_recovery_point=None, recovery_point_count: int=None, policy_state: str=None, resource_state: str=None, resource_state_sync_time=None, **kwargs) -> None:
+    def __init__(self, *, oldest_recovery_point=None, recovery_point_count: int=None, policy_state: str=None, **kwargs) -> None:
         super(AzureFileshareProtectedItemExtendedInfo, self).__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
-        self.resource_state = resource_state
-        self.resource_state_sync_time = resource_state_sync_time
+        self.resource_state = None
+        self.resource_state_sync_time = None
 
 
 class ProtectionPolicy(Model):
@@ -1017,24 +1025,31 @@ class RecoveryPoint(Model):
 class AzureFileShareRecoveryPoint(RecoveryPoint):
     """Azure File Share workload specific backup copy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_type: Type of the backup copy. Specifies whether it
+    :ivar recovery_point_type: Type of the backup copy. Specifies whether it
      is a crash consistent backup or app consistent.
-    :type recovery_point_type: str
-    :param recovery_point_time: Time at which this backup copy was created.
-    :type recovery_point_time: datetime
-    :param file_share_snapshot_uri: Contains Url to the snapshot of fileshare,
+    :vartype recovery_point_type: str
+    :ivar recovery_point_time: Time at which this backup copy was created.
+    :vartype recovery_point_time: datetime
+    :ivar file_share_snapshot_uri: Contains Url to the snapshot of fileshare,
      if applicable
-    :type file_share_snapshot_uri: str
-    :param recovery_point_size_in_gb: Contains recovery point size
-    :type recovery_point_size_in_gb: int
+    :vartype file_share_snapshot_uri: str
+    :ivar recovery_point_size_in_gb: Contains recovery point size
+    :vartype recovery_point_size_in_gb: int
     """
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_type': {'readonly': True},
+        'recovery_point_time': {'readonly': True},
+        'file_share_snapshot_uri': {'readonly': True},
+        'recovery_point_size_in_gb': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1045,12 +1060,12 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
         'recovery_point_size_in_gb': {'key': 'recoveryPointSizeInGB', 'type': 'int'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, file_share_snapshot_uri: str=None, recovery_point_size_in_gb: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureFileShareRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_type = recovery_point_type
-        self.recovery_point_time = recovery_point_time
-        self.file_share_snapshot_uri = file_share_snapshot_uri
-        self.recovery_point_size_in_gb = recovery_point_size_in_gb
+        self.recovery_point_type = None
+        self.recovery_point_time = None
+        self.file_share_snapshot_uri = None
+        self.recovery_point_size_in_gb = None
         self.object_type = 'AzureFileShareRecoveryPoint'
 
 
@@ -1830,17 +1845,27 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
 class AzureIaaSVMErrorInfo(Model):
     """Azure IaaS VM workload-specific error information.
 
-    :param error_code: Error code.
-    :type error_code: int
-    :param error_title: Title: Typically, the entity that the error pertains
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_code: Error code.
+    :vartype error_code: int
+    :ivar error_title: Title: Typically, the entity that the error pertains
      to.
-    :type error_title: str
-    :param error_string: Localized error string.
-    :type error_string: str
-    :param recommendations: List of localized recommendations for above error
+    :vartype error_title: str
+    :ivar error_string: Localized error string.
+    :vartype error_string: str
+    :ivar recommendations: List of localized recommendations for above error
      code.
-    :type recommendations: list[str]
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'error_code': {'readonly': True},
+        'error_title': {'readonly': True},
+        'error_string': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'error_code': {'key': 'errorCode', 'type': 'int'},
@@ -1849,26 +1874,36 @@ class AzureIaaSVMErrorInfo(Model):
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, *, error_code: int=None, error_title: str=None, error_string: str=None, recommendations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureIaaSVMErrorInfo, self).__init__(**kwargs)
-        self.error_code = error_code
-        self.error_title = error_title
-        self.error_string = error_string
-        self.recommendations = recommendations
+        self.error_code = None
+        self.error_title = None
+        self.error_string = None
+        self.recommendations = None
 
 
 class AzureIaaSVMHealthDetails(Model):
     """Azure IaaS VM workload-specific Health Details.
 
-    :param code: Health Code
-    :type code: int
-    :param title: Health Title
-    :type title: str
-    :param message: Health Message
-    :type message: str
-    :param recommendations: Health Recommended Actions
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Health Code
+    :vartype code: int
+    :ivar title: Health Title
+    :vartype title: str
+    :ivar message: Health Message
+    :vartype message: str
+    :ivar recommendations: Health Recommended Actions
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'title': {'readonly': True},
+        'message': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'int'},
@@ -1877,12 +1912,12 @@ class AzureIaaSVMHealthDetails(Model):
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, *, code: int=None, title: str=None, message: str=None, recommendations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureIaaSVMHealthDetails, self).__init__(**kwargs)
-        self.code = code
-        self.title = title
-        self.message = message
-        self.recommendations = recommendations
+        self.code = None
+        self.title = None
+        self.message = None
+        self.recommendations = None
 
 
 class Job(Model):
@@ -4976,21 +5011,26 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
     sub-classes are: AzureWorkloadPointInTimeRecoveryPoint,
     AzureWorkloadSAPHanaRecoveryPoint, AzureWorkloadSQLRecoveryPoint
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     """
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5003,10 +5043,10 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
         'object_type': {'AzureWorkloadPointInTimeRecoveryPoint': 'AzureWorkloadPointInTimeRecoveryPoint', 'AzureWorkloadSAPHanaRecoveryPoint': 'AzureWorkloadSAPHanaRecoveryPoint', 'AzureWorkloadSQLRecoveryPoint': 'AzureWorkloadSQLRecoveryPoint'}
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureWorkloadRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_time_in_utc = recovery_point_time_in_utc
-        self.type = type
+        self.recovery_point_time_in_utc = None
+        self.type = None
         self.object_type = 'AzureWorkloadRecoveryPoint'
 
 
@@ -5016,16 +5056,19 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSAPHanaPointInTimeRecoveryPoint
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
     :type time_ranges:
@@ -5034,6 +5077,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5047,8 +5092,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'AzureWorkloadSAPHanaPointInTimeRecoveryPoint': 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'}
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, **kwargs)
+    def __init__(self, *, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(**kwargs)
         self.time_ranges = time_ranges
         self.object_type = 'AzureWorkloadPointInTimeRecoveryPoint'
 
@@ -5164,16 +5209,19 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
 class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecoveryPoint):
     """Recovery point specific to PointInTime in SAPHana.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
     :type time_ranges:
@@ -5182,6 +5230,8 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5191,8 +5241,8 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, time_ranges=time_ranges, **kwargs)
+    def __init__(self, *, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(time_ranges=time_ranges, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'
 
 
@@ -5302,21 +5352,26 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
     """SAPHana specific recoverypoint, specifically encapsulates full/diff
     recoverypoints.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     """
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5325,8 +5380,8 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(**kwargs)
         self.object_type = 'AzureWorkloadSAPHanaRecoveryPoint'
 
 
@@ -5391,16 +5446,19 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSQLPointInTimeRecoveryPoint
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param extended_info: Extended Info that provides data directory details.
      Will be populated in two cases:
@@ -5413,6 +5471,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5426,8 +5486,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'AzureWorkloadSQLPointInTimeRecoveryPoint': 'AzureWorkloadSQLPointInTimeRecoveryPoint'}
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, extended_info=None, **kwargs) -> None:
-        super(AzureWorkloadSQLRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, **kwargs)
+    def __init__(self, *, extended_info=None, **kwargs) -> None:
+        super(AzureWorkloadSQLRecoveryPoint, self).__init__(**kwargs)
         self.extended_info = extended_info
         self.object_type = 'AzureWorkloadSQLRecoveryPoint'
 
@@ -5435,16 +5495,19 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
     """Recovery point specific to PointInTime.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param extended_info: Extended Info that provides data directory details.
      Will be populated in two cases:
@@ -5460,6 +5523,8 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5470,8 +5535,8 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, extended_info=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSQLPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, extended_info=extended_info, **kwargs)
+    def __init__(self, *, extended_info=None, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadSQLPointInTimeRecoveryPoint, self).__init__(extended_info=extended_info, **kwargs)
         self.time_ranges = time_ranges
         self.object_type = 'AzureWorkloadSQLPointInTimeRecoveryPoint'
 
@@ -5608,24 +5673,32 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
 class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
     """Extended info class details.
 
-    :param data_directory_time_in_utc: UTC time at which data directory info
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar data_directory_time_in_utc: UTC time at which data directory info
      was captured
-    :type data_directory_time_in_utc: datetime
-    :param data_directory_paths: List of data directory paths during restore
+    :vartype data_directory_time_in_utc: datetime
+    :ivar data_directory_paths: List of data directory paths during restore
      operation.
-    :type data_directory_paths:
+    :vartype data_directory_paths:
      list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectory]
     """
+
+    _validation = {
+        'data_directory_time_in_utc': {'readonly': True},
+        'data_directory_paths': {'readonly': True},
+    }
 
     _attribute_map = {
         'data_directory_time_in_utc': {'key': 'dataDirectoryTimeInUTC', 'type': 'iso-8601'},
         'data_directory_paths': {'key': 'dataDirectoryPaths', 'type': '[SQLDataDirectory]'},
     }
 
-    def __init__(self, *, data_directory_time_in_utc=None, data_directory_paths=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureWorkloadSQLRecoveryPointExtendedInfo, self).__init__(**kwargs)
-        self.data_directory_time_in_utc = data_directory_time_in_utc
-        self.data_directory_paths = data_directory_paths
+        self.data_directory_time_in_utc = None
+        self.data_directory_paths = None
 
 
 class Resource(Model):
@@ -7180,13 +7253,22 @@ class EncryptionDetails(Model):
 class ErrorDetail(Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error Message related to the Code.
-    :type message: str
-    :param recommendations: List of recommendation strings.
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error Message related to the Code.
+    :vartype message: str
+    :ivar recommendations: List of recommendation strings.
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -7194,11 +7276,11 @@ class ErrorDetail(Model):
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, recommendations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ErrorDetail, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.recommendations = recommendations
+        self.code = None
+        self.message = None
+        self.recommendations = None
 
 
 class OperationResultInfoBase(Model):
@@ -7637,23 +7719,26 @@ class IaasVMILRRegistrationRequest(ILRRequest):
 class IaasVMRecoveryPoint(RecoveryPoint):
     """IaaS VM workload specific backup copy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_type: Type of the backup copy.
-    :type recovery_point_type: str
-    :param recovery_point_time: Time at which this backup copy was created.
-    :type recovery_point_time: datetime
-    :param recovery_point_additional_info: Additional information associated
+    :ivar recovery_point_type: Type of the backup copy.
+    :vartype recovery_point_type: str
+    :ivar recovery_point_time: Time at which this backup copy was created.
+    :vartype recovery_point_time: datetime
+    :ivar recovery_point_additional_info: Additional information associated
      with this backup copy.
-    :type recovery_point_additional_info: str
-    :param source_vm_storage_type: Storage type of the VM whose backup copy is
+    :vartype recovery_point_additional_info: str
+    :ivar source_vm_storage_type: Storage type of the VM whose backup copy is
      created.
-    :type source_vm_storage_type: str
-    :param is_source_vm_encrypted: Identifies whether the VM was encrypted
-     when the backup copy is created.
-    :type is_source_vm_encrypted: bool
+    :vartype source_vm_storage_type: str
+    :ivar is_source_vm_encrypted: Identifies whether the VM was encrypted when
+     the backup copy is created.
+    :vartype is_source_vm_encrypted: bool
     :param key_and_secret: Required details for recovering an encrypted VM.
      Applicable only when IsSourceVMEncrypted is true.
     :type key_and_secret:
@@ -7679,6 +7764,11 @@ class IaasVMRecoveryPoint(RecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_type': {'readonly': True},
+        'recovery_point_time': {'readonly': True},
+        'recovery_point_additional_info': {'readonly': True},
+        'source_vm_storage_type': {'readonly': True},
+        'is_source_vm_encrypted': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7698,13 +7788,13 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, **kwargs) -> None:
+    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_type = recovery_point_type
-        self.recovery_point_time = recovery_point_time
-        self.recovery_point_additional_info = recovery_point_additional_info
-        self.source_vm_storage_type = source_vm_storage_type
-        self.is_source_vm_encrypted = is_source_vm_encrypted
+        self.recovery_point_type = None
+        self.recovery_point_time = None
+        self.recovery_point_additional_info = None
+        self.source_vm_storage_type = None
+        self.is_source_vm_encrypted = None
         self.key_and_secret = key_and_secret
         self.is_instant_ilr_session_active = is_instant_ilr_session_active
         self.recovery_point_tier_details = recovery_point_tier_details
@@ -8397,21 +8487,29 @@ class MABContainerHealthDetails(Model):
 class MabErrorInfo(Model):
     """MAB workload-specific error information.
 
-    :param error_string: Localized error string.
-    :type error_string: str
-    :param recommendations: List of localized recommendations.
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_string: Localized error string.
+    :vartype error_string: str
+    :ivar recommendations: List of localized recommendations.
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'error_string': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'error_string': {'key': 'errorString', 'type': 'str'},
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, *, error_string: str=None, recommendations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(MabErrorInfo, self).__init__(**kwargs)
-        self.error_string = error_string
-        self.recommendations = recommendations
+        self.error_string = None
+        self.recommendations = None
 
 
 class MabFileFolderProtectedItem(ProtectedItem):
