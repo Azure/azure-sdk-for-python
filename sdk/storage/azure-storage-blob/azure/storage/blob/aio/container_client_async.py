@@ -75,7 +75,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         account, in which case the blob container must also be specified.
     :param container_name:
         The name of the container for the blob.
-    :type container_name: str or ~azure.storage.blob.models.ContainerProperties
+    :type container_name: str or ~azure.storage.blob.ContainerProperties
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -786,7 +786,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         :param blob:
             The blob with which to interact.
-        :type blob: Union[BlobProperties, str]
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.

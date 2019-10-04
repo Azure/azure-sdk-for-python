@@ -974,7 +974,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param blob:
             The blob with which to interact.
-        :type blob: Union[str, BlobProperties]
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.

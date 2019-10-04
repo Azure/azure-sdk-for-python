@@ -466,7 +466,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         :param container:
             The container that the blob is in.
-        :type container: Union[ContainerProperties, str]
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.aio.container_client_async.ContainerClient
 
@@ -502,10 +502,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         :param container:
             The container that the blob is in.
-        :type container: Union[ContainerProperties, str]
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :param blob:
             The blob with which to interact.
-        :type blob: Union[BlobProperties, str]
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by
