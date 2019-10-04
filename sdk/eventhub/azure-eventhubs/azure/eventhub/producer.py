@@ -233,7 +233,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         child = None
         if span_impl_type is not None:
             child = span_impl_type(name="Azure.EventHubs.send")
-            child.kind = SpanKind.CLIENT  # Should be PRODUCER
+            child.kind = SpanKind.PRODUCER
 
         self._check_closed()
         if isinstance(event_data, EventData):

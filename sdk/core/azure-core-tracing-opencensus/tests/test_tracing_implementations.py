@@ -155,12 +155,16 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.CLIENT
             assert wrapped_class.kind == SpanKind.CLIENT
 
+            # opencensus doesn't support producer, put client instead
+            wrapped_class.kind = SpanKind.PRODUCER
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.CLIENT
+            assert wrapped_class.kind == SpanKind.CLIENT
+
+            # opencensus doesn't support consumer, put server instead
+            wrapped_class.kind = SpanKind.CONSUMER
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.SERVER
+            assert wrapped_class.kind == SpanKind.SERVER
+
             # not supported
-            with pytest.raises(ValueError):
-                wrapped_class.kind = SpanKind.PRODUCER
-
-            with pytest.raises(ValueError):
-                wrapped_class.kind = SpanKind.CONSUMER
-
             with pytest.raises(ValueError):
                 wrapped_class.kind = SpanKind.INTERNAL
