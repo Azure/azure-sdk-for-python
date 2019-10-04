@@ -261,7 +261,7 @@ class Certificate(object):
         policy,  # type: CertificatePolicy
         properties=None,  # type: Optional[CertificateProperties]
         cer=None,  # type: Optional[bytes]
-        kwargs  # type: ANy
+        **kwargs  # type: ANy
     ):
         # type: (...) -> None
         self._properties = properties
