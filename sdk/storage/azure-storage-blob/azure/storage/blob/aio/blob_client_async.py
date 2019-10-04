@@ -1322,12 +1322,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-, etc.
         :param int length:
-            End of byte range to use for getting valid page ranges.
+            Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
             This range will return valid page ranges for from the offset start up to
-            offset end.
+            the specified length.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
+            must be a modulus of 512 and the length  must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-, etc.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
@@ -1501,10 +1501,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            512.
         :param int length:
             Length of the page
         :param lease:
@@ -1592,9 +1592,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
