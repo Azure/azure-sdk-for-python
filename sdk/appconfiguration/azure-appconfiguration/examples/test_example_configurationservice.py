@@ -94,14 +94,14 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
         # [START list_configuration_setting]
         from datetime import datetime, timedelta
 
-        accept_date_time = datetime.today() + timedelta(days=-1)
+        accept_datetime = datetime.today() + timedelta(days=-1)
 
         all_listed = client.list_configuration_settings()
         for item in all_listed:
             pass  # do something
 
         filtered_listed = client.list_configuration_settings(
-            labels=["*Labe*"], keys=["*Ke*"], accept_date_time=accept_date_time
+            labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
         )
         for item in filtered_listed:
             pass  # do something
@@ -110,14 +110,14 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
         # [START list_revisions]
         from datetime import datetime, timedelta
 
-        accept_date_time = datetime.today() + timedelta(days=-1)
+        accept_datetime = datetime.today() + timedelta(days=-1)
 
         all_revisions = client.list_configuration_settings()
         for item in all_revisions:
             pass  # do something
 
         filtered_revisions = client.list_revisions(
-            labels=["*Labe*"], keys=["*Ke*"], accept_date_time=accept_date_time
+            labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
         )
         for item in filtered_revisions:
             pass  # do something

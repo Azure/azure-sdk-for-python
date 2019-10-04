@@ -10,7 +10,7 @@ import webbrowser
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from .._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, PublicClientCredential, wrap_exceptions
 
 try:
     from typing import TYPE_CHECKING
@@ -22,8 +22,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Mapping
 
 
-
-class InteractiveBrowserCredential(ConfidentialClientCredential):
+class InteractiveBrowserCredential(PublicClientCredential):
     """
     Authenticates a user through the authorization code flow. This is an interactive flow: ``get_token`` opens a
     browser to a login URL provided by Azure Active Directory, and waits for the user to authenticate there.
@@ -32,7 +31,6 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
     :param str client_id: the application's client ID
-    :param str client_secret: one of the application's client secrets
 
     Keyword arguments
         - *tenant (str)*: a tenant ID or a domain associated with a tenant. Defaults to the 'organizations' tenant,
@@ -41,14 +39,11 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
 
     """
 
-    def __init__(self, client_id, client_secret, **kwargs):
-        # type: (str, str, Any) -> None
+    def __init__(self, client_id, **kwargs):
+        # type: (str, Any) -> None
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
-        authority = "https://login.microsoftonline.com/" + kwargs.pop("tenant", "organizations")
-        super(InteractiveBrowserCredential, self).__init__(
-            client_id=client_id, client_credential=client_secret, authority=authority, **kwargs
-        )
+        super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument

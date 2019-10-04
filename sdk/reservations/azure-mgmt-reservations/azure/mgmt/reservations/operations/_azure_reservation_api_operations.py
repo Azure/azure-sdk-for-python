@@ -88,7 +88,8 @@ class AzureReservationAPIOperationsMixin(object):
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Get list of applicable `Reservation`s.
 
-        Get applicable `Reservation`s that are applied to this subscription.
+        Get applicable `Reservation`s that are applied to this subscription or
+        a resource group under this subscription.
 
         :param subscription_id: Id of the subscription
         :type subscription_id: str

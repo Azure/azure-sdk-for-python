@@ -7,7 +7,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map
 from .crypto import CryptographyClient
-from .models import Key, KeyBase, DeletedKey
+from .models import Key, KeyProperties, DeletedKey
 
 try:
     from typing import TYPE_CHECKING
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, List, Optional, Union
     from datetime import datetime
     from azure.core.paging import ItemPaged
+    from .models import JsonWebKey
 
 
 class KeyClient(KeyVaultClientBase):
@@ -323,11 +324,11 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_keys(self, **kwargs):
-        # type: (**Any) -> ItemPaged[KeyBase]
+        # type: (**Any) -> ItemPaged[KeyProperties]
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyBase]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -341,18 +342,18 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_keys(
             self._vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def list_key_versions(self, name, **kwargs):
-        # type: (str, **Any) -> ItemPaged[KeyBase]
+        # type: (str, **Any) -> ItemPaged[KeyProperties]
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
         :returns: An iterator of keys without their cryptographic material
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyBase]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -367,7 +368,7 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             name,
             maxresults=max_page_size,
-            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
         )
 
@@ -419,7 +420,7 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key(
+    def update_key_properties(
         self,
         name,  # type: str
         version=None,  # type: Optional[str]
@@ -530,7 +531,7 @@ class KeyClient(KeyVaultClientBase):
     def import_key(
         self,
         name,  # type: str
-        key,  # type: List[str]
+        key,  # type: JsonWebKey
         hsm=None,  # type: Optional[bool]
         enabled=None,  # type: Optional[bool]
         not_before=None,  # type: Optional[datetime]
@@ -560,6 +561,6 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_url, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)

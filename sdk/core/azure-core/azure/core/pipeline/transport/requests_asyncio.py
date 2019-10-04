@@ -64,7 +64,8 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START asyncio]
             :end-before: [END asyncio]
@@ -94,6 +95,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
         *session* - will override the driver session and use yours. Should NOT be done unless really required.
         Anything else is sent straight to requests.
+
         *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()

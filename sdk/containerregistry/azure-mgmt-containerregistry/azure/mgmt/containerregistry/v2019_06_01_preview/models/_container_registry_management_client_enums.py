@@ -201,3 +201,21 @@ class SecretObjectType(str, Enum):
 
     opaque = "Opaque"
     vaultsecret = "Vaultsecret"
+
+
+class TokenCertificateName(str, Enum):
+
+    certificate1 = "certificate1"
+    certificate2 = "certificate2"
+
+
+class TokenPasswordName(str, Enum):
+
+    password1 = "password1"
+    password2 = "password2"
+
+
+class TokenStatus(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"

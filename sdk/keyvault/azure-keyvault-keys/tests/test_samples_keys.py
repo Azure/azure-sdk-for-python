@@ -48,7 +48,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.name)
         print(key.id)
         print(key.key_material.kty)
-        print(key.expires)
+        print(key.properties.expires)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -74,7 +74,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
 
         print(ec_key.id)
-        print(ec_key.version)
+        print(ec_key.properties.version)
         print(ec_key.key_material.kty)
         print(ec_key.key_material.crv)
 
@@ -85,14 +85,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key = key_client.get_key("key-name")
 
         # alternatively, specify a version
-        key_version = key.version
+        key_version = key.properties.version
         key = key_client.get_key("key-name", key_version)
 
         print(key.id)
         print(key.name)
-        print(key.version)
+        print(key.properties.version)
         print(key.key_material.kty)
-        print(key.vault_url)
+        print(key.properties.vault_url)
 
         # [END get_key]
         # [START update_key]
@@ -100,12 +100,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # update attributes of an existing key
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = key_client.update_key(key.name, expires=expires, tags=tags)
+        updated_key = key_client.update_key_properties(key.name, expires=expires, tags=tags)
 
-        print(updated_key.version)
-        print(updated_key.updated)
-        print(updated_key.expires)
-        print(updated_key.tags)
+        print(updated_key.properties.version)
+        print(updated_key.properties.updated)
+        print(updated_key.properties.expires)
+        print(updated_key.properties.tags)
         print(key.key_material.kty)
 
         # [END update_key]
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # restore a key backup
         restored_key = key_client.restore_key(key_backup)
         print(restored_key.id)
-        print(restored_key.version)
+        print(restored_key.properties.version)
 
         # [END restore_key]
 

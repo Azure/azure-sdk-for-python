@@ -154,7 +154,7 @@ already exists, a new version of that secret is created.
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Retrieve a Secret
@@ -177,11 +177,11 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
     # You can specify additional application-specific metadata in the form of tags.
     tags = {"foo": "updated tag"}
 
-    updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
+    updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret.updated)
-    print(updated_secret.content_type)
-    print(updated_secret.tags)
+    print(updated_secret_properties.updated)
+    print(updated_secret_properties.content_type)
+    print(updated_secret_properties.tags)
 ```
 
 ### Delete a Secret
@@ -192,7 +192,7 @@ for the vault, this permanently deletes the secret.
     deleted_secret = secret_client.delete_secret("secret-name")
 
     print(deleted_secret.name)
-    print(deleted_secret.deleted_date)
+    print(deleted_secret.properties.deleted_date)
 ```
 
 ### List secrets
@@ -200,11 +200,11 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secrets = secret_client.list_secrets()
+    secret_properties = secret_client.list_secrets()
 
-    for secret in secrets:
+    for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
-        print(secret.name)
+        print(secret_property.name)
 ```
 
 ### Async operations
@@ -227,18 +227,18 @@ This example creates a secret in the Key Vault with the specified optional argum
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Async list secrets
 This example lists all the secrets in the specified Key Vault.
 
 ```python
-    secrets = secret_client.list_secrets()
+    secret_properties = secret_client.list_secrets()
 
-    async for secret in secrets:
+    async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
-        print(secret.name)
+        print(secret_property.name)
 ```
 
 ## Troubleshooting

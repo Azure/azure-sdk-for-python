@@ -31,6 +31,7 @@ from azure.core.exceptions import HttpResponseError
 # 5. Restore a certificate (restore_certificate)
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
     # Notice that the client is using default Azure credentials.
@@ -42,7 +43,7 @@ async def run_sample():
     try:
 
         print("\n.. Create Certificate")
-        cert_name = 'BackupRestoreCertificate'
+        cert_name = "BackupRestoreCertificate"
 
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
@@ -69,7 +70,7 @@ async def run_sample():
         # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
         # In order to be able to reuse the name during restoration, we must purge the certificate
         # after the initial deletion.
-        print ("\nPurging certificate...")
+        print("\nPurging certificate...")
         await client.purge_deleted_certificate(name=cert_name)
         # To ensure certificate is purged on the server side.
         await asyncio.sleep(30)

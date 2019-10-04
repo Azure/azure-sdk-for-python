@@ -39,29 +39,22 @@ credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # First we specify the AdministratorDetails for our issuers.
-    admin_details = [AdministratorDetails(
-        first_name="John",
-        last_name="Doe",
-        email="admin@microsoft.com",
-        phone="4255555555"
-    )]
+    admin_details = [
+        AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+    ]
 
     # Next we create an issuer with these administrator details
     # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
     # The provider for your issuer must exist for your vault location and tenant id.
     client.create_issuer(
-        name="issuer1",
-        provider="Test",
-        account_id="keyvaultuser",
-        admin_details=admin_details,
-        enabled=True
+        name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
     )
 
     # Now we get this issuer by name
     issuer1 = client.get_issuer(name="issuer1")
 
     print(issuer1.name)
-    print(issuer1.provider)
+    print(issuer1.properties.provider)
     print(issuer1.account_id)
 
     for admin_detail in issuer1.admin_details:
@@ -71,18 +64,13 @@ try:
         print(admin_detail.phone)
 
     # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
-    client.create_issuer(
-        name="issuer2",
-        provider="Test",
-        account_id="keyvaultuser",
-        enabled=True
-    )
+    client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
     issuers = client.list_issuers()
 
     for issuer in issuers:
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
 
     # Finally, we delete our first issuer by name.
     client.delete_issuer(name="issuer1")
