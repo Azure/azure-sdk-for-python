@@ -3,14 +3,6 @@
 Release History
 ===============
 
-5.1.0 (2019-10-04)
-++++++++++++++++++
-
-**Features**
-
-- Added operation DeploymentsOperations.what_if
-- Added operation DeploymentsOperations.what_if_at_subscription_scope
-
 5.0.0 (2019-09-22)
 ++++++++++++++++++
 

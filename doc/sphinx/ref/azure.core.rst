@@ -8,7 +8,6 @@ Subpackages
 
    azure.core.pipeline
    azure.core.polling
-   azure.core.tracing
 
 Submodules
 ----------
@@ -49,14 +48,6 @@ azure.core.exceptions module
 ----------------------------
 
 .. automodule:: azure.core.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.core.match\_conditions module
------------------------------------
-
-.. automodule:: azure.core.match_conditions
    :members:
    :undoc-members:
    :show-inheritance:

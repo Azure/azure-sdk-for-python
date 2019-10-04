@@ -44,14 +44,6 @@ azure.core.pipeline.policies.custom\_hook module
    :undoc-members:
    :show-inheritance:
 
-azure.core.pipeline.policies.distributed\_tracing module
---------------------------------------------------------
-
-.. automodule:: azure.core.pipeline.policies.distributed_tracing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 azure.core.pipeline.policies.redirect module
 --------------------------------------------
 

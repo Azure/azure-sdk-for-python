@@ -65,6 +65,7 @@ from .operations import JobVersionsOperations
 from .operations import LongTermRetentionBackupsOperations
 from .operations import BackupLongTermRetentionPoliciesOperations
 from .operations import ManagedBackupShortTermRetentionPoliciesOperations
+from .operations import ManagedDatabasesOperations
 from .operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from .operations import ServerAutomaticTuningOperations
 from .operations import ServerDnsAliasesOperations
@@ -95,8 +96,6 @@ from .operations import ManagedDatabaseSensitivityLabelsOperations
 from .operations import InstancePoolsOperations
 from .operations import UsagesOperations
 from .operations import ManagedInstancesOperations
-from .operations import ManagedDatabaseRestoreDetailsOperations
-from .operations import ManagedDatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from . import models
@@ -212,6 +211,8 @@ class SqlManagementClient(SDKClient):
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar managed_backup_short_term_retention_policies: ManagedBackupShortTermRetentionPolicies operations
     :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
+    :ivar managed_databases: ManagedDatabases operations
+    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar managed_restorable_dropped_database_backup_short_term_retention_policies: ManagedRestorableDroppedDatabaseBackupShortTermRetentionPolicies operations
     :vartype managed_restorable_dropped_database_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
@@ -272,10 +273,6 @@ class SqlManagementClient(SDKClient):
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
     :ivar managed_instances: ManagedInstances operations
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
-    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
-    :ivar managed_databases: ManagedDatabases operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
@@ -404,6 +401,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_databases = ManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.managed_restorable_dropped_database_backup_short_term_retention_policies = ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
@@ -463,10 +462,6 @@ class SqlManagementClient(SDKClient):
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

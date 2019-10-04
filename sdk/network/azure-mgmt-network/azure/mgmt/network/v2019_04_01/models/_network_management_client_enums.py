@@ -51,14 +51,6 @@ class SecurityRuleDirection(str, Enum):
     outbound = "Outbound"
 
 
-class ProvisioningState(str, Enum):
-
-    succeeded = "Succeeded"
-    updating = "Updating"
-    deleting = "Deleting"
-    failed = "Failed"
-
-
 class RouteNextHopType(str, Enum):
 
     virtual_network_gateway = "VirtualNetworkGateway"
@@ -213,6 +205,14 @@ class ResourceIdentityType(str, Enum):
     user_assigned = "UserAssigned"
     system_assigned_user_assigned = "SystemAssigned, UserAssigned"
     none = "None"
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
 
 
 class AzureFirewallRCActionType(str, Enum):

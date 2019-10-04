@@ -539,6 +539,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.import_key(
-            self.vault_url, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)

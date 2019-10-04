@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from typing import Any, Dict, List, Optional, Union
     from datetime import datetime
     from azure.core.paging import ItemPaged
-    from .models import JsonWebKey
 
 
 class KeyClient(KeyVaultClientBase):
@@ -531,7 +530,7 @@ class KeyClient(KeyVaultClientBase):
     def import_key(
         self,
         name,  # type: str
-        key,  # type: JsonWebKey
+        key,  # type: List[str]
         hsm=None,  # type: Optional[bool]
         enabled=None,  # type: Optional[bool]
         not_before=None,  # type: Optional[datetime]
@@ -561,6 +560,6 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_url, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)
