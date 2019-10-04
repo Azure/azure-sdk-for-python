@@ -2086,11 +2086,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
-        page_range = None # type: ignore
-        if offset is not None and length is None:
-            page_range = str(offset)
-        elif offset is not None and length is not None:
-            page_range = str(length - offset + 1)
+        if length is not None:
+            length = offset + length - 1
+        page_range, _ = validate_and_format_range_headers(offset, length, align_to_page=True)
         options = {
             'snapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
