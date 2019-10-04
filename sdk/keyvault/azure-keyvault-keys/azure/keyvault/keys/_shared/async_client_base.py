@@ -6,8 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._generated import KeyVaultClient

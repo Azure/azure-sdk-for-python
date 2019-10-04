@@ -4,11 +4,10 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .._user_agent import USER_AGENT
