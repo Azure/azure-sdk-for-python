@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
     TYPE_CHECKING
 )
 
@@ -46,7 +46,7 @@ from .blob_client import BlobClient
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
     from .models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
@@ -1028,7 +1028,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_blobs(self, *blobs, **kwargs):
-        # type: (...) -> None
+        # type: (...) -> Iterator[HttpResponse]
         """Marks the specified blobs or snapshots for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1079,7 +1079,8 @@ class ContainerClient(StorageAccountHostsMixin):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             **kwargs
@@ -1164,7 +1165,8 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
@@ -1217,7 +1219,8 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if premium_page_blob_tier is None:

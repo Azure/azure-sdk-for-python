@@ -790,13 +790,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def delete_blobs(  # pylint: disable=arguments-differ
-            self, *blobs,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
+            self, *blobs: Union[str, BlobProperties],
+            delete_snapshots: Optional[str] = None,
+            lease: Optional[Union[str, LeaseClient]] = None,
+            timeout: Optional[int] = None,
             **kwargs
-        ):
-        # type: (...) -> None
+        ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blob is later deleted during garbage collection.
@@ -848,7 +847,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             delete_snapshots=delete_snapshots,
@@ -902,7 +902,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
@@ -954,7 +955,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if premium_page_blob_tier is None:
