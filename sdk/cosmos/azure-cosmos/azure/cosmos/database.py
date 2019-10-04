@@ -177,22 +177,23 @@ class DatabaseProxy(object):
         :raise CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_container]
-            :end-before: [END create_container]
-            :language: python
-            :dedent: 0
-            :caption: Create a container with default settings:
-            :name: create_container
+        .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_container_with_settings]
-            :end-before: [END create_container_with_settings]
-            :language: python
-            :dedent: 0
-            :caption: Create a container with specific settings; in this case, a custom partition key:
-            :name: create_container_with_settings
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with default settings:
+                :name: create_container
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START create_container_with_settings]
+                :end-before: [END create_container_with_settings]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with specific settings; in this case, a custom partition key:
+                :name: create_container_with_settings
         """
         definition = dict(id=id)  # type: Dict[str, Any]
         if partition_key:
@@ -322,14 +323,15 @@ class DatabaseProxy(object):
             or a dict representing the properties of the container to be retrieved.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START get_container]
-            :end-before: [END get_container]
-            :language: python
-            :dedent: 0
-            :caption: Get an existing container, handling a failure if encountered:
-            :name: get_container
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START get_container]
+                :end-before: [END get_container]
+                :language: python
+                :dedent: 0
+                :caption: Get an existing container, handling a failure if encountered:
+                :name: get_container
         """
         if isinstance(container, ContainerProxy):
             id_value = container.id
@@ -355,14 +357,15 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START list_containers]
-            :end-before: [END list_containers]
-            :language: python
-            :dedent: 0
-            :caption: List all containers in the database:
-            :name: list_containers
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START list_containers]
+                :end-before: [END list_containers]
+                :language: python
+                :dedent: 0
+                :caption: List all containers in the database:
+                :name: list_containers
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -453,14 +456,15 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START reset_container_properties]
-            :end-before: [END reset_container_properties]
-            :language: python
-            :dedent: 0
-            :caption: Reset the TTL property on a container, and display the updated properties:
-            :name: reset_container_properties
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START reset_container_properties]
+                :end-before: [END reset_container_properties]
+                :language: python
+                :dedent: 0
+                :caption: Reset the TTL property on a container, and display the updated properties:
+                :name: reset_container_properties
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -580,14 +584,15 @@ class DatabaseProxy(object):
         :raise `CosmosHttpResponseError`: If the given user couldn't be created.
         :rtype: ~azure.cosmos.user.UserProxy
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_user]
-            :end-before: [END create_user]
-            :language: python
-            :dedent: 0
-            :caption: Create a database user:
-            :name: create_user
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START create_user]
+                :end-before: [END create_user]
+                :language: python
+                :dedent: 0
+                :caption: Create a database user:
+                :name: create_user
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)

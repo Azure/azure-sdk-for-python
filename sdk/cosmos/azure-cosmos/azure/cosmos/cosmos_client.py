@@ -134,38 +134,60 @@ class CosmosClient(object):
 
     **Keyword arguments:**
 
+    *timeout* - An absolute timeout in seconds, for the combined HTTP request and response processing.
+
     *request_timeout* - The HTTP request timeout in seconds.
+
     *media_request_timeout* - The media request timeout in seconds.
+
     *connection_mode* - The connection mode for the client - currently only supports 'Gateway'.
+
     *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
-    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration
-    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration
+
+    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration.
+
+    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration.
+
     *connection_verify* - Whether to verify the connection, default value is True.
+
     *connection_cert* - An alternative certificate to verify the connection.
+
     *retry_total* - Maximum retry attempts.
+
     *retry_backoff_max* - Maximum retry wait time in seconds.
+
     *retry_fixed_interval* - Fixed retry interval in milliseconds.
+
     *retry_read* - Maximum number of socket read retry attempts.
+
     *retry_connect* - Maximum number of connection error retry attempts.
+
     *retry_status* - Maximum number of retry attempts on error status codes.
+
     *retry_on_status_codes* - A list of specific status codes to retry on.
+
     *retry_backoff_factor* - Factor to calculate wait time between retry attempts.
+
     *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
+
     *preferred_locations* - The preferred locations for geo-replicated database accounts.
         When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
         the client will use this list to evaluate the final location, taking into consideration
         the order specified in `preferred_locations` list. The locations in this list are specified
         as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
         and so on.
+
     *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
 
-    .. literalinclude:: ../../samples/examples.py
-        :start-after: [START create_client]
-        :end-before: [END create_client]
-        :language: python
-        :dedent: 0
-        :caption: Create a new instance of the Cosmos DB client:
-        :name: create_client
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../samples/examples.py
+            :start-after: [START create_client]
+            :end-before: [END create_client]
+            :language: python
+            :dedent: 0
+            :caption: Create a new instance of the Cosmos DB client:
+            :name: create_client
     """
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
@@ -243,14 +265,15 @@ class CosmosClient(object):
         :rtype: ~azure.cosmos.database.DatabaseProxy
         :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_database]
-            :end-before: [END create_database]
-            :language: python
-            :dedent: 0
-            :caption: Create a database in the Cosmos DB account:
-            :name: create_database
+        .. admonition:: Example:
 
+            .. literalinclude:: ../../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
         """
 
         request_options = build_options(kwargs)
@@ -341,9 +364,9 @@ class CosmosClient(object):
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, str] feed_options: Dictionary of additional properties to be used for the request.
+        :param dict(str, str) feed_options: Dictionary of additional properties to be used for the request.
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]

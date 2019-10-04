@@ -1,5 +1,20 @@
 # Change Log azure-cosmos
 
+## Version 4.0.0b4:
+
+- Added support for a `timeout` keyword argument to all operations to specify an absolute timeout in seconds
+  within which the operation must be completed. If the timeout value is exceeded, a `azure.cosmos.errors.CosmosClientTimeoutError` will be raised.
+- Added a new `ConnectionRetryPolicy` to manage retry behaviour during HTTP connection errors.
+- Added new constructor and per-operation configuration keyword arguments:
+    -`retry_total` - Maximum retry attempts.
+    -`retry_backoff_max` - Maximum retry wait time in seconds.
+    -`retry_fixed_interval` - Fixed retry interval in milliseconds.
+    -`retry_read` - Maximum number of socket read retry attempts.
+    -`retry_connect` - Maximum number of connection error retry attempts.
+    -`retry_status` - Maximum number of retry attempts on error status codes.
+    -`retry_on_status_codes` - A list of specific status codes to retry on.
+    -`retry_backoff_factor` - Factor to calculate wait time between retry attempts.
+
 ## Version 4.0.0b3:
 
 - Added `create_database_if_not_exists()` and `create_container_if_not_exists` functionalities to CosmosClient and Database respectively.
