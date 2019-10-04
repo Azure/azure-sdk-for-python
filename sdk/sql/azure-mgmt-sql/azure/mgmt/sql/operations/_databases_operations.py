@@ -1414,7 +1414,7 @@ class DatabasesOperations(object):
 
 
     def _failover_initial(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, replica_type=None, custom_headers=None, raw=False, **operation_config):
         api_version = "2018-06-01-preview"
 
         # Construct URL
@@ -1429,6 +1429,8 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if replica_type is not None:
+            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -1454,7 +1456,7 @@ class DatabasesOperations(object):
             return client_raw_response
 
     def failover(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, database_name, replica_type=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Failovers a database.
 
         :param resource_group_name: The name of the resource group that
@@ -1465,6 +1467,9 @@ class DatabasesOperations(object):
         :type server_name: str
         :param database_name: The name of the database to failover.
         :type database_name: str
+        :param replica_type: The type of replica to be failed over. Possible
+         values include: 'Primary', 'ReadableSecondary'
+        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1480,6 +1485,7 @@ class DatabasesOperations(object):
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
+            replica_type=replica_type,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

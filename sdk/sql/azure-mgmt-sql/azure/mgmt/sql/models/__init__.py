@@ -489,6 +489,7 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     CapabilityGroup,
+    ReplicaType,
 )
 
 __all__ = [
@@ -807,4 +808,5 @@ __all__ = [
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'CapabilityGroup',
+    'ReplicaType',
 ]
