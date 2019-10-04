@@ -37,7 +37,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -85,8 +85,8 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[        
-        "msrest>=0.5.0",
-        "azure-core<2.0.0,>=1.0.0b2",
+        "msrest>=0.6.10",
+        "azure-core<2.0.0,>=1.0.0b4",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

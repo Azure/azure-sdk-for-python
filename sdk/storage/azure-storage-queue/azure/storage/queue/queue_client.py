@@ -36,7 +36,7 @@ from .models import QueueMessage, AccessPolicy, MessagesPaged
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from .models import QueuePermissions, QueueProperties
+    from .models import QueueSasPermissions, QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin):
@@ -70,7 +70,8 @@ class QueueClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_queue_samples_message.py
             :start-after: [START create_queue_client]
             :end-before: [END create_queue_client]
@@ -147,7 +148,8 @@ class QueueClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START create_queue_client_from_connection_string]
                 :end-before: [END create_queue_client_from_connection_string]
@@ -162,7 +164,7 @@ class QueueClient(StorageAccountHostsMixin):
         return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[QueuePermissions, str]]
+            self, permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -173,7 +175,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         Use the returned signature with the credential parameter of any Queue Service.
 
-        :param ~azure.storage.queue.models.QueuePermissions permission:
+        :param ~azure.storage.queue.models.QueueSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless a policy_id is given referencing a stored access policy
@@ -209,7 +211,8 @@ class QueueClient(StorageAccountHostsMixin):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START queue_client_sas_token]
                 :end-before: [END queue_client_sas_token]
@@ -250,7 +253,8 @@ class QueueClient(StorageAccountHostsMixin):
         :raises:
             ~azure.storage.queue._generated.models._models.StorageErrorException
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_hello_world.py
                 :start-after: [START create_queue]
                 :end-before: [END create_queue]
@@ -287,7 +291,8 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_hello_world.py
                 :start-after: [START delete_queue]
                 :end-before: [END delete_queue]
@@ -312,7 +317,8 @@ class QueueClient(StorageAccountHostsMixin):
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.queue.models.QueueProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START get_queue_properties]
                 :end-before: [END get_queue_properties]
@@ -344,7 +350,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START set_queue_metadata]
                 :end-before: [END set_queue_metadata]
@@ -408,7 +415,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START set_access_policy]
                 :end-before: [END set_access_policy]
@@ -481,7 +489,8 @@ class QueueClient(StorageAccountHostsMixin):
             returned from the service.
         :rtype: ~azure.storage.queue.models.QueueMessage
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START enqueue_messages]
                 :end-before: [END enqueue_messages]
@@ -545,7 +554,8 @@ class QueueClient(StorageAccountHostsMixin):
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.models.Message]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START receive_messages]
                 :end-before: [END receive_messages]
@@ -609,7 +619,8 @@ class QueueClient(StorageAccountHostsMixin):
             this object is also populated with the content, although it is not returned by the service.
         :rtype: ~azure.storage.queue.models.QueueMessage
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START update_message]
                 :end-before: [END update_message]
@@ -692,7 +703,8 @@ class QueueClient(StorageAccountHostsMixin):
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START peek_message]
                 :end-before: [END peek_message]
@@ -727,7 +739,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START clear_messages]
                 :end-before: [END clear_messages]
@@ -763,7 +776,8 @@ class QueueClient(StorageAccountHostsMixin):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message.py
                 :start-after: [START delete_message]
                 :end-before: [END delete_message]

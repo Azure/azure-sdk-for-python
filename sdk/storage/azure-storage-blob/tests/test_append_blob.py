@@ -17,7 +17,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobType,
-    BlobPermissions)
+    BlobSasPermissions)
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
     StorageTestCase,
@@ -198,7 +198,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -240,7 +240,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -273,7 +273,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -311,7 +311,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -349,7 +349,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -385,7 +385,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -420,7 +420,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -459,7 +459,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -494,7 +494,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -529,7 +529,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -565,7 +565,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -602,7 +602,7 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data)
         source_properties = source_blob_client.append_block(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 

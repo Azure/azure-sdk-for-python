@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
+    from azure.storage.queue._shared.models import AccountSasPermissions, ResourceTypes
     from azure.storage.queue.aio.models import (
         QueueProperties
     )
@@ -74,7 +74,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
             :start-after: [START async_create_queue_service_client]
             :end-before: [END async_create_queue_service_client]
@@ -148,7 +149,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_get_queue_service_properties]
                 :end-before: [END async_get_queue_service_properties]
@@ -197,7 +199,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_set_queue_service_properties]
                 :end-before: [END async_set_queue_service_properties]
@@ -244,7 +247,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :returns: An iterable (auto-paging) of QueueProperties.
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.core.queue.models.QueueProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_list_queues]
                 :end-before: [END async_qsc_list_queues]
@@ -286,7 +290,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_create_queue]
                 :end-before: [END async_qsc_create_queue]
@@ -325,7 +330,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_delete_queue]
                 :end-before: [END async_qsc_delete_queue]
@@ -350,7 +356,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
         :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_get_queue_client]
                 :end-before: [END async_get_queue_client]

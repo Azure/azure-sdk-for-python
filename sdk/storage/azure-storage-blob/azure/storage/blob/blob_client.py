@@ -23,11 +23,11 @@ from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._deserialize import get_page_ranges_result
 from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -47,17 +47,17 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob)
 from .models import BlobType, BlobBlock
+from .download import StorageStreamDownloader
 from .lease import LeaseClient, get_access_conditions
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
-    from ._generated.models import BlockList, PageList
+    from ._generated.models import BlockList
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
-        BlobPermissions,
+        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -106,7 +106,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_authentication.py
             :start-after: [START create_blob_client]
             :end-before: [END create_blob_client]
@@ -210,7 +211,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_blob]
                 :end-before: [END auth_from_connection_string_blob]
@@ -225,7 +227,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
+            self, permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -252,7 +254,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.BlobPermissions
+        :type permission: str or ~azure.storage.blob.models.BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -533,7 +535,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world.py
                 :start-after: [START upload_a_blob]
                 :end-before: [END upload_a_blob]
@@ -582,7 +585,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'service': self._client.blob,
+            'clients': self._client,
             'config': self._config,
             'offset': offset,
             'length': length,
@@ -656,7 +659,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A iterable data generator (stream)
         :rtype: ~azure.storage.blob._blob_utils.StorageStreamDownloader
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world.py
                 :start-after: [START download_a_blob]
                 :end-before: [END download_a_blob]
@@ -751,7 +755,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_hello_world.py
                 :start-after: [START delete_blob]
                 :end-before: [END delete_blob]
@@ -777,7 +782,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START undelete_blob]
                 :end-before: [END undelete_blob]
@@ -831,7 +837,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: BlobProperties
         :rtype: ~azure.storage.blob.models.BlobProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START get_blob_properties]
                 :end-before: [END get_blob_properties]
@@ -1328,7 +1335,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START create_blob_snapshot]
                 :end-before: [END create_blob_snapshot]
@@ -1521,7 +1529,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: Dict[str, Union[str, datetime]]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START copy_blob_from_url]
                 :end-before: [END copy_blob_from_url]
@@ -1572,7 +1581,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type copy_id: str or ~azure.storage.blob.models.BlobProperties
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START abort_copy_blob_from_url]
                 :end-before: [END abort_copy_blob_from_url]
@@ -1629,7 +1639,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A LeaseClient object.
         :rtype: ~azure.storage.blob.lease.LeaseClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_common.py
                 :start-after: [START acquire_lease_on_blob]
                 :end-before: [END acquire_lease_on_blob]
@@ -2110,16 +2121,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
-    def _get_page_ranges_result(self, ranges):
-        # type: (PageList) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
-        page_range = [] # type: ignore
-        clear_range = [] # type: List
-        if ranges.page_range:
-            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
-        if ranges.clear_range:
-            clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
-        return page_range, clear_range # type: ignore
-
     @distributed_trace
     def get_page_ranges( # type: ignore
             self, offset=None, # type: Optional[int]
@@ -2193,7 +2194,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 ranges = self._client.page_blob.get_page_ranges(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return self._get_page_ranges_result(ranges)
+        return get_page_ranges_result(ranges)
 
     def _set_sequence_number_options(self, sequence_number_action, sequence_number=None, **kwargs):
         # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]

@@ -39,7 +39,7 @@ from .blob_client_async import BlobClient
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import ContainerPermissions, PublicAccess
+    from ..models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
     from ..models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -85,7 +85,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_containers_async.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
@@ -135,7 +136,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
@@ -195,7 +197,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
@@ -264,7 +267,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A LeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
@@ -307,7 +311,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.models.ContainerProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
@@ -357,7 +362,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
@@ -394,7 +400,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: Access policy information in a dict.
         :rtype: dict[str, str]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
@@ -455,7 +462,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
@@ -510,7 +518,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.BlobProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
@@ -682,7 +691,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
@@ -780,13 +790,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def delete_blobs(  # pylint: disable=arguments-differ
-            self, *blobs,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
+            self, *blobs: Union[str, BlobProperties],
+            delete_snapshots: Optional[str] = None,
+            lease: Optional[Union[str, LeaseClient]] = None,
+            timeout: Optional[int] = None,
             **kwargs
-        ):
-        # type: (...) -> None
+        ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blob is later deleted during garbage collection.
@@ -838,7 +847,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             delete_snapshots=delete_snapshots,
@@ -892,7 +902,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
@@ -944,7 +955,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An async iterator of responses, one for each blob in order
+        :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if premium_page_blob_tier is None:
@@ -990,7 +1002,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers_async.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]

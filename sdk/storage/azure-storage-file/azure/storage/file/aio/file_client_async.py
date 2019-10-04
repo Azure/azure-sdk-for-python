@@ -22,7 +22,6 @@ from .._generated.version import VERSION
 from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
 from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -30,6 +29,7 @@ from .._deserialize import deserialize_file_properties, deserialize_file_stream
 from ..file_client import FileClient as FileClientBase
 from ._polling_async import CloseHandlesAsync
 from .models import HandlesPaged
+from .download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -45,7 +45,7 @@ async def _upload_file_helper(
     content_settings,
     validate_content,
     timeout,
-    max_connections,
+    max_concurrency,
     file_settings,
     file_attributes="none",
     file_creation_time="now",
@@ -76,7 +76,7 @@ async def _upload_file_helper(
             total_size=size,
             chunk_size=file_settings.max_range_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             timeout=timeout,
             **kwargs
@@ -195,7 +195,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
@@ -244,7 +245,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         metadata=None,  # type: Optional[Dict[str, str]]
         content_settings=None,  # type: Optional[ContentSettings]
         validate_content=False,  # type: bool
-        max_connections=1,  # type: Optional[int]
+        max_concurrency=1,  # type: Optional[int]
         file_attributes="none",  # type: Union[str, NTFSAttributes]
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
@@ -273,7 +274,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -306,7 +307,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
@@ -340,7 +342,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             content_settings,
             validate_content,
             timeout,
-            max_connections,
+            max_concurrency,
             self._config,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -374,7 +376,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
@@ -449,7 +452,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
@@ -463,7 +467,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Offset value must not be None if length is set.")
 
         downloader = StorageStreamDownloader(
-            service=self._client.file,
+            client=self._client.file,
             config=self._config,
             offset=offset,
             length=length,
@@ -488,7 +492,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]

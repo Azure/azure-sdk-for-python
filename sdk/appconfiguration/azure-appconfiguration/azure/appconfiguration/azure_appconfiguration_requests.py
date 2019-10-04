@@ -8,7 +8,7 @@ import hashlib
 import base64
 import hmac
 from azure.core.pipeline.policies import HTTPPolicy
-from .utils import get_current_utc_time
+from ._utils import get_current_utc_time
 
 
 
@@ -61,9 +61,9 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             "x-ms-content-sha256": content_hash,
             "Authorization": "HMAC-SHA256 Credential="
             + self._credentials.credential
-            + ", SignedHeaders="
+            + "&SignedHeaders="
             + signed_headers
-            + ", Signature="
+            + "&Signature="
             + signature,
         }
 

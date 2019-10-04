@@ -29,7 +29,7 @@ from .models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._shared.models import ResourceTypes, AccountPermissions
+    from ._shared.models import ResourceTypes, AccountSasPermissions
     from .models import Metrics, CorsRule, ShareProperties
 
 
@@ -68,7 +68,8 @@ class FileServiceClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_file_samples_authentication.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
@@ -122,7 +123,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_authentication.py
                 :start-after: [START create_file_service_client_from_conn_string]
                 :end-before: [END create_file_service_client_from_conn_string]
@@ -137,7 +139,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
+            permission,  # type: Union[AccountSasPermissions, str]
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
@@ -150,7 +152,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         :param ~azure.storage.file._shared.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.file._shared.models.AccountPermissions permission:
+        :param ~azure.storage.file._shared.models.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
@@ -182,7 +184,8 @@ class FileServiceClient(StorageAccountHostsMixin):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_authentication.py
                 :start-after: [START generate_sas_token]
                 :end-before: [END generate_sas_token]
@@ -214,7 +217,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
@@ -257,7 +261,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
@@ -300,7 +305,8 @@ class FileServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.models.ShareProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
@@ -347,7 +353,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.share_client.ShareClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
@@ -381,7 +388,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
@@ -408,7 +416,8 @@ class FileServiceClient(StorageAccountHostsMixin):
         :returns: A ShareClient.
         :rtype: ~azure.storage.file.share_client.ShareClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]

@@ -115,11 +115,11 @@ class TestAuthSamples(StorageTestCase):
         # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client
         from datetime import datetime, timedelta
-        from azure.storage.blob import ResourceTypes, AccountPermissions
+        from azure.storage.blob import ResourceTypes, AccountSasPermissions
 
         sas_token = blob_service_client.generate_shared_access_signature(
             resource_types=ResourceTypes.OBJECT,
-            permission=AccountPermissions.READ,
+            permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]

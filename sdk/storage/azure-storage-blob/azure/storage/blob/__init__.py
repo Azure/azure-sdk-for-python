@@ -12,12 +12,12 @@ from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
+from .download import StorageStreamDownloader
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from .models import (
@@ -43,8 +43,8 @@ from .models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
 )
 
 __version__ = VERSION
@@ -82,10 +82,10 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
-    'ContainerPermissions',
-    'BlobPermissions',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageStreamDownloader',
 ]
 

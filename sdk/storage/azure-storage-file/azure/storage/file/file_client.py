@@ -26,7 +26,6 @@ from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
@@ -36,10 +35,11 @@ from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._shared_access_signature import FileSharedAccessSignature
+from .download import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .models import ShareProperties, FilePermissions, ContentSettings, FileProperties
+    from .models import ShareProperties, FileSasPermissions, ContentSettings, FileProperties
     from ._generated.models import HandleItem
 
 
@@ -51,7 +51,7 @@ def _upload_file_helper(
         content_settings,
         validate_content,
         timeout,
-        max_connections,
+        max_concurrency,
         file_settings,
         file_attributes="none",
         file_creation_time="now",
@@ -83,7 +83,7 @@ def _upload_file_helper(
             total_size=size,
             chunk_size=file_settings.max_range_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             timeout=timeout,
             **kwargs
@@ -223,7 +223,8 @@ class FileClient(StorageAccountHostsMixin):
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START create_file_client]
                 :end-before: [END create_file_client]
@@ -238,7 +239,7 @@ class FileClient(StorageAccountHostsMixin):
             account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[FilePermissions, str]]
+            self, permission=None,  # type: Optional[Union[FileSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -256,7 +257,7 @@ class FileClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.FilePermissions permission:
+        :param ~azure.storage.file.models.FileSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.
@@ -383,7 +384,8 @@ class FileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
@@ -431,7 +433,7 @@ class FileClient(StorageAccountHostsMixin):
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
-            max_connections=1,  # type: Optional[int]
+            max_concurrency=1,  # type: Optional[int]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
@@ -460,7 +462,7 @@ class FileClient(StorageAccountHostsMixin):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -492,7 +494,8 @@ class FileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
@@ -526,7 +529,7 @@ class FileClient(StorageAccountHostsMixin):
             content_settings,
             validate_content,
             timeout,
-            max_connections,
+            max_concurrency,
             self._config,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -558,7 +561,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
@@ -635,7 +639,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
@@ -649,7 +654,7 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Offset value must not be None if length is set.")
 
         return StorageStreamDownloader(
-            service=self._client.file,
+            client=self._client.file,
             config=self._config,
             offset=offset,
             length=length,
@@ -674,7 +679,8 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]

@@ -26,7 +26,7 @@ from .models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .._shared.models import ResourceTypes, AccountPermissions
+    from .._shared.models import ResourceTypes, AccountSasPermissions
     from ..models import Metrics, CorsRule, ShareProperties
 
 
@@ -65,7 +65,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_file_samples_authentication_async.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
@@ -99,7 +100,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
@@ -142,7 +144,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
@@ -184,7 +187,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.ShareProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
@@ -231,7 +235,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.aio.share_client_async.ShareClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
@@ -265,7 +270,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
@@ -292,7 +298,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :returns: A ShareClient.
         :rtype: ~azure.storage.file.aio.share_client_async.ShareClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_service_async.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]

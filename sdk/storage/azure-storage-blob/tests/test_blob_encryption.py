@@ -700,6 +700,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         blob_content = blob.download_blob().content_as_bytes()
         self.assertEqual(content, blob_content)
+        blob.delete_blob()
 
     @record
     def test_get_blob_to_star(self):

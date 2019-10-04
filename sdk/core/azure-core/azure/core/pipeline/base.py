@@ -123,7 +123,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     :param transport: The Http Transport instance
     :param list policies: List of configured policies.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_sync.py
             :start-after: [START build_pipeline]
             :end-before: [END build_pipeline]

@@ -29,7 +29,7 @@ from azure.storage.blob.aio import (
     BlobType,
     ContentSettings,
     BlobProperties,
-    ContainerPermissions,
+    ContainerSasPermissions,
     StandardBlobTier,
     PremiumPageBlobTier
 )
@@ -558,7 +558,7 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
@@ -632,7 +632,7 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {'testid': access_policy}
@@ -673,7 +673,7 @@ class StorageContainerTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = await self._create_container()
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {i: access_policy for i in range(2)}
@@ -1460,7 +1460,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
         token = container.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
         )
         blob = BlobClient(blob.url, credential=token)
 

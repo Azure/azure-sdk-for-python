@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO,
+    Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
     TYPE_CHECKING
 )
 
@@ -46,9 +46,9 @@ from .blob_client import BlobClient
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
-    from .models import ContainerPermissions, PublicAccess
+    from .models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
     from .models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -93,7 +93,8 @@ class ContainerClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_containers.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
@@ -170,7 +171,8 @@ class ContainerClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_container]
                 :end-before: [END auth_from_connection_string_container]
@@ -185,7 +187,7 @@ class ContainerClient(StorageAccountHostsMixin):
             account_url, container=container, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
+            self, permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -211,7 +213,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.ContainerPermissions
+        :type permission: str or ~azure.storage.blob.models.ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -263,7 +265,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START generate_sas_token]
                 :end-before: [END generate_sas_token]
@@ -313,7 +316,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
@@ -373,7 +377,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
@@ -442,7 +447,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: A LeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.lease.LeaseClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
@@ -485,7 +491,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.models.ContainerProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
@@ -535,7 +542,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
@@ -572,7 +580,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: Access policy information in a dict.
         :rtype: dict[str, str]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
@@ -633,7 +642,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
@@ -688,7 +698,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.models.BlobProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
@@ -857,7 +868,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.blob_client.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
@@ -1016,7 +1028,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_blobs(self, *blobs, **kwargs):
-        # type: (...) -> None
+        # type: (...) -> Iterator[HttpResponse]
         """Marks the specified blobs or snapshots for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1067,7 +1079,8 @@ class ContainerClient(StorageAccountHostsMixin):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             **kwargs
@@ -1152,7 +1165,8 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
@@ -1205,7 +1219,8 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :rtype: None
+        :return: An iterator of responses, one for each blob in order
+        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if premium_page_blob_tier is None:
@@ -1251,7 +1266,8 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.blob_client.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_containers.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
