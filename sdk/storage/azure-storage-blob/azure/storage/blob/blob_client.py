@@ -2136,8 +2136,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Start of byte range to use for getting valid page ranges.
             If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
@@ -2412,8 +2412,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -2567,8 +2567,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -2705,13 +2705,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            512.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.

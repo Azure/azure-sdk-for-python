@@ -1326,19 +1326,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         of a page blob.
 
         :param int offset:
-            Start of byte range to use for getting valid page ranges.
-            If no length is given, all bytes after the offset will be searched.
+            Start of byte range to use for downloading a section of the blob.
+            Must be set if length is provided.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
-            This range will return valid page ranges for from the offset start up to
-            the specified length.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length  must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+            512.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -1506,17 +1504,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param bytes page:
             Content of the page.
         :param int offset:
-            Start of byte range to use for writing to a section of the blob.
+            Start of byte range to use for downloading a section of the blob.
+            Must be set if length is provided.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
-        :param int length:
-            Length of the page
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -1597,15 +1594,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
         :param int offset:
-            Start of byte range to use for writing to a section of the blob.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            Start of byte range to use for downloading a section of the blob.
+            Must be set if length is provided.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            512.
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
@@ -1692,15 +1687,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Clears a range of pages.
 
         :param int offset:
-            Start of byte range to use for writing to a section of the blob.
+            Start of byte range to use for downloading a section of the blob.
+            Must be set if length is provided.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512.
         :param int length:
-            End of byte range to use for writing to a section of the blob.
+            Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
-            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+            must be a modulus of 512 and the length must be a modulus of
+            512.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
