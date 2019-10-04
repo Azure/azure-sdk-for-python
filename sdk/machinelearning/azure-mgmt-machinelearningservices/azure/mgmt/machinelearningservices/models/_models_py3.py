@@ -671,7 +671,7 @@ class ClusterUpdateParameters(Model):
 
 
 class ComputeInstance(Compute):
-    """An Azure Machine Learning instance.
+    """An Azure Machine Learning compute instance.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -703,7 +703,7 @@ class ComputeInstance(Compute):
     :vartype is_attached_compute: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
-    :param properties: AML Instance properties
+    :param properties: Compute Instance properties
     :type properties:
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceProperties
     """
@@ -956,7 +956,7 @@ class ComputeInstanceOSUpdateSettings(Model):
 
 
 class ComputeInstanceProperties(Model):
-    """AML Instance properties.
+    """Compute Instance properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -966,6 +966,14 @@ class ComputeInstanceProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :param instance_sharing: Sharing policy for this compute instance. Policy
+     for sharing this compute instance among users of parent workspace. If
+     Disabled, only the creator can access applications on this compute
+     instance. When enabled any workspace user can access applications on this
+     instance depending on his/her assigned role. Possible values include:
+     'Enabled', 'Disabled'. Default value: "Disabled" .
+    :type instance_sharing: str or
+     ~azure.mgmt.machinelearningservices.models.InstanceSharing
     :param datastores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
     :type datastores_mount_settings:
@@ -1012,6 +1020,7 @@ class ComputeInstanceProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'instance_sharing': {'key': 'instanceSharing', 'type': 'str'},
         'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
         'custom_script_settings': {'key': 'customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
         'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
@@ -1022,10 +1031,11 @@ class ComputeInstanceProperties(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, *, vm_size: str=None, subnet=None, datastores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
+    def __init__(self, *, vm_size: str=None, subnet=None, instance_sharing="Disabled", datastores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.subnet = subnet
+        self.instance_sharing = instance_sharing
         self.datastores_mount_settings = datastores_mount_settings
         self.custom_script_settings = custom_script_settings
         self.software_update_settings = software_update_settings

@@ -73,6 +73,12 @@ class AllocationState(str, Enum):
     resizing = "Resizing"
 
 
+class InstanceSharing(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class DatastoreSelection(str, Enum):
 
     all = "All"
