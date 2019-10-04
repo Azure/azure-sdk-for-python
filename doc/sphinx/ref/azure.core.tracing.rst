@@ -1,12 +1,6 @@
 azure.core.tracing package
 ==========================
 
-Subpackages
------------
-
-.. toctree::
-
-   azure.core.tracing.ext
 
 Submodules
 ----------
