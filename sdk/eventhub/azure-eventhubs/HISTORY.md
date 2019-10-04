@@ -5,7 +5,7 @@
 **New features**
 
 - Added support for tracing (issue #7153).
-- Added the capability of `EventHubConsumer` to track last enqueued event properties of the partition.
+- Added the capability of tracking last enqueued event properties of the partition to `EventHubConsumer` .
     - Added new boolean type parameter`track_last_enqueued_event_properties` in method `EventHubClient.create_consumer()`.
     - Added new property `last_enqueued_event_properties` of on `EventHubConsumer` which contains sequence_number, offset, enqueued_time and retrieval_time information.
     - By default the capability is disabled as it will cost extra band width for transferring more information if turned on.
@@ -13,7 +13,7 @@
 **Breaking changes**
 
 - Removed support for IoT Hub direct connection.
-    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and receive device-to-cloud IoT Hub messages.
+    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
 - Removed support for sending EventData to IoT Hub.
 - Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
 - Updated uAMQP dependency to 1.2.3.
