@@ -229,7 +229,6 @@ class EventHubClient(EventHubClientAbstract):
         :type owner_level: int
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
-        :type track_last_enqueued_event_properties: bool
         :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
          on the last enqueued event on its associated partition, and track that information as events are received.
          When information about the partition's last enqueued event is being tracked, each event received from the
@@ -237,6 +236,7 @@ class EventHubClient(EventHubClientAbstract):
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
+        :type track_last_enqueued_event_properties: bool
         :rtype: ~azure.eventhub.consumer.EventHubConsumer
 
         Example:
