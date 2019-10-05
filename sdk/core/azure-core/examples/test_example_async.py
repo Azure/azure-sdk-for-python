@@ -117,7 +117,8 @@ async def test_example_async_pipeline_client():
     url = "https://bing.com"
 
     # [START build_async_pipeline_client]
-    from azure.core import Configuration, AsyncPipelineClient
+    from azure.core import AsyncPipelineClient
+    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
     from azure.core.pipeline.transport import HttpRequest
 
