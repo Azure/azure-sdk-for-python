@@ -214,6 +214,12 @@ def test_receive_batch(connstr_senders):
         received = receiver.receive(max_batch_size=5, timeout=5)
         assert len(received) == 5
 
+        for event in received:
+            assert event.system_properties
+            assert event.sequence_number is not None
+            assert event.offset
+            assert event.enqueued_time
+
 
 @pytest.mark.liveTest
 def test_receive_batch_with_app_prop_sync(connstr_senders):
@@ -272,3 +278,37 @@ def test_receive_over_websocket_sync(connstr_senders):
 
         received = receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
+
+
+@pytest.mark.liveTest
+def test_receive_run_time_metric(connstr_senders):
+    from uamqp import __version__ as uamqp_version
+    from distutils.version import StrictVersion
+    if StrictVersion(uamqp_version) < StrictVersion('1.2.3'):
+        pytest.skip("Disabled for uamqp 1.2.2. Will enable after uamqp 1.2.3 is released.")
+    connection_str, senders = connstr_senders
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
+                                                   network_tracing=False)
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0",
+                                      event_position=EventPosition('@latest'), prefetch=500,
+                                      track_last_enqueued_event_properties=True)
+
+    event_list = []
+    for i in range(20):
+        event_list.append(EventData("Event Number {}".format(i)))
+
+    with receiver:
+        received = receiver.receive(timeout=5)
+        assert len(received) == 0
+
+        senders[0].send(event_list)
+
+        time.sleep(1)
+
+        received = receiver.receive(max_batch_size=50, timeout=5)
+        assert len(received) == 20
+        assert receiver.last_enqueued_event_properties
+        assert receiver.last_enqueued_event_properties.get('sequence_number', None)
+        assert receiver.last_enqueued_event_properties.get('offset', None)
+        assert receiver.last_enqueued_event_properties.get('enqueued_time', None)
+        assert receiver.last_enqueued_event_properties.get('retrieval_time', None)
