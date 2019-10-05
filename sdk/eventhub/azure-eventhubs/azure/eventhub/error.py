@@ -187,11 +187,6 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
         if isinstance(exception, errors.AuthenticationException):
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.LinkRedirect):
-            log.info("%r link redirect received. Redirecting...", name)
-            redirect = exception
-            if hasattr(closable, "_redirect"):
-                closable._redirect(redirect)  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkDetach):
             if hasattr(closable, "_close_handler"):
                 closable._close_handler()  # pylint:disable=protected-access
