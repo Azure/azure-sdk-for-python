@@ -14,7 +14,8 @@ The Python implementation of the pipeline has some mechanisms specific to Python
 When constructing an SDK, a developer may consume the pipeline like so:
 
 ```python
-from azure.core import Configuration, Pipeline
+from azure.core.configuration import Configuration
+from azure.core.pipeline import Pipeline
 from azure.core.transport import RequestsTransport, HttpRequest
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
