@@ -92,6 +92,11 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             live=self.is_live
         )
         self.assertEqual(volume.name, TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1)
+        # check default export policy and protocol
+        self.assertTrue(volume.export_policy.rules[0].nfsv3),
+        self.assertFalse(volume.export_policy.rules[0].nfsv41)
+        self.assertEqual("0.0.0.0/0", volume.export_policy.rules[0].allowed_clients)
+        self.assertEqual(volume.protocol_types[0], "NFSv3")
 
         volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
         self.assertEqual(len(list(volume_list)), 1)
@@ -135,13 +140,13 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_update_volume(self):
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        self.assertEqual(volume.service_level, "Premium")
-        self.assertEqual(volume.usage_threshold, 100 * GIGABYTE)
+        self.assertEqual("Premium", volume.service_level)
+        self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
 
         volume_body = Volume(
-            usage_threshold = 100 * GIGABYTE,
+            usage_threshold = 200 * GIGABYTE,
             creation_token=TEST_VOL_1,
-            service_level="Standard",
+            service_level="Premium", # cannot differ from pool
             location=LOCATION,
             subnet_id = "/subscriptions/" + SUBSID + "/resourceGroups/" + TEST_RG + "/providers/Microsoft.Network/virtualNetworks/" + VNET + "/subnets/default"
         )
@@ -153,7 +158,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             TEST_POOL_1,
             TEST_VOL_1
         ).result()
-        self.assertEqual(volume.service_level, "Standard")
+        self.assertEqual("Premium", volume.service_level);  # unchanged
+        self.assertEqual(200 * GIGABYTE, volume.usage_threshold)
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
@@ -162,10 +168,12 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
     def test_patch_volume(self):
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         self.assertEqual("Premium", volume.service_level);
+        self.assertEqual(100 * GIGABYTE, volume.usage_threshold);
 
-        volume_patch = VolumePatch(service_level = "Standard")
+        volume_patch = VolumePatch(usage_threshold = 200 * GIGABYTE)
         volume = self.client.volumes.update(volume_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertEqual("Standard", volume.service_level);
+        self.assertEqual("Premium", volume.service_level);  # unchanged
+        self.assertEqual(200 * GIGABYTE, volume.usage_threshold);
 
         self.client.volumes.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1).wait()
         wait_for_no_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
