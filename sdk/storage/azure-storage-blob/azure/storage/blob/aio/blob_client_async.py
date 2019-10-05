@@ -1877,7 +1877,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the operation only if the source resource does not exist, and fail the
             operation if it does exist.
         :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
-        
+
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
