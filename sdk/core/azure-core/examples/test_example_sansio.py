@@ -27,7 +27,7 @@
 import sys
 from azure.core.configuration import Configuration
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline_client import PipelineClient
+from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies import SansIOHTTPPolicy

@@ -26,7 +26,7 @@
 
 
 # [START configuration]
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (

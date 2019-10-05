@@ -21,22 +21,6 @@ azure.core.async\_paging module
    :undoc-members:
    :show-inheritance:
 
-azure.core.common module
-------------------------
-
-.. automodule:: azure.core.common
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.core.configuration module
--------------------------------
-
-.. automodule:: azure.core.configuration
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 azure.core.credentials module
 -----------------------------
 
@@ -53,14 +37,6 @@ azure.core.exceptions module
    :undoc-members:
    :show-inheritance:
 
-azure.core.match\_conditions module
------------------------------------
-
-.. automodule:: azure.core.match_conditions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 azure.core.paging module
 ------------------------
 
@@ -69,34 +45,10 @@ azure.core.paging module
    :undoc-members:
    :show-inheritance:
 
-azure.core.pipeline\_client module
-----------------------------------
-
-.. automodule:: azure.core.pipeline_client
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.core.pipeline\_client\_async module
------------------------------------------
-
-.. automodule:: azure.core.pipeline_client_async
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 azure.core.settings module
 --------------------------
 
 .. automodule:: azure.core.settings
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.core.version module
--------------------------
-
-.. automodule:: azure.core.version
    :members:
    :undoc-members:
    :show-inheritance:
