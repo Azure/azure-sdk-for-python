@@ -168,8 +168,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -385,7 +385,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_metadata(metadata, lease_id)
+        await container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = await container.get_container_properties()
@@ -439,7 +439,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        md = await container.get_container_properties(lease_id)
+        md = await container.get_container_properties(lease=lease_id)
         md = md.metadata
 
         # Assert
@@ -482,7 +482,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        props = await container.get_container_properties(lease_id)
+        props = await container.get_container_properties(lease=lease_id)
         await lease_id.break_lease()
 
         # Assert
@@ -520,7 +520,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        acl = await container.get_container_access_policy(lease_id)
+        acl = await container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)
@@ -1462,7 +1462,7 @@ class StorageContainerTestAsync(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)

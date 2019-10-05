@@ -1352,13 +1352,13 @@ class StoragePageBlobTest(StorageTestCase):
         resp2 = source_blob.upload_page(data, offset=1024, length=512)
         source_snapshot_blob = source_blob.create_snapshot()
 
-        snapshot_blob = BlobClient(
+        snapshot_blob = BlobClient.from_blob_url(
             source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
         sas_token = snapshot_blob.generate_shared_access_signature(
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(snapshot_blob.url, credential=sas_token)
+        sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
 
         # Act
         dest_blob = self.bs.get_blob_client(self.container_name, 'dest_blob')

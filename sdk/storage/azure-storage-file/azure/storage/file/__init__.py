@@ -31,7 +31,9 @@ from .models import (
     ShareSasPermissions,
     ContentSettings,
     NTFSAttributes)
-
+from ._generated.models import (
+    HandleItem
+)
 
 __version__ = VERSION
 
@@ -62,5 +64,6 @@ __all__ = [
     'ContentSettings',
     'Handle',
     'HandlesPaged',
-    'NTFSAttributes'
+    'NTFSAttributes',
+    'HandleItem'
 ]

@@ -139,8 +139,8 @@ class StorageContainerTest(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -300,7 +300,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_metadata(metadata, lease_id)
+        container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = container.get_container_properties().metadata
@@ -340,7 +340,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        md = container.get_container_properties(lease_id).metadata
+        md = container.get_container_properties(lease=lease_id).metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
@@ -374,7 +374,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        props = container.get_container_properties(lease_id)
+        props = container.get_container_properties(lease=lease_id)
         lease_id.break_lease()
 
         # Assert
@@ -404,7 +404,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        acl = container.get_container_access_policy(lease_id)
+        acl = container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)
@@ -1201,7 +1201,7 @@ class StorageContainerTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)
@@ -1267,7 +1267,7 @@ class StorageContainerTest(StorageTestCase):
         blob_client.upload_blob(blob_content, length=len(blob_content))
 
         # Act
-        new_blob_client = BlobClient(blob_client.url, credential=token)
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
         content = new_blob_client.download_blob()
 
         # Assert

@@ -18,7 +18,11 @@ from ._shared.models import(
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode
+    StorageErrorCode,
+    UserDelegationKey
+)
+from ._generated.models import (
+    RehydratePriority
 )
 from .models import (
     BlobType,
@@ -45,6 +49,7 @@ from .models import (
     AccessPolicy,
     ContainerSasPermissions,
     BlobSasPermissions,
+    CustomerProvidedEncryptionKey,
 )
 
 __version__ = VERSION
@@ -57,6 +62,7 @@ __all__ = [
     'BlobType',
     'LeaseClient',
     'StorageErrorCode',
+    'UserDelegationKey',
     'ExponentialRetry',
     'LinearRetry',
     'NoRetry',
@@ -87,13 +93,14 @@ __all__ = [
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageStreamDownloader',
+    'CustomerProvidedEncryptionKey',
+    'RehydratePriority'
 ]
 
 
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        overwrite=False,  # type: bool
         max_concurrency=1,  # type: int
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
@@ -120,11 +127,10 @@ def upload_blob_to_url(
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         return client.upload_blob(
             data=data,
             blob_type=BlobType.BlockBlob,
-            overwrite=overwrite,
             max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs)
@@ -164,7 +170,7 @@ def download_blob_from_url(
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :rtype: None
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
             _download_to_stream(client, output, max_concurrency, **kwargs)
         else:

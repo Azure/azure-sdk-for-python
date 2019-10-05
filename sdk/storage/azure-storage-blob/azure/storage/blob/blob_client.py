@@ -90,14 +90,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str blob_url: The full URI to the blob. This can also be a URL to the storage account
+    :param str account_url: The full URI to the account. This can also be a URL to the storage account
         or container, in which case the blob and/or container must also be specified.
-    :param container: The container for the blob. If specified, this value will override
-        a container value specified in the blob URL.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
-    :param blob: The blob with which to interact. If specified, this value will override
+    :param container_name: The container for the blob.
+    :type container_name: str
+    :param blob_name: The blob with which to interact. If specified, this value will override
         a blob value specified in the blob URL.
-    :type blob: str or ~azure.storage.blob.models.BlobProperties
+    :type blob_name: str
     :param str snapshot:
         The optional blob snapshot on which to operate.
     :param credential:
@@ -123,37 +122,30 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, blob_url,  # type: str
-            container=None,  # type: Optional[Union[str, ContainerProperties]]
-            blob=None,  # type: Optional[Union[str, BlobProperties]]
+            self, account_url,  # type: str
+            container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         try:
-            if not blob_url.lower().startswith('http'):
-                blob_url = "https://" + blob_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("Blob URL must be a string.")
-        parsed_url = urlparse(blob_url.rstrip('/'))
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
 
-        if not parsed_url.path and not (container and blob):
-            raise ValueError("Please specify a container and blob name.")
+        if not (container_name and blob_name):
+            raise ValueError("Please specify a container name and blob name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(blob_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
 
-        path_container = ""
-        path_blob = ""
-        path_snapshot = None
-        if parsed_url.path:
-            path_container, _, path_blob = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
-        try:
-            self.container_name = container.name # type: ignore
-        except AttributeError:
-            self.container_name = container or unquote(path_container) # type: ignore
+        self.container_name = container_name
+        self.blob_name = blob_name
         try:
             self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
@@ -161,15 +153,59 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
-        try:
-            self.blob_name = blob.name # type: ignore
-            if not snapshot:
-                self.snapshot = blob.snapshot # type: ignore
-        except AttributeError:
-            self.blob_name = blob or unquote(path_blob)
+
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
+        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        """Create BlobClient from a blob url.
+
+        :param str blob_url:
+            The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type blob_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :param str snapshot:
+            The optional blob snapshot on which to operate. If specified, this will override the snapshot
+            in the url.
+        """
+        try:
+            if not blob_url.lower().startswith('http'):
+                blob_url = "https://" + blob_url
+        except AttributeError:
+            raise ValueError("Blob URL must be a string.")
+        parsed_url = urlparse(blob_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(blob_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        path_blob = parsed_url.path.lstrip('/').partition('/')
+        container_name, blob_name = unquote(path_blob[0]), unquote(path_blob[2])
+        if not container_name or not blob_name:
+            raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
+
+        path_snapshot, _ = parse_query(parsed_url.query)
+        if snapshot:
+            try:
+                path_snapshot = snapshot.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    path_snapshot = snapshot['snapshot'] # type: ignore
+                except TypeError:
+                    path_snapshot = snapshot
+
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=path_snapshot, credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -185,8 +221,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            container,  # type: Union[str, ContainerProperties]
-            blob,  # type: Union[str, BlobProperties]
+            container_name,  # type: str
+            blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
@@ -196,12 +232,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param container: The container for the blob. This can either be the name of the container,
-            or an instance of ContainerProperties
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param blob: The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param container_name: The container name for the blob.
+        :type container_name: str
+        :param blob_name: The name of the blob with which to interact/
+        :type blob_name: str
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :param credential:
@@ -224,7 +258,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, blob=blob, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=snapshot, credential=credential, **kwargs
+            )
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
@@ -232,14 +268,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            account_name=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None,  # type: Optional[str]
-            user_delegation_key=None  # type: Optional[UserDelegationKey]
+            user_delegation_key=None,  # type: Optional[UserDelegationKey]
+            **kwargs # type: Any
             ):
         # type: (...) -> Any
         """
@@ -254,7 +284,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.BlobSasPermissions
+        :type permission: str or ~azure.storage.blob.BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -262,14 +292,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
@@ -299,7 +329,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key.
@@ -307,6 +337,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        protocol = kwargs.pop('protocol', None)
+        account_name = kwargs.pop('account_name', None)
+        cache_control = kwargs.pop('cache_control', None)
+        content_disposition = kwargs.pop('content_disposition', None)
+        content_encoding = kwargs.pop('content_encoding', None)
+        content_language = kwargs.pop('content_language', None)
+        content_type = kwargs.pop('content_type', None)
+
         if user_delegation_key is not None:
             if not hasattr(self.credential, 'account_name') and not account_name:
                 raise ValueError("No account_name available. Please provide account_name parameter.")
@@ -353,12 +391,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _upload_blob_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -392,6 +426,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
+        validate_content = kwargs.pop('validate_content', False)
+        content_settings = kwargs.pop('content_settings', None)
+        overwrite = kwargs.pop('overwrite', False)
+        max_concurrency = kwargs.pop('max_concurrency', 1)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -443,19 +481,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def upload_blob(  # pylint: disable=too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Any
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
+        :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -469,7 +503,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -480,17 +514,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.LeaseClient lease:
             If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID.
             Required if the blob has an active lease.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -505,11 +539,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
         :param int maxsize_condition:
@@ -521,7 +555,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -547,12 +581,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._upload_blob_options(
             data,
             blob_type=blob_type,
-            overwrite=overwrite,
             length=length,
             metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return upload_block_blob(**options)
@@ -560,7 +590,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return upload_page_blob(**options)
         return upload_append_blob(**options)
 
-    def _download_blob_options(self, offset=None, length=None, validate_content=False, **kwargs):
+    def _download_blob_options(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], bool, **Any) -> Dict[str, Any]
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
@@ -569,6 +599,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if length is not None:
             length = offset + length - 1  # Service actually uses an end-range inclusive index
 
+        validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
@@ -603,7 +634,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
+    def download_blob(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], bool, **Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
@@ -625,14 +656,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             If specified, download_blob only succeeds if the blob's lease is active
             and matches this ID. Required if the blob has an active lease.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -647,7 +678,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -671,7 +702,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._download_blob_options(
             offset=offset,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         extra_properties = {
             'name': self.blob_name,
@@ -729,14 +759,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -805,14 +835,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -827,15 +857,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: BlobProperties
-        :rtype: ~azure.storage.blob.models.BlobProperties
+        :rtype: ~azure.storage.blob.BlobProperties
 
         .. admonition:: Example:
 
@@ -909,19 +938,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         If one property is set for the content_settings, all properties will be overriden.
 
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -988,14 +1017,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1010,7 +1039,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1028,7 +1057,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -1055,6 +1083,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
 
+        sequence_number = kwargs.pop('sequence_number', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1086,7 +1115,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -1098,7 +1126,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             This header specifies the maximum size
             for the page blob, up to 1 TB. The page blob size must be aligned
             to a 512-byte boundary.
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
         :param int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
@@ -1110,14 +1138,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1132,14 +1160,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -1149,7 +1177,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
-            sequence_number=sequence_number,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
@@ -1206,7 +1233,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
 
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
@@ -1214,14 +1241,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1236,7 +1263,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1300,13 +1327,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1324,8 +1351,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1445,13 +1472,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             pairs are specified, the destination blob is created with the specified
             metadata, and metadata is not copied from the source blob or file.
         :type metadata: dict(str, str)
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source
             blob has been modified since the specified date/time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1469,7 +1496,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             specified. If the values are identical, the Blob service returns status
             code 412 (Precondition Failed). This header cannot be specified if the
             source is an Azure File.
-        :param datetime destination_if_modified_since:
+        :param ~datetime.datetime destination_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1477,7 +1504,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has been modified since the specified date/time.
             If the destination blob has not been modified, the Blob service returns
             status code 412 (Precondition Failed).
-        :param datetime destination_if_unmodified_since:
+        :param ~datetime.datetime destination_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1502,11 +1529,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
-        :type destination_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type destination_lease: ~azure.storage.blob.LeaseClient or str
         :param source_lease:
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
-        :type source_lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type source_lease: ~azure.storage.blob.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param bool incremental_copy:
@@ -1515,19 +1542,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param :class:`~azure.storage.blob.models.RehydratePriority` rehydrate_priority:
+        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -1578,7 +1605,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of BlobProperties.
-        :type copy_id: str or ~azure.storage.blob.models.BlobProperties
+        :type copy_id: str or ~azure.storage.blob.BlobProperties
         :rtype: None
 
         .. admonition:: Example:
@@ -1613,13 +1640,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Proposed lease ID, in a GUID string format. The Blob Service
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1637,7 +1664,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.LeaseClient
 
         .. admonition:: Example:
 
@@ -1667,15 +1694,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
-        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
-        :param :class:`~azure.storage.blob._generated.models.RehydratePriority` rehydrate_priority:
+        :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1694,7 +1721,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1711,6 +1737,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if isinstance(data, bytes):
             data = data[:length]
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1737,7 +1764,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> None
@@ -1761,10 +1787,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1777,7 +1803,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             block_id,
             data,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             self._client.block_blob.stage_block(**options)
@@ -1852,8 +1877,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -1897,11 +1922,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
-        :rtype: tuple(list(~azure.storage.blob.models.BlobBlock), list(~azure.storage.blob.models.BlobBlock))
+        :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
@@ -1919,7 +1944,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1955,6 +1979,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_disposition=content_settings.content_disposition
             )
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1984,7 +2009,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -1996,8 +2020,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
@@ -2009,13 +2033,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2030,10 +2054,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2047,7 +2071,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             block_list,
             content_settings=content_settings,
             metadata=metadata,
-            validate_content=validate_content,
             **kwargs)
         try:
             return self._client.block_blob.commit_block_list(**options) # type: ignore
@@ -2063,7 +2086,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
+        :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -2071,7 +2094,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2149,18 +2172,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str previous_snapshot_diff:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2223,7 +2246,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str sequence_number_action:
             This property indicates how the service should modify the blob's sequence
-            number. See :class:`~azure.storage.blob.models.SequenceNumberAction` for more information.
+            number. See :class:`~azure.storage.blob.SequenceNumberAction` for more information.
         :param str sequence_number:
             This property sets the blob's sequence number. The sequence number is a
             user-controlled property that you can use to track requests and manage
@@ -2231,14 +2254,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2306,14 +2329,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2328,7 +2351,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
@@ -2347,7 +2370,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -2374,6 +2396,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
 
+        validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2401,7 +2424,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, page,  # type: bytes
             offset,  # type: int
             length,  # type: int
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -2422,7 +2444,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -2439,13 +2461,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2460,7 +2482,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2476,7 +2498,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             page=page,
             offset=offset,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             return self._client.page_blob.upload_pages(**options) # type: ignore
@@ -2488,7 +2509,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             offset,  # type: int
             length,  # type: int
             source_offset,  # type: int
-            source_content_md5=None,  # type: Optional[bytes]
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -2525,6 +2545,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_if_match=kwargs.pop('source_if_match', None),
             source_if_none_match=kwargs.pop('source_if_none_match', None))
 
+        source_content_md5 = kwargs.pop('source_content_md5', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2554,7 +2575,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                               offset,  # type: int
                               length,  # type: int
                               source_offset,  # type: int
-                              source_content_md5=None,  # type: Optional[bytes]
                               **kwargs
                               ):
         # type: (...) -> Dict[str, Any]
@@ -2579,13 +2599,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The service will read the same number of bytes as the destination range (length-offset).
         :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2611,13 +2631,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2632,7 +2652,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2646,7 +2666,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             offset=offset,
             length=length,
             source_offset=source_offset,
-            source_content_md5=source_content_md5,
             **kwargs
         )
         try:
@@ -2715,7 +2734,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -2725,13 +2744,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2746,7 +2765,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2765,9 +2784,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _append_block_options( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -2785,6 +2801,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if isinstance(data, bytes):
             data = data[:length]
 
+        appendpos_condition = kwargs.pop('appendpos_condition', None)
+        maxsize_condition = kwargs.pop('maxsize_condition', None)
+        validate_content = kwargs.pop('validate_content', False)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -2823,9 +2842,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def append_block( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
@@ -2857,14 +2873,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -2881,7 +2897,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -2894,9 +2910,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._append_block_options(
             data,
             length=length,
-            validate_content=validate_content,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:
@@ -2908,9 +2921,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, copy_source_url,  # type: str
             source_offset=None,  # type Optional[int]
             source_length=None,  # type Optional[int]
-            source_content_md5=None,  # type: Optional[bytearray]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -2928,6 +2938,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         elif source_offset is not None:
             source_range = "bytes={0}-".format(source_offset)
 
+        appendpos_condition = kwargs.pop('appendpos_condition', None)
+        maxsize_condition = kwargs.pop('maxsize_condition', None)
+        source_content_md5 = kwargs.pop('source_content_md5', None)
         append_conditions = None
         if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
@@ -2974,9 +2987,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def append_block_from_url(self, copy_source_url,  # type: str
                               source_offset=None,  # type Optional[int]
                               source_length=None,  # type Optional[int]
-                              source_content_md5=None,  # type: Optional[bytearray]
-                              maxsize_condition=None,  # type: Optional[int]
-                              appendpos_condition=None,  # type: Optional[int]
                               **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
@@ -3004,16 +3014,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is not, the request will fail with the
             AppendPositionConditionNotMet error
             (HTTP status code 412 - Precondition Failed).
-        :param ~azure.storage.blob.lease.LeaseClient or str lease:
+        :param ~azure.storage.blob.LeaseClient or str lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -3028,13 +3038,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param datetime source_if_modified_since:
+        :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param datetime source_if_unmodified_since:
+        :param ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -3049,7 +3059,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the source resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -3061,9 +3071,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             copy_source_url,
             source_offset=source_offset,
             source_length=source_length,
-            source_content_md5=source_content_md5,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:

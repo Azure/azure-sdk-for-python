@@ -81,12 +81,11 @@ class ContainerClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str container_url:
-        The full URI to the container. This can also be a URL to the storage
-        account, in which case the blob container must also be specified.
-    :param container:
+    :param str account_url:
+        The full URI to the storage account.
+    :param container_name:
         The container for the blob.
-    :type container: str or ~azure.storage.blob.models.ContainerProperties
+    :type container_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -110,35 +109,61 @@ class ContainerClient(StorageAccountHostsMixin):
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, container_url,  # type: str
-            container=None,  # type: Optional[Union[ContainerProperties, str]]
+            self, account_url,  # type: str
+            container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Container URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not container_name:
+            raise ValueError("Please specify a container name.")
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+
+        _, sas_token = parse_query(parsed_url.query)
+        self.container_name = container_name
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_container_url(cls, container_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> ContainerClient
+        """Create ContainerClient from a container url.
+
+        :param str container_url:
+            The full endpoint URL to the Container, including SAS token if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type container_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        """
         try:
             if not container_url.lower().startswith('http'):
                 container_url = "https://" + container_url
         except AttributeError:
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url.rstrip('/'))
-
-        if not parsed_url.path and not container:
-            raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        container_name = unquote(parsed_url.path.lstrip('/').partition('/')[0])
+        if not container_name:
+            raise ValueError("Invalid URL. Please provide a  url with a valid container_name")
 
-        path_container = ""
-        if parsed_url.path:
-            path_container = parsed_url.path.lstrip('/').partition('/')[0]
-        _, sas_token = parse_query(parsed_url.query)
-        try:
-            self.container_name = container.name # type: ignore
-        except AttributeError:
-            self.container_name = container or unquote(path_container) # type: ignore
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        return cls(
+            account_url, container_name=container_name, credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -153,7 +178,7 @@ class ContainerClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            container,  # type: Union[str, ContainerProperties]
+            container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):  # type: (...) -> ContainerClient
@@ -161,9 +186,9 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param container:
+        :param container_name:
             The container for the blob.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :type container_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -184,7 +209,7 @@ class ContainerClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container, credential=credential, **kwargs)
+            account_url, container_name=container_name, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
@@ -192,14 +217,8 @@ class ContainerClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            account_name=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None,  # type: Optional[str]
-            user_delegation_key=None  # type Optional[]
+            user_delegation_key=None,  # type: Optional[Any]
+            **kwargs # type: Any
         ):
         # type: (...) -> Any
         """Generates a shared access signature for the container.
@@ -213,7 +232,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.models.ContainerSasPermissions
+        :type permission: str or ~azure.storage.blob.ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -257,7 +276,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key.
@@ -274,6 +293,13 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Generating a sas token.
         """
+        protocol = kwargs.pop('protocol', None)
+        account_name = kwargs.pop('account_name', None)
+        cache_control = kwargs.pop('cache_control', None)
+        content_disposition = kwargs.pop('content_disposition', None)
+        content_encoding = kwargs.pop('content_encoding', None)
+        content_language = kwargs.pop('content_language', None)
+        content_type = kwargs.pop('content_type', None)
         if user_delegation_key is not None:
             if not hasattr(self.credential, 'account_name') and not account_name:
                 raise ValueError("No account_name available. Please provide account_name parameter.")
@@ -300,8 +326,8 @@ class ContainerClient(StorageAccountHostsMixin):
         )
 
     @distributed_trace
-    def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
+    def create_container(self, metadata=None, public_access=None, **kwargs):
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -310,7 +336,7 @@ class ContainerClient(StorageAccountHostsMixin):
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
         :type metadata: dict[str, str]
-        :param ~azure.storage.blob.models.PublicAccess public_access:
+        :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: container, blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -326,6 +352,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
+        timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
             return self._client.container.create( # type: ignore
@@ -339,26 +366,23 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_container(
-            self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+            self, **kwargs):
+        # type: (Any) -> None
         """
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -386,12 +410,14 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+        timeout = kwargs.pop('timeout', None)
         try:
             self._client.container.delete(
                 timeout=timeout,
@@ -405,7 +431,6 @@ class ContainerClient(StorageAccountHostsMixin):
     def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> LeaseClient
         """
@@ -421,13 +446,13 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns
             400 (Invalid request) if the proposed lease ID is not in the correct format.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -445,7 +470,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.blob.lease.LeaseClient
+        :rtype: ~azure.storage.blob.LeaseClient
 
         .. admonition:: Example:
 
@@ -458,6 +483,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
@@ -478,18 +504,18 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_properties(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
+    def get_container_properties(self, **kwargs):
+        # type: (Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.LeaseClient lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
-        :rtype: ~azure.storage.blob.models.ContainerProperties
+        :rtype: ~azure.storage.blob.ContainerProperties
 
         .. admonition:: Example:
 
@@ -500,7 +526,9 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting properties on the container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             response = self._client.container.get_properties(
                 timeout=timeout,
@@ -515,8 +543,6 @@ class ContainerClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -532,7 +558,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str lease:
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -553,8 +579,10 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
@@ -567,8 +595,8 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
+    def get_container_access_policy(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
@@ -589,7 +617,9 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the access policy on the container.
         """
+        lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
@@ -607,8 +637,6 @@ class ContainerClient(StorageAccountHostsMixin):
     def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
@@ -619,20 +647,20 @@ class ContainerClient(StorageAccountHostsMixin):
             A dictionary of access policies to associate with the container. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.blob.models.AccessPolicy`)
-        :param ~azure.storage.blob.models.PublicAccess public_access:
+        :type signed_identifiers: dict[str, ~azure.storage.blob.AccessPolicy]
+        :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: container, blob.
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified date/time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -641,6 +669,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -663,11 +692,12 @@ class ContainerClient(StorageAccountHostsMixin):
                     value.expiry = serialize_iso(value.expiry)
                 identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
             signed_identifiers = identifiers # type: ignore
-
+        lease = kwargs.pop('lease', None)
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
             if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         access_conditions = get_access_conditions(lease)
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
@@ -681,8 +711,8 @@ class ContainerClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[Any], Optional[int], **Any) -> ItemPaged[BlobProperties]
+    def list_blobs(self, name_starts_with=None, include=None, **kwargs):
+        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -696,7 +726,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.models.BlobProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
 
         .. admonition:: Example:
 
@@ -711,6 +741,7 @@ class ContainerClient(StorageAccountHostsMixin):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
@@ -725,7 +756,6 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
             delimiter="/", # type: str
-            timeout=None, # type: Optional[int]
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> ItemPaged[BlobProperties]
@@ -748,12 +778,13 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.models.BlobProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
         if include and not isinstance(include, list):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
@@ -771,14 +802,8 @@ class ContainerClient(StorageAccountHostsMixin):
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
-            max_concurrency=1,  # type: int
             encoding='UTF-8', # type: str
             **kwargs
         ):
@@ -787,8 +812,8 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param name: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
-        :type name: str or ~azure.storage.blob.models.BlobProperties
-        :param ~azure.storage.blob.models.BlobType blob_type: The type of the blob. This can be
+        :type name: str or ~azure.storage.blob.BlobProperties
+        :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -802,7 +827,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.models.ContentSettings content_settings:
+        :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -816,14 +841,14 @@ class ContainerClient(StorageAccountHostsMixin):
         :param lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param datetime if_modified_since:
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -842,11 +867,11 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
         :param int maxsize_condition:
@@ -858,7 +883,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
@@ -866,7 +891,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 
@@ -879,17 +904,13 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         blob.upload_blob(
             data,
             blob_type=blob_type,
-            overwrite=overwrite,
             length=length,
             metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            lease=lease,
             timeout=timeout,
-            max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs
         )
@@ -899,8 +920,6 @@ class ContainerClient(StorageAccountHostsMixin):
     def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -919,7 +938,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -927,18 +946,18 @@ class ContainerClient(StorageAccountHostsMixin):
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -959,19 +978,19 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         blob = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
-            lease=lease,
             timeout=timeout,
             **kwargs)
 
     def _generate_delete_blobs_options(
         self, snapshot=None,
-        timeout=None,
         delete_snapshots=None,
         request_id=None,
         lease_access_conditions=None,
-        modified_access_conditions=None
+        modified_access_conditions=None,
+        **kwargs
     ):
         """This code is a copy from _generated.
 
@@ -994,6 +1013,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_none_match = modified_access_conditions.if_none_match
 
         # Construct parameters
+        timeout = kwargs.pop('timeout', None)
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
@@ -1043,7 +1063,7 @@ class ContainerClient(StorageAccountHostsMixin):
         Soft-deleted blob or snapshot can be restored using Undelete API.
 
         :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1051,18 +1071,18 @@ class ContainerClient(StorageAccountHostsMixin):
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1104,7 +1124,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return self._batch_send(*reqs, **options)
 
     def _generate_set_tier_options(
-        self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None
+        self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None, **kwargs
     ):
         """This code is a copy from _generated.
 
@@ -1115,7 +1135,7 @@ class ContainerClient(StorageAccountHostsMixin):
             lease_id = lease_access_conditions.lease_id
 
         comp = "tier"
-
+        timeout = kwargs.pop('timeout', None)
         # Construct parameters
         query_parameters = {}
         if timeout is not None:
@@ -1150,7 +1170,7 @@ class ContainerClient(StorageAccountHostsMixin):
         This operation does not update the blob's ETag.
 
         :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param standard_blob_tier:
             Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
@@ -1158,13 +1178,13 @@ class ContainerClient(StorageAccountHostsMixin):
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
-        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
+        :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :return: An iterator of responses, one for each blob in order
         :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
@@ -1205,12 +1225,12 @@ class ContainerClient(StorageAccountHostsMixin):
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
+        :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1218,7 +1238,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :return: An iterator of responses, one for each blob in order
         :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
@@ -1258,13 +1278,12 @@ class ContainerClient(StorageAccountHostsMixin):
         The blob need not already exist.
 
         :param blob:
-            The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+            The blob with which to interact.
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate.
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.blob_client.BlobClient
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 
@@ -1275,8 +1294,12 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        try:
+            blob_name = blob.name
+        except AttributeError:
+            blob_name = blob
         return BlobClient(
-            self.url, container=self.container_name, blob=blob, snapshot=snapshot,
+            self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
