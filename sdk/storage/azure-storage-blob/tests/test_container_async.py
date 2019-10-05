@@ -385,7 +385,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_metadata(metadata, lease_id)
+        await container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = await container.get_container_properties()
