@@ -15,8 +15,8 @@ from logging.handlers import RotatingFileHandler
 # Ignore async tests for Python < 3.5
 collect_ignore = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("tests/asynctests")
-    collect_ignore.append("tests/eventprocessor_tests")
+    collect_ignore.append("tests/livetest/asynctests")
+    collect_ignore.append("tests/eventprocessor")
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 
@@ -82,7 +82,7 @@ def cleanup_eventhub(eventhub_config, hub_name, client=None):
     client.delete_event_hub(hub_name)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def live_eventhub_config():
     try:
         config = {}
@@ -150,22 +150,6 @@ def invalid_policy(live_eventhub_config):
         live_eventhub_config['hostname'],
         live_eventhub_config['access_key'],
         live_eventhub_config['event_hub'])
-
-
-@pytest.fixture()
-def iot_connection_str():
-    try:
-        return os.environ['IOTHUB_CONNECTION_STR']
-    except KeyError:
-        pytest.skip("No IotHub connection string found.")
-
-
-@pytest.fixture()
-def device_id():
-    try:
-        return os.environ['IOTHUB_DEVICE']
-    except KeyError:
-        pytest.skip("No Iothub device ID found.")
 
 
 @pytest.fixture()
