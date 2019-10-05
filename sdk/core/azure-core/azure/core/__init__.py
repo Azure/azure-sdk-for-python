@@ -35,9 +35,7 @@ from ._match_conditions import MatchConditions
 
 
 __all__ = [
-    "Configuration",
     "PipelineClient",
-    "HttpResponseError",
     "HttpRequest",
     "MatchConditions"
 ]
