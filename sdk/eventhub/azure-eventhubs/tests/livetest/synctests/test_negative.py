@@ -21,8 +21,7 @@ from azure.eventhub import (
 
 
 @pytest.mark.liveTest
-def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
-    _, receivers = connstr_receivers
+def test_send_with_invalid_hostname(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
@@ -40,8 +39,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
 
 
 @pytest.mark.liveTest
-def test_send_with_invalid_key(invalid_key, connstr_receivers):
-    _, receivers = connstr_receivers
+def test_send_with_invalid_key(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
@@ -60,8 +58,7 @@ def test_receive_with_invalid_key_sync(invalid_key):
 
 
 @pytest.mark.liveTest
-def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
-    _, receivers = connstr_receivers
+def test_send_with_invalid_policy(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
@@ -223,16 +220,6 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     sender = client.create_producer()
     with pytest.raises(AuthenticationError):
         batch_event_data = sender.create_batch(max_size=300, partition_key="key")
-    sender.close()
-
-
-@pytest.mark.liveTest
-def test_create_batch_with_none_sync(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
-    batch_event_data = sender.create_batch(max_size=300, partition_key="key")
-    with pytest.raises(ValueError):
-        batch_event_data.try_add(EventData(None))
     sender.close()
 
 

@@ -1,4 +1,8 @@
 # Release History
+
+## 1.0.0b4 (2019-10-09)
+This release has trivial internal changes only. No feature changes.
+
 ## 1.0.0b1 (2019-09-10)
 
 **New features**
