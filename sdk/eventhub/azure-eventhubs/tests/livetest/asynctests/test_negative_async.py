@@ -220,19 +220,6 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_create_batch_with_none_async(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
-    batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
-    try:
-        with pytest.raises(ValueError):
-            batch_event_data.try_add(EventData(None))
-    finally:
-        await sender.close()
-
-
-@pytest.mark.liveTest
-@pytest.mark.asyncio
 async def test_create_batch_with_too_large_size_async(connection_str):
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_producer()

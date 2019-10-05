@@ -6,13 +6,14 @@ from __future__ import unicode_literals
 
 import logging
 import sys
+import platform
 import uuid
 import time
-import functools
 from abc import abstractmethod
-from typing import Dict, Union, Any, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 
-from azure.eventhub import __version__, EventPosition
+from uamqp import types  # type: ignore
+from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
@@ -139,53 +140,18 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self._address = _Address()
         self._address.hostname = host
         self._address.path = "/" + event_hub_path if event_hub_path else ""
-        self._auth_config = {}  # type:Dict[str,str]
         self._credential = credential
-        if isinstance(credential, EventHubSharedKeyCredential):
-            self._username = credential.policy
-            self._password = credential.key
-            self._auth_config['username'] = self._username
-            self._auth_config['password'] = self._password
-
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._get_auth = functools.partial(self._create_auth)
         self._config = _Configuration(**kwargs)
         self._debug = self._config.network_tracing
-        self._is_iothub = False
-        self._iothub_redirect_info = None
-        self._redirect_consumer = None
 
         log.info("%r: Created the Event Hub client", self._container_id)
 
-    @classmethod
-    def _from_iothub_connection_string(cls, conn_str, **kwargs):
-        address, policy, key, _ = _parse_conn_str(conn_str)
-        hub_name = address.split('.')[0]
-        username = "{}@sas.root.{}".format(policy, hub_name)
-        password = _generate_sas_token(address, policy, key)
-        left_slash_pos = address.find("//")
-        if left_slash_pos != -1:
-            host = address[left_slash_pos + 2:]
-        else:
-            host = address
-        client = cls(host, "", EventHubSharedKeyCredential(username, password), **kwargs)
-        client._auth_config = {  # pylint: disable=protected-access
-            'iot_username': policy,
-            'iot_password': key,
-            'username': username,
-            'password': password}
-        client._is_iothub = True  # pylint: disable=protected-access
-        client._redirect_consumer = client.create_consumer(consumer_group='$default',  # pylint: disable=protected-access, no-member
-                                                           partition_id='0',
-                                                           event_position=EventPosition('-1'),
-                                                           operation='/messages/events')
-        return client
-
     @abstractmethod
-    def _create_auth(self, username=None, password=None):
+    def _create_auth(self):
         pass
 
     def _create_properties(self, user_agent=None):  # pylint: disable=no-self-use
@@ -196,13 +162,17 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :rtype: dict
         """
         properties = {}
-        properties["product"] = "eventhub.python"
-        properties["version"] = __version__
-        properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
-        properties["platform"] = sys.platform
+        product = "azure-eventhub"
+        properties[types.AMQPSymbol("product")] = product
+        properties[types.AMQPSymbol("version")] = __version__
+        framework = "Python {}.{}.{}, {}".format(
+            sys.version_info[0], sys.version_info[1], sys.version_info[2], platform.python_implementation()
+        )
+        properties[types.AMQPSymbol("framework")] = framework
+        platform_str = platform.platform()
+        properties[types.AMQPSymbol("platform")] = platform_str
 
-        final_user_agent = 'azsdk-python-eventhub/{} ({}; {})'.format(
-            __version__, properties["framework"], sys.platform)
+        final_user_agent = '{}/{} ({}, {})'.format(product, __version__, framework, platform_str)
         if user_agent:
             final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
 
@@ -210,8 +180,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
             raise ValueError("The user-agent string cannot be more than {} in length."
                              "Current user_agent string is: {} with length: {}".format(
                                 MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)))
-
-        properties["user-agent"] = final_user_agent
+        properties[types.AMQPSymbol("user-agent")] = final_user_agent
         return properties
 
     def _add_span_request_attributes(self, span):
@@ -219,22 +188,11 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def _process_redirect_uri(self, redirect):
-        redirect_uri = redirect.address.decode('utf-8')
-        auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
-        self._address = urlparse(auth_uri)
-        self._host = self._address.hostname
-        self.eh_name = self._address.path.lstrip('/')
-        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._mgmt_target = redirect_uri
-        if self._is_iothub:
-            self._iothub_redirect_info = redirect
-
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """Create an EventHubClient from an EventHub/IotHub connection string.
+        """Create an EventHubClient from an EventHub connection string.
 
-        :param conn_str: The connection string of an eventhub or IoT hub
+        :param conn_str: The connection string of an eventhub
         :type conn_str: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is
          not included in the connection string.
@@ -279,15 +237,11 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
 
         """
         event_hub_path = kwargs.pop("event_hub_path", None)
-        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
-        if not is_iot_conn_str:  # pylint:disable=no-else-return
-            address, policy, key, entity = _parse_conn_str(conn_str)
-            entity = event_hub_path or entity
-            left_slash_pos = address.find("//")
-            if left_slash_pos != -1:
-                host = address[left_slash_pos + 2:]
-            else:
-                host = address
-            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+        address, policy, key, entity = _parse_conn_str(conn_str)
+        entity = event_hub_path or entity
+        left_slash_pos = address.find("//")
+        if left_slash_pos != -1:
+            host = address[left_slash_pos + 2:]
         else:
-            return cls._from_iothub_connection_string(conn_str, **kwargs)
+            host = address
+        return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
