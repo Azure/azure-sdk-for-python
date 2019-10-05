@@ -79,7 +79,7 @@ class LeaseClient(object):
         self.release()
 
     @distributed_trace
-    def acquire(self, lease_duration=-1, timeout=None, **kwargs):
+    def acquire(self, lease_duration=-1, **kwargs):
         # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
 
@@ -123,7 +123,7 @@ class LeaseClient(object):
             if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = self._client.acquire_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
                 modified_access_conditions=mod_conditions,
@@ -136,8 +136,8 @@ class LeaseClient(object):
         self.etag = kwargs.get('etag')  # type: str
 
     @distributed_trace
-    def renew(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    def renew(self, **kwargs):
+        # type: (Any) -> None
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -179,7 +179,7 @@ class LeaseClient(object):
         try:
             response = self._client.renew_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -190,8 +190,8 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace
-    def release(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    def release(self, **kwargs):
+        # type: (Any) -> None
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -231,7 +231,7 @@ class LeaseClient(object):
         try:
             response = self._client.release_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -242,8 +242,8 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace
-    def change(self, proposed_lease_id, timeout=None, **kwargs):
-        # type: (str, Optional[int], Any) -> None
+    def change(self, proposed_lease_id, **kwargs):
+        # type: (str, Any) -> None
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -283,7 +283,7 @@ class LeaseClient(object):
             response = self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -294,8 +294,8 @@ class LeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace
-    def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> int
+    def break_lease(self, lease_break_period=None, **kwargs):
+        # type: (Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -337,7 +337,7 @@ class LeaseClient(object):
             if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         try:
             response = self._client.break_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,

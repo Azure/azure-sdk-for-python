@@ -62,8 +62,8 @@ class LeaseClient(LeaseClientBase):
         await self.release()
 
     @distributed_trace_async
-    async def acquire(self, lease_duration=-1, timeout=None, **kwargs):
-        # type: (int, Optional[int], Any) -> None
+    async def acquire(self, lease_duration=-1, **kwargs):
+        # type: (int, Any) -> None
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -106,7 +106,7 @@ class LeaseClient(LeaseClientBase):
             if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = await self._client.acquire_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
                 modified_access_conditions=mod_conditions,
@@ -119,8 +119,8 @@ class LeaseClient(LeaseClientBase):
         self.etag = kwargs.get('etag')  # type: str
 
     @distributed_trace_async
-    async def renew(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    async def renew(self, **kwargs):
+        # type: (Any) -> None
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -162,7 +162,7 @@ class LeaseClient(LeaseClientBase):
         try:
             response = await self._client.renew_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -173,8 +173,8 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def release(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    async def release(self, **kwargs):
+        # type: (Any) -> None
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -214,7 +214,7 @@ class LeaseClient(LeaseClientBase):
         try:
             response = await self._client.release_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -225,8 +225,8 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def change(self, proposed_lease_id, timeout=None, **kwargs):
-        # type: (str, Optional[int], Any) -> None
+    async def change(self, proposed_lease_id, **kwargs):
+        # type: (str, Any) -> None
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -266,7 +266,7 @@ class LeaseClient(LeaseClientBase):
             response = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -277,8 +277,8 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> int
+    async def break_lease(self, lease_break_period=None, **kwargs):
+        # type: (Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -320,7 +320,7 @@ class LeaseClient(LeaseClientBase):
             if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         try:
             response = await self._client.break_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,

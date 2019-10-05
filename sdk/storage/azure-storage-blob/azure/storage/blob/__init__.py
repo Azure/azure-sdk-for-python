@@ -101,7 +101,6 @@ __all__ = [
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        overwrite=False,  # type: bool
         max_concurrency=1,  # type: int
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
@@ -132,7 +131,6 @@ def upload_blob_to_url(
         return client.upload_blob(
             data=data,
             blob_type=BlobType.BlockBlob,
-            overwrite=overwrite,
             max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs)

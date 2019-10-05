@@ -385,7 +385,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_metadata(metadata, lease_id)
+        await container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = await container.get_container_properties()
@@ -439,7 +439,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        md = await container.get_container_properties(lease_id)
+        md = await container.get_container_properties(lease=lease_id)
         md = md.metadata
 
         # Assert
@@ -482,7 +482,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        props = await container.get_container_properties(lease_id)
+        props = await container.get_container_properties(lease=lease_id)
         await lease_id.break_lease()
 
         # Assert
@@ -520,7 +520,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        acl = await container.get_container_access_policy(lease_id)
+        acl = await container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)

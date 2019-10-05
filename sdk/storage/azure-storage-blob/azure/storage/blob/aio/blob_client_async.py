@@ -99,7 +99,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -110,10 +109,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob_name=blob_name,
             snapshot=snapshot,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -135,12 +133,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            overwrite=False,  # type: bool
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: Optional[bool]
-            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Any
@@ -239,12 +233,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._upload_blob_options(
             data,
             blob_type=blob_type,
-            overwrite=overwrite,
             length=length,
             metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return await upload_block_blob(**options)
@@ -253,8 +243,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return await upload_append_blob(**options)
 
     @distributed_trace_async
-    async def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
-        # type: (Optional[int], Optional[int], bool, Any) -> Iterable[bytes]
+    async def download_blob(self, offset=None, length=None, **kwargs):
+        # type: (Optional[int], Optional[int], Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
@@ -321,7 +311,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._download_blob_options(
             offset=offset,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         extra_properties = {
             'name': self.blob_name,
@@ -598,7 +587,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
-            sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
@@ -661,7 +649,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
-            sequence_number=sequence_number,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
@@ -1076,7 +1063,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> None
@@ -1116,7 +1102,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             block_id,
             data,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             await self._client.block_blob.stage_block(**options)
@@ -1209,7 +1194,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -1272,7 +1256,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             block_list,
             content_settings=content_settings,
             metadata=metadata,
-            validate_content=validate_content,
             **kwargs)
         try:
             return await self._client.block_blob.commit_block_list(**options) # type: ignore
@@ -1495,7 +1478,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -1573,7 +1555,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             start_range=start_range,
             end_range=end_range,
             length=length,
-            validate_content=validate_content,
             **kwargs)
         try:
             return await self._client.page_blob.upload_pages(**options) # type: ignore
@@ -1585,7 +1566,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                                     range_start,  # type: int
                                     range_end,  # type: int
                                     source_range_start,  # type: int
-                                    source_content_md5=None,  # type: Optional[bytes]
                                     **kwargs
                                     ):
         # type: (...) -> Dict[str, Any]
@@ -1677,7 +1657,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             range_start=range_start,
             range_end=range_end,
             source_range_start=source_range_start,
-            source_content_md5=source_content_md5,
             **kwargs
         )
         try:
@@ -1753,9 +1732,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def append_block( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: Optional[bool]
-            maxsize_condition=None,  # type: Optional[int]
-            appendpos_condition=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
@@ -1824,9 +1800,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._append_block_options(
             data,
             length=length,
-            validate_content=validate_content,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:
@@ -1838,9 +1811,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def append_block_from_url(self, copy_source_url,  # type: str
                                     source_range_start=None,  # type Optional[int]
                                     source_range_end=None,  # type Optional[int]
-                                    source_content_md5=None,  # type: Optional[bytearray]
-                                    maxsize_condition=None,  # type: Optional[int]
-                                    appendpos_condition=None,  # type: Optional[int]
                                     **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
@@ -1925,9 +1895,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             copy_source_url,
             source_range_start=source_range_start,
             source_range_end=source_range_end,
-            source_content_md5=source_content_md5,
-            maxsize_condition=maxsize_condition,
-            appendpos_condition=appendpos_condition,
             **kwargs
         )
         try:
