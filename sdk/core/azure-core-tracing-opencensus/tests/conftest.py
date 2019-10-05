@@ -23,10 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Union, Optional
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError
-)
+import sys
 
-ErrorType = Optional[Union[ServiceRequestError, ServiceResponseError]]
+# Ignore collection of async tests for Python 2
+collect_ignore = []
+if sys.version_info < (3, 5):
+    collect_ignore.append("asynctests")

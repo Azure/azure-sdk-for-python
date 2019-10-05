@@ -244,10 +244,6 @@ class CorsRule(GeneratedCorsRule):
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
-    Returned ``ContainerProperties`` instances expose these values through a
-    dictionary interface, for example: ``container_props["last_modified"]``.
-    Additionally, the container name is available as ``container_props["name"]``.
-
     :param ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :param str etag:
@@ -263,6 +259,10 @@ class ContainerProperties(DictMixin):
         Represents whether the container has a legal hold.
     :param dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
+
+    Returned ``ContainerProperties`` instances expose these values through a
+    dictionary interface, for example: ``container_props["last_modified"]``.
+    Additionally, the container name is available as ``container_props["name"]``.
     """
 
     def __init__(self, **kwargs):
