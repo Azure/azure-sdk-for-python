@@ -265,10 +265,10 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act part 1: make put block from url calls
         await destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url,
-                                                           source_offset=0, source_length=4 * 1024 - 1,
+                                                           source_offset=0, source_length=4 * 1024,
                                                            cpk=TEST_ENCRYPTION_KEY)
         await destination_blob_client.stage_block_from_url(block_id=2, source_url=source_blob_url,
-                                                           source_offset=4 * 1024, source_length=8 * 1024,
+                                                           source_offset=4 * 1024, source_length=4 * 1024,
                                                            cpk=TEST_ENCRYPTION_KEY)
 
         # Assert blocks
@@ -351,8 +351,8 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         append_blob_prop = await destination_blob_client.append_block_from_url(source_blob_url,
-                                                                               source_range_start=0,
-                                                                               source_range_end=4 * 1024 - 1,
+                                                                               source_offset=0,
+                                                                               source_length=4 * 1024,
                                                                                cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -414,8 +414,8 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_page(self.byte_data,
-                                                       start_range=0,
-                                                       end_range=len(self.byte_data) - 1,
+                                                       offset=0,
+                                                       length=len(self.byte_data),
                                                        cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -430,7 +430,7 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act get the blob content
         blob = await blob_client.download_blob(offset=0,
-                                               length=len(self.byte_data) - 1,
+                                               length=len(self.byte_data),
                                                cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
@@ -458,9 +458,9 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_pages_from_url(source_blob_url,
-                                                                 range_start=0,
-                                                                 range_end=len(self.byte_data) - 1,
-                                                                 source_range_start=0,
+                                                                 offset=0,
+                                                                 length=len(self.byte_data),
+                                                                 source_offset=0,
                                                                  cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -476,7 +476,7 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act get the blob content
         blob = await blob_client.download_blob(offset=0,
-                                               length=len(self.byte_data) - 1,
+                                               length=len(self.byte_data),
                                                cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk

@@ -334,7 +334,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = blob.download_blob(offset=0, length=5)
 
         # Assert
-        self.assertEqual(b"".join(list(data)), self.byte_data[:6])
+        self.assertEqual(b"".join(list(data)), self.byte_data[:5])
 
     @record
     def test_get_blob_with_lease(self):

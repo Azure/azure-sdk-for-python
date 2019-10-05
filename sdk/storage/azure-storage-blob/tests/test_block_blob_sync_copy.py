@@ -76,16 +76,17 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act part 1: make put block from url calls
+        split = 4 * 1024
         dest_blob.stage_block_from_url(
             block_id=1,
             source_url=self.source_blob_url,
             source_offset=0,
-            source_length=4 * 1024 - 1)
+            source_length=split)
         dest_blob.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url,
-            source_offset=4 * 1024,
-            source_length=8 * 1024)
+            source_offset=split,
+            source_length=split)
 
         # Assert blocks
         committed, uncommitted = dest_blob.get_block_list('all')
@@ -97,6 +98,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert destination blob has right content
         content = dest_blob.download_blob().content_as_bytes()
+        self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
 
     @record
