@@ -226,13 +226,13 @@ class CertificateProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """The name of the vault that the certificate is created in.
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def thumbprint(self):
@@ -1149,13 +1149,13 @@ class IssuerProperties(object):
         return self._provider
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """The name of the vault with this issuer.
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
 
 class Issuer(object):
