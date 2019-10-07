@@ -63,7 +63,6 @@ setup(
             "samples.Shared",
             "samples.Shared.config",
             "test",
-            "doc",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
         ]
