@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ def run_sample():
     # Instantiate a secret client that will be used to call the service. Notice that the client is using default Azure
     # credentials. To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=VAULT_URL, credential=credential)
+    client = SecretClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
@@ -72,7 +72,11 @@ def run_sample():
         print("\n.. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
         for secret_version in secret_versions:
-            print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.properties.version))
+            print(
+                "Bank Secret with name '{0}' has version: '{1}'.".format(
+                    secret_version.name, secret_version.properties.version
+                )
+            )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
         client.delete_secret(bank_secret.name)

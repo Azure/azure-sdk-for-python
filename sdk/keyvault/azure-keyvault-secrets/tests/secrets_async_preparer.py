@@ -19,6 +19,7 @@ from secrets_vault_client_async import VaultClient
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
     """
+
     async def send(self, request, **config):
         response = await super(AiohttpTestTransport, self).send(request, **config)
         if not isinstance(response.headers, CIMultiDictProxy):

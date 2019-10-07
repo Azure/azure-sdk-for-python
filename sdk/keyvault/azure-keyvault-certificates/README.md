@@ -59,7 +59,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`
+    > The `"vaultUri"` property is the `vault_endpoint` used by `CertificateClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's certificates, you'll need an instance
@@ -116,7 +116,7 @@ from azure.keyvault.certificates import CertificateClient
 credential = DefaultAzureCredential()
 
 # Create a new certificate client using the default credential
-certificate_client = CertificateClient(vault_url=<your-vault-url>, credential=credential)
+certificate_client = CertificateClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 With a `CertificateClient` you can get certificates from the vault, create new certificates and
@@ -278,7 +278,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
+client = CertificateClient(vault_endpoint=url, credential=credential, logging_enable=True))
 ```
 
 Network trace logging can also be enabled for any single operation:

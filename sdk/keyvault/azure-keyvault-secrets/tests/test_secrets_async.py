@@ -16,7 +16,7 @@ from dateutil import parser as date_parse
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
-        self.assertEqual(s1.vault_url, s2.vault_url)
+        self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -35,7 +35,10 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_value,
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
-        self.assertTrue(secret_attributes.properties.created and secret_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            secret_attributes.properties.created and secret_attributes.properties.updated,
+            "Missing required date attributes.",
+        )
 
     async def _validate_secret_list(self, secrets, expected):
         async for secret in secrets:
@@ -57,14 +60,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # create secret
         created = await client.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
 
         # set secret with optional arguments
         not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
         enabled = True
         tags = {"foo": "created tag"}
         created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
-        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
         self.assertEqual(enabled, created.properties.enabled)
         self.assertEqual(not_before, created.properties.not_before)
         self.assertEqual(tags, created.properties.tags)
@@ -85,7 +88,12 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             tags = {"foo": "updated tag"}
             enabled = not secret.properties.enabled
             updated_secret = await client.update_secret_properties(
-                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+                secret.name,
+                secret.properties.version,
+                content_type=content_type,
+                expires=expires,
+                tags=tags,
+                enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)
