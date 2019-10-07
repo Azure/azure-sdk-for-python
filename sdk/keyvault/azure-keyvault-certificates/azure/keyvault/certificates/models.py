@@ -120,10 +120,10 @@ class CertificateProperties(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._attributes = kwargs.get('attributes', None)
-        self._id = kwargs.get('cert_id', None)
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_id", None)
         self._vault_id = parse_vault_id(self._id)
-        self._thumbprint = kwargs.get('thumbprint', None)
+        self._thumbprint = kwargs.get("thumbprint", None)
         self._tags = kwargs.get("tags", None)
 
     @classmethod
@@ -261,12 +261,12 @@ class Certificate(object):
         policy,  # type: CertificatePolicy
         properties=None,  # type: Optional[CertificateProperties]
         cer=None,  # type: Optional[bytes]
-        **kwargs  # type: ANy
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self._properties = properties
-        self._key_id = kwargs.get('key_id', None)
-        self._secret_id = kwargs.get('secret_id')
+        self._key_id = kwargs.get("key_id", None)
+        self._secret_id = kwargs.get("secret_id")
         self._policy = policy
         self._cer = cer
 
@@ -578,8 +578,8 @@ class CertificatePolicy(object):
     ):
         # type: (...) -> None
         self._subject_name = subject_name
-        self._attributes = kwargs.get('attributes', None)
-        self._id = kwargs.get('cert_policy_id', None)
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_policy_id", None)
         self._exportable = exportable
         self._key_type = key_type
         self._key_size = key_size
@@ -1078,7 +1078,7 @@ class IssuerProperties(object):
 
     def __init__(self, provider=None, **kwargs):
         # type: (Optional[str], **Any) -> None
-        self._id = kwargs.get('issuer_id', None)
+        self._id = kwargs.get("issuer_id", None)
         self._vault_id = parse_vault_id(self._id)
         self._provider = provider
 
@@ -1320,12 +1320,10 @@ class DeletedCertificate(Certificate):
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        super(DeletedCertificate, self).__init__(
-            properties=properties, policy=policy, cer=cer, **kwargs
-        )
-        self._deleted_date = kwargs.get('deleted_date', None)
-        self._recovery_id = kwargs.get('recovery_id', None)
-        self._scheduled_purge_date = kwargs.get('scheduled_purge_date', None)
+        super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
+        self._deleted_date = kwargs.get("deleted_date", None)
+        self._recovery_id = kwargs.get("recovery_id", None)
+        self._scheduled_purge_date = kwargs.get("scheduled_purge_date", None)
 
     @classmethod
     def _from_deleted_certificate_item(cls, deleted_certificate_item):
