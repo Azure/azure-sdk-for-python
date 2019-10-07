@@ -34,7 +34,10 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value,
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
-        self.assertTrue(secret_attributes.properties.created and secret_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            secret_attributes.properties.created and secret_attributes.properties.updated,
+            "Missing required date attributes.",
+        )
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
@@ -80,7 +83,9 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(tags, created.properties.tags)
 
         self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
-        self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name, created.properties.version).properties)
+        self._assert_secret_attributes_equal(
+            created.properties, client.get_secret(created.name, created.properties.version).properties
+        )
 
         def _update_secret(secret):
             content_type = "text/plain"
@@ -88,7 +93,12 @@ class SecretClientTests(KeyVaultTestCase):
             tags = {"foo": "updated tag"}
             enabled = not secret.properties.enabled
             updated_secret = client.update_secret_properties(
-                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+                secret.name,
+                secret.properties.version,
+                content_type=content_type,
+                expires=expires,
+                tags=tags,
+                enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)

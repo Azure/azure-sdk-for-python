@@ -67,9 +67,19 @@ async def run_sample():
         # associated with a key previously stored within Key Vault.
         print("\n.. Update a Key by name")
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        updated_ec_key = await client.update_key_properties(ec_key.name, ec_key.properties.version, expires=expires, enabled=False)
-        print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated))
-        print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.properties.expires))
+        updated_ec_key = await client.update_key_properties(
+            ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+        )
+        print(
+            "Key with name '{0}' was updated on date '{1}'".format(
+                updated_ec_key.name, updated_ec_key.properties.updated
+            )
+        )
+        print(
+            "Key with name '{0}' was updated to expire on '{1}'".format(
+                updated_ec_key.name, updated_ec_key.properties.expires
+            )
+        )
 
         # The keys are no longer used, let's delete them
         print("\n.. Deleting keys")

@@ -43,10 +43,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
     @distributed_trace_async
     async def create_certificate(
-        self,
-        name: str,
-        policy: Optional[CertificatePolicy] = None,
-        **kwargs: "**Any"
+        self, name: str, policy: Optional[CertificatePolicy] = None, **kwargs: "**Any"
     ) -> Coroutine:
         """Creates a new certificate.
 
@@ -76,8 +73,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -130,10 +127,18 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_certificate(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint,
+            certificate_name=name,
+            certificate_version="",
+            error_map=error_map,
+            **kwargs
+>>>>>>> ran black on keyvault
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -249,7 +254,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        await self._client.purge_deleted_certificate(vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs)
+        await self._client.purge_deleted_certificate(
+            vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs
+        )
 
     @distributed_trace_async
     async def recover_deleted_certificate(self, name: str, **kwargs: "**Any") -> Certificate:
@@ -313,8 +320,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
             - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -355,7 +362,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any") -> CertificatePolicy:
+    async def update_policy(
+        self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any"
+    ) -> CertificatePolicy:
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leaves others as null.
@@ -382,10 +391,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_certificate_properties(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        **kwargs: "**Any"
+        self, name: str, version: Optional[str] = None, **kwargs: "**Any"
     ) -> Certificate:
         """Updates the specified attributes associated with the given certificate.
 
@@ -412,8 +418,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -614,7 +620,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         contacts = await self._client.set_certificate_contacts(
-            vault_base_url=self.vault_endpoint, contact_list=[c._to_certificate_contacts_item() for c in contacts], **kwargs
+            vault_base_url=self.vault_endpoint,
+            contact_list=[c._to_certificate_contacts_item() for c in contacts],
+            **kwargs
         )
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
@@ -789,12 +797,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return deserialized
 
     @distributed_trace_async
-    async def merge_certificate(
-        self,
-        name: str,
-        x509_certificates: List[bytearray],
-        **kwargs: "**Any"
-    ) -> Certificate:
+    async def merge_certificate(self, name: str, x509_certificates: List[bytearray], **kwargs: "**Any") -> Certificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         Performs the merging of a certificate or certificate chain with a key pair currently
@@ -815,8 +818,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
             - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -903,7 +906,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -973,7 +976,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             - *enabled (bool)* - Determines whether the object is enabled.
         """
 
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)

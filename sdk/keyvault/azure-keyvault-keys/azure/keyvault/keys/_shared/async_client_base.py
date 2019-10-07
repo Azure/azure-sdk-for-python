@@ -28,9 +28,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(
-        credential: "TokenCredential", api_version: str = None, **kwargs: "**Any"
-    ) -> Configuration:
+    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "**Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)

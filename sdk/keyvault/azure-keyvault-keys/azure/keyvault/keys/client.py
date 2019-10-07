@@ -246,10 +246,14 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.delete_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -274,10 +278,16 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.get_key(self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs)
 =======
         bundle = self._client.get_key(self.vault_endpoint, name, key_version=version or "", error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.get_key(
+            self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
+        )
+>>>>>>> ran black on keyvault
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -303,10 +313,14 @@ class KeyClient(KeyVaultClientBase):
         """
         # TODO: which exception is raised when soft-delete is not enabled
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -510,10 +524,14 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return backup_result.value
 
     @distributed_trace
@@ -541,10 +559,14 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -581,6 +603,12 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_endpoint, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            hsm=hsm,
+            key_attributes=attributes,
+            tags=tags,
+            **kwargs
         )
         return Key._from_key_bundle(bundle)

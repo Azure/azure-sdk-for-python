@@ -88,7 +88,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         self._internal_key = None  # type: Optional[_Key]
 
-        super(CryptographyClient, self).__init__(vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs)
+        super(CryptographyClient, self).__init__(
+            vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs
+        )
 
     @property
     def key_id(self) -> str:

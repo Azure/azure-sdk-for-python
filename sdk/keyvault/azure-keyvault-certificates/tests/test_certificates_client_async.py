@@ -306,7 +306,15 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = (await self._import_common_certificate(client=client, cert_name=cert_name))[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_endpoint + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
+                cid = (
+                    parsed_id.vault_endpoint
+                    + "/"
+                    + parsed_id.collection
+                    + "/"
+                    + parsed_id.name
+                    + "/"
+                    + parsed_id.version
+                )
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:

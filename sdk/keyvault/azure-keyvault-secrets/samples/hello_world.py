@@ -59,7 +59,11 @@ def run_sample():
         expires = bank_secret.properties.expires + datetime.timedelta(days=365)
         updated_secret_properties = client.update_secret_properties(secret.name, expires=expires)
         print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated))
-        print("Secret with name '{0}' was updated to expire on '{1}'".format(secret.name, updated_secret_properties.expires))
+        print(
+            "Secret with name '{0}' was updated to expire on '{1}'".format(
+                secret.name, updated_secret_properties.expires
+            )
+        )
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the Key Vault.
         # To achieve this, we need to create a new version of the secret in the Key Vault. The update operation cannot

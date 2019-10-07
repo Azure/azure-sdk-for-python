@@ -52,10 +52,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -97,7 +101,13 @@ class SecretClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.set_secret(
-            self.vault_endpoint, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            value,
+            secret_attributes=attributes,
+            content_type=content_type,
+            tags=tags,
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -224,10 +234,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         backup_result = await self._client.backup_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return backup_result.value
 
@@ -252,10 +266,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.restore_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, backup, error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, backup, error_map={409: ResourceExistsError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, backup, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -279,10 +297,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.delete_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -307,10 +329,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_deleted_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 

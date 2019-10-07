@@ -58,7 +58,9 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
-        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+        )
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
@@ -68,7 +70,9 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
-        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+        )
 
     def _update_key_properties(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")

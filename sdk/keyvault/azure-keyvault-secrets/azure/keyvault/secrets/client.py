@@ -248,10 +248,14 @@ class SecretClient(KeyVaultClientBase):
         """
         backup_result = self._client.backup_secret(
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.vault_endpoint, name, error_map=_error_map, **kwargs
 =======
             self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return backup_result.value
 
@@ -277,10 +281,16 @@ class SecretClient(KeyVaultClientBase):
 
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.restore_secret(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.restore_secret(self.vault_endpoint, backup, error_map={409: ResourceExistsError}, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.restore_secret(
+            self.vault_endpoint, backup, error_map=_error_map, **kwargs
+        )
+>>>>>>> ran black on keyvault
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -304,10 +314,14 @@ class SecretClient(KeyVaultClientBase):
 
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.delete_secret(self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -332,10 +346,16 @@ class SecretClient(KeyVaultClientBase):
 
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.get_deleted_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = self._client.get_deleted_secret(self.vault_endpoint, name, error_map={404: ResourceNotFoundError}, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.get_deleted_secret(
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+        )
+>>>>>>> ran black on keyvault
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace

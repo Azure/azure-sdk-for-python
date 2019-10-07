@@ -66,9 +66,17 @@ try:
     # associated with a key previously stored within Key Vault.
     print("\n.. Update a Key by name")
     expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-    updated_ec_key = client.update_key_properties(ec_key.name, ec_key.properties.version, expires=expires, enabled=False)
-    print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated))
-    print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.properties.expires))
+    updated_ec_key = client.update_key_properties(
+        ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+    )
+    print(
+        "Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated)
+    )
+    print(
+        "Key with name '{0}' was updated to expire on '{1}'".format(
+            updated_ec_key.name, updated_ec_key.properties.expires
+        )
+    )
 
     # The RSA key is no longer used, need to delete it from the Key Vault.
     print("\n.. Delete Keys")

@@ -307,7 +307,15 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_endpoint + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
+                cid = (
+                    parsed_id.vault_endpoint
+                    + "/"
+                    + parsed_id.collection
+                    + "/"
+                    + parsed_id.name
+                    + "/"
+                    + parsed_id.version
+                )
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
@@ -485,7 +493,9 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_parameters=IssuerParameters(name="Self"),
         )
 
-        client.update_policy(certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        client.update_policy(
+            certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
+        )
         updated_cert_policy = client.get_policy(certificate_name=cert_name)
         self.assertIsNotNone(updated_cert_policy)
 

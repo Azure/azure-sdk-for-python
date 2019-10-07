@@ -59,9 +59,7 @@ try:
     for key in keys:
         retrieved_key = client.get_key(key.name)
         print(
-            "Key with name '{0}' with type '{1}' was found.".format(
-                retrieved_key.name, retrieved_key.key_material.kty
-            )
+            "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key_material.kty)
         )
 
     # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure

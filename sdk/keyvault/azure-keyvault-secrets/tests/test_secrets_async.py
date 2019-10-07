@@ -35,7 +35,10 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_value,
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
-        self.assertTrue(secret_attributes.properties.created and secret_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            secret_attributes.properties.created and secret_attributes.properties.updated,
+            "Missing required date attributes.",
+        )
 
     async def _validate_secret_list(self, secrets, expected):
         async for secret in secrets:
@@ -85,7 +88,12 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             tags = {"foo": "updated tag"}
             enabled = not secret.properties.enabled
             updated_secret = await client.update_secret_properties(
-                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+                secret.name,
+                secret.properties.version,
+                content_type=content_type,
+                expires=expires,
+                tags=tags,
+                enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)

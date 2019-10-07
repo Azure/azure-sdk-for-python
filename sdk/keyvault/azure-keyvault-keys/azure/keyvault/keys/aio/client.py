@@ -62,7 +62,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
@@ -120,7 +120,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
@@ -171,7 +171,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
@@ -232,10 +232,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
@@ -262,10 +266,14 @@ class KeyClient(AsyncKeyVaultClientBase):
             version = ""
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
 =======
         bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -289,10 +297,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = await self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         bundle = await self._client.get_deleted_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = await self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -339,7 +351,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -422,7 +434,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
@@ -490,10 +502,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         backup_result = await self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
 =======
         backup_result = await self._client.backup_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        backup_result = await self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return backup_result.value
 
     @distributed_trace_async
@@ -520,10 +536,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = await self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
 =======
         bundle = await self._client.restore_key(self.vault_endpoint, backup, error_map=error_map, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = await self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
+>>>>>>> ran black on keyvault
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -536,7 +556,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
@@ -559,6 +579,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.import_key(
-            self.vault_endpoint, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            hsm=hsm,
+            key_attributes=attributes,
+            tags=tags,
+            **kwargs,
         )
         return Key._from_key_bundle(bundle)

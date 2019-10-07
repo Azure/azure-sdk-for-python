@@ -58,9 +58,15 @@ async def run_sample():
         print("\n.. Update a Secret by name")
         expires = bank_secret.properties.expires + datetime.timedelta(days=365)
         updated_secret_properties = await client.update_secret_properties(secret.name, expires=expires)
-        print("Secret with name '{0}' was updated on date '{1}'".format(updated_secret_properties.name, updated_secret_properties.updated))
         print(
-            "Secret with name '{0}' was updated to expire on '{1}'".format(updated_secret_properties.name, updated_secret_properties.expires)
+            "Secret with name '{0}' was updated on date '{1}'".format(
+                updated_secret_properties.name, updated_secret_properties.updated
+            )
+        )
+        print(
+            "Secret with name '{0}' was updated to expire on '{1}'".format(
+                updated_secret_properties.name, updated_secret_properties.expires
+            )
         )
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.

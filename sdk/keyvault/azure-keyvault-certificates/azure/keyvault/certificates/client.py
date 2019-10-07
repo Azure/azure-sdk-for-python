@@ -84,8 +84,8 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("enabled", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -141,10 +141,18 @@ class CertificateClient(KeyVaultClientBase):
         """
         bundle = self._client.get_certificate(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint,
+            certificate_name=name,
+            certificate_version="",
+            error_map=_error_map,
+            **kwargs
+>>>>>>> ran black on keyvault
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -208,10 +216,14 @@ class CertificateClient(KeyVaultClientBase):
         """
         bundle = self._client.delete_certificate(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -242,10 +254,14 @@ class CertificateClient(KeyVaultClientBase):
         """
         bundle = self._client.get_deleted_certificate(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -330,8 +346,8 @@ class CertificateClient(KeyVaultClientBase):
             - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -364,10 +380,16 @@ class CertificateClient(KeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         bundle = self._client.get_certificate_policy(vault_base_url=self.vault_endpoint, certificate_name=certificate_name, **kwargs)
 =======
         bundle = self._client.get_certificate_policy(vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs)
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+        bundle = self._client.get_certificate_policy(
+            vault_base_url=self.vault_endpoint, certificate_name=certificate_name, **kwargs
+        )
+>>>>>>> ran black on keyvault
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
@@ -431,8 +453,8 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -475,10 +497,14 @@ class CertificateClient(KeyVaultClientBase):
         """
         backup_result = self._client.backup_certificate(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return backup_result.value
 
@@ -633,7 +659,9 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         contacts = self._client.set_certificate_contacts(
-            vault_base_url=self.vault_endpoint, contact_list=[c._to_certificate_contacts_item() for c in contacts], **kwargs
+            vault_base_url=self.vault_endpoint,
+            contact_list=[c._to_certificate_contacts_item() for c in contacts],
+            **kwargs
         )
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
@@ -702,10 +730,14 @@ class CertificateClient(KeyVaultClientBase):
 
         bundle = self._client.get_certificate_operation(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -774,8 +806,8 @@ class CertificateClient(KeyVaultClientBase):
             - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
         """
 
-        enabled = kwargs.pop('enabled', None)
-        tags = kwargs.pop('tags', None)
+        enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -869,10 +901,14 @@ class CertificateClient(KeyVaultClientBase):
         """
         issuer_bundle = self._client.get_certificate_issuer(
 <<<<<<< HEAD
+<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, issuer_name=name, error_map=_error_map, **kwargs
 =======
             vault_base_url=self.vault_endpoint, issuer_name=name, error_map=error_map, **kwargs
 >>>>>>> switched vault_url to vault_endpoint across key vault
+=======
+            vault_base_url=self.vault_endpoint, issuer_name=name, error_map=_error_map, **kwargs
+>>>>>>> ran black on keyvault
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -917,7 +953,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -989,7 +1025,7 @@ class CertificateClient(KeyVaultClientBase):
             - *enabled (bool)* - Determines whether the object is enabled.
         """
 
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
