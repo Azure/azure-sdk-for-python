@@ -21,6 +21,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
+    condition: ne(variables['Skip.Analyze'], 'true')
     variables:
     - template: ../variables/globals.yml
 
@@ -34,6 +35,7 @@ jobs:
     - template: ../steps/analyze.yml
 
   - job: 'Test'
+    condition: ne(variables['Skip.Test'], 'true')
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
