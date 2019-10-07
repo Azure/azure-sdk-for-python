@@ -40,7 +40,7 @@ pr:
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: storage
+    ServiceDirectory: template
     Artifacts:
     - name: azure_template
       safeName: azuretemplate
