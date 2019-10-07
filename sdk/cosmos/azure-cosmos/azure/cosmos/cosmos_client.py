@@ -262,7 +262,7 @@ class CosmosClient(object):
         :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the new database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :rtype: ~azure.cosmos.DatabaseProxy
         :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
         .. admonition:: Example:
@@ -313,7 +313,7 @@ class CosmosClient(object):
         :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :rtype: ~azure.cosmos.DatabaseProxy
         :raise CosmosHttpResponseError: The database read or creation failed.
         """
         try:
@@ -338,9 +338,9 @@ class CosmosClient(object):
 
         :param database: The ID (name), dict representing the properties or `DatabaseProxy`
             instance of the database to read.
-        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :returns: A `DatabaseProxy` instance representing the retrieved database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :rtype: ~azure.cosmos.DatabaseProxy
         """
         if isinstance(database, DatabaseProxy):
             id_value = database.id
@@ -446,7 +446,7 @@ class CosmosClient(object):
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
-        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :param str session_token: Token for use with Session consistency.
         :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :param dict[str, str] access_condition: Conditions Associated with the request.

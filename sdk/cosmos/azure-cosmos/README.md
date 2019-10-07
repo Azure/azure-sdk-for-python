@@ -63,7 +63,7 @@ export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $A
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
 ```Python
-from azure.cosmos import CosmosClient, Container, Database, PartitionKey, errors
+from azure.cosmos import CosmosClient, PartitionKey, errors
 
 import os
 url = os.environ['ACCOUNT_URI']
@@ -271,14 +271,14 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-[ref_container_delete_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.delete_item
-[ref_container_query_items]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.query_items
-[ref_container_upsert_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.upsert_item
-[ref_container]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html
+[ref_container_delete_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
+[ref_container_query_items]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
+[ref_container_upsert_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
+[ref_container]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy
 [ref_cosmos_sdk]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html
-[ref_cosmosclient_create_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.cosmos_client.html#azure.cosmos.cosmos_client.CosmosClient.create_database
-[ref_cosmosclient]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.cosmos_client.html
-[ref_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.database.html
+[ref_cosmosclient_create_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
+[ref_cosmosclient]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.CosmosClient
+[ref_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.DatabaseProxy
 [ref_httpfailure]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.errors.html#azure.cosmos.errors.CosmosHttpResponseError
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DatabaseManagement
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DocumentManagement

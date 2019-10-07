@@ -558,7 +558,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be retrieved.
-        :rtype: ~azure.cosmos.offer.Offer
+        :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -588,7 +588,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be updated.
-        :rtype: ~azure.cosmos.offer.Offer
+        :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()

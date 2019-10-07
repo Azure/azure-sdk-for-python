@@ -175,7 +175,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the new container.
         :raise CosmosHttpResponseError: The container creation failed.
-        :rtype: ~azure.cosmos.container.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
 
@@ -259,7 +259,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the container.
         :raise CosmosHttpResponseError: The container read or creation failed.
-        :rtype: ~azure.cosmos.container.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy
         """
 
         try:
@@ -321,7 +321,7 @@ class DatabaseProxy(object):
 
         :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
-        :rtype: ~azure.cosmos.container.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
 
@@ -454,7 +454,7 @@ class DatabaseProxy(object):
         :raise `CosmosHttpResponseError`: Raised if the container couldn't be replaced. This includes
             if the container with given id does not exist.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
-        :rtype: ~azure.cosmos.container.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
 
@@ -558,7 +558,7 @@ class DatabaseProxy(object):
             instance of the user to be retrieved.
         :returns: A `UserProxy` instance representing the retrieved user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         if isinstance(user, UserProxy):
             id_value = user.id
@@ -582,7 +582,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the new user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be created.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
 
         .. admonition:: Example:
 
@@ -619,7 +619,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the upserted user.
         :raise `CosmosHttpResponseError`: If the given user could not be upserted.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -653,7 +653,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raise `CosmosHttpResponseError`: If the replace failed or the user with given id does not exist.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -704,7 +704,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database.
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be retrieved.
-        :rtype: ~azure.cosmos.offer.Offer
+        :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -734,7 +734,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database, updated with new throughput.
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be updated.
-        :rtype: ~azure.cosmos.offer.Offer
+        :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
