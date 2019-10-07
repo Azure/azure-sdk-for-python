@@ -51,8 +51,8 @@ class DeviceCodeCredential(PublicClientCredential):
           authorities for other clouds.
         - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the device
-          code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
+          device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
 
     """
 
