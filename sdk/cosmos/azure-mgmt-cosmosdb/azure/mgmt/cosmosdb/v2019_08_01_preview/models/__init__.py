@@ -69,6 +69,7 @@ try:
     from ._models_py3 import PartitionUsage
     from ._models_py3 import PercentileMetric
     from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PrivateLinkResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import SqlContainerCreateUpdateParameters
     from ._models_py3 import SqlContainerGetResults
@@ -155,6 +156,7 @@ except (SyntaxError, ImportError):
     from ._models import PartitionUsage
     from ._models import PercentileMetric
     from ._models import PercentileMetricValue
+    from ._models import PrivateLinkResource
     from ._models import RegionForOnlineOffline
     from ._models import SqlContainerCreateUpdateParameters
     from ._models import SqlContainerGetResults
@@ -194,6 +196,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import PartitionMetricPaged
 from ._paged_models import PartitionUsagePaged
 from ._paged_models import PercentileMetricPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import SqlContainerGetResultsPaged
 from ._paged_models import SqlDatabaseGetResultsPaged
 from ._paged_models import SqlStoredProcedureGetResultsPaged
@@ -278,6 +281,7 @@ __all__ = [
     'PartitionUsage',
     'PercentileMetric',
     'PercentileMetricValue',
+    'PrivateLinkResource',
     'RegionForOnlineOffline',
     'SqlContainerCreateUpdateParameters',
     'SqlContainerGetResults',
@@ -324,6 +328,7 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
+    'PrivateLinkResourcePaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',

@@ -40,7 +40,7 @@ class ARMProxyResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ARMProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -80,13 +80,13 @@ class ARMResourceProperties(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ARMResourceProperties, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class Capability(Model):
@@ -102,9 +102,9 @@ class Capability(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Capability, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs.get('name', None)
 
 
 class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
@@ -129,7 +129,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a Cassandra
      keyspace
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraKeyspaceResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraKeyspaceResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -153,10 +153,10 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(CassandraKeyspaceCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(CassandraKeyspaceCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class CassandraKeyspaceGetResults(ARMResourceProperties):
@@ -213,9 +213,9 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, cassandra_keyspace_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(CassandraKeyspaceGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.cassandra_keyspace_get_results_id = cassandra_keyspace_get_results_id
+    def __init__(self, **kwargs):
+        super(CassandraKeyspaceGetResults, self).__init__(**kwargs)
+        self.cassandra_keyspace_get_results_id = kwargs.get('cassandra_keyspace_get_results_id', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -238,9 +238,9 @@ class CassandraKeyspaceResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CassandraKeyspaceResource, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class CassandraPartitionKey(Model):
@@ -254,22 +254,23 @@ class CassandraPartitionKey(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CassandraPartitionKey, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs.get('name', None)
 
 
 class CassandraSchema(Model):
     """Cosmos DB Cassandra table schema.
 
     :param columns: List of Cassandra table columns.
-    :type columns: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Column]
+    :type columns:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Column]
     :param partition_keys: List of partition key.
     :type partition_keys:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraPartitionKey]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraPartitionKey]
     :param cluster_keys: List of cluster key.
     :type cluster_keys:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.ClusterKey]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ClusterKey]
     """
 
     _attribute_map = {
@@ -278,11 +279,11 @@ class CassandraSchema(Model):
         'cluster_keys': {'key': 'clusterKeys', 'type': '[ClusterKey]'},
     }
 
-    def __init__(self, *, columns=None, partition_keys=None, cluster_keys=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CassandraSchema, self).__init__(**kwargs)
-        self.columns = columns
-        self.partition_keys = partition_keys
-        self.cluster_keys = cluster_keys
+        self.columns = kwargs.get('columns', None)
+        self.partition_keys = kwargs.get('partition_keys', None)
+        self.cluster_keys = kwargs.get('cluster_keys', None)
 
 
 class CassandraTableCreateUpdateParameters(ARMResourceProperties):
@@ -306,7 +307,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Cassandra table
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraTableResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraTableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -330,10 +331,10 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(CassandraTableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(CassandraTableCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class CassandraTableGetResults(ARMResourceProperties):
@@ -361,7 +362,8 @@ class CassandraTableGetResults(ARMResourceProperties):
     :param default_ttl: Time to live of the Cosmos DB Cassandra table
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
-    :type schema: ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraSchema
+    :type schema:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraSchema
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -396,11 +398,11 @@ class CassandraTableGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, cassandra_table_get_results_id: str, location: str=None, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
-        super(CassandraTableGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.cassandra_table_get_results_id = cassandra_table_get_results_id
-        self.default_ttl = default_ttl
-        self.schema = schema
+    def __init__(self, **kwargs):
+        super(CassandraTableGetResults, self).__init__(**kwargs)
+        self.cassandra_table_get_results_id = kwargs.get('cassandra_table_get_results_id', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.schema = kwargs.get('schema', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -416,7 +418,8 @@ class CassandraTableResource(Model):
     :param default_ttl: Time to live of the Cosmos DB Cassandra table
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
-    :type schema: ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraSchema
+    :type schema:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraSchema
     """
 
     _validation = {
@@ -429,11 +432,11 @@ class CassandraTableResource(Model):
         'schema': {'key': 'schema', 'type': 'CassandraSchema'},
     }
 
-    def __init__(self, *, id: str, default_ttl: int=None, schema=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CassandraTableResource, self).__init__(**kwargs)
-        self.id = id
-        self.default_ttl = default_ttl
-        self.schema = schema
+        self.id = kwargs.get('id', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.schema = kwargs.get('schema', None)
 
 
 class CloudError(Model):
@@ -459,10 +462,10 @@ class ClusterKey(Model):
         'order_by': {'key': 'orderBy', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, order_by: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ClusterKey, self).__init__(**kwargs)
-        self.name = name
-        self.order_by = order_by
+        self.name = kwargs.get('name', None)
+        self.order_by = kwargs.get('order_by', None)
 
 
 class Column(Model):
@@ -479,10 +482,10 @@ class Column(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, type: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Column, self).__init__(**kwargs)
-        self.name = name
-        self.type = type
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class ConflictResolutionPolicy(Model):
@@ -491,7 +494,7 @@ class ConflictResolutionPolicy(Model):
     :param mode: Indicates the conflict resolution mode. Possible values
      include: 'LastWriterWins', 'Custom'. Default value: "LastWriterWins" .
     :type mode: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionMode
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionMode
     :param conflict_resolution_path: The conflict resolution path in the case
      of LastWriterWins mode.
     :type conflict_resolution_path: str
@@ -506,11 +509,11 @@ class ConflictResolutionPolicy(Model):
         'conflict_resolution_procedure': {'key': 'conflictResolutionProcedure', 'type': 'str'},
     }
 
-    def __init__(self, *, mode="LastWriterWins", conflict_resolution_path: str=None, conflict_resolution_procedure: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ConflictResolutionPolicy, self).__init__(**kwargs)
-        self.mode = mode
-        self.conflict_resolution_path = conflict_resolution_path
-        self.conflict_resolution_procedure = conflict_resolution_procedure
+        self.mode = kwargs.get('mode', "LastWriterWins")
+        self.conflict_resolution_path = kwargs.get('conflict_resolution_path', None)
+        self.conflict_resolution_procedure = kwargs.get('conflict_resolution_procedure', None)
 
 
 class ConsistencyPolicy(Model):
@@ -523,7 +526,7 @@ class ConsistencyPolicy(Model):
      include: 'Eventual', 'Session', 'BoundedStaleness', 'Strong',
      'ConsistentPrefix'
     :type default_consistency_level: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DefaultConsistencyLevel
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DefaultConsistencyLevel
     :param max_staleness_prefix: When used with the Bounded Staleness
      consistency level, this value represents the number of stale requests
      tolerated. Accepted range for this value is 1 – 2,147,483,647. Required
@@ -548,11 +551,11 @@ class ConsistencyPolicy(Model):
         'max_interval_in_seconds': {'key': 'maxIntervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, *, default_consistency_level, max_staleness_prefix: int=None, max_interval_in_seconds: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ConsistencyPolicy, self).__init__(**kwargs)
-        self.default_consistency_level = default_consistency_level
-        self.max_staleness_prefix = max_staleness_prefix
-        self.max_interval_in_seconds = max_interval_in_seconds
+        self.default_consistency_level = kwargs.get('default_consistency_level', None)
+        self.max_staleness_prefix = kwargs.get('max_staleness_prefix', None)
+        self.max_interval_in_seconds = kwargs.get('max_interval_in_seconds', None)
 
 
 class ContainerPartitionKey(Model):
@@ -564,7 +567,8 @@ class ContainerPartitionKey(Model):
     :type paths: list[str]
     :param kind: Indicates the kind of algorithm used for partitioning.
      Possible values include: 'Hash', 'Range'. Default value: "Hash" .
-    :type kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.PartitionKind
+    :type kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PartitionKind
     :param version: Indicates the version of the partition key definition
     :type version: int
     """
@@ -579,11 +583,11 @@ class ContainerPartitionKey(Model):
         'version': {'key': 'version', 'type': 'int'},
     }
 
-    def __init__(self, *, paths=None, kind="Hash", version: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ContainerPartitionKey, self).__init__(**kwargs)
-        self.paths = paths
-        self.kind = kind
-        self.version = version
+        self.paths = kwargs.get('paths', None)
+        self.kind = kwargs.get('kind', "Hash")
+        self.version = kwargs.get('version', None)
 
 
 class DatabaseAccountConnectionString(Model):
@@ -608,7 +612,7 @@ class DatabaseAccountConnectionString(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountConnectionString, self).__init__(**kwargs)
         self.connection_string = None
         self.description = None
@@ -637,14 +641,15 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountKind
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountKind
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param locations: Required. An array that contains the georeplication
      locations enabled for the Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :type locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar database_account_offer_type: Required. The offer type for the
      database. Default value: "Standard" .
     :vartype database_account_offer_type: str
@@ -663,11 +668,11 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
     :type enable_automatic_failover: bool
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -677,7 +682,7 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -714,20 +719,20 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
-        super(DatabaseAccountCreateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.kind = kind
-        self.consistency_policy = consistency_policy
-        self.locations = locations
-        self.ip_range_filter = ip_range_filter
-        self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
-        self.enable_automatic_failover = enable_automatic_failover
-        self.capabilities = capabilities
-        self.virtual_network_rules = virtual_network_rules
-        self.enable_multiple_write_locations = enable_multiple_write_locations
-        self.enable_cassandra_connector = enable_cassandra_connector
-        self.connector_offer = connector_offer
-        self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+    def __init__(self, **kwargs):
+        super(DatabaseAccountCreateParameters, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.locations = kwargs.get('locations', None)
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)
+        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -751,7 +756,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountKind
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountKind
     :param provisioning_state:
     :type provisioning_state: str
     :ivar document_endpoint: The connection endpoint for the Cosmos DB
@@ -761,7 +766,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      database account. Default value: Standard. Possible values include:
      'Standard'
     :vartype database_account_offer_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountOfferType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountOfferType
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -778,29 +783,30 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
     :vartype write_locations:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar read_locations: An array that contains of the read locations enabled
      for the Cosmos DB account.
     :vartype read_locations:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar locations: An array that contains all of the locations enabled for
      the Cosmos DB account.
-    :vartype locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :vartype locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
     :vartype failover_policies:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.FailoverPolicy]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.FailoverPolicy]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -810,7 +816,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -854,26 +860,26 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
-        super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.kind = kind
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(DatabaseAccountGetResults, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.document_endpoint = None
         self.database_account_offer_type = None
-        self.ip_range_filter = ip_range_filter
-        self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
-        self.enable_automatic_failover = enable_automatic_failover
-        self.consistency_policy = consistency_policy
-        self.capabilities = capabilities
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.capabilities = kwargs.get('capabilities', None)
         self.write_locations = None
         self.read_locations = None
         self.locations = None
         self.failover_policies = None
-        self.virtual_network_rules = virtual_network_rules
-        self.enable_multiple_write_locations = enable_multiple_write_locations
-        self.enable_cassandra_connector = enable_cassandra_connector
-        self.connector_offer = connector_offer
-        self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)
+        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -882,16 +888,16 @@ class DatabaseAccountListConnectionStringsResult(Model):
     :param connection_strings: An array that contains the connection strings
      for the Cosmos DB account.
     :type connection_strings:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountConnectionString]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountConnectionString]
     """
 
     _attribute_map = {
         'connection_strings': {'key': 'connectionStrings', 'type': '[DatabaseAccountConnectionString]'},
     }
 
-    def __init__(self, *, connection_strings=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountListConnectionStringsResult, self).__init__(**kwargs)
-        self.connection_strings = connection_strings
+        self.connection_strings = kwargs.get('connection_strings', None)
 
 
 class DatabaseAccountListReadOnlyKeysResult(Model):
@@ -918,7 +924,7 @@ class DatabaseAccountListReadOnlyKeysResult(Model):
         'secondary_readonly_master_key': {'key': 'secondaryReadonlyMasterKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountListReadOnlyKeysResult, self).__init__(**kwargs)
         self.primary_readonly_master_key = None
         self.secondary_readonly_master_key = None
@@ -958,7 +964,7 @@ class DatabaseAccountListKeysResult(DatabaseAccountListReadOnlyKeysResult):
         'secondary_master_key': {'key': 'secondaryMasterKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountListKeysResult, self).__init__(**kwargs)
         self.primary_master_key = None
         self.secondary_master_key = None
@@ -971,7 +977,8 @@ class DatabaseAccountRegenerateKeyParameters(Model):
 
     :param key_kind: Required. The access key to regenerate. Possible values
      include: 'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
-    :type key_kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.KeyKind
+    :type key_kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.KeyKind
     """
 
     _validation = {
@@ -982,9 +989,9 @@ class DatabaseAccountRegenerateKeyParameters(Model):
         'key_kind': {'key': 'keyKind', 'type': 'str'},
     }
 
-    def __init__(self, *, key_kind, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_kind = key_kind
+        self.key_kind = kwargs.get('key_kind', None)
 
 
 class DatabaseAccountUpdateParameters(Model):
@@ -998,10 +1005,11 @@ class DatabaseAccountUpdateParameters(Model):
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param locations: An array that contains the georeplication locations
      enabled for the Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :type locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -1017,11 +1025,11 @@ class DatabaseAccountUpdateParameters(Model):
     :type enable_automatic_failover: bool
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -1031,7 +1039,7 @@ class DatabaseAccountUpdateParameters(Model):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -1053,21 +1061,21 @@ class DatabaseAccountUpdateParameters(Model):
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-        self.consistency_policy = consistency_policy
-        self.locations = locations
-        self.ip_range_filter = ip_range_filter
-        self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
-        self.enable_automatic_failover = enable_automatic_failover
-        self.capabilities = capabilities
-        self.virtual_network_rules = virtual_network_rules
-        self.enable_multiple_write_locations = enable_multiple_write_locations
-        self.enable_cassandra_connector = enable_cassandra_connector
-        self.connector_offer = connector_offer
-        self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.locations = kwargs.get('locations', None)
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)
+        self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
+        self.connector_offer = kwargs.get('connector_offer', None)
+        self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
 
 
 class ErrorResponse(Model):
@@ -1084,10 +1092,10 @@ class ErrorResponse(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class ErrorResponseException(HttpOperationError):
@@ -1114,9 +1122,9 @@ class ExcludedPath(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, *, path: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ExcludedPath, self).__init__(**kwargs)
-        self.path = path
+        self.path = kwargs.get('path', None)
 
 
 class ExtendedResourceProperties(Model):
@@ -1148,7 +1156,7 @@ class ExtendedResourceProperties(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ExtendedResourceProperties, self).__init__(**kwargs)
         self._rid = None
         self._ts = None
@@ -1162,7 +1170,7 @@ class FailoverPolicies(Model):
 
     :param failover_policies: Required. List of failover policies.
     :type failover_policies:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.FailoverPolicy]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.FailoverPolicy]
     """
 
     _validation = {
@@ -1173,9 +1181,9 @@ class FailoverPolicies(Model):
         'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, *, failover_policies, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(FailoverPolicies, self).__init__(**kwargs)
-        self.failover_policies = failover_policies
+        self.failover_policies = kwargs.get('failover_policies', None)
 
 
 class FailoverPolicy(Model):
@@ -1208,11 +1216,11 @@ class FailoverPolicy(Model):
         'failover_priority': {'key': 'failoverPriority', 'type': 'int'},
     }
 
-    def __init__(self, *, location_name: str=None, failover_priority: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(FailoverPolicy, self).__init__(**kwargs)
         self.id = None
-        self.location_name = location_name
-        self.failover_priority = failover_priority
+        self.location_name = kwargs.get('location_name', None)
+        self.failover_priority = kwargs.get('failover_priority', None)
 
 
 class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -1236,7 +1244,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.GremlinDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1260,10 +1268,10 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(GremlinDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(GremlinDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class GremlinDatabaseGetResults(ARMResourceProperties):
@@ -1320,9 +1328,9 @@ class GremlinDatabaseGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, gremlin_database_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(GremlinDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.gremlin_database_get_results_id = gremlin_database_get_results_id
+    def __init__(self, **kwargs):
+        super(GremlinDatabaseGetResults, self).__init__(**kwargs)
+        self.gremlin_database_get_results_id = kwargs.get('gremlin_database_get_results_id', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -1345,9 +1353,9 @@ class GremlinDatabaseResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(GremlinDatabaseResource, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
@@ -1371,7 +1379,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin graph
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.GremlinGraphResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1395,10 +1403,10 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(GremlinGraphCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(GremlinGraphCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class GremlinGraphGetResults(ARMResourceProperties):
@@ -1426,22 +1434,22 @@ class GremlinGraphGetResults(ARMResourceProperties):
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the graph
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      graph.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -1479,14 +1487,14 @@ class GremlinGraphGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, gremlin_graph_get_results_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
-        super(GremlinGraphGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.gremlin_graph_get_results_id = gremlin_graph_get_results_id
-        self.indexing_policy = indexing_policy
-        self.partition_key = partition_key
-        self.default_ttl = default_ttl
-        self.unique_key_policy = unique_key_policy
-        self.conflict_resolution_policy = conflict_resolution_policy
+    def __init__(self, **kwargs):
+        super(GremlinGraphGetResults, self).__init__(**kwargs)
+        self.gremlin_graph_get_results_id = kwargs.get('gremlin_graph_get_results_id', None)
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -1502,22 +1510,22 @@ class GremlinGraphResource(Model):
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the graph
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      graph.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     """
 
     _validation = {
@@ -1533,14 +1541,14 @@ class GremlinGraphResource(Model):
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
 
-    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(GremlinGraphResource, self).__init__(**kwargs)
-        self.id = id
-        self.indexing_policy = indexing_policy
-        self.partition_key = partition_key
-        self.default_ttl = default_ttl
-        self.unique_key_policy = unique_key_policy
-        self.conflict_resolution_policy = conflict_resolution_policy
+        self.id = kwargs.get('id', None)
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
 
 
 class IncludedPath(Model):
@@ -1550,7 +1558,8 @@ class IncludedPath(Model):
      paths typically start with root and end with wildcard (/path/*)
     :type path: str
     :param indexes: List of indexes for this path
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Indexes]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Indexes]
     """
 
     _attribute_map = {
@@ -1558,10 +1567,10 @@ class IncludedPath(Model):
         'indexes': {'key': 'indexes', 'type': '[Indexes]'},
     }
 
-    def __init__(self, *, path: str=None, indexes=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(IncludedPath, self).__init__(**kwargs)
-        self.path = path
-        self.indexes = indexes
+        self.path = kwargs.get('path', None)
+        self.indexes = kwargs.get('indexes', None)
 
 
 class Indexes(Model):
@@ -1570,12 +1579,14 @@ class Indexes(Model):
     :param data_type: The datatype for which the indexing behavior is applied
      to. Possible values include: 'String', 'Number', 'Point', 'Polygon',
      'LineString', 'MultiPolygon'. Default value: "String" .
-    :type data_type: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.DataType
+    :type data_type: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DataType
     :param precision: The precision of the index. -1 is maximum precision.
     :type precision: int
     :param kind: Indicates the type of index. Possible values include: 'Hash',
      'Range', 'Spatial'. Default value: "Hash" .
-    :type kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexKind
+    :type kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexKind
     """
 
     _attribute_map = {
@@ -1584,11 +1595,11 @@ class Indexes(Model):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, data_type="String", precision: int=None, kind="Hash", **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Indexes, self).__init__(**kwargs)
-        self.data_type = data_type
-        self.precision = precision
-        self.kind = kind
+        self.data_type = kwargs.get('data_type', "String")
+        self.precision = kwargs.get('precision', None)
+        self.kind = kwargs.get('kind', "Hash")
 
 
 class IndexingPolicy(Model):
@@ -1599,13 +1610,13 @@ class IndexingPolicy(Model):
     :param indexing_mode: Indicates the indexing mode. Possible values
      include: 'Consistent', 'Lazy', 'None'. Default value: "Consistent" .
     :type indexing_mode: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingMode
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingMode
     :param included_paths: List of paths to include in the indexing
     :type included_paths:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.IncludedPath]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IncludedPath]
     :param excluded_paths: List of paths to exclude from indexing
     :type excluded_paths:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.ExcludedPath]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ExcludedPath]
     """
 
     _attribute_map = {
@@ -1615,12 +1626,12 @@ class IndexingPolicy(Model):
         'excluded_paths': {'key': 'excludedPaths', 'type': '[ExcludedPath]'},
     }
 
-    def __init__(self, *, automatic: bool=None, indexing_mode="Consistent", included_paths=None, excluded_paths=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(IndexingPolicy, self).__init__(**kwargs)
-        self.automatic = automatic
-        self.indexing_mode = indexing_mode
-        self.included_paths = included_paths
-        self.excluded_paths = excluded_paths
+        self.automatic = kwargs.get('automatic', None)
+        self.indexing_mode = kwargs.get('indexing_mode', "Consistent")
+        self.included_paths = kwargs.get('included_paths', None)
+        self.excluded_paths = kwargs.get('excluded_paths', None)
 
 
 class Location(Model):
@@ -1665,14 +1676,14 @@ class Location(Model):
         'is_zone_redundant': {'key': 'isZoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, *, location_name: str=None, provisioning_state: str=None, failover_priority: int=None, is_zone_redundant: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Location, self).__init__(**kwargs)
         self.id = None
-        self.location_name = location_name
+        self.location_name = kwargs.get('location_name', None)
         self.document_endpoint = None
-        self.provisioning_state = provisioning_state
-        self.failover_priority = failover_priority
-        self.is_zone_redundant = is_zone_redundant
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.failover_priority = kwargs.get('failover_priority', None)
+        self.is_zone_redundant = kwargs.get('is_zone_redundant', None)
 
 
 class Metric(Model):
@@ -1691,13 +1702,14 @@ class Metric(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricValue]
     """
 
     _validation = {
@@ -1717,12 +1729,12 @@ class Metric(Model):
         'metric_values': {'key': 'metricValues', 'type': '[MetricValue]'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Metric, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.time_grain = None
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.metric_values = None
 
@@ -1750,7 +1762,7 @@ class MetricAvailability(Model):
         'retention': {'key': 'retention', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricAvailability, self).__init__(**kwargs)
         self.time_grain = None
         self.retention = None
@@ -1765,20 +1777,21 @@ class MetricDefinition(Model):
     :ivar metric_availabilities: The list of metric availabilities for the
      account.
     :vartype metric_availabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricAvailability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricAvailability]
     :ivar primary_aggregation_type: The primary aggregation type of the
      metric. Possible values include: 'None', 'Average', 'Total', 'Minimum',
      'Maximum', 'Last'
     :vartype primary_aggregation_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.PrimaryAggregationType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrimaryAggregationType
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar resource_uri: The resource uri of the database.
     :vartype resource_uri: str
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     """
 
     _validation = {
@@ -1796,11 +1809,11 @@ class MetricDefinition(Model):
         'name': {'key': 'name', 'type': 'MetricName'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricDefinition, self).__init__(**kwargs)
         self.metric_availabilities = None
         self.primary_aggregation_type = None
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.resource_uri = None
         self.name = None
 
@@ -1827,7 +1840,7 @@ class MetricName(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None
@@ -1871,7 +1884,7 @@ class MetricValue(Model):
         'total': {'key': 'total', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MetricValue, self).__init__(**kwargs)
         self._count = None
         self.average = None
@@ -1903,7 +1916,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a MongoDB
      collection
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoDBCollectionResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoDBCollectionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1927,10 +1940,10 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(MongoDBCollectionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(MongoDBCollectionCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class MongoDBCollectionGetResults(ARMResourceProperties):
@@ -1959,7 +1972,8 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
      request.
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndex]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndex]
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -1994,11 +2008,11 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, mongo_db_collection_get_results_id: str, location: str=None, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
-        super(MongoDBCollectionGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.mongo_db_collection_get_results_id = mongo_db_collection_get_results_id
-        self.shard_key = shard_key
-        self.indexes = indexes
+    def __init__(self, **kwargs):
+        super(MongoDBCollectionGetResults, self).__init__(**kwargs)
+        self.mongo_db_collection_get_results_id = kwargs.get('mongo_db_collection_get_results_id', None)
+        self.shard_key = kwargs.get('shard_key', None)
+        self.indexes = kwargs.get('indexes', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -2015,7 +2029,8 @@ class MongoDBCollectionResource(Model):
      request.
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndex]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndex]
     """
 
     _validation = {
@@ -2028,11 +2043,11 @@ class MongoDBCollectionResource(Model):
         'indexes': {'key': 'indexes', 'type': '[MongoIndex]'},
     }
 
-    def __init__(self, *, id: str, shard_key=None, indexes=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MongoDBCollectionResource, self).__init__(**kwargs)
-        self.id = id
-        self.shard_key = shard_key
-        self.indexes = indexes
+        self.id = kwargs.get('id', None)
+        self.shard_key = kwargs.get('shard_key', None)
+        self.indexes = kwargs.get('indexes', None)
 
 
 class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -2056,7 +2071,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a MongoDB database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoDBDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoDBDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2080,10 +2095,10 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(MongoDBDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(MongoDBDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class MongoDBDatabaseGetResults(ARMResourceProperties):
@@ -2140,9 +2155,9 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, mongo_db_database_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(MongoDBDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.mongo_db_database_get_results_id = mongo_db_database_get_results_id
+    def __init__(self, **kwargs):
+        super(MongoDBDatabaseGetResults, self).__init__(**kwargs)
+        self.mongo_db_database_get_results_id = kwargs.get('mongo_db_database_get_results_id', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -2165,18 +2180,19 @@ class MongoDBDatabaseResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MongoDBDatabaseResource, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class MongoIndex(Model):
     """Cosmos DB MongoDB collection index key.
 
     :param key: Cosmos DB MongoDB collection index keys
-    :type key: ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndexKeys
+    :type key: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndexKeys
     :param options: Cosmos DB MongoDB collection index key options
-    :type options: ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndexOptions
+    :type options:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndexOptions
     """
 
     _attribute_map = {
@@ -2184,10 +2200,10 @@ class MongoIndex(Model):
         'options': {'key': 'options', 'type': 'MongoIndexOptions'},
     }
 
-    def __init__(self, *, key=None, options=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MongoIndex, self).__init__(**kwargs)
-        self.key = key
-        self.options = options
+        self.key = kwargs.get('key', None)
+        self.options = kwargs.get('options', None)
 
 
 class MongoIndexKeys(Model):
@@ -2202,9 +2218,9 @@ class MongoIndexKeys(Model):
         'keys': {'key': 'keys', 'type': '[str]'},
     }
 
-    def __init__(self, *, keys=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MongoIndexKeys, self).__init__(**kwargs)
-        self.keys = keys
+        self.keys = kwargs.get('keys', None)
 
 
 class MongoIndexOptions(Model):
@@ -2221,10 +2237,10 @@ class MongoIndexOptions(Model):
         'unique': {'key': 'unique', 'type': 'bool'},
     }
 
-    def __init__(self, *, expire_after_seconds: int=None, unique: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(MongoIndexOptions, self).__init__(**kwargs)
-        self.expire_after_seconds = expire_after_seconds
-        self.unique = unique
+        self.expire_after_seconds = kwargs.get('expire_after_seconds', None)
+        self.unique = kwargs.get('unique', None)
 
 
 class Operation(Model):
@@ -2233,7 +2249,8 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.cosmosdb.v2019_08_01.models.OperationDisplay
+    :type display:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -2241,10 +2258,10 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = name
-        self.display = display
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
 
 
 class OperationDisplay(Model):
@@ -2268,12 +2285,12 @@ class OperationDisplay(Model):
         'description': {'key': 'Description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)
 
 
 class PartitionMetric(Metric):
@@ -2292,13 +2309,14 @@ class PartitionMetric(Metric):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricValue]
     :ivar partition_id: The partition id (GUID identifier) of the metric
      values.
     :vartype partition_id: str
@@ -2328,8 +2346,8 @@ class PartitionMetric(Metric):
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
-        super(PartitionMetric, self).__init__(unit=unit, **kwargs)
+    def __init__(self, **kwargs):
+        super(PartitionMetric, self).__init__(**kwargs)
         self.partition_id = None
         self.partition_key_range_id = None
 
@@ -2343,9 +2361,10 @@ class Usage(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
@@ -2369,9 +2388,9 @@ class Usage(Model):
         'current_value': {'key': 'currentValue', 'type': 'long'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Usage, self).__init__(**kwargs)
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.quota_period = None
         self.limit = None
@@ -2387,9 +2406,10 @@ class PartitionUsage(Usage):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
@@ -2422,8 +2442,8 @@ class PartitionUsage(Usage):
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
-        super(PartitionUsage, self).__init__(unit=unit, **kwargs)
+    def __init__(self, **kwargs):
+        super(PartitionUsage, self).__init__(**kwargs)
         self.partition_id = None
         self.partition_key_range_id = None
 
@@ -2444,13 +2464,14 @@ class PercentileMetric(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The percentile metric values for the specified time
      window and timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.PercentileMetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PercentileMetricValue]
     """
 
     _validation = {
@@ -2470,12 +2491,12 @@ class PercentileMetric(Model):
         'metric_values': {'key': 'metricValues', 'type': '[PercentileMetricValue]'},
     }
 
-    def __init__(self, *, unit=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PercentileMetric, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.time_grain = None
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.metric_values = None
 
@@ -2546,7 +2567,7 @@ class PercentileMetricValue(MetricValue):
         'p99': {'key': 'P99', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(PercentileMetricValue, self).__init__(**kwargs)
         self.p10 = None
         self.p25 = None
@@ -2555,6 +2576,46 @@ class PercentileMetricValue(MetricValue):
         self.p90 = None
         self.p95 = None
         self.p99 = None
+
+
+class PrivateLinkResource(ARMProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
 
 
 class RegionForOnlineOffline(Model):
@@ -2575,9 +2636,9 @@ class RegionForOnlineOffline(Model):
         'region': {'key': 'region', 'type': 'str'},
     }
 
-    def __init__(self, *, region: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(RegionForOnlineOffline, self).__init__(**kwargs)
-        self.region = region
+        self.region = kwargs.get('region', None)
 
 
 class SqlContainerCreateUpdateParameters(ARMResourceProperties):
@@ -2601,7 +2662,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a container
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlContainerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2625,10 +2686,10 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(SqlContainerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(SqlContainerCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class SqlContainerGetResults(ARMResourceProperties):
@@ -2657,22 +2718,22 @@ class SqlContainerGetResults(ARMResourceProperties):
      default, the indexing is automatic for all document paths within the
      container
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      container.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -2710,14 +2771,14 @@ class SqlContainerGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_container_get_results_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
-        super(SqlContainerGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_container_get_results_id = sql_container_get_results_id
-        self.indexing_policy = indexing_policy
-        self.partition_key = partition_key
-        self.default_ttl = default_ttl
-        self.unique_key_policy = unique_key_policy
-        self.conflict_resolution_policy = conflict_resolution_policy
+    def __init__(self, **kwargs):
+        super(SqlContainerGetResults, self).__init__(**kwargs)
+        self.sql_container_get_results_id = kwargs.get('sql_container_get_results_id', None)
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -2734,22 +2795,22 @@ class SqlContainerResource(Model):
      default, the indexing is automatic for all document paths within the
      container
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      container.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     """
 
     _validation = {
@@ -2765,14 +2826,14 @@ class SqlContainerResource(Model):
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
 
-    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SqlContainerResource, self).__init__(**kwargs)
-        self.id = id
-        self.indexing_policy = indexing_policy
-        self.partition_key = partition_key
-        self.default_ttl = default_ttl
-        self.unique_key_policy = unique_key_policy
-        self.conflict_resolution_policy = conflict_resolution_policy
+        self.id = kwargs.get('id', None)
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
 
 
 class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -2796,7 +2857,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a SQL database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2820,10 +2881,10 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(SqlDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(SqlDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class SqlDatabaseGetResults(ARMResourceProperties):
@@ -2888,14 +2949,14 @@ class SqlDatabaseGetResults(ARMResourceProperties):
         '_users': {'key': 'properties._users', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_database_get_results_id: str, location: str=None, tags=None, _colls: str=None, _users: str=None, **kwargs) -> None:
-        super(SqlDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_database_get_results_id = sql_database_get_results_id
+    def __init__(self, **kwargs):
+        super(SqlDatabaseGetResults, self).__init__(**kwargs)
+        self.sql_database_get_results_id = kwargs.get('sql_database_get_results_id', None)
         self._rid = None
         self._ts = None
         self._etag = None
-        self._colls = _colls
-        self._users = _users
+        self._colls = kwargs.get('_colls', None)
+        self._users = kwargs.get('_users', None)
 
 
 class SqlDatabaseResource(Model):
@@ -2915,9 +2976,9 @@ class SqlDatabaseResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SqlDatabaseResource, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
@@ -2941,7 +3002,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a storedProcedure
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlStoredProcedureResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2965,10 +3026,10 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(SqlStoredProcedureCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(SqlStoredProcedureCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class SqlStoredProcedureGetResults(ARMResourceProperties):
@@ -3028,10 +3089,10 @@ class SqlStoredProcedureGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_stored_procedure_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
-        super(SqlStoredProcedureGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_stored_procedure_get_results_id = sql_stored_procedure_get_results_id
-        self.body = body
+    def __init__(self, **kwargs):
+        super(SqlStoredProcedureGetResults, self).__init__(**kwargs)
+        self.sql_stored_procedure_get_results_id = kwargs.get('sql_stored_procedure_get_results_id', None)
+        self.body = kwargs.get('body', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3057,10 +3118,10 @@ class SqlStoredProcedureResource(Model):
         'body': {'key': 'body', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SqlStoredProcedureResource, self).__init__(**kwargs)
-        self.id = id
-        self.body = body
+        self.id = kwargs.get('id', None)
+        self.body = kwargs.get('body', None)
 
 
 class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
@@ -3083,7 +3144,8 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
     :param tags:
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a trigger
-    :type resource: ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerResource
+    :type resource:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlTriggerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3107,10 +3169,10 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(SqlTriggerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(SqlTriggerCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class SqlTriggerGetResults(ARMResourceProperties):
@@ -3140,11 +3202,11 @@ class SqlTriggerGetResults(ARMResourceProperties):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerType
     :param trigger_operation: The operation the trigger is associated with.
      Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
     :type trigger_operation: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerOperation
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerOperation
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -3180,12 +3242,12 @@ class SqlTriggerGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_trigger_get_results_id: str, location: str=None, tags=None, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
-        super(SqlTriggerGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_trigger_get_results_id = sql_trigger_get_results_id
-        self.body = body
-        self.trigger_type = trigger_type
-        self.trigger_operation = trigger_operation
+    def __init__(self, **kwargs):
+        super(SqlTriggerGetResults, self).__init__(**kwargs)
+        self.sql_trigger_get_results_id = kwargs.get('sql_trigger_get_results_id', None)
+        self.body = kwargs.get('body', None)
+        self.trigger_type = kwargs.get('trigger_type', None)
+        self.trigger_operation = kwargs.get('trigger_operation', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3203,11 +3265,11 @@ class SqlTriggerResource(Model):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerType
     :param trigger_operation: The operation the trigger is associated with.
      Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
     :type trigger_operation: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerOperation
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerOperation
     """
 
     _validation = {
@@ -3221,12 +3283,12 @@ class SqlTriggerResource(Model):
         'trigger_operation': {'key': 'triggerOperation', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SqlTriggerResource, self).__init__(**kwargs)
-        self.id = id
-        self.body = body
-        self.trigger_type = trigger_type
-        self.trigger_operation = trigger_operation
+        self.id = kwargs.get('id', None)
+        self.body = kwargs.get('body', None)
+        self.trigger_type = kwargs.get('trigger_type', None)
+        self.trigger_operation = kwargs.get('trigger_operation', None)
 
 
 class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
@@ -3251,7 +3313,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a
      userDefinedFunction
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlUserDefinedFunctionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3275,10 +3337,10 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(SqlUserDefinedFunctionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(SqlUserDefinedFunctionCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
@@ -3338,10 +3400,10 @@ class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_user_defined_function_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
-        super(SqlUserDefinedFunctionGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_user_defined_function_get_results_id = sql_user_defined_function_get_results_id
-        self.body = body
+    def __init__(self, **kwargs):
+        super(SqlUserDefinedFunctionGetResults, self).__init__(**kwargs)
+        self.sql_user_defined_function_get_results_id = kwargs.get('sql_user_defined_function_get_results_id', None)
+        self.body = kwargs.get('body', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3367,10 +3429,10 @@ class SqlUserDefinedFunctionResource(Model):
         'body': {'key': 'body', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(SqlUserDefinedFunctionResource, self).__init__(**kwargs)
-        self.id = id
-        self.body = body
+        self.id = kwargs.get('id', None)
+        self.body = kwargs.get('body', None)
 
 
 class TableCreateUpdateParameters(ARMResourceProperties):
@@ -3393,7 +3455,8 @@ class TableCreateUpdateParameters(ARMResourceProperties):
     :param tags:
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Table
-    :type resource: ~azure.mgmt.cosmosdb.v2019_08_01.models.TableResource
+    :type resource:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3417,10 +3480,10 @@ class TableCreateUpdateParameters(ARMResourceProperties):
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
-        super(TableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
-        self.options = options
+    def __init__(self, **kwargs):
+        super(TableCreateUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
+        self.options = kwargs.get('options', None)
 
 
 class TableGetResults(ARMResourceProperties):
@@ -3476,9 +3539,9 @@ class TableGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, table_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(TableGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.table_get_results_id = table_get_results_id
+    def __init__(self, **kwargs):
+        super(TableGetResults, self).__init__(**kwargs)
+        self.table_get_results_id = kwargs.get('table_get_results_id', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3501,9 +3564,9 @@ class TableResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(TableResource, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.get('id', None)
 
 
 class ThroughputSettingsGetResults(ARMResourceProperties):
@@ -3553,9 +3616,9 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
         'offer_replace_pending': {'key': 'properties.offerReplacePending', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int, location: str=None, tags=None, **kwargs) -> None:
-        super(ThroughputSettingsGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.throughput = throughput
+    def __init__(self, **kwargs):
+        super(ThroughputSettingsGetResults, self).__init__(**kwargs)
+        self.throughput = kwargs.get('throughput', None)
         self.minimum_throughput = None
         self.offer_replace_pending = None
 
@@ -3588,9 +3651,9 @@ class ThroughputSettingsResource(Model):
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
 
-    def __init__(self, *, throughput: int, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ThroughputSettingsResource, self).__init__(**kwargs)
-        self.throughput = throughput
+        self.throughput = kwargs.get('throughput', None)
         self.minimum_throughput = None
         self.offer_replace_pending = None
 
@@ -3617,7 +3680,7 @@ class ThroughputSettingsUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a resource
      throughput
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsResource
     """
 
     _validation = {
@@ -3636,9 +3699,9 @@ class ThroughputSettingsUpdateParameters(ARMResourceProperties):
         'resource': {'key': 'properties.resource', 'type': 'ThroughputSettingsResource'},
     }
 
-    def __init__(self, *, resource, location: str=None, tags=None, **kwargs) -> None:
-        super(ThroughputSettingsUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource = resource
+    def __init__(self, **kwargs):
+        super(ThroughputSettingsUpdateParameters, self).__init__(**kwargs)
+        self.resource = kwargs.get('resource', None)
 
 
 class UniqueKey(Model):
@@ -3654,9 +3717,9 @@ class UniqueKey(Model):
         'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, *, paths=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(UniqueKey, self).__init__(**kwargs)
-        self.paths = paths
+        self.paths = kwargs.get('paths', None)
 
 
 class UniqueKeyPolicy(Model):
@@ -3665,16 +3728,17 @@ class UniqueKeyPolicy(Model):
 
     :param unique_keys: List of unique keys on that enforces uniqueness
      constraint on documents in the collection in the Azure Cosmos DB service.
-    :type unique_keys: list[~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKey]
+    :type unique_keys:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKey]
     """
 
     _attribute_map = {
         'unique_keys': {'key': 'uniqueKeys', 'type': '[UniqueKey]'},
     }
 
-    def __init__(self, *, unique_keys=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(UniqueKeyPolicy, self).__init__(**kwargs)
-        self.unique_keys = unique_keys
+        self.unique_keys = kwargs.get('unique_keys', None)
 
 
 class VirtualNetworkRule(Model):
@@ -3693,7 +3757,7 @@ class VirtualNetworkRule(Model):
         'ignore_missing_vnet_service_endpoint': {'key': 'ignoreMissingVNetServiceEndpoint', 'type': 'bool'},
     }
 
-    def __init__(self, *, id: str=None, ignore_missing_vnet_service_endpoint: bool=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.id = id
-        self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
+        self.id = kwargs.get('id', None)
+        self.ignore_missing_vnet_service_endpoint = kwargs.get('ignore_missing_vnet_service_endpoint', None)

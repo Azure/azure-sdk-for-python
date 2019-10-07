@@ -129,7 +129,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a Cassandra
      keyspace
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraKeyspaceResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraKeyspaceResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -263,13 +263,14 @@ class CassandraSchema(Model):
     """Cosmos DB Cassandra table schema.
 
     :param columns: List of Cassandra table columns.
-    :type columns: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Column]
+    :type columns:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Column]
     :param partition_keys: List of partition key.
     :type partition_keys:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraPartitionKey]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraPartitionKey]
     :param cluster_keys: List of cluster key.
     :type cluster_keys:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.ClusterKey]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ClusterKey]
     """
 
     _attribute_map = {
@@ -306,7 +307,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Cassandra table
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraTableResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraTableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -361,7 +362,8 @@ class CassandraTableGetResults(ARMResourceProperties):
     :param default_ttl: Time to live of the Cosmos DB Cassandra table
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
-    :type schema: ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraSchema
+    :type schema:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraSchema
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -416,7 +418,8 @@ class CassandraTableResource(Model):
     :param default_ttl: Time to live of the Cosmos DB Cassandra table
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
-    :type schema: ~azure.mgmt.cosmosdb.v2019_08_01.models.CassandraSchema
+    :type schema:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.CassandraSchema
     """
 
     _validation = {
@@ -491,7 +494,7 @@ class ConflictResolutionPolicy(Model):
     :param mode: Indicates the conflict resolution mode. Possible values
      include: 'LastWriterWins', 'Custom'. Default value: "LastWriterWins" .
     :type mode: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionMode
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionMode
     :param conflict_resolution_path: The conflict resolution path in the case
      of LastWriterWins mode.
     :type conflict_resolution_path: str
@@ -523,7 +526,7 @@ class ConsistencyPolicy(Model):
      include: 'Eventual', 'Session', 'BoundedStaleness', 'Strong',
      'ConsistentPrefix'
     :type default_consistency_level: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DefaultConsistencyLevel
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DefaultConsistencyLevel
     :param max_staleness_prefix: When used with the Bounded Staleness
      consistency level, this value represents the number of stale requests
      tolerated. Accepted range for this value is 1 – 2,147,483,647. Required
@@ -564,7 +567,8 @@ class ContainerPartitionKey(Model):
     :type paths: list[str]
     :param kind: Indicates the kind of algorithm used for partitioning.
      Possible values include: 'Hash', 'Range'. Default value: "Hash" .
-    :type kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.PartitionKind
+    :type kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PartitionKind
     :param version: Indicates the version of the partition key definition
     :type version: int
     """
@@ -637,14 +641,15 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountKind
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountKind
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param locations: Required. An array that contains the georeplication
      locations enabled for the Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :type locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar database_account_offer_type: Required. The offer type for the
      database. Default value: "Standard" .
     :vartype database_account_offer_type: str
@@ -663,11 +668,11 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
     :type enable_automatic_failover: bool
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -677,7 +682,7 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -751,7 +756,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountKind
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountKind
     :param provisioning_state:
     :type provisioning_state: str
     :ivar document_endpoint: The connection endpoint for the Cosmos DB
@@ -761,7 +766,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
      database account. Default value: Standard. Possible values include:
      'Standard'
     :vartype database_account_offer_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountOfferType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountOfferType
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -778,29 +783,30 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
     :vartype write_locations:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar read_locations: An array that contains of the read locations enabled
      for the Cosmos DB account.
     :vartype read_locations:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar locations: An array that contains all of the locations enabled for
      the Cosmos DB account.
-    :vartype locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :vartype locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
     :vartype failover_policies:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.FailoverPolicy]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.FailoverPolicy]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -810,7 +816,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -882,7 +888,7 @@ class DatabaseAccountListConnectionStringsResult(Model):
     :param connection_strings: An array that contains the connection strings
      for the Cosmos DB account.
     :type connection_strings:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.DatabaseAccountConnectionString]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountConnectionString]
     """
 
     _attribute_map = {
@@ -971,7 +977,8 @@ class DatabaseAccountRegenerateKeyParameters(Model):
 
     :param key_kind: Required. The access key to regenerate. Possible values
      include: 'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
-    :type key_kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.KeyKind
+    :type key_kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.KeyKind
     """
 
     _validation = {
@@ -998,10 +1005,11 @@ class DatabaseAccountUpdateParameters(Model):
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConsistencyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConsistencyPolicy
     :param locations: An array that contains the georeplication locations
      enabled for the Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Location]
+    :type locations:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Location]
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -1017,11 +1025,11 @@ class DatabaseAccountUpdateParameters(Model):
     :type enable_automatic_failover: bool
     :param capabilities: List of Cosmos DB capabilities for the account
     :type capabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.Capability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Capability]
     :param virtual_network_rules: List of Virtual Network ACL rules configured
      for the Cosmos DB account.
     :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.VirtualNetworkRule]
     :param enable_multiple_write_locations: Enables the account to write in
      multiple locations
     :type enable_multiple_write_locations: bool
@@ -1031,7 +1039,7 @@ class DatabaseAccountUpdateParameters(Model):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConnectorOffer
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConnectorOffer
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
@@ -1162,7 +1170,7 @@ class FailoverPolicies(Model):
 
     :param failover_policies: Required. List of failover policies.
     :type failover_policies:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.FailoverPolicy]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.FailoverPolicy]
     """
 
     _validation = {
@@ -1236,7 +1244,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.GremlinDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1371,7 +1379,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin graph
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.GremlinGraphResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1426,22 +1434,22 @@ class GremlinGraphGetResults(ARMResourceProperties):
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the graph
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      graph.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -1502,22 +1510,22 @@ class GremlinGraphResource(Model):
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the graph
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      graph.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     """
 
     _validation = {
@@ -1550,7 +1558,8 @@ class IncludedPath(Model):
      paths typically start with root and end with wildcard (/path/*)
     :type path: str
     :param indexes: List of indexes for this path
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.Indexes]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.Indexes]
     """
 
     _attribute_map = {
@@ -1570,12 +1579,14 @@ class Indexes(Model):
     :param data_type: The datatype for which the indexing behavior is applied
      to. Possible values include: 'String', 'Number', 'Point', 'Polygon',
      'LineString', 'MultiPolygon'. Default value: "String" .
-    :type data_type: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.DataType
+    :type data_type: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DataType
     :param precision: The precision of the index. -1 is maximum precision.
     :type precision: int
     :param kind: Indicates the type of index. Possible values include: 'Hash',
      'Range', 'Spatial'. Default value: "Hash" .
-    :type kind: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexKind
+    :type kind: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexKind
     """
 
     _attribute_map = {
@@ -1599,13 +1610,13 @@ class IndexingPolicy(Model):
     :param indexing_mode: Indicates the indexing mode. Possible values
      include: 'Consistent', 'Lazy', 'None'. Default value: "Consistent" .
     :type indexing_mode: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingMode
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingMode
     :param included_paths: List of paths to include in the indexing
     :type included_paths:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.IncludedPath]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IncludedPath]
     :param excluded_paths: List of paths to exclude from indexing
     :type excluded_paths:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.ExcludedPath]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ExcludedPath]
     """
 
     _attribute_map = {
@@ -1691,13 +1702,14 @@ class Metric(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricValue]
     """
 
     _validation = {
@@ -1765,20 +1777,21 @@ class MetricDefinition(Model):
     :ivar metric_availabilities: The list of metric availabilities for the
      account.
     :vartype metric_availabilities:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricAvailability]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricAvailability]
     :ivar primary_aggregation_type: The primary aggregation type of the
      metric. Possible values include: 'None', 'Average', 'Total', 'Minimum',
      'Maximum', 'Last'
     :vartype primary_aggregation_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.PrimaryAggregationType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrimaryAggregationType
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar resource_uri: The resource uri of the database.
     :vartype resource_uri: str
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     """
 
     _validation = {
@@ -1903,7 +1916,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a MongoDB
      collection
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoDBCollectionResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoDBCollectionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -1959,7 +1972,8 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
      request.
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndex]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndex]
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -2015,7 +2029,8 @@ class MongoDBCollectionResource(Model):
      request.
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndex]
+    :type indexes:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndex]
     """
 
     _validation = {
@@ -2056,7 +2071,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a MongoDB database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoDBDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoDBDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2174,9 +2189,10 @@ class MongoIndex(Model):
     """Cosmos DB MongoDB collection index key.
 
     :param key: Cosmos DB MongoDB collection index keys
-    :type key: ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndexKeys
+    :type key: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndexKeys
     :param options: Cosmos DB MongoDB collection index key options
-    :type options: ~azure.mgmt.cosmosdb.v2019_08_01.models.MongoIndexOptions
+    :type options:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MongoIndexOptions
     """
 
     _attribute_map = {
@@ -2233,7 +2249,8 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.cosmosdb.v2019_08_01.models.OperationDisplay
+    :type display:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -2292,13 +2309,14 @@ class PartitionMetric(Metric):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.MetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricValue]
     :ivar partition_id: The partition id (GUID identifier) of the metric
      values.
     :vartype partition_id: str
@@ -2343,9 +2361,10 @@ class Usage(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
@@ -2387,9 +2406,10 @@ class PartitionUsage(Usage):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
@@ -2444,13 +2464,14 @@ class PercentileMetric(Model):
     :param unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond',
      'Milliseconds'
-    :type unit: str or ~azure.mgmt.cosmosdb.v2019_08_01.models.UnitType
+    :type unit: str or
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01.models.MetricName
+    :vartype name: ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.MetricName
     :ivar metric_values: The percentile metric values for the specified time
      window and timestep.
     :vartype metric_values:
-     list[~azure.mgmt.cosmosdb.v2019_08_01.models.PercentileMetricValue]
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PercentileMetricValue]
     """
 
     _validation = {
@@ -2557,6 +2578,46 @@ class PercentileMetricValue(MetricValue):
         self.p99 = None
 
 
+class PrivateLinkResource(ARMProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
@@ -2601,7 +2662,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a container
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlContainerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2657,22 +2718,22 @@ class SqlContainerGetResults(ARMResourceProperties):
      default, the indexing is automatic for all document paths within the
      container
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      container.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -2734,22 +2795,22 @@ class SqlContainerResource(Model):
      default, the indexing is automatic for all document paths within the
      container
     :type indexing_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.IndexingPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ContainerPartitionKey
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
     :type unique_key_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKeyPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      container.
     :type conflict_resolution_policy:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ConflictResolutionPolicy
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ConflictResolutionPolicy
     """
 
     _validation = {
@@ -2796,7 +2857,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a SQL database
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -2941,7 +3002,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a storedProcedure
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlStoredProcedureResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3083,7 +3144,8 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
     :param tags:
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a trigger
-    :type resource: ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerResource
+    :type resource:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlTriggerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3140,11 +3202,11 @@ class SqlTriggerGetResults(ARMResourceProperties):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerType
     :param trigger_operation: The operation the trigger is associated with.
      Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
     :type trigger_operation: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerOperation
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerOperation
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -3203,11 +3265,11 @@ class SqlTriggerResource(Model):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerType
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerType
     :param trigger_operation: The operation the trigger is associated with.
      Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
     :type trigger_operation: str or
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.TriggerOperation
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TriggerOperation
     """
 
     _validation = {
@@ -3251,7 +3313,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a
      userDefinedFunction
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.SqlUserDefinedFunctionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3393,7 +3455,8 @@ class TableCreateUpdateParameters(ARMResourceProperties):
     :param tags:
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Table
-    :type resource: ~azure.mgmt.cosmosdb.v2019_08_01.models.TableResource
+    :type resource:
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -3617,7 +3680,7 @@ class ThroughputSettingsUpdateParameters(ARMResourceProperties):
     :param resource: Required. The standard JSON format of a resource
      throughput
     :type resource:
-     ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsResource
+     ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsResource
     """
 
     _validation = {
@@ -3665,7 +3728,8 @@ class UniqueKeyPolicy(Model):
 
     :param unique_keys: List of unique keys on that enforces uniqueness
      constraint on documents in the collection in the Azure Cosmos DB service.
-    :type unique_keys: list[~azure.mgmt.cosmosdb.v2019_08_01.models.UniqueKey]
+    :type unique_keys:
+     list[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.UniqueKey]
     """
 
     _attribute_map = {
