@@ -42,6 +42,9 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_ID**: the application's client ID
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password
+      - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
+        If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
+        school accounts.
     """
 
     def __init__(self, **kwargs):
