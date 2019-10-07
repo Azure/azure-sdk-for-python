@@ -35,6 +35,8 @@ changed include:
 - Add support for delete_blobs API to ContainerClient (Python 3 only)
 - Add support for set_standard_blob_tier_blobs to ContainerClient (Python 3 only)
 - Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
+- Added support to set rehydrate blob priority for Block Blob, including Set Standard Blob Tier/Copy Blob APIs
+- Added blob tier support for Block Blob, including Upload Blob/Commit Block List/Copy Blob APIs.
 
 **Fixes and improvements**
 - Downloading page blobs now take advantage of their sparseness.
