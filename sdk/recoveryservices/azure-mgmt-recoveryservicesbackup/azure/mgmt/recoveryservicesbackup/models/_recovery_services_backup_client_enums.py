@@ -33,7 +33,7 @@ class EnhancedSecurityState(str, Enum):
     disabled = "Disabled"
 
 
-class SoftDeleteState(str, Enum):
+class SoftDeleteFeatureState(str, Enum):
 
     invalid = "Invalid"
     enabled = "Enabled"
