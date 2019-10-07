@@ -5,7 +5,7 @@
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
-from ._shared.exceptions import error_map
+from ._shared.exceptions import error_map as _error_map
 from .crypto import CryptographyClient
 from .models import Key, KeyProperties, DeletedKey
 
@@ -245,7 +245,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
+        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -270,7 +270,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_key(
-            self.vault_endpoint, name, key_version=version or "", error_map=error_map, **kwargs
+            self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
         )
         return Key._from_key_bundle(bundle)
 
@@ -296,7 +296,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         # TODO: which exception is raised when soft-delete is not enabled
-        bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -470,7 +470,7 @@ class KeyClient(KeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map=error_map,
+            error_map=_error_map,
             **kwargs
         )
         return Key._from_key_bundle(bundle)
@@ -499,7 +499,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=error_map, **kwargs)
+        backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -526,7 +526,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=error_map, **kwargs)
+        bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace

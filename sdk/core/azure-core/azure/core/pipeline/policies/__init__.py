@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from .base import HTTPPolicy, SansIOHTTPPolicy
+from .base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
 from .authentication import BearerTokenCredentialPolicy
 from .custom_hook import CustomHookPolicy
 from .redirect import RedirectPolicy
@@ -50,7 +50,8 @@ __all__ = [
     'RedirectPolicy',
     'ProxyPolicy',
     'CustomHookPolicy',
-    'DistributedTracingPolicy'
+    'DistributedTracingPolicy',
+    'RequestHistory',
 ]
 
 #pylint: disable=unused-import

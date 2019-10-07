@@ -31,6 +31,36 @@
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
 - Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
+- Some modules and classes that were importables from several differente places have been removed:
+   
+   - `azure.core.HttpResponseError` is now only `azure.core.exceptions.HttpResponseError`
+   - `azure.core.Configuration` is now only `azure.core.configuration.Configuration`
+   - `azure.core.HttpRequest` is now only `azure.core.pipeline.transport.HttpRequest`
+   - `azure.core.version` module has been removed. Use `azure.core.__version__` to get version number.
+   - `azure.core.pipeline_client` has been removed. Import from `azure.core` instead.
+   - `azure.core.pipeline_client_async` has been removed. Import from `azure.core` instead.
+   - `azure.core.pipeline.base` has been removed. Import from `azure.core.pipeline` instead.
+   - `azure.core.pipeline.base_async` has been removed. Import from `azure.core.pipeline` instead.
+   - `azure.core.pipeline.policies.base` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.base_async` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.authentication` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.authentication_async` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.custom_hook` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.redirect` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.redirect_async` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.retry` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.retry_async` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.distributed_tracing` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.pipeline.policies.universal` has been removed. Import from `azure.core.pipeline.policies` instead.
+   - `azure.core.tracing.abstract_span` has been removed. Import from `azure.core.tracing` instead.
+   - `azure.core.pipeline.transport.base` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.pipeline.transport.base_async` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.pipeline.transport.requests_basic` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.pipeline.transport.requests_asyncio` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.pipeline.transport.requests_trio` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.pipeline.transport.aiohttp` has been removed. Import from `azure.core.pipeline.transport` instead.
+   - `azure.core.polling.poller` has been removed. Import from `azure.core.polling` instead.
+   - `azure.core.polling.async_poller` has been removed. Import from `azure.core.polling` instead.
 
 ## 2019-09-09 Version 1.0.0b3
 
