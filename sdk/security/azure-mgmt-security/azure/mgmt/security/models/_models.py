@@ -2048,28 +2048,28 @@ class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(Model):
     :vartype device_id: str
     :ivar alerts_count: Number of alerts raised for this device.
     :vartype alerts_count: int
-    :ivar last_occurrence_time: Most recent time this alert was raised for
-     this device, on this day.
-    :vartype last_occurrence_time: str
+    :ivar last_occurrence: Most recent time this alert was raised for this
+     device, on this day.
+    :vartype last_occurrence: str
     """
 
     _validation = {
         'device_id': {'readonly': True},
         'alerts_count': {'readonly': True},
-        'last_occurrence_time': {'readonly': True},
+        'last_occurrence': {'readonly': True},
     }
 
     _attribute_map = {
         'device_id': {'key': 'deviceId', 'type': 'str'},
         'alerts_count': {'key': 'alertsCount', 'type': 'int'},
-        'last_occurrence_time': {'key': 'lastOccurrenceTime', 'type': 'str'},
+        'last_occurrence': {'key': 'lastOccurrence', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IoTSecurityAggregatedAlertPropertiesTopDevicesListItem, self).__init__(**kwargs)
         self.device_id = None
         self.alerts_count = None
-        self.last_occurrence_time = None
+        self.last_occurrence = None
 
 
 class IoTSecurityAggregatedRecommendation(Model):
