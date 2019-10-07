@@ -24,8 +24,7 @@ from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
 from .user import UserProxy
-from .scripts import ScriptsProxy, ScriptType
-from .offer import Offer
+from .scripts import ScriptsProxy
 from .documents import (
     ConsistencyLevel,
     DataType,
@@ -37,7 +36,7 @@ from .documents import (
     TriggerOperation,
     TriggerType,
 )
-from .partition_key import PartitionKey, NonePartitionKeyValue
+from .partition_key import PartitionKey
 from .permission import Permission
 from .version import VERSION
 
