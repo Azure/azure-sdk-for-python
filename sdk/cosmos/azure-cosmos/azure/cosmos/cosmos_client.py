@@ -128,7 +128,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential:
         Can be the account key, or a dictionary of resource tokens.
-    :type credential: str or dict(str, str)
+    :type credential: str or dict[str, str]
     :param str consistency_level:
         Consistency level to use for the session. The default value is "Session".
 
@@ -255,11 +255,14 @@ class CosmosClient(object):
 
         :param id: ID (name) of the database to create.
         :param str session_token: Token for use with Session consistency.
-        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
-        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
-        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -306,11 +309,14 @@ class CosmosClient(object):
 
         :param id: ID (name) of the database to read or create.
         :param str session_token: Token for use with Session consistency.
-        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
-        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
-        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -364,9 +370,11 @@ class CosmosClient(object):
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict(str, str) feed_options: Dictionary of additional properties to be used for the request.
+        :param feed_options: Dictionary of additional properties to be used for the request.
+        :type feed_options: dict[str, str]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
@@ -403,9 +411,11 @@ class CosmosClient(object):
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, Any] feed_options: Dictionary of additional properties to be used for the request.
+        :param feed_options: Dictionary of additional properties to be used for the request.
+        :type feed_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
@@ -448,10 +458,13 @@ class CosmosClient(object):
             instance of the database to delete.
         :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :param dict[str, str] access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, str] request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :raise CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
