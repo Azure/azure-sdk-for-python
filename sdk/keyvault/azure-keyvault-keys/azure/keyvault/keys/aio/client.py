@@ -58,10 +58,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         size: Optional[int] = None,
         curve: Optional[str] = None,
         key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Key:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
@@ -73,15 +71,17 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
         :param key_operations: (optional) Allowed key operations
         :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
         :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the key is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -91,6 +91,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create a key
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -103,7 +104,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             size,
             key_attributes=attributes,
             key_ops=key_operations,
-            tags=tags,
             curve=curve,
             **kwargs,
         )
@@ -116,10 +116,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         hsm: bool,
         size: Optional[int] = None,
         key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Key:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
@@ -130,13 +128,15 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
         :param key_operations: (optional) Allowed key operations
         :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the key is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -153,10 +153,8 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_type=key_type,
             size=size,
             key_operations=key_operations,
-            enabled=enabled,
             expires=expires,
             not_before=not_before,
-            tags=tags,
             **kwargs,
         )
 
@@ -167,10 +165,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         hsm: bool,
         curve: Optional[str] = None,
         key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Key:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
@@ -182,13 +178,15 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :param key_operations: (optional) Allowed key operations
         :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the key is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -205,10 +203,8 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_type=key_type,
             curve=curve,
             key_operations=key_operations,
-            enabled=enabled,
             expires=expires,
             not_before=not_before,
-            tags=tags,
             **kwargs,
         )
 
@@ -406,10 +402,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         name: str,
         version: Optional[str] = None,
         key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
@@ -419,15 +413,17 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str version: (optional) The version of the key to update
         :param key_operations: (optional) Allowed key operations
         :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the key is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -437,6 +433,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Update a key's attributes
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -447,7 +444,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             key_version=version or "",
             key_ops=key_operations,
-            tags=tags,
             key_attributes=attributes,
             error_map=_error_map,
             **kwargs,
@@ -512,10 +508,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         name: str,
         key: JsonWebKey,
         hsm: Optional[bool] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Key:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
@@ -525,15 +519,18 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
         :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
-        :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
+        Keyword arguments
+            - *enabled (bool)* - Whether the key is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -544,7 +541,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             key=key._to_generated_model(),
             hsm=hsm,
             key_attributes=attributes,
-            tags=tags,
             **kwargs,
         )
         return Key._from_key_bundle(bundle)
