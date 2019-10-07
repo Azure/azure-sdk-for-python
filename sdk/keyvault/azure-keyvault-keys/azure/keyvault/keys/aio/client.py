@@ -62,7 +62,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any",
+        **kwargs: "**Any"
     ) -> Key:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
@@ -120,7 +120,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any",
+        **kwargs: "**Any"
     ) -> Key:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
@@ -171,7 +171,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any",
+        **kwargs: "**Any"
     ) -> Key:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
@@ -410,7 +410,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any",
+        **kwargs: "**Any"
     ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
@@ -516,7 +516,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any",
+        **kwargs: "**Any"
     ) -> Key:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
