@@ -511,7 +511,7 @@ class JitNetworkAccessPoliciesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies/{jitNetworkAccessPolicyName}'}
 
     def initiate(
-            self, resource_group_name, jit_network_access_policy_name, virtual_machines, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, jit_network_access_policy_name, virtual_machines, justification=None, custom_headers=None, raw=False, **operation_config):
         """Initiate a JIT access from a specific Just-in-Time policy
         configuration.
 
@@ -525,6 +525,9 @@ class JitNetworkAccessPoliciesOperations(object):
          access for
         :type virtual_machines:
          list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
+        :param justification: The justification for making the initiate
+         request
+        :type justification: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -535,7 +538,7 @@ class JitNetworkAccessPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        body = models.JitNetworkAccessPolicyInitiateRequest(virtual_machines=virtual_machines)
+        body = models.JitNetworkAccessPolicyInitiateRequest(virtual_machines=virtual_machines, justification=justification)
 
         # Construct URL
         url = self.initiate.metadata['url']

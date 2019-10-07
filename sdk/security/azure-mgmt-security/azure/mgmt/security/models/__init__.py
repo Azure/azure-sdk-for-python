@@ -13,6 +13,7 @@ try:
     from ._models_py3 import AadConnectivityState1
     from ._models_py3 import AadExternalSecuritySolution
     from ._models_py3 import AadSolutionProperties
+    from ._models_py3 import AdditionalData
     from ._models_py3 import AdvancedThreatProtectionSetting
     from ._models_py3 import Alert
     from ._models_py3 import AlertConfidenceReason
@@ -27,6 +28,8 @@ try:
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
     from ._models_py3 import AutoProvisioningSetting
+    from ._models_py3 import AwsResourceDetails
+    from ._models_py3 import AzureResourceDetails
     from ._models_py3 import CefExternalSecuritySolution
     from ._models_py3 import CefSolutionProperties
     from ._models_py3 import Compliance
@@ -35,7 +38,10 @@ try:
     from ._models_py3 import ConnectableResource
     from ._models_py3 import ConnectedResource
     from ._models_py3 import ConnectedWorkspace
+    from ._models_py3 import ContainerRegistryVulnerabilityProperties
     from ._models_py3 import CustomAlertRule
+    from ._models_py3 import CVE
+    from ._models_py3 import CVSS
     from ._models_py3 import DataExportSetting
     from ._models_py3 import DenylistCustomAlertRule
     from ._models_py3 import DeviceSecurityGroup
@@ -73,20 +79,26 @@ try:
     from ._models_py3 import PathRecommendation
     from ._models_py3 import Pricing
     from ._models_py3 import PricingList
+    from ._models_py3 import ProtectionMode
     from ._models_py3 import PublisherInfo
     from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
     from ._models_py3 import RegulatoryComplianceControl
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceDetails
     from ._models_py3 import SecurityContact
+    from ._models_py3 import SecuritySubAssessment
     from ._models_py3 import SecurityTask
     from ._models_py3 import SecurityTaskParameters
     from ._models_py3 import SensitivityLabel
     from ._models_py3 import ServerVulnerabilityAssessment
     from ._models_py3 import ServerVulnerabilityAssessmentsList
+    from ._models_py3 import ServerVulnerabilityProperties
     from ._models_py3 import Setting
     from ._models_py3 import SettingResource
+    from ._models_py3 import SqlServerVulnerabilityProperties
+    from ._models_py3 import SubAssessmentStatus
     from ._models_py3 import TagsResource
     from ._models_py3 import ThresholdCustomAlertRule
     from ._models_py3 import TimeWindowCustomAlertRule
@@ -97,12 +109,14 @@ try:
     from ._models_py3 import UpdateIotSecuritySolutionData
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
+    from ._models_py3 import VendorReference
     from ._models_py3 import VmRecommendation
     from ._models_py3 import WorkspaceSetting
 except (SyntaxError, ImportError):
     from ._models import AadConnectivityState1
     from ._models import AadExternalSecuritySolution
     from ._models import AadSolutionProperties
+    from ._models import AdditionalData
     from ._models import AdvancedThreatProtectionSetting
     from ._models import Alert
     from ._models import AlertConfidenceReason
@@ -117,6 +131,8 @@ except (SyntaxError, ImportError):
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
     from ._models import AutoProvisioningSetting
+    from ._models import AwsResourceDetails
+    from ._models import AzureResourceDetails
     from ._models import CefExternalSecuritySolution
     from ._models import CefSolutionProperties
     from ._models import Compliance
@@ -125,7 +141,10 @@ except (SyntaxError, ImportError):
     from ._models import ConnectableResource
     from ._models import ConnectedResource
     from ._models import ConnectedWorkspace
+    from ._models import ContainerRegistryVulnerabilityProperties
     from ._models import CustomAlertRule
+    from ._models import CVE
+    from ._models import CVSS
     from ._models import DataExportSetting
     from ._models import DenylistCustomAlertRule
     from ._models import DeviceSecurityGroup
@@ -163,20 +182,26 @@ except (SyntaxError, ImportError):
     from ._models import PathRecommendation
     from ._models import Pricing
     from ._models import PricingList
+    from ._models import ProtectionMode
     from ._models import PublisherInfo
     from ._models import RecommendationConfigurationProperties
     from ._models import RegulatoryComplianceAssessment
     from ._models import RegulatoryComplianceControl
     from ._models import RegulatoryComplianceStandard
     from ._models import Resource
+    from ._models import ResourceDetails
     from ._models import SecurityContact
+    from ._models import SecuritySubAssessment
     from ._models import SecurityTask
     from ._models import SecurityTaskParameters
     from ._models import SensitivityLabel
     from ._models import ServerVulnerabilityAssessment
     from ._models import ServerVulnerabilityAssessmentsList
+    from ._models import ServerVulnerabilityProperties
     from ._models import Setting
     from ._models import SettingResource
+    from ._models import SqlServerVulnerabilityProperties
+    from ._models import SubAssessmentStatus
     from ._models import TagsResource
     from ._models import ThresholdCustomAlertRule
     from ._models import TimeWindowCustomAlertRule
@@ -187,6 +212,7 @@ except (SyntaxError, ImportError):
     from ._models import UpdateIotSecuritySolutionData
     from ._models import UserDefinedResourcesProperties
     from ._models import UserRecommendation
+    from ._models import VendorReference
     from ._models import VmRecommendation
     from ._models import WorkspaceSetting
 from ._paged_models import AlertPaged
@@ -208,6 +234,7 @@ from ._paged_models import RegulatoryComplianceAssessmentPaged
 from ._paged_models import RegulatoryComplianceControlPaged
 from ._paged_models import RegulatoryComplianceStandardPaged
 from ._paged_models import SecurityContactPaged
+from ._paged_models import SecuritySubAssessmentPaged
 from ._paged_models import SecurityTaskPaged
 from ._paged_models import SettingPaged
 from ._paged_models import TopologyResourcePaged
@@ -234,6 +261,8 @@ from ._security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
     State,
+    SubAssessmentStatusCode,
+    Severity,
     ConnectionType,
 )
 
@@ -241,6 +270,7 @@ __all__ = [
     'AadConnectivityState1',
     'AadExternalSecuritySolution',
     'AadSolutionProperties',
+    'AdditionalData',
     'AdvancedThreatProtectionSetting',
     'Alert',
     'AlertConfidenceReason',
@@ -255,6 +285,8 @@ __all__ = [
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
     'AutoProvisioningSetting',
+    'AwsResourceDetails',
+    'AzureResourceDetails',
     'CefExternalSecuritySolution',
     'CefSolutionProperties',
     'Compliance',
@@ -263,7 +295,10 @@ __all__ = [
     'ConnectableResource',
     'ConnectedResource',
     'ConnectedWorkspace',
+    'ContainerRegistryVulnerabilityProperties',
     'CustomAlertRule',
+    'CVE',
+    'CVSS',
     'DataExportSetting',
     'DenylistCustomAlertRule',
     'DeviceSecurityGroup',
@@ -301,20 +336,26 @@ __all__ = [
     'PathRecommendation',
     'Pricing',
     'PricingList',
+    'ProtectionMode',
     'PublisherInfo',
     'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceStandard',
     'Resource',
+    'ResourceDetails',
     'SecurityContact',
+    'SecuritySubAssessment',
     'SecurityTask',
     'SecurityTaskParameters',
     'SensitivityLabel',
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentsList',
+    'ServerVulnerabilityProperties',
     'Setting',
     'SettingResource',
+    'SqlServerVulnerabilityProperties',
+    'SubAssessmentStatus',
     'TagsResource',
     'ThresholdCustomAlertRule',
     'TimeWindowCustomAlertRule',
@@ -325,6 +366,7 @@ __all__ = [
     'UpdateIotSecuritySolutionData',
     'UserDefinedResourcesProperties',
     'UserRecommendation',
+    'VendorReference',
     'VmRecommendation',
     'WorkspaceSetting',
     'ComplianceResultPaged',
@@ -350,6 +392,7 @@ __all__ = [
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
+    'SecuritySubAssessmentPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -371,5 +414,7 @@ __all__ = [
     'AlertNotifications',
     'AlertsToAdmins',
     'State',
+    'SubAssessmentStatusCode',
+    'Severity',
     'ConnectionType',
 ]

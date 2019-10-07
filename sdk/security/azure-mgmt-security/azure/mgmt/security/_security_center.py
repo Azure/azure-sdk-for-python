@@ -41,6 +41,7 @@ from .operations import RegulatoryComplianceStandardsOperations
 from .operations import RegulatoryComplianceControlsOperations
 from .operations import RegulatoryComplianceAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentOperations
+from .operations import SubAssessmentsOperations
 from . import models
 
 
@@ -106,6 +107,8 @@ class SecurityCenter(SDKClient):
     :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar server_vulnerability_assessment: ServerVulnerabilityAssessment operations
     :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
+    :ivar sub_assessments: SubAssessments operations
+    :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -183,4 +186,6 @@ class SecurityCenter(SDKClient):
         self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sub_assessments = SubAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
