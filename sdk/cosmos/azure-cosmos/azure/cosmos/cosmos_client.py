@@ -315,7 +315,7 @@ class CosmosClient(object):
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
-        :raise CosmosHttpResponseError: The database read or creation failed.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The database read or creation failed.
         """
         try:
             database_proxy = self.get_database_client(id)
@@ -461,7 +461,7 @@ class CosmosClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
-        :raise CosmosHttpResponseError: If the database couldn't be deleted.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
         request_options = build_options(kwargs)

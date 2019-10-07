@@ -127,8 +127,8 @@ class ContainerProxy(object):
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `CosmosHttpResponseError`: Raised if the container couldn't be retrieved. This includes
-            if the container does not exist.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
+            This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
@@ -173,7 +173,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: Dict representing the item to be retrieved.
-        :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given item couldn't be retrieved.
         :rtype: dict[str, Any]
 
         .. admonition:: Example:
@@ -392,7 +392,8 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
-        :raise `CosmosHttpResponseError`: If the replace failed or the item with given id does not exist.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the item with
+            given id does not exist.
         :rtype: dict[str, Any]
         """
         item_link = self._get_document_link(item)
@@ -437,7 +438,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
-        :raise `CosmosHttpResponseError`: If the given item could not be upserted.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given item could not be upserted.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -557,7 +558,8 @@ class ContainerProxy(object):
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
-        :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be retrieved.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If no offer exists for the container or
+            if the offer could not be retrieved.
         :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
@@ -587,7 +589,8 @@ class ContainerProxy(object):
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
-        :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be updated.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If no offer exists for the container
+            or if the offer could not be updated.
         :rtype: ~azure.cosmos.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
@@ -691,7 +694,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved conflict.
-        :raise `CosmosHttpResponseError`: If the given conflict couldn't be retrieved.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given conflict couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
