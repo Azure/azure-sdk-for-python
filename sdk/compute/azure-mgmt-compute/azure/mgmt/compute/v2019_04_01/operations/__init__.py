@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_skus_operations import ResourceSkusOperations
+from ._resource_skus_operations import ResourceSkusOperations
 
 __all__ = [
     'ResourceSkusOperations',

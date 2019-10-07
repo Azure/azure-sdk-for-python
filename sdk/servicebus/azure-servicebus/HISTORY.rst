@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.50.1 (2019-06-24)
+-------------------
+
+**BugFixes**
+
+* Fixed bug where enqueued_time and scheduled_enqueue_time of message being parsed as local timestamp rather than UTC.
+
+
 0.50.0 (2019-01-17)
 -------------------
 

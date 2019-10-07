@@ -1,4 +1,3 @@
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 
@@ -49,7 +48,7 @@ class DatabaseManagement:
     def find_database(client, id):
         print('1. Query for Database')
 
-        databases = list(client.QueryDatabases({
+        databases = list(client.query_databases({
             "query": "SELECT * FROM r WHERE r.id=@id",
             "parameters": [
                 { "name":"@id", "value": id }
@@ -66,34 +65,22 @@ class DatabaseManagement:
         print("\n2. Create Database")
         
         try:
-            client.CreateDatabase({"id": id})
+            client.create_database(id=id)
             print('Database with id \'{0}\' created'.format(id))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 409:
-               print('A database with id \'{0}\' already exists'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)               
+        except errors.CosmosResourceExistsError:
+            print('A database with id \'{0}\' already exists'.format(id))             
     
     @staticmethod
     def read_database(client, id):
         print("\n3. Get a Database by id")
 
         try:
-            # All Azure Cosmos resources are addressable via a link
-            # This link is constructed from a combination of resource hierachy and 
-            # the resource id. 
-            # Eg. The link for database with an id of Foo would be dbs/Foo
-            database_link = 'dbs/' + id
+            database = client.get_database_client(id)
+            print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
-            database = client.ReadDatabase(database_link)
-            print('Database with id \'{0}\' was found, it\'s _self is {1}'.format(id, database['_self']))
-
-        except errors.HTTPFailure as e:
-            if e.status_code == 404:
-               print('A database with id \'{0}\' does not exist'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)    
+        except errors.CosmosResourceNotFoundError:
+            print('A database with id \'{0}\' does not exist'.format(id))   
 
     @staticmethod
     def list_databases(client):
@@ -101,7 +88,7 @@ class DatabaseManagement:
         
         print('Databases:')
         
-        databases = list(client.ReadDatabases())
+        databases = list(client.list_databases())
         
         if not databases:
             return
@@ -114,16 +101,12 @@ class DatabaseManagement:
         print("\n5. Delete Database")
         
         try:
-           database_link = 'dbs/' + id
-           client.DeleteDatabase(database_link)
+           client.delete_database(id)
 
            print('Database with id \'{0}\' was deleted'.format(id))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 404:
-               print('A database with id \'{0}\' does not exist'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceNotFoundError:
+            print('A database with id \'{0}\' does not exist'.format(id))
 
 def run_sample():     
     with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
@@ -143,7 +126,7 @@ def run_sample():
             # delete database by id
             DatabaseManagement.delete_database(client, DATABASE_ID)
 
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:

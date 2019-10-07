@@ -9,16 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
-from .elevate_access_operations import ElevateAccessOperations
+from ._permissions_operations import PermissionsOperations
+from ._role_definitions_operations import RoleDefinitionsOperations
+from ._provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from ._global_administrator_operations import GlobalAdministratorOperations
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._classic_administrators_operations import ClassicAdministratorsOperations
 
 __all__ = [
     'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
     'RoleDefinitionsOperations',
-    'ElevateAccessOperations',
+    'ProviderOperationsMetadataOperations',
+    'GlobalAdministratorOperations',
+    'RoleAssignmentsOperations',
+    'ClassicAdministratorsOperations',
 ]

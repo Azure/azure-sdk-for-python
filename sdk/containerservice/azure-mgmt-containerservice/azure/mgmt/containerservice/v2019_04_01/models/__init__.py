@@ -10,63 +10,63 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_value_py3 import OperationValue
-    from .resource_py3 import Resource
-    from .sub_resource_py3 import SubResource
-    from .tags_object_py3 import TagsObject
-    from .managed_cluster_service_principal_profile_py3 import ManagedClusterServicePrincipalProfile
-    from .container_service_master_profile_py3 import ContainerServiceMasterProfile
-    from .managed_cluster_agent_pool_profile_properties_py3 import ManagedClusterAgentPoolProfileProperties
-    from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
-    from .agent_pool_py3 import AgentPool
-    from .managed_cluster_windows_profile_py3 import ManagedClusterWindowsProfile
-    from .container_service_ssh_public_key_py3 import ContainerServiceSshPublicKey
-    from .container_service_ssh_configuration_py3 import ContainerServiceSshConfiguration
-    from .container_service_linux_profile_py3 import ContainerServiceLinuxProfile
-    from .container_service_network_profile_py3 import ContainerServiceNetworkProfile
-    from .container_service_vm_diagnostics_py3 import ContainerServiceVMDiagnostics
-    from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
-    from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
-    from .managed_cluster_aad_profile_py3 import ManagedClusterAADProfile
-    from .managed_cluster_identity_py3 import ManagedClusterIdentity
-    from .managed_cluster_py3 import ManagedCluster
-    from .managed_cluster_access_profile_py3 import ManagedClusterAccessProfile
-    from .managed_cluster_pool_upgrade_profile_upgrades_item_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
-    from .managed_cluster_pool_upgrade_profile_py3 import ManagedClusterPoolUpgradeProfile
-    from .managed_cluster_upgrade_profile_py3 import ManagedClusterUpgradeProfile
-    from .credential_result_py3 import CredentialResult
-    from .credential_results_py3 import CredentialResults
+    from ._models_py3 import AgentPool
+    from ._models_py3 import ContainerServiceDiagnosticsProfile
+    from ._models_py3 import ContainerServiceLinuxProfile
+    from ._models_py3 import ContainerServiceMasterProfile
+    from ._models_py3 import ContainerServiceNetworkProfile
+    from ._models_py3 import ContainerServiceSshConfiguration
+    from ._models_py3 import ContainerServiceSshPublicKey
+    from ._models_py3 import ContainerServiceVMDiagnostics
+    from ._models_py3 import CredentialResult
+    from ._models_py3 import CredentialResults
+    from ._models_py3 import ManagedCluster
+    from ._models_py3 import ManagedClusterAADProfile
+    from ._models_py3 import ManagedClusterAccessProfile
+    from ._models_py3 import ManagedClusterAddonProfile
+    from ._models_py3 import ManagedClusterAgentPoolProfile
+    from ._models_py3 import ManagedClusterAgentPoolProfileProperties
+    from ._models_py3 import ManagedClusterIdentity
+    from ._models_py3 import ManagedClusterPoolUpgradeProfile
+    from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
+    from ._models_py3 import ManagedClusterServicePrincipalProfile
+    from ._models_py3 import ManagedClusterUpgradeProfile
+    from ._models_py3 import ManagedClusterWindowsProfile
+    from ._models_py3 import OperationValue
+    from ._models_py3 import Resource
+    from ._models_py3 import SubResource
+    from ._models_py3 import TagsObject
 except (SyntaxError, ImportError):
-    from .operation_value import OperationValue
-    from .resource import Resource
-    from .sub_resource import SubResource
-    from .tags_object import TagsObject
-    from .managed_cluster_service_principal_profile import ManagedClusterServicePrincipalProfile
-    from .container_service_master_profile import ContainerServiceMasterProfile
-    from .managed_cluster_agent_pool_profile_properties import ManagedClusterAgentPoolProfileProperties
-    from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
-    from .agent_pool import AgentPool
-    from .managed_cluster_windows_profile import ManagedClusterWindowsProfile
-    from .container_service_ssh_public_key import ContainerServiceSshPublicKey
-    from .container_service_ssh_configuration import ContainerServiceSshConfiguration
-    from .container_service_linux_profile import ContainerServiceLinuxProfile
-    from .container_service_network_profile import ContainerServiceNetworkProfile
-    from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
-    from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
-    from .managed_cluster_addon_profile import ManagedClusterAddonProfile
-    from .managed_cluster_aad_profile import ManagedClusterAADProfile
-    from .managed_cluster_identity import ManagedClusterIdentity
-    from .managed_cluster import ManagedCluster
-    from .managed_cluster_access_profile import ManagedClusterAccessProfile
-    from .managed_cluster_pool_upgrade_profile_upgrades_item import ManagedClusterPoolUpgradeProfileUpgradesItem
-    from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
-    from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
-    from .credential_result import CredentialResult
-    from .credential_results import CredentialResults
-from .operation_value_paged import OperationValuePaged
-from .managed_cluster_paged import ManagedClusterPaged
-from .agent_pool_paged import AgentPoolPaged
-from .container_service_client_enums import (
+    from ._models import AgentPool
+    from ._models import ContainerServiceDiagnosticsProfile
+    from ._models import ContainerServiceLinuxProfile
+    from ._models import ContainerServiceMasterProfile
+    from ._models import ContainerServiceNetworkProfile
+    from ._models import ContainerServiceSshConfiguration
+    from ._models import ContainerServiceSshPublicKey
+    from ._models import ContainerServiceVMDiagnostics
+    from ._models import CredentialResult
+    from ._models import CredentialResults
+    from ._models import ManagedCluster
+    from ._models import ManagedClusterAADProfile
+    from ._models import ManagedClusterAccessProfile
+    from ._models import ManagedClusterAddonProfile
+    from ._models import ManagedClusterAgentPoolProfile
+    from ._models import ManagedClusterAgentPoolProfileProperties
+    from ._models import ManagedClusterIdentity
+    from ._models import ManagedClusterPoolUpgradeProfile
+    from ._models import ManagedClusterPoolUpgradeProfileUpgradesItem
+    from ._models import ManagedClusterServicePrincipalProfile
+    from ._models import ManagedClusterUpgradeProfile
+    from ._models import ManagedClusterWindowsProfile
+    from ._models import OperationValue
+    from ._models import Resource
+    from ._models import SubResource
+    from ._models import TagsObject
+from ._paged_models import AgentPoolPaged
+from ._paged_models import ManagedClusterPaged
+from ._paged_models import OperationValuePaged
+from ._container_service_client_enums import (
     ContainerServiceStorageProfileTypes,
     ContainerServiceVMSizeTypes,
     OSType,
@@ -78,32 +78,32 @@ from .container_service_client_enums import (
 )
 
 __all__ = [
+    'AgentPool',
+    'ContainerServiceDiagnosticsProfile',
+    'ContainerServiceLinuxProfile',
+    'ContainerServiceMasterProfile',
+    'ContainerServiceNetworkProfile',
+    'ContainerServiceSshConfiguration',
+    'ContainerServiceSshPublicKey',
+    'ContainerServiceVMDiagnostics',
+    'CredentialResult',
+    'CredentialResults',
+    'ManagedCluster',
+    'ManagedClusterAADProfile',
+    'ManagedClusterAccessProfile',
+    'ManagedClusterAddonProfile',
+    'ManagedClusterAgentPoolProfile',
+    'ManagedClusterAgentPoolProfileProperties',
+    'ManagedClusterIdentity',
+    'ManagedClusterPoolUpgradeProfile',
+    'ManagedClusterPoolUpgradeProfileUpgradesItem',
+    'ManagedClusterServicePrincipalProfile',
+    'ManagedClusterUpgradeProfile',
+    'ManagedClusterWindowsProfile',
     'OperationValue',
     'Resource',
     'SubResource',
     'TagsObject',
-    'ManagedClusterServicePrincipalProfile',
-    'ContainerServiceMasterProfile',
-    'ManagedClusterAgentPoolProfileProperties',
-    'ManagedClusterAgentPoolProfile',
-    'AgentPool',
-    'ManagedClusterWindowsProfile',
-    'ContainerServiceSshPublicKey',
-    'ContainerServiceSshConfiguration',
-    'ContainerServiceLinuxProfile',
-    'ContainerServiceNetworkProfile',
-    'ContainerServiceVMDiagnostics',
-    'ContainerServiceDiagnosticsProfile',
-    'ManagedClusterAddonProfile',
-    'ManagedClusterAADProfile',
-    'ManagedClusterIdentity',
-    'ManagedCluster',
-    'ManagedClusterAccessProfile',
-    'ManagedClusterPoolUpgradeProfileUpgradesItem',
-    'ManagedClusterPoolUpgradeProfile',
-    'ManagedClusterUpgradeProfile',
-    'CredentialResult',
-    'CredentialResults',
     'OperationValuePaged',
     'ManagedClusterPaged',
     'AgentPoolPaged',

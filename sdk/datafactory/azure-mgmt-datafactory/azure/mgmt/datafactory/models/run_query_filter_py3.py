@@ -24,7 +24,7 @@ class RunQueryFilter(Model):
      TriggerName, TriggerRunTimestamp and Status. Possible values include:
      'PipelineName', 'Status', 'RunStart', 'RunEnd', 'ActivityName',
      'ActivityRunStart', 'ActivityRunEnd', 'ActivityType', 'TriggerName',
-     'TriggerRunTimestamp'
+     'TriggerRunTimestamp', 'RunGroupId', 'LatestOnly'
     :type operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
     :param operator: Required. Operator to be used for filter. Possible values
      include: 'Equals', 'NotEquals', 'In', 'NotIn'

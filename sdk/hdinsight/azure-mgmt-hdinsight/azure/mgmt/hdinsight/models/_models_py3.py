@@ -154,7 +154,7 @@ class ApplicationGetHttpsEndpoint(Model):
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
-    :param sub_domain_suffix: The subDomainSuffix of the application.
+    :param sub_domain_suffix: The subdomain suffix of the application.
     :type sub_domain_suffix: str
     :param disable_gateway_auth: The value indicates whether to disable
      GatewayAuth.
@@ -248,6 +248,229 @@ class ApplicationProperties(Model):
         self.errors = errors
         self.created_date = None
         self.marketplace_identifier = None
+
+
+class Autoscale(Model):
+    """The autoscale request parameters.
+
+    :param capacity: Parameters for load-based autoscale
+    :type capacity: ~azure.mgmt.hdinsight.models.AutoscaleCapacity
+    :param recurrence: Parameters for schedule-based autoscale
+    :type recurrence: ~azure.mgmt.hdinsight.models.AutoscaleRecurrence
+    """
+
+    _attribute_map = {
+        'capacity': {'key': 'capacity', 'type': 'AutoscaleCapacity'},
+        'recurrence': {'key': 'recurrence', 'type': 'AutoscaleRecurrence'},
+    }
+
+    def __init__(self, *, capacity=None, recurrence=None, **kwargs) -> None:
+        super(Autoscale, self).__init__(**kwargs)
+        self.capacity = capacity
+        self.recurrence = recurrence
+
+
+class AutoscaleCapacity(Model):
+    """The load-based autoscale request parameters.
+
+    :param min_instance_count: The minimum instance count of the cluster
+    :type min_instance_count: int
+    :param max_instance_count: The maximum instance count of the cluster
+    :type max_instance_count: int
+    """
+
+    _attribute_map = {
+        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
+        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+    }
+
+    def __init__(self, *, min_instance_count: int=None, max_instance_count: int=None, **kwargs) -> None:
+        super(AutoscaleCapacity, self).__init__(**kwargs)
+        self.min_instance_count = min_instance_count
+        self.max_instance_count = max_instance_count
+
+
+class AutoscaleRecurrence(Model):
+    """Schedule-based autoscale request parameters.
+
+    :param time_zone: The time zone for the autoscale schedule times
+    :type time_zone: str
+    :param schedule: Array of schedule-based autoscale rules
+    :type schedule: list[~azure.mgmt.hdinsight.models.AutoscaleSchedule]
+    """
+
+    _attribute_map = {
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': '[AutoscaleSchedule]'},
+    }
+
+    def __init__(self, *, time_zone: str=None, schedule=None, **kwargs) -> None:
+        super(AutoscaleRecurrence, self).__init__(**kwargs)
+        self.time_zone = time_zone
+        self.schedule = schedule
+
+
+class AutoscaleSchedule(Model):
+    """Parameters for a schedule-based autoscale rule, consisting of an array of
+    days + a time and capacity.
+
+    :param days: Days of the week for a schedule-based autoscale rule
+    :type days: list[str or ~azure.mgmt.hdinsight.models.DaysOfWeek]
+    :param time_and_capacity: Time and capacity for a schedule-based autoscale
+     rule
+    :type time_and_capacity:
+     ~azure.mgmt.hdinsight.models.AutoscaleTimeAndCapacity
+    """
+
+    _attribute_map = {
+        'days': {'key': 'days', 'type': '[DaysOfWeek]'},
+        'time_and_capacity': {'key': 'timeAndCapacity', 'type': 'AutoscaleTimeAndCapacity'},
+    }
+
+    def __init__(self, *, days=None, time_and_capacity=None, **kwargs) -> None:
+        super(AutoscaleSchedule, self).__init__(**kwargs)
+        self.days = days
+        self.time_and_capacity = time_and_capacity
+
+
+class AutoscaleTimeAndCapacity(Model):
+    """Time and capacity request parameters.
+
+    :param time: 24-hour time in the form xx:xx
+    :type time: str
+    :param min_instance_count: The minimum instance count of the cluster
+    :type min_instance_count: int
+    :param max_instance_count: The maximum instance count of the cluster
+    :type max_instance_count: int
+    """
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'str'},
+        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
+        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+    }
+
+    def __init__(self, *, time: str=None, min_instance_count: int=None, max_instance_count: int=None, **kwargs) -> None:
+        super(AutoscaleTimeAndCapacity, self).__init__(**kwargs)
+        self.time = time
+        self.min_instance_count = min_instance_count
+        self.max_instance_count = max_instance_count
+
+
+class BillingMeters(Model):
+    """The billing meters.
+
+    :param meter_parameter: The virtual machine sizes.
+    :type meter_parameter: str
+    :param meter: The HDInsight meter guid.
+    :type meter: str
+    :param unit: The unit of meter, VMHours or CoreHours.
+    :type unit: str
+    """
+
+    _attribute_map = {
+        'meter_parameter': {'key': 'meterParameter', 'type': 'str'},
+        'meter': {'key': 'meter', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, *, meter_parameter: str=None, meter: str=None, unit: str=None, **kwargs) -> None:
+        super(BillingMeters, self).__init__(**kwargs)
+        self.meter_parameter = meter_parameter
+        self.meter = meter
+        self.unit = unit
+
+
+class BillingResources(Model):
+    """The billing resources.
+
+    :param region: The region or location.
+    :type region: str
+    :param billing_meters: The billing meter information.
+    :type billing_meters: list[~azure.mgmt.hdinsight.models.BillingMeters]
+    :param disk_billing_meters: The managed disk billing information.
+    :type disk_billing_meters:
+     list[~azure.mgmt.hdinsight.models.DiskBillingMeters]
+    """
+
+    _attribute_map = {
+        'region': {'key': 'region', 'type': 'str'},
+        'billing_meters': {'key': 'billingMeters', 'type': '[BillingMeters]'},
+        'disk_billing_meters': {'key': 'diskBillingMeters', 'type': '[DiskBillingMeters]'},
+    }
+
+    def __init__(self, *, region: str=None, billing_meters=None, disk_billing_meters=None, **kwargs) -> None:
+        super(BillingResources, self).__init__(**kwargs)
+        self.region = region
+        self.billing_meters = billing_meters
+        self.disk_billing_meters = disk_billing_meters
+
+
+class BillingResponseListResult(Model):
+    """The response for the operation to get regional billingSpecs for a
+    subscription.
+
+    :param vm_sizes: The virtual machine sizes to include or exclude.
+    :type vm_sizes: list[str]
+    :param vm_size_filters: The virtual machine filtering mode. Effectively
+     this can enabling or disabling the virtual machine sizes in a particular
+     set.
+    :type vm_size_filters:
+     list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+    :param billing_resources: The billing and managed disk billing resources
+     for a region.
+    :type billing_resources:
+     list[~azure.mgmt.hdinsight.models.BillingResources]
+    """
+
+    _attribute_map = {
+        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+        'vm_size_filters': {'key': 'vmSizeFilters', 'type': '[VmSizeCompatibilityFilterV2]'},
+        'billing_resources': {'key': 'billingResources', 'type': '[BillingResources]'},
+    }
+
+    def __init__(self, *, vm_sizes=None, vm_size_filters=None, billing_resources=None, **kwargs) -> None:
+        super(BillingResponseListResult, self).__init__(**kwargs)
+        self.vm_sizes = vm_sizes
+        self.vm_size_filters = vm_size_filters
+        self.billing_resources = billing_resources
+
+
+class CapabilitiesResult(Model):
+    """The Get Capabilities operation response.
+
+    :param versions: The version capability.
+    :type versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
+    :param regions: The virtual machine size compatibility features.
+    :type regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
+    :param vm_sizes: The virtual machine sizes.
+    :type vm_sizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
+    :param vm_size_filters: The virtual machine size compatibility filters.
+    :type vm_size_filters:
+     list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilter]
+    :param features: The capability features.
+    :type features: list[str]
+    :param quota: The quota capability.
+    :type quota: ~azure.mgmt.hdinsight.models.QuotaCapability
+    """
+
+    _attribute_map = {
+        'versions': {'key': 'versions', 'type': '{VersionsCapability}'},
+        'regions': {'key': 'regions', 'type': '{RegionsCapability}'},
+        'vm_sizes': {'key': 'vmSizes', 'type': '{VmSizesCapability}'},
+        'vm_size_filters': {'key': 'vmSize_filters', 'type': '[VmSizeCompatibilityFilter]'},
+        'features': {'key': 'features', 'type': '[str]'},
+        'quota': {'key': 'quota', 'type': 'QuotaCapability'},
+    }
+
+    def __init__(self, *, versions=None, regions=None, vm_sizes=None, vm_size_filters=None, features=None, quota=None, **kwargs) -> None:
+        super(CapabilitiesResult, self).__init__(**kwargs)
+        self.versions = versions
+        self.regions = regions
+        self.vm_sizes = vm_sizes
+        self.vm_size_filters = vm_size_filters
+        self.features = features
+        self.quota = quota
 
 
 class CloudError(Model):
@@ -848,6 +1071,31 @@ class DataDisksGroups(Model):
         self.disk_size_gb = None
 
 
+class DiskBillingMeters(Model):
+    """The disk billing meters.
+
+    :param disk_rp_meter: The managed disk meter guid.
+    :type disk_rp_meter: str
+    :param sku: The managed disk billing sku, P30 or S30.
+    :type sku: str
+    :param tier: The managed disk billing tier, Standard or Premium. Possible
+     values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.hdinsight.models.Tier
+    """
+
+    _attribute_map = {
+        'disk_rp_meter': {'key': 'diskRpMeter', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'Tier'},
+    }
+
+    def __init__(self, *, disk_rp_meter: str=None, sku: str=None, tier=None, **kwargs) -> None:
+        super(DiskBillingMeters, self).__init__(**kwargs)
+        self.disk_rp_meter = disk_rp_meter
+        self.sku = sku
+        self.tier = tier
+
+
 class DiskEncryptionProperties(Model):
     """The disk encryption properties.
 
@@ -1163,6 +1411,32 @@ class OsProfile(Model):
         self.linux_operating_system_profile = linux_operating_system_profile
 
 
+class QuotaCapability(Model):
+    """The regional quota capability.
+
+    :param cores_used: The number of cores used in the subscription.
+    :type cores_used: long
+    :param max_cores_allowed: The number of cores that the subscription
+     allowed.
+    :type max_cores_allowed: long
+    :param regional_quotas: The list of region quota capabilities.
+    :type regional_quotas:
+     list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
+    """
+
+    _attribute_map = {
+        'cores_used': {'key': 'cores_used', 'type': 'long'},
+        'max_cores_allowed': {'key': 'max_cores_allowed', 'type': 'long'},
+        'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
+    }
+
+    def __init__(self, *, cores_used: int=None, max_cores_allowed: int=None, regional_quotas=None, **kwargs) -> None:
+        super(QuotaCapability, self).__init__(**kwargs)
+        self.cores_used = cores_used
+        self.max_cores_allowed = max_cores_allowed
+        self.regional_quotas = regional_quotas
+
+
 class QuotaInfo(Model):
     """The quota properties for the cluster.
 
@@ -1179,6 +1453,46 @@ class QuotaInfo(Model):
         self.cores_used = cores_used
 
 
+class RegionalQuotaCapability(Model):
+    """The regional quota capacity.
+
+    :param region_name: The region name.
+    :type region_name: str
+    :param cores_used: The number of cores used in the region.
+    :type cores_used: long
+    :param cores_available: The number of cores available in the region.
+    :type cores_available: long
+    """
+
+    _attribute_map = {
+        'region_name': {'key': 'region_name', 'type': 'str'},
+        'cores_used': {'key': 'cores_used', 'type': 'long'},
+        'cores_available': {'key': 'cores_available', 'type': 'long'},
+    }
+
+    def __init__(self, *, region_name: str=None, cores_used: int=None, cores_available: int=None, **kwargs) -> None:
+        super(RegionalQuotaCapability, self).__init__(**kwargs)
+        self.region_name = region_name
+        self.cores_used = cores_used
+        self.cores_available = cores_available
+
+
+class RegionsCapability(Model):
+    """The regions capability.
+
+    :param available: The list of region capabilities.
+    :type available: list[str]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[str]'},
+    }
+
+    def __init__(self, *, available=None, **kwargs) -> None:
+        super(RegionsCapability, self).__init__(**kwargs)
+        self.available = available
+
+
 class Role(Model):
     """Describes a role on the cluster.
 
@@ -1188,6 +1502,8 @@ class Role(Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param autoscale_configuration: The autoscale configurations.
+    :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
     :type hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
     :param os_profile: The operating system profile.
@@ -1206,6 +1522,7 @@ class Role(Model):
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
@@ -1213,11 +1530,12 @@ class Role(Model):
         'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
     }
 
-    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, autoscale_configuration=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, **kwargs) -> None:
         super(Role, self).__init__(**kwargs)
         self.name = name
         self.min_instance_count = min_instance_count
         self.target_instance_count = target_instance_count
+        self.autoscale_configuration = autoscale_configuration
         self.hardware_profile = hardware_profile
         self.os_profile = os_profile
         self.virtual_network_profile = virtual_network_profile
@@ -1656,6 +1974,50 @@ class UsagesListResult(Model):
         self.value = value
 
 
+class VersionsCapability(Model):
+    """The version capability.
+
+    :param available: The list of version capabilities.
+    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[VersionSpec]'},
+    }
+
+    def __init__(self, *, available=None, **kwargs) -> None:
+        super(VersionsCapability, self).__init__(**kwargs)
+        self.available = available
+
+
+class VersionSpec(Model):
+    """The version properties.
+
+    :param friendly_name: The friendly name
+    :type friendly_name: str
+    :param display_name: The display name
+    :type display_name: str
+    :param is_default: Whether or not the version is the default version.
+    :type is_default: str
+    :param component_versions: The component version property.
+    :type component_versions: dict[str, str]
+    """
+
+    _attribute_map = {
+        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'str'},
+        'component_versions': {'key': 'componentVersions', 'type': '{str}'},
+    }
+
+    def __init__(self, *, friendly_name: str=None, display_name: str=None, is_default: str=None, component_versions=None, **kwargs) -> None:
+        super(VersionSpec, self).__init__(**kwargs)
+        self.friendly_name = friendly_name
+        self.display_name = display_name
+        self.is_default = is_default
+        self.component_versions = component_versions
+
+
 class VirtualNetworkProfile(Model):
     """The virtual network properties.
 
@@ -1674,3 +2036,104 @@ class VirtualNetworkProfile(Model):
         super(VirtualNetworkProfile, self).__init__(**kwargs)
         self.id = id
         self.subnet = subnet
+
+
+class VmSizeCompatibilityFilter(Model):
+    """The virtual machine type compatibility filter.
+
+    :param filter_mode: The mode for the filter.
+    :type filter_mode: str
+    :param regions: The list of regions.
+    :type regions: list[str]
+    :param cluster_flavors: The list of cluster types available.
+    :type cluster_flavors: list[str]
+    :param node_types: The list of node types.
+    :type node_types: list[str]
+    :param cluster_versions: The list of cluster versions.
+    :type cluster_versions: list[str]
+    :param vmsizes: The list of virtual machine sizes.
+    :type vmsizes: list[str]
+    """
+
+    _attribute_map = {
+        'filter_mode': {'key': 'FilterMode', 'type': 'str'},
+        'regions': {'key': 'Regions', 'type': '[str]'},
+        'cluster_flavors': {'key': 'ClusterFlavors', 'type': '[str]'},
+        'node_types': {'key': 'NodeTypes', 'type': '[str]'},
+        'cluster_versions': {'key': 'ClusterVersions', 'type': '[str]'},
+        'vmsizes': {'key': 'vmsizes', 'type': '[str]'},
+    }
+
+    def __init__(self, *, filter_mode: str=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, vmsizes=None, **kwargs) -> None:
+        super(VmSizeCompatibilityFilter, self).__init__(**kwargs)
+        self.filter_mode = filter_mode
+        self.regions = regions
+        self.cluster_flavors = cluster_flavors
+        self.node_types = node_types
+        self.cluster_versions = cluster_versions
+        self.vmsizes = vmsizes
+
+
+class VmSizeCompatibilityFilterV2(Model):
+    """This class represent a single filter object that defines a multidimensional
+    set. The dimensions of this set are Regions, ClusterFlavors, NodeTypes and
+    ClusterVersions. The constraint should be defined based on the following:
+    FilterMode (Exclude vs Include), VMSizes (the vm sizes in affect of
+    exclusion/inclusion) and the ordering of the Filters. Later filters
+    override previous settings if conflicted.
+
+    :param filter_mode: The filtering mode. Effectively this can enabling or
+     disabling the VM sizes in a particular set. Possible values include:
+     'Exclude', 'Include'
+    :type filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
+    :param regions: The list of regions under the effect of the filter.
+    :type regions: list[str]
+    :param cluster_flavors: The list of cluster flavors under the effect of
+     the filter.
+    :type cluster_flavors: list[str]
+    :param node_types: The list of node types affected by the filter.
+    :type node_types: list[str]
+    :param cluster_versions: The list of cluster versions affected in
+     Major.Minor format.
+    :type cluster_versions: list[str]
+    :param os_type: The OSType affected, Windows or Linux.
+    :type os_type: list[str or ~azure.mgmt.hdinsight.models.OSType]
+    :param vm_sizes: The list of virtual machine sizes to include or exclude.
+    :type vm_sizes: list[str]
+    """
+
+    _attribute_map = {
+        'filter_mode': {'key': 'filterMode', 'type': 'str'},
+        'regions': {'key': 'regions', 'type': '[str]'},
+        'cluster_flavors': {'key': 'clusterFlavors', 'type': '[str]'},
+        'node_types': {'key': 'nodeTypes', 'type': '[str]'},
+        'cluster_versions': {'key': 'clusterVersions', 'type': '[str]'},
+        'os_type': {'key': 'osType', 'type': '[OSType]'},
+        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
+    }
+
+    def __init__(self, *, filter_mode=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, os_type=None, vm_sizes=None, **kwargs) -> None:
+        super(VmSizeCompatibilityFilterV2, self).__init__(**kwargs)
+        self.filter_mode = filter_mode
+        self.regions = regions
+        self.cluster_flavors = cluster_flavors
+        self.node_types = node_types
+        self.cluster_versions = cluster_versions
+        self.os_type = os_type
+        self.vm_sizes = vm_sizes
+
+
+class VmSizesCapability(Model):
+    """The virtual machine sizes capability.
+
+    :param available: The list of virtual machine size capabilities.
+    :type available: list[str]
+    """
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': '[str]'},
+    }
+
+    def __init__(self, *, available=None, **kwargs) -> None:
+        super(VmSizesCapability, self).__init__(**kwargs)
+        self.available = available

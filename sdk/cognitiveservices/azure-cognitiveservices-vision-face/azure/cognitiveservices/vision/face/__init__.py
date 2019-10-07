@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .face_client import FaceClient
-from .version import VERSION
+from ._configuration import FaceClientConfiguration
+from ._face_client import FaceClient
+__all__ = ['FaceClient', 'FaceClientConfiguration']
 
-__all__ = ['FaceClient']
+from .version import VERSION
 
 __version__ = VERSION
 

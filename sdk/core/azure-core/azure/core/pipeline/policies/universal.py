@@ -49,6 +49,8 @@ from .base import SansIOHTTPPolicy
 
 _LOGGER = logging.getLogger(__name__)
 ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 
 class HeadersPolicy(SansIOHTTPPolicy):
@@ -60,18 +62,19 @@ class HeadersPolicy(SansIOHTTPPolicy):
 
     :param dict base_headers: Headers to send with the request.
 
-    Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START headers_policy]
             :end-before: [END headers_policy]
             :language: python
             :dedent: 4
             :caption: Configuring a headers policy.
     """
-    def __init__(self, base_headers=None, **kwargs):
-        # type: (Mapping[str, str], Any) -> None
+    def __init__(self, base_headers=None, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (Dict[str, str], Any) -> None
         self._headers = base_headers or {}
-        self._headers.update(kwargs.pop('headers', {})) # type: ignore
+        self._headers.update(kwargs.pop('headers', {}))
 
     @property
     def headers(self):
@@ -86,17 +89,17 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """
         self._headers[key] = value
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Updates with the given headers before sending the request to the next policy.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request.http_request.headers.update(self.headers) # type: ignore
-        additional_headers = request.context.options.pop('headers', {}) # type: ignore
+        request.http_request.headers.update(self.headers)
+        additional_headers = request.context.options.pop('headers', {})
         if additional_headers:
-            request.http_request.headers.update(additional_headers) # type: ignore
+            request.http_request.headers.update(additional_headers)
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
@@ -110,8 +113,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
 
-    Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START user_agent_policy]
             :end-before: [END user_agent_policy]
             :language: python
@@ -121,7 +125,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
-    def __init__(self, base_user_agent=None, **kwargs):
+    def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Optional[str], bool) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
@@ -152,25 +156,25 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Modifies the User-Agent header before the request is sent.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         http_request = request.http_request
-        options = request.context.options # type: ignore
-        if 'user_agent' in options:
-            user_agent = options.pop('user_agent')
-            if options.pop('user_agent_overwrite', self.overwrite):
-                http_request.headers[self._USERAGENT] = user_agent # type: ignore
+        options_dict = request.context.options
+        if 'user_agent' in options_dict:
+            user_agent = options_dict.pop('user_agent')
+            if options_dict.pop('user_agent_overwrite', self.overwrite):
+                http_request.headers[self._USERAGENT] = user_agent
             else:
                 user_agent = "{} {}".format(self.user_agent, user_agent)
-                http_request.headers[self._USERAGENT] = user_agent # type: ignore
+                http_request.headers[self._USERAGENT] = user_agent
 
-        elif self.overwrite or self._USERAGENT not in http_request.headers: # type: ignore
-            http_request.headers[self._USERAGENT] = self.user_agent # type: ignore
+        elif self.overwrite or self._USERAGENT not in http_request.headers:
+            http_request.headers[self._USERAGENT] = self.user_agent
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
@@ -180,8 +184,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     :param bool logging_enable: Use to enable per operation. Defaults to False.
 
-    Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START network_trace_logging_policy]
             :end-before: [END network_trace_logging_policy]
             :language: python
@@ -191,25 +196,25 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Logs HTTP request to the DEBUG logger.
 
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         http_request = request.http_request
-        options = request.context.options # type: ignore
+        options = request.context.options
         if options.pop("logging_enable", self.enable_http_logger):
-            request.context["logging_enable"] = True # type: ignore
+            request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
             try:
-                _LOGGER.debug("Request URL: %r", http_request.url) # type: ignore
-                _LOGGER.debug("Request method: %r", http_request.method) # type: ignore
+                _LOGGER.debug("Request URL: %r", http_request.url)
+                _LOGGER.debug("Request method: %r", http_request.method)
                 _LOGGER.debug("Request headers:")
-                for header, value in http_request.headers.items(): # type: ignore
+                for header, value in http_request.headers.items():
                     if header.lower() == 'authorization':
                         value = '*****'
                     _LOGGER.debug("    %r: %r", header, value)
@@ -223,8 +228,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
         """Logs HTTP response to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -232,33 +237,33 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
-        if response.context.pop("logging_enable", self.enable_http_logger): # type: ignore
+        if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
             try:
-                _LOGGER.debug("Response status: %r", response.http_response.status_code) # type: ignore
+                _LOGGER.debug("Response status: %r", response.http_response.status_code)
                 _LOGGER.debug("Response headers:")
-                for res_header, value in response.http_response.headers.items(): # type: ignore
+                for res_header, value in response.http_response.headers.items():
                     _LOGGER.debug("    %r: %r", res_header, value)
 
                 # We don't want to log binary data if the response is a file.
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
-                header = response.http_response.headers.get('content-disposition') # type: ignore
+                header = response.http_response.headers.get('content-disposition')
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"): # type: ignore
+                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"): # type: ignore
+                elif response.http_response.headers.get("content-type", "").startswith("image"):
                     _LOGGER.debug("Body contains image data.")
                 else:
-                    if response.context.options.get('stream', False): # type: ignore
+                    if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(response.http_response.text()) # type: ignore
+                        _LOGGER.debug(response.http_response.text())
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -266,16 +271,15 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
     """
-    JSON_MIMETYPES = [
-        'application/json',
-        'text/json' # Because we're open minded people...
-    ]
+    # Accept "text" because we're open minded people...
+    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
+
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
     @classmethod
     def deserialize_from_text(cls, response, content_type=None):
-        # type: (Type[ContentDecodePolicyType], PipelineResponse, Optional[str]) -> Any
+        # type: (Type[ContentDecodePolicyType], HTTPResponseType, Optional[str]) -> Any
         """Decode response data according to content-type.
         Accept a stream of data as well, but will be load at once in memory for now.
         If no content-type, will return the string version (not bytes, not stream)
@@ -301,13 +305,19 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if content_type is None:
             return data
 
-        if content_type in cls.JSON_MIMETYPES:
+        if cls.JSON_REGEXP.match(content_type):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
                 raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
         elif "xml" in (content_type or []):
             try:
+                try:
+                    if isinstance(data, unicode):  # type: ignore
+                        # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
+                        data_as_str = data_as_str.encode(encoding="utf-8")  # type: ignore
+                except NameError:
+                    pass
                 return ET.fromstring(data_as_str)
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
@@ -332,7 +342,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_http_generics(cls, response):
-        # type: (Type[ContentDecodePolicyType], PipelineResponse) -> Any
+        # type: (Type[ContentDecodePolicyType], HTTPResponseType) -> Any
         """Deserialize from HTTP response.
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
@@ -344,7 +354,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # Try to use content-type from headers if available
         content_type = None
         if response.content_type: # type: ignore
-            content_type = response.content_type[0].strip().lower() # type: ignore
+            content_type = response.content_type.split(";")[0].strip().lower() # type: ignore
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
@@ -355,8 +365,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(response, content_type)
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request, response):
+        # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType]) -> None
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
@@ -373,10 +383,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         """
         # If response was asked as stream, do NOT read anything and quit now
-        if response.context.options.get("stream", True): # type: ignore
+        if response.context.options.get("stream", True):
             return
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response) # type: ignore
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
@@ -388,18 +398,20 @@ class ProxyPolicy(SansIOHTTPPolicy):
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
 
-    **Keyword argument:**
+    .. admonition:: Example:
 
-    *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
-
-    Example:
-        .. literalinclude:: ../examples/examples_sansio.py
+        .. literalinclude:: ../examples/test_example_sansio.py
             :start-after: [START proxy_policy]
             :end-before: [END proxy_policy]
             :language: python
             :dedent: 4
             :caption: Configuring a proxy policy.
     """
-    def __init__(self, proxies=None, **kwargs):
+    def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
-        self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        ctxt = request.context.options
+        if self.proxies and "proxies" not in ctxt:
+            ctxt["proxies"] = self.proxies

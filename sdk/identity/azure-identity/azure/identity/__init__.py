@@ -1,56 +1,36 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-from .exceptions import AuthenticationError
-from .credentials import (
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+from ._constants import EnvironmentVariables, KnownAuthorities
+from ._credentials import (
+    AuthorizationCodeCredential,
+
     CertificateCredential,
+    ChainedTokenCredential,
     ClientSecretCredential,
+    DefaultAzureCredential,
+    DeviceCodeCredential,
     EnvironmentCredential,
+    InteractiveBrowserCredential,
     ManagedIdentityCredential,
-    TokenCredentialChain,
+    SharedTokenCacheCredential,
+    UsernamePasswordCredential,
 )
 
 
-class DefaultAzureCredential(TokenCredentialChain):
-    """default credential is environment followed by MSI/IMDS"""
-
-    def __init__(self, **kwargs):
-        super(DefaultAzureCredential, self).__init__(
-            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
-        )
-
-
 __all__ = [
-    "AuthenticationError",
+    "AuthorizationCodeCredential",
     "CertificateCredential",
+    "ChainedTokenCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",
+    "DeviceCodeCredential",
     "EnvironmentCredential",
+    "EnvironmentVariables",
+    "InteractiveBrowserCredential",
+    "KnownAuthorities",
     "ManagedIdentityCredential",
-    "TokenCredentialChain",
+    "SharedTokenCacheCredential",
+    "UsernamePasswordCredential",
 ]
-
-try:
-    from .aio import (
-        AsyncCertificateCredential,
-        AsyncClientSecretCredential,
-        AsyncDefaultAzureCredential,
-        AsyncEnvironmentCredential,
-        AsyncManagedIdentityCredential,
-        AsyncTokenCredentialChain,
-    )
-
-    __all__.extend(
-        [
-            "AsyncCertificateCredential",
-            "AsyncClientSecretCredential",
-            "AsyncDefaultAzureCredential",
-            "AsyncEnvironmentCredential",
-            "AsyncManagedIdentityCredential",
-            "AsyncTokenCredentialChain",
-        ]
-    )
-except (ImportError, SyntaxError):
-    pass

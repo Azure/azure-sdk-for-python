@@ -3,6 +3,55 @@
 Release History
 ===============
 
+3.0.0rc6 (2019-10-03)
++++++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.generate_credentials
+
+3.0.0rc5 (2019-08-02)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Reverting API version back to 2019-05-01
+
+3.0.0rc4 (2019-07-10)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix incorrect default API version from 2019-05-01 to 2017-10-01
+
+3.0.0rc3 (2019-07-01)
++++++++++++++++++++++
+
+New preview API version 2019-06-01-preview contains:
+
+**Features**
+
+- Model BaseImageTriggerUpdateParameters has a new parameter update_trigger_payload_type
+- Model BaseImageTriggerUpdateParameters has a new parameter update_trigger_endpoint
+- Model RegistryUpdateParameters has a new parameter policies
+- Model Registry has a new parameter policies
+- Model TaskRunRequest has a new parameter override_task_step_properties
+- Model BaseImageTrigger has a new parameter update_trigger_payload_type
+- Model BaseImageTrigger has a new parameter update_trigger_endpoint
+- Model Run has a new parameter update_trigger_token
+- Added operation RegistriesOperations.get_build_source_upload_url
+- Added operation RegistriesOperations.schedule_run
+
+**Breaking changes**
+
+- Model RegistryUpdateParameters no longer has parameter storage_account
+- Model TaskRunRequest no longer has parameter task_name
+- Model TaskRunRequest no longer has parameter values
+- Model TaskRunRequest has a new required parameter task_id
+- Removed operation RegistriesOperations.list_policies
+- Removed operation RegistriesOperations.generate_credentials
+- Removed operation RegistriesOperations.update_policies
+
 3.0.0rc2 (2019-06-12)
 +++++++++++++++++++++
 

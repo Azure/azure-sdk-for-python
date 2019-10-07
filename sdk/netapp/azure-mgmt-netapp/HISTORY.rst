@@ -3,6 +3,35 @@
 Release History
 ===============
 
+0.6.0 (2019-09-26)
+++++++++++++++++++
+
+**Features**
+
+- Model Snapshot has a new parameter created
+- Model ExportPolicyRule has a new parameter nfsv41
+- Added operation group AzureNetAppFilesManagementClientOperationsMixin
+
+**Breaking changes**
+
+- Model Snapshot no longer has parameter creation_date
+- Model ExportPolicyRule no longer has parameter nfsv4
+
+0.5.0 (2019-07-03)
+++++++++++++++++++
+
+**Features**
+
+- Model Volume has a new parameter protocol_types
+- Model Volume has a new parameter mount_targets
+
+**Breaking changes**
+
+- Parameter subnet_id of model Volume is now required
+- Parameter usage_threshold of model Volume is now required
+- Parameter service_level of model CapacityPool is now required
+- Parameter size of model CapacityPool is now required
+
 0.4.0 (2019-04-29)
 ++++++++++++++++++
 

@@ -43,7 +43,7 @@ class RegistrationAssignmentProperties(Model):
 
     _attribute_map = {
         'registration_definition_id': {'key': 'registrationDefinitionId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'registration_definition': {'key': 'registrationDefinition', 'type': 'RegistrationAssignmentPropertiesRegistrationDefinition'},
     }
 

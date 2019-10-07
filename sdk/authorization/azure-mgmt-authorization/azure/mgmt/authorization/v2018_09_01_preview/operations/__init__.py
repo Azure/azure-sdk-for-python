@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .role_assignments_operations import RoleAssignmentsOperations
+from ._role_assignments_operations import RoleAssignmentsOperations
 
 __all__ = [
     'RoleAssignmentsOperations',

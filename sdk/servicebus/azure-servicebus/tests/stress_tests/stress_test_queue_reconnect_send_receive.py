@@ -17,7 +17,7 @@ def message_send_process(sb_config, queue, endtime):
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
-        debug=True)
+        debug=False)
 
     total = 0
     queue_client = client.get_queue(queue)
@@ -33,7 +33,7 @@ def message_receive_process(sb_config, queue, endtime):
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(queue)
     total = 0

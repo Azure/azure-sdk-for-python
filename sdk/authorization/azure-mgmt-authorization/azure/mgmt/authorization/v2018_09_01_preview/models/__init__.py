@@ -10,22 +10,22 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .role_assignment_filter_py3 import RoleAssignmentFilter
-    from .role_assignment_py3 import RoleAssignment
-    from .role_assignment_create_parameters_py3 import RoleAssignmentCreateParameters
+    from ._models_py3 import RoleAssignment
+    from ._models_py3 import RoleAssignmentCreateParameters
+    from ._models_py3 import RoleAssignmentFilter
 except (SyntaxError, ImportError):
-    from .role_assignment_filter import RoleAssignmentFilter
-    from .role_assignment import RoleAssignment
-    from .role_assignment_create_parameters import RoleAssignmentCreateParameters
-from .role_assignment_paged import RoleAssignmentPaged
-from .authorization_management_client_enums import (
+    from ._models import RoleAssignment
+    from ._models import RoleAssignmentCreateParameters
+    from ._models import RoleAssignmentFilter
+from ._paged_models import RoleAssignmentPaged
+from ._authorization_management_client_enums import (
     PrincipalType,
 )
 
 __all__ = [
-    'RoleAssignmentFilter',
     'RoleAssignment',
     'RoleAssignmentCreateParameters',
+    'RoleAssignmentFilter',
     'RoleAssignmentPaged',
     'PrincipalType',
 ]

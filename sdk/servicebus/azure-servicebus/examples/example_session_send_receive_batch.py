@@ -18,7 +18,7 @@ def sample_session_send_receive_batch(sb_config, queue):
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(queue)
     with queue_client.get_sender(session=session_id) as sender:

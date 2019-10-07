@@ -1,11 +1,15 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+import binascii
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
 
-from .constants import Endpoints
+from ._constants import Endpoints
 
 try:
     from typing import TYPE_CHECKING
@@ -18,35 +22,54 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredentialBase(object):
-    def __init__(self, client_id, secret, tenant_id, **kwargs):
+    """Sans I/O base for client secret credentials"""
+
+    def __init__(self, client_id, secret, tenant_id, **kwargs):  # pylint:disable=unused-argument
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not secret:
             raise ValueError("secret should be an Azure Active Directory application's client secret")
         if not tenant_id:
-            raise ValueError("tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')")
+            raise ValueError(
+                "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
+            )
         self._form_data = {"client_id": client_id, "client_secret": secret, "grant_type": "client_credentials"}
         super(ClientSecretCredentialBase, self).__init__()
 
 
 class CertificateCredentialBase(object):
-    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
+    """Sans I/O base for certificate credentials"""
+
+    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):  # pylint:disable=unused-argument
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not certificate_path:
             # TODO: support PFX
-            raise ValueError("certificate_path must be the path to a PEM-encoded private key file")
+            raise ValueError(
+                "certificate_path must be the path to a PEM file containing an "
+                "x509 certificate and its private key, not protected with a password"
+            )
 
         super(CertificateCredentialBase, self).__init__()
-        auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
 
-        with open(certificate_path) as pem:
-            private_key = pem.read()
-        signer = JwtSigner(private_key, "RS256")
-        client_assertion = signer.sign_assertion(audience=auth_url, issuer=client_id)
-        self._form_data = {
-            "client_assertion": client_assertion,
+        with open(certificate_path, "rb") as f:
+            pem_bytes = f.read()
+
+        # TODO: support pem password
+        private_key = serialization.load_pem_private_key(pem_bytes, password=None, backend=default_backend())
+        cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
+        fingerprint = cert.fingerprint(hashes.SHA1())
+
+        self._auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
+        self._client_id = client_id
+        self._signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
+
+    def _get_request_data(self, *scopes):
+        assertion = self._signer.sign_assertion(audience=self._auth_url, issuer=self._client_id)
+        return {
+            "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            "client_id": client_id,
+            "client_id": self._client_id,
             "grant_type": "client_credentials",
+            "scope": " ".join(scopes)
         }

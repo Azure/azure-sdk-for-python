@@ -11,36 +11,27 @@ the event in on_event_data callback.
 
 """
 import os
-import sys
-import logging
-from azure.eventhub import EventHubClient, Receiver, Offset
+from azure.eventhub import EventHubClient, EventPosition, EventHubSharedKeyCredential
 
-import examples
-logger = examples.get_logger(logging.INFO)
 
-# Address can be in either of these formats:
-# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
-# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
-
-# SAS policy and key are not required if they are encoded in the URL
-USER = os.environ.get('EVENT_HUB_SAS_POLICY')
-KEY = os.environ.get('EVENT_HUB_SAS_KEY')
-CONSUMER_GROUP = "$default"
-OFFSET = Offset("-1")
+HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
+EVENT_HUB = os.environ['EVENT_HUB_NAME']
+USER = os.environ['EVENT_HUB_SAS_POLICY']
+KEY = os.environ['EVENT_HUB_SAS_KEY']
+EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
-
 
 total = 0
 last_sn = -1
 last_offset = "-1"
-client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-try:
-    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=100, offset=OFFSET)
-    client.run()
-    batched_events = receiver.receive(max_batch_size=10)
+client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
+
+consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION,
+                                  event_position=EVENT_POSITION, prefetch=100)
+with consumer:
+    batched_events = consumer.receive(max_batch_size=10)
     for event_data in batched_events:
-        last_offset = event_data.offset.value
+        last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
         print("Partition {}, Received {}, sn={} offset={}".format(
@@ -48,8 +39,3 @@ try:
             total,
             last_sn,
             last_offset))
-
-except KeyboardInterrupt:
-    pass
-finally:
-    client.stop()

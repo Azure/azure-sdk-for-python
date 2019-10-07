@@ -1,0 +1,94 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 2eaa1a4a-8ecb-11e9-9ac5-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:12 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer8d2416f2/blob8d2416f2
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
+        \ specified blob does not exist.\nRequestId:e11051ed-801e-00d7-63d7-222e27000000\n\
+        Time:2019-06-14T17:38:13.3365090Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '215'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 14 Jun 2019 17:38:12 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - e11051ed-801e-00d7-63d7-222e27000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 80db028a-8ed4-11e9-8512-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 18:44:55 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainer8d2416f2/blob8d2416f2
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
+        \ specified blob does not exist.\nRequestId:f3c5c967-901e-002d-33e1-22e7c0000000\n\
+        Time:2019-06-14T18:44:55.9401507Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '215'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 14 Jun 2019 18:44:55 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - f3c5c967-901e-002d-33e1-22e7c0000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+version: 1

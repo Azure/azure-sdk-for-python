@@ -60,10 +60,9 @@ class EnvTest(unittest.TestCase):
 
         os.environ["COSMOS_ENDPOINT"] = cls.host
         os.environ["COSMOS_KEY"] = cls.masterKey
-        cls.client = cosmos_client.CosmosClient(None, None, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(url=cls.host, credential=cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
-        cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
 
     @classmethod
     def tearDownClass(cls):
@@ -80,7 +79,7 @@ class EnvTest(unittest.TestCase):
                  'spam2': 'eggs',
                  }
 
-        self.client.CreateItem(self.collection_link, d)
+        self.created_collection.create_item(d)
 
     @classmethod
     def GetDatabaseLink(cls, database, is_name_based=True):

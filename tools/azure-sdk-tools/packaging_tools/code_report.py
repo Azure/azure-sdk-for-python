@@ -7,6 +7,7 @@ import os
 import pkgutil
 from pathlib import Path
 import subprocess
+import sys
 import types
 from typing import Dict, Any, Optional
 
@@ -32,16 +33,21 @@ def parse_input(input_parameter):
         module_name = ".".join([module_name, split_package_name[1]])
     return package_name, module_name
 
+def create_empty_report():
+    return {
+        "models": {
+            "enums": {},
+            "exceptions": {},
+            "models": {}
+        },
+        "operations": {}
+    }
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
 
-    report = {}
-    report["models"] = {
-        "enums": {},
-        "exceptions": {},
-        "models": {}
-    }
+    report = create_empty_report()
+
     # Look for models first
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:
@@ -68,7 +74,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
                 # Keep it
                 func_content = create_report_from_func(op_attr)
                 op_content.setdefault("functions", {})[op_attr_name] = func_content
-        report.setdefault("operations", {})[op_name] = op_content
+        report['operations'][op_name] = op_content
 
     return report
 
@@ -126,6 +132,23 @@ def resolve_package_directory(package_name):
 
     return packages[0]
 
+def merge_report(report_paths):
+    """Merge report on the given paths list.
+    """
+    if len(report_paths) == 1:
+        raise ValueError("Doesn't make sense to merge a report if there is only one report....")
+
+    merged_report = create_empty_report()
+    for report in sorted(report_paths):
+        with report.open() as report_fd:
+            report_json = json.load(report_fd)
+
+        merged_report["models"]["enums"].update(report_json["models"]["enums"])
+        merged_report["models"]["exceptions"].update(report_json["models"]["exceptions"])
+        merged_report["models"]["models"].update(report_json["models"]["models"])
+        merged_report["operations"].update(report_json["operations"])
+    return merged_report
+
 def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False):
     package_name, module_name = parse_input(input_parameter)
     path_to_package = resolve_package_directory(package_name)
@@ -164,26 +187,33 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
 
     modules = find_autorest_generated_folder(module_name)
     result = []
+    version = version or "latest"
+    output_folder = Path(path_to_package) / Path("code_reports") / Path(version)
+    output_folder.mkdir(parents=True, exist_ok=True)
+
     for module_name in modules:
         _LOGGER.info(f"Working on {module_name}")
 
         report = create_report(module_name)
-        version = version or "latest"
-
-        output_filename = Path(path_to_package) / Path("code_reports") / Path(version)
 
         module_for_path = get_sub_module_part(package_name, module_name)
         if module_for_path:
-            output_filename /= Path(module_for_path+".json")
+            output_filename = output_folder / Path(module_for_path+".json")
         else:
-            output_filename /= Path("report.json")
-
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
+            output_filename = output_folder / Path("report.json")
 
         with open(output_filename, "w") as fd:
             json.dump(report, fd, indent=2)
             _LOGGER.info(f"Report written to {output_filename}")
         result.append(output_filename)
+
+    if len(result) > 1:
+        merged_report = merge_report(result)
+        output_filename = output_folder / Path("merged_report.json")
+        with open(output_filename, "w") as fd:
+            json.dump(merged_report, fd, indent=2)
+            _LOGGER.info(f"Merged report written to {output_filename}")
+
     return result
 
 def find_autorest_generated_folder(module_prefix="azure"):

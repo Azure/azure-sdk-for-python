@@ -38,13 +38,17 @@ class SqlVirtualMachine(TrackedResource):
     :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
-    :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
+    :param sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
      SQL2017-WS2016.
-    :vartype sql_image_offer: str
+    :type sql_image_offer: str
     :param sql_server_license_type: SQL Server license type. Possible values
      include: 'PAYG', 'AHUB'
     :type sql_server_license_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
+    :param sql_management: SQL Server Management type. Possible values
+     include: 'Full', 'LightWeight', 'NoAgent'
+    :type sql_management: str or
+     ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
     :param sql_image_sku: SQL Server edition type. Possible values include:
      'Developer', 'Express', 'Standard', 'Enterprise', 'Web'
     :type sql_image_sku: str or
@@ -78,7 +82,6 @@ class SqlVirtualMachine(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'sql_image_offer': {'readonly': True},
     }
 
     _attribute_map = {
@@ -92,6 +95,7 @@ class SqlVirtualMachine(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'sql_image_offer': {'key': 'properties.sqlImageOffer', 'type': 'str'},
         'sql_server_license_type': {'key': 'properties.sqlServerLicenseType', 'type': 'str'},
+        'sql_management': {'key': 'properties.sqlManagement', 'type': 'str'},
         'sql_image_sku': {'key': 'properties.sqlImageSku', 'type': 'str'},
         'sql_virtual_machine_group_resource_id': {'key': 'properties.sqlVirtualMachineGroupResourceId', 'type': 'str'},
         'wsfc_domain_credentials': {'key': 'properties.wsfcDomainCredentials', 'type': 'WsfcDomainCredentials'},
@@ -106,8 +110,9 @@ class SqlVirtualMachine(TrackedResource):
         self.identity = kwargs.get('identity', None)
         self.virtual_machine_resource_id = kwargs.get('virtual_machine_resource_id', None)
         self.provisioning_state = None
-        self.sql_image_offer = None
+        self.sql_image_offer = kwargs.get('sql_image_offer', None)
         self.sql_server_license_type = kwargs.get('sql_server_license_type', None)
+        self.sql_management = kwargs.get('sql_management', None)
         self.sql_image_sku = kwargs.get('sql_image_sku', None)
         self.sql_virtual_machine_group_resource_id = kwargs.get('sql_virtual_machine_group_resource_id', None)
         self.wsfc_domain_credentials = kwargs.get('wsfc_domain_credentials', None)

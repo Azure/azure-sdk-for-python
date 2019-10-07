@@ -1,0 +1,76 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-date:
+      - Fri, 06 Sep 2019 21:53:49 GMT
+      x-ms-meta:
+      - '{''val1'': ''test'', ''val2'': ''blah''}'
+      x-ms-meta-val1:
+      - test
+      x-ms-meta-val2:
+      - blah
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://pyacrstoraged355138d.queue.core.windows.net/pythonqueued355138d
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 06 Sep 2019 21:53:48 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoraged355138d.queue.core.windows.net
+        - /pythonqueued355138d
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-date:
+      - Fri, 06 Sep 2019 21:53:50 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://pyacrstoraged355138d.queue.core.windows.net/pythonqueued355138d?comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 06 Sep 2019 21:53:48 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-approximate-messages-count: '0'
+      x-ms-meta-val1: test
+      x-ms-meta-val2: blah
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoraged355138d.queue.core.windows.net
+        - /pythonqueued355138d
+        - comp=metadata
+        - ''
+version: 1

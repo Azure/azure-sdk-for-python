@@ -43,7 +43,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        self.assertEqual(len(all_ops), 35)
+        self.assertEqual(len(all_ops), 41)
         self.assertEqual(all_ops[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(all_ops[0].origin, 'system')
         self.assertEqual(all_ops[0].display.provider, 'Microsoft Batch')
@@ -52,7 +52,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 3)
+        self.assertEqual(quotas.account_quota, 1)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
@@ -117,8 +117,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Get Account
         account = self.mgmt_batch_client.batch_account.get(resource_group.name, account_name)
-        self.assertEqual(account.dedicated_core_quota, 20)
-        self.assertEqual(account.low_priority_core_quota, 100)
+        self.assertEqual(account.dedicated_core_quota, 700)
+        self.assertEqual(account.low_priority_core_quota, 500)
         self.assertEqual(account.pool_quota, 100)
         self.assertEqual(account.pool_allocation_mode.value, 'BatchService')
 
@@ -160,7 +160,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         )
         batch_account = models.BatchAccountCreateParameters(
             location=location,
-            auto_storage=models.AutoStorageBaseProperties(storage_resource)
+            auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
         )
         account_name = self._get_account_name()
         account_setup = self.mgmt_batch_client.batch_account.create(
@@ -269,7 +269,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         cert = self.mgmt_batch_client.certificate.get(resource_group.name, batch_account.name, certificate)
         self.assertIsInstance(cert, models.Certificate)
         self.assertEqual(cert.thumbprint.lower(), 'cff2ab63c8c955aaf71989efa641b906558d9fb7')
-        self.assertEqual(cert.thumbprint_algorithm, 'SHA1')
+        self.assertEqual(cert.thumbprint_algorithm, 'sha1')
         self.assertIsNone(cert.delete_certificate_error)
 
         # Test Update Certiciate
@@ -302,14 +302,14 @@ class MgmtBatchTest(AzureMgmtTestCase):
             start_task=models.StartTask(
                 command_line="cmd.exe /c \"echo hello world\"",
                 resource_files=[models.ResourceFile(http_url='https://blobsource.com', file_path='filename.txt')],
-                environment_settings=[models.EnvironmentSetting('ENV_VAR', 'env_value')],
+                environment_settings=[models.EnvironmentSetting(name='ENV_VAR', value='env_value')],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(
                         elevation_level=models.ElevationLevel.admin
                     )
                 )
             ),
-            user_accounts=[models.UserAccount('UserName', 'p@55wOrd')],
+            user_accounts=[models.UserAccount(name='UserName', password='p@55wOrd')],
             scale_settings=models.ScaleSettings(
                 fixed_scale=models.FixedScaleSettings(
                     target_dedicated_nodes=0,
@@ -334,7 +334,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
                         sku='2016-Datacenter-smalldisk'
                     ),
                     node_agent_sku_id='batch.node.windows amd64',
-                    windows_configuration=models.WindowsConfiguration(True)
+                    windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True)
                 )
             ),
             scale_settings=models.ScaleSettings(

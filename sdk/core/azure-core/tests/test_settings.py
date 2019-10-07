@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-
+import sys
 import pytest
 
 # module under test
@@ -75,6 +75,13 @@ class TestPrioritizedSetting(object):
         ps.set_value(40)
         assert ps() == 40
 
+    def test_user_unset(self):
+        ps = m.PrioritizedSetting("foo", default=2)
+        ps.set_value(40)
+        assert ps() == 40
+        ps.unset_value()
+        assert ps() == 2
+
     def test_user_set_converts(self):
         ps = m.PrioritizedSetting("foo", convert=int)
         ps.set_value("40")
@@ -94,9 +101,7 @@ class TestPrioritizedSetting(object):
         assert ps() == 10
 
         # 1. system value
-        ps = m.PrioritizedSetting(
-            "foo", env_var="AZURE_FOO", convert=int, default=10, system_hook=lambda: 20
-        )
+        ps = m.PrioritizedSetting("foo", env_var="AZURE_FOO", convert=int, default=10, system_hook=lambda: 20)
         assert ps() == 20
 
         # 2. environment variable
@@ -130,11 +135,11 @@ class TestPrioritizedSetting(object):
 
 
 class TestConverters(object):
-    @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on"])
+    @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on", "true", "True", True])
     def test_convert_bool(self, value):
         assert m.convert_bool(value)
 
-    @pytest.mark.parametrize("value", ["No", "NO", "no", "0", "OFF", "off"])
+    @pytest.mark.parametrize("value", ["No", "NO", "no", "0", "OFF", "off", "false", "False", False])
     def test_convert_bool_false(self, value):
         assert not m.convert_bool(value)
 
@@ -198,10 +203,20 @@ class TestStandardSettings(object):
 
     def test_defaults(self):
         val = m.settings.defaults
-        assert isinstance(val, tuple)
-        assert val == m.settings.config(log_level=20, tracing_enabled=False)
+        # assert isinstance(val, tuple)
+        defaults = m.settings.config(
+            log_level=20, tracing_enabled=False, tracing_implementation=None
+        )
+        assert val.log_level == defaults.log_level
+        assert val.tracing_enabled == defaults.tracing_enabled
+        assert val.tracing_implementation == defaults.tracing_implementation
         os.environ["AZURE_LOG_LEVEL"] = "debug"
-        assert val == m.settings.config(log_level=20, tracing_enabled=False)
+        defaults = m.settings.config(
+            log_level=20, tracing_enabled=False, tracing_implementation=None
+        )
+        assert val.log_level == defaults.log_level
+        assert val.tracing_enabled == defaults.tracing_enabled
+        assert val.tracing_implementation == defaults.tracing_implementation
         del os.environ["AZURE_LOG_LEVEL"]
 
     def test_current(self):

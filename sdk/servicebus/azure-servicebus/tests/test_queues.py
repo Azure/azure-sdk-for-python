@@ -62,7 +62,7 @@ def test_queue_by_queue_client_conn_str_receive_handler_peeklock(live_servicebus
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=standard_queue,
-        debug=True)
+        debug=False)
 
     with queue_client.get_sender() as sender:
         for i in range(10):
@@ -84,7 +84,7 @@ def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(live_se
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=standard_queue,
-        debug=True)
+        debug=False)
 
     with queue_client.get_sender() as sender:
         for i in range(10):
@@ -114,7 +114,7 @@ def test_queue_by_queue_client_conn_str_receive_handler_with_stop(live_servicebu
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=standard_queue,
-        debug=True)
+        debug=False)
 
     with queue_client.get_sender() as sender:
         for i in range(10):
@@ -148,7 +148,7 @@ def test_queue_by_servicebus_client_iter_messages_simple(live_servicebus_config,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
@@ -174,7 +174,7 @@ def test_queue_by_servicebus_client_iter_messages_simple(live_servicebus_config,
 
 @pytest.mark.liveTest
 def test_queue_by_servicebus_conn_str_client_iter_messages_with_abandon(live_servicebus_config, standard_queue):
-    client = ServiceBusClient.from_connection_string(live_servicebus_config['conn_str'], debug=True)
+    client = ServiceBusClient.from_connection_string(live_servicebus_config['conn_str'], debug=False)
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
@@ -209,7 +209,7 @@ def test_queue_by_servicebus_client_iter_messages_with_defer(live_servicebus_con
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -243,7 +243,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_client(
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -283,7 +283,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receive
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -318,7 +318,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receive
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -359,7 +359,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receive
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -392,7 +392,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_fou
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
@@ -425,7 +425,7 @@ def test_queue_by_servicebus_client_receive_batch_with_deadletter(live_servicebu
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
@@ -461,7 +461,7 @@ def test_queue_by_servicebus_client_receive_batch_with_retrieve_deadletter(live_
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
@@ -500,7 +500,7 @@ def test_queue_by_servicebus_client_session_fail(live_servicebus_config, standar
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with pytest.raises(ValueError):
@@ -516,7 +516,7 @@ def test_queue_by_servicebus_client_browse_messages_client(live_servicebus_confi
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_sender() as sender:
@@ -539,7 +539,7 @@ def test_queue_by_servicebus_client_browse_messages_with_receiver(live_servicebu
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
@@ -563,7 +563,7 @@ def test_queue_by_servicebus_client_browse_empty_messages(live_servicebus_config
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
@@ -576,7 +576,7 @@ def test_queue_by_servicebus_client_fail_send_messages(live_servicebus_config, s
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     too_large = "A" * 1024 * 512
@@ -611,7 +611,7 @@ def test_queue_by_servicebus_client_fail_send_batch_messages(live_servicebus_con
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     results = queue_client.send(BatchMessage(batch_data()))
@@ -636,7 +636,7 @@ def test_queue_by_servicebus_client_renew_message_locks(live_servicebus_config, 
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
     messages = []
@@ -672,7 +672,7 @@ def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(live_
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=standard_queue,
-        debug=True)
+        debug=False)
 
     with queue_client.get_sender() as sender:
         for i in range(10):
@@ -719,7 +719,7 @@ def test_queue_message_time_to_live(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
     
@@ -749,7 +749,7 @@ def test_queue_message_duplicate_detection(live_servicebus_config, duplicate_que
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     message_id = uuid.uuid4()
     queue_client = client.get_queue(duplicate_queue)
@@ -775,7 +775,7 @@ def test_queue_message_connection_closed(live_servicebus_config, standard_queue)
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
     
@@ -797,7 +797,7 @@ def test_queue_message_expiry(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
     
@@ -829,7 +829,7 @@ def test_queue_message_lock_renew(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
     
@@ -859,7 +859,7 @@ def test_queue_message_receive_and_delete(live_servicebus_config, standard_queue
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     queue_client = client.get_queue(standard_queue)
     
     with queue_client.get_sender() as sender:
@@ -896,7 +896,7 @@ def test_queue_message_batch(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     queue_client = client.get_queue(standard_queue)
     
     def message_content():
@@ -926,10 +926,10 @@ def test_queue_schedule_message(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver() as receiver:
         with queue_client.get_sender() as sender:
             content = str(uuid.uuid4())
@@ -960,10 +960,10 @@ def test_queue_schedule_multiple_messages(live_servicebus_config, standard_queue
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver(prefetch=20) as receiver:
         with queue_client.get_sender() as sender:
             content = str(uuid.uuid4())
@@ -998,10 +998,10 @@ def test_queue_cancel_scheduled_messages(live_servicebus_config, standard_queue)
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver() as receiver:
         with queue_client.get_sender() as sender:
             message_a = Message("Test scheduled message")

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .deny_assignments_operations import DenyAssignmentsOperations
+from ._deny_assignments_operations import DenyAssignmentsOperations
 
 __all__ = [
     'DenyAssignmentsOperations',

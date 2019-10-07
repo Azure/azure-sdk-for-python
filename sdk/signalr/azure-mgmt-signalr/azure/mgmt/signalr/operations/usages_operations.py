@@ -23,7 +23,7 @@ class UsagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Possible values include: '2018-03-01-preview', '2018-10-01'. Constant value: "2018-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-10-01".
     """
 
     models = models

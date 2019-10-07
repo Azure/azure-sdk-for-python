@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .managed_clusters_operations import ManagedClustersOperations
-from .agent_pools_operations import AgentPoolsOperations
+from ._operations import Operations
+from ._managed_clusters_operations import ManagedClustersOperations
+from ._agent_pools_operations import AgentPoolsOperations
 
 __all__ = [
     'Operations',

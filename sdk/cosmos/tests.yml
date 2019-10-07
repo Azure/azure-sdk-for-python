@@ -1,0 +1,11 @@
+trigger: none
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      MaxParallel: 1
+      ServiceDirectory: cosmos
+      TestMarkArgument: not globaldb
+      EnvVars:
+        ACCOUNT_KEY: $(python-cosmos-live-account-key)
+        ACCOUNT_HOST: $(python-cosmos-live-account-host)

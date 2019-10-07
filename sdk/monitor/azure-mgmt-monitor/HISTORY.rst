@@ -3,6 +3,46 @@
 Release History
 ===============
 
+0.7.0 (2019-06-24)
+++++++++++++++++++
+
+This package now support profiles as parameter for sovereign cloud support
+
+**Features**
+
+- Model MultiMetricCriteria has a new parameter metric_namespace
+- Model MultiMetricCriteria has a new parameter dimensions
+- Added operation group ServiceDiagnosticSettingsOperations
+- Added operation group GuestDiagnosticsSettingsOperations
+- Added operation group BaselinesOperations
+- Added operation group GuestDiagnosticsSettingsAssociationOperations
+- Added operation group BaselineOperations
+
+**Breaking changes**
+
+- Operation MetricBaselineOperations.get has a new signature
+- Model MultiMetricCriteria has a new required parameter name
+- Model MultiMetricCriteria has a new required parameter time_aggregation
+- Model MultiMetricCriteria has a new required parameter metric_name
+- Model ArmRoleReceiver has a new required parameter use_common_alert_schema
+- Model LogicAppReceiver has a new required parameter use_common_alert_schema
+- Model AzureFunctionReceiver has a new required parameter use_common_alert_schema
+- Model EmailReceiver has a new required parameter use_common_alert_schema
+- Model AutomationRunbookReceiver has a new required parameter use_common_alert_schema
+- Model WebhookReceiver has a new signature
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes for some imports.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- MonitorManagementClient cannot be imported from `azure.mgmt.monitor.monitor_management_client` anymore (import from `azure.mgmt.monitor` works like before)
+- MonitorManagementClientConfiguration import has been moved from `azure.mgmt.monitor.monitor_management_client` to `azure.mgmt.monitor`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.monitor.models.my_class` (import from `azure.mgmt.monitor.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.monitor.operations.my_class_operations` (import from `azure.mgmt.monitor.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 0.6.0 (2018-03-06)
 ++++++++++++++++++
 

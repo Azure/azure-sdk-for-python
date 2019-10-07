@@ -1,8 +1,8 @@
 import unittest
 import uuid
-import pytest
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.documents as documents
+import azure.cosmos._retry_utility as retry_utility
+import pytest
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -25,81 +25,79 @@ class QueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = cls.config.create_database_if_not_exist(cls.client)
 
     def test_first_and_last_slashes_trimmed_for_query_string (self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-        document_definition = {'pk': 'pk', 'id':'myId'}
-        self.client.CreateItem(created_collection['_self'], document_definition)
+        document_definition = {'pk': 'pk', 'id': 'myId'}
+        created_collection.create_item(body=document_definition)
 
-        query_options = {'partitionKey': 'pk'}
-        collectionLink = '/dbs/' + self.created_db['id'] + '/colls/' + created_collection['id'] + '/'
         query = 'SELECT * from c'
-        query_iterable = self.client.QueryItems(collectionLink, query, query_options)
-
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk'
+        )
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')
 
     def test_query_change_feed(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-        collection_link = created_collection['_self']
         # The test targets partition #3
-        pkRangeId = "3"
+        pkRangeId = "2"
 
-        # Read change feed with passing options
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link)
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-
-        # Read change feed without specifying partition key range ID
-        options = {}
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        # Read change feed without passing any options
+        query_iterable = created_collection.query_items_change_feed()
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
-        options['partitionKeyRangeId'] = pkRangeId
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        query_iterable = created_collection.query_items_change_feed(partition_key_range_id=pkRangeId)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in self.client.last_response_headers)
-        self.assertNotEquals(self.client.last_response_headers['etag'], '')
+        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
+        self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
 
         # Read change feed from beginning should return an empty list
-        options['isStartFromBeginning'] = True
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        query_iterable = created_collection.query_items_change_feed(
+            partition_key_range_id=pkRangeId,
+            is_start_from_beginning=True
+        )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in self.client.last_response_headers)
-        continuation1 = self.client.last_response_headers['etag']
-        self.assertNotEquals(continuation1, '')
+        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
+        continuation1 = created_collection.client_connection.last_response_headers['etag']
+        self.assertNotEqual(continuation1, '')
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id':'doc1'}
-        self.client.CreateItem(collection_link, document_definition)
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        created_collection.create_item(body=document_definition)
+        query_iterable = created_collection.query_items_change_feed(
+            partition_key_range_id=pkRangeId,
+            is_start_from_beginning=True,
+        )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 1)
         self.assertEqual(iter_list[0]['id'], 'doc1')
-        self.assertTrue('etag' in self.client.last_response_headers)
-        continuation2 = self.client.last_response_headers['etag']
-        self.assertNotEquals(continuation2, '')
-        self.assertNotEquals(continuation2, continuation1)
+        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
+        continuation2 = created_collection.client_connection.last_response_headers['etag']
+        self.assertNotEqual(continuation2, '')
+        self.assertNotEqual(continuation2, continuation1)
 
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
-        document_definition = {'pk': 'pk', 'id':'doc2'}
-        self.client.CreateItem(collection_link, document_definition)
-        document_definition = {'pk': 'pk', 'id':'doc3'}
-        self.client.CreateItem(collection_link, document_definition)
-        options['isStartFromBeginning'] = False
-        
+        document_definition = {'pk': 'pk', 'id': 'doc2'}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        created_collection.create_item(body=document_definition)
+
         for pageSize in [1, 100]:
             # verify iterator
-            options['continuation'] = continuation2
-            options['maxItemCount'] = pageSize
-            query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+            query_iterable = created_collection.query_items_change_feed(
+                partition_key_range_id=pkRangeId,
+                continuation=continuation2,
+                max_item_count=pageSize
+            )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
@@ -107,65 +105,111 @@ class QueryTest(unittest.TestCase):
                 actual_ids += item['id'] + '.'    
             self.assertEqual(actual_ids, expected_ids)
 
-            # verify fetch_next_block
+            # verify by_page
             # the options is not copied, therefore it need to be restored
-            options['continuation'] = continuation2
-            query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+            query_iterable = created_collection.query_items_change_feed(
+                partition_key_range_id=pkRangeId,
+                continuation=continuation2,
+                max_item_count=pageSize
+            )
             count = 0
             expected_count = 2
             all_fetched_res = []
-            while (True):
-                fetched_res = query_iterable.fetch_next_block()
-                self.assertEquals(len(fetched_res), min(pageSize, expected_count - count))
+            for page in query_iterable.by_page():
+                fetched_res = list(page)
+                self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
-                if len(fetched_res) == 0:
-                    break
+
             actual_ids = ''
             for item in all_fetched_res:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
-            # verify there's no more results
-            self.assertEquals(query_iterable.fetch_next_block(), [])
 
         # verify reading change feed from the beginning
-        options['isStartFromBeginning'] = True
-        options['continuation'] = None
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        query_iterable = created_collection.query_items_change_feed(
+            partition_key_range_id=pkRangeId,
+            is_start_from_beginning=True
+        )
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__iter__()
         for i in range(0, len(expected_ids)):
             doc = next(it)
-            self.assertEquals(doc['id'], expected_ids[i])
-        self.assertTrue('etag' in self.client.last_response_headers)
-        continuation3 = self.client.last_response_headers['etag']
+            self.assertEqual(doc['id'], expected_ids[i])
+        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
+        continuation3 = created_collection.client_connection.last_response_headers['etag']
 
         # verify reading empty change feed 
-        options['continuation'] = continuation3
-        query_iterable = self.client.QueryItemsChangeFeed(collection_link, options)
+        query_iterable = created_collection.query_items_change_feed(
+            partition_key_range_id=pkRangeId,
+            continuation=continuation3,
+            is_start_from_beginning=True
+        )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
 
-    def test_populate_query_metrics (self):
+    def test_populate_query_metrics(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         document_definition = {'pk': 'pk', 'id':'myId'}
-        self.client.CreateItem(created_collection['_self'], document_definition)
+        created_collection.create_item(body=document_definition)
 
-        query_options = {'partitionKey': 'pk',
-                         'populateQueryMetrics': True}
         query = 'SELECT * from c'
-        query_iterable = self.client.QueryItems(created_collection['_self'], query, query_options)
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_query_metrics=True
+        )
 
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')
 
         METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
-        self.assertTrue(METRICS_HEADER_NAME in self.client.last_response_headers)
-        metrics_header = self.client.last_response_headers[METRICS_HEADER_NAME]
+        self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
+        metrics_header = created_collection.client_connection.last_response_headers[METRICS_HEADER_NAME]
         # Validate header is well-formed: "key1=value1;key2=value2;etc"
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
+
+    def test_max_item_count_honored_in_order_by_query(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        docs = []
+        for i in range(10):
+            document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
+            docs.append(created_collection.create_item(body=document_definition))
+
+        query = 'SELECT * from c ORDER BY c._ts'
+        query_iterable = created_collection.query_items(
+            query=query,
+            max_item_count=1,
+            enable_cross_partition_query=True
+        )
+        # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
+        self.validate_query_requests_count(query_iterable, 16 * 2)
+
+        query_iterable = created_collection.query_items(
+            query=query,
+            max_item_count=100,
+            enable_cross_partition_query=True
+        )
+
+        # 1 call to get query plan 1 calls to one partition with the documents, 1 call each to other 4 partitions
+        self.validate_query_requests_count(query_iterable, 6 * 2)
+
+    def validate_query_requests_count(self, query_iterable, expected_count):
+        self.count = 0
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
+        retry_utility.ExecuteFunction = self._MockExecuteFunction
+        for block in query_iterable.by_page():
+            assert len(list(block)) != 0
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEqual(self.count, expected_count)
+        self.count = 0
+
+    def _MockExecuteFunction(self, function, *args, **kwargs):
+        self.count += 1
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
+
 
 if __name__ == "__main__":
     unittest.main()

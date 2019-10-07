@@ -1,0 +1,5 @@
+-e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+aiohttp>=3.0; python_version >= '3.5'
+pytest

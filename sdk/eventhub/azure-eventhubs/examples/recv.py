@@ -9,51 +9,36 @@
 An example to show receiving events from an Event Hub partition.
 """
 import os
-import sys
-import logging
 import time
-from azure.eventhub import EventHubClient, Receiver, Offset
+from azure.eventhub import EventHubClient, EventPosition, EventHubSharedKeyCredential
 
-import examples
-logger = examples.get_logger(logging.INFO)
+HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
+EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
-# Address can be in either of these formats:
-# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
-# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
+USER = os.environ['EVENT_HUB_SAS_POLICY']
+KEY = os.environ['EVENT_HUB_SAS_KEY']
 
-# SAS policy and key are not required if they are encoded in the URL
-USER = os.environ.get('EVENT_HUB_SAS_POLICY')
-KEY = os.environ.get('EVENT_HUB_SAS_KEY')
-CONSUMER_GROUP = "$default"
-OFFSET = Offset("-1")
+EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
 
 
 total = 0
 last_sn = -1
 last_offset = "-1"
-client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-try:
-    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
-    client.run()
+client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
+                        network_tracing=False)
+
+consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION,
+                                  event_position=EVENT_POSITION, prefetch=5000)
+with consumer:
     start_time = time.time()
-    batch = receiver.receive(timeout=5000)
+    batch = consumer.receive(timeout=5)
     while batch:
         for event_data in batch:
             last_offset = event_data.offset
             last_sn = event_data.sequence_number
-            print("Received: {}, {}".format(last_offset.value, last_sn))
+            print("Received: {}, {}".format(last_offset, last_sn))
             print(event_data.body_as_str())
             total += 1
-        batch = receiver.receive(timeout=5000)
-
-    end_time = time.time()
-    client.stop()
-    run_time = end_time - start_time
-    print("Received {} messages in {} seconds".format(total, run_time))
-
-except KeyboardInterrupt:
-    pass
-finally:
-    client.stop()
+        batch = consumer.receive(timeout=5)
+    print("Received {} messages in {} seconds".format(total, time.time() - start_time))

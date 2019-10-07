@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .hana_instances_operations import HanaInstancesOperations
+from ._operations import Operations
+from ._hana_instances_operations import HanaInstancesOperations
+from ._sap_monitors_operations import SapMonitorsOperations
 
 __all__ = [
     'Operations',
     'HanaInstancesOperations',
+    'SapMonitorsOperations',
 ]

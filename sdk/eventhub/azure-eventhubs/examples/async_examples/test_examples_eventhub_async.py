@@ -5,175 +5,106 @@
 #--------------------------------------------------------------------------
 
 import pytest
-import datetime
-import os
-import time
 import logging
 import asyncio
-
-from azure.eventhub import EventHubError
 
 
 @pytest.mark.asyncio
 async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
     # [START create_eventhub_client_async]
-    from azure.eventhub import EventHubClientAsync
+    from azure.eventhub.aio import EventHubClient
     import os
     connection_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
         os.environ['EVENT_HUB_HOSTNAME'],
         os.environ['EVENT_HUB_SAS_POLICY'],
         os.environ['EVENT_HUB_SAS_KEY'],
-        os.environ['EVENT_HUB_NAME'])    
-    client = EventHubClientAsync.from_connection_string(connection_str)
+        os.environ['EVENT_HUB_NAME'])
+    client = EventHubClient.from_connection_string(connection_str)
     # [END create_eventhub_client_async]
 
-    from azure.eventhub import EventData, Offset
+    from azure.eventhub import EventData, EventPosition
 
     # [START create_eventhub_client_async_sender]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    # Add a async sender to the async client object.
-    sender = client.add_async_sender(partition="0")
+    client = EventHubClient.from_connection_string(connection_str)
+    # Create an async producer.
+    producer = client.create_producer(partition_id="0")
     # [END create_eventhub_client_async_sender]
 
     # [START create_eventhub_client_async_receiver]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    # Add a async receiver to the async client object.
-    receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    # Create an async consumer.
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    # Create an exclusive async consumer.
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), owner_level=1)
     # [END create_eventhub_client_async_receiver]
 
-    # [START create_eventhub_client_async_epoch_receiver]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    # Add a async receiver to the async client object.
-    epoch_receiver = client.add_async_epoch_receiver(consumer_group="$default", partition="0", epoch=42)
-    # [END create_eventhub_client_async_epoch_receiver]
+    client = EventHubClient.from_connection_string(connection_str)
+    producer = client.create_producer(partition_id="0")
+    consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
-    # [START eventhub_client_run_async]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    # Add AsyncSenders/AsyncReceivers
-    try:
-        # Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
-        await client.run_async()
-        # Start sending and receiving
-    except:
-        raise
-    finally:
-        await client.stop_async()
-    # [END eventhub_client_run_async]
+    await consumer.receive(timeout=1)
 
-    
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    sender = client.add_async_sender(partition="0")
-    receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
-    try:
-        # Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
-        await client.run_async()   
+    # [START eventhub_client_async_create_batch]
+    event_data_batch = await producer.create_batch(max_size=10000)
+    while True:
+        try:
+            event_data_batch.try_add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # The EventDataBatch object reaches its max_size.
+            # You can send the full EventDataBatch object and create a new one here.
+            break
+    # [END eventhub_client_async_create_batch]
 
-        # [START eventhub_client_async_send]
+    # [START eventhub_client_async_send]
+    async with producer:
         event_data = EventData(b"A single event")
-        await sender.send(event_data)
-        # [END eventhub_client_async_send]
-        time.sleep(1)
-        # [START eventhub_client_async_receive]
-        logger = logging.getLogger("azure.eventhub")
-        received = await receiver.receive(timeout=5)
+        await producer.send(event_data)
+    # [END eventhub_client_async_send]
+
+        await asyncio.sleep(1)
+
+    # [START eventhub_client_async_receive]
+    logger = logging.getLogger("azure.eventhub")
+    async with consumer:
+        received = await consumer.receive(timeout=5)
         for event_data in received:
             logger.info("Message received:{}".format(event_data.body_as_str()))
-        # [END eventhub_client_async_receive]
-        assert len(received) == 1
+    # [END eventhub_client_async_receive]
+        assert len(received) > 0
         assert received[0].body_as_str() == "A single event"
         assert list(received[-1].body)[0] == b"A single event"
-    except:
-        raise
-    finally:
-        await client.stop_async()
-
-    # [START eventhub_client_async_stop]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    # Add AsyncSenders/AsyncReceivers
-    try:
-        # Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
-        await client.run_async()
-        # Start sending and receiving
-    except:
-        raise
-    finally:
-        await client.stop_async()
-    # [END eventhub_client_async_stop]
 
 
 @pytest.mark.asyncio
-async def test_example_eventhub_async_sender_ops(live_eventhub_config, connection_str):
-    import os
-    # [START create_eventhub_client_async_sender_instance]
-    from azure.eventhub import EventHubClientAsync
-
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    sender = client.add_async_sender(partition="0")
-    # [END create_eventhub_client_async_sender_instance]
-
-    # [START eventhub_client_async_sender_open]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    sender = client.add_async_sender(partition="0")
-    try:
-        # Open the Async Sender using the supplied conneciton.
-        await sender.open_async()
-        # Start sending
-    except:
-        raise
-    finally:
-        # Close down the send handler.
-        await sender.close_async()
-    # [END eventhub_client_async_sender_open]        
+async def test_example_eventhub_async_producer_ops(live_eventhub_config, connection_str):
+    from azure.eventhub.aio import EventHubClient
+    from azure.eventhub import EventData
 
     # [START eventhub_client_async_sender_close]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    sender = client.add_async_sender(partition="0")
+    client = EventHubClient.from_connection_string(connection_str)
+    producer = client.create_producer(partition_id="0")
     try:
-        # Open the Async Sender using the supplied conneciton.
-        await sender.open_async()
-        # Start sending
-    except:
-        raise
+        await producer.send(EventData(b"A single event"))
     finally:
         # Close down the send handler.
-        await sender.close_async()
+        await producer.close()
     # [END eventhub_client_async_sender_close]
 
 
 @pytest.mark.asyncio
-async def test_example_eventhub_async_receiver_ops(live_eventhub_config, connection_str):
-    import os
-    # [START create_eventhub_client_async_receiver_instance]
-    from azure.eventhub import EventHubClientAsync, Offset
-
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
-    # [END create_eventhub_client_async_receiver_instance]
-
-    # [START eventhub_client_async_receiver_open]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
-    try:
-        # Open the Async Receiver using the supplied conneciton.
-        await receiver.open_async()
-        # Start receiving
-    except:
-        raise
-    finally:
-        # Close down the receive handler.
-        await receiver.close_async()
-    # [END eventhub_client_async_receiver_open]        
+async def test_example_eventhub_async_consumer_ops(live_eventhub_config, connection_str):
+    from azure.eventhub.aio import EventHubClient
+    from azure.eventhub import EventPosition
 
     # [START eventhub_client_async_receiver_close]
-    client = EventHubClientAsync.from_connection_string(connection_str)
-    receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
-        # Open the Async Receiver using the supplied conneciton.
-        await receiver.open_async()
-        # Start receiving
+        # Open and receive
+        await consumer.receive(timeout=1)
     except:
         raise
     finally:
         # Close down the receive handler.
-        await receiver.close_async()
+        await consumer.close()
     # [END eventhub_client_async_receiver_close]

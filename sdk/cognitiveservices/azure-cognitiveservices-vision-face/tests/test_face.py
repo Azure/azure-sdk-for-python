@@ -57,7 +57,7 @@ class FaceTest(ReplayableTest):
             )
 
         detected = result[0]
-        self.assertEqual(detected.face_attributes.age, 47.0)
+        self.assertEqual(detected.face_attributes.age, 51.0)
         self.assertEqual(detected.face_attributes.gender, Gender.female)
         self.assertEqual(detected.face_attributes.emotion.happiness, 1.0)
 
@@ -71,44 +71,51 @@ class FaceTest(ReplayableTest):
         personGroupId = "69ff3e98-2de7-468e-beae-f78aa85200db"
         newPersonGroupId = "fb644ecf-3ed0-4b25-9270-1d174b980afb"
 
+        try:
+            face_client.person_group.delete(personGroupId)
+        except Exception:
+            pass  # Guess this doesn't exist
+
         face_client.person_group.create(personGroupId, "test", "test")
 
         # Take a snapshot for the PersonGroup
-        apply_scope = ["Apply-Scope-Subscriptions"]
+        apply_scope = [
+            self.settings.SUBSCRIPTION_ID
+        ]
         snapshot_type = "PersonGroup"
 
         takeSnapshotResponse = face_client.snapshot.take(snapshot_type, personGroupId, apply_scope, raw=True)
         takeOperationId = takeSnapshotResponse.headers["Operation-Location"].split("/")[2]
 
         getOperationStatusResponse = face_client.snapshot.get_operation_status(takeOperationId)
-        operationStatus = getOperationStatusResponse.additional_properties["Status"]
-        
-        # Wait for take operation to complete.        
+        operationStatus = getOperationStatusResponse.status
+
+        # Wait for take operation to complete.
         while operationStatus != "succeeded" and operationStatus != "failed":
           getOperationStatusResponse = face_client.snapshot.get_operation_status(takeOperationId)
-          operationStatus = getOperationStatusResponse.additional_properties["Status"]
+          operationStatus = getOperationStatusResponse.status
           if self.is_live:
               sleep(1)
 
-        self.assertEqual(operationStatus, "succeeded")
+        assert operationStatus == "succeeded"
 
-        snapshotId = getOperationStatusResponse.additional_properties["ResourceLocation"].split("/")[2]
-        
+        snapshotId = getOperationStatusResponse.resource_location.split("/")[2]
+
         # Apply the snapshot to a new PersonGroup.
         applySnapshotResponse = face_client.snapshot.apply(snapshotId, newPersonGroupId, raw=True)
         applyOperationId = applySnapshotResponse.headers["Operation-Location"].split("/")[2]
 
         applyOperationStatusResponse = face_client.snapshot.get_operation_status(applyOperationId)
-        operationStatus = applyOperationStatusResponse.additional_properties["Status"]
-        
+        operationStatus = applyOperationStatusResponse.status
+
         # Wait for apply operation to complete.
         while operationStatus != "succeeded" and operationStatus != "failed":
           applyOperationStatusResponse = face_client.snapshot.get_operation_status(applyOperationId)
-          operationStatus = applyOperationStatusResponse.additional_properties["Status"]
+          operationStatus = applyOperationStatusResponse.status
           if self.is_live:
               sleep(1)
 
-        self.assertEqual(operationStatus, "succeeded")
+        assert operationStatus == "succeeded"
 
         face_client.snapshot.delete(snapshotId)
         face_client.person_group.delete(personGroupId)

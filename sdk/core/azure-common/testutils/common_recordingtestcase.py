@@ -66,7 +66,7 @@ class RecordingTestCase(ExtendedTestCase):
             self.test_mode = test_settings['mode']
         except:
             pass
-        
+
         if getattr(self, 'test_mode', None) is None:
             self.test_mode = TestMode.playback
 
@@ -134,11 +134,18 @@ class RecordingTestCase(ExtendedTestCase):
             response = decode_response(response)
             headers = response.get('headers')
             if headers:
+                def internal_scrub(key, val):
+                    if key.lower() == 'retry-after':
+                        return '0'
+                    return self._scrub(val)
+
                 for name, val in headers.items():
-                    for i, e in enumerate(val):
-                        val[i] = self._scrub(e)
-                    if name.lower() == 'retry-after':
-                        val[:] = ['0']
+                    if isinstance(val, list):
+                        for i, e in enumerate(val):
+                            val[i] = internal_scrub(name, e)
+                    else:
+                        headers[name] = internal_scrub(name, val)
+
             body = response.get('body')
             if body:
                 body_str = body.get('string')
