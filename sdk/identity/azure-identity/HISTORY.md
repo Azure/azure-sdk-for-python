@@ -6,6 +6,16 @@
 authorization code. See Azure Active Directory's
 [authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
+- Multi-cloud support: client credentials accept the authority of an Azure Active
+Directory authentication endpoint as an `authority` keyword argument. Known
+authorities are defined in `azure.identity.KnownAuthorities`. The default
+authority is for Azure Public Cloud, `login.microsoftonline.com`
+(`KnownAuthorities.AZURE_PUBLIC_CLOUD`). An application running in Azure
+Government would use `KnownAuthorities.AZURE_GOVERNMENT` instead:
+>```
+>from azure.identity import DefaultAzureCredential, KnownAuthorities
+>credential = DefaultAzureCredential(authority=KnownAuthorities.AZURE_GOVERNMENT)
+>```
 
 ### Breaking changes:
 - Removed `client_secret` parameter from `InteractiveBrowserCredential`
