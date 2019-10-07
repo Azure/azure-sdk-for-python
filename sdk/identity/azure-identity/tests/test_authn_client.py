@@ -4,7 +4,6 @@
 # ------------------------------------
 """These tests use the synchronous AuthnClient as a driver to test functionality
 of the sans I/O AuthnClientBase shared with AsyncAuthnClient."""
-
 import json
 import time
 
@@ -15,7 +14,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity._authn_client import AuthnClient
-
+from six.moves.urllib_parse import urlparse
 from helpers import mock_response
 
 
@@ -27,16 +26,14 @@ def test_authn_client_deserialization():
     expected_access_token = AccessToken(access_token, expires_on)
     scope = "scope"
 
-    mock_response = Mock(
-        headers={"content-type": "application/json"}, status_code=200, content_type="application/json"
-    )
+    mock_response = Mock(headers={"content-type": "application/json"}, status_code=200, content_type="application/json")
     mock_send = Mock(return_value=mock_response)
 
     # response with expires_on only
     mock_response.text = lambda: json.dumps(
         {"access_token": access_token, "expires_on": expires_on, "token_type": "Bearer", "resource": scope}
     )
-    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token(scope)
     assert token == expected_access_token
 
     # response with expires_on only and it's a datetime string (App Service MSI)
@@ -48,7 +45,7 @@ def test_authn_client_deserialization():
             "resource": scope,
         }
     )
-    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token(scope)
     assert token == expected_access_token
 
     # response with string expires_in and expires_on (IMDS, Cloud Shell)
@@ -61,7 +58,7 @@ def test_authn_client_deserialization():
             "resource": scope,
         }
     )
-    token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+    token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token(scope)
     assert token == expected_access_token
 
     # response with int expires_in (AAD)
@@ -70,7 +67,7 @@ def test_authn_client_deserialization():
     )
     with patch("azure.identity._authn_client.time.time") as mock_time:
         mock_time.return_value = now
-        token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token(scope)
+        token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token(scope)
         assert token == expected_access_token
 
 
@@ -91,7 +88,7 @@ def test_caching_when_only_expires_in_set():
     )
     mock_send = Mock(return_value=mock_response)
 
-    client = AuthnClient("http://foo", transport=Mock(send=mock_send))
+    client = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send))
     with patch("azure.identity._authn_client.time.time") as mock_time:
         mock_time.return_value = 42
         token = client.request_token(["scope"])
@@ -105,9 +102,7 @@ def test_caching_when_only_expires_in_set():
 def test_expires_in_strings():
     expected_token = "token"
 
-    mock_response = Mock(
-        headers={"content-type": "application/json"}, status_code=200, content_type="application/json"
-    )
+    mock_response = Mock(headers={"content-type": "application/json"}, status_code=200, content_type="application/json")
     mock_send = Mock(return_value=mock_response)
 
     mock_response.text = lambda: json.dumps(
@@ -117,7 +112,7 @@ def test_expires_in_strings():
     now = int(time.time())
     with patch("azure.identity._authn_client.time.time") as mock_time:
         mock_time.return_value = now
-        token = AuthnClient("http://foo", transport=Mock(send=mock_send)).request_token("scope")
+        token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token("scope")
     assert token.token == expected_token
     assert token.expires_on == now + 42
 
@@ -137,7 +132,7 @@ def test_cache_expiry():
     )
     mock_send = Mock(return_value=mock_response)
 
-    client = AuthnClient("http://foo", transport=Mock(send=mock_send))
+    client = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send))
     with patch("azure.identity._authn_client.time.time") as mock_time:
         # populate the cache with a valid token
         mock_time.return_value = now
@@ -178,7 +173,7 @@ def test_cache_scopes():
         token = expected_tokens[request.data["resource"]]
         return mock_response(json_payload=token)
 
-    client = AuthnClient("http://foo", transport=Mock(send=mock_send))
+    client = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send))
 
     # if the cache has a token for a & b, it should hit for a, b, a & b
     token = client.request_token([scope_a, scope_b], form_data={"resource": scope_ab})
@@ -188,9 +183,29 @@ def test_cache_scopes():
     assert client.get_cached_token([scope_a, scope_b]).token == scope_ab
 
     # if the cache has only tokens for a and b alone, a & b should miss
-    client = AuthnClient("http://foo", transport=Mock(send=mock_send))
+    client = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send))
     for scope in (scope_a, scope_b):
         token = client.request_token([scope], form_data={"resource": scope})
         assert token.token == scope
         assert client.get_cached_token([scope]).token == scope
     assert not client.get_cached_token([scope_a, scope_b])
+
+
+def test_request_url():
+    authority = "authority.com"
+    tenant = "expected_tenant"
+
+    def validate_url(url):
+        scheme, netloc, path, _, _, _ = urlparse(url)
+        assert scheme == "https"
+        assert netloc == authority
+        assert path.startswith("/" + tenant)
+
+    def mock_send(request, **kwargs):
+        validate_url(request.url)
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
+
+    client = AuthnClient(tenant=tenant, transport=Mock(send=mock_send), authority=authority)
+    client.request_token(("scope",))
+    request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
+    validate_url(request.url)

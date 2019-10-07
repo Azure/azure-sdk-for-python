@@ -3,25 +3,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import TYPE_CHECKING
+
 
 from msal import TokenCache
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import (
-    AsyncRetryPolicy,
-    ContentDecodePolicy,
-    HTTPPolicy,
-    NetworkTraceLoggingPolicy,
-    ProxyPolicy,
-)
+from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
 
 from .._authn_client import AuthnClientBase
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Iterable, Mapping, Optional
+    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
@@ -30,11 +29,10 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
-        auth_url: str,
         config: "Optional[Configuration]" = None,
-        policies: Optional[Iterable[HTTPPolicy]] = None,
-        transport: Optional[AsyncHttpTransport] = None,
-        **kwargs: Mapping[str, Any]
+        policies: "Optional[Iterable[HTTPPolicy]]" = None,
+        transport: "Optional[AsyncHttpTransport]" = None,
+        **kwargs: "Any"
     ) -> None:
         config = config or self._create_config(**kwargs)
         policies = policies or [
@@ -46,15 +44,15 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         if not transport:
             transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
-        super(AsyncAuthnClient, self).__init__(auth_url, **kwargs)
+        super().__init__(**kwargs)
 
     async def request_token(
         self,
-        scopes: Iterable[str],
-        method: Optional[str] = "POST",
-        headers: Optional[Mapping[str, str]] = None,
-        form_data: Optional[Mapping[str, str]] = None,
-        params: Optional[Dict[str, str]] = None,
+        scopes: "Iterable[str]",
+        method: "Optional[str]" = "POST",
+        headers: "Optional[Mapping[str, str]]" = None,
+        form_data: "Optional[Mapping[str, str]]" = None,
+        params: "Optional[Dict[str, str]]" = None,
         **kwargs: "Any"
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
@@ -63,7 +61,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
-    async def obtain_token_by_refresh_token(self, scopes: Iterable[str], username: str) -> Optional[AccessToken]:
+    async def obtain_token_by_refresh_token(self, scopes: "Iterable[str]", username: str) -> "Optional[AccessToken]":
         """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
         refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
 
@@ -91,7 +89,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         return None
 
     @staticmethod
-    def _create_config(**kwargs: Mapping[str, Any]) -> Configuration:
+    def _create_config(**kwargs: "Any") -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)

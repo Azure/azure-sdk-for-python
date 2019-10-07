@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.identity import DefaultAzureCredential, CertificateCredential, ClientSecretCredential
+from azure.identity import DefaultAzureCredential, CertificateCredential, ClientSecretCredential, KnownAuthorities
 from azure.identity._internal import ConfidentialClientCredential
 
 ARM_SCOPE = "https://management.azure.com/.default"
@@ -44,7 +44,8 @@ def test_confidential_client_credential(live_identity_settings):
     credential = ConfidentialClientCredential(
         client_id=live_identity_settings["client_id"],
         client_credential=live_identity_settings["client_secret"],
-        authority="https://login.microsoftonline.com/" + live_identity_settings["tenant_id"],
+        authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
+        tenant=live_identity_settings["tenant_id"],
     )
     token = credential.get_token(ARM_SCOPE)
     assert token
