@@ -61,7 +61,7 @@ class _ManagedIdentityBase(object):
         self._client_id = client_id
         config = config or self._create_config(**kwargs)
         policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
-        self._client = client_cls(endpoint, config, policies, **kwargs)
+        self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
 
     @staticmethod
     def _create_config(**kwargs):
@@ -105,9 +105,9 @@ class ImdsCredential(_ManagedIdentityBase):
     :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Any) -> None
-        super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
