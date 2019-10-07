@@ -1,9 +1,11 @@
 import platform
 import pytest
+
+
+pytestmark = pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="This is ignored for PyPy")
+
+
 from azure.eventhub import EventData, EventDataBatch
-
-
-pytestmark = pytest.mark.skipif(platform.python_implementation() == "Pypy", reason="This is ignored for Pypy")
 
 
 @pytest.mark.parametrize("test_input, expected_result",
