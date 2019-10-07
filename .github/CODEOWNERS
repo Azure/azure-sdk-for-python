@@ -35,7 +35,7 @@
 /sdk/recoveryservices/ @DheerendraRathor
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
-/sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS
+/sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
 
 # Management Plane
 /**/*mgmt*/ @zikalino
