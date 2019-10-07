@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from .._authn_client import AsyncAuthnClient
 from ..._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..._constants import Endpoints
 
 if TYPE_CHECKING:
     from typing import Any, Mapping
@@ -20,11 +19,16 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_id: the service principal's client ID
     :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+
+    Keyword arguments
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+            authorities for other clouds.
     """
 
     def __init__(self, client_id: str, secret: str, tenant_id: str, **kwargs: "Mapping[str, Any]") -> None:
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
+        self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """
@@ -48,11 +52,16 @@ class CertificateCredential(CertificateCredentialBase):
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
+
+    Keyword arguments
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+            authorities for other clouds.
     """
 
     def __init__(self, client_id: str, tenant_id: str, certificate_path: str, **kwargs: "Mapping[str, Any]") -> None:
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
+        self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """
