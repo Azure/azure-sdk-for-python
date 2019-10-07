@@ -32,8 +32,15 @@ class AuthorizationCodeCredential(object):
           authorities for other clouds.
     """
 
-    def __init__(self, client_id, tenant_id, authorization_code, redirect_uri, client_secret=None, **kwargs):
-        # type: (str, str, str, str, Optional[str], **Any) -> None
+    def __init__(
+        self,
+        client_id: str,
+        tenant_id: str,
+        authorization_code: str,
+        redirect_uri: str,
+        client_secret: "Optional[str]" = None,
+        **kwargs: "Any"
+    ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
         self._client_secret = client_secret
