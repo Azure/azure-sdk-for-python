@@ -28,6 +28,10 @@ class SecretProperties(object):
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
+    def __repr__(self):
+        # type () -> str
+        return "<SecretProperties [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
         # type: (_models.SecretBundle) -> SecretProperties
@@ -171,6 +175,10 @@ class Secret(object):
         self._properties = properties
         self._value = value
 
+    def __repr__(self):
+        # type: () -> str
+        return "<Secret [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
         # type: (_models.SecretBundle) -> Secret
@@ -228,6 +236,10 @@ class DeletedSecret(object):
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
+
+    def __repr__(self):
+        # type: () -> str
+        return "<DeletedSecret [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_deleted_secret_bundle(cls, deleted_secret_bundle):

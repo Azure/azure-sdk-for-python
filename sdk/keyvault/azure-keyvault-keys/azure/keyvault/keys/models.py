@@ -71,6 +71,10 @@ class KeyProperties(object):
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
+    def __repr__(self):
+        # type () -> str
+        return "<KeyProperties [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
@@ -196,6 +200,10 @@ class Key(object):
         self._properties = properties
         self._key_material = key_material
 
+    def __repr__(self):
+        # type () -> str
+        return "<Key [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> Key
@@ -246,6 +254,10 @@ class DeletedKey(Key):
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
+
+    def __repr__(self):
+        # type () -> str
+        return "<DeletedKey [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_deleted_key_bundle(cls, deleted_key_bundle):
