@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b5
+
+
 ## 1.0.0b4 (2019-10-07)
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
