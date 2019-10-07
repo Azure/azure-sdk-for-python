@@ -182,7 +182,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
             ContentDecodePolicy(),
-            retry_policy,
+            #retry_policy,
             CustomHookPolicy(**kwargs),
             DistributedTracingPolicy(),
             NetworkTraceLoggingPolicy(**kwargs),
