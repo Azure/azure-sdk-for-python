@@ -5,12 +5,12 @@
 from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.keyvault.secrets.models import Secret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
+from .._shared.exceptions import error_map as _error_map
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -51,7 +51,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_secret(
-            self.vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_url, name, version or "", error_map=_error_map, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -144,7 +144,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             content_type=content_type,
             tags=tags,
             secret_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -219,7 +219,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_url, name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -243,7 +243,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_secret(
-            self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs
+            self.vault_url, backup, error_map=_error_map, **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -266,7 +266,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_url, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -290,7 +290,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_url, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 

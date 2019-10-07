@@ -51,7 +51,7 @@ __all__ = [
     'ProxyPolicy',
     'CustomHookPolicy',
     'DistributedTracingPolicy',
-    'RequestHistory'
+    'RequestHistory',
 ]
 
 #pylint: disable=unused-import
