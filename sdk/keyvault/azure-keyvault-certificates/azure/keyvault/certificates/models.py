@@ -35,6 +35,12 @@ class AdministratorDetails(object):
         self._phone = phone
         self._email = email
 
+    def __repr__(self):
+        # type () -> str
+        return "AdministratorDetails(first_name={}, last_name={}, email={}, phone={})".format(
+            self.first_name, self.last_name, self.email, self.phone
+        )[:1024]
+
     @classmethod
     def _from_admin_details_bundle(cls, admin_details_bundle):
         # type: (models.AdministratorDetails) -> AdministratorDetails
@@ -86,6 +92,10 @@ class Error(object):
         self._message = message
         self._inner_error = inner_error
 
+    def __repr__(self):
+        # type () -> str
+        return "Error({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
+
     @property
     def code(self):
         # type: () -> str
@@ -127,6 +137,10 @@ class CertificateProperties(object):
         self._vault_id = parse_vault_id(cert_id)
         self._thumbprint = thumbprint
         self._tags = kwargs.get("tags", None)
+
+    def __repr__(self):
+        # type () -> str
+        return "<CertificateProperties [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_item(cls, certificate_item):
@@ -275,6 +289,10 @@ class Certificate(object):
         self._policy = policy
         self._cer = cer
 
+    def __repr__(self):
+        # type () -> str
+        return "<Certificate [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_certificate_bundle(cls, certificate_bundle):
         # type: (models.CertificateBundle) -> Certificate
@@ -395,6 +413,10 @@ class CertificateOperation(object):
         self._error = error
         self._target = target
         self._request_id = request_id
+
+    def __repr__(self):
+        # type () -> str
+        return "<CertificateOperation [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_operation_bundle(cls, certificate_operation_bundle):
@@ -630,6 +652,9 @@ class CertificatePolicy(object):
             content_type=SecretContentType.PKCS12,
             validity_in_months=12,
         )
+    def __repr__(self):
+        # type () -> str
+        return "<CertificatePolicy [{}]>".format(self.id)[:1024]
 
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
@@ -1048,6 +1073,10 @@ class Contact(object):
         self._name = name
         self._phone = phone
 
+    def __repr__(self):
+        # type () -> str
+        return "Contact(email={}, name={}, phone={})".format(self.email, self.name, self.phone)[:1024]
+
     def _to_certificate_contacts_item(self):
         # type: (Contact) -> models.Contact
         return models.Contact(email_address=self.email, name=self.name, phone=self.phone)
@@ -1089,6 +1118,10 @@ class IssuerProperties(object):
         self._id = issuer_id
         self._vault_id = parse_vault_id(issuer_id)
         self._provider = provider
+
+    def __repr__(self):
+        # type () -> str
+        return "IssuerProperties(issuer_id={}, provider={})".format(self.id, self.provider)[:1024]
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
@@ -1153,6 +1186,10 @@ class Issuer(object):
         self._password = password
         self._organization_id = organization_id
         self._admin_details = admin_details
+
+    def __repr__(self):
+        # type () -> str
+        return "<Issuer [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_issuer_bundle(cls, issuer_bundle):
@@ -1277,6 +1314,12 @@ class LifetimeAction(object):
         self._days_before_expiry = days_before_expiry
         self._action_type = action_type
 
+    def __repr__(self):
+        # type () -> str
+        return "LifetimeAction(action_type={}, lifetime_percentage={}, days_before_expiry={})".format(
+            self.action_type, self.lifetime_percentage, self.days_before_expiry
+        )[:1024]
+
     @property
     def lifetime_percentage(self):
         # type: () -> int
@@ -1343,6 +1386,10 @@ class DeletedCertificate(Certificate):
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
+
+    def __repr__(self):
+        # type () -> str
+        return "<DeletedCertificate [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_deleted_certificate_item(cls, deleted_certificate_item):
