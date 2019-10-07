@@ -2795,6 +2795,455 @@ class SqlDatabaseResource(Model):
         self.id = id
 
 
+class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB storedProcedure.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param resource: Required. The standard JSON format of a storedProcedure
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlStoredProcedureResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlStoredProcedureCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlStoredProcedureGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB storedProcedure.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_stored_procedure_get_results_id: Required. Name of the Cosmos
+     DB SQL storedProcedure
+    :type sql_stored_procedure_get_results_id: str
+    :param body: Body of the Stored Procedure
+    :type body: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_stored_procedure_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_stored_procedure_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_stored_procedure_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
+        super(SqlStoredProcedureGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_stored_procedure_get_results_id = sql_stored_procedure_get_results_id
+        self.body = body
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlStoredProcedureResource(Model):
+    """Cosmos DB SQL storedProcedure resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL storedProcedure
+    :type id: str
+    :param body: Body of the Stored Procedure
+    :type body: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+        super(SqlStoredProcedureResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+
+
+class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB trigger.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param resource: Required. The standard JSON format of a trigger
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlTriggerResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlTriggerResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlTriggerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlTriggerGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB trigger.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_trigger_get_results_id: Required. Name of the Cosmos DB SQL
+     trigger
+    :type sql_trigger_get_results_id: str
+    :param body: Body of the Trigger
+    :type body: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_trigger_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_trigger_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        'trigger_type': {'key': 'properties.triggerType', 'type': 'str'},
+        'trigger_operation': {'key': 'properties.triggerOperation', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_trigger_get_results_id: str, location: str=None, tags=None, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
+        super(SqlTriggerGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_trigger_get_results_id = sql_trigger_get_results_id
+        self.body = body
+        self.trigger_type = trigger_type
+        self.trigger_operation = trigger_operation
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlTriggerResource(Model):
+    """Cosmos DB SQL trigger resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL trigger
+    :type id: str
+    :param body: Body of the Trigger
+    :type body: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+        'trigger_type': {'key': 'triggerType', 'type': 'str'},
+        'trigger_operation': {'key': 'triggerOperation', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
+        super(SqlTriggerResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+        self.trigger_type = trigger_type
+        self.trigger_operation = trigger_operation
+
+
+class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB userDefinedFunction.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param resource: Required. The standard JSON format of a
+     userDefinedFunction
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlUserDefinedFunctionResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB userDefinedFunction.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_user_defined_function_get_results_id: Required. Name of the
+     Cosmos DB SQL userDefinedFunction
+    :type sql_user_defined_function_get_results_id: str
+    :param body: Body of the User Defined Function
+    :type body: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_user_defined_function_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_user_defined_function_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_user_defined_function_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_user_defined_function_get_results_id = sql_user_defined_function_get_results_id
+        self.body = body
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlUserDefinedFunctionResource(Model):
+    """Cosmos DB SQL userDefinedFunction resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL userDefinedFunction
+    :type id: str
+    :param body: Body of the User Defined Function
+    :type body: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+
+
 class TableCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB Table.
 
