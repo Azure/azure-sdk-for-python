@@ -26,8 +26,8 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
     def __init__(self, client_id, secret, tenant_id, **kwargs):
@@ -61,8 +61,8 @@ class CertificateCredential(CertificateCredentialBase):
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
     def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
