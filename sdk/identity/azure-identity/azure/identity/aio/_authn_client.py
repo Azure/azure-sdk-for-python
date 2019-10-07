@@ -14,12 +14,11 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     ContentDecodePolicy,
-    HTTPPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
 )
-from azure.core.pipeline.transport import AsyncHttpTransport, AsyncioRequestsTransport
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 
 from .._authn_client import AuthnClientBase
 
