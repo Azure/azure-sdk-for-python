@@ -144,9 +144,9 @@ class CosmosClient(object):
 
     *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
 
-    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration.
+    *proxy_config* - Instance of `azure.cosmos.ProxyConfiguration`.
 
-    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration.
+    *ssl_config* - Instance of `azure.cosmos.SSLConfiguration`.
 
     *connection_verify* - Whether to verify the connection, default value is True.
 
@@ -171,13 +171,8 @@ class CosmosClient(object):
     *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
 
     *preferred_locations* - The preferred locations for geo-replicated database accounts.
-        When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
-        the client will use this list to evaluate the final location, taking into consideration
-        the order specified in `preferred_locations` list. The locations in this list are specified
-        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
-        and so on.
 
-    *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
+    *connection_policy* - An instance of `azure.cosmos.documents.ConnectionPolicy`
 
     .. admonition:: Example:
 
@@ -487,7 +482,7 @@ class CosmosClient(object):
 
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.documents.DatabaseAccount
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)

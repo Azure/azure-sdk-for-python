@@ -577,7 +577,7 @@ class DatabaseProxy(object):
         To update or replace an existing user, use the :func:`ContainerProxy.upsert_user` method.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
-        The user ID must be unique within the database, and consist of no more than 255 characters.
+         The user ID must be unique within the database, and consist of no more than 255 characters.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the new user.
