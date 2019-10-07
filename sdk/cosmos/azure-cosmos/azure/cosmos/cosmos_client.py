@@ -176,7 +176,7 @@ class CosmosClient(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/examples.py
+        .. literalinclude:: ../samples/examples.py
             :start-after: [START create_client]
             :end-before: [END create_client]
             :language: python
@@ -265,7 +265,7 @@ class CosmosClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_database]
                 :end-before: [END create_database]
                 :language: python

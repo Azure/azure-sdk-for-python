@@ -179,7 +179,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -187,7 +187,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with default settings:
                 :name: create_container
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container_with_settings]
                 :end-before: [END create_container_with_settings]
                 :language: python
@@ -325,7 +325,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START get_container]
                 :end-before: [END get_container]
                 :language: python
@@ -359,7 +359,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START list_containers]
                 :end-before: [END list_containers]
                 :language: python
@@ -458,7 +458,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START reset_container_properties]
                 :end-before: [END reset_container_properties]
                 :language: python
@@ -586,7 +586,7 @@ class DatabaseProxy(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/examples.py
+            .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_user]
                 :end-before: [END create_user]
                 :language: python
