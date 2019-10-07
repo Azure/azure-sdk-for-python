@@ -126,16 +126,14 @@ class Error(object):
 
 class CertificateProperties(object):
     """Certificate properties consists of a certificates metadata.
-
-    :param bytes thumbprint: Thumpbrint of the certificate
     """
 
-    def __init__(self, attributes=None, cert_id=None, thumbprint=None, **kwargs):
-        # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], **Any) -> None
-        self._attributes = attributes
-        self._id = cert_id
-        self._vault_id = parse_vault_id(cert_id)
-        self._thumbprint = thumbprint
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_id", None)
+        self._vault_id = parse_vault_id(self._id)
+        self._thumbprint = kwargs.get("thumbprint", None)
         self._tags = kwargs.get("tags", None)
 
     def __repr__(self):
@@ -269,8 +267,6 @@ class Certificate(object):
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
     :param properties: The certificate's properties.
     :type properties: ~azure.keyvault.certificates.CertificateProperties
-    :param str key_id: The key id.
-    :param str secret_id: The secret id.
     :param bytearray cer: CER contents of the X509 certificate.
     """
 
@@ -278,14 +274,13 @@ class Certificate(object):
         self,
         policy,  # type: CertificatePolicy
         properties=None,  # type: Optional[CertificateProperties]
-        key_id=None,  # type: Optional[str]
-        secret_id=None,  # type: Optional[str]
         cer=None,  # type: Optional[bytes]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self._properties = properties
-        self._key_id = key_id
-        self._secret_id = secret_id
+        self._key_id = kwargs.get("key_id", None)
+        self._secret_id = kwargs.get("secret_id")
         self._policy = policy
         self._cer = cer
 
@@ -589,7 +584,6 @@ class CertificatePolicy(object):
         self,
         issuer_name,  # type: str
         subject_name,  # type: str
-        cert_policy_id=None,  # type: Optional[str]
         exportable=None,  # type: Optional[bool]
         key_type=None,  # type: Optional[KeyType]
         key_size=None,  # type: Optional[str]
@@ -602,13 +596,12 @@ class CertificatePolicy(object):
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
-        attributes=None,  # type: Optional[models.CertificateAttributes]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
         self._subject_name = subject_name
-        self._attributes = attributes
-        self._id = cert_policy_id
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_policy_id", None)
         self._exportable = exportable
         self._key_type = key_type
         self._key_size = key_size
@@ -1109,14 +1102,13 @@ class Contact(object):
 class IssuerProperties(object):
     """The properties of an issuer containing the issuer metadata.
 
-    :param str issuer_id: the ID of the issuer.
     :param str provider: The issuer provider.
     """
 
-    def __init__(self, issuer_id=None, provider=None):
-        # type: (Optional[str], Optional[str]) -> None
-        self._id = issuer_id
-        self._vault_id = parse_vault_id(issuer_id)
+    def __init__(self, provider=None, **kwargs):
+        # type: (Optional[str], **Any) -> None
+        self._id = kwargs.get("issuer_id", None)
+        self._vault_id = parse_vault_id(self._id)
         self._provider = provider
 
     def __repr__(self):
@@ -1353,10 +1345,6 @@ class DeletedCertificate(Certificate):
     """A Deleted Certificate consisting of its previous id, attributes and its
     tags, as well as information on when it will be purged.
 
-    :param str cert_id: The certificate id.
-    :param bytes thumbprint: Thumbprint of the certificate.
-    :param str key_id: The key id.
-    :param str secret_id: The secret id.
     :param policy: The management policy of the deleted certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
     :param bytearray cer: CER contents of the X509 certificate.
@@ -1370,22 +1358,15 @@ class DeletedCertificate(Certificate):
     def __init__(
         self,
         properties=None,  # type: Optional[CertificateProperties]
-        key_id=None,  # type: Optional[str]
-        secret_id=None,  # type: Optional[str]
         policy=None,  # type: Optional[CertificatePolicy]
         cer=None,  # type: Optional[bytes]
-        deleted_date=None,  # type: Optional[datetime]
-        recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        super(DeletedCertificate, self).__init__(
-            properties=properties, policy=policy, key_id=key_id, secret_id=secret_id, cer=cer, **kwargs
-        )
-        self._deleted_date = deleted_date
-        self._recovery_id = recovery_id
-        self._scheduled_purge_date = scheduled_purge_date
+        super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
+        self._deleted_date = kwargs.get("deleted_date", None)
+        self._recovery_id = kwargs.get("recovery_id", None)
+        self._scheduled_purge_date = kwargs.get("scheduled_purge_date", None)
 
     def __repr__(self):
         # type () -> str
