@@ -126,19 +126,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_certificate(
-<<<<<<< HEAD
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=_error_map, **kwargs
-=======
-            vault_base_url=self.vault_endpoint, certificate_name=name, certificate_version="", error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
-=======
             vault_base_url=self.vault_endpoint,
             certificate_name=name,
             certificate_version="",
             error_map=error_map,
             **kwargs
->>>>>>> ran black on keyvault
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -169,7 +161,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self.vault_endpoint,
             certificate_name=name,
             certificate_version=version,
-            error_map=_error_map,
+            error_map=error_map,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -199,11 +191,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_certificate(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -232,11 +220,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_certificate(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -353,11 +337,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.get_certificate_policy(
-<<<<<<< HEAD
             vault_base_url=self.vault_endpoint, certificate_name=certificate_name, **kwargs
-=======
-            vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
@@ -379,11 +359,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.update_certificate_policy(
             vault_base_url=self.vault_endpoint,
-<<<<<<< HEAD
             certificate_name=certificate_name,
-=======
-            certificate_name=name,
->>>>>>> switched vault_url to vault_endpoint across key vault
             certificate_policy=policy._to_certificate_policy_bundle(),
             **kwargs
         )
@@ -460,11 +436,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_certificate(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return backup_result.value
 
@@ -695,11 +667,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         bundle = await self._client.get_certificate_operation(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -719,11 +687,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
         """
         bundle = await self._client.delete_certificate_operation(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, certificate_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, certificate_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -786,7 +750,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            self._client.map_error(status_code=response.status_code, response=response, error_map=_error_map)
+            self._client.map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise self._client.models.KeyVaultErrorException(response, self._client._deserialize)
 
         deserialized = None
@@ -858,11 +822,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = await self._client.get_certificate_issuer(
-<<<<<<< HEAD
-            vault_base_url=self.vault_endpoint, issuer_name=name, error_map=_error_map, **kwargs
-=======
             vault_base_url=self.vault_endpoint, issuer_name=name, error_map=error_map, **kwargs
->>>>>>> switched vault_url to vault_endpoint across key vault
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
