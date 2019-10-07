@@ -35,6 +35,12 @@ class AdministratorDetails(object):
         self._phone = phone
         self._email = email
 
+    def __repr__(self):
+        # type () -> str
+        return "AdministratorDetails(first_name={}, last_name={}, email={}, phone={})".format(
+            self.first_name, self.last_name, self.email, self.phone
+        )[:1024]
+
     @classmethod
     def _from_admin_details_bundle(cls, admin_details_bundle):
         # type: (models.AdministratorDetails) -> AdministratorDetails
@@ -86,6 +92,10 @@ class Error(object):
         self._message = message
         self._inner_error = inner_error
 
+    def __repr__(self):
+        # type () -> str
+        return "Error({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
+
     @property
     def code(self):
         # type: () -> str
@@ -116,17 +126,19 @@ class Error(object):
 
 class CertificateProperties(object):
     """Certificate properties consists of a certificates metadata.
-
-    :param bytes thumbprint: Thumpbrint of the certificate
     """
 
-    def __init__(self, attributes=None, cert_id=None, thumbprint=None, **kwargs):
-        # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], **Any) -> None
-        self._attributes = attributes
-        self._id = cert_id
-        self._vault_id = parse_vault_id(cert_id)
-        self._thumbprint = thumbprint
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_id", None)
+        self._vault_id = parse_vault_id(self._id)
+        self._thumbprint = kwargs.get("thumbprint", None)
         self._tags = kwargs.get("tags", None)
+
+    def __repr__(self):
+        # type () -> str
+        return "<CertificateProperties [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_item(cls, certificate_item):
@@ -212,13 +224,13 @@ class CertificateProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """The name of the vault that the certificate is created in.
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def thumbprint(self):
@@ -255,8 +267,6 @@ class Certificate(object):
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
     :param properties: The certificate's properties.
     :type properties: ~azure.keyvault.certificates.CertificateProperties
-    :param str key_id: The key id.
-    :param str secret_id: The secret id.
     :param bytearray cer: CER contents of the X509 certificate.
     """
 
@@ -264,16 +274,19 @@ class Certificate(object):
         self,
         policy,  # type: CertificatePolicy
         properties=None,  # type: Optional[CertificateProperties]
-        key_id=None,  # type: Optional[str]
-        secret_id=None,  # type: Optional[str]
         cer=None,  # type: Optional[bytes]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self._properties = properties
-        self._key_id = key_id
-        self._secret_id = secret_id
+        self._key_id = kwargs.get("key_id", None)
+        self._secret_id = kwargs.get("secret_id")
         self._policy = policy
         self._cer = cer
+
+    def __repr__(self):
+        # type () -> str
+        return "<Certificate [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_bundle(cls, certificate_bundle):
@@ -395,6 +408,10 @@ class CertificateOperation(object):
         self._error = error
         self._target = target
         self._request_id = request_id
+
+    def __repr__(self):
+        # type () -> str
+        return "<CertificateOperation [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_operation_bundle(cls, certificate_operation_bundle):
@@ -567,7 +584,6 @@ class CertificatePolicy(object):
         self,
         issuer_name,  # type: str
         subject_name,  # type: str
-        cert_policy_id=None,  # type: Optional[str]
         exportable=None,  # type: Optional[bool]
         key_type=None,  # type: Optional[KeyType]
         key_size=None,  # type: Optional[str]
@@ -580,13 +596,12 @@ class CertificatePolicy(object):
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
-        attributes=None,  # type: Optional[models.CertificateAttributes]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
         self._subject_name = subject_name
-        self._attributes = attributes
-        self._id = cert_policy_id
+        self._attributes = kwargs.get("attributes", None)
+        self._id = kwargs.get("cert_policy_id", None)
         self._exportable = exportable
         self._key_type = key_type
         self._key_size = key_size
@@ -630,6 +645,9 @@ class CertificatePolicy(object):
             content_type=SecretContentType.PKCS12,
             validity_in_months=12,
         )
+    def __repr__(self):
+        # type () -> str
+        return "<CertificatePolicy [{}]>".format(self.id)[:1024]
 
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
@@ -1048,6 +1066,10 @@ class Contact(object):
         self._name = name
         self._phone = phone
 
+    def __repr__(self):
+        # type () -> str
+        return "Contact(email={}, name={}, phone={})".format(self.email, self.name, self.phone)[:1024]
+
     def _to_certificate_contacts_item(self):
         # type: (Contact) -> models.Contact
         return models.Contact(email_address=self.email, name=self.name, phone=self.phone)
@@ -1080,15 +1102,18 @@ class Contact(object):
 class IssuerProperties(object):
     """The properties of an issuer containing the issuer metadata.
 
-    :param str issuer_id: the ID of the issuer.
     :param str provider: The issuer provider.
     """
 
-    def __init__(self, issuer_id=None, provider=None):
-        # type: (Optional[str], Optional[str]) -> None
-        self._id = issuer_id
-        self._vault_id = parse_vault_id(issuer_id)
+    def __init__(self, provider=None, **kwargs):
+        # type: (Optional[str], **Any) -> None
+        self._id = kwargs.get("issuer_id", None)
+        self._vault_id = parse_vault_id(self._id)
         self._provider = provider
+
+    def __repr__(self):
+        # type () -> str
+        return "IssuerProperties(issuer_id={}, provider={})".format(self.id, self.provider)[:1024]
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
@@ -1116,13 +1141,13 @@ class IssuerProperties(object):
         return self._provider
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """The name of the vault with this issuer.
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
 
 class Issuer(object):
@@ -1153,6 +1178,10 @@ class Issuer(object):
         self._password = password
         self._organization_id = organization_id
         self._admin_details = admin_details
+
+    def __repr__(self):
+        # type () -> str
+        return "<Issuer [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_issuer_bundle(cls, issuer_bundle):
@@ -1277,6 +1306,12 @@ class LifetimeAction(object):
         self._days_before_expiry = days_before_expiry
         self._action_type = action_type
 
+    def __repr__(self):
+        # type () -> str
+        return "LifetimeAction(action_type={}, lifetime_percentage={}, days_before_expiry={})".format(
+            self.action_type, self.lifetime_percentage, self.days_before_expiry
+        )[:1024]
+
     @property
     def lifetime_percentage(self):
         # type: () -> int
@@ -1310,10 +1345,6 @@ class DeletedCertificate(Certificate):
     """A Deleted Certificate consisting of its previous id, attributes and its
     tags, as well as information on when it will be purged.
 
-    :param str cert_id: The certificate id.
-    :param bytes thumbprint: Thumbprint of the certificate.
-    :param str key_id: The key id.
-    :param str secret_id: The secret id.
     :param policy: The management policy of the deleted certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
     :param bytearray cer: CER contents of the X509 certificate.
@@ -1327,22 +1358,19 @@ class DeletedCertificate(Certificate):
     def __init__(
         self,
         properties=None,  # type: Optional[CertificateProperties]
-        key_id=None,  # type: Optional[str]
-        secret_id=None,  # type: Optional[str]
         policy=None,  # type: Optional[CertificatePolicy]
         cer=None,  # type: Optional[bytes]
-        deleted_date=None,  # type: Optional[datetime]
-        recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        super(DeletedCertificate, self).__init__(
-            properties=properties, policy=policy, key_id=key_id, secret_id=secret_id, cer=cer, **kwargs
-        )
-        self._deleted_date = deleted_date
-        self._recovery_id = recovery_id
-        self._scheduled_purge_date = scheduled_purge_date
+        super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
+        self._deleted_date = kwargs.get("deleted_date", None)
+        self._recovery_id = kwargs.get("recovery_id", None)
+        self._scheduled_purge_date = kwargs.get("scheduled_purge_date", None)
+
+    def __repr__(self):
+        # type () -> str
+        return "<DeletedCertificate [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_deleted_certificate_item(cls, deleted_certificate_item):

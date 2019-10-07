@@ -61,7 +61,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `KeyClient`.
+    > The `"vaultUri"` property is the `vault_endpoint` used by `KeyClient`.
 
 ### Authenticate the client
 To interact with a Key Vault's keys, you'll need an instance of the
@@ -120,7 +120,7 @@ from azure.keyvault.keys import KeyClient
 
 credential = DefaultAzureCredential()
 
-key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
+key_client = KeyClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -217,7 +217,7 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 key = key_client.get_key("mykey")
 crypto_client = key_client.get_cryptography_client(key)
@@ -246,7 +246,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 # Create an RSA key
 rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
@@ -309,7 +309,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = KeyClient(vault_url=url, credential=credential, logging_enable=True)
+client = KeyClient(vault_endpoint=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:
