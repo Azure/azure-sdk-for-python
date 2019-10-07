@@ -19,7 +19,7 @@ trigger:
     - hotfix/*
     - release/*
     - restapi*
-`  paths:
+  paths:
     include:
     - sdk/hanaonazure/
 
@@ -31,15 +31,15 @@ pr:
     - hotfix/*
     - release/*
     - restapi*
-`  paths:
+  paths:
     include:
     - sdk/hanaonazure/
 
 
 stages:
-`- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-`    ServiceDirectory: hanaonazure
+    ServiceDirectory: hanaonazure
     Artifacts:
     - name: azure_mgmt_hanaonazure
       safeName: azuremgmthanaonazure

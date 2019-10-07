@@ -31,18 +31,17 @@ pr:
     - hotfix/*
     - release/*
     - restapi*
-`  paths:
+  paths:
     include:
     - sdk/compute/
 
 
 stages:
-`- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+- template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-`    ServiceDirectory: compute
+    ServiceDirectory: compute
     Artifacts:
     - name: azure_mgmt_compute
       safeName: azuremgmtcompute
     - name: azure_mgmt_imagebuilder
       safeName: azuremgmtimagebuilder
-    TestTimeoutInMinutes: 75

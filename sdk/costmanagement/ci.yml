@@ -43,4 +43,3 @@ stages:
     Artifacts:
     - name: azure_mgmt_costmanagement
       safeName: azuremgmtcostmanagement
-    TestTimeoutInMinutes: 75
