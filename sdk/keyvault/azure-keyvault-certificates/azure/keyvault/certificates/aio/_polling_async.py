@@ -33,7 +33,7 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
             while not self.finished():
                 await self._update_status()
                 await asyncio.sleep(self._polling_interval)
-            if self._pending_certificate_op.status.lower() == 'completed':
+            if self._pending_certificate_op.status.lower() == "completed":
                 self._resource = await self._get_certificate_command()
             else:
                 self._resource = self._pending_certificate_op
@@ -42,9 +42,9 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        if self._pending_certificate_op.issuer_name.lower() == 'unknown':
+        if self._pending_certificate_op.issuer_name.lower() == "unknown":
             return True
-        return self._pending_certificate_op.status.lower() != 'inprogress'
+        return self._pending_certificate_op.status.lower() != "inprogress"
 
     def resource(self) -> Any:
         return self._resource

@@ -1,5 +1,5 @@
 -e ../../../tools/azure-devtools
--e ../../core/azure-core
+../../core/azure-core
 -e ../../identity/azure-identity
 -e ../azure-mgmt-keyvault
 -e ../../../tools/azure-sdk-tools

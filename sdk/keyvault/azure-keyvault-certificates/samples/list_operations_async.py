@@ -31,6 +31,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service. Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
@@ -70,8 +71,7 @@ async def run_sample():
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
-                bank_certificate.name,
-                bank_certificate.tags
+                bank_certificate.name, bank_certificate.tags
             )
         )
 
@@ -79,10 +79,11 @@ async def run_sample():
         print("\n.. List versions of the certificate using its name")
         certificate_versions = client.list_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
-            print("Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
-                certificate_version.name,
-                certificate_version.version,
-                certificate_version.tags))
+            print(
+                "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
+                    certificate_version.name, certificate_version.version, certificate_version.tags
+                )
+            )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
         await client.delete_certificate(name=bank_cert_name)
@@ -93,7 +94,9 @@ async def run_sample():
         deleted_certificates = client.list_deleted_certificates()
         async for deleted_certificate in deleted_certificates:
             print(
-                "Certificate with name '{0}' has recovery id '{1}'".format(deleted_certificate.name, deleted_certificate.recovery_id)
+                "Certificate with name '{0}' has recovery id '{1}'".format(
+                    deleted_certificate.name, deleted_certificate.recovery_id
+                )
             )
 
     except HttpResponseError as e:

@@ -6,10 +6,9 @@
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     ResourceExistsError,

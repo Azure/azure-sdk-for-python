@@ -59,6 +59,13 @@ steps:
       artifactName: 'artifacts' 
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  # Duplicating  the task above to introduce a packages artifact for consistency
+  # with the other pipelines. Also using the newer YAML shortcut. Once we get
+  # past release successfully with unified pipelines we'll look at getting rid
+  # of the duplicated "artifacts" artifact.
+  - publish: $(Build.ArtifactStagingDirectory)
+    artifact: packages 
+
   - task: PublishBuildArtifacts@1
     condition: succeededOrFailed()
     displayName: 'Publish Artifacts'
