@@ -10,7 +10,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyProperties
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
-from .._shared.exceptions import error_map
+from .._shared.exceptions import error_map as _error_map
 from ..crypto.aio import CryptographyClient
 
 
@@ -231,7 +231,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
+        bundle = await self._client.delete_key(self.vault_url, name, _error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
@@ -257,7 +257,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(self.vault_url, name, version, error_map=error_map, **kwargs)
+        bundle = await self._client.get_key(self.vault_url, name, version, _error_map=_error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -280,7 +280,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
+        bundle = await self._client.get_deleted_key(self.vault_url, name, _error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -449,7 +449,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map=error_map,
+            _error_map=_error_map,
             **kwargs,
         )
         return Key._from_key_bundle(bundle)
@@ -477,7 +477,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
+        backup_result = await self._client.backup_key(self.vault_url, name, _error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -503,7 +503,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = await self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
+        bundle = await self._client.restore_key(self.vault_url, backup, _error_map=_error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async

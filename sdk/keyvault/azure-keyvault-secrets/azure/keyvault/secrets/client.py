@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from ._shared.exceptions import error_map as _error_map
 from .models import Secret, DeletedSecret, SecretProperties
 
 try:
@@ -62,7 +62,7 @@ class SecretClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             secret_name=name,
             secret_version=version or "",
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return Secret._from_secret_bundle(bundle)
@@ -166,7 +166,7 @@ class SecretClient(KeyVaultClientBase):
             content_type=content_type,
             tags=tags,
             secret_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -247,7 +247,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         backup_result = self._client.backup_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_url, name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -272,7 +272,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -295,7 +295,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -319,7 +319,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
