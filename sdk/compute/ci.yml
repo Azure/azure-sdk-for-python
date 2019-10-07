@@ -19,7 +19,7 @@ trigger:
     - hotfix/*
     - release/*
     - restapi*
-`  paths:
+  paths:
     include:
     - sdk/compute/
 
