@@ -1370,7 +1370,8 @@ class ControlActivity(Activity):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: WebHookActivity, AppendVariableActivity,
     SetVariableActivity, FilterActivity, ValidationActivity, UntilActivity,
-    WaitActivity, ForEachActivity, IfConditionActivity, ExecutePipelineActivity
+    WaitActivity, ForEachActivity, SwitchActivity, IfConditionActivity,
+    ExecutePipelineActivity
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1404,7 +1405,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'Switch': 'SwitchActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, **kwargs):
@@ -28889,6 +28890,88 @@ class StoredProcedureParameter(Model):
         super(StoredProcedureParameter, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.type = kwargs.get('type', None)
+
+
+class SwitchActivity(ControlActivity):
+    """This activity evaluates an expression and executes activities under the
+    cases property that correspond to the expression evaluation expected in the
+    equals property.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param on: Required. An expression that would evaluate to a string or
+     integer. This is used to determine the block of activities in cases that
+     will be executed.
+    :type on: ~azure.mgmt.datafactory.models.Expression
+    :param cases: List of cases that correspond to expected values of the 'on'
+     property. This is an optional property and if not provided, the activity
+     will execute activities provided in defaultActivities.
+    :type cases: list[~azure.mgmt.datafactory.models.SwitchCase]
+    :param default_activities: List of activities to execute if no case
+     condition is satisfied. This is an optional property and if not provided,
+     the activity will exit without any action.
+    :type default_activities: list[~azure.mgmt.datafactory.models.Activity]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'on': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'on': {'key': 'typeProperties.on', 'type': 'Expression'},
+        'cases': {'key': 'typeProperties.cases', 'type': '[SwitchCase]'},
+        'default_activities': {'key': 'typeProperties.defaultActivities', 'type': '[Activity]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwitchActivity, self).__init__(**kwargs)
+        self.on = kwargs.get('on', None)
+        self.cases = kwargs.get('cases', None)
+        self.default_activities = kwargs.get('default_activities', None)
+        self.type = 'Switch'
+
+
+class SwitchCase(Model):
+    """Switch cases with have a value and corresponding activities.
+
+    :param value: Expected value that satisfies the expression result of the
+     'on' property.
+    :type value: str
+    :param activities: List of activities to execute for satisfied case
+     condition.
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'activities': {'key': 'activities', 'type': '[Activity]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwitchCase, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.activities = kwargs.get('activities', None)
 
 
 class SybaseLinkedService(LinkedService):

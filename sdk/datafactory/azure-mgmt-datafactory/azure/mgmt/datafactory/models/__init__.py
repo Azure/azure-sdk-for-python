@@ -524,6 +524,8 @@ try:
     from ._models_py3 import StoreWriteSettings
     from ._models_py3 import SubResource
     from ._models_py3 import SubResourceDebugResource
+    from ._models_py3 import SwitchActivity
+    from ._models_py3 import SwitchCase
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
@@ -1086,6 +1088,8 @@ except (SyntaxError, ImportError):
     from ._models import StoreWriteSettings
     from ._models import SubResource
     from ._models import SubResourceDebugResource
+    from ._models import SwitchActivity
+    from ._models import SwitchCase
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
@@ -1735,6 +1739,8 @@ __all__ = [
     'StoreWriteSettings',
     'SubResource',
     'SubResourceDebugResource',
+    'SwitchActivity',
+    'SwitchCase',
     'SybaseLinkedService',
     'SybaseSource',
     'SybaseTableDataset',
