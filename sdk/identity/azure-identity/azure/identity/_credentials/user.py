@@ -46,13 +46,13 @@ class DeviceCodeCredential(PublicClientCredential):
         If not provided, the credential will print instructions to stdout.
 
     Keyword arguments
-        - *authority*: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
-        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
+        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-        - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device
-          code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
+          device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
 
     """
 
@@ -117,8 +117,8 @@ class SharedTokenCacheCredential(object):
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
     def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
@@ -193,10 +193,10 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str password: the user's password
 
     Keyword arguments
-        - *authority*: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
-        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
+        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
 
     """
