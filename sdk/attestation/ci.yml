@@ -21,8 +21,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/media/
-    - sdk/core/
+    - sdk/attestation/
 
 pr:
   branches:
@@ -34,14 +33,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/media/
-    - sdk/core/
+    - sdk/attestation/
+
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: media
+    ServiceDirectory: attestation
     Artifacts:
-    - name: azure_mgmt_media
-      safeName: azuremgmtmedia
-      
+    - name: azure_mgmt_attestation
+      safeName: azuremgmtattestation
