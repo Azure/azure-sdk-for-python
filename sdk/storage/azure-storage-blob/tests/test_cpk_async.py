@@ -295,13 +295,15 @@ class StorageCPKAsyncTest(StorageTestCase):
         blob = await destination_blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(await blob.content_as_bytes(), self.byte_data[0: 8 * 1024 + 1])
+        self.assertEqual(await blob.content_as_bytes(), self.byte_data[0: 8 * 1024])
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @record
     def test_put_block_from_url_and_commit_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_commit())
 

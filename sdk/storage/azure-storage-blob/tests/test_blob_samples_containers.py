@@ -174,7 +174,7 @@ class TestContainerSamples(StorageTestCase):
             # Use the sas token to authenticate a new client
             # [START create_container_client_sastoken]
             from azure.storage.blob import ContainerClient
-            container = ContainerClient(
+            container = ContainerClient.from_container_url(
                 container_url="https://account.blob.core.windows.net/mycontainer",
                 credential=sas_token
             )

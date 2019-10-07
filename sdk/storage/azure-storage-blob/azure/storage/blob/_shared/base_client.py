@@ -212,7 +212,11 @@ class StorageAccountHostsMixin(object):
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            return response.parts()
+            try:
+                return response.parts()
+            except ValueError:
+                # We assume it was not multipart
+                raise StorageErrorException(response, self._client._deserialize)
         except StorageErrorException as error:
             process_storage_error(error)
 

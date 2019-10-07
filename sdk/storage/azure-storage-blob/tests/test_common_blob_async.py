@@ -434,7 +434,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         content = await stream.content_as_bytes()
 
         # Assert
-        self.assertEqual(content, self.byte_data[:6])
+        self.assertEqual(content, self.byte_data[:5])
 
     @record
     def test_get_blob_with_range(self):
