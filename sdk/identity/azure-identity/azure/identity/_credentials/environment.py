@@ -78,6 +78,7 @@ class EnvironmentCredential:
         # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
