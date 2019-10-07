@@ -1,2 +1,2 @@
-azure-core<2.0.0,>=1.0.0b4
+azure-core<2.0.0,>=1.0.0b3
 six>=1.6
