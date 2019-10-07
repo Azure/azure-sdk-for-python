@@ -25,7 +25,7 @@ from azure.keyvault.certificates.models import (
 )
 from ._polling_async import CreateCertificatePollerAsync
 from .._shared import AsyncKeyVaultClientBase
-from .._shared.exceptions import error_map
+from .._shared.exceptions import error_map as _error_map
 
 
 class CertificateClient(AsyncKeyVaultClientBase):
@@ -126,7 +126,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, certificate_version="", error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, certificate_version="", error_map=_error_map, **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -157,7 +157,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version=version,
-            error_map=error_map,
+            error_map=_error_map,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -187,7 +187,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -216,7 +216,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -425,7 +425,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -654,7 +654,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         bundle = await self._client.get_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -674,7 +674,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
         """
         bundle = await self._client.delete_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -737,7 +737,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            self._client.map_error(status_code=response.status_code, response=response, error_map=error_map)
+            self._client.map_error(status_code=response.status_code, response=response, error_map=_error_map)
             raise self._client.models.KeyVaultErrorException(response, self._client._deserialize)
 
         deserialized = None
@@ -811,7 +811,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = await self._client.get_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, error_map=error_map, **kwargs
+            vault_base_url=self.vault_url, issuer_name=name, error_map=_error_map, **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
