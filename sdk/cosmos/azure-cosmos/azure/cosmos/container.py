@@ -482,7 +482,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
-        :raises `CosmosHttpResponseError`: If item with the given ID already exists.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -529,8 +529,8 @@ class ContainerProxy(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `CosmosHttpResponseError`: The item wasn't deleted successfully. If the item does not
-            exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The item wasn't deleted successfully.
+         If the item does not exist in the container, a `404` error is returned.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -716,8 +716,8 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `CosmosHttpResponseError`: The conflict wasn't deleted successfully. If the conflict
-            does not exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The conflict wasn't deleted successfully.
+         If the conflict does not exist in the container, a `404` error is returned.
         :rtype: None
         """
         request_options = build_options(kwargs)

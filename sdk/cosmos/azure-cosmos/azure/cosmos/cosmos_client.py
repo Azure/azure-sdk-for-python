@@ -261,7 +261,7 @@ class CosmosClient(object):
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
-        :raises `CosmosResourceExistsError`: If database with the given ID already exists.
+        :raises ~azure.cosmos.errors.CosmosResourceExistsError: Database with the given ID already exists.
 
         .. admonition:: Example:
 

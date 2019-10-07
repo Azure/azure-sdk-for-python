@@ -682,8 +682,8 @@ class DatabaseProxy(object):
             instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `CosmosHttpResponseError`: The user wasn't deleted successfully. If the user does not
-            exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The user wasn't deleted successfully.
+         If the user does not exist in the container, a `404` error is returned.
         :rtype: None
         """
         request_options = build_options(kwargs)
