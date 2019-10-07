@@ -7,7 +7,6 @@ Submodules
 .. toctree::
 
    azure.cosmos.diagnostics
-   azure.cosmos.documents
    azure.cosmos.errors
    azure.cosmos.http_constants
 
