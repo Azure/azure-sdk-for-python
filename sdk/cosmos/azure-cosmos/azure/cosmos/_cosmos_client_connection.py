@@ -36,8 +36,8 @@ from azure.core.pipeline.policies import (  # type: ignore
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
+    DistributedTracingPolicy,
     ProxyPolicy)
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
 from . import _base as base
 from . import documents
