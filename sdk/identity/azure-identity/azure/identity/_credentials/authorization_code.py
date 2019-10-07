@@ -27,8 +27,8 @@ class AuthorizationCodeCredential(object):
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
     def __init__(self, client_id, tenant_id, authorization_code, redirect_uri, client_secret=None, **kwargs):

@@ -39,8 +39,8 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
 
         Keyword arguments
             - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-                the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
-                defines authorities for other clouds.
+              the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+              defines authorities for other clouds.
         """
 
         if not self._client:
