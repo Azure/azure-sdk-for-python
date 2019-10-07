@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4
+## 1.0.0b4 (2019-10-07)
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Azure Active Directory's
@@ -22,8 +22,9 @@ Government would use `KnownAuthorities.AZURE_GOVERNMENT` instead:
 
 ### Fixes and improvements:
 - `UsernamePasswordCredential` correctly handles environment configuration with
-no tenant information (#7260)
-- user realm discovery requests are sent through credential pipelines (#7260)
+no tenant information ([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
+- user realm discovery requests are sent through credential pipelines
+([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
 
 
 ## 1.0.0b3 (2019-09-10)
