@@ -14,7 +14,7 @@ def print(*args):
 
 
 def test_create_secret_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
@@ -23,7 +23,7 @@ def test_create_secret_client():
 
     # Create a SecretClient using default Azure credentials
     credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
+    secret_client = SecretClient(vault_endpoint, credentials)
 
     # [END create_secret_client]
 
@@ -62,7 +62,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(secret.id)
         print(secret.name)
         print(secret.properties.version)
-        print(secret.properties.vault_url)
+        print(secret.properties.vault_endpoint)
 
         # [END get_secret]
         # [START update_secret]
@@ -70,7 +70,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # update attributes of an existing secret
         content_type = "text/plain"
         tags = {"foo": "updated tag"}
-        updated_secret_properties = await secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
+        updated_secret_properties = await secret_client.update_secret_properties(
+            "secret-name", content_type=content_type, tags=tags
+        )
 
         print(updated_secret_properties.version)
         print(updated_secret_properties.updated)

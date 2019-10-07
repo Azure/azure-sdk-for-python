@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = KeyClient(vault_url=VAULT_URL, credential=credential)
+client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create an RSA key with size 2048, hsm disabled and optional key_operations of encrypt, decrypt.
     # if the key already exists in the Key Vault, then a new version of the key is created.
@@ -66,9 +66,17 @@ try:
     # associated with a key previously stored within Key Vault.
     print("\n.. Update a Key by name")
     expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-    updated_ec_key = client.update_key_properties(ec_key.name, ec_key.properties.version, expires=expires, enabled=False)
-    print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated))
-    print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.properties.expires))
+    updated_ec_key = client.update_key_properties(
+        ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+    )
+    print(
+        "Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated)
+    )
+    print(
+        "Key with name '{0}' was updated to expire on '{1}'".format(
+            updated_ec_key.name, updated_ec_key.properties.expires
+        )
+    )
 
     # The RSA key is no longer used, need to delete it from the Key Vault.
     print("\n.. Delete Keys")

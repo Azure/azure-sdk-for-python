@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 class KeyClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's keys.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -107,7 +107,7 @@ class KeyClient(KeyVaultClientBase):
             attributes = None
 
         bundle = self._client.create_key(
-            vault_base_url=self.vault_url,
+            vault_base_url=self.vault_endpoint,
             key_name=name,
             kty=key_type,
             key_size=size,
@@ -245,7 +245,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -269,7 +269,9 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
+        bundle = self._client.get_key(
+            self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
+        )
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -294,7 +296,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         # TODO: which exception is raised when soft-delete is not enabled
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -316,7 +318,7 @@ class KeyClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_deleted_keys(
-            self._vault_url,
+            self._vault_endpoint,
             maxresults=max_page_size,
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs
@@ -340,7 +342,7 @@ class KeyClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_keys(
-            self._vault_url,
+            self._vault_endpoint,
             maxresults=max_page_size,
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
@@ -365,7 +367,7 @@ class KeyClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_key_versions(
-            self._vault_url,
+            self._vault_endpoint,
             name,
             maxresults=max_page_size,
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
@@ -392,7 +394,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
+        self._client.purge_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
@@ -416,7 +418,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
+        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -462,7 +464,7 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.update_key(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             key_version=version or "",
             key_ops=key_operations,
@@ -497,7 +499,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -524,7 +526,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = self._client.restore_key(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -561,6 +563,12 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_url, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            hsm=hsm,
+            key_attributes=attributes,
+            tags=tags,
+            **kwargs
         )
         return Key._from_key_bundle(bundle)

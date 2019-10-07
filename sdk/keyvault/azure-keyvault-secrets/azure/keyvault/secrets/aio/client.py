@@ -16,7 +16,7 @@ from .._shared.exceptions import error_map as _error_map
 class SecretClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's secrets.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
 
@@ -51,7 +51,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_secret(
-            self.vault_url, name, version or "", error_map=_error_map, **kwargs
+            self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -93,7 +93,13 @@ class SecretClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            value,
+            secret_attributes=attributes,
+            content_type=content_type,
+            tags=tags,
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -138,7 +144,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.update_secret(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             secret_version=version or "",
             content_type=content_type,
@@ -167,7 +173,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_secrets(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
@@ -192,7 +198,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_secret_versions(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             maxresults=max_results,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
@@ -219,7 +225,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_secret(
-            self.vault_url, name, error_map=_error_map, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -243,7 +249,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_secret(
-            self.vault_url, backup, error_map=_error_map, **kwargs
+            self.vault_endpoint, backup, error_map=_error_map, **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -266,7 +272,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_secret(
-            self.vault_url, name, error_map=_error_map, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -290,7 +296,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_secret(
-            self.vault_url, name, error_map=_error_map, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -312,7 +318,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_secrets(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
@@ -337,7 +343,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 await secret_client.purge_deleted_secret("secret-name")
 
         """
-        await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_secret(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
@@ -357,5 +363,5 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+        bundle = await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
