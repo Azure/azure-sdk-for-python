@@ -7,8 +7,8 @@
 - Added support for tracing (issue #7153).
 - Added the capability of tracking last enqueued event properties of the partition to `EventHubConsumer` .
     - Added new boolean type parameter`track_last_enqueued_event_properties` in method `EventHubClient.create_consumer()`.
-    - Added new property `last_enqueued_event_properties` of on `EventHubConsumer` which contains sequence_number, offset, enqueued_time and retrieval_time information.
-    - By default the capability is disabled as it will cost extra band width for transferring more information if turned on.
+    - Added new property `last_enqueued_event_properties` of `EventHubConsumer` which contains sequence_number, offset, enqueued_time and retrieval_time information.
+    - By default the capability is disabled as it will cost extra bandwidth for transferring more information if turned on.
 
 **Breaking changes**
 
