@@ -3,11 +3,45 @@
 
 ## Version 12.0.0b4:
 
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `BlobPermissions` and `ContainerPermissions` have been renamed to 
+  `AccountSasPermissions`, `BlobSasPermissions` and `ContainerSasPermissions` respectively.
+  - enum-like list parameters have been removed from all three of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
+- `ContainerClient` now accepts only `account_url` with a mandatory string param `container_name`.
+To use a container_url, the method `from_container_url` must be used.
+- `BlobClient` now accepts only `account_url` with mandatory string params `container_name` and 
+`blob_name`. To use a blob_url, the method `from_blob_url` must be used.
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+- APIs now take in `offset` and `length` instead of `range_start` and `range_end` consistently.
+`length` is the number of bytes to take in starting from the `offset`. The APIs that have been 
+changed include:
+  - `get_page_ranges`
+  - `upload_page`
+  - `upload_pages_from_url`
+  - `clear_page`
+  - `append_block_from_url`
+- `block_id` is not optional in `BlobBlock` model.
+
 **New features**
 
 - Add support for delete_blobs API to ContainerClient (Python 3 only)
 - Add support for set_standard_blob_tier_blobs to ContainerClient (Python 3 only)
 - Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
+- Added support to set rehydrate blob priority for Block Blob, including Set Standard Blob Tier/Copy Blob APIs
+- Added blob tier support for Block Blob, including Upload Blob/Commit Block List/Copy Blob APIs.
+
+**Fixes and improvements**
+- Downloading page blobs now take advantage of their sparseness.
+- The `length` param in `download_blob` now takes the number of bytes to take in starting from the `offset`
+instead of a harde set end value.
 
 **Dependency updates**
 - Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b4
