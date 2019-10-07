@@ -79,7 +79,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(cert_policy.issuer_parameters.name, pending_cert_operation.issuer_name)
         pending_id = parse_vault_id(pending_cert_operation.id)
-        self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
+        self.assertEqual(pending_id.vault_endpoint.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
     def _validate_certificate_bundle(self, cert, cert_name, cert_policy):
@@ -201,7 +201,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(issuer.id, expected.id)
         self.assertEqual(issuer.name, expected.name)
         self.assertEqual(issuer.provider, expected.provider)
-        self.assertEqual(issuer.vault_url, expected.vault_url)
+        self.assertEqual(issuer.vault_endpoint, expected.vault_endpoint)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -277,7 +277,7 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
+                cid = parsed_id.vault_endpoint + "/" + parsed_id.collection + "/" + parsed_id.name
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
@@ -307,7 +307,15 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
+                cid = (
+                    parsed_id.vault_endpoint
+                    + "/"
+                    + parsed_id.collection
+                    + "/"
+                    + parsed_id.name
+                    + "/"
+                    + parsed_id.version
+                )
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
@@ -428,7 +436,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(cancel_operation.cancellation_requested)
         self._validate_certificate_operation(
             pending_cert_operation=cancel_operation,
-            vault=client.vault_url,
+            vault=client.vault_endpoint,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -440,7 +448,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(retrieved_operation.cancellation_requested)
         self._validate_certificate_operation(
             pending_cert_operation=retrieved_operation,
-            vault=client.vault_url,
+            vault=client.vault_endpoint,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -450,7 +458,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(deleted_operation)
         self._validate_certificate_operation(
             pending_cert_operation=deleted_operation,
-            vault=client.vault_url,
+            vault=client.vault_endpoint,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -475,7 +483,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate policy
         self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = client.get_policy(name=cert_name)
+        retrieved_policy = client.get_policy(certificate_name=cert_name)
         self.assertIsNotNone(retrieved_policy)
 
         # update certificate policy
@@ -485,8 +493,10 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_parameters=IssuerParameters(name="Self"),
         )
 
-        client.update_policy(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
-        updated_cert_policy = client.get_policy(name=cert_name)
+        client.update_policy(
+            certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
+        )
+        updated_cert_policy = client.get_policy(certificate_name=cert_name)
         self.assertIsNotNone(updated_cert_policy)
 
     @ResourceGroupPreparer()
@@ -617,7 +627,7 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         properties = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
+            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name, provider="Test"
         )
 
         # create certificate issuer
@@ -649,11 +659,11 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         expected_base_1 = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
+            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name, provider="Test"
         )
 
         expected_base_2 = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name + "2", provider="Test"
+            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name + "2", provider="Test"
         )
         expected_issuers = [expected_base_1, expected_base_2]
 

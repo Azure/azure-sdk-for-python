@@ -28,9 +28,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(
-        credential: "TokenCredential", api_version: str = None, **kwargs: "**Any"
-    ) -> Configuration:
+    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "**Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
@@ -61,7 +59,7 @@ class AsyncKeyVaultClientBase:
 
     def __init__(
         self,
-        vault_url: str,
+        vault_endpoint: str,
         credential: "TokenCredential",
         transport: AsyncHttpTransport = None,
         api_version: str = None,
@@ -72,10 +70,10 @@ class AsyncKeyVaultClientBase:
                 "credential should be an object supporting the TokenCredential protocol, "
                 "such as a credential from azure-identity"
             )
-        if not vault_url:
-            raise ValueError("vault_url must be the URL of an Azure Key Vault")
+        if not vault_endpoint:
+            raise ValueError("vault_endpoint must be the URL of an Azure Key Vault")
 
-        self._vault_url = vault_url.strip(" /")
+        self._vault_endpoint = vault_endpoint.strip(" /")
 
         client = kwargs.pop("generated_client", None)
         if client:
@@ -111,5 +109,5 @@ class AsyncKeyVaultClientBase:
         return AsyncPipeline(transport, policies=policies)
 
     @property
-    def vault_url(self) -> str:
-        return self._vault_url
+    def vault_endpoint(self) -> str:
+        return self._vault_endpoint

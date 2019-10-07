@@ -17,7 +17,7 @@ from devtools_testutils import ResourceGroupPreparer
 class KeyClientTests(KeyVaultTestCase):
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
-        self.assertEqual(k1.vault_url, k2.vault_url)
+        self.assertEqual(k1.vault_endpoint, k2.vault_endpoint)
         self.assertEqual(k1.enabled, k2.enabled)
         self.assertEqual(k1.not_before, k2.not_before)
         self.assertEqual(k1.expires, k2.expires)
@@ -35,7 +35,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         kty = "RSA-HSM" if hsm else "RSA"
-        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, kty, key_ops)
+        self._validate_rsa_key_bundle(created_key, client.vault_endpoint, key_name, kty, key_ops)
         return created_key
 
     def _create_ec_key(self, client, key_name, hsm):
@@ -47,7 +47,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.properties.enabled)
         self.assertEqual(tags, created_key.properties.tags)
-        self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
+        self._validate_ec_key_bundle(created_key, client.vault_endpoint, key_name, key_type)
         return created_key
 
     def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
@@ -58,7 +58,9 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
-        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+        )
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
@@ -68,7 +70,9 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
-        self.assertTrue(key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes.")
+        self.assertTrue(
+            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+        )
 
     def _update_key_properties(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
@@ -114,7 +118,7 @@ class KeyClientTests(KeyVaultTestCase):
             ),
         )
         imported_key = client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_endpoint, name, key.kty, key.key_ops)
         return imported_key
 
     @ResourceGroupPreparer()

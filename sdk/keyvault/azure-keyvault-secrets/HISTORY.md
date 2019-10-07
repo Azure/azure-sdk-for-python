@@ -9,6 +9,8 @@ through the `properties` property. See the updated [docs]
 (https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
 for details.
 - `update_secret` has been renamed to `update_secret_properties`.
+- The `vault_url` parameter of `SecretClient` has been renamed to `vault_endpoint`
+- The property `vault_url` has been renamed to `vault_endpoint` in all models.
 
 ### Fixes and improvements
 - `list_secrets` and `list_secret_versions` return the correct type

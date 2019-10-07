@@ -152,14 +152,14 @@ class KeyProperties(object):
         return self._attributes.updated
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """
         URL of the vault containing the key
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def recovery_level(self):
