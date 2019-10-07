@@ -29,14 +29,13 @@ __version__ = VERSION
 
 from .configuration import Configuration  # pylint: disable=unused-import
 from .pipeline_client import PipelineClient
-from .pipeline.transport import HttpRequest
+from .pipeline.transport import HttpRequest  # pylint: disable=unused-import
 from .exceptions import HttpResponseError  # pylint: disable=unused-import
 from ._match_conditions import MatchConditions
 
 
 __all__ = [
     "PipelineClient",
-    "HttpRequest",
     "MatchConditions"
 ]
 
