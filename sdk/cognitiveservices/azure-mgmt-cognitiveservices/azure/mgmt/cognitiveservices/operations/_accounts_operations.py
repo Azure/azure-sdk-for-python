@@ -39,7 +39,7 @@ class AccountsOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, account, custom_headers=None, raw=False, **operation_config):
         """Create Cognitive Services Account. Accounts is a resource group wide
         resource type. It holds the keys for developer to access intelligent
         APIs. It's also the resource type for billing.
@@ -49,9 +49,9 @@ class AccountsOperations(object):
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
-        :param parameters: The parameters to provide for the created account.
-        :type parameters:
-         ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountCreateParameters
+        :param account: The parameters to provide for the created account.
+        :type account:
+         ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -88,7 +88,7 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CognitiveServicesAccountCreateParameters')
+        body_content = self._serialize.body(account, 'CognitiveServicesAccount')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -111,7 +111,7 @@ class AccountsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, sku=None, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, account, custom_headers=None, raw=False, **operation_config):
         """Updates a Cognitive Services account.
 
         :param resource_group_name: The name of the resource group within the
@@ -119,17 +119,9 @@ class AccountsOperations(object):
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
-        :param sku: Gets or sets the SKU of the resource.
-        :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-        :param tags: Gets or sets a list of key value pairs that describe the
-         resource. These tags can be used in viewing and grouping this resource
-         (across resource groups). A maximum of 15 tags can be provided for a
-         resource. Each tag must have a key no greater than 128 characters and
-         value no greater than 256 characters.
-        :type tags: dict[str, str]
-        :param properties: Additional properties for Account. Only provided
-         fields will be updated.
-        :type properties: object
+        :param account: The parameters to provide for the created account.
+        :type account:
+         ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -141,8 +133,6 @@ class AccountsOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
-        parameters = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags, properties=properties)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -168,7 +158,7 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CognitiveServicesAccountUpdateParameters')
+        body_content = self._serialize.body(account, 'CognitiveServicesAccount')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

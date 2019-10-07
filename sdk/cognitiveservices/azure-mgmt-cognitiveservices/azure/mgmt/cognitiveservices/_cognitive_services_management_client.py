@@ -17,7 +17,6 @@ from .operations import CognitiveServicesManagementClientOperationsMixin
 from .operations import AccountsOperations
 from .operations import ResourceSkusOperations
 from .operations import Operations
-from .operations import CheckSkuAvailabilityOperations
 from . import models
 
 
@@ -33,8 +32,6 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
     :vartype resource_skus: azure.mgmt.cognitiveservices.operations.ResourceSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
-    :ivar check_sku_availability: CheckSkuAvailability operations
-    :vartype check_sku_availability: azure.mgmt.cognitiveservices.operations.CheckSkuAvailabilityOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -60,6 +57,4 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
         self.resource_skus = ResourceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.check_sku_availability = CheckSkuAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -169,31 +169,19 @@ class CognitiveServicesAccount(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param etag: Entity Tag
-    :type etag: str
+    :ivar etag: Entity Tag
+    :vartype etag: str
     :ivar id: The id of the created account
     :vartype id: str
-    :param kind: Type of cognitive service account.
+    :param kind: The Kind of the resource.
     :type kind: str
     :param location: The location of the resource
     :type location: str
     :ivar name: The name of the created account
     :vartype name: str
-    :ivar provisioning_state: Gets the status of the cognitive services
-     account at the time the operation was called. Possible values include:
-     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.cognitiveservices.models.ProvisioningState
-    :param endpoint: Endpoint of the created account.
-    :type endpoint: str
-    :param internal_id: The internal identifier.
-    :type internal_id: str
-    :param custom_sub_domain_name: Optional subdomain name used for
-     token-based authentication.
-    :type custom_sub_domain_name: str
-    :param network_acls: A collection of rules governing the accessibility
-     from specific network locations.
-    :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param properties: Properties of Cognitive Services account.
+    :type properties:
+     ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountProperties
     :param sku: The SKU of Cognitive Services account.
     :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
@@ -207,9 +195,9 @@ class CognitiveServicesAccount(Model):
     """
 
     _validation = {
+        'etag': {'readonly': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -219,81 +207,60 @@ class CognitiveServicesAccount(Model):
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'internal_id': {'key': 'properties.internalId', 'type': 'str'},
-        'custom_sub_domain_name': {'key': 'properties.customSubDomainName', 'type': 'str'},
-        'network_acls': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        'properties': {'key': 'properties', 'type': 'CognitiveServicesAccountProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, kind: str=None, location: str=None, endpoint: str=None, internal_id: str=None, custom_sub_domain_name: str=None, network_acls=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, location: str=None, properties=None, sku=None, tags=None, **kwargs) -> None:
         super(CognitiveServicesAccount, self).__init__(**kwargs)
-        self.etag = etag
+        self.etag = None
         self.id = None
         self.kind = kind
         self.location = location
         self.name = None
-        self.provisioning_state = None
-        self.endpoint = endpoint
-        self.internal_id = internal_id
-        self.custom_sub_domain_name = custom_sub_domain_name
-        self.network_acls = network_acls
+        self.properties = properties
         self.sku = sku
         self.tags = tags
         self.type = None
 
 
-class CognitiveServicesAccountCreateParameters(Model):
-    """The parameters to provide for the account.
+class CognitiveServicesAccountApiProperties(Model):
+    """The api properties for special APIs.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param sku: Required. Required. Gets or sets the SKU of the resource.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-    :param kind: Required. Required. Gets or sets the Kind of the resource.
-    :type kind: str
-    :param location: Required. Required. Gets or sets the location of the
-     resource. This will be one of the supported and registered Azure Geo
-     Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
-     resource cannot be changed once it is created, but if an identical geo
-     region is specified on update the request will succeed.
-    :type location: str
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used in viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key no greater than 128 characters and
-     value no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param properties: Required. Must exist in the request. Must be an empty
-     object. Must not be null.
-    :type properties: object
+    :param qna_runtime_endpoint: (QnAMaker Only) The runtime endpoint of
+     QnAMaker.
+    :type qna_runtime_endpoint: str
+    :param statistics_enabled: (Bing Search Only) The flag to enable
+     statistics of Bing Search.
+    :type statistics_enabled: bool
+    :param event_hub_connection_string: (Personalization Only) The flag to
+     enable statistics of Bing Search.
+    :type event_hub_connection_string: str
+    :param storage_account_connection_string: (Personalization Only) The
+     storage account connection string.
+    :type storage_account_connection_string: str
     """
 
     _validation = {
-        'sku': {'required': True},
-        'kind': {'required': True},
-        'location': {'required': True},
-        'properties': {'required': True},
+        'event_hub_connection_string': {'max_length': 1000, 'pattern': r'^( *)Endpoint=sb://(.*);( *)SharedAccessKeyName=(.*);( *)SharedAccessKey=(.*)$'},
+        'storage_account_connection_string': {'max_length': 1000, 'pattern': r'^(( *)DefaultEndpointsProtocol=(http|https)( *);( *))?AccountName=(.*)AccountKey=(.*)EndpointSuffix=(.*)$'},
     }
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'qna_runtime_endpoint': {'key': 'qnaRuntimeEndpoint', 'type': 'str'},
+        'statistics_enabled': {'key': 'statisticsEnabled', 'type': 'bool'},
+        'event_hub_connection_string': {'key': 'eventHubConnectionString', 'type': 'str'},
+        'storage_account_connection_string': {'key': 'storageAccountConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, *, sku, kind: str, location: str, properties, tags=None, **kwargs) -> None:
-        super(CognitiveServicesAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = sku
-        self.kind = kind
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, *, qna_runtime_endpoint: str=None, statistics_enabled: bool=None, event_hub_connection_string: str=None, storage_account_connection_string: str=None, **kwargs) -> None:
+        super(CognitiveServicesAccountApiProperties, self).__init__(**kwargs)
+        self.qna_runtime_endpoint = qna_runtime_endpoint
+        self.statistics_enabled = statistics_enabled
+        self.event_hub_connection_string = event_hub_connection_string
+        self.storage_account_connection_string = storage_account_connection_string
 
 
 class CognitiveServicesAccountEnumerateSkusResult(Model):
@@ -341,33 +308,55 @@ class CognitiveServicesAccountKeys(Model):
         self.key2 = key2
 
 
-class CognitiveServicesAccountUpdateParameters(Model):
-    """The parameters to provide for the account.
+class CognitiveServicesAccountProperties(Model):
+    """Properties of Cognitive Services account.
 
-    :param sku: Gets or sets the SKU of the resource.
-    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
-    :param tags: Gets or sets a list of key value pairs that describe the
-     resource. These tags can be used in viewing and grouping this resource
-     (across resource groups). A maximum of 15 tags can be provided for a
-     resource. Each tag must have a key no greater than 128 characters and
-     value no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param properties: Additional properties for Account. Only provided fields
-     will be updated.
-    :type properties: object
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: Gets the status of the cognitive services
+     account at the time the operation was called. Possible values include:
+     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar endpoint: Endpoint of the created account.
+    :vartype endpoint: str
+    :ivar internal_id: The internal identifier.
+    :vartype internal_id: str
+    :param custom_sub_domain_name: Optional subdomain name used for
+     token-based authentication.
+    :type custom_sub_domain_name: str
+    :param network_acls: A collection of rules governing the accessibility
+     from specific network locations.
+    :type network_acls: ~azure.mgmt.cognitiveservices.models.NetworkRuleSet
+    :param api_properties: The api properties for special APIs.
+    :type api_properties:
+     ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
     """
 
-    _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'endpoint': {'readonly': True},
+        'internal_id': {'readonly': True},
     }
 
-    def __init__(self, *, sku=None, tags=None, properties=None, **kwargs) -> None:
-        super(CognitiveServicesAccountUpdateParameters, self).__init__(**kwargs)
-        self.sku = sku
-        self.tags = tags
-        self.properties = properties
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'internal_id': {'key': 'internalId', 'type': 'str'},
+        'custom_sub_domain_name': {'key': 'customSubDomainName', 'type': 'str'},
+        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
+        'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
+    }
+
+    def __init__(self, *, custom_sub_domain_name: str=None, network_acls=None, api_properties=None, **kwargs) -> None:
+        super(CognitiveServicesAccountProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.endpoint = None
+        self.internal_id = None
+        self.custom_sub_domain_name = custom_sub_domain_name
+        self.network_acls = network_acls
+        self.api_properties = api_properties
 
 
 class CognitiveServicesResourceAndSku(Model):
@@ -500,11 +489,6 @@ class MetricName(Model):
 class NetworkRuleSet(Model):
     """A set of rules governing the network accessibility.
 
-    :param bypass: Tells what traffic can bypass network rules. This can be
-     'AzureServices' or 'None'.  If not specified the default is
-     'AzureServices'. Possible values include: 'AzureServices', 'None'
-    :type bypass: str or
-     ~azure.mgmt.cognitiveservices.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and
      from virtualNetworkRules match. This is only used after the bypass
      property has been evaluated. Possible values include: 'Allow', 'Deny'
@@ -518,15 +502,13 @@ class NetworkRuleSet(Model):
     """
 
     _attribute_map = {
-        'bypass': {'key': 'bypass', 'type': 'str'},
         'default_action': {'key': 'defaultAction', 'type': 'str'},
         'ip_rules': {'key': 'ipRules', 'type': '[IpRule]'},
         'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
     }
 
-    def __init__(self, *, bypass=None, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
+    def __init__(self, *, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.bypass = bypass
         self.default_action = default_action
         self.ip_rules = ip_rules
         self.virtual_network_rules = virtual_network_rules
