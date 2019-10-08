@@ -146,15 +146,22 @@ class EventData(object):
             return self._last_enqueued_event_properties
 
         if self.message.delivery_annotations:
+            enqueued_time_stamp = \
+                self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None)
+            retrieval_time_stamp = \
+                self.message.delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+
             self._last_enqueued_event_properties = {
                 "sequence_number":
                     self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
                 "offset":
                     self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
                 "enqueued_time":
-                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
+                    datetime.datetime.utcfromtimestamp(
+                        float(enqueued_time_stamp)/1000) if enqueued_time_stamp else None,
                 "retrieval_time":
-                    self.message.delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+                    datetime.datetime.utcfromtimestamp(
+                        float(retrieval_time_stamp)/1000) if retrieval_time_stamp else None
             }
             return self._last_enqueued_event_properties
 
