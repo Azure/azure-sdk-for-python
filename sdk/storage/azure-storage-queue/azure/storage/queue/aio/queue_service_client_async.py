@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue._shared.models import AccountPermissions, ResourceTypes
+    from azure.storage.queue._shared.models import AccountSasPermissions, ResourceTypes
     from azure.storage.queue.aio.models import (
         QueueProperties
     )
@@ -74,7 +74,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
             :start-after: [START async_create_queue_service_client]
             :end-before: [END async_create_queue_service_client]
@@ -148,7 +149,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_get_queue_service_properties]
                 :end-before: [END async_get_queue_service_properties]
@@ -179,25 +181,26 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.queue.models.Logging
+        :type logging: ~azure.storage.queue.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
-        :type hour_metrics: ~azure.storage.queue.models.Metrics
+        :type hour_metrics: ~azure.storage.queue.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for queues.
-        :type minute_metrics: ~azure.storage.queue.models.Metrics
+        :type minute_metrics: ~azure.storage.queue.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.queue.models.CorsRule`)
+        :type cors: list(~azure.storage.queue.CorsRule)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_set_queue_service_properties]
                 :end-before: [END async_set_queue_service_properties]
@@ -244,7 +247,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :returns: An iterable (auto-paging) of QueueProperties.
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.core.queue.models.QueueProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_list_queues]
                 :end-before: [END async_qsc_list_queues]
@@ -284,9 +288,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_create_queue]
                 :end-before: [END async_qsc_create_queue]
@@ -320,12 +325,13 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :param queue:
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_qsc_delete_queue]
                 :end-before: [END async_qsc_delete_queue]
@@ -346,11 +352,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :param queue:
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.storage.queue.aio.queue_client_async.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service_async.py
                 :start-after: [START async_get_queue_client]
                 :end-before: [END async_get_queue_client]

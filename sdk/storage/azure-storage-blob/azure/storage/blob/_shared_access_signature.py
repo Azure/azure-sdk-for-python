@@ -52,7 +52,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str snapshot:
             The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to grant permission.
-        :param BlobPermissions permission:
+        :param BlobSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.
@@ -129,7 +129,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         :param str container_name:
             Name of container.
-        :param ContainerPermissions permission:
+        :param ContainerSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, write, delete, list.

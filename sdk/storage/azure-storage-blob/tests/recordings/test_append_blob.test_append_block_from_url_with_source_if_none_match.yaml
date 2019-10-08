@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - ea8c0c4a-cbc5-11e9-b4cc-001a7dda7113
+      - 0853ac3a-d998-11e9-8a03-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -31,17 +31,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:00 GMT
       ETag:
-      - '"0x8D72DE9CECBD88A"'
+      - '"0x8D73BBBECB90876"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - ea8c0c4a-cbc5-11e9-b4cc-001a7dda7113
       x-ms-request-id:
-      - 60456d1e-201e-0052-49d2-5f2f1c000000
+      - f9fd2fc9-b01e-003c-0aa4-6dbbfc000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1211,13 +1209,13 @@ interactions:
       Content-Length:
       - '65536'
       Content-Type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - eaa88f62-cbc5-11e9-9182-001a7dda7113
+      - 0895a554-d998-11e9-ac5b-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1229,23 +1227,21 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:00 GMT
       ETag:
-      - '"0x8D72DE9CED8AC25"'
+      - '"0x8D73BBBECE102CE"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
       - '0'
       x-ms-blob-committed-block-count:
       - '1'
-      x-ms-client-request-id:
-      - eaa88f62-cbc5-11e9-9182-001a7dda7113
       x-ms-content-crc64:
       - jc/vsLnGjak=
       x-ms-request-id:
-      - 60456d3c-201e-0052-5cd2-5f2f1c000000
+      - f9fd2fe5-b01e-003c-17a4-6dbbfc000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1263,13 +1259,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - eab54022-cbc5-11e9-9a01-001a7dda7113
+      - 08becf5c-d998-11e9-887d-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -1285,11 +1281,11 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:00 GMT
       ETag:
-      - '"0x8D72DE9CED8AC25"'
+      - '"0x8D73BBBECE102CE"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -1302,20 +1298,16 @@ interactions:
       - '1'
       x-ms-blob-type:
       - AppendBlob
-      x-ms-client-request-id:
-      - eab54022-cbc5-11e9-9a01-001a7dda7113
       x-ms-creation-time:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 60456d58-201e-0052-72d2-5f2f1c000000
+      - f9fd3006-b01e-003c-2da4-6dbbfc000000
       x-ms-server-encrypted:
       - 'true'
-      x-ms-tag-count:
-      - '0'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -1333,15 +1325,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - eabd769c-cbc5-11e9-8b70-001a7dda7113
+      - 08d5c648-d998-11e9-a1eb-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1353,17 +1345,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:00 GMT
       ETag:
-      - '"0x8D72DE9CEE7A302"'
+      - '"0x8D73BBBED10779B"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - eabd769c-cbc5-11e9-8b70-001a7dda7113
       x-ms-request-id:
-      - 60456d72-201e-0052-07d2-5f2f1c000000
+      - f9fd301b-b01e-003c-3aa4-6dbbfc000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1383,15 +1373,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - eac41710-cbc5-11e9-b89f-001a7dda7113
+      - 08efd098-d998-11e9-a249-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersourceda7c1c3e/blobda7c1c3e?se=2019-08-31T09%3A04%3A11Z&sp=rd&sv=2019-02-02&sr=b&sig=aHHaTY1DTbEV0BV6HMvQn45O8rUF486gOhONAQLgRoM%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersourceda7c1c3e/blobda7c1c3e?se=2019-09-17T23%3A11%3A01Z&sp=rd&sv=2019-02-02&sr=b&sig=PQdiixBgZvf7/l98mT33rC1rqDm5x/zy31EyuKz8I2k%3D
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-source-if-none-match:
       - '0x111111111111111'
       x-ms-source-range:
@@ -1409,21 +1399,19 @@ interactions:
       Content-MD5:
       - c7986ryGtZLKQlD/soqrtw==
       Date:
-      - Sat, 31 Aug 2019 08:04:13 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       ETag:
-      - '"0x8D72DE9D046D767"'
+      - '"0x8D73BBBED3564CF"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
       - '0'
       x-ms-blob-committed-block-count:
       - '1'
-      x-ms-client-request-id:
-      - eac41710-cbc5-11e9-b89f-001a7dda7113
       x-ms-request-id:
-      - 60456d7b-201e-0052-0fd2-5f2f1c000000
+      - f9fd3033-b01e-003c-47a4-6dbbfc000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1441,13 +1429,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ec413ed4-cbc5-11e9-aad2-001a7dda7113
+      - 09171840-d998-11e9-a803-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -1463,11 +1451,11 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       ETag:
-      - '"0x8D72DE9D046D767"'
+      - '"0x8D73BBBED3564CF"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -1480,20 +1468,16 @@ interactions:
       - '1'
       x-ms-blob-type:
       - AppendBlob
-      x-ms-client-request-id:
-      - ec413ed4-cbc5-11e9-aad2-001a7dda7113
       x-ms-creation-time:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 604571d9-201e-0052-20d2-5f2f1c000000
+      - f9fd304d-b01e-003c-59a4-6dbbfc000000
       x-ms-server-encrypted:
       - 'true'
-      x-ms-tag-count:
-      - '0'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -1503,19 +1487,19 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml, application/octet-stream, text/plain
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ec4fb564-cbc5-11e9-840d-001a7dda7113
+      - 092b2238-d998-11e9-8e8b-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -2685,11 +2669,11 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       ETag:
-      - '"0x8D72DE9D046D767"'
+      - '"0x8D73BBBED3564CF"'
       Last-Modified:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -2698,20 +2682,16 @@ interactions:
       - '1'
       x-ms-blob-type:
       - AppendBlob
-      x-ms-client-request-id:
-      - ec4fb564-cbc5-11e9-840d-001a7dda7113
       x-ms-creation-time:
-      - Sat, 31 Aug 2019 08:04:11 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 604571f5-201e-0052-36d2-5f2f1c000000
+      - f9fd305b-b01e-003c-63a4-6dbbfc000000
       x-ms-server-encrypted:
       - 'true'
-      x-ms-tag-count:
-      - '0'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -2729,17 +2709,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ec5a6e34-cbc5-11e9-9cba-001a7dda7113
+      - 094878be-d998-11e9-9395-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersourceda7c1c3e/blobda7c1c3e?se=2019-08-31T09%3A04%3A11Z&sp=rd&sv=2019-02-02&sr=b&sig=aHHaTY1DTbEV0BV6HMvQn45O8rUF486gOhONAQLgRoM%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersourceda7c1c3e/blobda7c1c3e?se=2019-09-17T23%3A11%3A01Z&sp=rd&sv=2019-02-02&sr=b&sig=PQdiixBgZvf7/l98mT33rC1rqDm5x/zy31EyuKz8I2k%3D
       x-ms-date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:02 GMT
       x-ms-source-if-none-match:
-      - '"0x8D72DE9CED8AC25"'
+      - '"0x8D73BBBECE102CE"'
       x-ms-source-range:
       - bytes=0-65535
       x-ms-version:
@@ -2751,15 +2731,13 @@ interactions:
       string: ''
     headers:
       Date:
-      - Sat, 31 Aug 2019 08:04:14 GMT
+      - Tue, 17 Sep 2019 22:11:01 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - ec5a6e34-cbc5-11e9-9cba-001a7dda7113
       x-ms-error-code:
       - CannotVerifyCopySource
       x-ms-request-id:
-      - 60457210-201e-0052-4fd2-5f2f1c000000
+      - f9fd306e-b01e-003c-70a4-6dbbfc000000
       x-ms-version:
       - '2019-02-02'
     status:

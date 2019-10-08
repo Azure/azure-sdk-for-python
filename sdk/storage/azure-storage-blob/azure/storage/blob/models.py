@@ -128,7 +128,7 @@ class Logging(GeneratedLogging):
     :param retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -153,7 +153,7 @@ class Metrics(GeneratedMetrics):
     :param retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -244,12 +244,12 @@ class CorsRule(GeneratedCorsRule):
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
-    :param datetime last_modified:
+    :param ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :param str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param ~azure.storage.blob.models.LeaseProperties lease:
+    :param ~azure.storage.blob.LeaseProperties lease:
         Stores all the lease information for the container.
     :param str public_access: Specifies whether data in the container may be accessed
         publicly and the level of access.
@@ -300,7 +300,7 @@ class ContainerPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.ContainerProperties)
+    :vartype current_page: list(~azure.storage.blob.ContainerProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only containers whose names
@@ -362,7 +362,7 @@ class BlobProperties(DictMixin):
         String indicating this blob's type.
     :ivar dict metadata:
         Name-value pairs associated with the blob as metadata.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the blob was modified.
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
@@ -381,31 +381,31 @@ class BlobProperties(DictMixin):
         concurrent writes.
     :ivar bool server_encrypted:
         Set to true if the blob is encrypted on the server.
-    :ivar ~azure.storage.blob.models.CopyProperties copy:
+    :ivar ~azure.storage.blob.CopyProperties copy:
         Stores all the copy properties for the blob.
-    :ivar ~azure.storage.blob.models.ContentSettings content_settings:
+    :ivar ~azure.storage.blob.ContentSettings content_settings:
         Stores all the content settings for the blob.
-    :ivar ~azure.storage.blob.models.LeaseProperties lease:
+    :ivar ~azure.storage.blob.LeaseProperties lease:
         Stores all the lease information for the blob.
-    :ivar ~azure.storage.blob.models.StandardBlobTier blob_tier:
+    :ivar ~azure.storage.blob.StandardBlobTier blob_tier:
         Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
         with flexible latency requirements.
-    :ivar datetime blob_tier_change_time:
+    :ivar ~datetime.datetime blob_tier_change_time:
         Indicates when the access tier was last changed.
     :ivar bool blob_tier_inferred:
         Indicates whether the access tier was inferred by the service.
         If false, it indicates that the tier was set explicitly.
     :ivar bool deleted:
         Whether this blob was deleted.
-    :ivar datetime deleted_time:
+    :ivar ~datetime.datetime deleted_time:
         A datetime object representing the time at which the blob was deleted.
     :ivar int remaining_retention_days:
         The number of days that the blob will be retained before being permanently deleted by the service.
-    :ivar datetime creation_time:
+    :ivar ~datetime.datetime creation_time:
         Indicates when the blob was created, in UTC.
     :ivar str archive_status:
         Archive status of blob.
@@ -478,7 +478,7 @@ class BlobPropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
@@ -538,7 +538,6 @@ class BlobPropertiesPaged(PageIterator):
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
         self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
-        self.delimiter = self._response.delimiter
 
         return self._response.next_marker or None, self.current_page
 
@@ -567,7 +566,7 @@ class BlobPrefix(ItemPaged, DictMixin):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.models.BlobProperties)
+    :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
@@ -603,6 +602,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
         self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
         self.current_page = [self._build_item(item) for item in self.current_page]
+        self.delimiter = self._response.delimiter
 
         return continuation_token, self.current_page
 
@@ -720,7 +720,7 @@ class CopyProperties(DictMixin):
         Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy Blob operation where this blob was the destination blob. Can show
         between 0 and Content-Length bytes copied.
-    :param datetime completion_time:
+    :param ~datetime.datetime completion_time:
         Conclusion time of the last attempted Copy Blob operation where this blob was the
         destination blob. This value can specify the time of a completed, aborted, or
         failed copy attempt.
@@ -731,7 +731,7 @@ class CopyProperties(DictMixin):
         Copies the snapshot of the source page blob to a destination page blob.
         The snapshot is copied such that only the differential changes between
         the previously copied snapshot are transferred to the destination
-    :param datetime destination_snapshot:
+    :param ~datetime.datetime destination_snapshot:
         Included if the blob is incremental copy blob or incremental copy snapshot,
         if x-ms-copy-status is success. Snapshot time of the last successful
         incremental copy snapshot for this blob.
@@ -772,15 +772,14 @@ class BlobBlock(DictMixin):
         Block size in bytes.
     """
 
-    def __init__(self, block_id=None, state=BlockState.Latest):
+    def __init__(self, block_id, state=BlockState.Latest):
         self.id = block_id
         self.state = state
         self.size = None
 
     @classmethod
     def _from_generated(cls, generated):
-        block = cls()
-        block.id = decode_base64_to_text(generated.name)
+        block = cls(decode_base64_to_text(generated.name))
         block.size = generated.size
         return block
 
@@ -825,7 +824,7 @@ class AccessPolicy(GenAccessPolicy):
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.blob.models.ContainerPermissions
+    :type permission: str or ~azure.storage.blob.ContainerSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -848,27 +847,12 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
-class ContainerPermissions(object):
-    """ContainerPermissions class to be used with
-    :func:`~azure.storage.blob.container_client.ContainerClient.generate_shared_access_signature` API and
+class ContainerSasPermissions(object):
+    """ContainerSasPermissions class to be used with
+    :func:`~azure.storage.blob.ContainerClient.generate_shared_access_signature` API and
     for the AccessPolicies used with
-    :func:`~azure.storage.blob.container_client.ContainerClient.set_container_access_policy`.
+    :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
 
-    :cvar ContainerPermissions ContainerPermissions.DELETE:
-        Delete any blob in the container. Note: You cannot grant permissions to
-        delete a container with a container SAS. Use an account SAS instead.
-    :cvar ContainerPermissions ContainerPermissions.LIST:
-        List blobs in the container.
-    :cvar ContainerPermissions ContainerPermissions.READ:
-        Read the content, properties, metadata or block list of any blob in the
-        container. Use any blob in the container as the source of a copy operation.
-    :cvar ContainerPermissions ContainerPermissions.WRITE:
-        For any blob in the container, create or write content, properties,
-        metadata, or block list. Snapshot or lease the blob. Resize the blob
-        (page blob only). Use the blob as the destination of a copy operation
-        within the same account. Note: You cannot grant permissions to read or
-        write container properties or metadata, nor to lease a container, with
-        a container SAS. Use an account SAS instead.
     :param bool read:
         Read the content, properties, metadata or block list of any blob in the
         container. Use any blob in the container as the source of a copy operation.
@@ -884,58 +868,35 @@ class ContainerPermissions(object):
         delete a container with a container SAS. Use an account SAS instead.
     :param bool list:
         List blobs in the container.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    DELETE = None  # type: ContainerPermissions
-    LIST = None  # type: ContainerPermissions
-    READ = None  # type: ContainerPermissions
-    WRITE = None  # type: ContainerPermissions
-
-    def __init__(self, read=False, write=False, delete=False, list=False, _str=None):  # pylint: disable=redefined-builtin
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-
-    def __or__(self, other):
-        return ContainerPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ContainerPermissions(_str=str(self) + str(other))
+    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else ''))
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
-ContainerPermissions.DELETE = ContainerPermissions(delete=True)
-ContainerPermissions.LIST = ContainerPermissions(list=True)
-ContainerPermissions.READ = ContainerPermissions(read=True)
-ContainerPermissions.WRITE = ContainerPermissions(write=True)
-
-
-class BlobPermissions(object):
-    """BlobPermissions class to be used with
+class BlobSasPermissions(object):
+    """BlobSasPermissions class to be used with
     :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
 
-    :cvar BlobPermissions BlobPermissions.ADD:
-        Add a block to an append blob.
-    :cvar BlobPermissions BlobPermissions.CREATE:
-        Write a new blob, snapshot a blob, or copy a blob to a new blob.
-    :cvar BlobPermissions BlobPermissions.DELETE:
-        Delete the blob.
-    :cvar BlobPermissions BlobPermissions.READ:
-        Read the content, properties, metadata and block list. Use the blob as the source of a copy operation.
-    :cvar BlobPermissions BlobPermissions.WRITE:
-        Create or write content, properties, metadata, or block list. Snapshot or lease
-        the blob. Resize the blob (page blob only). Use the blob as the destination of a
-        copy operation within the same account.
     :param bool read:
         Read the content, properties, metadata and block list. Use the blob as
         the source of a copy operation.
@@ -949,45 +910,34 @@ class BlobPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
-    :param str _str:
-        A string representing the permissions.
     """
-    ADD = None  # type: BlobPermissions
-    CREATE = None  # type: BlobPermissions
-    DELETE = None  # type: BlobPermissions
-    READ = None  # type: BlobPermissions
-    WRITE = None  # type: BlobPermissions
-
-
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-
-    def __or__(self, other):
-        return BlobPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return BlobPermissions(_str=str(self) + str(other))
+                 delete=False):
+        self.read = read
+        self.add = add
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
 
-BlobPermissions.ADD = BlobPermissions(add=True)
-BlobPermissions.CREATE = BlobPermissions(create=True)
-BlobPermissions.DELETE = BlobPermissions(delete=True)
-BlobPermissions.READ = BlobPermissions(read=True)
-BlobPermissions.WRITE = BlobPermissions(write=True)
+        parsed = cls(p_read, p_add, p_create, p_write, p_delete)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
 class CustomerProvidedEncryptionKey(object):

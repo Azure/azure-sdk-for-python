@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 import pytest
 import unittest
+import re
+import sys
 from dateutil.tz import tzutc
 
 import requests
@@ -18,14 +20,18 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     LeaseClient,
-    ContainerPermissions,
+    ContainerSasPermissions,
     PublicAccess,
-    ContainerPermissions,
-    AccessPolicy
+    ContainerSasPermissions,
+    AccessPolicy,
+    StandardBlobTier,
+    PremiumPageBlobTier
 )
 
 from azure.identity import ClientSecretCredential
 from testcase import StorageTestCase, TestMode, record, LogCaptured
+
+import pytest
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -133,8 +139,8 @@ class StorageContainerTest(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -294,7 +300,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_metadata(metadata, lease_id)
+        container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = container.get_container_properties().metadata
@@ -334,7 +340,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        md = container.get_container_properties(lease_id).metadata
+        md = container.get_container_properties(lease=lease_id).metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
@@ -368,7 +374,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        props = container.get_container_properties(lease_id)
+        props = container.get_container_properties(lease=lease_id)
         lease_id.break_lease()
 
         # Assert
@@ -398,7 +404,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        acl = container.get_container_access_policy(lease_id)
+        acl = container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)
@@ -428,7 +434,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
@@ -444,7 +450,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifiers = {'testid': access_policy}
@@ -517,7 +523,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {'testid': access_policy}
@@ -550,10 +556,10 @@ class StorageContainerTest(StorageTestCase):
     def test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = self._create_container()
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
-        identifiers = {str(i): access_policy for i in range(0, 3)}
+        identifiers = {i: access_policy for i in range(3)}
 
         # Act
         container.set_container_access_policy(identifiers)
@@ -862,7 +868,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_metadata(self):
         # Arrange
-        pytest.skip("Waiting on metadata XML fix in msrest")
+
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -961,6 +967,165 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
+    def test_delete_blobs_simple(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        try:
+            container.get_blob_client('blob1').upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        )
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
+    def test_delete_blobs_snapshot(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        try:
+            blob1_client = container.get_blob_client('blob1')
+            blob1_client.upload_blob(data)
+            blob1_client.create_snapshot()
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+        blobs = list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 4  # 3 blobs + 1 snapshot
+
+        # Act
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            delete_snapshots='only'
+        )
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 404  # There was no snapshot
+        assert response[2].status_code == 404  # There was no snapshot
+
+        blobs = list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 3  # 3 blobs
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
+    def test_standard_blob_tier_set_tier_api_batch(self):
+        container = self._create_container()
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        )
+
+        for tier in tiers:
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            blob.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = blob.get_blob_properties()
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+            assert blob_ref.blob_tier_change_time is None
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+    @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    # once we have premium tests, still we don't want to test Py 2.7
+    # @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
+    def test_premium_tier_set_tier_api_batch(self):
+        url = self._get_premium_account_url()
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
+
+        try:
+            container_name = self.get_resource_name('utpremiumcontainer')
+            container = pbs.get_container_client(container_name)
+
+            if not self.is_playback():
+                try:
+                    container.create_container()
+                except ResourceExistsError:
+                    pass
+
+            pblob = container.get_blob_client('blob1')
+            pblob.create_page_blob(1024)
+            container.get_blob_client('blob2').create_page_blob(1024)
+            container.get_blob_client('blob3').create_page_blob(1024)
+
+            blob_ref = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P10 == blob_ref.blob_tier
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+
+            parts = container.set_premium_page_blob_tier_blobs(
+                PremiumPageBlobTier.P50,
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+
+            blob_ref2 = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+
+        finally:
+            container.delete_container()
+
+
     @record
     def test_walk_blobs_with_delimiter(self):
         # Arrange
@@ -990,7 +1155,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_multiple(self):
         # Arrange
-        pytest.skip("Waiting on metadata XML fix in msrest")
+
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1034,9 +1199,9 @@ class StorageContainerTest(StorageTestCase):
 
         token = container.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)
@@ -1092,7 +1257,7 @@ class StorageContainerTest(StorageTestCase):
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
         token = container_client.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest'
         )
@@ -1102,11 +1267,26 @@ class StorageContainerTest(StorageTestCase):
         blob_client.upload_blob(blob_content, length=len(blob_content))
 
         # Act
-        new_blob_client = BlobClient(blob_client.url, credential=token)
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
         content = new_blob_client.download_blob()
 
         # Assert
         self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
+
+    def test_set_container_permission_from_string(self):
+        # Arrange
+        permission1 = ContainerSasPermissions(read=True, write=True)
+        permission2 = ContainerSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
+
+    def test_set_container_permission(self):
+        # Arrange
+        permission = ContainerSasPermissions.from_string('wrlx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.list, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrlx')
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

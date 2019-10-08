@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3e334252-b637-11e9-804b-2816a845e8c6
+      - a1aff9ac-d9a9-11e9-b078-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726?restype=share
   response:
@@ -29,17 +29,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:58 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B220C8F54"'
+      - '"0x8D73BCD85EEC3D2"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:58 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - d3666f0b-001a-0045-4343-4ab991000000
+      - 16f924db-f01a-0041-17b6-6d0b10000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -55,15 +55,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3ea7f302-b637-11e9-a3c6-2816a845e8c6
+      - a1cb70d0-d9a9-11e9-90a2-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726/dir1?restype=directory
   response:
@@ -73,19 +81,33 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B2234129E"'
+      - '"0x8D73BCD85F6FF78"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-18T00:16:59.8105976Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:16:59.8105976Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:16:59.8105976Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - d3666f0e-001a-0045-4443-4ab991000000
+      - 16f924de-f01a-0041-18b6-6d0b10000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -101,15 +123,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3ec6aaa8-b637-11e9-88e8-2816a845e8c6
+      - a1d38086-d9a9-11e9-bbd7-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726/dir2?restype=directory
   response:
@@ -119,19 +149,33 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B2253390F"'
+      - '"0x8D73BCD85FE7B5F"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-18T00:16:59.8596447Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:16:59.8596447Z'
+      x-ms-file-id:
+      - '11529285414812647424'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:16:59.8596447Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - d3666f0f-001a-0045-4543-4ab991000000
+      - 16f924df-f01a-0041-19b6-6d0b10000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -147,15 +191,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3ee2dbca-b637-11e9-980c-2816a845e8c6
+      - a1da2fba-d9a9-11e9-bf48-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726?restype=share&comp=snapshot
   response:
@@ -165,19 +209,19 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B220C8F54"'
+      - '"0x8D73BCD85EEC3D2"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:58 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - d3666f10-001a-0045-4643-4ab991000000
+      - 16f924e0-f01a-0041-1ab6-6d0b10000000
       x-ms-snapshot:
-      - '2019-08-03T21:39:59.0000000Z'
+      - '2019-09-18T00:16:59.0000000Z'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -193,15 +237,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3f05b750-b637-11e9-950f-2816a845e8c6
+      - a1e60e98-d9a9-11e9-bcfa-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726/dir3?restype=directory
   response:
@@ -211,19 +263,33 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B2291ACFB"'
+      - '"0x8D73BCD8611449E"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-18T00:16:59.9827614Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:16:59.9827614Z'
+      x-ms-file-id:
+      - '16140971433240035328'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:16:59.9827614Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - d3666f11-001a-0045-4744-4ab991000000
+      - 16f924e1-f01a-0041-1bb6-6d0b10000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -239,19 +305,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3f24443a-b637-11e9-9728-2816a845e8c6
+      - a1ed8b80-d9a9-11e9-aa99-001a7dda7113
       x-ms-content-length:
       - '4'
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:01 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/share90471726/file1
   response:
@@ -261,19 +335,33 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B22B05E26"'
+      - '"0x8D73BCD861A2066"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:39:59 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-18T00:17:00.0408166Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:17:00.0408166Z'
+      x-ms-file-id:
+      - '10376363910205800448'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:17:00.0408166Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - d3666f12-001a-0045-4844-4ab991000000
+      - 16f924e2-f01a-0041-1cb6-6d0b10000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -291,15 +379,15 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 3f40c36e-b637-11e9-891e-2816a845e8c6
+      - a1f83164-d9a9-11e9-9932-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:01 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-range:
       - bytes=0-3
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -313,19 +401,19 @@ interactions:
       Content-MD5:
       - jXd/OF09/siBXSD3SWAm3A==
       Date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       ETag:
-      - '"0x8D7185B22CEE836"'
+      - '"0x8D73BCD8626F4D3"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - d3666f16-001a-0045-4944-4ab991000000
+      - 16f924e3-f01a-0041-1db6-6d0b10000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -339,39 +427,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3f5835ae-b637-11e9-8284-2816a845e8c6
+      - a2037448-d9a9-11e9-ac5b-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:01 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/share90471726?sharesnapshot=2019-08-03T21:39:59.0000000Z&restype=directory&comp=list
+    uri: https://storagename.file.core.windows.net/share90471726?sharesnapshot=2019-09-18T00:16:59.0000000Z&restype=directory&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\" ShareName=\"share90471726\"
-        ShareSnapshot=\"2019-08-03T21:39:59.0000000Z\" DirectoryPath=\"\"><Entries><Directory><Name>dir1</Name><Properties
+        ShareSnapshot=\"2019-09-18T00:16:59.0000000Z\" DirectoryPath=\"\"><Entries><Directory><Name>dir1</Name><Properties
         /></Directory><Directory><Name>dir2</Name><Properties /></Directory></Entries><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:16:59 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-request-id:
-      - d3666f18-001a-0045-4a44-4ab991000000
+      - 16f924e4-f01a-0041-1eb6-6d0b10000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -385,39 +471,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3f7fc5ca-b637-11e9-be88-2816a845e8c6
+      - a209b19c-d9a9-11e9-a2b0-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:01 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share90471726</Name><Snapshot>2019-08-03T21:39:59.0000000Z</Snapshot><Properties><Last-Modified>Sat,
-        03 Aug 2019 21:39:58 GMT</Last-Modified><Etag>\"0x8D7185B220C8F54\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share90471726</Name><Properties><Last-Modified>Sat,
-        03 Aug 2019 21:39:58 GMT</Last-Modified><Etag>\"0x8D7185B220C8F54\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share90471726</Name><Snapshot>2019-09-18T00:16:59.0000000Z</Snapshot><Properties><Last-Modified>Wed,
+        18 Sep 2019 00:16:59 GMT</Last-Modified><Etag>\"0x8D73BCD85EEC3D2\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share90471726</Name><Properties><Last-Modified>Wed,
+        18 Sep 2019 00:16:59 GMT</Last-Modified><Etag>\"0x8D73BCD85EEC3D2\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-request-id:
-      - d3666f1a-001a-0045-4b44-4ab991000000
+      - 16f924e6-f01a-0041-1fb6-6d0b10000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -433,17 +517,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3fbe89ca-b637-11e9-8b0b-2816a845e8c6
+      - a2107052-d9a9-11e9-aa3e-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:02 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.file.core.windows.net/share90471726?restype=share
   response:
@@ -453,13 +537,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:40:00 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - d3666f1c-001a-0045-4c44-4ab991000000
+      - 16f924e7-f01a-0041-20b6-6d0b10000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -475,38 +559,38 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 3fe0c358-b637-11e9-992e-2816a845e8c6
+      - a21837fa-d9a9-11e9-8ee8-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:02 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.file.core.windows.net/share90471726?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareBeingDeleted</Code><Message>The
-        specified share is being deleted. Try operation later.\nRequestId:d3666f1d-001a-0045-4d44-4ab991000000\nTime:2019-08-03T21:40:01.1519815Z</Message></Error>"
+        specified share is being deleted. Try operation later.\nRequestId:16f924e8-f01a-0041-21b6-6d0b10000000\nTime:2019-09-18T00:17:00.3110401Z</Message></Error>"
     headers:
       Content-Length:
       - '244'
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:40:01 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ShareBeingDeleted
       x-ms-request-id:
-      - d3666f1d-001a-0045-4d44-4ab991000000
+      - 16f924e8-f01a-0041-21b6-6d0b10000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 409
       message: The specified share is being deleted. Try operation later.

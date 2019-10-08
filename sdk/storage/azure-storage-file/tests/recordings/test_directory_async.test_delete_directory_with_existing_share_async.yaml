@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ebb54466-d055-11e9-9819-001a7dda7113
+      - 4e44fd66-d9a6-11e9-91c9-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:25:05 GMT
+      - Tue, 17 Sep 2019 23:53:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -23,18 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:25:04 GMT
+      : Tue, 17 Sep 2019 23:53:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D73279CFE95BDD"'
+      : '"0x8D73BCA327243AB"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:25:05 GMT
+      : Tue, 17 Sep 2019 23:53:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: ebb54466-d055-11e9-9819-001a7dda7113
-      x-ms-request-id: c1271172-901a-00c1-4762-64f416000000
+      x-ms-request-id: f6bf3943-f01a-009a-04b3-6dcd2d000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -51,13 +50,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ebc112a2-d055-11e9-9d92-001a7dda7113
+      - 4e4f5692-d9a6-11e9-9ca2-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:25:05 GMT
+      - Tue, 17 Sep 2019 23:53:11 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -79,25 +78,24 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:25:04 GMT
+      : Tue, 17 Sep 2019 23:53:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D73279CFEF8F0F"'
+      : '"0x8D73BCA3287E30A"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:25:05 GMT
+      : Tue, 17 Sep 2019 23:53:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: ebc112a2-d055-11e9-9d92-001a7dda7113
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-06T03:25:05.7229583Z'
-      x-ms-file-creation-time: '2019-09-06T03:25:05.7229583Z'
+      x-ms-file-change-time: '2019-09-17T23:53:11.3413386Z'
+      x-ms-file-creation-time: '2019-09-17T23:53:11.3413386Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-06T03:25:05.7229583Z'
+      x-ms-file-last-write-time: '2019-09-17T23:53:11.3413386Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 17913408918638655783*10394889115079208622
-      x-ms-request-id: c1271175-901a-00c1-4862-64f416000000
+      x-ms-request-id: f6bf3946-f01a-009a-05b3-6dcd2d000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -115,13 +113,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ebc4c148-d055-11e9-b43a-001a7dda7113
+      - 4e62d138-d9a6-11e9-944f-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:25:05 GMT
+      - Tue, 17 Sep 2019 23:53:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -135,12 +133,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:25:04 GMT
+      : Tue, 17 Sep 2019 23:53:10 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: ebc4c148-d055-11e9-b43a-001a7dda7113
-      x-ms-request-id: c1271176-901a-00c1-4962-64f416000000
+      x-ms-request-id: f6bf3947-f01a-009a-06b3-6dcd2d000000
       x-ms-version: '2019-02-02'
     status:
       code: 202
@@ -157,13 +154,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ebc7f31e-d055-11e9-bb6c-001a7dda7113
+      - 4e64a4ba-d9a6-11e9-abe7-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:25:05 GMT
+      - Tue, 17 Sep 2019 23:53:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -171,7 +168,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:c1271177-901a-00c1-4a62-64f416000000\nTime:2019-09-06T03:25:05.7623817Z</Message></Error>"
+        specified resource does not exist.\nRequestId:f6bf3948-f01a-009a-07b3-6dcd2d000000\nTime:2019-09-17T23:53:11.3697503Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -181,13 +178,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:25:05 GMT
+      : Tue, 17 Sep 2019 23:53:11 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: ebc7f31e-d055-11e9-bb6c-001a7dda7113
       x-ms-error-code: ResourceNotFound
-      x-ms-request-id: c1271177-901a-00c1-4a62-64f416000000
+      x-ms-request-id: f6bf3948-f01a-009a-07b3-6dcd2d000000
       x-ms-version: '2019-02-02'
     status:
       code: 404

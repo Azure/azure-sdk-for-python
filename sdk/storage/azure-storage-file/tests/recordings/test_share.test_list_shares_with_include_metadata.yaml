@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 41408d24-b637-11e9-8947-2816a845e8c6
+      - a26c3e2e-d9a9-11e9-a7be-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:04 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -25,7 +25,7 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/sharef877141f?restype=share
   response:
@@ -35,17 +35,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:40:03 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       ETag:
-      - '"0x8D7185B250B3B84"'
+      - '"0x8D73BCD86A87E48"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:40:03 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - bf6281d5-301a-00e7-0144-4a740d000000
+      - 4e2aa381-d01a-00b2-72b6-6dac85000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -59,38 +59,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 41928ee8-b637-11e9-a559-2816a845e8c6
+      - a2845980-d9a9-11e9-9b96-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:05 GMT
+      - Wed, 18 Sep 2019 00:17:01 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/?prefix=sharef877141f&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Sat,
-        03 Aug 2019 21:40:03 GMT</Last-Modified><Etag>\"0x8D7185B250B3B84\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
+        18 Sep 2019 00:17:00 GMT</Last-Modified><Etag>\"0x8D73BCD86A87E48\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:40:03 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-request-id:
-      - bf6281d8-301a-00e7-0244-4a740d000000
+      - 4e2aa384-d01a-00b2-73b6-6dac85000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -104,38 +102,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 41a37936-b637-11e9-a890-2816a845e8c6
+      - a28a70f6-d9a9-11e9-ba41-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:05 GMT
+      - Wed, 18 Sep 2019 00:17:01 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Sat,
-        03 Aug 2019 21:40:03 GMT</Last-Modified><Etag>\"0x8D7185B250B3B84\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
+        18 Sep 2019 00:17:00 GMT</Last-Modified><Etag>\"0x8D73BCD86A87E48\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:40:03 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-request-id:
-      - bf6281da-301a-00e7-0344-4a740d000000
+      - 4e2aa385-d01a-00b2-74b6-6dac85000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -151,17 +147,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 41bd1ffa-b637-11e9-abf3-2816a845e8c6
+      - a291f040-d9a9-11e9-842b-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:40:05 GMT
+      - Wed, 18 Sep 2019 00:17:01 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.file.core.windows.net/sharef877141f?restype=share
   response:
@@ -171,13 +167,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:40:03 GMT
+      - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - bf6281db-301a-00e7-0444-4a740d000000
+      - 4e2aa386-d01a-00b2-75b6-6dac85000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

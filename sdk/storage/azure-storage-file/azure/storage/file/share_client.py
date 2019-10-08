@@ -34,7 +34,7 @@ from .file_client import FileClient
 from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy, SharePermissions
+    from .models import ShareProperties, AccessPolicy, ShareSasPermissions
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -64,7 +64,7 @@ class ShareClient(StorageAccountHostsMixin):
     :param str share_url: The full URI to the share.
     :param share: The share with which to interact. If specified, this value will override
         a share value specified in the share URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str snapshot:
         An optional share snapshot on which to operate.
     :param credential:
@@ -145,7 +145,7 @@ class ShareClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param share: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.models.ShareProperties
+        :type share: str or ~azure.storage.file.ShareProperties
         :param str snapshot:
             The optional share snapshot on which to operate.
         :param credential:
@@ -153,7 +153,8 @@ class ShareClient(StorageAccountHostsMixin):
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_client_from_conn_string]
                 :end-before: [END create_share_client_from_conn_string]
@@ -168,7 +169,7 @@ class ShareClient(StorageAccountHostsMixin):
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[SharePermissions, str]]
+            self, permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -184,7 +185,7 @@ class ShareClient(StorageAccountHostsMixin):
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
 
-        :param ~azure.storage.file.models.SharePermissions permission:
+        :param ~azure.storage.file.ShareSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, create, write, delete, list.
@@ -198,14 +199,14 @@ class ShareClient(StorageAccountHostsMixin):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use :func:`~set_share_access_policy`.
@@ -263,7 +264,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param str directory_path:
             Path to the specified directory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
         """
         return DirectoryClient(
             self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
@@ -278,7 +279,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param str file_path:
             Path to the specified file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         return FileClient(
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
@@ -305,7 +306,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
@@ -352,7 +354,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
@@ -387,7 +390,8 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
@@ -417,9 +421,10 @@ class ShareClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: The share properties.
-        :rtype: ~azure.storage.file.models.ShareProperties
+        :rtype: ~azure.storage.file.ShareProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_hello_world.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
@@ -452,7 +457,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
@@ -486,7 +492,8 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
@@ -539,7 +546,7 @@ class ShareClient(StorageAccountHostsMixin):
             A dictionary of access policies to associate with the share. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.file.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`~azure.storage.file.AccessPolicy`)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
@@ -612,7 +619,8 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_share.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
@@ -642,8 +650,8 @@ class ShareClient(StorageAccountHostsMixin):
                                     **kwargs  # type: Any
                                     ):
         # type: (...) -> str
-        """
-        Create a permission(a security descriptor) at the share level.
+        """Create a permission(a security descriptor) at the share level.
+
         This 'permission' can be used for the files/directories in the share.
         If a 'permission' already exists, it shall return the key of it, else
         creates a new permission at the share level and return its key.
@@ -652,8 +660,8 @@ class ShareClient(StorageAccountHostsMixin):
             File permission, a Portable SDDL
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns a file permission key
-        :rtype str
+        :returns: a file permission key
+        :rtype: str
         """
         options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
@@ -668,16 +676,16 @@ class ShareClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> str
-        """
-        Get a permission(a security descriptor) for a given key.
+        """Get a permission(a security descriptor) for a given key.
+
         This 'permission' can be used for the files/directories in the share.
 
         :param str file_permission_key:
             Key of the file permission to retrieve
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns a file permission(a portable SDDL)
-        :rtype str
+        :returns: a file permission(a portable SDDL)
+        :rtype: str
         """
         try:
             return self._client.share.get_permission(  # type: ignore
