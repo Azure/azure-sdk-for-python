@@ -71,7 +71,7 @@ async def run_sample():
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
-                bank_certificate.name, bank_certificate.tags
+                bank_certificate.name, bank_certificate.properties.tags
             )
         )
 
