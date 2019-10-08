@@ -6,12 +6,11 @@ been renamed to `KeyCurveName`, `KeyOperation`, and `KeyType`, respectively.
 - `Key` now has attribute `properties`, which holds certain properties of the
 key, such as `version`. This changes the shape of the returned `Key` type,
 as certain properties of `Key` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs]
-(https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
 for details.
 - `update_key` has been renamed to `update_key_properties`
 - The `vault_url` parameter of `KeyClient` has been renamed to `vault_endpoint`
-- The property `vault_url` has been renamed to `vault_endpoint` in all models.
+- The property `vault_url` has been renamed to `vault_endpoint` in all models
 
 ### Fixes and improvements:
 - The `key` argument to `import_key` should be an instance of `azure.keyvault.keys.JsonWebKey`
