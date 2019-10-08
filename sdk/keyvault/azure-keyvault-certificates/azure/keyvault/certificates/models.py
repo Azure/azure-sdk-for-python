@@ -645,6 +645,7 @@ class CertificatePolicy(object):
             content_type=SecretContentType.PKCS12,
             validity_in_months=12,
         )
+
     def __repr__(self):
         # type () -> str
         return "<CertificatePolicy [{}]>".format(self.id)[:1024]

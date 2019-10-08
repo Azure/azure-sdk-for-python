@@ -61,10 +61,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         name: str,
         value: str,
         content_type: Optional[str] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Secret:
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
@@ -73,12 +71,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str value: The value of the secret
         :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
         :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
         :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :rtype: ~azure.keyvault.secrets.models.Secret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -88,6 +88,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Set a secret's value
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -98,7 +99,6 @@ class SecretClient(AsyncKeyVaultClientBase):
             value,
             secret_attributes=attributes,
             content_type=content_type,
-            tags=tags,
             **kwargs
         )
         return Secret._from_secret_bundle(bundle)
@@ -109,10 +109,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         name: str,
         version: Optional[str] = None,
         content_type: Optional[str] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> SecretProperties:
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
@@ -131,6 +129,10 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START update_secret]
@@ -139,6 +141,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Updates a secret's attributes
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -148,7 +151,6 @@ class SecretClient(AsyncKeyVaultClientBase):
             name,
             secret_version=version or "",
             content_type=content_type,
-            tags=tags,
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs
