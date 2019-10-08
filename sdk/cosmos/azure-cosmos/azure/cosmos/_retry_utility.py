@@ -160,9 +160,9 @@ class ConnectionRetryPolicy(RetryPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raises: ~azure.cosmos.CosmosClientTimeoutError if specified timeout exceeded.
-        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
+        :raises ~azure.core.exceptions.AzureError: Maximum retries exceeded.
+        :raises ~azure.cosmos.errors.CosmosClientTimeoutError: Specified timeout exceeded.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
