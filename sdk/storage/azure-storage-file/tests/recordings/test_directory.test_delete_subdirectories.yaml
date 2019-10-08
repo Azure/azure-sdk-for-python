@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cdc113de-d055-11e9-8839-001a7dda7113
+      - 516d2f48-d9a6-11e9-97ac-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -37,31 +37,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       ETag:
-      - '"0x8D73279B206FC35"'
+      - '"0x8D73BCA35ADB3BC"'
       Last-Modified:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - cdc113de-d055-11e9-8839-001a7dda7113
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2019-09-06T03:24:15.5448373Z'
+      - '2019-09-17T23:53:16.6223292Z'
       x-ms-file-creation-time:
-      - '2019-09-06T03:24:15.5448373Z'
+      - '2019-09-17T23:53:16.6223292Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-06T03:24:15.5448373Z'
+      - '2019-09-17T23:53:16.6223292Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
       - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - 8c638cf4-301a-0013-0262-6477f8000000
+      - 9de02696-101a-003b-0eb3-6d1650000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -81,13 +79,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cddc8a62-d055-11e9-96a5-001a7dda7113
+      - 51894964-d9a6-11e9-a284-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -107,31 +105,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       ETag:
-      - '"0x8D73279B20EC648"'
+      - '"0x8D73BCA35B52F9B"'
       Last-Modified:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - cddc8a62-d055-11e9-96a5-001a7dda7113
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2019-09-06T03:24:15.5958856Z'
+      - '2019-09-17T23:53:16.6713755Z'
       x-ms-file-creation-time:
-      - '2019-09-06T03:24:15.5958856Z'
+      - '2019-09-17T23:53:16.6713755Z'
       x-ms-file-id:
       - '11529285414812647424'
       x-ms-file-last-write-time:
-      - '2019-09-06T03:24:15.5958856Z'
+      - '2019-09-17T23:53:16.6713755Z'
       x-ms-file-parent-id:
       - '13835128424026341376'
       x-ms-file-permission-key:
       - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - 8c638cf8-301a-0013-0562-6477f8000000
+      - 9de02698-101a-003b-0fb3-6d1650000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -151,13 +147,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cde890fa-d055-11e9-ab4d-001a7dda7113
+      - 51965106-d9a6-11e9-8b92-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -169,13 +165,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - cde890fa-d055-11e9-ab4d-001a7dda7113
       x-ms-request-id:
-      - 8c638cfc-301a-0013-0962-6477f8000000
+      - 9de02699-101a-003b-10b3-6d1650000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -191,13 +185,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cdf00506-d055-11e9-b326-001a7dda7113
+      - 519fe728-d9a6-11e9-a362-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -205,22 +199,20 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:8c638cfd-301a-0013-0a62-6477f8000000\nTime:2019-09-06T03:24:15.7222522Z</Message></Error>"
+        specified resource does not exist.\nRequestId:9de0269a-101a-003b-11b3-6d1650000000\nTime:2019-09-17T23:53:16.8203808Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 06 Sep 2019 03:24:15 GMT
+      - Tue, 17 Sep 2019 23:53:16 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - cdf00506-d055-11e9-b326-001a7dda7113
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - 8c638cfd-301a-0013-0a62-6477f8000000
+      - 9de0269a-101a-003b-11b3-6d1650000000
       x-ms-version:
       - '2019-02-02'
     status:

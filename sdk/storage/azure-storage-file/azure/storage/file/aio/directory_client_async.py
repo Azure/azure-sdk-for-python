@@ -64,7 +64,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         or share, in which case the directory and/or share must also be specified.
     :param share: The share for the directory. If specified, this value will override
         a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -126,7 +126,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :returns: A Directory Client.
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
@@ -157,7 +158,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
@@ -186,7 +188,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
@@ -210,9 +213,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.DirectoryProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.DirectoryProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
@@ -240,8 +244,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.storage.file.models.HandlesPaged
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -270,7 +274,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
-        :type handle: str or ~azure.storage.file.models.Handle
+        :type handle: str or ~azure.storage.file.Handle
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
@@ -313,7 +317,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryProperties
-        :rtype: ~azure.storage.file.models.DirectoryProperties
+        :rtype: ~azure.storage.file.DirectoryProperties
         """
         try:
             response = await self._client.directory.get_properties(
@@ -369,7 +373,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -425,7 +429,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
@@ -452,7 +457,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
@@ -471,7 +477,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None, # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
-            max_connections=1,  # type: Optional[int]
+            max_concurrency=1,  # type: Optional[int]
             timeout=None, # type: Optional[int]
             encoding='UTF-8',  # type: str
             **kwargs # type: Any
@@ -489,7 +495,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -498,7 +504,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -507,7 +513,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :returns: FileClient
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
@@ -522,7 +529,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             metadata=metadata,
             content_settings=content_settings,
             validate_content=validate_content,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             timeout=timeout,
             encoding=encoding,
             **kwargs)
@@ -544,7 +551,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_directory_async.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]

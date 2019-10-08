@@ -5,11 +5,10 @@
 # --------------------------------------------------------------------------
 
 from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from ..models import (
@@ -32,14 +31,15 @@ from ..models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
 )
 from .models import (
     ContainerPropertiesPaged,
     BlobPropertiesPaged,
     BlobPrefix
 )
+from .download_async import StorageStreamDownloader
 from .blob_client_async import BlobClient
 from .container_client_async import ContainerClient
 from .blob_service_client_async import BlobServiceClient
@@ -78,9 +78,9 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
-    'ContainerPermissions',
-    'BlobPermissions',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageStreamDownloader',
 ]
