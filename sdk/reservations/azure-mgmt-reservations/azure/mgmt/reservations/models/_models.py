@@ -356,19 +356,19 @@ class CurrentQuotaLimit(Model):
     :type limit: int
     :ivar current_value: The current resource usages information.
     :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+    :ivar unit:  The units of the limit, such as - Count, Bytes, etc. Use the
      unit field provided in the Get quota response.
-    :type unit: str
+    :vartype unit: str
     :param name: Name of the resource provide by the resource Provider. Please
      use this name property for quotaRequests.
     :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :param quota_period: The quota period over which the usage values are
+    :ivar resource_type: The Resource Type Name.
+    :vartype resource_type: object
+    :ivar quota_period: The quota period over which the usage values are
      summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
-    :type quota_period: str
+    :vartype quota_period: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
@@ -380,6 +380,9 @@ class CurrentQuotaLimit(Model):
 
     _validation = {
         'current_value': {'readonly': True},
+        'unit': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'quota_period': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
     }
@@ -400,10 +403,10 @@ class CurrentQuotaLimit(Model):
         super(CurrentQuotaLimit, self).__init__(**kwargs)
         self.limit = kwargs.get('limit', None)
         self.current_value = None
-        self.unit = kwargs.get('unit', None)
+        self.unit = None
         self.name = kwargs.get('name', None)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.quota_period = kwargs.get('quota_period', None)
+        self.resource_type = None
+        self.quota_period = None
         self.properties = kwargs.get('properties', None)
         self.provisioning_state = None
         self.message = None
@@ -419,19 +422,19 @@ class CurrentQuotaLimitBase(Model):
     :type limit: int
     :ivar current_value: The current resource usages information.
     :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+    :ivar unit:  The units of the limit, such as - Count, Bytes, etc. Use the
      unit field provided in the Get quota response.
-    :type unit: str
+    :vartype unit: str
     :param name: Name of the resource provide by the resource Provider. Please
      use this name property for quotaRequests.
     :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :param quota_period: The quota period over which the usage values are
+    :ivar resource_type: The Resource Type Name.
+    :vartype resource_type: object
+    :ivar quota_period: The quota period over which the usage values are
      summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
-    :type quota_period: str
+    :vartype quota_period: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
@@ -439,6 +442,9 @@ class CurrentQuotaLimitBase(Model):
 
     _validation = {
         'current_value': {'readonly': True},
+        'unit': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'quota_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -455,10 +461,10 @@ class CurrentQuotaLimitBase(Model):
         super(CurrentQuotaLimitBase, self).__init__(**kwargs)
         self.limit = kwargs.get('limit', None)
         self.current_value = None
-        self.unit = kwargs.get('unit', None)
+        self.unit = None
         self.name = kwargs.get('name', None)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.quota_period = kwargs.get('quota_period', None)
+        self.resource_type = None
+        self.quota_period = None
         self.properties = kwargs.get('properties', None)
 
 
@@ -466,11 +472,19 @@ class CurrentQuotaLimitBaseName(Model):
     """Name of the resource provide by the resource Provider. Please use this name
     property for quotaRequests.
 
-    :param value: Resource name.
-    :type value: str
-    :param localized_value: Resource display name.
-    :type localized_value: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Resource name.
+    :vartype value: str
+    :ivar localized_value: Resource display name.
+    :vartype localized_value: str
     """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
@@ -479,8 +493,8 @@ class CurrentQuotaLimitBaseName(Model):
 
     def __init__(self, **kwargs):
         super(CurrentQuotaLimitBaseName, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
+        self.value = None
+        self.localized_value = None
 
 
 class EmailAction(Model):
@@ -1104,19 +1118,19 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :type limit: int
     :ivar current_value: The current resource usages information.
     :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+    :ivar unit:  The units of the limit, such as - Count, Bytes, etc. Use the
      unit field provided in the Get quota response.
-    :type unit: str
+    :vartype unit: str
     :param name1: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
     :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :param quota_period: The quota period over which the usage values are
+    :ivar resource_type: The Resource Type Name.
+    :vartype resource_type: object
+    :ivar quota_period: The quota period over which the usage values are
      summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
-    :type quota_period: str
+    :vartype quota_period: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
@@ -1130,6 +1144,9 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
         'current_value': {'readonly': True},
+        'unit': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'quota_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1158,10 +1175,10 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.request_submit_time = None
         self.limit = kwargs.get('limit', None)
         self.current_value = None
-        self.unit = kwargs.get('unit', None)
+        self.unit = None
         self.name1 = kwargs.get('name1', None)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.quota_period = kwargs.get('quota_period', None)
+        self.resource_type = None
+        self.quota_period = None
         self.properties = kwargs.get('properties', None)
 
 
