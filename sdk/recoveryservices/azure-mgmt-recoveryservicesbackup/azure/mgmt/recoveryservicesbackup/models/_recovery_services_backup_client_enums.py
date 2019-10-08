@@ -12,34 +12,6 @@
 from enum import Enum
 
 
-class StorageType(str, Enum):
-
-    invalid = "Invalid"
-    geo_redundant = "GeoRedundant"
-    locally_redundant = "LocallyRedundant"
-
-
-class StorageTypeState(str, Enum):
-
-    invalid = "Invalid"
-    locked = "Locked"
-    unlocked = "Unlocked"
-
-
-class EnhancedSecurityState(str, Enum):
-
-    invalid = "Invalid"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SoftDeleteFeatureState(str, Enum):
-
-    invalid = "Invalid"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class ProtectionState(str, Enum):
 
     invalid = "Invalid"
@@ -172,6 +144,34 @@ class SQLDataDirectoryType(str, Enum):
     invalid = "Invalid"
     data = "Data"
     log = "Log"
+
+
+class StorageType(str, Enum):
+
+    invalid = "Invalid"
+    geo_redundant = "GeoRedundant"
+    locally_redundant = "LocallyRedundant"
+
+
+class StorageTypeState(str, Enum):
+
+    invalid = "Invalid"
+    locked = "Locked"
+    unlocked = "Unlocked"
+
+
+class EnhancedSecurityState(str, Enum):
+
+    invalid = "Invalid"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SoftDeleteFeatureState(str, Enum):
+
+    invalid = "Invalid"
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class RestorePointQueryType(str, Enum):
