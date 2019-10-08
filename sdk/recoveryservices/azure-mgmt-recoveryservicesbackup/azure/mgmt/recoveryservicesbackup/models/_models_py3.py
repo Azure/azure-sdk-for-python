@@ -2177,9 +2177,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
-    :param instant_rp_details:
-    :type instant_rp_details:
-     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2203,16 +2200,14 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, instant_rp_details=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
+    def __init__(self, *, protected_items_count: int=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
         super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
-        self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
@@ -5816,8 +5811,6 @@ class BackupEngineExtendedInfo(Model):
     :param azure_protected_instances: Protected instances in the backup
      engine.
     :type azure_protected_instances: int
-    :param is_sync_enabled: Indicates if DS was synced to BMS or not
-    :type is_sync_enabled: bool
     """
 
     _attribute_map = {
@@ -5829,10 +5822,9 @@ class BackupEngineExtendedInfo(Model):
         'available_disk_space': {'key': 'availableDiskSpace', 'type': 'float'},
         'refreshed_at': {'key': 'refreshedAt', 'type': 'iso-8601'},
         'azure_protected_instances': {'key': 'azureProtectedInstances', 'type': 'int'},
-        'is_sync_enabled': {'key': 'isSyncEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, database_name: str=None, protected_items_count: int=None, protected_servers_count: int=None, disk_count: int=None, used_disk_space: float=None, available_disk_space: float=None, refreshed_at=None, azure_protected_instances: int=None, is_sync_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, database_name: str=None, protected_items_count: int=None, protected_servers_count: int=None, disk_count: int=None, used_disk_space: float=None, available_disk_space: float=None, refreshed_at=None, azure_protected_instances: int=None, **kwargs) -> None:
         super(BackupEngineExtendedInfo, self).__init__(**kwargs)
         self.database_name = database_name
         self.protected_items_count = protected_items_count
@@ -5842,7 +5834,6 @@ class BackupEngineExtendedInfo(Model):
         self.available_disk_space = available_disk_space
         self.refreshed_at = refreshed_at
         self.azure_protected_instances = azure_protected_instances
-        self.is_sync_enabled = is_sync_enabled
 
 
 class BackupManagementUsage(Model):
@@ -5943,24 +5934,19 @@ class BackupResourceConfig(Model):
      Possible values include: 'Invalid', 'Locked', 'Unlocked'
     :type storage_type_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageTypeState
-    :param cross_region_restore_flag: Opt in details of Cross Region Restore
-     feature.
-    :type cross_region_restore_flag: bool
     """
 
     _attribute_map = {
         'storage_model_type': {'key': 'storageModelType', 'type': 'str'},
         'storage_type': {'key': 'storageType', 'type': 'str'},
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
-        'cross_region_restore_flag': {'key': 'crossRegionRestoreFlag', 'type': 'bool'},
     }
 
-    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, cross_region_restore_flag: bool=None, **kwargs) -> None:
+    def __init__(self, *, storage_model_type=None, storage_type=None, storage_type_state=None, **kwargs) -> None:
         super(BackupResourceConfig, self).__init__(**kwargs)
         self.storage_model_type = storage_model_type
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state
-        self.cross_region_restore_flag = cross_region_restore_flag
 
 
 class BackupResourceConfigResource(Resource):
@@ -8429,10 +8415,6 @@ class MabContainerExtendedInfo(Model):
     :type policy_name: str
     :param last_backup_status: Latest backup status of this container.
     :type last_backup_status: str
-    :param is_sync_enabled: Indicates if DS was synced to BMS or not
-    :type is_sync_enabled: bool
-    :param protected_items_count: Number of protected items in the container.
-    :type protected_items_count: int
     """
 
     _attribute_map = {
@@ -8441,19 +8423,15 @@ class MabContainerExtendedInfo(Model):
         'backup_items': {'key': 'backupItems', 'type': '[str]'},
         'policy_name': {'key': 'policyName', 'type': 'str'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'is_sync_enabled': {'key': 'isSyncEnabled', 'type': 'bool'},
-        'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
     }
 
-    def __init__(self, *, last_refreshed_at=None, backup_item_type=None, backup_items=None, policy_name: str=None, last_backup_status: str=None, is_sync_enabled: bool=None, protected_items_count: int=None, **kwargs) -> None:
+    def __init__(self, *, last_refreshed_at=None, backup_item_type=None, backup_items=None, policy_name: str=None, last_backup_status: str=None, **kwargs) -> None:
         super(MabContainerExtendedInfo, self).__init__(**kwargs)
         self.last_refreshed_at = last_refreshed_at
         self.backup_item_type = backup_item_type
         self.backup_items = backup_items
         self.policy_name = policy_name
         self.last_backup_status = last_backup_status
-        self.is_sync_enabled = is_sync_enabled
-        self.protected_items_count = protected_items_count
 
 
 class MABContainerHealthDetails(Model):
@@ -9040,22 +9018,17 @@ class OperationStatusError(Model):
     :type code: str
     :param message: Error message displayed if the operation failure.
     :type message: str
-    :param recommendation: Recommended action displayed in case operation
-     fails.
-    :type recommendation: str
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'recommendation': {'key': 'recommendation', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, recommendation: str=None, **kwargs) -> None:
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
         super(OperationStatusError, self).__init__(**kwargs)
         self.code = code
         self.message = message
-        self.recommendation = recommendation
 
 
 class OperationStatusExtendedInfo(Model):

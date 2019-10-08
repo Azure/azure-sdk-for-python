@@ -2177,9 +2177,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
-    :param instant_rp_details:
-    :type instant_rp_details:
-     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2203,7 +2200,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
@@ -2212,7 +2208,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     def __init__(self, **kwargs):
         super(AzureIaaSVMProtectionPolicy, self).__init__(**kwargs)
-        self.instant_rp_details = kwargs.get('instant_rp_details', None)
         self.schedule_policy = kwargs.get('schedule_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
         self.instant_rp_retention_range_in_days = kwargs.get('instant_rp_retention_range_in_days', None)
@@ -5816,8 +5811,6 @@ class BackupEngineExtendedInfo(Model):
     :param azure_protected_instances: Protected instances in the backup
      engine.
     :type azure_protected_instances: int
-    :param is_sync_enabled: Indicates if DS was synced to BMS or not
-    :type is_sync_enabled: bool
     """
 
     _attribute_map = {
@@ -5829,7 +5822,6 @@ class BackupEngineExtendedInfo(Model):
         'available_disk_space': {'key': 'availableDiskSpace', 'type': 'float'},
         'refreshed_at': {'key': 'refreshedAt', 'type': 'iso-8601'},
         'azure_protected_instances': {'key': 'azureProtectedInstances', 'type': 'int'},
-        'is_sync_enabled': {'key': 'isSyncEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5842,7 +5834,6 @@ class BackupEngineExtendedInfo(Model):
         self.available_disk_space = kwargs.get('available_disk_space', None)
         self.refreshed_at = kwargs.get('refreshed_at', None)
         self.azure_protected_instances = kwargs.get('azure_protected_instances', None)
-        self.is_sync_enabled = kwargs.get('is_sync_enabled', None)
 
 
 class BackupManagementUsage(Model):
@@ -5943,16 +5934,12 @@ class BackupResourceConfig(Model):
      Possible values include: 'Invalid', 'Locked', 'Unlocked'
     :type storage_type_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.StorageTypeState
-    :param cross_region_restore_flag: Opt in details of Cross Region Restore
-     feature.
-    :type cross_region_restore_flag: bool
     """
 
     _attribute_map = {
         'storage_model_type': {'key': 'storageModelType', 'type': 'str'},
         'storage_type': {'key': 'storageType', 'type': 'str'},
         'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
-        'cross_region_restore_flag': {'key': 'crossRegionRestoreFlag', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5960,7 +5947,6 @@ class BackupResourceConfig(Model):
         self.storage_model_type = kwargs.get('storage_model_type', None)
         self.storage_type = kwargs.get('storage_type', None)
         self.storage_type_state = kwargs.get('storage_type_state', None)
-        self.cross_region_restore_flag = kwargs.get('cross_region_restore_flag', None)
 
 
 class BackupResourceConfigResource(Resource):
@@ -8429,10 +8415,6 @@ class MabContainerExtendedInfo(Model):
     :type policy_name: str
     :param last_backup_status: Latest backup status of this container.
     :type last_backup_status: str
-    :param is_sync_enabled: Indicates if DS was synced to BMS or not
-    :type is_sync_enabled: bool
-    :param protected_items_count: Number of protected items in the container.
-    :type protected_items_count: int
     """
 
     _attribute_map = {
@@ -8441,8 +8423,6 @@ class MabContainerExtendedInfo(Model):
         'backup_items': {'key': 'backupItems', 'type': '[str]'},
         'policy_name': {'key': 'policyName', 'type': 'str'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'is_sync_enabled': {'key': 'isSyncEnabled', 'type': 'bool'},
-        'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -8452,8 +8432,6 @@ class MabContainerExtendedInfo(Model):
         self.backup_items = kwargs.get('backup_items', None)
         self.policy_name = kwargs.get('policy_name', None)
         self.last_backup_status = kwargs.get('last_backup_status', None)
-        self.is_sync_enabled = kwargs.get('is_sync_enabled', None)
-        self.protected_items_count = kwargs.get('protected_items_count', None)
 
 
 class MABContainerHealthDetails(Model):
@@ -9040,22 +9018,17 @@ class OperationStatusError(Model):
     :type code: str
     :param message: Error message displayed if the operation failure.
     :type message: str
-    :param recommendation: Recommended action displayed in case operation
-     fails.
-    :type recommendation: str
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'recommendation': {'key': 'recommendation', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(OperationStatusError, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
-        self.recommendation = kwargs.get('recommendation', None)
 
 
 class OperationStatusExtendedInfo(Model):
