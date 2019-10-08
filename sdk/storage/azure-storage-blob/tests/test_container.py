@@ -559,7 +559,7 @@ class StorageContainerTest(StorageTestCase):
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
-        identifiers = {str(i): access_policy for i in range(0, 3)}
+        identifiers = {i: access_policy for i in range(3)}
 
         # Act
         container.set_container_access_policy(identifiers)

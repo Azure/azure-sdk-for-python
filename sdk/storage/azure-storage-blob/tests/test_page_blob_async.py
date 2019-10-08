@@ -486,13 +486,13 @@ class StoragePageBlobTestAsync(StorageTestCase):
         destination_blob_client = await self._create_blob(SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0, 4 * 1024,
-                                                                   0)
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, offset=0, length=4 * 1024, source_offset=0)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 4 * 1024,
-                                                                   SOURCE_BLOB_SIZE, 4 * 1024)
+        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, offset=4 * 1024,
+                                                                   length=4 * 1024, source_offset=4 * 1024)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -1024,9 +1024,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
         blob = await self._create_blob(2048)
         data = self.get_random_bytes(1536)
         snapshot1 = await blob.create_snapshot()
-        await blob.upload_page(data, 0, 1536)
+        await blob.upload_page(data, offset=0, length=1536)
         snapshot2 = await blob.create_snapshot()
-        await blob.clear_page(512, 1024)
+        await blob.clear_page(offset=512, length=512)
 
         # Act
         ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot1)
@@ -1617,7 +1617,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         source_blob = await self._create_blob(2048)
         data = self.get_random_bytes(512)
         resp1 = await source_blob.upload_page(data, offset=0, length=512)
-        resp2 = await source_blob.upload_page(data, 1024, 1535)
+        resp2 = await source_blob.upload_page(data, offset=1024, length=512)
         source_snapshot_blob = await source_blob.create_snapshot()
 
         snapshot_blob = BlobClient.from_blob_url(
