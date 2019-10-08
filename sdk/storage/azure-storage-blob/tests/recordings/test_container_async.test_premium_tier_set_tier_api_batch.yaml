@@ -1,0 +1,242 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 10 Oct 2019 19:23:44 GMT
+      etag: '"0x8D74DB75E14FA5B"'
+      last-modified: Thu, 10 Oct 2019 19:23:44 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /utpremiumcontainerac331777
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-content-length:
+      - '1024'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob1
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 10 Oct 2019 19:23:44 GMT
+      etag: '"0x8D74DB75E21FCAA"'
+      last-modified: Thu, 10 Oct 2019 19:23:44 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /utpremiumcontainerac331777/blob1
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-content-length:
+      - '1024'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:45 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob2
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 10 Oct 2019 19:23:44 GMT
+      etag: '"0x8D74DB75E2EF787"'
+      last-modified: Thu, 10 Oct 2019 19:23:45 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /utpremiumcontainerac331777/blob2
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-content-length:
+      - '1024'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:45 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob3
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 10 Oct 2019 19:23:44 GMT
+      etag: '"0x8D74DB75E39F54B"'
+      last-modified: Thu, 10 Oct 2019 19:23:45 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /utpremiumcontainerac331777/blob3
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:45 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob1
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-type: application/octet-stream
+      date: Thu, 10 Oct 2019 19:23:44 GMT
+      etag: '"0x8D74DB75E21FCAA"'
+      last-modified: Thu, 10 Oct 2019 19:23:44 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: P10
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-sequence-number: '0'
+      x-ms-blob-type: PageBlob
+      x-ms-creation-time: Thu, 10 Oct 2019 19:23:44 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /utpremiumcontainerac331777/blob1
+        - ''
+        - ''
+- request:
+    body: "--===============1381633496==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+      binary\r\nContent-ID: 0\r\n\r\nDELETE /utpremiumcontainerac331777/blob1? HTTP/1.1\r\nx-ms-date:
+      Thu, 10 Oct 2019 19:23:45 GMT\r\nx-ms-client-request-id: 7a109ba8-eb93-11e9-9f25-b831b58100e8\r\nAuthorization:
+      SharedKey pyacrstorageac331777:ZaYt1LTHbPGWE+pGvzbQLkxrjto3Ixdtc3rRtCjkKvA=\r\n\r\n\r\n--===============1381633496==\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
+      /utpremiumcontainerac331777/blob2? HTTP/1.1\r\nx-ms-date: Thu, 10 Oct 2019 19:23:45
+      GMT\r\nx-ms-client-request-id: 7a10c2a6-eb93-11e9-920d-b831b58100e8\r\nAuthorization:
+      SharedKey pyacrstorageac331777:EkMLqOBWr5QBFakeBsHwD+3M66k9RCd3bKlPN9ZjeTQ=\r\n\r\n\r\n--===============1381633496==\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
+      /utpremiumcontainerac331777/blob3? HTTP/1.1\r\nx-ms-date: Thu, 10 Oct 2019 19:23:45
+      GMT\r\nx-ms-client-request-id: 7a10c2a7-eb93-11e9-8bb8-b831b58100e8\r\nAuthorization:
+      SharedKey pyacrstorageac331777:nryAznSGL8VKC70HvKwGmru08C8g/SSnTAN/42an/oE=\r\n\r\n\r\n--===============1381633496==--\r\n"
+    headers:
+      Content-Length:
+      - '1134'
+      Content-Type:
+      - multipart/mixed; boundary================1381633496==
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Oct 2019 19:23:45 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://pyacrstorageac331777.blob.core.windows.net/?comp=batch
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidQueryParameterValue</Code><Message>Value
+        for one of the query parameters specified in the request URI is invalid.\nRequestId:86161693-b01c-004b-05a0-7f368e000000\nTime:2019-10-10T19:23:45.3287790Z</Message><QueryParameterName>comp</QueryParameterName><QueryParameterValue>batch</QueryParameterValue></Error>"
+    headers:
+      content-length: '367'
+      content-type: application/xml
+      date: Thu, 10 Oct 2019 19:23:45 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: InvalidQueryParameterValue
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Value for one of the query parameters specified in the request URI
+        is invalid.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageac331777.blob.core.windows.net
+        - /
+        - comp=batch
+        - ''
+version: 1

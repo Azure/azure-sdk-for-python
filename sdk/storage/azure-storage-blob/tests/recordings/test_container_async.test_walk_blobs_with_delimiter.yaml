@@ -1,0 +1,76 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Oct 2019 20:14:56 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage231c1506.blob.core.windows.net/container231c1506?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:311ca2af-001e-0044-19a7-7fd666000000\nTime:2019-10-10T20:14:56.6597808Z</Message></Error>"
+    headers:
+      content-length: '230'
+      content-type: application/xml
+      date: Thu, 10 Oct 2019 20:14:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2019-02-02'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage231c1506.blob.core.windows.net
+        - /container231c1506
+        - restype=container
+        - ''
+- request:
+    body: hello world
+    headers:
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 10 Oct 2019 20:14:56 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage231c1506.blob.core.windows.net/container231c1506/a%2Fblob1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The
+        specified blob already exists.\nRequestId:311ca2d2-001e-0044-3aa7-7fd666000000\nTime:2019-10-10T20:14:56.7048138Z</Message></Error>"
+    headers:
+      content-length: '220'
+      content-type: application/xml
+      date: Thu, 10 Oct 2019 20:14:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: BlobAlreadyExists
+      x-ms-version: '2019-02-02'
+    status:
+      code: 409
+      message: The specified blob already exists.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage231c1506.blob.core.windows.net
+        - /container231c1506/a%2Fblob1
+        - ''
+        - ''
+version: 1

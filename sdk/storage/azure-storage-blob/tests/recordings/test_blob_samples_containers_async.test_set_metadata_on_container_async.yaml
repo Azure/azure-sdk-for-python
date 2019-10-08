@@ -1,0 +1,137 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 09 Oct 2019 18:41:24 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage1d751d39.blob.core.windows.net/mymetadatacontainerasync?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 09 Oct 2019 18:41:26 GMT
+      etag: '"0x8D74CE84AF2AEE9"'
+      last-modified: Wed, 09 Oct 2019 18:41:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage1d751d39.blob.core.windows.net
+        - /mymetadatacontainerasync
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 09 Oct 2019 18:41:27 GMT
+      x-ms-meta-type:
+      - test
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage1d751d39.blob.core.windows.net/mymetadatacontainerasync?restype=container&comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 09 Oct 2019 18:41:26 GMT
+      etag: '"0x8D74CE84AF96508"'
+      last-modified: Wed, 09 Oct 2019 18:41:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage1d751d39.blob.core.windows.net
+        - /mymetadatacontainerasync
+        - restype=container&comp=metadata
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 09 Oct 2019 18:41:27 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorage1d751d39.blob.core.windows.net/mymetadatacontainerasync?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 09 Oct 2019 18:41:26 GMT
+      etag: '"0x8D74CE84AF96508"'
+      last-modified: Wed, 09 Oct 2019 18:41:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-type: test
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage1d751d39.blob.core.windows.net
+        - /mymetadatacontainerasync
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 09 Oct 2019 18:41:27 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstorage1d751d39.blob.core.windows.net/mymetadatacontainerasync?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 09 Oct 2019 18:41:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage1d751d39.blob.core.windows.net
+        - /mymetadatacontainerasync
+        - restype=container
+        - ''
+version: 1

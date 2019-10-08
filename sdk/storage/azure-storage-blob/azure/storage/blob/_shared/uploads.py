@@ -394,9 +394,12 @@ class SubStream(IOBase):
     def flush(self):
         pass
 
-    def read(self, n):
+    def read(self, n=None):
         if self.closed:
             raise ValueError("Stream is closed.")
+
+        if n is None:
+            n = self._length - self._position
 
         # adjust if out of bounds
         if n + self._position >= self._length:

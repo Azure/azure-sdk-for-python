@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bbbecad8-9c16-11e9-9a54-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:46 GMT
+      - Wed, 09 Oct 2019 18:38:41 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/myleasecontainer?restype=container
+    uri: https://pyacrstoragef0de18a6.blob.core.windows.net/myleasecontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:45 GMT
-      ETag:
-      - '"0x8D6FE3AA02F10BF"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:46 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:38:43 GMT
+      etag:
+      - '"0x8D74CE7E9E4D5BA"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:38:44 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 304df494-501e-0074-1123-30e246000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,41 +49,37 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bbe0bfb0-9c16-11e9-89e9-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:46 GMT
+      - Wed, 09 Oct 2019 18:38:44 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - f2b52b44-ea9c-469e-98e2-dde1f968b73d
+      - 6e494961-02d8-4f22-b7dc-cb662ba52c4e
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/myleasecontainer?comp=lease&restype=container
+    uri: https://pyacrstoragef0de18a6.blob.core.windows.net/myleasecontainer?comp=lease&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:45 GMT
-      ETag:
-      - '"0x8D6FE3AA02F10BF"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:46 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:38:43 GMT
+      etag:
+      - '"0x8D74CE7E9E4D5BA"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:38:44 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - f2b52b44-ea9c-469e-98e2-dde1f968b73d
-      x-ms-request-id:
-      - 304df4ad-501e-0074-2423-30e246000000
+      - 6e494961-02d8-4f22-b7dc-cb662ba52c4e
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -103,31 +95,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bbf00c40-9c16-11e9-aed5-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:46 GMT
+      - Wed, 09 Oct 2019 18:38:44 GMT
       x-ms-lease-id:
-      - f2b52b44-ea9c-469e-98e2-dde1f968b73d
+      - 6e494961-02d8-4f22-b7dc-cb662ba52c4e
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/myleasecontainer?restype=container
+    uri: https://pyacrstoragef0de18a6.blob.core.windows.net/myleasecontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:46 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:38:43 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 304df4c1-501e-0074-3523-30e246000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

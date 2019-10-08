@@ -8,15 +8,9 @@
 
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+    StorageTestCase
 )
 
 SOURCE_FILE = 'SampleSource.txt'
@@ -24,9 +18,6 @@ DEST_FILE = 'BlockDestination.txt'
 
 
 class TestBlobSamples(StorageTestCase):
-
-    connection_string = settings.CONNECTION_STRING
-
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         with open(SOURCE_FILE, 'wb') as stream:
@@ -50,12 +41,14 @@ class TestBlobSamples(StorageTestCase):
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @record
-    def test_create_container_sample(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_container_sample(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("mycontainer")
@@ -71,12 +64,14 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @record
-    def test_block_blob_sample(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_block_blob_sample(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("myblockcontainer")
@@ -107,12 +102,14 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @record
-    def test_page_blob_sample(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_page_blob_sample(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("mypagecontainer")
@@ -139,12 +136,14 @@ class TestBlobSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @record
-    def test_append_blob_sample(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_sample(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("myappendcontainer")

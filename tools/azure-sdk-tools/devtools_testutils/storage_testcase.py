@@ -21,7 +21,7 @@ FakeStorageAccount = FakeResource
 class StorageAccountPreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
-                 sku='Standard_LRS', location='westus', kind='storage',
+                 sku='Standard_LRS', location='westus', kind='StorageV2',
                  parameter_name='storage_account',
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
