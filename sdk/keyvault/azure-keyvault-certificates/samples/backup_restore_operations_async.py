@@ -62,19 +62,9 @@ async def run_sample():
         print("Backup created for certificate with name '{0}'.".format(cert_name))
 
         # The storage account certificate is no longer in use, so you can delete it.
+        print("\n.. Delete the certificate")
         await client.delete_certificate(name=cert_name)
-        # To ensure certificate is deleted on the server side.
-        await asyncio.sleep(30)
         print("Deleted Certificate with name '{0}'".format(cert_name))
-
-        # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-        # In order to be able to reuse the name during restoration, we must purge the certificate
-        # after the initial deletion.
-        print("\nPurging certificate...")
-        await client.purge_deleted_certificate(name=cert_name)
-        # To ensure certificate is purged on the server side.
-        await asyncio.sleep(30)
-        print("Purged Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the certificate using the backed up certificate bytes")
