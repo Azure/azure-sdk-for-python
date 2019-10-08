@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from azure.identity import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables
 from azure.identity.aio import DefaultAzureCredential, CertificateCredential, ClientSecretCredential
 from azure.identity.aio._credentials.managed_identity import ImdsCredential, MsiCredential
 
