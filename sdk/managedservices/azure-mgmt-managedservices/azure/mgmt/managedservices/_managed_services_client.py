@@ -11,39 +11,13 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.registration_definitions_operations import RegistrationDefinitionsOperations
-from .operations.registration_assignments_operations import RegistrationAssignmentsOperations
-from .operations.operations import Operations
+
+from ._configuration import ManagedServicesClientConfiguration
+from .operations import RegistrationDefinitionsOperations
+from .operations import RegistrationAssignmentsOperations
+from .operations import MarketplaceRegistrationDefinitionsOperations
+from .operations import Operations
 from . import models
-
-
-class ManagedServicesClientConfiguration(AzureConfiguration):
-    """Configuration for ManagedServicesClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(ManagedServicesClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-managedservices/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
 
 
 class ManagedServicesClient(SDKClient):
@@ -56,6 +30,8 @@ class ManagedServicesClient(SDKClient):
     :vartype registration_definitions: azure.mgmt.managedservices.operations.RegistrationDefinitionsOperations
     :ivar registration_assignments: RegistrationAssignments operations
     :vartype registration_assignments: azure.mgmt.managedservices.operations.RegistrationAssignmentsOperations
+    :ivar marketplace_registration_definitions: MarketplaceRegistrationDefinitions operations
+    :vartype marketplace_registration_definitions: azure.mgmt.managedservices.operations.MarketplaceRegistrationDefinitionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.managedservices.operations.Operations
 
@@ -72,13 +48,15 @@ class ManagedServicesClient(SDKClient):
         super(ManagedServicesClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-01'
+        self.api_version = '2019-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.registration_definitions = RegistrationDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.registration_assignments = RegistrationAssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplace_registration_definitions = MarketplaceRegistrationDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class RegistrationDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RegistrationDefinition <azure.mgmt.managedservices.models.RegistrationDefinition>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RegistrationDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RegistrationDefinitionPaged, self).__init__(*args, **kwargs)
 class RegistrationAssignmentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`RegistrationAssignment <azure.mgmt.managedservices.models.RegistrationAssignment>` object

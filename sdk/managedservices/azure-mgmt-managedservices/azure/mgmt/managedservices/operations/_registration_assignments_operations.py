@@ -20,11 +20,13 @@ from .. import models
 class RegistrationAssignmentsOperations(object):
     """RegistrationAssignmentsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-09-01".
     """
 
     models = models
@@ -34,7 +36,7 @@ class RegistrationAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-09-01"
 
         self.config = config
 
@@ -94,7 +96,6 @@ class RegistrationAssignmentsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RegistrationAssignment', response)
 
@@ -308,8 +309,7 @@ class RegistrationAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -340,6 +340,11 @@ class RegistrationAssignmentsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -348,12 +353,10 @@ class RegistrationAssignmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RegistrationAssignmentPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RegistrationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RegistrationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments'}

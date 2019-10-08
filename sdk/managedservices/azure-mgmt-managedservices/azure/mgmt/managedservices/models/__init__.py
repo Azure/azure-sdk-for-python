@@ -10,53 +10,53 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .authorization_py3 import Authorization
-    from .registration_definition_properties_py3 import RegistrationDefinitionProperties
-    from .plan_py3 import Plan
-    from .registration_definition_py3 import RegistrationDefinition
-    from .registration_assignment_properties_registration_definition_properties_py3 import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
-    from .registration_assignment_properties_registration_definition_py3 import RegistrationAssignmentPropertiesRegistrationDefinition
-    from .registration_assignment_properties_py3 import RegistrationAssignmentProperties
-    from .registration_assignment_py3 import RegistrationAssignment
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_py3 import OperationList
-    from .error_response_error_py3 import ErrorResponseError
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Authorization
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseError
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationList
+    from ._models_py3 import Plan
+    from ._models_py3 import RegistrationAssignment
+    from ._models_py3 import RegistrationAssignmentProperties
+    from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinition
+    from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
+    from ._models_py3 import RegistrationDefinition
+    from ._models_py3 import RegistrationDefinitionProperties
 except (SyntaxError, ImportError):
-    from .authorization import Authorization
-    from .registration_definition_properties import RegistrationDefinitionProperties
-    from .plan import Plan
-    from .registration_definition import RegistrationDefinition
-    from .registration_assignment_properties_registration_definition_properties import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
-    from .registration_assignment_properties_registration_definition import RegistrationAssignmentPropertiesRegistrationDefinition
-    from .registration_assignment_properties import RegistrationAssignmentProperties
-    from .registration_assignment import RegistrationAssignment
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list import OperationList
-    from .error_response_error import ErrorResponseError
-    from .error_response import ErrorResponse, ErrorResponseException
-from .registration_definition_paged import RegistrationDefinitionPaged
-from .registration_assignment_paged import RegistrationAssignmentPaged
-from .managed_services_client_enums import (
+    from ._models import Authorization
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseError
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationList
+    from ._models import Plan
+    from ._models import RegistrationAssignment
+    from ._models import RegistrationAssignmentProperties
+    from ._models import RegistrationAssignmentPropertiesRegistrationDefinition
+    from ._models import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
+    from ._models import RegistrationDefinition
+    from ._models import RegistrationDefinitionProperties
+from ._paged_models import RegistrationAssignmentPaged
+from ._paged_models import RegistrationDefinitionPaged
+from ._managed_services_client_enums import (
     ProvisioningState,
 )
 
 __all__ = [
     'Authorization',
-    'RegistrationDefinitionProperties',
-    'Plan',
-    'RegistrationDefinition',
-    'RegistrationAssignmentPropertiesRegistrationDefinitionProperties',
-    'RegistrationAssignmentPropertiesRegistrationDefinition',
-    'RegistrationAssignmentProperties',
-    'RegistrationAssignment',
-    'OperationDisplay',
-    'Operation',
-    'OperationList',
-    'ErrorResponseError',
     'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseError',
+    'Operation',
+    'OperationDisplay',
+    'OperationList',
+    'Plan',
+    'RegistrationAssignment',
+    'RegistrationAssignmentProperties',
+    'RegistrationAssignmentPropertiesRegistrationDefinition',
+    'RegistrationAssignmentPropertiesRegistrationDefinitionProperties',
+    'RegistrationDefinition',
+    'RegistrationDefinitionProperties',
     'RegistrationDefinitionPaged',
     'RegistrationAssignmentPaged',
     'ProvisioningState',
