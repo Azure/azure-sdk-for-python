@@ -154,7 +154,6 @@ policy will be used. The `create_certificate` operation returns a long running o
 ```python
 create_certificate_poller = certificate_client.create_certificate(name="cert-name")
 
-create_certificate_poller.wait()
 print(create_certificate_poller.result())
 ```
 
@@ -173,6 +172,7 @@ print(certificate.policy.id)
 Version is required.
 ```python
 certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
+
 print(certificate.name)
 print(certificate.properties.version)
 ```
@@ -247,10 +247,10 @@ For example, if you try to retrieve a certificate after it is deleted a `404` er
 resource not found. In the following snippet, the error is handled gracefully by catching the exception and
 displaying additional information about the error.
 ```python
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError
 try:
     certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
-except HttpResponseError as e:
+except ResourceNotFoundError as e:
     print(e.message)
 
 Output: "certificate not found:deleted_certificate"

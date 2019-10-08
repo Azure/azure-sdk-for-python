@@ -42,8 +42,8 @@ async def run_sample():
         # Let's create certificates holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
         print("\n.. Create Certificates")
-        bank_cert_name = "BankRecoverCertificatezxv2"
-        storage_cert_name = "ServerRecoverCertificatezxcv2"
+        bank_cert_name = "BankRecoverCertificate"
+        storage_cert_name = "ServerRecoverCertificate"
 
         bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
         storage_certificate_poller = await client.create_certificate(name=storage_cert_name)

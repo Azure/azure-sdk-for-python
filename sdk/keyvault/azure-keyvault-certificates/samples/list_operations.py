@@ -65,10 +65,11 @@ try:
     # certificate creates a new version of the certificate in the Key Vault with the new value.
 
     tags = {"a": "b"}
-    bank_certificate = client.create_certificate(name=bank_cert_name, tags=tags).result()
+    bank_certificate_poller = client.create_certificate(name=bank_cert_name, tags=tags)
+    bank_certificate = bank_certificate_poller.result()
     print(
         "Certificate with name '{0}' was created again with tags '{1}'".format(
-            bank_certificate.name, bank_certificate.tags
+            bank_certificate.name, bank_certificate.properties.tags
         )
     )
 
