@@ -19,7 +19,7 @@ from azure.core.exceptions import (
 
 from azure.storage.file.aio import (
     AccessPolicy,
-    SharePermissions,
+    ShareSasPermissions,
     FileServiceClient,
     DirectoryClient,
     FileClient,
@@ -662,7 +662,7 @@ class StorageShareTest(FileTestCase):
         # Act
         identifiers = dict()
         identifiers['testid'] = AccessPolicy(
-            permission=SharePermissions.WRITE,
+            permission=ShareSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             start=datetime.utcnow() - timedelta(minutes=1),
         )
@@ -873,7 +873,7 @@ class StorageShareTest(FileTestCase):
 
         token = share.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=SharePermissions.READ,
+            permission=ShareSasPermissions(read=True),
         )
         sas_client = FileClient(
             self.get_file_url(),

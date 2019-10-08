@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d64aa652-d052-11e9-8f15-001a7dda7113
+      - 6bd7bf50-d9a9-11e9-9a3b-001a7dda7113
       x-ms-content-length:
       - '0'
       x-ms-date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:29 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -41,31 +41,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:28 GMT
       ETag:
-      - '"0x8D73276BA8D539B"'
+      - '"0x8D73BCD5019801A"'
       Last-Modified:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:29 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - d64aa652-d052-11e9-8f15-001a7dda7113
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-06T03:03:01.3568411Z'
+      - '2019-09-18T00:15:29.4397466Z'
       x-ms-file-creation-time:
-      - '2019-09-06T03:03:01.3568411Z'
+      - '2019-09-18T00:15:29.4397466Z'
       x-ms-file-id:
       - '13835163608398430208'
       x-ms-file-last-write-time:
-      - '2019-09-06T03:03:01.3568411Z'
+      - '2019-09-18T00:15:29.4397466Z'
       x-ms-file-parent-id:
       - '13835128424026341376'
       x-ms-file-permission-key:
       - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - c3c481ee-301a-0003-685f-64b290000000
+      - 6cf5cfcc-701a-0012-37b6-6d2824000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -83,13 +81,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d662645e-d052-11e9-9cf4-001a7dda7113
+      - 6bf5812c-d9a9-11e9-8de8-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:29 GMT
       x-ms-range:
       - bytes=0-5
       x-ms-version:
@@ -99,7 +97,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:c3c481f1-301a-0003-695f-64b290000000\nTime:2019-09-06T03:03:01.4285929Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:6cf5cfcd-701a-0012-38b6-6d2824000000\nTime:2019-09-18T00:15:29.5013050Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -108,15 +106,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:28 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - d662645e-d052-11e9-9cf4-001a7dda7113
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - c3c481f1-301a-0003-695f-64b290000000
+      - 6cf5cfcd-701a-0012-38b6-6d2824000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -132,13 +128,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d66c4d70-d052-11e9-8ffd-001a7dda7113
+      - 6c008718-d9a9-11e9-970c-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:29 GMT
       x-ms-range:
       - bytes=3-5
       x-ms-version:
@@ -148,7 +144,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:c3c481f2-301a-0003-6a5f-64b290000000\nTime:2019-09-06T03:03:01.4696217Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:6cf5cfce-701a-0012-39b6-6d2824000000\nTime:2019-09-18T00:15:29.5393320Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -157,15 +153,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 06 Sep 2019 03:03:01 GMT
+      - Wed, 18 Sep 2019 00:15:28 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - d66c4d70-d052-11e9-8ffd-001a7dda7113
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - c3c481f2-301a-0003-6a5f-64b290000000
+      - 6cf5cfce-701a-0012-39b6-6d2824000000
       x-ms-version:
       - '2019-02-02'
     status:

@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a2ca5f86-d054-11e9-87db-001a7dda7113
+      - 7c4726cc-d9a9-11e9-9cf5-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:53 GMT
+      - Wed, 18 Sep 2019 00:15:56 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -23,18 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7327886FC71F6"'
+      : '"0x8D73BCD6072888B"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2ca5f86-d054-11e9-87db-001a7dda7113
-      x-ms-request-id: 83aeea29-601a-00b7-3b61-647e5e000000
+      x-ms-request-id: 5af320b2-701a-0094-2cb6-6de49d000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -51,13 +50,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a2d2a1fa-d054-11e9-9aa6-001a7dda7113
+      - 7c528252-d9a9-11e9-839b-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:53 GMT
+      - Wed, 18 Sep 2019 00:15:56 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -79,25 +78,24 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D732788701CDB3"'
+      : '"0x8D73BCD607C01A3"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2d2a1fa-d054-11e9-9aa6-001a7dda7113
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-06T03:15:53.8721203Z'
-      x-ms-file-creation-time: '2019-09-06T03:15:53.8721203Z'
+      x-ms-file-change-time: '2019-09-18T00:15:56.9288611Z'
+      x-ms-file-creation-time: '2019-09-18T00:15:56.9288611Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-06T03:15:53.8721203Z'
+      x-ms-file-last-write-time: '2019-09-18T00:15:56.9288611Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 17913408918638655783*10394889115079208622
-      x-ms-request-id: 83aeea2c-601a-00b7-3d61-647e5e000000
+      x-ms-request-id: 5af320b5-701a-0094-2db6-6de49d000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -115,15 +113,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a2d78df6-d054-11e9-898a-001a7dda7113
+      - 7c5acc22-d9a9-11e9-93f0-001a7dda7113
       x-ms-content-length:
       - '65541'
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:53 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -147,25 +145,24 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D73278870C7EAA"'
+      : '"0x8D73BCD6089C09C"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2d78df6-d054-11e9-898a-001a7dda7113
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-06T03:15:53.9421866Z'
-      x-ms-file-creation-time: '2019-09-06T03:15:53.9421866Z'
+      x-ms-file-change-time: '2019-09-18T00:15:57.0189468Z'
+      x-ms-file-creation-time: '2019-09-18T00:15:57.0189468Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2019-09-06T03:15:53.9421866Z'
+      x-ms-file-last-write-time: '2019-09-18T00:15:57.0189468Z'
       x-ms-file-parent-id: '13835128424026341376'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
-      x-ms-request-id: 4decae0d-401a-0009-2861-641627000000
+      x-ms-request-id: 6ff7e401-f01a-006e-3eb6-6d06db000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1337,11 +1334,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - a2e1666e-d054-11e9-bd31-001a7dda7113
+      - 7c65da74-d9a9-11e9-8d31-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:54 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-range:
       - bytes=0-65540
       x-ms-version:
@@ -1362,18 +1359,17 @@ interactions:
       : zI1tEwj92923GHdEFo7Mjg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D73278871161DD"'
+      : '"0x8D73BCD609051E6"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2e1666e-d054-11e9-bd31-001a7dda7113
-      x-ms-request-id: 4decae0f-401a-0009-2961-641627000000
+      x-ms-request-id: 6ff7e403-f01a-006e-3fb6-6d06db000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1391,15 +1387,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a2e7a65c-d054-11e9-9a25-001a7dda7113
+      - 7c6f22cc-d9a9-11e9-a240-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:54 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -1423,25 +1419,24 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D73278871EAB80"'
+      : '"0x8D73BCD609B9F46"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2e7a65c-d054-11e9-9a25-001a7dda7113
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-06T03:15:54.0612992Z'
-      x-ms-file-creation-time: '2019-09-06T03:15:54.0612992Z'
+      x-ms-file-change-time: '2019-09-18T00:15:57.1360582Z'
+      x-ms-file-creation-time: '2019-09-18T00:15:57.1360582Z'
       x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2019-09-06T03:15:54.0612992Z'
+      x-ms-file-last-write-time: '2019-09-18T00:15:57.1360582Z'
       x-ms-file-parent-id: '13835128424026341376'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
-      x-ms-request-id: d281fb0f-f01a-001c-7561-640194000000
+      x-ms-request-id: 918be210-001a-0037-0eb6-6d8158000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1481,11 +1476,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - a2f376ba-d054-11e9-9171-001a7dda7113
+      - 7c7824d2-d9a9-11e9-b9ac-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:54 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -1506,18 +1501,17 @@ interactions:
       : 6NpHjHIEZVpQZqcztsfR5A==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D732788721442C"'
+      : '"0x8D73BCD609EFB78"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2f376ba-d054-11e9-9171-001a7dda7113
-      x-ms-request-id: d281fb11-f01a-001c-7661-640194000000
+      x-ms-request-id: 918be212-001a-0037-0fb6-6d8158000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1535,13 +1529,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a2f6f6c2-d054-11e9-befe-001a7dda7113
+      - 7c7b8238-d9a9-11e9-95e5-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:54 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1555,19 +1549,18 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7327886FC71F6"'
+      : '"0x8D73BCD6072888B"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:53 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a2f6f6c2-d054-11e9-befe-001a7dda7113
-      x-ms-request-id: 83aeea32-601a-00b7-4361-647e5e000000
-      x-ms-snapshot: '2019-09-06T03:15:54.0000000Z'
+      x-ms-request-id: 5af320b6-701a-0094-2eb6-6de49d000000
+      x-ms-snapshot: '2019-09-18T00:15:57.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -1584,13 +1577,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a371bc98-d054-11e9-85ad-001a7dda7113
+      - 7c807e78-d9a9-11e9-a707-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:54 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -1604,12 +1597,11 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a371bc98-d054-11e9-85ad-001a7dda7113
-      x-ms-request-id: d281fb15-f01a-001c-7a61-640194000000
+      x-ms-request-id: 918be213-001a-0037-10b6-6d8158000000
       x-ms-version: '2019-02-02'
     status:
       code: 202
@@ -1628,19 +1620,19 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a37ab59e-d054-11e9-9d8e-001a7dda7113
+      - 7c89776c-d9a9-11e9-9da3-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:15:55 GMT
+      - Wed, 18 Sep 2019 00:15:57 GMT
       x-ms-range:
       - bytes=0-32767
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharedd2b1c6c/utdirdd2b1c6c/filedd2b1c6c?sharesnapshot=2019-09-06T03:15:54.0000000Z
+    uri: https://storagename.file.core.windows.net/utsharedd2b1c6c/utdirdd2b1c6c/filedd2b1c6c?sharesnapshot=2019-09-18T00:15:57.0000000Z
   response:
     body:
       string: !!binary |
@@ -1677,25 +1669,24 @@ interactions:
       : application/xml; charset=utf-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:56 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D732788721442C"'
+      : '"0x8D73BCD609EFB78"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 03:15:54 GMT
+      : Wed, 18 Sep 2019 00:15:57 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: a37ab59e-d054-11e9-9d8e-001a7dda7113
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-06T03:15:54.0612992Z'
-      x-ms-file-creation-time: '2019-09-06T03:15:54.0612992Z'
+      x-ms-file-change-time: '2019-09-18T00:15:57.1360582Z'
+      x-ms-file-creation-time: '2019-09-18T00:15:57.1360582Z'
       x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2019-09-06T03:15:54.0612992Z'
+      x-ms-file-last-write-time: '2019-09-18T00:15:57.1360582Z'
       x-ms-file-parent-id: '13835128424026341376'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
-      x-ms-request-id: 594592dc-401a-0019-4561-64d34f000000
+      x-ms-request-id: 714ce8d2-701a-0060-63b6-6d2f6b000000
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2019-02-02'
@@ -1708,6 +1699,6 @@ interactions:
         - https
         - emilydevtest.file.core.windows.net
         - /utsharedd2b1c6c/utdirdd2b1c6c/filedd2b1c6c
-        - sharesnapshot=2019-09-06T03:15:54.0000000Z
+        - sharesnapshot=2019-09-18T00:15:57.0000000Z
         - ''
 version: 1

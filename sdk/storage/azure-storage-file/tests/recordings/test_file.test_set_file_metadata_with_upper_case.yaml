@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a6bb4ddc-d048-11e9-ad38-001a7dda7113
+      - ef63de48-d9a6-11e9-bdd5-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -41,31 +41,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       ETag:
-      - '"0x8D7326C8B01B527"'
+      - '"0x8D73BCAD39DBD7B"'
       Last-Modified:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a6bb4ddc-d048-11e9-ad38-001a7dda7113
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-06T01:50:06.6216231Z'
+      - '2019-09-17T23:57:41.5977339Z'
       x-ms-file-creation-time:
-      - '2019-09-06T01:50:06.6216231Z'
+      - '2019-09-17T23:57:41.5977339Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-06T01:50:06.6216231Z'
+      - '2019-09-17T23:57:41.5977339Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
       - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - f316ce5b-801a-00cd-7255-64631e000000
+      - 5cc000e1-101a-0059-4ab3-6dd477000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -105,11 +103,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - a6d5e2d2-d048-11e9-a71a-001a7dda7113
+      - ef78b6a6-d9a6-11e9-bf2a-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -127,17 +125,15 @@ interactions:
       Content-MD5:
       - cf/Kv0gEslHxNn+WPdM6NQ==
       Date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       ETag:
-      - '"0x8D7326C8B086D8A"'
+      - '"0x8D73BCAD3A44EC2"'
       Last-Modified:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a6d5e2d2-d048-11e9-a71a-001a7dda7113
       x-ms-request-id:
-      - f316ce5d-801a-00cd-7355-64631e000000
+      - 5cc000e2-101a-0059-4bb3-6dd477000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -157,13 +153,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a6dc46d0-d048-11e9-9b28-001a7dda7113
+      - ef8005ee-d9a6-11e9-a81f-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42'', ''UP'': ''UPval''}'
       x-ms-meta-UP:
@@ -183,17 +179,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       ETag:
-      - '"0x8D7326C8B0EB0A1"'
+      - '"0x8D73BCAD3AB7C6E"'
       Last-Modified:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a6dc46d0-d048-11e9-9b28-001a7dda7113
       x-ms-request-id:
-      - f316ce5f-801a-00cd-7555-64631e000000
+      - 5cc000e3-101a-0059-4cb3-6dd477000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -211,13 +205,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a6e8c78a-d048-11e9-b151-001a7dda7113
+      - ef8644e6-d9a6-11e9-a169-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -231,25 +225,23 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       ETag:
-      - '"0x8D7326C8B0EB0A1"'
+      - '"0x8D73BCAD3AB7C6E"'
       Last-Modified:
-      - Fri, 06 Sep 2019 01:50:06 GMT
+      - Tue, 17 Sep 2019 23:57:41 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - a6e8c78a-d048-11e9-b151-001a7dda7113
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-06T01:50:06.7067041Z'
+      - '2019-09-17T23:57:41.6878190Z'
       x-ms-file-creation-time:
-      - '2019-09-06T01:50:06.6216231Z'
+      - '2019-09-17T23:57:41.5977339Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-06T01:50:06.6216231Z'
+      - '2019-09-17T23:57:41.5977339Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
@@ -261,7 +253,7 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-request-id:
-      - f316ce60-801a-00cd-7655-64631e000000
+      - 5cc000e4-101a-0059-4db3-6dd477000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:

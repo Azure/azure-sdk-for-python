@@ -1,5 +1,15 @@
 # Change Log azure-storage-queue
 
+## Version 12.0.0b4:
+
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `QueuePermissions` have been renamed to 
+  `AccountSasPermissions`, `QueueSasPermissions` respectively.
+  - enum-like list parameters have been removed from both of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
 
 ## Version 12.0.0b3:
 

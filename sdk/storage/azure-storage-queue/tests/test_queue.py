@@ -27,10 +27,10 @@ from azure.core.exceptions import (
 from azure.storage.queue import (
     QueueServiceClient,
     QueueClient,
-    QueuePermissions,
+    QueueSasPermissions,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
 )
 
 from queuetestcase import (
@@ -543,7 +543,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.enqueue_message(u'message1')
         token = qsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
@@ -600,7 +600,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.READ,
+            QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
@@ -632,7 +632,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.ADD,
+            QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -660,7 +660,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.UPDATE,
+            QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
         messages = queue_client.receive_messages()
@@ -695,7 +695,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.PROCESS,
+            QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -722,7 +722,7 @@ class StorageQueueTest(QueueTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = QueuePermissions.READ
+        access_policy.permission = QueueSasPermissions(read=True)
 
         identifiers = {'testid': access_policy}
 
@@ -858,7 +858,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
 
         # Act
-        access_policy = AccessPolicy(permission=QueuePermissions.READ,
+        access_policy = AccessPolicy(permission=QueueSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=5))
         identifiers = {'testid': access_policy}
