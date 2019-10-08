@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
@@ -95,6 +96,7 @@ try:
     from ._models_py3 import Usage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import ARMProxyResource
     from ._models import ARMResourceProperties
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
@@ -217,6 +219,7 @@ from ._cosmos_db_enums import (
 )
 
 __all__ = [
+    'ARMProxyResource',
     'ARMResourceProperties',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
