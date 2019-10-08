@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b4
+## 4.0.0b4 (2019-10-08)
 - Enums `JsonWebKeyCurveName`, `JsonWebKeyOperation`, and `JsonWebKeyType` have
 been renamed to `KeyCurveName`, `KeyOperation`, and `KeyType`, respectively.
 - `Key` now has attribute `properties`, which holds certain properties of the
