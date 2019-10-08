@@ -20,6 +20,14 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class ManagedIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"  #: Indicates that system assigned identity is associated with the resource.
+    user_assigned = "UserAssigned"  #: Indicates that user assigned identity is associated with the resource.
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"  #: Indicates that both system assigned and user assigned identity are associated with the resource.
+    none = "None"  #: Indicates that no identity is associated with the resource.
+
+
 class ArmUpgradeFailureAction(str, Enum):
 
     rollback = "Rollback"  #: Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade fails.

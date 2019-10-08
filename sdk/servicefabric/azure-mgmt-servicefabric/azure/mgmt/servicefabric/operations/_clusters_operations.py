@@ -26,7 +26,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-03-01" for this specification. Constant value: "2019-03-01".
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-06-01-preview" for this specification. Constant value: "2019-06-01-preview".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-06-01-preview"
 
         self.config = config
 
@@ -104,10 +104,10 @@ class ClustersOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
 
-    def _create_or_update_initial(
+    def _create_initial(
             self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
@@ -153,7 +153,7 @@ class ClustersOperations(object):
 
         return deserialized
 
-    def create_or_update(
+    def create(
             self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a Service Fabric cluster resource.
 
@@ -180,7 +180,7 @@ class ClustersOperations(object):
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             parameters=parameters,
@@ -205,7 +205,7 @@ class ClustersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}'}
 
 
     def _update_initial(
