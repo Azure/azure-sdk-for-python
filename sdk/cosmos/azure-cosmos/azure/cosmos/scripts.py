@@ -164,7 +164,7 @@ class ScriptsProxy(object):
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :raises ~azure.cosmos.errors.CosmosHttpResponseError: The sproc wasn't deleted successfully.
-         If the sproc does not exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The sproc does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -319,7 +319,7 @@ class ScriptsProxy(object):
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :raises ~azure.cosmos.errors.CosmosHttpResponseError: The trigger wasn't deleted successfully.
-         If the trigger does not exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The trigger does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -434,7 +434,7 @@ class ScriptsProxy(object):
         :param udf: The ID (name) or dict representing udf to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :raises ~azure.cosmos.errors.CosmosHttpResponseError: The udf wasn't deleted successfully.
-         If the udf does not exist in the container, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The UDF does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)

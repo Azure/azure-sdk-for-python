@@ -287,7 +287,7 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :raises ~azure.cosmos.errors.CosmosHttpResponseError: The permission wasn't deleted successfully.
-         If the permission does not exist for the user, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None
         """
         request_options = build_options(kwargs)
