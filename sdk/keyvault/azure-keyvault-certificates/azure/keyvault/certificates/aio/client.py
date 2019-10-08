@@ -74,6 +74,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
+        tags = kwargs.pop('tags', None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -88,8 +89,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
+            tags=tags,
             **kwargs
         )
+
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
         command = partial(self.get_certificate_operation, name=name, **kwargs)
