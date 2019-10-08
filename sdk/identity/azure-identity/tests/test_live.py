@@ -10,11 +10,13 @@ from azure.identity import (
     DefaultAzureCredential,
     CertificateCredential,
     ClientSecretCredential,
+    DeviceCodeCredential,
     KnownAuthorities,
+    InteractiveBrowserCredential,
     ManagedIdentityCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
 from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential
 from azure.identity._internal import ConfidentialClientCredential
 
@@ -87,4 +89,22 @@ def test_username_password_auth(live_user_details):
         password=live_user_details["password"],
         tenant=live_user_details["tenant"],
     )
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_device_code(prints):
+    import webbrowser
+
+    def prompt(url, user_code, _):
+        print("opening a browser to '{}', enter device code {}".format(url, user_code))
+        webbrowser.open_new_tab(url)
+
+    credential = DeviceCodeCredential(client_id=AZURE_CLI_CLIENT_ID, prompt_callback=prompt, timeout=25)
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_browser_auth():
+    credential = InteractiveBrowserCredential(client_id=AZURE_CLI_CLIENT_ID, timeout=25)
     get_token(credential)
