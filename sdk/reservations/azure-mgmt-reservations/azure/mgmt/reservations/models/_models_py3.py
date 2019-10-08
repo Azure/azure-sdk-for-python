@@ -472,29 +472,21 @@ class CurrentQuotaLimitBaseName(Model):
     """Name of the resource provide by the resource Provider. Please use this name
     property for quotaRequests.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: Resource name.
-    :vartype value: str
-    :ivar localized_value: Resource display name.
-    :vartype localized_value: str
+    :param value: Resource name.
+    :type value: str
+    :param localized_value: Resource display name.
+    :type localized_value: str
     """
-
-    _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
-    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
         super(CurrentQuotaLimitBaseName, self).__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+        self.value = value
+        self.localized_value = localized_value
 
 
 class EmailAction(Model):
