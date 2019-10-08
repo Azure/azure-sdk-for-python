@@ -25,6 +25,19 @@ class RecoveryPointResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RecoveryPointResourcePaged, self).__init__(*args, **kwargs)
+class ProtectionPolicyResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProtectionPolicyResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProtectionPolicyResourcePaged, self).__init__(*args, **kwargs)
 class JobResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`JobResource <azure.mgmt.recoveryservicesbackup.models.JobResource>` object
@@ -51,19 +64,6 @@ class ProtectedItemResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProtectedItemResourcePaged, self).__init__(*args, **kwargs)
-class ProtectionPolicyResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ProtectionPolicyResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProtectionPolicyResourcePaged, self).__init__(*args, **kwargs)
 class ProtectionIntentResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ProtectionIntentResource <azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource>` object

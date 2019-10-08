@@ -14,6 +14,9 @@ from ._protected_items_operations import ProtectedItemsOperations
 from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._restores_operations import RestoresOperations
+from ._backup_policies_operations import BackupPoliciesOperations
+from ._protection_policies_operations import ProtectionPoliciesOperations
+from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._backup_jobs_operations import BackupJobsOperations
 from ._job_details_operations import JobDetailsOperations
 from ._job_cancellations_operations import JobCancellationsOperations
@@ -25,9 +28,6 @@ from ._operation_operations import OperationOperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
-from ._backup_policies_operations import BackupPoliciesOperations
-from ._protection_policies_operations import ProtectionPoliciesOperations
-from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._backup_protection_intent_operations import BackupProtectionIntentOperations
 from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
 from ._backup_engines_operations import BackupEnginesOperations
@@ -54,6 +54,9 @@ __all__ = [
     'ProtectedItemOperationResultsOperations',
     'RecoveryPointsOperations',
     'RestoresOperations',
+    'BackupPoliciesOperations',
+    'ProtectionPoliciesOperations',
+    'ProtectionPolicyOperationResultsOperations',
     'BackupJobsOperations',
     'JobDetailsOperations',
     'JobCancellationsOperations',
@@ -65,9 +68,6 @@ __all__ = [
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
-    'BackupPoliciesOperations',
-    'ProtectionPoliciesOperations',
-    'ProtectionPolicyOperationResultsOperations',
     'BackupProtectionIntentOperations',
     'BackupUsageSummariesOperations',
     'BackupEnginesOperations',

@@ -83,6 +83,34 @@ class RestoreRequestType(str, Enum):
     item_level_restore = "ItemLevelRestore"
 
 
+class WorkloadType(str, Enum):
+
+    invalid = "Invalid"
+    vm = "VM"
+    file_folder = "FileFolder"
+    azure_sql_db = "AzureSqlDb"
+    sqldb = "SQLDB"
+    exchange = "Exchange"
+    sharepoint = "Sharepoint"
+    vmware_vm = "VMwareVM"
+    system_state = "SystemState"
+    client = "Client"
+    generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
+
+
+class PolicyType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    differential = "Differential"
+    log = "Log"
+    copy_only_full = "CopyOnlyFull"
+
+
 class JobSupportedAction(str, Enum):
 
     invalid = "Invalid"
@@ -156,6 +184,15 @@ class RestorePointQueryType(str, Enum):
     all = "All"
 
 
+class RetentionDurationType(str, Enum):
+
+    invalid = "Invalid"
+    days = "Days"
+    weeks = "Weeks"
+    months = "Months"
+    years = "Years"
+
+
 class RecoveryPointTierType(str, Enum):
 
     invalid = "Invalid"
@@ -209,6 +246,51 @@ class JobOperationType(str, Enum):
     undelete = "Undelete"
 
 
+class DayOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class RetentionScheduleFormat(str, Enum):
+
+    invalid = "Invalid"
+    daily = "Daily"
+    weekly = "Weekly"
+
+
+class WeekOfMonth(str, Enum):
+
+    first = "First"
+    second = "Second"
+    third = "Third"
+    fourth = "Fourth"
+    last = "Last"
+    invalid = "Invalid"
+
+
+class MonthOfYear(str, Enum):
+
+    invalid = "Invalid"
+    january = "January"
+    february = "February"
+    march = "March"
+    april = "April"
+    may = "May"
+    june = "June"
+    july = "July"
+    august = "August"
+    september = "September"
+    october = "October"
+    november = "November"
+    december = "December"
+
+
 class MabServerType(str, Enum):
 
     invalid = "Invalid"
@@ -226,25 +308,6 @@ class MabServerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
-
-
-class WorkloadType(str, Enum):
-
-    invalid = "Invalid"
-    vm = "VM"
-    file_folder = "FileFolder"
-    azure_sql_db = "AzureSqlDb"
-    sqldb = "SQLDB"
-    exchange = "Exchange"
-    sharepoint = "Sharepoint"
-    vmware_vm = "VMwareVM"
-    system_state = "SystemState"
-    client = "Client"
-    generic_data_source = "GenericDataSource"
-    sql_data_base = "SQLDataBase"
-    azure_file_share = "AzureFileShare"
-    sap_hana_database = "SAPHanaDatabase"
-    sap_ase_database = "SAPAseDatabase"
 
 
 class HttpStatusCode(str, Enum):
@@ -332,6 +395,13 @@ class HealthState(str, Enum):
     invalid = "Invalid"
 
 
+class ScheduleRunType(str, Enum):
+
+    invalid = "Invalid"
+    daily = "Daily"
+    weekly = "Weekly"
+
+
 class SupportStatus(str, Enum):
 
     invalid = "Invalid"
@@ -339,15 +409,6 @@ class SupportStatus(str, Enum):
     default_off = "DefaultOFF"
     default_on = "DefaultON"
     not_supported = "NotSupported"
-
-
-class PolicyType(str, Enum):
-
-    invalid = "Invalid"
-    full = "Full"
-    differential = "Differential"
-    log = "Log"
-    copy_only_full = "CopyOnlyFull"
 
 
 class WorkloadItemType(str, Enum):
@@ -393,60 +454,6 @@ class Type(str, Enum):
     backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
 
 
-class RetentionDurationType(str, Enum):
-
-    invalid = "Invalid"
-    days = "Days"
-    weeks = "Weeks"
-    months = "Months"
-    years = "Years"
-
-
-class DayOfWeek(str, Enum):
-
-    sunday = "Sunday"
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-
-
-class RetentionScheduleFormat(str, Enum):
-
-    invalid = "Invalid"
-    daily = "Daily"
-    weekly = "Weekly"
-
-
-class WeekOfMonth(str, Enum):
-
-    first = "First"
-    second = "Second"
-    third = "Third"
-    fourth = "Fourth"
-    last = "Last"
-    invalid = "Invalid"
-
-
-class MonthOfYear(str, Enum):
-
-    invalid = "Invalid"
-    january = "January"
-    february = "February"
-    march = "March"
-    april = "April"
-    may = "May"
-    june = "June"
-    july = "July"
-    august = "August"
-    september = "September"
-    october = "October"
-    november = "November"
-    december = "December"
-
-
 class ValidationStatus(str, Enum):
 
     invalid = "Invalid"
@@ -459,13 +466,6 @@ class IntentItemType(str, Enum):
     invalid = "Invalid"
     sql_instance = "SQLInstance"
     sql_availability_group_container = "SQLAvailabilityGroupContainer"
-
-
-class ScheduleRunType(str, Enum):
-
-    invalid = "Invalid"
-    daily = "Daily"
-    weekly = "Weekly"
 
 
 class AzureFileShareType(str, Enum):

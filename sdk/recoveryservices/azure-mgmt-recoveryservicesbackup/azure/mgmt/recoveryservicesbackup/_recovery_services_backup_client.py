@@ -18,6 +18,9 @@ from .operations import ProtectedItemsOperations
 from .operations import ProtectedItemOperationResultsOperations
 from .operations import RecoveryPointsOperations
 from .operations import RestoresOperations
+from .operations import BackupPoliciesOperations
+from .operations import ProtectionPoliciesOperations
+from .operations import ProtectionPolicyOperationResultsOperations
 from .operations import BackupJobsOperations
 from .operations import JobDetailsOperations
 from .operations import JobCancellationsOperations
@@ -29,9 +32,6 @@ from .operations import OperationOperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
-from .operations import BackupPoliciesOperations
-from .operations import ProtectionPoliciesOperations
-from .operations import ProtectionPolicyOperationResultsOperations
 from .operations import BackupProtectionIntentOperations
 from .operations import BackupUsageSummariesOperations
 from .operations import BackupEnginesOperations
@@ -70,6 +70,12 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype recovery_points: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations
     :ivar restores: Restores operations
     :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
+    :ivar backup_policies: BackupPolicies operations
+    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
+    :ivar protection_policies: ProtectionPolicies operations
+    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
+    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
+    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
     :ivar backup_jobs: BackupJobs operations
     :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
     :ivar job_details: JobDetails operations
@@ -92,12 +98,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
     :ivar feature_support: FeatureSupport operations
     :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
-    :ivar backup_policies: BackupPolicies operations
-    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
-    :ivar protection_policies: ProtectionPolicies operations
-    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
-    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
-    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
     :ivar backup_protection_intent: BackupProtectionIntent operations
     :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
     :ivar backup_usage_summaries: BackupUsageSummaries operations
@@ -165,6 +165,12 @@ class RecoveryServicesBackupClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.restores = RestoresOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.backup_policies = BackupPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policies = ProtectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.backup_jobs = BackupJobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_details = JobDetailsOperations(
@@ -186,12 +192,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self.backup_status = BackupStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.feature_support = FeatureSupportOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_policies = BackupPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policies = ProtectionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_protection_intent = BackupProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
