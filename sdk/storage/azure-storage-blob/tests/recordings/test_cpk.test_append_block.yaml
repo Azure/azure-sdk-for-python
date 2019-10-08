@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - aa24df2e-d274-11e9-8b78-001a7dda7113
+      - 64061d12-d99b-11e9-bb39-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:12 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -37,19 +37,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sun, 08 Sep 2019 20:10:12 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       ETag:
-      - '"0x8D734988EA563BF"'
+      - '"0x8D73BBF487252B3"'
       Last-Modified:
-      - Sun, 08 Sep 2019 20:10:12 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - aa24df2e-d274-11e9-8b78-001a7dda7113
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-id:
-      - a0acd9bb-a01e-0042-1b81-662bbb000000
+      - 6202e0a2-f01e-003d-03a8-6de420000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -71,11 +69,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - aa86bdde-d274-11e9-a98c-001a7dda7113
+      - 6451e20a-d99b-11e9-88ab-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -93,25 +91,23 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sun, 08 Sep 2019 20:10:12 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       ETag:
-      - '"0x8D734988EC98DE2"'
+      - '"0x8D73BBF48898221"'
       Last-Modified:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
       - '0'
       x-ms-blob-committed-block-count:
       - '1'
-      x-ms-client-request-id:
-      - aa86bdde-d274-11e9-a98c-001a7dda7113
       x-ms-content-crc64:
       - Cc/2Kr4DuKg=
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-id:
-      - a0acd9c1-a01e-0042-2081-662bbb000000
+      - 6202e0aa-f01e-003d-09a8-6de420000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -133,11 +129,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - aa9ef5b4-d274-11e9-b296-001a7dda7113
+      - 64684e82-d99b-11e9-8e0c-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -155,25 +151,23 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       ETag:
-      - '"0x8D734988EE3F3C3"'
+      - '"0x8D73BBF489F2D03"'
       Last-Modified:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
       - '3'
       x-ms-blob-committed-block-count:
       - '2'
-      x-ms-client-request-id:
-      - aa9ef5b4-d274-11e9-b296-001a7dda7113
       x-ms-content-crc64:
       - +3yuPEA7IqE=
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-id:
-      - a0acd9ce-a01e-0042-2981-662bbb000000
+      - 6202e0b7-f01e-003d-10a8-6de420000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -195,11 +189,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - aab923ee-d274-11e9-ab1e-001a7dda7113
+      - 647e06b6-d99b-11e9-9cf4-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -217,25 +211,23 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       ETag:
-      - '"0x8D734988EFB4E3E"'
+      - '"0x8D73BBF48B72322"'
       Last-Modified:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
       - '6'
       x-ms-blob-committed-block-count:
       - '3'
-      x-ms-client-request-id:
-      - aab923ee-d274-11e9-ab1e-001a7dda7113
       x-ms-content-crc64:
       - VRJmMeosVKY=
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-id:
-      - a0acd9d3-a01e-0042-2e81-662bbb000000
+      - 6202e0be-f01e-003d-14a8-6de420000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -253,13 +245,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - aad0145c-d274-11e9-859d-001a7dda7113
+      - 64962292-d99b-11e9-a5a4-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -270,22 +262,22 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
         blob is encrypted with customer specified encryption, but it was not provided
-        in the request.\nRequestId:a0acd9d5-a01e-0042-3081-662bbb000000\nTime:2019-09-08T20:10:13.6032002Z</Message></Error>"
+        in the request.\nRequestId:6202e0ce-f01e-003d-1da8-6de420000000\nTime:2019-09-17T22:35:04.2663903Z</Message></Error>"
     headers:
       Content-Length:
       - '301'
       Content-Type:
       - application/xml
       Date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - aad0145c-d274-11e9-859d-001a7dda7113
+      Vary:
+      - Origin
       x-ms-error-code:
       - BlobUsesCustomerSpecifiedEncryption
       x-ms-request-id:
-      - a0acd9d5-a01e-0042-3081-662bbb000000
+      - 6202e0ce-f01e-003d-1da8-6de420000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -302,13 +294,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - aae4f7f8-d274-11e9-a029-001a7dda7113
+      - 64addee8-d99b-11e9-a6aa-001a7dda7113
       x-ms-date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -334,21 +326,21 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       ETag:
-      - '"0x8D734988EFB4E3E"'
+      - '"0x8D73BBF48B72322"'
       Last-Modified:
-      - Sun, 08 Sep 2019 20:10:13 GMT
+      - Tue, 17 Sep 2019 22:35:04 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
       x-ms-blob-committed-block-count:
       - '3'
       x-ms-blob-type:
       - AppendBlob
-      x-ms-client-request-id:
-      - aae4f7f8-d274-11e9-a029-001a7dda7113
       x-ms-creation-time:
-      - Sun, 08 Sep 2019 20:10:12 GMT
+      - Tue, 17 Sep 2019 22:35:03 GMT
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-lease-state:
@@ -356,7 +348,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - a0acd9de-a01e-0042-3981-662bbb000000
+      - 6202e0d8-f01e-003d-23a8-6de420000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:

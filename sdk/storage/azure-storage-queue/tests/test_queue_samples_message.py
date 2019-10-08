@@ -39,11 +39,11 @@ class TestMessageQueueSamples(QueueTestCase):
         try:
             # [START set_access_policy]
             # Create an access policy
-            from azure.storage.queue import AccessPolicy, QueuePermissions
+            from azure.storage.queue import AccessPolicy, QueueSasPermissions
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = QueuePermissions.READ
+            access_policy.permission = QueueSasPermissions(read=True)
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy

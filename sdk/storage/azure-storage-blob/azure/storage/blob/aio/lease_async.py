@@ -42,8 +42,8 @@ class LeaseClient(LeaseClientBase):
 
     :param client:
         The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.aio.blob_client_async.BlobClient or
-        ~azure.storage.blob.aio.container_client_async.ContainerClient
+    :type client: ~azure.storage.blob.aio.BlobClient or
+        ~azure.storage.blob.aio.ContainerClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
@@ -62,8 +62,8 @@ class LeaseClient(LeaseClientBase):
         await self.release()
 
     @distributed_trace_async
-    async def acquire(self, lease_duration=-1, timeout=None, **kwargs):
-        # type: (int, Optional[int], Any) -> None
+    async def acquire(self, lease_duration=-1, **kwargs):
+        # type: (int, Any) -> None
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -74,13 +74,13 @@ class LeaseClient(LeaseClientBase):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -106,7 +106,7 @@ class LeaseClient(LeaseClientBase):
             if_none_match=kwargs.pop('if_none_match', None))
         try:
             response = await self._client.acquire_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
                 modified_access_conditions=mod_conditions,
@@ -119,8 +119,8 @@ class LeaseClient(LeaseClientBase):
         self.etag = kwargs.get('etag')  # type: str
 
     @distributed_trace_async
-    async def renew(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    async def renew(self, **kwargs):
+        # type: (Any) -> None
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -129,13 +129,13 @@ class LeaseClient(LeaseClientBase):
         or blob has not been leased again since the expiration of that lease. When you
         renew a lease, the lease duration clock resets.
 
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -162,7 +162,7 @@ class LeaseClient(LeaseClientBase):
         try:
             response = await self._client.renew_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -173,21 +173,21 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def release(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> None
+    async def release(self, **kwargs):
+        # type: (Any) -> None
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
         that associated with the container or blob. Releasing the lease allows another client
         to immediately acquire the lease for the container or blob as soon as the release is complete.
 
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -214,7 +214,7 @@ class LeaseClient(LeaseClientBase):
         try:
             response = await self._client.release_lease(
                 lease_id=self.id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -225,20 +225,20 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def change(self, proposed_lease_id, timeout=None, **kwargs):
-        # type: (str, Optional[int], Any) -> None
+    async def change(self, proposed_lease_id, **kwargs):
+        # type: (str, Any) -> None
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -266,7 +266,7 @@ class LeaseClient(LeaseClientBase):
             response = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -277,8 +277,8 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> int
+    async def break_lease(self, lease_break_period=None, **kwargs):
+        # type: (Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -298,13 +298,13 @@ class LeaseClient(LeaseClientBase):
             period. If this header does not appear with a break
             operation, a fixed-duration lease breaks after the remaining lease
             period elapses, and an infinite lease breaks immediately.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -320,7 +320,7 @@ class LeaseClient(LeaseClientBase):
             if_unmodified_since=kwargs.pop('if_unmodified_since', None))
         try:
             response = await self._client.break_lease(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
