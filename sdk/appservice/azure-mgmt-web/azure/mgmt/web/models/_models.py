@@ -87,9 +87,58 @@ class Address(Model):
         self.state = kwargs.get('state', None)
 
 
-class AddressResponse(Model):
+class ProxyOnlyResource(Model):
+    """Azure proxy only resource. This resource is not tracked by Azure Resource
+    Manager.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyOnlyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.kind = kwargs.get('kind', None)
+        self.type = None
+
+
+class AddressResponse(ProxyOnlyResource):
     """Describes main public IP address and any extra virtual IPs.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param service_ip_address: Main public virtual IP.
     :type service_ip_address: str
     :param internal_ip_address: Virtual Network internal IP address of the App
@@ -102,11 +151,21 @@ class AddressResponse(Model):
     :type vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'service_ip_address': {'key': 'serviceIpAddress', 'type': 'str'},
-        'internal_ip_address': {'key': 'internalIpAddress', 'type': 'str'},
-        'outbound_ip_addresses': {'key': 'outboundIpAddresses', 'type': '[str]'},
-        'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'service_ip_address': {'key': 'properties.serviceIpAddress', 'type': 'str'},
+        'internal_ip_address': {'key': 'properties.internalIpAddress', 'type': 'str'},
+        'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': '[str]'},
+        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
     }
 
     def __init__(self, **kwargs):
@@ -147,44 +206,6 @@ class AnalysisData(Model):
         self.metrics = kwargs.get('metrics', None)
         self.data = kwargs.get('data', None)
         self.detector_meta_data = kwargs.get('detector_meta_data', None)
-
-
-class ProxyOnlyResource(Model):
-    """Azure proxy only resource. This resource is not tracked by Azure Resource
-    Manager.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ProxyOnlyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.kind = kwargs.get('kind', None)
-        self.type = None
 
 
 class AnalysisDefinition(ProxyOnlyResource):
@@ -241,6 +262,74 @@ class ApiDefinitionInfo(Model):
         self.url = kwargs.get('url', None)
 
 
+class ApiKVReference(Model):
+    """Description of site key vault references.
+
+    :param reference:
+    :type reference: str
+    :param status: Possible values include: 'Initialized', 'Resolved',
+     'InvalidSyntax', 'MSINotEnabled', 'VaultNotFound', 'SecretNotFound',
+     'SecretVersionNotFound', 'AccessToKeyVaultDenied', 'OtherReasons'
+    :type status: str or ~azure.mgmt.web.models.ResolveStatus
+    :param vault_name:
+    :type vault_name: str
+    :param secret_name:
+    :type secret_name: str
+    :param secret_version:
+    :type secret_version: str
+    :param identity_type: Possible values include: 'None', 'SystemAssigned',
+     'UserAssigned'
+    :type identity_type: str or
+     ~azure.mgmt.web.models.ManagedServiceIdentityType
+    :param details:
+    :type details: str
+    :param source: Possible values include: 'KeyVault'
+    :type source: str or ~azure.mgmt.web.models.ConfigReferenceSource
+    :param location: Possible values include: 'ApplicationSetting'
+    :type location: str or ~azure.mgmt.web.models.ConfigReferenceLocation
+    """
+
+    _attribute_map = {
+        'reference': {'key': 'reference', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ResolveStatus'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'secret_name': {'key': 'secretName', 'type': 'str'},
+        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+        'identity_type': {'key': 'identityType', 'type': 'ManagedServiceIdentityType'},
+        'details': {'key': 'details', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'ConfigReferenceSource'},
+        'location': {'key': 'location', 'type': 'ConfigReferenceLocation'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiKVReference, self).__init__(**kwargs)
+        self.reference = kwargs.get('reference', None)
+        self.status = kwargs.get('status', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.secret_name = kwargs.get('secret_name', None)
+        self.secret_version = kwargs.get('secret_version', None)
+        self.identity_type = kwargs.get('identity_type', None)
+        self.details = kwargs.get('details', None)
+        self.source = kwargs.get('source', None)
+        self.location = kwargs.get('location', None)
+
+
+class ApiManagementConfig(Model):
+    """Azure API management (APIM) configuration linked to the app.
+
+    :param id: APIM-Api Identifier.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiManagementConfig, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
 class ApplicationLogsConfig(Model):
     """Application logs configuration.
 
@@ -294,6 +383,59 @@ class ApplicationStack(Model):
     def __init__(self, **kwargs):
         super(ApplicationStack, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.dependency = kwargs.get('dependency', None)
+        self.major_versions = kwargs.get('major_versions', None)
+        self.frameworks = kwargs.get('frameworks', None)
+
+
+class ApplicationStackResource(ProxyOnlyResource):
+    """ARM resource for a ApplicationStack.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param application_stack_resource_name: Application stack name.
+    :type application_stack_resource_name: str
+    :param display: Application stack display name.
+    :type display: str
+    :param dependency: Application stack dependency.
+    :type dependency: str
+    :param major_versions: List of major versions available.
+    :type major_versions: list[~azure.mgmt.web.models.StackMajorVersion]
+    :param frameworks: List of frameworks associated with application stack.
+    :type frameworks: list[~azure.mgmt.web.models.ApplicationStack]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'application_stack_resource_name': {'key': 'properties.name', 'type': 'str'},
+        'display': {'key': 'properties.display', 'type': 'str'},
+        'dependency': {'key': 'properties.dependency', 'type': 'str'},
+        'major_versions': {'key': 'properties.majorVersions', 'type': '[StackMajorVersion]'},
+        'frameworks': {'key': 'properties.frameworks', 'type': '[ApplicationStack]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationStackResource, self).__init__(**kwargs)
+        self.application_stack_resource_name = kwargs.get('application_stack_resource_name', None)
         self.display = kwargs.get('display', None)
         self.dependency = kwargs.get('dependency', None)
         self.major_versions = kwargs.get('major_versions', None)
@@ -2446,6 +2588,9 @@ class Certificate(Resource):
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
     :type server_farm_id: str
+    :param canonical_name: CNAME of the certificate to be issued via free
+     certificate
+    :type canonical_name: str
     """
 
     _validation = {
@@ -2495,6 +2640,7 @@ class Certificate(Resource):
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
+        'canonical_name': {'key': 'properties.canonicalName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2518,6 +2664,7 @@ class Certificate(Resource):
         self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.key_vault_secret_status = None
         self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.canonical_name = kwargs.get('canonical_name', None)
 
 
 class CertificateDetails(Model):
@@ -2737,6 +2884,9 @@ class CertificatePatchResource(ProxyOnlyResource):
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
     :type server_farm_id: str
+    :param canonical_name: CNAME of the certificate to be issued via free
+     certificate
+    :type canonical_name: str
     """
 
     _validation = {
@@ -2783,6 +2933,7 @@ class CertificatePatchResource(ProxyOnlyResource):
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
+        'canonical_name': {'key': 'properties.canonicalName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2806,6 +2957,7 @@ class CertificatePatchResource(ProxyOnlyResource):
         self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.key_vault_secret_status = None
         self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.canonical_name = kwargs.get('canonical_name', None)
 
 
 class CloningInfo(Model):
@@ -3050,6 +3202,198 @@ class Contact(Model):
         self.phone = kwargs.get('phone', None)
 
 
+class ContainerCpuStatistics(Model):
+    """ContainerCpuStatistics.
+
+    :param cpu_usage:
+    :type cpu_usage: ~azure.mgmt.web.models.ContainerCpuUsage
+    :param system_cpu_usage:
+    :type system_cpu_usage: long
+    :param online_cpu_count:
+    :type online_cpu_count: int
+    :param throttling_data:
+    :type throttling_data: ~azure.mgmt.web.models.ContainerThrottlingData
+    """
+
+    _attribute_map = {
+        'cpu_usage': {'key': 'cpuUsage', 'type': 'ContainerCpuUsage'},
+        'system_cpu_usage': {'key': 'systemCpuUsage', 'type': 'long'},
+        'online_cpu_count': {'key': 'onlineCpuCount', 'type': 'int'},
+        'throttling_data': {'key': 'throttlingData', 'type': 'ContainerThrottlingData'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerCpuStatistics, self).__init__(**kwargs)
+        self.cpu_usage = kwargs.get('cpu_usage', None)
+        self.system_cpu_usage = kwargs.get('system_cpu_usage', None)
+        self.online_cpu_count = kwargs.get('online_cpu_count', None)
+        self.throttling_data = kwargs.get('throttling_data', None)
+
+
+class ContainerCpuUsage(Model):
+    """ContainerCpuUsage.
+
+    :param total_usage:
+    :type total_usage: long
+    :param per_cpu_usage:
+    :type per_cpu_usage: list[long]
+    :param kernel_mode_usage:
+    :type kernel_mode_usage: long
+    :param user_mode_usage:
+    :type user_mode_usage: long
+    """
+
+    _attribute_map = {
+        'total_usage': {'key': 'totalUsage', 'type': 'long'},
+        'per_cpu_usage': {'key': 'perCpuUsage', 'type': '[long]'},
+        'kernel_mode_usage': {'key': 'kernelModeUsage', 'type': 'long'},
+        'user_mode_usage': {'key': 'userModeUsage', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerCpuUsage, self).__init__(**kwargs)
+        self.total_usage = kwargs.get('total_usage', None)
+        self.per_cpu_usage = kwargs.get('per_cpu_usage', None)
+        self.kernel_mode_usage = kwargs.get('kernel_mode_usage', None)
+        self.user_mode_usage = kwargs.get('user_mode_usage', None)
+
+
+class ContainerInfo(Model):
+    """ContainerInfo.
+
+    :param current_time_stamp:
+    :type current_time_stamp: datetime
+    :param previous_time_stamp:
+    :type previous_time_stamp: datetime
+    :param current_cpu_stats:
+    :type current_cpu_stats: ~azure.mgmt.web.models.ContainerCpuStatistics
+    :param previous_cpu_stats:
+    :type previous_cpu_stats: ~azure.mgmt.web.models.ContainerCpuStatistics
+    :param memory_stats:
+    :type memory_stats: ~azure.mgmt.web.models.ContainerMemoryStatistics
+    :param name:
+    :type name: str
+    :param id:
+    :type id: str
+    :param eth0:
+    :type eth0: ~azure.mgmt.web.models.ContainerNetworkInterfaceStatistics
+    """
+
+    _attribute_map = {
+        'current_time_stamp': {'key': 'currentTimeStamp', 'type': 'iso-8601'},
+        'previous_time_stamp': {'key': 'previousTimeStamp', 'type': 'iso-8601'},
+        'current_cpu_stats': {'key': 'currentCpuStats', 'type': 'ContainerCpuStatistics'},
+        'previous_cpu_stats': {'key': 'previousCpuStats', 'type': 'ContainerCpuStatistics'},
+        'memory_stats': {'key': 'memoryStats', 'type': 'ContainerMemoryStatistics'},
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'eth0': {'key': 'eth0', 'type': 'ContainerNetworkInterfaceStatistics'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerInfo, self).__init__(**kwargs)
+        self.current_time_stamp = kwargs.get('current_time_stamp', None)
+        self.previous_time_stamp = kwargs.get('previous_time_stamp', None)
+        self.current_cpu_stats = kwargs.get('current_cpu_stats', None)
+        self.previous_cpu_stats = kwargs.get('previous_cpu_stats', None)
+        self.memory_stats = kwargs.get('memory_stats', None)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.eth0 = kwargs.get('eth0', None)
+
+
+class ContainerMemoryStatistics(Model):
+    """ContainerMemoryStatistics.
+
+    :param usage:
+    :type usage: long
+    :param max_usage:
+    :type max_usage: long
+    :param limit:
+    :type limit: long
+    """
+
+    _attribute_map = {
+        'usage': {'key': 'usage', 'type': 'long'},
+        'max_usage': {'key': 'maxUsage', 'type': 'long'},
+        'limit': {'key': 'limit', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerMemoryStatistics, self).__init__(**kwargs)
+        self.usage = kwargs.get('usage', None)
+        self.max_usage = kwargs.get('max_usage', None)
+        self.limit = kwargs.get('limit', None)
+
+
+class ContainerNetworkInterfaceStatistics(Model):
+    """ContainerNetworkInterfaceStatistics.
+
+    :param rx_bytes:
+    :type rx_bytes: long
+    :param rx_packets:
+    :type rx_packets: long
+    :param rx_errors:
+    :type rx_errors: long
+    :param rx_dropped:
+    :type rx_dropped: long
+    :param tx_bytes:
+    :type tx_bytes: long
+    :param tx_packets:
+    :type tx_packets: long
+    :param tx_errors:
+    :type tx_errors: long
+    :param tx_dropped:
+    :type tx_dropped: long
+    """
+
+    _attribute_map = {
+        'rx_bytes': {'key': 'rxBytes', 'type': 'long'},
+        'rx_packets': {'key': 'rxPackets', 'type': 'long'},
+        'rx_errors': {'key': 'rxErrors', 'type': 'long'},
+        'rx_dropped': {'key': 'rxDropped', 'type': 'long'},
+        'tx_bytes': {'key': 'txBytes', 'type': 'long'},
+        'tx_packets': {'key': 'txPackets', 'type': 'long'},
+        'tx_errors': {'key': 'txErrors', 'type': 'long'},
+        'tx_dropped': {'key': 'txDropped', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerNetworkInterfaceStatistics, self).__init__(**kwargs)
+        self.rx_bytes = kwargs.get('rx_bytes', None)
+        self.rx_packets = kwargs.get('rx_packets', None)
+        self.rx_errors = kwargs.get('rx_errors', None)
+        self.rx_dropped = kwargs.get('rx_dropped', None)
+        self.tx_bytes = kwargs.get('tx_bytes', None)
+        self.tx_packets = kwargs.get('tx_packets', None)
+        self.tx_errors = kwargs.get('tx_errors', None)
+        self.tx_dropped = kwargs.get('tx_dropped', None)
+
+
+class ContainerThrottlingData(Model):
+    """ContainerThrottlingData.
+
+    :param periods:
+    :type periods: int
+    :param throttled_periods:
+    :type throttled_periods: int
+    :param throttled_time:
+    :type throttled_time: int
+    """
+
+    _attribute_map = {
+        'periods': {'key': 'periods', 'type': 'int'},
+        'throttled_periods': {'key': 'throttledPeriods', 'type': 'int'},
+        'throttled_time': {'key': 'throttledTime', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerThrottlingData, self).__init__(**kwargs)
+        self.periods = kwargs.get('periods', None)
+        self.throttled_periods = kwargs.get('throttled_periods', None)
+        self.throttled_time = kwargs.get('throttled_time', None)
+
+
 class ContinuousWebJob(ProxyOnlyResource):
     """Continuous Web Job Information.
 
@@ -3148,6 +3492,39 @@ class CorsSettings(Model):
         super(CorsSettings, self).__init__(**kwargs)
         self.allowed_origins = kwargs.get('allowed_origins', None)
         self.support_credentials = kwargs.get('support_credentials', None)
+
+
+class CsmCopySlotEntity(Model):
+    """Copy deployment slot parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_slot: Required. Destination deployment slot during copy
+     operation.
+    :type target_slot: str
+    :param site_config: Required. The site object which will be merged with
+     the source slot site
+     to produce new destination slot site object.
+     <code>null</code> to just copy source slot content. Otherwise a
+     <code>Site</code>
+     object with properties to override source slot site.
+    :type site_config: ~azure.mgmt.web.models.SiteConfig
+    """
+
+    _validation = {
+        'target_slot': {'required': True},
+        'site_config': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_slot': {'key': 'targetSlot', 'type': 'str'},
+        'site_config': {'key': 'siteConfig', 'type': 'SiteConfig'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CsmCopySlotEntity, self).__init__(**kwargs)
+        self.target_slot = kwargs.get('target_slot', None)
+        self.site_config = kwargs.get('site_config', None)
 
 
 class CsmMoveResourceEnvelope(Model):
@@ -4493,7 +4870,7 @@ class Domain(Resource):
         self.auth_code = kwargs.get('auth_code', None)
 
 
-class DomainAvailablilityCheckResult(Model):
+class DomainAvailabilityCheckResult(Model):
     """Domain availability check result.
 
     :param name: Name of the domain.
@@ -4515,7 +4892,7 @@ class DomainAvailablilityCheckResult(Model):
     }
 
     def __init__(self, **kwargs):
-        super(DomainAvailablilityCheckResult, self).__init__(**kwargs)
+        super(DomainAvailabilityCheckResult, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.available = kwargs.get('available', None)
         self.domain_type = kwargs.get('domain_type', None)
@@ -4835,16 +5212,16 @@ class EndpointDetail(Model):
      be created from the App Service Environment to this IpAddress at this
      Port.
     :type latency: float
-    :param is_accessable: Whether it is possible to create a TCP connection
+    :param is_accessible: Whether it is possible to create a TCP connection
      from the App Service Environment to this IpAddress at this Port.
-    :type is_accessable: bool
+    :type is_accessible: bool
     """
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
         'latency': {'key': 'latency', 'type': 'float'},
-        'is_accessable': {'key': 'isAccessable', 'type': 'bool'},
+        'is_accessible': {'key': 'isAccessible', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -4852,7 +5229,7 @@ class EndpointDetail(Model):
         self.ip_address = kwargs.get('ip_address', None)
         self.port = kwargs.get('port', None)
         self.latency = kwargs.get('latency', None)
-        self.is_accessable = kwargs.get('is_accessable', None)
+        self.is_accessible = kwargs.get('is_accessible', None)
 
 
 class ErrorEntity(Model):
@@ -4959,7 +5336,7 @@ class FileSystemHttpLogsConfig(Model):
 
 
 class FunctionEnvelope(ProxyOnlyResource):
-    """Web Job Information.
+    """Function information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -4980,6 +5357,8 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type script_href: str
     :param config_href: Config URI.
     :type config_href: str
+    :param test_data_href: Test data URI.
+    :type test_data_href: str
     :param secrets_file_href: Secrets file URI.
     :type secrets_file_href: str
     :param href: Function URI.
@@ -4990,6 +5369,13 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
     :type test_data: str
+    :param invoke_url_template: The invocation URL
+    :type invoke_url_template: str
+    :param language: The function language
+    :type language: str
+    :param is_disabled: Gets or sets a value indicating whether the function
+     is disabled
+    :type is_disabled: bool
     """
 
     _validation = {
@@ -5007,11 +5393,15 @@ class FunctionEnvelope(ProxyOnlyResource):
         'script_root_path_href': {'key': 'properties.script_root_path_href', 'type': 'str'},
         'script_href': {'key': 'properties.script_href', 'type': 'str'},
         'config_href': {'key': 'properties.config_href', 'type': 'str'},
+        'test_data_href': {'key': 'properties.test_data_href', 'type': 'str'},
         'secrets_file_href': {'key': 'properties.secrets_file_href', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'config': {'key': 'properties.config', 'type': 'object'},
         'files': {'key': 'properties.files', 'type': '{str}'},
         'test_data': {'key': 'properties.test_data', 'type': 'str'},
+        'invoke_url_template': {'key': 'properties.invoke_url_template', 'type': 'str'},
+        'language': {'key': 'properties.language', 'type': 'str'},
+        'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5020,11 +5410,15 @@ class FunctionEnvelope(ProxyOnlyResource):
         self.script_root_path_href = kwargs.get('script_root_path_href', None)
         self.script_href = kwargs.get('script_href', None)
         self.config_href = kwargs.get('config_href', None)
+        self.test_data_href = kwargs.get('test_data_href', None)
         self.secrets_file_href = kwargs.get('secrets_file_href', None)
         self.href = kwargs.get('href', None)
         self.config = kwargs.get('config', None)
         self.files = kwargs.get('files', None)
         self.test_data = kwargs.get('test_data', None)
+        self.invoke_url_template = kwargs.get('invoke_url_template', None)
+        self.language = kwargs.get('language', None)
+        self.is_disabled = kwargs.get('is_disabled', None)
 
 
 class FunctionSecrets(ProxyOnlyResource):
@@ -5068,26 +5462,6 @@ class FunctionSecrets(ProxyOnlyResource):
         self.trigger_url = kwargs.get('trigger_url', None)
 
 
-class GeoDistribution(Model):
-    """A global distribution definition.
-
-    :param location: Location.
-    :type location: str
-    :param number_of_workers: NumberOfWorkers.
-    :type number_of_workers: int
-    """
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'number_of_workers': {'key': 'numberOfWorkers', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GeoDistribution, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.number_of_workers = kwargs.get('number_of_workers', None)
-
-
 class GeoRegion(ProxyOnlyResource):
     """Geographical region.
 
@@ -5106,6 +5480,8 @@ class GeoRegion(ProxyOnlyResource):
     :vartype description: str
     :ivar display_name: Display name for region.
     :vartype display_name: str
+    :ivar org_domain: Display name for region.
+    :vartype org_domain: str
     """
 
     _validation = {
@@ -5114,6 +5490,7 @@ class GeoRegion(ProxyOnlyResource):
         'type': {'readonly': True},
         'description': {'readonly': True},
         'display_name': {'readonly': True},
+        'org_domain': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5123,12 +5500,14 @@ class GeoRegion(ProxyOnlyResource):
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'org_domain': {'key': 'properties.orgDomain', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(GeoRegion, self).__init__(**kwargs)
         self.description = None
         self.display_name = None
+        self.org_domain = None
 
 
 class GlobalCsmSkuDescription(Model):
@@ -5226,19 +5605,19 @@ class HostingEnvironmentDiagnostics(Model):
 
     :param name: Name/identifier of the diagnostics.
     :type name: str
-    :param diagnosics_output: Diagnostics output.
-    :type diagnosics_output: str
+    :param diagnostics_output: Diagnostics output.
+    :type diagnostics_output: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'diagnosics_output': {'key': 'diagnosicsOutput', 'type': 'str'},
+        'diagnostics_output': {'key': 'diagnosticsOutput', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(HostingEnvironmentDiagnostics, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.diagnosics_output = kwargs.get('diagnosics_output', None)
+        self.diagnostics_output = kwargs.get('diagnostics_output', None)
 
 
 class HostingEnvironmentProfile(Model):
@@ -5624,8 +6003,8 @@ class Identifier(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param identifier_id: String representation of the identity.
-    :type identifier_id: str
+    :param value: String representation of the identity.
+    :type value: str
     """
 
     _validation = {
@@ -5639,12 +6018,12 @@ class Identifier(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'identifier_id': {'key': 'properties.id', 'type': 'str'},
+        'value': {'key': 'properties.id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Identifier, self).__init__(**kwargs)
-        self.identifier_id = kwargs.get('identifier_id', None)
+        self.value = kwargs.get('value', None)
 
 
 class InboundEnvironmentEndpoint(Model):
@@ -5733,6 +6112,117 @@ class IpSecurityRestriction(Model):
         self.description = kwargs.get('description', None)
 
 
+class KeyVaultReferenceCollection(ProxyOnlyResource):
+    """Web app key vault reference and status ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param key_to_reference_statuses:
+    :type key_to_reference_statuses: dict[str,
+     ~azure.mgmt.web.models.ApiKVReference]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'key_to_reference_statuses': {'key': 'properties.keyToReferenceStatuses', 'type': '{ApiKVReference}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultReferenceCollection, self).__init__(**kwargs)
+        self.key_to_reference_statuses = kwargs.get('key_to_reference_statuses', None)
+
+
+class KeyVaultReferenceResource(ProxyOnlyResource):
+    """Web app key vault reference and status ARM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param reference:
+    :type reference: str
+    :param status: Possible values include: 'Initialized', 'Resolved',
+     'InvalidSyntax', 'MSINotEnabled', 'VaultNotFound', 'SecretNotFound',
+     'SecretVersionNotFound', 'AccessToKeyVaultDenied', 'OtherReasons'
+    :type status: str or ~azure.mgmt.web.models.ResolveStatus
+    :param vault_name:
+    :type vault_name: str
+    :param secret_name:
+    :type secret_name: str
+    :param secret_version:
+    :type secret_version: str
+    :param identity_type: Possible values include: 'None', 'SystemAssigned',
+     'UserAssigned'
+    :type identity_type: str or
+     ~azure.mgmt.web.models.ManagedServiceIdentityType
+    :param details:
+    :type details: str
+    :param source: Possible values include: 'KeyVault'
+    :type source: str or ~azure.mgmt.web.models.ConfigReferenceSource
+    :param location: Possible values include: 'ApplicationSetting'
+    :type location: str or ~azure.mgmt.web.models.ConfigReferenceLocation
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'reference': {'key': 'properties.reference', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'ResolveStatus'},
+        'vault_name': {'key': 'properties.vaultName', 'type': 'str'},
+        'secret_name': {'key': 'properties.secretName', 'type': 'str'},
+        'secret_version': {'key': 'properties.secretVersion', 'type': 'str'},
+        'identity_type': {'key': 'properties.identityType', 'type': 'ManagedServiceIdentityType'},
+        'details': {'key': 'properties.details', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'ConfigReferenceSource'},
+        'location': {'key': 'properties.location', 'type': 'ConfigReferenceLocation'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultReferenceResource, self).__init__(**kwargs)
+        self.reference = kwargs.get('reference', None)
+        self.status = kwargs.get('status', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.secret_name = kwargs.get('secret_name', None)
+        self.secret_version = kwargs.get('secret_version', None)
+        self.identity_type = kwargs.get('identity_type', None)
+        self.details = kwargs.get('details', None)
+        self.source = kwargs.get('source', None)
+        self.location = kwargs.get('location', None)
+
+
 class LocalizableString(Model):
     """Localizable string object containing the name and a localized value.
 
@@ -5784,7 +6274,7 @@ class ManagedServiceIdentity(Model):
     sending a request.
 
     :param type: Type of managed service identity. Possible values include:
-     'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
+     'None', 'SystemAssigned', 'UserAssigned'
     :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
@@ -5804,7 +6294,7 @@ class ManagedServiceIdentity(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ManagedServiceIdentityType'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ManagedServiceIdentityUserAssignedIdentitiesValue}'},
@@ -5846,26 +6336,6 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(Model):
         self.client_id = None
 
 
-class MetricAvailabilily(Model):
-    """Metric availability and retention.
-
-    :param time_grain: Time grain.
-    :type time_grain: str
-    :param retention: Retention period for the current time grain.
-    :type retention: str
-    """
-
-    _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'retention': {'key': 'retention', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MetricAvailabilily, self).__init__(**kwargs)
-        self.time_grain = kwargs.get('time_grain', None)
-        self.retention = kwargs.get('retention', None)
-
-
 class MetricAvailability(Model):
     """Retention policy of a resource metric.
 
@@ -5884,61 +6354,6 @@ class MetricAvailability(Model):
         super(MetricAvailability, self).__init__(**kwargs)
         self.time_grain = kwargs.get('time_grain', None)
         self.blob_duration = kwargs.get('blob_duration', None)
-
-
-class MetricDefinition(ProxyOnlyResource):
-    """Metadata for a metric.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar unit: Unit of the metric.
-    :vartype unit: str
-    :ivar primary_aggregation_type: Primary aggregation type.
-    :vartype primary_aggregation_type: str
-    :ivar metric_availabilities: List of time grains supported for the metric
-     together with retention period.
-    :vartype metric_availabilities:
-     list[~azure.mgmt.web.models.MetricAvailabilily]
-    :ivar display_name: Friendly name shown in the UI.
-    :vartype display_name: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'unit': {'readonly': True},
-        'primary_aggregation_type': {'readonly': True},
-        'metric_availabilities': {'readonly': True},
-        'display_name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'unit': {'key': 'properties.unit', 'type': 'str'},
-        'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
-        'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[MetricAvailabilily]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MetricDefinition, self).__init__(**kwargs)
-        self.unit = None
-        self.primary_aggregation_type = None
-        self.metric_availabilities = None
-        self.display_name = None
 
 
 class MetricSpecification(Model):
@@ -5974,6 +6389,8 @@ class MetricSpecification(Model):
     :type category: str
     :param availabilities:
     :type availabilities: list[~azure.mgmt.web.models.MetricAvailability]
+    :param supported_time_grain_types:
+    :type supported_time_grain_types: list[str]
     """
 
     _attribute_map = {
@@ -5992,6 +6409,7 @@ class MetricSpecification(Model):
         'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
         'category': {'key': 'category', 'type': 'str'},
         'availabilities': {'key': 'availabilities', 'type': '[MetricAvailability]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -6011,6 +6429,7 @@ class MetricSpecification(Model):
         self.dimensions = kwargs.get('dimensions', None)
         self.category = kwargs.get('category', None)
         self.availabilities = kwargs.get('availabilities', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
 
 
 class MigrateMySqlRequest(ProxyOnlyResource):
@@ -7184,8 +7603,6 @@ class ProcessThreadInfo(ProxyOnlyResource):
     :type total_processor_time: str
     :param user_processor_time: User processor time.
     :type user_processor_time: str
-    :param priviledged_processor_time: Privileged processor time.
-    :type priviledged_processor_time: str
     :param state: Thread state.
     :type state: str
     :param wait_reason: Wait reason.
@@ -7214,7 +7631,6 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
         'total_processor_time': {'key': 'properties.total_processor_time', 'type': 'str'},
         'user_processor_time': {'key': 'properties.user_processor_time', 'type': 'str'},
-        'priviledged_processor_time': {'key': 'properties.priviledged_processor_time', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'wait_reason': {'key': 'properties.wait_reason', 'type': 'str'},
     }
@@ -7231,7 +7647,6 @@ class ProcessThreadInfo(ProxyOnlyResource):
         self.start_time = kwargs.get('start_time', None)
         self.total_processor_time = kwargs.get('total_processor_time', None)
         self.user_processor_time = kwargs.get('user_processor_time', None)
-        self.priviledged_processor_time = kwargs.get('priviledged_processor_time', None)
         self.state = kwargs.get('state', None)
         self.wait_reason = kwargs.get('wait_reason', None)
 
@@ -7357,11 +7772,12 @@ class RampUpRule(Model):
     :type reroute_percentage: float
     :param change_step: In auto ramp up scenario this is the step to
      add/remove from <code>ReroutePercentage</code> until it reaches
-     <code>MinReroutePercentage</code> or <code>MaxReroutePercentage</code>.
-     Site metrics are checked every N minutes specified in
-     <code>ChangeIntervalInMinutes</code>.
-     Custom decision algorithm can be provided in TiPCallback site extension
-     which URL can be specified in <code>ChangeDecisionCallbackUrl</code>.
+     \\n<code>MinReroutePercentage</code> or
+     <code>MaxReroutePercentage</code>. Site metrics are checked every N
+     minutes specified in <code>ChangeIntervalInMinutes</code>.\\nCustom
+     decision algorithm
+     can be provided in TiPCallback site extension which URL can be specified
+     in <code>ChangeDecisionCallbackUrl</code>.
     :type change_step: float
     :param change_interval_in_minutes: Specifies interval in minutes to
      reevaluate ReroutePercentage.
@@ -7892,69 +8308,6 @@ class ResourceHealthMetadata(ProxyOnlyResource):
         self.signal_availability = kwargs.get('signal_availability', None)
 
 
-class ResourceMetric(Model):
-    """Object representing a metric for any resource .
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Name of metric.
-    :vartype name: ~azure.mgmt.web.models.ResourceMetricName
-    :ivar unit: Metric unit.
-    :vartype unit: str
-    :ivar time_grain: Metric granularity. E.g PT1H, PT5M, P1D
-    :vartype time_grain: str
-    :ivar start_time: Metric start time.
-    :vartype start_time: datetime
-    :ivar end_time: Metric end time.
-    :vartype end_time: datetime
-    :ivar resource_id: Metric resource Id.
-    :vartype resource_id: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar metric_values: Metric values.
-    :vartype metric_values: list[~azure.mgmt.web.models.ResourceMetricValue]
-    :ivar properties: Resource metric properties collection.
-    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'unit': {'readonly': True},
-        'time_grain': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'id': {'readonly': True},
-        'metric_values': {'readonly': True},
-        'properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'ResourceMetricName'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'metric_values': {'key': 'metricValues', 'type': '[ResourceMetricValue]'},
-        'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceMetric, self).__init__(**kwargs)
-        self.name = None
-        self.unit = None
-        self.time_grain = None
-        self.start_time = None
-        self.end_time = None
-        self.resource_id = None
-        self.id = None
-        self.metric_values = None
-        self.properties = None
-
-
 class ResourceMetricAvailability(Model):
     """Metrics availability and retention.
 
@@ -8040,107 +8393,6 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         self.primary_aggregation_type = None
         self.metric_availabilities = None
         self.resource_uri = None
-        self.properties = None
-
-
-class ResourceMetricName(Model):
-    """Name of a metric for any resource .
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: metric name value.
-    :vartype value: str
-    :ivar localized_value: Localized metric name value.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceMetricName, self).__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
-
-
-class ResourceMetricProperty(Model):
-    """Resource metric property.
-
-    :param key: Key for resource metric property.
-    :type key: str
-    :param value: Value of pair.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceMetricProperty, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
-        self.value = kwargs.get('value', None)
-
-
-class ResourceMetricValue(Model):
-    """Value of resource metric.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar timestamp: Value timestamp.
-    :vartype timestamp: str
-    :ivar average: Value average.
-    :vartype average: float
-    :ivar minimum: Value minimum.
-    :vartype minimum: float
-    :ivar maximum: Value maximum.
-    :vartype maximum: float
-    :ivar total: Value total.
-    :vartype total: float
-    :ivar count: Value count.
-    :vartype count: float
-    :ivar properties: Resource metric properties collection.
-    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
-    """
-
-    _validation = {
-        'timestamp': {'readonly': True},
-        'average': {'readonly': True},
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'total': {'readonly': True},
-        'count': {'readonly': True},
-        'properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'str'},
-        'average': {'key': 'average', 'type': 'float'},
-        'minimum': {'key': 'minimum', 'type': 'float'},
-        'maximum': {'key': 'maximum', 'type': 'float'},
-        'total': {'key': 'total', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceMetricValue, self).__init__(**kwargs)
-        self.timestamp = None
-        self.average = None
-        self.minimum = None
-        self.maximum = None
-        self.total = None
-        self.count = None
         self.properties = None
 
 
@@ -8441,7 +8693,7 @@ class Site(Resource):
     :vartype outbound_ip_addresses: str
     :ivar possible_outbound_ip_addresses: List of IP addresses that the app
      uses for outbound connections (e.g. database access). Includes VIPs from
-     all tenants. Read-only.
+     all tenants except dataComponent. Read-only.
     :vartype possible_outbound_ip_addresses: str
     :param container_size: Size of the function container.
     :type container_size: int
@@ -8477,8 +8729,6 @@ class Site(Resource):
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
-    :param geo_distributions: GeoDistributions for this site
-    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
     :param identity:
     :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
@@ -8551,7 +8801,6 @@ class Site(Resource):
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
-        'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
@@ -8593,7 +8842,6 @@ class Site(Resource):
         self.https_only = kwargs.get('https_only', None)
         self.redundancy_mode = kwargs.get('redundancy_mode', None)
         self.in_progress_operation_id = None
-        self.geo_distributions = kwargs.get('geo_distributions', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -8928,9 +9176,6 @@ class SiteConfig(Model):
     :type publishing_username: str
     :param app_settings: Application settings.
     :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
-    :param azure_storage_accounts: User-provided Azure storage accounts.
-    :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
     :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
@@ -8941,7 +9186,7 @@ class SiteConfig(Model):
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
-     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
+     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO', 'VSTSRM'
     :type scm_type: str or ~azure.mgmt.web.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
@@ -8991,6 +9236,9 @@ class SiteConfig(Model):
     :param api_definition: Information about the formal API definition for the
      app.
     :type api_definition: ~azure.mgmt.web.models.ApiDefinitionInfo
+    :param api_management_config: Azure API management settings linked to the
+     app.
+    :type api_management_config: ~azure.mgmt.web.models.ApiManagementConfig
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -9019,14 +9267,16 @@ class SiteConfig(Model):
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
     :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
-    :param reserved_instance_count: Number of reserved instances.
-     This setting only applies to the Consumption Plan
-    :type reserved_instance_count: int
+    :param pre_warmed_instance_count: Number of preWarmed instances.
+     This setting only applies to the Consumption and Elastic Plans
+    :type pre_warmed_instance_count: int
+    :param health_check_path: Health check path
+    :type health_check_path: str
     """
 
     _validation = {
         'machine_key': {'readonly': True},
-        'reserved_instance_count': {'maximum': 10, 'minimum': 0},
+        'pre_warmed_instance_count': {'maximum': 10, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -9047,7 +9297,6 @@ class SiteConfig(Model):
         'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
         'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
-        'azure_storage_accounts': {'key': 'azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
         'connection_strings': {'key': 'connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'handlerMappings', 'type': '[HandlerMapping]'},
@@ -9072,6 +9321,7 @@ class SiteConfig(Model):
         'cors': {'key': 'cors', 'type': 'CorsSettings'},
         'push': {'key': 'push', 'type': 'PushSettings'},
         'api_definition': {'key': 'apiDefinition', 'type': 'ApiDefinitionInfo'},
+        'api_management_config': {'key': 'apiManagementConfig', 'type': 'ApiManagementConfig'},
         'auto_swap_slot_name': {'key': 'autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
         'managed_service_identity_id': {'key': 'managedServiceIdentityId', 'type': 'int'},
@@ -9082,7 +9332,8 @@ class SiteConfig(Model):
         'http20_enabled': {'key': 'http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'ftpsState', 'type': 'str'},
-        'reserved_instance_count': {'key': 'reservedInstanceCount', 'type': 'int'},
+        'pre_warmed_instance_count': {'key': 'preWarmedInstanceCount', 'type': 'int'},
+        'health_check_path': {'key': 'healthCheckPath', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -9104,7 +9355,6 @@ class SiteConfig(Model):
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
         self.app_settings = kwargs.get('app_settings', None)
-        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
         self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
         self.handler_mappings = kwargs.get('handler_mappings', None)
@@ -9129,6 +9379,7 @@ class SiteConfig(Model):
         self.cors = kwargs.get('cors', None)
         self.push = kwargs.get('push', None)
         self.api_definition = kwargs.get('api_definition', None)
+        self.api_management_config = kwargs.get('api_management_config', None)
         self.auto_swap_slot_name = kwargs.get('auto_swap_slot_name', None)
         self.local_my_sql_enabled = kwargs.get('local_my_sql_enabled', False)
         self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
@@ -9139,7 +9390,8 @@ class SiteConfig(Model):
         self.http20_enabled = kwargs.get('http20_enabled', True)
         self.min_tls_version = kwargs.get('min_tls_version', None)
         self.ftps_state = kwargs.get('ftps_state', None)
-        self.reserved_instance_count = kwargs.get('reserved_instance_count', None)
+        self.pre_warmed_instance_count = kwargs.get('pre_warmed_instance_count', None)
+        self.health_check_path = kwargs.get('health_check_path', None)
 
 
 class SiteConfigResource(ProxyOnlyResource):
@@ -9195,9 +9447,6 @@ class SiteConfigResource(ProxyOnlyResource):
     :type publishing_username: str
     :param app_settings: Application settings.
     :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
-    :param azure_storage_accounts: User-provided Azure storage accounts.
-    :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
     :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
@@ -9208,7 +9457,7 @@ class SiteConfigResource(ProxyOnlyResource):
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
-     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
+     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO', 'VSTSRM'
     :type scm_type: str or ~azure.mgmt.web.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
@@ -9258,6 +9507,9 @@ class SiteConfigResource(ProxyOnlyResource):
     :param api_definition: Information about the formal API definition for the
      app.
     :type api_definition: ~azure.mgmt.web.models.ApiDefinitionInfo
+    :param api_management_config: Azure API management settings linked to the
+     app.
+    :type api_management_config: ~azure.mgmt.web.models.ApiManagementConfig
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -9286,9 +9538,11 @@ class SiteConfigResource(ProxyOnlyResource):
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
     :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
-    :param reserved_instance_count: Number of reserved instances.
-     This setting only applies to the Consumption Plan
-    :type reserved_instance_count: int
+    :param pre_warmed_instance_count: Number of preWarmed instances.
+     This setting only applies to the Consumption and Elastic Plans
+    :type pre_warmed_instance_count: int
+    :param health_check_path: Health check path
+    :type health_check_path: str
     """
 
     _validation = {
@@ -9296,7 +9550,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'machine_key': {'readonly': True},
-        'reserved_instance_count': {'maximum': 10, 'minimum': 0},
+        'pre_warmed_instance_count': {'maximum': 10, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -9321,7 +9575,6 @@ class SiteConfigResource(ProxyOnlyResource):
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
         'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'azure_storage_accounts': {'key': 'properties.azureStorageAccounts', 'type': '{AzureStorageInfoValue}'},
         'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
@@ -9346,6 +9599,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'cors': {'key': 'properties.cors', 'type': 'CorsSettings'},
         'push': {'key': 'properties.push', 'type': 'PushSettings'},
         'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
+        'api_management_config': {'key': 'properties.apiManagementConfig', 'type': 'ApiManagementConfig'},
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
         'managed_service_identity_id': {'key': 'properties.managedServiceIdentityId', 'type': 'int'},
@@ -9356,7 +9610,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'properties.minTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'properties.ftpsState', 'type': 'str'},
-        'reserved_instance_count': {'key': 'properties.reservedInstanceCount', 'type': 'int'},
+        'pre_warmed_instance_count': {'key': 'properties.preWarmedInstanceCount', 'type': 'int'},
+        'health_check_path': {'key': 'properties.healthCheckPath', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -9378,7 +9633,6 @@ class SiteConfigResource(ProxyOnlyResource):
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
         self.app_settings = kwargs.get('app_settings', None)
-        self.azure_storage_accounts = kwargs.get('azure_storage_accounts', None)
         self.connection_strings = kwargs.get('connection_strings', None)
         self.machine_key = None
         self.handler_mappings = kwargs.get('handler_mappings', None)
@@ -9403,6 +9657,7 @@ class SiteConfigResource(ProxyOnlyResource):
         self.cors = kwargs.get('cors', None)
         self.push = kwargs.get('push', None)
         self.api_definition = kwargs.get('api_definition', None)
+        self.api_management_config = kwargs.get('api_management_config', None)
         self.auto_swap_slot_name = kwargs.get('auto_swap_slot_name', None)
         self.local_my_sql_enabled = kwargs.get('local_my_sql_enabled', False)
         self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
@@ -9413,7 +9668,8 @@ class SiteConfigResource(ProxyOnlyResource):
         self.http20_enabled = kwargs.get('http20_enabled', True)
         self.min_tls_version = kwargs.get('min_tls_version', None)
         self.ftps_state = kwargs.get('ftps_state', None)
-        self.reserved_instance_count = kwargs.get('reserved_instance_count', None)
+        self.pre_warmed_instance_count = kwargs.get('pre_warmed_instance_count', None)
+        self.health_check_path = kwargs.get('health_check_path', None)
 
 
 class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
@@ -9805,7 +10061,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype outbound_ip_addresses: str
     :ivar possible_outbound_ip_addresses: List of IP addresses that the app
      uses for outbound connections (e.g. database access). Includes VIPs from
-     all tenants. Read-only.
+     all tenants except dataComponent. Read-only.
     :vartype possible_outbound_ip_addresses: str
     :param container_size: Size of the function container.
     :type container_size: int
@@ -9841,8 +10097,6 @@ class SitePatchResource(ProxyOnlyResource):
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
-    :param geo_distributions: GeoDistributions for this site
-    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
     :param identity:
     :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
@@ -9912,7 +10166,6 @@ class SitePatchResource(ProxyOnlyResource):
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
-        'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
@@ -9954,7 +10207,6 @@ class SitePatchResource(ProxyOnlyResource):
         self.https_only = kwargs.get('https_only', None)
         self.redundancy_mode = kwargs.get('redundancy_mode', None)
         self.in_progress_operation_id = None
-        self.geo_distributions = kwargs.get('geo_distributions', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -10634,6 +10886,15 @@ class StackMajorVersion(Model):
     :param application_insights: <code>true</code> if this supports
      Application Insights; otherwise, <code>false</code>.
     :type application_insights: bool
+    :param is_preview: <code>true</code> if this stack is in Preview,
+     otherwise <code>false</code>.
+    :type is_preview: bool
+    :param is_deprecated: <code>true</code> if this stack has been deprecated,
+     otherwise <code>false</code>.
+    :type is_deprecated: bool
+    :param is_hidden: <code>true</code> if this stack should be hidden for new
+     customers on portal, otherwise <code>false</code>.
+    :type is_hidden: bool
     """
 
     _attribute_map = {
@@ -10642,6 +10903,9 @@ class StackMajorVersion(Model):
         'is_default': {'key': 'isDefault', 'type': 'bool'},
         'minor_versions': {'key': 'minorVersions', 'type': '[StackMinorVersion]'},
         'application_insights': {'key': 'applicationInsights', 'type': 'bool'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        'is_deprecated': {'key': 'isDeprecated', 'type': 'bool'},
+        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -10651,6 +10915,9 @@ class StackMajorVersion(Model):
         self.is_default = kwargs.get('is_default', None)
         self.minor_versions = kwargs.get('minor_versions', None)
         self.application_insights = kwargs.get('application_insights', None)
+        self.is_preview = kwargs.get('is_preview', None)
+        self.is_deprecated = kwargs.get('is_deprecated', None)
+        self.is_hidden = kwargs.get('is_hidden', None)
 
 
 class StackMinorVersion(Model):
@@ -10700,7 +10967,7 @@ class StampCapacity(Model):
      'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
-     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'Default'
+     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'NestedSmall', 'Default'
     :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
@@ -11378,42 +11645,6 @@ class User(ProxyOnlyResource):
         self.scm_uri = kwargs.get('scm_uri', None)
 
 
-class ValidateContainerSettingsRequest(Model):
-    """Container settings validation request context.
-
-    :param base_url: Base URL of the container registry
-    :type base_url: str
-    :param username: Username for to access the container registry
-    :type username: str
-    :param password: Password for to access the container registry
-    :type password: str
-    :param repository: Repository name (image name)
-    :type repository: str
-    :param tag: Image tag
-    :type tag: str
-    :param platform: Platform (windows or linux)
-    :type platform: str
-    """
-
-    _attribute_map = {
-        'base_url': {'key': 'baseUrl', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'platform': {'key': 'platform', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ValidateContainerSettingsRequest, self).__init__(**kwargs)
-        self.base_url = kwargs.get('base_url', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.repository = kwargs.get('repository', None)
-        self.tag = kwargs.get('tag', None)
-        self.platform = kwargs.get('platform', None)
-
-
 class ValidateRequest(Model):
     """Resource validation request content.
 
@@ -11445,6 +11676,20 @@ class ValidateRequest(Model):
     :param is_xenon: <code>true</code> if App Service plan is running as a
      windows container
     :type is_xenon: bool
+    :param container_registry_base_url: Base URL of the container registry
+    :type container_registry_base_url: str
+    :param container_registry_username: Username for to access the container
+     registry
+    :type container_registry_username: str
+    :param container_registry_password: Password for to access the container
+     registry
+    :type container_registry_password: str
+    :param container_image_repository: Repository name (image name)
+    :type container_image_repository: str
+    :param container_image_tag: Image tag
+    :type container_image_tag: str
+    :param container_image_platform: Platform (windows or linux)
+    :type container_image_platform: str
     """
 
     _validation = {
@@ -11465,6 +11710,12 @@ class ValidateRequest(Model):
         'capacity': {'key': 'properties.capacity', 'type': 'int'},
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
         'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'container_registry_base_url': {'key': 'properties.containerRegistryBaseUrl', 'type': 'str'},
+        'container_registry_username': {'key': 'properties.containerRegistryUsername', 'type': 'str'},
+        'container_registry_password': {'key': 'properties.containerRegistryPassword', 'type': 'str'},
+        'container_image_repository': {'key': 'properties.containerImageRepository', 'type': 'str'},
+        'container_image_tag': {'key': 'properties.containerImageTag', 'type': 'str'},
+        'container_image_platform': {'key': 'properties.containerImagePlatform', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -11479,6 +11730,12 @@ class ValidateRequest(Model):
         self.capacity = kwargs.get('capacity', None)
         self.hosting_environment = kwargs.get('hosting_environment', None)
         self.is_xenon = kwargs.get('is_xenon', None)
+        self.container_registry_base_url = kwargs.get('container_registry_base_url', None)
+        self.container_registry_username = kwargs.get('container_registry_username', None)
+        self.container_registry_password = kwargs.get('container_registry_password', None)
+        self.container_image_repository = kwargs.get('container_image_repository', None)
+        self.container_image_tag = kwargs.get('container_image_tag', None)
+        self.container_image_platform = kwargs.get('container_image_platform', None)
 
 
 class ValidateResponse(Model):
@@ -11581,6 +11838,8 @@ class VirtualIPMapping(Model):
     :type internal_https_port: int
     :param in_use: Is virtual IP mapping in use.
     :type in_use: bool
+    :param service_name: name of the service that virtual IP is assigned to
+    :type service_name: str
     """
 
     _attribute_map = {
@@ -11588,6 +11847,7 @@ class VirtualIPMapping(Model):
         'internal_http_port': {'key': 'internalHttpPort', 'type': 'int'},
         'internal_https_port': {'key': 'internalHttpsPort', 'type': 'int'},
         'in_use': {'key': 'inUse', 'type': 'bool'},
+        'service_name': {'key': 'serviceName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -11596,6 +11856,7 @@ class VirtualIPMapping(Model):
         self.internal_http_port = kwargs.get('internal_http_port', None)
         self.internal_https_port = kwargs.get('internal_https_port', None)
         self.in_use = kwargs.get('in_use', None)
+        self.service_name = kwargs.get('service_name', None)
 
 
 class VirtualNetworkProfile(Model):
@@ -12021,6 +12282,59 @@ class WebJob(ProxyOnlyResource):
         self.error = kwargs.get('error', None)
         self.using_sdk = kwargs.get('using_sdk', None)
         self.settings = kwargs.get('settings', None)
+
+
+class WebSiteInstanceStatus(ProxyOnlyResource):
+    """WebSiteInstanceStatus.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: Possible values include: 'READY', 'STOPPED', 'UNKNOWN'
+    :type state: str or ~azure.mgmt.web.models.SiteRuntimeState
+    :param status_url: Link to the GetStatusApi in Kudu
+    :type status_url: str
+    :param detector_url: Link to the Diagnose and Solve Portal
+    :type detector_url: str
+    :param console_url: Link to the Diagnose and Solve Portal
+    :type console_url: str
+    :param containers:
+    :type containers: dict[str, ~azure.mgmt.web.models.ContainerInfo]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'SiteRuntimeState'},
+        'status_url': {'key': 'properties.statusUrl', 'type': 'str'},
+        'detector_url': {'key': 'properties.detectorUrl', 'type': 'str'},
+        'console_url': {'key': 'properties.consoleUrl', 'type': 'str'},
+        'containers': {'key': 'properties.containers', 'type': '{ContainerInfo}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebSiteInstanceStatus, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.status_url = kwargs.get('status_url', None)
+        self.detector_url = kwargs.get('detector_url', None)
+        self.console_url = kwargs.get('console_url', None)
+        self.containers = kwargs.get('containers', None)
 
 
 class WorkerPool(Model):

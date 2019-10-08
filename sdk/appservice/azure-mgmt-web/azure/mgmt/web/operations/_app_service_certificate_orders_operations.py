@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class AppServiceCertificateOrdersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class AppServiceCertificateOrdersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -45,7 +44,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """List all certificate orders in a subscription.
 
-        List all certificate orders in a subscription.
+        Description for List all certificate orders in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,7 +111,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, app_service_certificate_order, custom_headers=None, raw=False, **operation_config):
         """Validate information for a certificate order.
 
-        Validate information for a certificate order.
+        Description for Validate information for a certificate order.
 
         :param app_service_certificate_order: Information for a certificate
          order.
@@ -125,7 +124,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.validate_purchase_information.metadata['url']
@@ -156,9 +156,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -169,7 +167,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get certificate orders in a resource group.
 
-        Get certificate orders in a resource group.
+        Description for Get certificate orders in a resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -240,7 +238,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Get a certificate order.
 
-        Get a certificate order.
+        Description for Get a certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -353,7 +351,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a certificate purchase order.
 
-        Create or update a certificate purchase order.
+        Description for Create or update a certificate purchase order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -410,7 +408,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Delete an existing certificate order.
 
-        Delete an existing certificate order.
+        Description for Delete an existing certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -424,7 +422,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -453,9 +452,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -466,7 +463,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
         """Create or update a certificate purchase order.
 
-        Create or update a certificate purchase order.
+        Description for Create or update a certificate purchase order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -539,7 +536,8 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """List all certificates associated with a certificate order.
 
-        List all certificates associated with a certificate order.
+        Description for List all certificates associated with a certificate
+        order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -613,7 +611,8 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the certificate associated with a certificate order.
 
-        Get the certificate associated with a certificate order.
+        Description for Get the certificate associated with a certificate
+        order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -731,7 +730,8 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a certificate and associates with key vault secret.
 
-        Creates or updates a certificate and associates with key vault secret.
+        Description for Creates or updates a certificate and associates with
+        key vault secret.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -790,7 +790,8 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete the certificate associated with a certificate order.
 
-        Delete the certificate associated with a certificate order.
+        Description for Delete the certificate associated with a certificate
+        order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -806,7 +807,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_certificate.metadata['url']
@@ -836,9 +838,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -849,7 +849,8 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a certificate and associates with key vault secret.
 
-        Creates or updates a certificate and associates with key vault secret.
+        Description for Creates or updates a certificate and associates with
+        key vault secret.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -925,7 +926,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """Reissue an existing certificate order.
 
-        Reissue an existing certificate order.
+        Description for Reissue an existing certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -942,7 +943,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reissue.metadata['url']
@@ -975,9 +977,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -988,7 +988,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, renew_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """Renew an existing certificate order.
 
-        Renew an existing certificate order.
+        Description for Renew an existing certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1005,7 +1005,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.renew.metadata['url']
@@ -1038,9 +1039,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1051,7 +1050,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Resend certificate email.
 
-        Resend certificate email.
+        Description for Resend certificate email.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1065,7 +1064,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.resend_email.metadata['url']
@@ -1094,9 +1094,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1107,7 +1105,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, name=None, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
-        Verify domain ownership for this certificate order.
+        Description for Verify domain ownership for this certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1123,7 +1121,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         name_identifier = models.NameIdentifier(name=name)
 
@@ -1158,9 +1157,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1171,7 +1168,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, light_theme=None, locale=None, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
-        Verify domain ownership for this certificate order.
+        Description for Verify domain ownership for this certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1245,7 +1242,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
-        Verify domain ownership for this certificate order.
+        Description for Verify domain ownership for this certificate order.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1259,7 +1256,8 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.verify_domain_ownership.metadata['url']
@@ -1288,9 +1286,7 @@ class AppServiceCertificateOrdersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1301,7 +1297,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the list of certificate actions.
 
-        Retrieve the list of certificate actions.
+        Description for Retrieve the list of certificate actions.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1364,7 +1360,7 @@ class AppServiceCertificateOrdersOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Retrieve email history.
 
-        Retrieve email history.
+        Description for Retrieve email history.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

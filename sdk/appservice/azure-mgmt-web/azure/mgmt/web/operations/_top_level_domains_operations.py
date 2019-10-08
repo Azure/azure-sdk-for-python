@@ -24,7 +24,7 @@ class TopLevelDomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class TopLevelDomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -42,7 +42,7 @@ class TopLevelDomainsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all top-level domains supported for registration.
 
-        Get all top-level domains supported for registration.
+        Description for Get all top-level domains supported for registration.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -109,7 +109,7 @@ class TopLevelDomainsOperations(object):
             self, name, custom_headers=None, raw=False, **operation_config):
         """Get details of a top-level domain.
 
-        Get details of a top-level domain.
+        Description for Get details of a top-level domain.
 
         :param name: Name of the top-level domain.
         :type name: str
@@ -169,8 +169,8 @@ class TopLevelDomainsOperations(object):
         """Gets all legal agreements that user needs to accept before purchasing a
         domain.
 
-        Gets all legal agreements that user needs to accept before purchasing a
-        domain.
+        Description for Gets all legal agreements that user needs to accept
+        before purchasing a domain.
 
         :param name: Name of the top-level domain.
         :type name: str

@@ -194,19 +194,19 @@ class DetectorDefinitionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DetectorDefinitionPaged, self).__init__(*args, **kwargs)
-class ApplicationStackPaged(Paged):
+class ApplicationStackResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ApplicationStack <azure.mgmt.web.models.ApplicationStack>` object
+    A paging container for iterating over a list of :class:`ApplicationStackResource <azure.mgmt.web.models.ApplicationStackResource>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ApplicationStack]'}
+        'current_page': {'key': 'value', 'type': '[ApplicationStackResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ApplicationStackPaged, self).__init__(*args, **kwargs)
+        super(ApplicationStackResourcePaged, self).__init__(*args, **kwargs)
 class RecommendationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Recommendation <azure.mgmt.web.models.Recommendation>` object
@@ -441,32 +441,6 @@ class ProcessThreadInfoPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProcessThreadInfoPaged, self).__init__(*args, **kwargs)
-class ResourceMetricDefinitionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.models.ResourceMetricDefinition>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ResourceMetricDefinition]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ResourceMetricDefinitionPaged, self).__init__(*args, **kwargs)
-class ResourceMetricPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ResourceMetric <azure.mgmt.web.models.ResourceMetric>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ResourceMetric]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ResourceMetricPaged, self).__init__(*args, **kwargs)
 class PerfMonResponsePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PerfMonResponse <azure.mgmt.web.models.PerfMonResponse>` object
@@ -636,6 +610,19 @@ class WorkerPoolResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkerPoolResourcePaged, self).__init__(*args, **kwargs)
+class ResourceMetricDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.models.ResourceMetricDefinition>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceMetricDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceMetricDefinitionPaged, self).__init__(*args, **kwargs)
 class SkuInfoPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SkuInfo <azure.mgmt.web.models.SkuInfo>` object
