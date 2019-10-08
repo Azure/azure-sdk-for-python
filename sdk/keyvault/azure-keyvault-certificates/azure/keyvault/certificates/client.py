@@ -103,6 +103,8 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
+        kwargs.pop('tags', None)
+
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
         command = partial(self.get_certificate_operation, name=name, **kwargs)
