@@ -164,7 +164,7 @@ def convert_tracing_impl(value):
 
     """
     if value is None:
-        return _get_opencensus_span()
+        value = 'opencensus'
 
     if not isinstance(value, six.string_types):
         return value
