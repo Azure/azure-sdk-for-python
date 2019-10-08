@@ -83,10 +83,9 @@ class RouteType(str, Enum):
 
 class ManagedServiceIdentityType(str, Enum):
 
+    none = "None"
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
 
 
 class IpFilterTag(str, Enum):
@@ -117,19 +116,6 @@ class ConnectionStringType(str, Enum):
     postgre_sql = "PostgreSQL"
 
 
-class AzureStorageType(str, Enum):
-
-    azure_files = "AzureFiles"
-    azure_blob = "AzureBlob"
-
-
-class AzureStorageState(str, Enum):
-
-    ok = "Ok"
-    invalid_credentials = "InvalidCredentials"
-    invalid_share = "InvalidShare"
-
-
 class ScmType(str, Enum):
 
     none = "None"
@@ -145,6 +131,7 @@ class ScmType(str, Enum):
     external_hg = "ExternalHg"
     one_drive = "OneDrive"
     vso = "VSO"
+    vstsrm = "VSTSRM"
 
 
 class ManagedPipelineMode(str, Enum):
@@ -303,6 +290,7 @@ class WorkerSizeOptions(str, Enum):
     d1 = "D1"
     d2 = "D2"
     d3 = "D3"
+    nested_small = "NestedSmall"
     default = "Default"
 
 
@@ -406,6 +394,29 @@ class ValidateResourceTypes(str, Enum):
     site = "Site"
 
 
+class ResolveStatus(str, Enum):
+
+    initialized = "Initialized"
+    resolved = "Resolved"
+    invalid_syntax = "InvalidSyntax"
+    msi_not_enabled = "MSINotEnabled"
+    vault_not_found = "VaultNotFound"
+    secret_not_found = "SecretNotFound"
+    secret_version_not_found = "SecretVersionNotFound"
+    access_to_key_vault_denied = "AccessToKeyVaultDenied"
+    other_reasons = "OtherReasons"
+
+
+class ConfigReferenceSource(str, Enum):
+
+    key_vault = "KeyVault"
+
+
+class ConfigReferenceLocation(str, Enum):
+
+    application_setting = "ApplicationSetting"
+
+
 class LogLevel(str, Enum):
 
     off = "Off"
@@ -413,6 +424,19 @@ class LogLevel(str, Enum):
     information = "Information"
     warning = "Warning"
     error = "Error"
+
+
+class AzureStorageType(str, Enum):
+
+    azure_files = "AzureFiles"
+    azure_blob = "AzureBlob"
+
+
+class AzureStorageState(str, Enum):
+
+    ok = "Ok"
+    invalid_credentials = "InvalidCredentials"
+    invalid_share = "InvalidShare"
 
 
 class BackupItemStatus(str, Enum):
@@ -543,6 +567,13 @@ class TriggeredWebJobStatus(str, Enum):
     success = "Success"
     failed = "Failed"
     error = "Error"
+
+
+class SiteRuntimeState(str, Enum):
+
+    ready = "READY"
+    stopped = "STOPPED"
+    unknown = "UNKNOWN"
 
 
 class SkuName(str, Enum):

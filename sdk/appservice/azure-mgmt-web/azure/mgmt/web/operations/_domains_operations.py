@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class DomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class DomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -45,7 +44,7 @@ class DomainsOperations(object):
             self, name=None, custom_headers=None, raw=False, **operation_config):
         """Check if a domain is available for registration.
 
-        Check if a domain is available for registration.
+        Description for Check if a domain is available for registration.
 
         :param name: Name of the object.
         :type name: str
@@ -54,9 +53,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DomainAvailablilityCheckResult or ClientRawResponse if
+        :return: DomainAvailabilityCheckResult or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.DomainAvailablilityCheckResult or
+        :rtype: ~azure.mgmt.web.models.DomainAvailabilityCheckResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
@@ -97,7 +96,7 @@ class DomainsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DomainAvailablilityCheckResult', response)
+            deserialized = self._deserialize('DomainAvailabilityCheckResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -110,7 +109,7 @@ class DomainsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all domains in a subscription.
 
-        Get all domains in a subscription.
+        Description for Get all domains in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -177,7 +176,8 @@ class DomainsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Generate a single sign-on request for the domain management portal.
 
-        Generate a single sign-on request for the domain management portal.
+        Description for Generate a single sign-on request for the domain
+        management portal.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -234,7 +234,7 @@ class DomainsOperations(object):
             self, keywords=None, max_domain_recommendations=None, custom_headers=None, raw=False, **operation_config):
         """Get domain name recommendations based on keywords.
 
-        Get domain name recommendations based on keywords.
+        Description for Get domain name recommendations based on keywords.
 
         :param keywords: Keywords to be used for generating domain
          recommendations.
@@ -312,7 +312,7 @@ class DomainsOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get all domains in a resource group.
 
-        Get all domains in a resource group.
+        Description for Get all domains in a resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -383,7 +383,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Get a domain.
 
-        Get a domain.
+        Description for Get a domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -496,7 +496,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a domain.
 
-        Creates or updates a domain.
+        Description for Creates or updates a domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -550,7 +550,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
         """Delete a domain.
 
-        Delete a domain.
+        Description for Delete a domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -568,7 +568,8 @@ class DomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -599,9 +600,7 @@ class DomainsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -612,7 +611,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a domain.
 
-        Creates or updates a domain.
+        Description for Creates or updates a domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -683,7 +682,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Lists domain ownership identifiers.
 
-        Lists domain ownership identifiers.
+        Description for Lists domain ownership identifiers.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -757,7 +756,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
         """Get ownership identifier for domain.
 
-        Get ownership identifier for domain.
+        Description for Get ownership identifier for domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -824,8 +823,8 @@ class DomainsOperations(object):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
-        Creates an ownership identifier for a domain or updates identifier
-        details for an existing identifer.
+        Description for Creates an ownership identifier for a domain or updates
+        identifier details for an existing identifer.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -901,7 +900,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete ownership identifier for domain.
 
-        Delete ownership identifier for domain.
+        Description for Delete ownership identifier for domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -917,7 +916,8 @@ class DomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_ownership_identifier.metadata['url']
@@ -947,9 +947,7 @@ class DomainsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -961,8 +959,8 @@ class DomainsOperations(object):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
-        Creates an ownership identifier for a domain or updates identifier
-        details for an existing identifer.
+        Description for Creates an ownership identifier for a domain or updates
+        identifier details for an existing identifer.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1038,7 +1036,7 @@ class DomainsOperations(object):
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Renew a domain.
 
-        Renew a domain.
+        Description for Renew a domain.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1052,7 +1050,8 @@ class DomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.renew.metadata['url']
@@ -1080,10 +1079,8 @@ class DomainsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204, 400, 500]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202, 204]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

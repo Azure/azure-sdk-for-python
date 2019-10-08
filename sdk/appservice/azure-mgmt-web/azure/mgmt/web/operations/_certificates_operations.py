@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class CertificatesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-11-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class CertificatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -43,7 +42,7 @@ class CertificatesOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all certificates for a subscription.
 
-        Get all certificates for a subscription.
+        Description for Get all certificates for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -110,7 +109,7 @@ class CertificatesOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get all certificates in a resource group.
 
-        Get all certificates in a resource group.
+        Description for Get all certificates in a resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -181,7 +180,7 @@ class CertificatesOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get a certificate.
 
-        Get a certificate.
+        Description for Get a certificate.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -244,7 +243,7 @@ class CertificatesOperations(object):
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
         """Create or update a certificate.
 
-        Create or update a certificate.
+        Description for Create or update a certificate.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -314,7 +313,7 @@ class CertificatesOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete a certificate.
 
-        Delete a certificate.
+        Description for Delete a certificate.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -328,7 +327,8 @@ class CertificatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -357,9 +357,7 @@ class CertificatesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -370,7 +368,7 @@ class CertificatesOperations(object):
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
         """Create or update a certificate.
 
-        Create or update a certificate.
+        Description for Create or update a certificate.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

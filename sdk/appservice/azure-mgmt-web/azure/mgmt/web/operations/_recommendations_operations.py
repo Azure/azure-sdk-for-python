@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class RecommendationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class RecommendationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -43,7 +42,7 @@ class RecommendationsOperations(object):
             self, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """List all recommendations for a subscription.
 
-        List all recommendations for a subscription.
+        Description for List all recommendations for a subscription.
 
         :param featured: Specify <code>true</code> to return only the most
          critical recommendations. The default is <code>false</code>, which
@@ -123,7 +122,8 @@ class RecommendationsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Reset all recommendation opt-out settings for a subscription.
 
-        Reset all recommendation opt-out settings for a subscription.
+        Description for Reset all recommendation opt-out settings for a
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -132,7 +132,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters.metadata['url']
@@ -159,9 +160,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -173,8 +172,8 @@ class RecommendationsOperations(object):
         """Disables the specified rule so it will not apply to a subscription in
         the future.
 
-        Disables the specified rule so it will not apply to a subscription in
-        the future.
+        Description for Disables the specified rule so it will not apply to a
+        subscription in the future.
 
         :param name: Rule name
         :type name: str
@@ -185,7 +184,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_subscription.metadata['url']
@@ -213,9 +213,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -227,8 +225,8 @@ class RecommendationsOperations(object):
         """Get past recommendations for an app, optionally specified by the time
         range.
 
-        Get past recommendations for an app, optionally specified by the time
-        range.
+        Description for Get past recommendations for an app, optionally
+        specified by the time range.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -315,7 +313,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, hosting_environment_name, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get all recommendations for an app.
 
-        Get all recommendations for an app.
+        Description for Get all recommendations for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -401,7 +399,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, environment_name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
         """Disable all recommendations for an app.
 
-        Disable all recommendations for an app.
+        Description for Disable all recommendations for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -417,7 +415,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_all_for_hosting_environment.metadata['url']
@@ -447,9 +446,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -460,7 +457,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, environment_name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
         """Reset all recommendation opt-out settings for an app.
 
-        Reset all recommendation opt-out settings for an app.
+        Description for Reset all recommendation opt-out settings for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -476,7 +473,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters_for_hosting_environment.metadata['url']
@@ -506,9 +504,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -519,7 +515,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, hosting_environment_name, name, update_seen=None, recommendation_id=None, custom_headers=None, raw=False, **operation_config):
         """Get a recommendation rule for an app.
 
-        Get a recommendation rule for an app.
+        Description for Get a recommendation rule for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -596,7 +592,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, environment_name, name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
         """Disables the specific rule for a web site permanently.
 
-        Disables the specific rule for a web site permanently.
+        Description for Disables the specific rule for a web site permanently.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -614,7 +610,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_hosting_environment.metadata['url']
@@ -645,9 +642,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -659,8 +654,8 @@ class RecommendationsOperations(object):
         """Get past recommendations for an app, optionally specified by the time
         range.
 
-        Get past recommendations for an app, optionally specified by the time
-        range.
+        Description for Get past recommendations for an app, optionally
+        specified by the time range.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -747,7 +742,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, site_name, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get all recommendations for an app.
 
-        Get all recommendations for an app.
+        Description for Get all recommendations for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -833,7 +828,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
         """Disable all recommendations for an app.
 
-        Disable all recommendations for an app.
+        Description for Disable all recommendations for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -847,7 +842,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_all_for_web_app.metadata['url']
@@ -876,9 +872,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -889,7 +883,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
         """Reset all recommendation opt-out settings for an app.
 
-        Reset all recommendation opt-out settings for an app.
+        Description for Reset all recommendation opt-out settings for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -903,7 +897,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters_for_web_app.metadata['url']
@@ -932,9 +927,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -945,7 +938,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, site_name, name, update_seen=None, recommendation_id=None, custom_headers=None, raw=False, **operation_config):
         """Get a recommendation rule for an app.
 
-        Get a recommendation rule for an app.
+        Description for Get a recommendation rule for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1022,7 +1015,7 @@ class RecommendationsOperations(object):
             self, resource_group_name, site_name, name, custom_headers=None, raw=False, **operation_config):
         """Disables the specific rule for a web site permanently.
 
-        Disables the specific rule for a web site permanently.
+        Description for Disables the specific rule for a web site permanently.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1038,7 +1031,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_site.metadata['url']
@@ -1068,9 +1062,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

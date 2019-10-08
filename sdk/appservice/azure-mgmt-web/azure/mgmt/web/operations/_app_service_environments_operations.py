@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class AppServiceEnvironmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class AppServiceEnvironmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -45,7 +44,7 @@ class AppServiceEnvironmentsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all App Service Environments for a subscription.
 
-        Get all App Service Environments for a subscription.
+        Description for Get all App Service Environments for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,7 +111,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get all App Service Environments in a resource group.
 
-        Get all App Service Environments in a resource group.
+        Description for Get all App Service Environments in a resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -183,7 +182,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the properties of an App Service Environment.
 
-        Get the properties of an App Service Environment.
+        Description for Get the properties of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -277,14 +276,14 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 201, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('AppServiceEnvironmentResource', response)
         if response.status_code == 202:
             deserialized = self._deserialize('AppServiceEnvironmentResource', response)
@@ -299,7 +298,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an App Service Environment.
 
-        Create or update an App Service Environment.
+        Description for Create or update an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -322,7 +321,8 @@ class AppServiceEnvironmentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceEnvironmentResource]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.AppServiceEnvironmentResource]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -382,10 +382,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [202, 204]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -395,7 +393,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, force_delete=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete an App Service Environment.
 
-        Delete an App Service Environment.
+        Description for Delete an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -415,7 +413,8 @@ class AppServiceEnvironmentsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -444,7 +443,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
         """Create or update an App Service Environment.
 
-        Create or update an App Service Environment.
+        Description for Create or update an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -464,7 +463,8 @@ class AppServiceEnvironmentsOperations(object):
          raw=true
         :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -497,13 +497,13 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 201, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('AppServiceEnvironmentResource', response)
         if response.status_code == 202:
             deserialized = self._deserialize('AppServiceEnvironmentResource', response)
@@ -520,8 +520,8 @@ class AppServiceEnvironmentsOperations(object):
         """Get the used, available, and total worker capacity an App Service
         Environment.
 
-        Get the used, available, and total worker capacity an App Service
-        Environment.
+        Description for Get the used, available, and total worker capacity an
+        App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -591,11 +591,12 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_capacities.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/compute'}
 
-    def list_vips(
+    def get_vip_info(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get IP addresses assigned to an App Service Environment.
 
-        Get IP addresses assigned to an App Service Environment.
+        Description for Get IP addresses assigned to an App Service
+        Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -614,7 +615,7 @@ class AppServiceEnvironmentsOperations(object):
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
-        url = self.list_vips.metadata['url']
+        url = self.get_vip_info.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -652,7 +653,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_vips.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/virtualip'}
+    get_vip_info.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/virtualip'}
 
 
     def _change_vnet_initial(
@@ -710,7 +711,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, id=None, subnet=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Move an App Service Environment to a different VNET.
 
-        Move an App Service Environment to a different VNET.
+        Description for Move an App Service Environment to a different VNET.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -767,7 +768,8 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get diagnostic information for an App Service Environment.
 
-        Get diagnostic information for an App Service Environment.
+        Description for Get diagnostic information for an App Service
+        Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -830,7 +832,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, diagnostics_name, custom_headers=None, raw=False, **operation_config):
         """Get a diagnostics item for an App Service Environment.
 
-        Get a diagnostics item for an App Service Environment.
+        Description for Get a diagnostics item for an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -898,8 +900,8 @@ class AppServiceEnvironmentsOperations(object):
         """Get the network endpoints of all inbound dependencies of an App Service
         Environment.
 
-        Get the network endpoints of all inbound dependencies of an App Service
-        Environment.
+        Description for Get the network endpoints of all inbound dependencies
+        of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -969,161 +971,11 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     get_inbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/inboundNetworkDependenciesEndpoints'}
 
-    def list_metric_definitions(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Get global metric definitions of an App Service Environment.
-
-        Get global metric definitions of an App Service Environment.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: MetricDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.MetricDefinition or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_metric_definitions.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricDefinition', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metricdefinitions'}
-
-    def list_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get global metrics of an App Service Environment.
-
-        Get global metrics of an App Service Environment.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
-         eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metrics'}
-
     def list_multi_role_pools(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get all multi-role pools.
 
-        Get all multi-role pools.
+        Description for Get all multi-role pools.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1197,7 +1049,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get properties of a multi-role pool.
 
-        Get properties of a multi-role pool.
+        Description for Get properties of a multi-role pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1290,10 +1142,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1312,7 +1162,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a multi-role pool.
 
-        Create or update a multi-role pool.
+        Description for Create or update a multi-role pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1333,7 +1183,8 @@ class AppServiceEnvironmentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WorkerPoolResource]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_multi_role_pool_initial(
             resource_group_name=resource_group_name,
@@ -1366,7 +1217,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
         """Create or update a multi-role pool.
 
-        Create or update a multi-role pool.
+        Description for Create or update a multi-role pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1384,7 +1235,8 @@ class AppServiceEnvironmentsOperations(object):
         :return: WorkerPoolResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_multi_role_pool.metadata['url']
@@ -1417,10 +1269,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1440,8 +1290,8 @@ class AppServiceEnvironmentsOperations(object):
         """Get metric definitions for a specific instance of a multi-role pool of
         an App Service Environment.
 
-        Get metric definitions for a specific instance of a multi-role pool of
-        an App Service Environment.
+        Description for Get metric definitions for a specific instance of a
+        multi-role pool of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1514,97 +1364,13 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_multi_role_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metricdefinitions'}
 
-    def list_multi_role_pool_instance_metrics(
-            self, resource_group_name, name, instance, details=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for a specific instance of a multi-role pool of an App
-        Service Environment.
-
-        Get metrics for a specific instance of a multi-role pool of an App
-        Service Environment.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param instance: Name of the instance in the multi-role pool.
-        :type instance: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_multi_role_pool_instance_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'instance': self._serialize.url("instance", instance, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_multi_role_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metrics'}
-
     def list_multi_role_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get metric definitions for a multi-role pool of an App Service
         Environment.
 
-        Get metric definitions for a multi-role pool of an App Service
-        Environment.
+        Description for Get metric definitions for a multi-role pool of an App
+        Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1674,110 +1440,11 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_multi_role_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metricdefinitions'}
 
-    def list_multi_role_metrics(
-            self, resource_group_name, name, start_time=None, end_time=None, time_grain=None, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for a multi-role pool of an App Service Environment.
-
-        Get metrics for a multi-role pool of an App Service Environment.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param start_time: Beginning time of the metrics query.
-        :type start_time: str
-        :param end_time: End time of the metrics query.
-        :type end_time: str
-        :param time_grain: Time granularity of the metrics query.
-        :type time_grain: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
-         eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_multi_role_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if start_time is not None:
-                    query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
-                if end_time is not None:
-                    query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'str')
-                if time_grain is not None:
-                    query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str')
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_multi_role_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metrics'}
-
     def list_multi_role_pool_skus(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get available SKUs for scaling a multi-role pool.
 
-        Get available SKUs for scaling a multi-role pool.
+        Description for Get available SKUs for scaling a multi-role pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1851,7 +1518,8 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get usage metrics for a multi-role pool of an App Service Environment.
 
-        Get usage metrics for a multi-role pool of an App Service Environment.
+        Description for Get usage metrics for a multi-role pool of an App
+        Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1925,7 +1593,8 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List all currently running operations on the App Service Environment.
 
-        List all currently running operations on the App Service Environment.
+        Description for List all currently running operations on the App
+        Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1989,8 +1658,8 @@ class AppServiceEnvironmentsOperations(object):
         """Get the network endpoints of all outbound dependencies of an App
         Service Environment.
 
-        Get the network endpoints of all outbound dependencies of an App
-        Service Environment.
+        Description for Get the network endpoints of all outbound dependencies
+        of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2064,7 +1733,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Reboot all machines in an App Service Environment.
 
-        Reboot all machines in an App Service Environment.
+        Description for Reboot all machines in an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2078,7 +1747,8 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reboot.metadata['url']
@@ -2106,10 +1776,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -2166,7 +1834,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Resume an App Service Environment.
 
-        Resume an App Service Environment.
+        Description for Resume an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2217,7 +1885,8 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get all App Service plans in an App Service Environment.
 
-        Get all App Service plans in an App Service Environment.
+        Description for Get all App Service plans in an App Service
+        Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2291,7 +1960,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
         """Get all apps in an App Service Environment.
 
-        Get all apps in an App Service Environment.
+        Description for Get all apps in an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2415,7 +2084,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Suspend an App Service Environment.
 
-        Suspend an App Service Environment.
+        Description for Suspend an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2466,7 +2135,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get global usage metrics of an App Service Environment.
 
-        Get global usage metrics of an App Service Environment.
+        Description for Get global usage metrics of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2548,7 +2217,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get all worker pools of an App Service Environment.
 
-        Get all worker pools of an App Service Environment.
+        Description for Get all worker pools of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2622,7 +2291,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
         """Get properties of a worker pool.
 
-        Get properties of a worker pool.
+        Description for Get properties of a worker pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2719,10 +2388,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -2741,7 +2408,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a worker pool.
 
-        Create or update a worker pool.
+        Description for Create or update a worker pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2763,7 +2430,8 @@ class AppServiceEnvironmentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WorkerPoolResource]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_worker_pool_initial(
             resource_group_name=resource_group_name,
@@ -2797,7 +2465,7 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
         """Create or update a worker pool.
 
-        Create or update a worker pool.
+        Description for Create or update a worker pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2816,7 +2484,8 @@ class AppServiceEnvironmentsOperations(object):
         :return: WorkerPoolResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_worker_pool.metadata['url']
@@ -2850,10 +2519,8 @@ class AppServiceEnvironmentsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 400, 404, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -2873,8 +2540,8 @@ class AppServiceEnvironmentsOperations(object):
         """Get metric definitions for a specific instance of a worker pool of an
         App Service Environment.
 
-        Get metric definitions for a specific instance of a worker pool of an
-        App Service Environment.
+        Description for Get metric definitions for a specific instance of a
+        worker pool of an App Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2950,106 +2617,12 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_worker_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metricdefinitions'}
 
-    def list_worker_pool_instance_metrics(
-            self, resource_group_name, name, worker_pool_name, instance, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for a specific instance of a worker pool of an App Service
-        Environment.
-
-        Get metrics for a specific instance of a worker pool of an App Service
-        Environment.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param worker_pool_name: Name of the worker pool.
-        :type worker_pool_name: str
-        :param instance: Name of the instance in the worker pool.
-        :type instance: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
-         eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_worker_pool_instance_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'workerPoolName': self._serialize.url("worker_pool_name", worker_pool_name, 'str'),
-                    'instance': self._serialize.url("instance", instance, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_worker_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metrics'}
-
     def list_web_worker_metric_definitions(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
         """Get metric definitions for a worker pool of an App Service Environment.
 
-        Get metric definitions for a worker pool of an App Service Environment.
+        Description for Get metric definitions for a worker pool of an App
+        Service Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3122,103 +2695,11 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_web_worker_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metricdefinitions'}
 
-    def list_web_worker_metrics(
-            self, resource_group_name, name, worker_pool_name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for a worker pool of a AppServiceEnvironment (App Service
-        Environment).
-
-        Get metrics for a worker pool of a AppServiceEnvironment (App Service
-        Environment).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service Environment.
-        :type name: str
-        :param worker_pool_name: Name of worker pool
-        :type worker_pool_name: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
-         eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_web_worker_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'workerPoolName': self._serialize.url("worker_pool_name", worker_pool_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_web_worker_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metrics'}
-
     def list_worker_pool_skus(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
         """Get available SKUs for scaling a worker pool.
 
-        Get available SKUs for scaling a worker pool.
+        Description for Get available SKUs for scaling a worker pool.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3295,7 +2776,8 @@ class AppServiceEnvironmentsOperations(object):
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
         """Get usage metrics for a worker pool of an App Service Environment.
 
-        Get usage metrics for a worker pool of an App Service Environment.
+        Description for Get usage metrics for a worker pool of an App Service
+        Environment.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

@@ -24,7 +24,7 @@ class ResourceHealthMetadataOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ResourceHealthMetadataOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -42,7 +42,8 @@ class ResourceHealthMetadataOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """List all ResourceHealthMetadata for all sites in the subscription.
 
-        List all ResourceHealthMetadata for all sites in the subscription.
+        Description for List all ResourceHealthMetadata for all sites in the
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -110,8 +111,8 @@ class ResourceHealthMetadataOperations(object):
         """List all ResourceHealthMetadata for all sites in the resource group in
         the subscription.
 
-        List all ResourceHealthMetadata for all sites in the resource group in
-        the subscription.
+        Description for List all ResourceHealthMetadata for all sites in the
+        resource group in the subscription.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -183,8 +184,8 @@ class ResourceHealthMetadataOperations(object):
         """Gets the category of ResourceHealthMetadata to use for the given site
         as a collection.
 
-        Gets the category of ResourceHealthMetadata to use for the given site
-        as a collection.
+        Description for Gets the category of ResourceHealthMetadata to use for
+        the given site as a collection.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -258,7 +259,8 @@ class ResourceHealthMetadataOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the category of ResourceHealthMetadata to use for the given site.
 
-        Gets the category of ResourceHealthMetadata to use for the given site.
+        Description for Gets the category of ResourceHealthMetadata to use for
+        the given site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -322,8 +324,8 @@ class ResourceHealthMetadataOperations(object):
         """Gets the category of ResourceHealthMetadata to use for the given site
         as a collection.
 
-        Gets the category of ResourceHealthMetadata to use for the given site
-        as a collection.
+        Description for Gets the category of ResourceHealthMetadata to use for
+        the given site as a collection.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -401,7 +403,8 @@ class ResourceHealthMetadataOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the category of ResourceHealthMetadata to use for the given site.
 
-        Gets the category of ResourceHealthMetadata to use for the given site.
+        Description for Gets the category of ResourceHealthMetadata to use for
+        the given site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

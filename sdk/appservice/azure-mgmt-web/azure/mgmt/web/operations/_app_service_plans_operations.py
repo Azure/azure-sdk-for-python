@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -27,7 +26,7 @@ class AppServicePlansOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +36,7 @@ class AppServicePlansOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -45,7 +44,7 @@ class AppServicePlansOperations(object):
             self, detailed=None, custom_headers=None, raw=False, **operation_config):
         """Get all App Service plans for a subscription.
 
-        Get all App Service plans for a subscription.
+        Description for Get all App Service plans for a subscription.
 
         :param detailed: Specify <code>true</code> to return all App Service
          plan properties. The default is <code>false</code>, which returns a
@@ -119,7 +118,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get all App Service plans in a resource group.
 
-        Get all App Service plans in a resource group.
+        Description for Get all App Service plans in a resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -190,7 +189,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get an App Service plan.
 
-        Get an App Service plan.
+        Description for Get an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -205,7 +204,8 @@ class AppServicePlansOperations(object):
         :return: AppServicePlan or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.AppServicePlan or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -235,9 +235,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -284,14 +282,12 @@ class AppServicePlansOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 202]:
             raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AppServicePlan', response)
-        if response.status_code == 201:
             deserialized = self._deserialize('AppServicePlan', response)
         if response.status_code == 202:
             deserialized = self._deserialize('AppServicePlan', response)
@@ -306,7 +302,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, app_service_plan, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an App Service Plan.
 
-        Creates or updates an App Service Plan.
+        Description for Creates or updates an App Service Plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -360,7 +356,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete an App Service plan.
 
-        Delete an App Service plan.
+        Description for Delete an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -374,7 +370,8 @@ class AppServicePlansOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -403,9 +400,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -416,7 +411,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, app_service_plan, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an App Service Plan.
 
-        Creates or updates an App Service Plan.
+        Description for Creates or updates an App Service Plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -488,7 +483,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List all capabilities of an App Service plan.
 
-        List all capabilities of an App Service plan.
+        Description for List all capabilities of an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -551,7 +546,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
-        Retrieve a Hybrid Connection in use in an App Service plan.
+        Description for Retrieve a Hybrid Connection in use in an App Service
+        plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -620,7 +616,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Delete a Hybrid Connection in use in an App Service plan.
 
-        Delete a Hybrid Connection in use in an App Service plan.
+        Description for Delete a Hybrid Connection in use in an App Service
+        plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -638,7 +635,8 @@ class AppServicePlansOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_hybrid_connection.metadata['url']
@@ -669,9 +667,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -682,7 +678,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Get the send key name and value of a Hybrid Connection.
 
-        Get the send key name and value of a Hybrid Connection.
+        Description for Get the send key name and value of a Hybrid Connection.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -751,7 +747,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
-        Get all apps that use a Hybrid Connection in an App Service Plan.
+        Description for Get all apps that use a Hybrid Connection in an App
+        Service Plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -831,8 +828,8 @@ class AppServicePlansOperations(object):
         """Get the maximum number of Hybrid Connections allowed in an App Service
         plan.
 
-        Get the maximum number of Hybrid Connections allowed in an App Service
-        plan.
+        Description for Get the maximum number of Hybrid Connections allowed in
+        an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -895,7 +892,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
-        Retrieve all Hybrid Connections in use in an App Service plan.
+        Description for Retrieve all Hybrid Connections in use in an App
+        Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -965,174 +963,11 @@ class AppServicePlansOperations(object):
         return deserialized
     list_hybrid_connections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionRelays'}
 
-    def list_metric_defintions(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Get metrics that can be queried for an App Service plan, and their
-        definitions.
-
-        Get metrics that can be queried for an App Service plan, and their
-        definitions.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service plan.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetricDefinition
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metric_defintions.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metric_defintions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metricdefinitions'}
-
-    def list_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for an App Service plan.
-
-        Get metrics for an App Service plan.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the App Service plan.
-        :type name: str
-        :param details: Specify <code>true</code> to include instance details.
-         The default is <code>false</code>.
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
-         eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metrics'}
-
     def restart_web_apps(
             self, resource_group_name, name, soft_restart=None, custom_headers=None, raw=False, **operation_config):
         """Restart all apps in an App Service plan.
 
-        Restart all apps in an App Service plan.
+        Description for Restart all apps in an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1151,7 +986,8 @@ class AppServicePlansOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.restart_web_apps.metadata['url']
@@ -1182,9 +1018,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1195,7 +1029,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, skip_token=None, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all apps associated with an App Service plan.
 
-        Get all apps associated with an App Service plan.
+        Description for Get all apps associated with an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1284,7 +1118,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets all selectable SKUs for a given App Service Plan.
 
-        Gets all selectable SKUs for a given App Service Plan.
+        Description for Gets all selectable SKUs for a given App Service Plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1346,7 +1180,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets server farm usage information.
 
-        Gets server farm usage information.
+        Description for Gets server farm usage information.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1426,7 +1260,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get all Virtual Networks associated with an App Service plan.
 
-        Get all Virtual Networks associated with an App Service plan.
+        Description for Get all Virtual Networks associated with an App Service
+        plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1489,7 +1324,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network associated with an App Service plan.
 
-        Get a Virtual Network associated with an App Service plan.
+        Description for Get a Virtual Network associated with an App Service
+        plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1506,7 +1342,8 @@ class AppServicePlansOperations(object):
         :return: VnetInfo or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_from_server_farm.metadata['url']
@@ -1537,9 +1374,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1556,7 +1391,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network gateway.
 
-        Get a Virtual Network gateway.
+        Description for Get a Virtual Network gateway.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1626,7 +1461,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """Update a Virtual Network gateway.
 
-        Update a Virtual Network gateway.
+        Description for Update a Virtual Network gateway.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1703,8 +1538,8 @@ class AppServicePlansOperations(object):
         """Get all routes that are associated with a Virtual Network in an App
         Service plan.
 
-        Get all routes that are associated with a Virtual Network in an App
-        Service plan.
+        Description for Get all routes that are associated with a Virtual
+        Network in an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1770,7 +1605,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network route in an App Service plan.
 
-        Get a Virtual Network route in an App Service plan.
+        Description for Get a Virtual Network route in an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1789,7 +1624,8 @@ class AppServicePlansOperations(object):
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.mgmt.web.models.VnetRoute] or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_route_for_vnet.metadata['url']
@@ -1821,9 +1657,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1840,7 +1674,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """Create or update a Virtual Network route in an App Service plan.
 
-        Create or update a Virtual Network route in an App Service plan.
+        Description for Create or update a Virtual Network route in an App
+        Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1861,7 +1696,8 @@ class AppServicePlansOperations(object):
         :return: VnetRoute or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.VnetRoute or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_vnet_route.metadata['url']
@@ -1897,9 +1733,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 400, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1916,7 +1750,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """Delete a Virtual Network route in an App Service plan.
 
-        Delete a Virtual Network route in an App Service plan.
+        Description for Delete a Virtual Network route in an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1934,7 +1768,8 @@ class AppServicePlansOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_vnet_route.metadata['url']
@@ -1965,9 +1800,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1978,7 +1811,8 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """Create or update a Virtual Network route in an App Service plan.
 
-        Create or update a Virtual Network route in an App Service plan.
+        Description for Create or update a Virtual Network route in an App
+        Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1999,7 +1833,8 @@ class AppServicePlansOperations(object):
         :return: VnetRoute or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.VnetRoute or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_route.metadata['url']
@@ -2035,9 +1870,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 400, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -2054,7 +1887,7 @@ class AppServicePlansOperations(object):
             self, resource_group_name, name, worker_name, custom_headers=None, raw=False, **operation_config):
         """Reboot a worker machine in an App Service plan.
 
-        Reboot a worker machine in an App Service plan.
+        Description for Reboot a worker machine in an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2071,7 +1904,8 @@ class AppServicePlansOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reboot_worker.metadata['url']
@@ -2101,9 +1935,7 @@ class AppServicePlansOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

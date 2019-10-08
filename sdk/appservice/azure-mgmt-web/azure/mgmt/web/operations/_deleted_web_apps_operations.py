@@ -24,7 +24,7 @@ class DeletedWebAppsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class DeletedWebAppsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -42,7 +42,7 @@ class DeletedWebAppsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all deleted apps for a subscription.
 
-        Get all deleted apps for a subscription.
+        Description for Get all deleted apps for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -109,7 +109,7 @@ class DeletedWebAppsOperations(object):
             self, location, custom_headers=None, raw=False, **operation_config):
         """Get all deleted apps for a subscription at location.
 
-        Get all deleted apps for a subscription at location.
+        Description for Get all deleted apps for a subscription at location.
 
         :param location:
         :type location: str
@@ -179,7 +179,7 @@ class DeletedWebAppsOperations(object):
             self, location, deleted_site_id, custom_headers=None, raw=False, **operation_config):
         """Get deleted app for a subscription at location.
 
-        Get deleted app for a subscription at location.
+        Description for Get deleted app for a subscription at location.
 
         :param location:
         :type location: str

@@ -24,7 +24,7 @@ class CertificateRegistrationProviderOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class CertificateRegistrationProviderOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -43,8 +43,8 @@ class CertificateRegistrationProviderOperations(object):
         """Implements Csm operations Api to exposes the list of available Csm Apis
         under the resource provider.
 
-        Implements Csm operations Api to exposes the list of available Csm Apis
-        under the resource provider.
+        Description for Implements Csm operations Api to exposes the list of
+        available Csm Apis under the resource provider.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -23,7 +23,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets publishing user.
 
-        Gets publishing user.
+        Description for Gets publishing user.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -36,14 +36,12 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -77,7 +75,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, user_details, custom_headers=None, raw=False, **operation_config):
         """Updates publishing user.
 
-        Updates publishing user.
+        Description for Updates publishing user.
 
         :param user_details: Details of publishing user
         :type user_details: ~azure.mgmt.web.models.User
@@ -92,14 +90,12 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -137,7 +133,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets the source controls available for Azure websites.
 
-        Gets the source controls available for Azure websites.
+        Description for Gets the source controls available for Azure websites.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -150,8 +146,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -159,7 +153,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -202,7 +196,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, source_control_type, custom_headers=None, raw=False, **operation_config):
         """Gets source control token.
 
-        Gets source control token.
+        Description for Gets source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
@@ -217,8 +211,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.get_source_control.metadata['url']
         path_format_arguments = {
@@ -228,7 +220,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -262,7 +254,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
         """Updates source control token.
 
-        Updates source control token.
+        Description for Updates source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
@@ -279,8 +271,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.update_source_control.metadata['url']
         path_format_arguments = {
@@ -290,7 +280,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -328,7 +318,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, billing_location=None, os_type=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of meters for a given location.
 
-        Gets a list of meters for a given location.
+        Description for Gets a list of meters for a given location.
 
         :param billing_location: Azure Location of billable resource
         :type billing_location: str
@@ -345,8 +335,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -362,7 +350,7 @@ class WebSiteManagementClientOperationsMixin(object):
                     query_parameters['billingLocation'] = self._serialize.query("billing_location", billing_location, 'str')
                 if os_type is not None:
                     query_parameters['osType'] = self._serialize.query("os_type", os_type, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -405,7 +393,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
         """Check if a resource name is available.
 
-        Check if a resource name is available.
+        Description for Check if a resource name is available.
 
         :param name: Resource name to verify.
         :type name: str
@@ -429,8 +417,6 @@ class WebSiteManagementClientOperationsMixin(object):
         """
         request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
 
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -440,7 +426,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -478,7 +464,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets list of available geo regions plus ministamps.
 
-        Gets list of available geo regions plus ministamps.
+        Description for Gets list of available geo regions plus ministamps.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -491,8 +477,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.get_subscription_deployment_locations.metadata['url']
         path_format_arguments = {
@@ -502,7 +486,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -536,7 +520,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, linux_dynamic_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
-        Get a list of available geographical regions.
+        Description for Get a list of available geographical regions.
 
         :param sku: Name of SKU used to filter the regions. Possible values
          include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
@@ -562,8 +546,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -583,7 +565,7 @@ class WebSiteManagementClientOperationsMixin(object):
                     query_parameters['xenonWorkersEnabled'] = self._serialize.query("xenon_workers_enabled", xenon_workers_enabled, 'bool')
                 if linux_dynamic_workers_enabled is not None:
                     query_parameters['linuxDynamicWorkersEnabled'] = self._serialize.query("linux_dynamic_workers_enabled", linux_dynamic_workers_enabled, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -626,7 +608,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, name=None, custom_headers=None, raw=False, **operation_config):
         """List all apps that are assigned to a hostname.
 
-        List all apps that are assigned to a hostname.
+        Description for List all apps that are assigned to a hostname.
 
         :param name: Name of the object.
         :type name: str
@@ -643,8 +625,6 @@ class WebSiteManagementClientOperationsMixin(object):
         """
         name_identifier = models.NameIdentifier(name=name)
 
-        api_version = "2018-02-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -656,7 +636,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -703,7 +683,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, custom_headers=None, raw=False, **operation_config):
         """List all premier add-on offers.
 
-        List all premier add-on offers.
+        Description for List all premier add-on offers.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -716,8 +696,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -729,7 +707,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -772,7 +750,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, custom_headers=None, raw=False, **operation_config):
         """List all SKUs.
 
-        List all SKUs.
+        Description for List all SKUs.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -785,8 +763,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.list_skus.metadata['url']
         path_format_arguments = {
@@ -796,7 +772,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -831,8 +807,8 @@ class WebSiteManagementClientOperationsMixin(object):
         """Verifies if this VNET is compatible with an App Service Environment by
         analyzing the Network Security Group rules.
 
-        Verifies if this VNET is compatible with an App Service Environment by
-        analyzing the Network Security Group rules.
+        Description for Verifies if this VNET is compatible with an App Service
+        Environment by analyzing the Network Security Group rules.
 
         :param parameters: VNET information
         :type parameters: ~azure.mgmt.web.models.VnetParameters
@@ -847,8 +823,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.verify_hosting_environment_vnet.metadata['url']
         path_format_arguments = {
@@ -858,7 +832,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -896,7 +870,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Move resources between resource groups.
 
-        Move resources between resource groups.
+        Description for Move resources between resource groups.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -912,11 +886,10 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
-
-        api_version = "2018-02-01"
 
         # Construct URL
         url = self.move.metadata['url']
@@ -928,7 +901,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -948,9 +921,7 @@ class WebSiteManagementClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -961,7 +932,7 @@ class WebSiteManagementClientOperationsMixin(object):
             self, resource_group_name, validate_request, custom_headers=None, raw=False, **operation_config):
         """Validate if a resource can be created.
 
-        Validate if a resource can be created.
+        Description for Validate if a resource can be created.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -979,8 +950,6 @@ class WebSiteManagementClientOperationsMixin(object):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.validate.metadata['url']
         path_format_arguments = {
@@ -991,7 +960,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1025,79 +994,11 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'}
 
-    def validate_container_settings(
-            self, validate_container_settings_request, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Validate if the container settings are correct.
-
-        Validate if the container settings are correct.
-
-        :param validate_container_settings_request:
-        :type validate_container_settings_request:
-         ~azure.mgmt.web.models.ValidateContainerSettingsRequest
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
-        """
-        api_version = "2018-02-01"
-
-        # Construct URL
-        url = self.validate_container_settings.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(validate_container_settings_request, 'ValidateContainerSettingsRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    validate_container_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validateContainerSettings'}
-
     def validate_move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Validate whether a resource can be moved.
 
-        Validate whether a resource can be moved.
+        Description for Validate whether a resource can be moved.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1113,11 +1014,10 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
-
-        api_version = "2018-02-01"
 
         # Construct URL
         url = self.validate_move.metadata['url']
@@ -1129,7 +1029,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1149,9 +1049,7 @@ class WebSiteManagementClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

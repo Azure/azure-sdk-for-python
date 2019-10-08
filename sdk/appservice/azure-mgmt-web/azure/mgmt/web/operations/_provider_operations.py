@@ -24,7 +24,7 @@ class ProviderOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ProviderOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -42,7 +42,8 @@ class ProviderOperations(object):
             self, os_type_selected=None, custom_headers=None, raw=False, **operation_config):
         """Get available application frameworks and their versions.
 
-        Get available application frameworks and their versions.
+        Description for Get available application frameworks and their
+        versions.
 
         :param os_type_selected: Possible values include: 'Windows', 'Linux',
          'WindowsFunctions', 'LinuxFunctions'
@@ -52,9 +53,9 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ApplicationStack
+        :return: An iterator like instance of ApplicationStackResource
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackPaged[~azure.mgmt.web.models.ApplicationStack]
+         ~azure.mgmt.web.models.ApplicationStackResourcePaged[~azure.mgmt.web.models.ApplicationStackResource]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -101,7 +102,7 @@ class ProviderOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ApplicationStackPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ApplicationStackResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     get_available_stacks.metadata = {'url': '/providers/Microsoft.Web/availableStacks'}
@@ -111,8 +112,8 @@ class ProviderOperations(object):
         """Gets all available operations for the Microsoft.Web resource provider.
         Also exposes resource metric definitions.
 
-        Gets all available operations for the Microsoft.Web resource provider.
-        Also exposes resource metric definitions.
+        Description for Gets all available operations for the Microsoft.Web
+        resource provider. Also exposes resource metric definitions.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -175,7 +176,8 @@ class ProviderOperations(object):
             self, os_type_selected=None, custom_headers=None, raw=False, **operation_config):
         """Get available application frameworks and their versions.
 
-        Get available application frameworks and their versions.
+        Description for Get available application frameworks and their
+        versions.
 
         :param os_type_selected: Possible values include: 'Windows', 'Linux',
          'WindowsFunctions', 'LinuxFunctions'
@@ -185,9 +187,9 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ApplicationStack
+        :return: An iterator like instance of ApplicationStackResource
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackPaged[~azure.mgmt.web.models.ApplicationStack]
+         ~azure.mgmt.web.models.ApplicationStackResourcePaged[~azure.mgmt.web.models.ApplicationStackResource]
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
@@ -238,7 +240,7 @@ class ProviderOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ApplicationStackPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ApplicationStackResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     get_available_stacks_on_prem.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/availableStacks'}
