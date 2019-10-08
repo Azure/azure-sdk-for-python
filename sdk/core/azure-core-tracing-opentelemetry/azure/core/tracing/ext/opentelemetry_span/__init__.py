@@ -8,7 +8,7 @@ from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind,
 from opentelemetry.context import Context
 from opentelemetry.propagators import extract, inject
 
-from azure.core.tracing import SpanKind  # pylint: disable=no-name-in-module
+from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
 try:
     from typing import TYPE_CHECKING
@@ -41,7 +41,7 @@ def _set_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: st
     headers[key] = value
 
 
-class OpenTelemetrySpan(object):
+class OpenTelemetrySpan(HttpSpanMixin, object):
     """Wraps a given OpenTelemetry Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="span"):
@@ -57,11 +57,6 @@ class OpenTelemetrySpan(object):
         """
         tracer = self.get_current_tracer()
         self._span_instance = span or tracer.create_span(name=name)
-        self._span_component = "component"
-        self._http_user_agent = "http.user_agent"
-        self._http_method = "http.method"
-        self._http_url = "http.url"
-        self._http_status_code = "http.status_code"
         self._current_ctxt_manager = None
 
     @property
@@ -159,28 +154,6 @@ class OpenTelemetrySpan(object):
         :type value: str
         """
         self.span_instance.set_attribute(key, value)
-
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponse]) -> None
-        """
-        Add correct attributes for a http client span.
-
-        :param request: The request made
-        :type request: HttpRequest
-        :param response: The response received by the server. Is None if no response received.
-        :type response: HttpResponse
-        """
-        self.kind = SpanKind.CLIENT
-        self.add_attribute(self._span_component, "http")
-        self.add_attribute(self._http_method, request.method)
-        self.add_attribute(self._http_url, request.url)
-        user_agent = request.headers.get("User-Agent")
-        if user_agent:
-            self.add_attribute(self._http_user_agent, user_agent)
-        if response:
-            self.add_attribute(self._http_status_code, response.status_code)
-        else:
-            self.add_attribute(self._http_status_code, 504)
 
     def get_trace_parent(self):
         """Return traceparent string as defined in W3C trace context specification.
