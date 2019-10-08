@@ -185,7 +185,7 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
         # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
-        if test_config._test_config.host == "https://localhost:443/":
+        if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
             self.validate_query_requests_count(query_iterable, 16 * 2)
         else:
             self.validate_query_requests_count(query_iterable, 17 * 2)
