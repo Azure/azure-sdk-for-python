@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
+import warnings
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
@@ -226,7 +227,20 @@ class OpenCensusSpan(object):
         :param span: The span to set the current span as
         :type span: :class: opencensus.trace.Span
         """
+        warnings.warn("set_current_span is deprecated, use change_context instead", DeprecationWarning)
         return execution_context.set_current_span(span)
+
+    @classmethod
+    def change_context(cls, span):
+        # type: (Span) -> ContextManager
+        """Change the context for the life of this context manager.
+        """
+        original_span = cls.get_current_span()
+        try:
+            execution_context.set_current_span(span)
+            yield
+        finally:
+            execution_context.set_current_span(original_span)
 
     @classmethod
     def set_current_tracer(cls, tracer):

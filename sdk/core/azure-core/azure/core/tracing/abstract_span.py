@@ -163,6 +163,12 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
+    def change_context(cls, span):
+        # type: (Span) -> ContextManager
+        """Change the context for the life of this context manager.
+        """
+
+    @classmethod
     def with_current_context(cls, func):
         # type: (Callable) -> Callable
         """Passes the current spans to the new context the function will be run in.
