@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 18:53:50 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragefed91ce5.blob.core.windows.net/utcontainerfed91ce5?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 18:53:50 GMT
+      etag: '"0x8D74E7C5B02146B"'
+      last-modified: Fri, 11 Oct 2019 18:53:50 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragefed91ce5.blob.core.windows.net
+        - /utcontainerfed91ce5
+        - timeout=5&restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 18:53:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstoragefed91ce5.blob.core.windows.net/utcontainerfed91ce5?restype=account&comp=properties&se=2019-10-11T19:53:51Z&sp=r&sv=2019-02-02&sr=c&sig=xTjbV6zrP1NZ/uBjW19UMZt05lWZO%2BaDLy32BVFJmc8%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 18:53:50 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-account-kind: StorageV2
+      x-ms-sku-name: Standard_LRS
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragefed91ce5.blob.core.windows.net
+        - /utcontainerfed91ce5
+        - restype=account&comp=properties&se=2019-10-11T19:53:51Z&sp=r&sv=2019-02-02&sr=c&sig=xTjbV6zrP1NZ/uBjW19UMZt05lWZO%2BaDLy32BVFJmc8%3D
+        - ''
+version: 1

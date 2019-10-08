@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:25:22 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage52771ddb.blob.core.windows.net/utcontainer52771ddb?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 01:25:22 GMT
+      etag: '"0x8D74DE9E2C1CB1B"'
+      last-modified: Fri, 11 Oct 2019 01:25:22 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage52771ddb.blob.core.windows.net
+        - /utcontainer52771ddb
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      If-Unmodified-Since:
+      - Fri, 11 Oct 2019 01:10:22 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:25:22 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - af924911-9072-4aaa-ba52-25496a0d3683
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage52771ddb.blob.core.windows.net/utcontainer52771ddb?comp=lease&restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:6c6dc182-601e-0114-27d2-7f6139000000\nTime:2019-10-11T01:25:22.4675830Z</Message></Error>"
+    headers:
+      content-length: '252'
+      content-type: application/xml
+      date: Fri, 11 Oct 2019 01:25:22 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ConditionNotMet
+      x-ms-version: '2019-02-02'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage52771ddb.blob.core.windows.net
+        - /utcontainer52771ddb
+        - comp=lease&restype=container
+        - ''
+version: 1
