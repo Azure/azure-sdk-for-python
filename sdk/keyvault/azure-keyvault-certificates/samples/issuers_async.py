@@ -5,7 +5,8 @@
 import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.certificates.aio import AdministratorDetails, CertificateClient
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import AdministratorDetails
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ async def run_sample():
         issuer1 = await client.get_issuer(name="issuer1")
 
         print(issuer1.name)
-        print(issuer1.provider)
+        print(issuer1.properties.provider)
         print(issuer1.account_id)
 
         for admin_detail in issuer1.admin_details:
@@ -72,7 +73,7 @@ async def run_sample():
 
         async for issuer in issuers:
             print(issuer.name)
-            print(issuer.properties.provider)
+            print(issuer.provider)
 
         # Finally, we delete our first issuer by name.
         await client.delete_issuer(name="issuer1")
