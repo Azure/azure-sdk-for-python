@@ -192,7 +192,12 @@ class Test_retry_policy_tests(unittest.TestCase):
             result_docs = list(docs)
             self.assertEqual(result_docs[0]['id'], 'doc1')
             self.assertEqual(result_docs[1]['id'], 'doc2')
-            self.assertEqual(mf.counter, 15)
+
+            # TODO: Differing result between live and emulator
+            if 'localhost' in self.host or '127.0.0.1' in self.host:
+                self.assertEqual(mf.counter, 12)
+            else:
+                self.assertEqual(mf.counter, 18)
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
 

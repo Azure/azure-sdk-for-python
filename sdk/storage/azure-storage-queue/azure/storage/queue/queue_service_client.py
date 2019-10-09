@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._shared.models import AccountPermissions, ResourceTypes
+    from ._shared.models import AccountSasPermissions, ResourceTypes
     from .models import (
         QueueProperties,
         Logging,
@@ -73,7 +73,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_queue_samples_authentication.py
             :start-after: [START create_queue_service_client]
             :end-before: [END create_queue_service_client]
@@ -133,7 +134,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
@@ -149,7 +151,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountPermissions, str]
+            permission,  # type: Union[AccountSasPermissions, str]
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
@@ -159,9 +161,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         Use the returned signature with the credential parameter of any Queue Service.
 
-        :param ~azure.storage.queue._shared.models.ResourceTypes resource_types:
+        :param ~azure.storage.queue.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.queue._shared.models.AccountPermissions permission:
+        :param ~azure.storage.queue.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
         :param expiry:
@@ -171,14 +173,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
@@ -229,7 +231,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
+        :rtype: ~azure.storage.queue.StorageServiceStats
         """
         try:
             return self._client.service.get_statistics( # type: ignore
@@ -245,9 +247,10 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
+        :rtype: ~azure.storage.queue.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START get_queue_service_properties]
                 :end-before: [END get_queue_service_properties]
@@ -278,25 +281,26 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.queue.models.Logging
+        :type logging: ~azure.storage.queue.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
-        :type hour_metrics: ~azure.storage.queue.models.Metrics
+        :type hour_metrics: ~azure.storage.queue.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for queues.
-        :type minute_metrics: ~azure.storage.queue.models.Metrics
+        :type minute_metrics: ~azure.storage.queue.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.queue.models.CorsRule`)
+        :type cors: list(~azure.storage.queue.CorsRule)
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START set_queue_service_properties]
                 :end-before: [END set_queue_service_properties]
@@ -344,7 +348,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :returns: An iterable (auto-paging) of QueueProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.core.queue.models.QueueProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_list_queues]
                 :end-before: [END qsc_list_queues]
@@ -384,9 +389,10 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_create_queue]
                 :end-before: [END qsc_create_queue]
@@ -420,12 +426,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param queue:
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START qsc_delete_queue]
                 :end-before: [END qsc_delete_queue]
@@ -446,11 +453,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param queue:
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.models.QueueProperties
+        :type queue: str or ~azure.storage.queue.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
         :rtype: ~azure.core.queue.queue_client.QueueClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_service.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]

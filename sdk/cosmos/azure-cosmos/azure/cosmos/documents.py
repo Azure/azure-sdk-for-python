@@ -375,7 +375,7 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
-        int or azure.cosmos.ConnectionRetryPolicy or requests.packages.urllib3.util.retry
+        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
     """
 
     __defaultRequestTimeout = 60000  # milliseconds

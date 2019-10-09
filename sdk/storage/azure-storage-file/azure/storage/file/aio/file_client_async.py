@@ -22,7 +22,6 @@ from .._generated.version import VERSION
 from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
 from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -30,6 +29,7 @@ from .._deserialize import deserialize_file_properties, deserialize_file_stream
 from ..file_client import FileClient as FileClientBase
 from ._polling_async import CloseHandlesAsync
 from .models import HandlesPaged
+from .download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -45,7 +45,7 @@ async def _upload_file_helper(
     content_settings,
     validate_content,
     timeout,
-    max_connections,
+    max_concurrency,
     file_settings,
     file_attributes="none",
     file_creation_time="now",
@@ -76,7 +76,7 @@ async def _upload_file_helper(
             total_size=size,
             chunk_size=file_settings.max_range_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             timeout=timeout,
             **kwargs
@@ -111,7 +111,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         or share, in which case the file and/or share must also be specified.
     :param share: The share for the file. If specified, this value will override
         a share value specified in the file URL.
-    :type share: str or ~azure.storage.file.models.ShareProperties
+    :type share: str or ~azure.storage.file.ShareProperties
     :param str file_path:
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
@@ -162,7 +162,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
@@ -174,7 +174,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -195,7 +195,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
@@ -244,7 +245,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         metadata=None,  # type: Optional[Dict[str, str]]
         content_settings=None,  # type: Optional[ContentSettings]
         validate_content=False,  # type: bool
-        max_connections=1,  # type: Optional[int]
+        max_concurrency=1,  # type: Optional[int]
         file_attributes="none",  # type: Union[str, NTFSAttributes]
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
@@ -264,7 +265,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -273,7 +274,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -284,7 +285,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -306,7 +307,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
@@ -340,7 +342,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             content_settings,
             validate_content,
             timeout,
-            max_connections,
+            max_concurrency,
             self._config,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
@@ -374,7 +376,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
@@ -403,7 +406,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.file.models.FileProperties
+        :type copy_id: str or ~azure.storage.file.FileProperties
         :rtype: None
         """
         try:
@@ -449,7 +452,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
@@ -463,7 +467,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Offset value must not be None if length is set.")
 
         downloader = StorageStreamDownloader(
-            service=self._client.file,
+            client=self._client.file,
             config=self._config,
             offset=offset,
             length=length,
@@ -488,7 +492,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]
@@ -510,7 +515,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
-        :rtype: ~azure.storage.file.models.FileProperties
+        :rtype: ~azure.storage.file.FileProperties
         """
         try:
             file_props = await self._client.file.get_properties(
@@ -537,7 +542,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
-        :param ~azure.storage.file.models.ContentSettings content_settings:
+        :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -545,7 +550,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -851,8 +856,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItems
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.models.Handle]
+        :returns: An auto-paging iterable of HandleItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
@@ -880,7 +885,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
-        :type handle: str or ~azure.storage.file.models.Handle
+        :type handle: str or ~azure.storage.file.Handle
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A long-running poller to get operation status.

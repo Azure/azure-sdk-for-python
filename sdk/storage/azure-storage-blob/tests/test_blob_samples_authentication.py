@@ -46,13 +46,13 @@ class TestAuthSamples(StorageTestCase):
         # [START auth_from_connection_string_container]
         from azure.storage.blob import ContainerClient
         container_client = ContainerClient.from_connection_string(
-            self.connection_string, container="mycontainer")
+            self.connection_string, container_name="mycontainer")
         # [END auth_from_connection_string_container]
 
         # [START auth_from_connection_string_blob]
         from azure.storage.blob import BlobClient
         blob_client = BlobClient.from_connection_string(
-            self.connection_string, container="mycontainer", blob="blobname.txt")
+            self.connection_string, container_name="mycontainer", blob_name="blobname.txt")
         # [END auth_from_connection_string_blob]
 
         # Get account information for the Blob Service
@@ -73,14 +73,14 @@ class TestAuthSamples(StorageTestCase):
     def test_auth_blob_url(self):
         # [START create_blob_client]
         from azure.storage.blob import BlobClient
-        blob_client = BlobClient(blob_url="https://account.blob.core.windows.net/container/blob-name")
+        blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
         # [END create_blob_client]
 
         # [START create_blob_client_sas_url]
         from azure.storage.blob import BlobClient
 
         sas_url = "https://account.blob.core.windows.net/container/blob-name?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
-        blob_client = BlobClient(sas_url)
+        blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
     @record
@@ -115,11 +115,11 @@ class TestAuthSamples(StorageTestCase):
         # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client
         from datetime import datetime, timedelta
-        from azure.storage.blob import ResourceTypes, AccountPermissions
+        from azure.storage.blob import ResourceTypes, AccountSasPermissions
 
         sas_token = blob_service_client.generate_shared_access_signature(
             resource_types=ResourceTypes.OBJECT,
-            permission=AccountPermissions.READ,
+            permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]

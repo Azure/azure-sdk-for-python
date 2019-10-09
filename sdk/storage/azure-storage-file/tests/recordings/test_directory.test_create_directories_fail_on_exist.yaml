@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c06a9d98-d055-11e9-b738-001a7dda7113
+      - 4eeae6f0-d9a6-11e9-8321-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:23:53 GMT
+      - Tue, 17 Sep 2019 23:53:12 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -37,31 +37,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 06 Sep 2019 03:23:54 GMT
+      - Tue, 17 Sep 2019 23:53:12 GMT
       ETag:
-      - '"0x8D73279A56CAA95"'
+      - '"0x8D73BCA332A16A7"'
       Last-Modified:
-      - Fri, 06 Sep 2019 03:23:54 GMT
+      - Tue, 17 Sep 2019 23:53:12 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - c06a9d98-d055-11e9-b738-001a7dda7113
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2019-09-06T03:23:54.4008341Z'
+      - '2019-09-17T23:53:12.4043431Z'
       x-ms-file-creation-time:
-      - '2019-09-06T03:23:54.4008341Z'
+      - '2019-09-17T23:53:12.4043431Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-06T03:23:54.4008341Z'
+      - '2019-09-17T23:53:12.4043431Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
       - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - efc16608-f01a-0023-1d62-64c937000000
+      - def673bb-501a-002a-5cb3-6d8ce4000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -81,13 +79,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - c145a752-d055-11e9-b42e-001a7dda7113
+      - 4f07479e-d9a6-11e9-b20f-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 03:23:54 GMT
+      - Tue, 17 Sep 2019 23:53:12 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -103,22 +101,20 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The
-        specified resource already exists.\nRequestId:efc1661f-f01a-0023-3262-64c937000000\nTime:2019-09-06T03:23:55.2365840Z</Message></Error>"
+        specified resource already exists.\nRequestId:def673bd-501a-002a-5db3-6d8ce4000000\nTime:2019-09-17T23:53:12.4661550Z</Message></Error>"
     headers:
       Content-Length:
       - '228'
       Content-Type:
       - application/xml
       Date:
-      - Fri, 06 Sep 2019 03:23:55 GMT
+      - Tue, 17 Sep 2019 23:53:12 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id:
-      - c145a752-d055-11e9-b42e-001a7dda7113
       x-ms-error-code:
       - ResourceAlreadyExists
       x-ms-request-id:
-      - efc1661f-f01a-0023-3262-64c937000000
+      - def673bd-501a-002a-5db3-6d8ce4000000
       x-ms-version:
       - '2019-02-02'
     status:

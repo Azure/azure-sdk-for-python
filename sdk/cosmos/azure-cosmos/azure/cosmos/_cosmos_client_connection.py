@@ -26,7 +26,7 @@
 """
 from typing import Dict, Any, Optional
 import six
-from requests.packages.urllib3.util.retry import Retry  # pylint: disable=import-error
+from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
 from azure.core.pipeline.policies import (  # type: ignore
