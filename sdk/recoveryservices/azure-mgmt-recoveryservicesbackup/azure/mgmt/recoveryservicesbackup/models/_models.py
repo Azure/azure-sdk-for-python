@@ -7971,14 +7971,21 @@ class InquiryInfo(Model):
 class InquiryValidation(Model):
     """Validation for inquired protectable items under a given container.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param status: Status for the Inquiry Validation.
     :type status: str
     :param error_detail: Error Detail in case the status is non-success.
     :type error_detail: ~azure.mgmt.recoveryservicesbackup.models.ErrorDetail
-    :param additional_detail: Error Additional Detail in case the status is
+    :ivar additional_detail: Error Additional Detail in case the status is
      non-success.
-    :type additional_detail: str
+    :vartype additional_detail: str
     """
+
+    _validation = {
+        'additional_detail': {'readonly': True},
+    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
@@ -7990,7 +7997,7 @@ class InquiryValidation(Model):
         super(InquiryValidation, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.error_detail = kwargs.get('error_detail', None)
-        self.additional_detail = kwargs.get('additional_detail', None)
+        self.additional_detail = None
 
 
 class InstantItemRecoveryTarget(Model):
