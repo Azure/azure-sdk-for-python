@@ -231,14 +231,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                     retry_active = False
                 else:
                     await asyncio.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
                     chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
                         raise StopIteration()
-                    self.downloaded += chunk
+                    self.downloaded += len(chunk)
                     return chunk
                 continue
             except StreamConsumedError:
