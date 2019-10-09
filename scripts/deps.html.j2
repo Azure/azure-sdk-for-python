@@ -48,6 +48,9 @@
       th.inconsistent {
         background-color: #FF0000;
       }
+      th.version_conflicts {
+        background-color: #FF0000;
+      }
       td.version {
           width: 75px;
       }
@@ -155,6 +158,9 @@
         {% endif %}
         {% else %}
         <strong>No lockfile is present in the repo, declared dependency versions were not able to be validated.</strong><br/>
+        {% endif %}
+        {% if version_conflicts %}
+        <br/><strong>{{ version_conflicts|length }} out of date metapackage {{ pluralize(version_conflicts|length,'requirement was','requirements were') }} discovered.</strong><br/>
         {% endif %}
         <br/>This report scanned {{ packages|length }} <a href="#packages">{{ pluralize(packages|length,'package','packages') }}</a>.
       </p>
@@ -275,6 +281,24 @@
           <td>{{ name }}</td>
           <td>{{ info.version }}</td>
           <td>{{ info.source }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <br/><br/><hr/><br/><br/>
+      <a name="version_conflicts"/>
+      <table class="condensed">
+        <thead>
+          <tr><th colspan="4" class="version_conflicts"><strong>Metadata package out of date requirements</strong></th></tr>
+          <tr><th>Meta package</th><th>Requirement</th><th>Required Version</th><th>Current Version</th></tr>
+        </thead>
+        <tbody>
+        {% for pkg_info in version_conflicts %}
+        <tr>
+          <td>{{ pkg_info.required_by }}</td>
+          <td>{{ pkg_info.library_name }}</td>          
+          <td>{{ pkg_info.required_version }}</td>
+          <td>{{ pkg_info.current_version }}</td>
         </tr>
         {% endfor %}
         </tbody>

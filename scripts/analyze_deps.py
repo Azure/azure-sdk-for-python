@@ -10,6 +10,8 @@ from pkg_resources import Requirement
 import re
 import sys
 import textwrap
+from packaging.version import Version
+from packaging.specifiers import SpecifierSet
 
 def should_skip_lib(lib_name):
     skip_pkgs = [
@@ -152,6 +154,37 @@ def render_report(output_path, report_context):
     template = env.get_template('deps.html.j2')
     with io.open(output_path, 'w', encoding='utf-8') as output:
         output.write(template.render(report_context))
+
+def should_filter_metapackage(package_name):
+    excluded_metapackages = [
+        'azure-storage-blob',
+        'azure-storage-file',
+        'azure-storage-queue'
+    ]
+    return package_name in excluded_metapackages
+
+def find_required_version_conflicts(packages, dependencies):
+    package_conflicts = []
+    for required_pkg in sorted(dependencies.keys()):
+        #Skip third party packages. Validate against Azure packages only
+        lib_info = packages.get(required_pkg)
+        if lib_info is None or should_filter_metapackage(required_pkg):
+            continue
+            
+        current_ver = Version(packages[required_pkg]['version'])
+        #compare current version against required specification in setup.py
+        for spec in dependencies[required_pkg].keys():
+            if spec:
+                version_spec = SpecifierSet(spec)
+                if current_ver not in version_spec:
+                    #add all packages that require a version of required library which conflicts with current version
+                    for dependent_lib in dependencies[required_pkg][spec]:                        
+                        pkg_info = {"library_name": required_pkg, "current_version": current_ver, "required_by": dependent_lib, "required_version":version_spec}
+                        package_conflicts.append(pkg_info)                        
+                        if args.verbose:
+                            conflict = "{0} version {1} conflicts with version requirement {2} for library {3}".format(required_pkg, current_ver, version_spec, dependent_lib)
+                            print(conflict)
+    return package_conflicts
 
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -311,6 +344,14 @@ if __name__ == '__main__':
     elif inconsistent:
         exitcode = 1
     
+    print("\nVerifying Metadata package out of date requirements")
+    pkg_conflicts = find_required_version_conflicts(packages, dependencies)
+    if pkg_conflicts:
+        print('\nMetadata package out of date requirements found')
+        exitcode = 1
+    else:
+        print('All metadata package requirements verified. No out of date requirements were found')
+
     if exitcode == 1:
         if not args.verbose:
             print('\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
@@ -340,6 +381,7 @@ if __name__ == '__main__':
             'override_count': override_count,
             'overrides': overrides,
             'packages': packages,
+            'version_conflicts': pkg_conflicts,
             'repo_name': 'azure-sdk-for-python'
         })
 
