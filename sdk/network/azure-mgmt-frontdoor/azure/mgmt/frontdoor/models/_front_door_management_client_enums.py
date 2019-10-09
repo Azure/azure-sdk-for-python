@@ -19,7 +19,7 @@ class NetworkOperationStatus(str, Enum):
     failed = "Failed"
 
 
-class NetworkExperimentationResourceState(str, Enum):
+class NetworkExperimentResourceState(str, Enum):
 
     creating = "Creating"
     enabling = "Enabling"

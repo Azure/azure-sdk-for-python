@@ -142,7 +142,7 @@ from ._paged_models import ProfilePaged
 from ._paged_models import WebApplicationFirewallPolicyPaged
 from ._front_door_management_client_enums import (
     NetworkOperationStatus,
-    NetworkExperimentationResourceState,
+    NetworkExperimentResourceState,
     State,
     AggregationInterval,
     TimeseriesType,
@@ -254,7 +254,7 @@ __all__ = [
     'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',
     'NetworkOperationStatus',
-    'NetworkExperimentationResourceState',
+    'NetworkExperimentResourceState',
     'State',
     'AggregationInterval',
     'TimeseriesType',

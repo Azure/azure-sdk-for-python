@@ -671,7 +671,7 @@ class Experiment(Resource):
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
-     ~azure.mgmt.frontdoor.models.NetworkExperimentationResourceState
+     ~azure.mgmt.frontdoor.models.NetworkExperimentResourceState
     :ivar status: The description of Experiment status from the server side
     :vartype status: str
     :ivar script_file_uri: The uri to the Script used in the Experiment
@@ -1994,7 +1994,7 @@ class Profile(Resource):
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
-     ~azure.mgmt.frontdoor.models.NetworkExperimentationResourceState
+     ~azure.mgmt.frontdoor.models.NetworkExperimentResourceState
     :param enabled_state: The state of the Experiment. Possible values
      include: 'Enabled', 'Disabled'
     :type enabled_state: str or ~azure.mgmt.frontdoor.models.State
