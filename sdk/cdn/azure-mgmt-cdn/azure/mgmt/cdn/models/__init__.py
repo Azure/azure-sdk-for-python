@@ -66,9 +66,9 @@ try:
     from .load_parameters_py3 import LoadParameters
     from .origin_py3 import Origin
     from .origin_update_parameters_py3 import OriginUpdateParameters
+    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
     from .custom_domain_py3 import CustomDomain
     from .custom_domain_parameters_py3 import CustomDomainParameters
-    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
     from .cdn_certificate_source_parameters_py3 import CdnCertificateSourceParameters
     from .cdn_managed_https_parameters_py3 import CdnManagedHttpsParameters
     from .key_vault_certificate_source_parameters_py3 import KeyVaultCertificateSourceParameters
@@ -146,9 +146,9 @@ except (SyntaxError, ImportError):
     from .load_parameters import LoadParameters
     from .origin import Origin
     from .origin_update_parameters import OriginUpdateParameters
+    from .custom_domain_https_parameters import CustomDomainHttpsParameters
     from .custom_domain import CustomDomain
     from .custom_domain_parameters import CustomDomainParameters
-    from .custom_domain_https_parameters import CustomDomainHttpsParameters
     from .cdn_certificate_source_parameters import CdnCertificateSourceParameters
     from .cdn_managed_https_parameters import CdnManagedHttpsParameters
     from .key_vault_certificate_source_parameters import KeyVaultCertificateSourceParameters
@@ -265,9 +265,9 @@ __all__ = [
     'LoadParameters',
     'Origin',
     'OriginUpdateParameters',
+    'CustomDomainHttpsParameters',
     'CustomDomain',
     'CustomDomainParameters',
-    'CustomDomainHttpsParameters',
     'CdnCertificateSourceParameters',
     'CdnManagedHttpsParameters',
     'KeyVaultCertificateSourceParameters',

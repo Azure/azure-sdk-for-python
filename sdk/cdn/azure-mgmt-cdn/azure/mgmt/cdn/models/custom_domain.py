@@ -50,6 +50,10 @@ class CustomDomain(ProxyResource):
      'CertificateDeleted'
     :vartype custom_https_provisioning_substate: str or
      ~azure.mgmt.cdn.models.CustomHttpsProvisioningSubstate
+    :param custom_https_parameters: Certificate parameters for securing custom
+     HTTPS
+    :type custom_https_parameters:
+     ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
     :param validation_data: Special validation or data may be required when
      delivering CDN to some regions due to local compliance reasons. E.g. ICP
      license number of a custom domain is required to deliver content in China.
@@ -77,6 +81,7 @@ class CustomDomain(ProxyResource):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
         'custom_https_provisioning_substate': {'key': 'properties.customHttpsProvisioningSubstate', 'type': 'str'},
+        'custom_https_parameters': {'key': 'properties.customHttpsParameters', 'type': 'CustomDomainHttpsParameters'},
         'validation_data': {'key': 'properties.validationData', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -87,5 +92,6 @@ class CustomDomain(ProxyResource):
         self.resource_state = None
         self.custom_https_provisioning_state = None
         self.custom_https_provisioning_substate = None
+        self.custom_https_parameters = kwargs.get('custom_https_parameters', None)
         self.validation_data = kwargs.get('validation_data', None)
         self.provisioning_state = None
