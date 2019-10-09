@@ -764,26 +764,25 @@ class ComputeInstanceConnectivityEndpoints(Model):
 
     :ivar public_ip_address: Public IP Address of this ComputeInstance.
     :vartype public_ip_address: str
-    :ivar application_uris: Describes available applications and their
-     connectivity endpoint URIs.
-    :vartype application_uris:
-     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplicationUri]
+    :ivar private_ip_address: Private IP Address of this ComputeInstance
+     (local to the VNET in which the compute instance is deployed).
+    :vartype private_ip_address: str
     """
 
     _validation = {
         'public_ip_address': {'readonly': True},
-        'application_uris': {'readonly': True},
+        'private_ip_address': {'readonly': True},
     }
 
     _attribute_map = {
         'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'application_uris': {'key': 'applicationUris', 'type': '[ComputeInstanceApplicationUri]'},
+        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ComputeInstanceConnectivityEndpoints, self).__init__(**kwargs)
         self.public_ip_address = None
-        self.application_uris = None
+        self.private_ip_address = None
 
 
 class ComputeInstanceCreatedBy(Model):
@@ -966,14 +965,14 @@ class ComputeInstanceProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
-    :param instance_sharing: Sharing policy for this compute instance. Policy
-     for sharing this compute instance among users of parent workspace. If
-     Disabled, only the creator can access applications on this compute
-     instance. When enabled any workspace user can access applications on this
-     instance depending on his/her assigned role. Possible values include:
-     'Enabled', 'Disabled'. Default value: "Disabled" .
-    :type instance_sharing: str or
-     ~azure.mgmt.machinelearningservices.models.InstanceSharing
+    :param application_sharing_policy: Sharing policy for applictions on this
+     compute instance. Policy for sharing applications on this compute instance
+     among users of parent workspace. If Personal, only the creator can access
+     applications on this compute instance. When Shared, any workspace user can
+     access applications on this instance depending on his/her assigned role.
+     Possible values include: 'Personal', 'Shared'. Default value: "Shared" .
+    :type application_sharing_policy: str or
+     ~azure.mgmt.machinelearningservices.models.ApplicationSharingPolicy
     :param datastores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
     :type datastores_mount_settings:
@@ -993,6 +992,10 @@ class ComputeInstanceProperties(Model):
      available for this ComputeInstance.
     :vartype connectivity_endpoints:
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceConnectivityEndpoints
+    :ivar application_uris: Describes available applications and their
+     endpoints on this ComputeInstance.
+    :vartype application_uris:
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplicationUri]
     :ivar created_by: Describes information on user who created this
      ComputeInstance.
     :vartype created_by:
@@ -1012,6 +1015,7 @@ class ComputeInstanceProperties(Model):
 
     _validation = {
         'connectivity_endpoints': {'readonly': True},
+        'application_uris': {'readonly': True},
         'created_by': {'readonly': True},
         'errors': {'readonly': True},
         'state': {'readonly': True},
@@ -1020,12 +1024,13 @@ class ComputeInstanceProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'instance_sharing': {'key': 'instanceSharing', 'type': 'str'},
+        'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
         'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
         'custom_script_settings': {'key': 'customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
         'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
+        'application_uris': {'key': 'applicationUris', 'type': '[ComputeInstanceApplicationUri]'},
         'created_by': {'key': 'createdBy', 'type': 'ComputeInstanceCreatedBy'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
@@ -1035,12 +1040,13 @@ class ComputeInstanceProperties(Model):
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
         self.subnet = kwargs.get('subnet', None)
-        self.instance_sharing = kwargs.get('instance_sharing', "Disabled")
+        self.application_sharing_policy = kwargs.get('application_sharing_policy', "Shared")
         self.datastores_mount_settings = kwargs.get('datastores_mount_settings', None)
         self.custom_script_settings = kwargs.get('custom_script_settings', None)
         self.software_update_settings = kwargs.get('software_update_settings', None)
         self.ssh_settings = kwargs.get('ssh_settings', None)
         self.connectivity_endpoints = None
+        self.application_uris = None
         self.created_by = None
         self.errors = None
         self.state = None
@@ -1145,6 +1151,8 @@ class ComputeInstanceSshSettings(Model):
      ~azure.mgmt.machinelearningservices.models.SshPublicAccess
     :ivar admin_user_name: Describes the admin user name.
     :vartype admin_user_name: str
+    :ivar ssh_port: Describes the port for connecting through SSH.
+    :vartype ssh_port: int
     :param admin_public_key: Specifies the SSH rsa public key file as a
      string. Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.
     :type admin_public_key: str
@@ -1152,11 +1160,13 @@ class ComputeInstanceSshSettings(Model):
 
     _validation = {
         'admin_user_name': {'readonly': True},
+        'ssh_port': {'readonly': True},
     }
 
     _attribute_map = {
         'ssh_public_access': {'key': 'sshPublicAccess', 'type': 'str'},
         'admin_user_name': {'key': 'adminUserName', 'type': 'str'},
+        'ssh_port': {'key': 'sshPort', 'type': 'int'},
         'admin_public_key': {'key': 'adminPublicKey', 'type': 'str'},
     }
 
@@ -1164,6 +1174,7 @@ class ComputeInstanceSshSettings(Model):
         super(ComputeInstanceSshSettings, self).__init__(**kwargs)
         self.ssh_public_access = kwargs.get('ssh_public_access', "Disabled")
         self.admin_user_name = None
+        self.ssh_port = None
         self.admin_public_key = kwargs.get('admin_public_key', None)
 
 
