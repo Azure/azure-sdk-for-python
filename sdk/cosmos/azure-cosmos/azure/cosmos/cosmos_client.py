@@ -22,14 +22,14 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-# pylint: disable=unused-import
-from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List
+from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
+from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .errors import CosmosResourceNotFoundError
@@ -97,11 +97,25 @@ def _build_connection_policy(kwargs):
 
     # Retry config
     retry = kwargs.pop('retry_options', None) or policy.RetryOptions
-    retry._max_retry_attempt_count = kwargs.pop('retry_total', None) or retry._max_retry_attempt_count
+    total_retries = kwargs.pop('retry_total', None)
+    retry._max_retry_attempt_count = total_retries or retry._max_retry_attempt_count
     retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
         retry._fixed_retry_interval_in_milliseconds
-    retry._max_wait_time_in_seconds = kwargs.pop('retry_backoff_max', None) or retry._max_wait_time_in_seconds
+    max_backoff = kwargs.pop('retry_backoff_max', None)
+    retry._max_wait_time_in_seconds = max_backoff or retry._max_wait_time_in_seconds
     policy.RetryOptions = retry
+    connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
+    if not connection_retry:
+        connection_retry = ConnectionRetryPolicy(
+            retry_total=total_retries,
+            retry_connect=kwargs.pop('retry_connect', None),
+            retry_read=kwargs.pop('retry_read', None),
+            retry_status=kwargs.pop('retry_status', None),
+            retry_backoff_max=max_backoff,
+            retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
+            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
+        )
+    policy.ConnectionRetryConfiguration = connection_retry
 
     return policy
 
@@ -114,39 +128,61 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential:
         Can be the account key, or a dictionary of resource tokens.
-    :type credential: str or dict(str, str)
+    :type credential: str or dict[str, str]
     :param str consistency_level:
         Consistency level to use for the session. The default value is "Session".
 
     **Keyword arguments:**
 
-    *request_timeout* - The HTTP request timeout in seconds.
-    *media_request_timeout* - The media request timeout in seconds.
-    *connection_mode* - The connection mode for the client - currently only supports 'Gateway'.
-    *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
-    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration
-    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration
-    *connection_verify* - Whether to verify the connection, default value is True.
-    *connection_cert* - An alternative certificate to verify the connection.
-    *retry_total* - Maximum retry attempts.
-    *retry_backoff_max* - Maximum retry wait time in seconds.
-    *retry_fixed_interval* - Fixed retry interval in milliseconds.
-    *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
-    *preferred_locations* - The preferred locations for geo-replicated database accounts.
-        When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
-        the client will use this list to evaluate the final location, taking into consideration
-        the order specified in `preferred_locations` list. The locations in this list are specified
-        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
-        and so on.
-    *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
+    *timeout* - An absolute timeout in seconds, for the combined HTTP request and response processing.
 
-    .. literalinclude:: ../../samples/examples.py
-        :start-after: [START create_client]
-        :end-before: [END create_client]
-        :language: python
-        :dedent: 0
-        :caption: Create a new instance of the Cosmos DB client:
-        :name: create_client
+    *request_timeout* - The HTTP request timeout in seconds.
+
+    *media_request_timeout* - The media request timeout in seconds.
+
+    *connection_mode* - The connection mode for the client - currently only supports 'Gateway'.
+
+    *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
+
+    *proxy_config* - Instance of `azure.cosmos.ProxyConfiguration`.
+
+    *ssl_config* - Instance of `azure.cosmos.SSLConfiguration`.
+
+    *connection_verify* - Whether to verify the connection, default value is True.
+
+    *connection_cert* - An alternative certificate to verify the connection.
+
+    *retry_total* - Maximum retry attempts.
+
+    *retry_backoff_max* - Maximum retry wait time in seconds.
+
+    *retry_fixed_interval* - Fixed retry interval in milliseconds.
+
+    *retry_read* - Maximum number of socket read retry attempts.
+
+    *retry_connect* - Maximum number of connection error retry attempts.
+
+    *retry_status* - Maximum number of retry attempts on error status codes.
+
+    *retry_on_status_codes* - A list of specific status codes to retry on.
+
+    *retry_backoff_factor* - Factor to calculate wait time between retry attempts.
+
+    *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
+
+    *preferred_locations* - The preferred locations for geo-replicated database accounts.
+
+    *connection_policy* - An instance of `azure.cosmos.documents.ConnectionPolicy`
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/examples.py
+            :start-after: [START create_client]
+            :end-before: [END create_client]
+            :language: python
+            :dedent: 0
+            :caption: Create a new instance of the Cosmos DB client:
+            :name: create_client
     """
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
@@ -214,24 +250,28 @@ class CosmosClient(object):
 
         :param id: ID (name) of the database to create.
         :param str session_token: Token for use with Session consistency.
-        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
-        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
-        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the new database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
-        :raises `CosmosResourceExistsError`: If database with the given ID already exists.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.errors.CosmosResourceExistsError: Database with the given ID already exists.
 
-        .. literalinclude:: ../../samples/examples.py
-            :start-after: [START create_database]
-            :end-before: [END create_database]
-            :language: python
-            :dedent: 0
-            :caption: Create a database in the Cosmos DB account:
-            :name: create_database
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
         """
 
         request_options = build_options(kwargs)
@@ -264,15 +304,18 @@ class CosmosClient(object):
 
         :param id: ID (name) of the database to read or create.
         :param str session_token: Token for use with Session consistency.
-        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
-        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
-        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
-        :raise CosmosHttpResponseError: The database read or creation failed.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The database read or creation failed.
         """
         try:
             database_proxy = self.get_database_client(id)
@@ -296,9 +339,9 @@ class CosmosClient(object):
 
         :param database: The ID (name), dict representing the properties or `DatabaseProxy`
             instance of the database to read.
-        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :returns: A `DatabaseProxy` instance representing the retrieved database.
-        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :rtype: ~azure.cosmos.DatabaseProxy
         """
         if isinstance(database, DatabaseProxy):
             id_value = database.id
@@ -322,9 +365,11 @@ class CosmosClient(object):
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, str] feed_options: Dictionary of additional properties to be used for the request.
+        :param feed_options: Dictionary of additional properties to be used for the request.
+        :type feed_options: dict[str, str]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
@@ -361,9 +406,11 @@ class CosmosClient(object):
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, Any] feed_options: Dictionary of additional properties to be used for the request.
+        :param feed_options: Dictionary of additional properties to be used for the request.
+        :type feed_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
@@ -404,14 +451,17 @@ class CosmosClient(object):
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
-        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :param str session_token: Token for use with Session consistency.
-        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :param dict[str, str] access_condition: Conditions Associated with the request.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :type initial_headers: dict[str, str]
+        :param access_condition: Conditions Associated with the request.
+        :type access_condition: dict[str, str]
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param dict[str, str] request_options: Dictionary of additional properties to be used for the request.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
-        :raise CosmosHttpResponseError: If the database couldn't be deleted.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -432,7 +482,7 @@ class CosmosClient(object):
 
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.documents.DatabaseAccount
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
