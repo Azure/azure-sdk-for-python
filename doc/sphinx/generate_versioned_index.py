@@ -20,7 +20,8 @@ CONFIG_FILE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "./package_service_mapping.json"
 )
 logging.getLogger().setLevel(logging.INFO)
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+location = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.abspath(os.path.join(location, "..", ".."))
 
 TOC_TEMPLATE = """
 .. toctree::
@@ -29,7 +30,28 @@ TOC_TEMPLATE = """
   :caption: {category}
 
   {members}
+
 """
+
+LANDING_TEMPLATE = """
+{package_name}
+{package_name_title_indicator}
+
+Published Versions
+------------------
+
+.. raw:: html
+
+    <embed>
+        <ul id="versions"></ul>
+        <script type="text/javascript">
+            populateIndexList('#versions', '{package_name}')
+        </script>
+    </embed>
+
+"""
+
+LANDING_PAGE_LOCATION = "ref/{}.rst"
 
 PACKAGE_REDIRECTIONS = {
     "azure-eventhubs": "azure-eventhub",
@@ -40,6 +62,15 @@ def read_config_file(config_path=CONFIG_FILE):
     with open(CONFIG_FILE, "r") as f:
         return json.load(f)
 
+def check_package_against_omission(package_name):
+    if "nspkg" in package_name:
+        return False
+
+    if "azure" == package_name:
+        return False
+
+    return True
+
 def get_repo_packages(base_dir):
     packages = [
         os.path.basename(os.path.dirname(p))
@@ -48,6 +79,8 @@ def get_repo_packages(base_dir):
         )
     ]
 
+    packages = [p for p in packages if check_package_against_omission(p)]
+
     for redirection in PACKAGE_REDIRECTIONS:
         if redirection in packages:
             packages.remove(redirection)
@@ -55,8 +88,38 @@ def get_repo_packages(base_dir):
 
     return sorted(packages)
 
-def write_landing_pages(categorized_menu_items):
-    print(categorized_menu_items)
+def write_landing_pages(package_names):
+    for pkg in package_names:
+        with open(os.path.join(location, 'ref/{}.rst'.format(pkg)), 'w') as f:
+            content = LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["="] * len(pkg)))
+            f.write(content)
+
+def write_toc_tree(categorized_menu_items):
+    toc_tree_contents = ""
+
+    for key in categorized_menu_items:
+        formatted_locations = [LANDING_PAGE_LOCATION.format(p) for p in categorized_menu_items[key]]
+        category_toc_contents = TOC_TEMPLATE.format(category = key, members = "\n  ".join(formatted_locations))
+
+        toc_tree_contents += category_toc_contents
+
+    with open(os.path.join(location, 'toc_tree.rst'), 'w') as f:
+        f.write(toc_tree_contents)
+
+
+def get_categorized_menu_items(package_names):
+    categorized_menu_items = {"Client": [], "Management": [], "Other": []}
+
+    for pkg in package_names:
+        # add to the categorized menu items
+        if pkg in service_mapping:
+            pkg_meta = service_mapping[pkg]
+            categorized_menu_items[pkg_meta["category"]].append(pkg)
+        else:
+            categorized_menu_items["Other"].append(pkg)
+
+    return categorized_menu_items
+    
 
 # output everything to the _docs
 if __name__ == "__main__":
@@ -80,17 +143,13 @@ if __name__ == "__main__":
     service_mapping = read_config_file()
     all_packages = get_repo_packages(root_dir)
 
+    # write all the landing pages that will reach out to the appropriate location
     write_landing_pages(all_packages)
 
-    categorized_menu_items = {"Client": [], "Management": [], "Other": []}
+    # work up where stuff should exist in the ToC
+    categorized_menu_items = get_categorized_menu_items(all_packages)
 
-    for pkg in all_packages:
-        # add to the categorized menu items
-        if pkg in service_mapping:
-            pkg_meta = service_mapping[pkg]
-            categorized_menu_items[pkg_meta["category"]].append(pkg)
-        else:
-            categorized_menu_items["Other"].append(pkg)
+    # write the ToC
+    write_toc_tree(categorized_menu_items)
 
-        # generate the individual landing page
-
+    # ready to run sphinx!
