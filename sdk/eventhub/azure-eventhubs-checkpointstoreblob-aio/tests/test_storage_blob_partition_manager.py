@@ -28,7 +28,7 @@ def get_live_storage_blob_client():
     container_str = str(uuid.uuid4())
     blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
     blob_service_client.create_container(container_str)
-    container_client = ContainerClient.from_connection_string(storage_connection_str, container=container_str)
+    container_client = ContainerClient.from_connection_string(storage_connection_str, container_str)
     return container_str, container_client
 
 
