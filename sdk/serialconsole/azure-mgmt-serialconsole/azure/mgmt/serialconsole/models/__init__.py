@@ -10,22 +10,22 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .serial_console_get_result_py3 import SerialConsoleGetResult
-    from .get_disabled_result_py3 import GetDisabledResult
-    from .set_disabled_result_py3 import SetDisabledResult
-    from .deployment_validate_result_py3 import DeploymentValidateResult, DeploymentValidateResultException
-    from .serial_console_operations_py3 import SerialConsoleOperations
+    from ._models_py3 import DisableSerialConsoleResult
+    from ._models_py3 import EnableSerialConsoleResult
+    from ._models_py3 import GetSerialConsoleResult
+    from ._models_py3 import GetSerialConsoleSubscriptionNotFound
+    from ._models_py3 import SerialConsoleOperations
 except (SyntaxError, ImportError):
-    from .serial_console_get_result import SerialConsoleGetResult
-    from .get_disabled_result import GetDisabledResult
-    from .set_disabled_result import SetDisabledResult
-    from .deployment_validate_result import DeploymentValidateResult, DeploymentValidateResultException
-    from .serial_console_operations import SerialConsoleOperations
+    from ._models import DisableSerialConsoleResult
+    from ._models import EnableSerialConsoleResult
+    from ._models import GetSerialConsoleResult
+    from ._models import GetSerialConsoleSubscriptionNotFound
+    from ._models import SerialConsoleOperations
 
 __all__ = [
-    'SerialConsoleGetResult',
-    'GetDisabledResult',
-    'SetDisabledResult',
-    'DeploymentValidateResult', 'DeploymentValidateResultException',
+    'DisableSerialConsoleResult',
+    'EnableSerialConsoleResult',
+    'GetSerialConsoleResult',
+    'GetSerialConsoleSubscriptionNotFound',
     'SerialConsoleOperations',
 ]
