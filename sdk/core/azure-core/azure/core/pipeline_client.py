@@ -60,7 +60,7 @@ class PipelineClient(PipelineClientBase):
     Builds a Pipeline client.
 
     :param str base_url: URL for the request.
-    :keyword Configuration config: If omitted, it will be used by the PipelineClient.
+    :keyword Configuration config: If omitted, the config object will be used by the PipelineClient.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
     :keyword HttpTranpost transport: If omitted, RequestsTransport is used for synchronous transport.
@@ -79,7 +79,7 @@ class PipelineClient(PipelineClientBase):
 
     def __init__(self, base_url, **kwargs):
         super(PipelineClient, self).__init__(base_url)
-        self._config = kwargs.get("config", None) or Configuration(**kwargs)
+        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
         if kwargs.get("pipeline"):
             self._pipeline = kwargs["pipeline"]
