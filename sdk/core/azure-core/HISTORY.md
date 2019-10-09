@@ -3,7 +3,7 @@
 
 -------------------
 
-## 2019-XX-XX Versuib 1.0.0
+## 2019-XX-XX Version 1.0.0
 
 ### Bug fixes
 
