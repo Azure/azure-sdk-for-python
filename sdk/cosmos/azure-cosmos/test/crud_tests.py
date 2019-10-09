@@ -41,6 +41,8 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -53,7 +55,8 @@ from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
 from azure.cosmos import _retry_utility
-from requests.packages.urllib3.util.retry import Retry
+import requests
+from urllib3.util.retry import Retry
 from requests.exceptions import ConnectionError
 
 
@@ -65,6 +68,26 @@ pytestmark = pytest.mark.cosmosEmulator
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+
+class TimeoutTransport(RequestsTransport):
+
+    def __init__(self, response):
+        self._response = response
+        super(TimeoutTransport, self).__init__()
+
+    def send(self, *args, **kwargs):
+        if kwargs.pop("passthrough", False):
+            return super(TimeoutTransport, self).send(*args, **kwargs)
+
+        time.sleep(5)
+        if isinstance(self._response, Exception):
+            raise self._response
+        output = requests.Response()
+        output.status_code = self._response
+        response = RequestsTransportResponse(None, output)
+        return response
+
 
 @pytest.mark.usefixtures("teardown")
 class CRUDTests(unittest.TestCase):
@@ -1977,7 +2000,7 @@ class CRUDTests(unittest.TestCase):
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0
+        connection_policy.RequestTimeout =  0.000000000001
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
@@ -1985,7 +2008,7 @@ class CRUDTests(unittest.TestCase):
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0
+        connection_policy.RequestTimeout =  0.000000000001
         connection_policy.ConnectionRetryConfiguration = Retry(
                                                             total=3,
                                                             read=3,
@@ -1993,32 +2016,94 @@ class CRUDTests(unittest.TestCase):
                                                             backoff_factor=0.3,
                                                             status_forcelist=(500, 502, 504)
                                                         )
-        with self.assertRaises(Exception):
+        with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
     def test_client_connection_retry_configuration(self):
-        total_time_for_two_retries = self.initialize_client_with_connection_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_retry_config(3)
+        total_time_for_two_retries = self.initialize_client_with_connection_urllib_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_urllib_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
 
-    def initialize_client_with_connection_retry_config(self, retries):
-        from azure.core.exceptions import ServiceRequestError
-        connection_policy = documents.ConnectionPolicy()
-        connection_policy.ConnectionRetryConfiguration = Retry(
-                                                            total=retries,
-                                                            read=retries,
-                                                            connect=retries,
-                                                            backoff_factor=0.3,
-                                                            status_forcelist=(500, 502, 504)
-                                                        )
+        total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
+        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
+
+    def initialize_client_with_connection_urllib_retry_config(self, retries):
+        retry_policy = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 504)
+        )
         start_time = time.time()
         try:
-            cosmos_client.CosmosClient("https://localhost:9999", CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                connection_retry_policy=retry_policy)
             self.fail()
-        except ServiceRequestError as e:
+        except AzureError as e:
             end_time = time.time()
             return end_time - start_time
+
+    def initialize_client_with_connection_core_retry_config(self, retries):
+        start_time = time.time()
+        try:
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=retries,
+                retry_read=retries,
+                retry_connect=retries,
+                retry_status=retries)
+            self.fail()
+        except AzureError as e:
+            end_time = time.time()
+            return end_time - start_time
+
+    def test_absolute_client_timeout(self):
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=3,
+                timeout=1)
+
+        error_response = ServiceResponseError("Read timeout")
+        timeout_transport = TimeoutTransport(error_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        status_response = 500  # Users connection level retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            list(databases)
+
+        status_response = 429  # Uses Cosmos custom retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(errors.CosmosClientTimeoutError):
+            list(databases)
+
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):
