@@ -7,7 +7,8 @@
 
 ### Bug fixes
 
-- Fix AsyncioRequestsTransport is input stream is an async generator  #7743
+- Fix AsyncioRequestsTransport if input stream is an async generator  #7743
+- Fix form-data with aiohttp transport  #7749
 
 ## 2019-10-07 Version 1.0.0b4
 

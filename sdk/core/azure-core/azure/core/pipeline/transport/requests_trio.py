@@ -98,7 +98,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     retry_active = False
                 else:
                     await trio.sleep(1000)
-                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
@@ -114,7 +114,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                         )
                     if not chunk:
                         raise StopIteration()
-                    self.downloaded += chunk
+                    self.downloaded += len(chunk)
                     return chunk
                 continue
             except requests.exceptions.StreamConsumedError:
