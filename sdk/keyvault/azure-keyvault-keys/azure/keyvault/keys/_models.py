@@ -64,11 +64,11 @@ class JsonWebKey(object):
 class KeyProperties(object):
     """A key's id and attributes."""
 
-    def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.KeyAttributes, str, **Any) -> None
+    def __init__(self, key_id, attributes=None, **kwargs):
+        # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
-        self._id = vault_id
-        self._vault_id = parse_vault_id(vault_id)
+        self._id = key_id
+        self._vault_id = parse_vault_id(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
@@ -80,13 +80,15 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
-        return cls(key_bundle.attributes, key_bundle.key.kid, managed=key_bundle.managed, tags=key_bundle.tags)
+        return cls(
+            key_bundle.key.kid, attributes=key_bundle.attributes, managed=key_bundle.managed, tags=key_bundle.tags
+        )
 
     @classmethod
     def _from_key_item(cls, key_item):
         # type: (_models.KeyItem) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyItem"""
-        return cls(key_item.attributes, key_item.kid, managed=key_item.managed, tags=key_item.tags)
+        return cls(key_id=key_item.kid, attributes=key_item.attributes, managed=key_item.managed, tags=key_item.tags)
 
     @property
     def id(self):
@@ -186,12 +188,48 @@ class KeyProperties(object):
 
 
 class KeyVaultKey(object):
-    """A key's attributes and cryptographic material"""
+    """A key's attributes and cryptographic material.
 
-    def __init__(self, properties, key_material):
-        # type: (KeyProperties, _models.JsonWebKey, **Any) -> None
-        self._properties = properties
-        self._key_material = key_material
+    :param str key_id:
+        Key Vault's identifier for the key. Typically a URI, e.g. https://myvault.vault.azure.net/keys/my-key/version
+    :param jwk:
+        The key's cryptographic material as a JSON Web Key (https://tools.ietf.org/html/rfc7517). This may be provided
+        as a dictionary or keyword arguments. See :class:`~azure.keyvault.keys.models.JsonWebKey` for field names.
+
+    Providing cryptographic material as keyword arguments:
+
+    .. code-block:: python
+
+        from azure.keyvault.keys.models import Key
+
+        key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
+        key_bytes = os.urandom(32)
+        key = Key(key_id, k=key_bytes, kty='oct', key_ops=['unwrapKey', 'wrapKey'])
+
+    Providing cryptographic material as a dictionary:
+
+    .. code-block:: python
+
+        from azure.keyvault.keys.models import Key
+
+        key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
+        key_bytes = os.urandom(32)
+        jwk = {'k': key_bytes, 'kty': 'oct', 'key_ops': ['unwrapKey', 'wrapKey']}
+        key = Key(key_id, jwk=jwk)
+
+    """
+
+    def __init__(self, key_id, jwk=None, **kwargs):
+        # type: (str, Optional[JsonWebKey], **Any) -> None
+        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+        if isinstance(jwk, dict):
+            if any(field in kwargs for field in JsonWebKey.FIELDS):
+                raise ValueError(
+                    "Individual keyword arguments for key material and the 'jwk' argument are mutually exclusive."
+                )
+            self._key_material = JsonWebKey(**jwk)
+        else:
+            self._key_material = JsonWebKey(**kwargs)
 
     def __repr__(self):
         # type () -> str
@@ -202,8 +240,9 @@ class KeyVaultKey(object):
         # type: (_models.KeyBundle) -> KeyVaultKey
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
         return cls(
+            key_id=key_bundle.key.kid,
+            jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey.FIELDS},
             properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
-            key_material=key_bundle.key,
         )
 
     @property
@@ -229,7 +268,7 @@ class KeyVaultKey(object):
 
     @property
     def key(self):
-        # type: () -> _models.JsonWebKey
+        # type: () -> JsonWebKey
         """The JSON web key
 
         :rtype: ~azure.keyvault.keys.JsonWebKey
@@ -262,13 +301,13 @@ class DeletedKey(KeyVaultKey):
     def __init__(
         self,
         properties,  # type: KeyProperties
-        key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(DeletedKey, self).__init__(properties, key_material)
+        super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -283,7 +322,8 @@ class DeletedKey(KeyVaultKey):
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         return cls(
             properties=KeyProperties._from_key_bundle(deleted_key_bundle),  # pylint: disable=protected-access
-            key_material=deleted_key_bundle.key,
+            key_id=deleted_key_bundle.key.kid,
+            jwk={field: getattr(deleted_key_bundle.key, field, None) for field in JsonWebKey.FIELDS},
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
             scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
@@ -295,6 +335,7 @@ class DeletedKey(KeyVaultKey):
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
             properties=KeyProperties._from_key_item(deleted_key_item),  # pylint: disable=protected-access
+            key_id=deleted_key_item.kid,
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
             scheduled_purge_date=deleted_key_item.scheduled_purge_date,
