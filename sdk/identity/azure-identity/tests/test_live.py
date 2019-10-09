@@ -62,24 +62,30 @@ def test_confidential_client_credential(live_service_principal):
 
 
 @pytest.mark.skipif("TEST_IMDS" not in os.environ, reason="To test IMDS authentication, set $TEST_IMDS with any value")
-def test_imds_credential():
+def test_imds_credential(managed_identity_id):
     get_token(ImdsCredential())
+    if managed_identity_id:
+        get_token(ImdsCredential(client_id=managed_identity_id))
 
 
 @pytest.mark.skipif(
     EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET in os.environ,
     reason="Legacy MSI unavailable",
 )
-def test_msi_legacy():
+def test_msi_legacy(managed_identity_id):
     get_token(MsiCredential())
+    if managed_identity_id:
+        get_token(ImdsCredential(client_id=managed_identity_id))
 
 
 @pytest.mark.skipif(
     EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET not in os.environ,
     reason="App Service MSI unavailable",
 )
-def test_msi_app_service():
+def test_msi_app_service(managed_identity_id):
     get_token(MsiCredential())
+    if managed_identity_id:
+        get_token(ImdsCredential(client_id=managed_identity_id))
 
 
 def test_username_password_auth(live_user_details):

@@ -90,3 +90,8 @@ def live_user_details():
 def prints():
     if stdout_captured:
         pytest.skip("This test prints to stdout. Run pytest with '-s' to ensure the output is visible.")
+
+
+@pytest.fixture()
+def managed_identity_id():
+    return os.environ.get("MANAGED_IDENTITY_ID")
