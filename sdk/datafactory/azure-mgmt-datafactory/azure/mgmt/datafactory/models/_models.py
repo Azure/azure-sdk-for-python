@@ -334,9 +334,9 @@ class LinkedService(Model):
     MongoDbV2LinkedService, MongoDbLinkedService, CassandraLinkedService,
     WebLinkedService, ODataLinkedService, HdfsLinkedService,
     MicrosoftAccessLinkedService, InformixLinkedService, OdbcLinkedService,
-    AzureMLLinkedService, TeradataLinkedService, Db2LinkedService,
-    SybaseLinkedService, PostgreSqlLinkedService, MySqlLinkedService,
-    AzureMySqlLinkedService, OracleLinkedService,
+    AzureMLServiceLinkedService, AzureMLLinkedService, TeradataLinkedService,
+    Db2LinkedService, SybaseLinkedService, PostgreSqlLinkedService,
+    MySqlLinkedService, AzureMySqlLinkedService, OracleLinkedService,
     GoogleCloudStorageLinkedService, AzureFileStorageLinkedService,
     FileServerLinkedService, HDInsightLinkedService,
     CommonDataServiceForAppsLinkedService, DynamicsCrmLinkedService,
@@ -380,7 +380,7 @@ class LinkedService(Model):
     }
 
     _subtype_map = {
-        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
+        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
     }
 
     def __init__(self, **kwargs):
@@ -2815,9 +2815,9 @@ class ExecutionActivity(Activity):
     sub-classes are: ExecuteDataFlowActivity, AzureFunctionActivity,
     DatabricksSparkPythonActivity, DatabricksSparkJarActivity,
     DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
-    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
-    GetMetadataActivity, WebActivity, LookupActivity,
-    AzureDataExplorerCommandActivity, DeleteActivity,
+    AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity,
+    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
+    LookupActivity, AzureDataExplorerCommandActivity, DeleteActivity,
     SqlServerStoredProcedureActivity, CustomActivity,
     ExecuteSSISPackageActivity, HDInsightSparkActivity,
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
@@ -2862,7 +2862,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
     def __init__(self, **kwargs):
@@ -4304,8 +4304,90 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         self.type = 'AzureMLBatchExecution'
 
 
+class AzureMLExecutePipelineActivity(ExecutionActivity):
+    """Azure ML Execute Pipeline activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param ml_pipeline_id: Required. ID of the published Azure ML pipeline.
+     Type: string (or Expression with resultType string).
+    :type ml_pipeline_id: object
+    :param experiment_name: Run history experiment name of the pipeline run.
+     This information will be passed in the ExperimentName property of the
+     published pipeline execution request. Type: string (or Expression with
+     resultType string).
+    :type experiment_name: object
+    :param ml_pipeline_parameters: Key,Value pairs to be passed to the
+     published Azure ML pipeline endpoint. Keys must match the names of
+     pipeline parameters defined in the published pipeline. Values will be
+     passed in the ParameterAssignments property of the published pipeline
+     execution request. Type: object with key value pairs (or Expression with
+     resultType object).
+    :type ml_pipeline_parameters: object
+    :param ml_parent_run_id: The parent Azure ML Service pipeline run id. This
+     information will be passed in the ParentRunId property of the published
+     pipeline execution request. Type: string (or Expression with resultType
+     string).
+    :type ml_parent_run_id: object
+    :param continue_on_step_failure: Whether to continue execution of other
+     steps in the PipelineRun if a step fails. This information will be passed
+     in the continueOnStepFailure property of the published pipeline execution
+     request. Type: boolean (or Expression with resultType boolean).
+    :type continue_on_step_failure: object
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'ml_pipeline_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'ml_pipeline_id': {'key': 'typeProperties.mlPipelineId', 'type': 'object'},
+        'experiment_name': {'key': 'typeProperties.experimentName', 'type': 'object'},
+        'ml_pipeline_parameters': {'key': 'typeProperties.mlPipelineParameters', 'type': 'object'},
+        'ml_parent_run_id': {'key': 'typeProperties.mlParentRunId', 'type': 'object'},
+        'continue_on_step_failure': {'key': 'typeProperties.continueOnStepFailure', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureMLExecutePipelineActivity, self).__init__(**kwargs)
+        self.ml_pipeline_id = kwargs.get('ml_pipeline_id', None)
+        self.experiment_name = kwargs.get('experiment_name', None)
+        self.ml_pipeline_parameters = kwargs.get('ml_pipeline_parameters', None)
+        self.ml_parent_run_id = kwargs.get('ml_parent_run_id', None)
+        self.continue_on_step_failure = kwargs.get('continue_on_step_failure', None)
+        self.type = 'AzureMLExecutePipeline'
+
+
 class AzureMLLinkedService(LinkedService):
-    """Azure ML Web Service linked service.
+    """Azure ML Studio Web Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4326,22 +4408,23 @@ class AzureMLLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param ml_endpoint: Required. The Batch Execution REST URL for an Azure ML
-     Web Service endpoint. Type: string (or Expression with resultType string).
+     Studio Web Service endpoint. Type: string (or Expression with resultType
+     string).
     :type ml_endpoint: object
     :param api_key: Required. The API key for accessing the Azure ML model
      endpoint.
     :type api_key: ~azure.mgmt.datafactory.models.SecretBase
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
-     ML Web Service endpoint. Type: string (or Expression with resultType
-     string).
+     ML Studio Web Service endpoint. Type: string (or Expression with
+     resultType string).
     :type update_resource_endpoint: object
     :param service_principal_id: The ID of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
-     web service. Type: string (or Expression with resultType string).
+     Studio web service. Type: string (or Expression with resultType string).
     :type service_principal_id: object
     :param service_principal_key: The key of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
-     web service.
+     Studio web service.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
@@ -4384,6 +4467,88 @@ class AzureMLLinkedService(LinkedService):
         self.tenant = kwargs.get('tenant', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureML'
+
+
+class AzureMLServiceLinkedService(LinkedService):
+    """Azure ML Service linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param subscription_id: Required. Azure ML Service workspace subscription
+     ID. Type: string (or Expression with resultType string).
+    :type subscription_id: object
+    :param resource_group_name: Required. Azure ML Service workspace resource
+     group name. Type: string (or Expression with resultType string).
+    :type resource_group_name: object
+    :param ml_workspace_name: Required. Azure ML Service workspace name. Type:
+     string (or Expression with resultType string).
+    :type ml_workspace_name: object
+    :param service_principal_id: The ID of the service principal used to
+     authenticate against the endpoint of a published Azure ML Service
+     pipeline. Type: string (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_key: The key of the service principal used to
+     authenticate against the endpoint of a published Azure ML Service
+     pipeline.
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param tenant: The name or ID of the tenant to which the service principal
+     belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'subscription_id': {'required': True},
+        'resource_group_name': {'required': True},
+        'ml_workspace_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'subscription_id': {'key': 'typeProperties.subscriptionId', 'type': 'object'},
+        'resource_group_name': {'key': 'typeProperties.resourceGroupName', 'type': 'object'},
+        'ml_workspace_name': {'key': 'typeProperties.mlWorkspaceName', 'type': 'object'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
+        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureMLServiceLinkedService, self).__init__(**kwargs)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.ml_workspace_name = kwargs.get('ml_workspace_name', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'AzureMLService'
 
 
 class AzureMLUpdateResourceActivity(ExecutionActivity):
