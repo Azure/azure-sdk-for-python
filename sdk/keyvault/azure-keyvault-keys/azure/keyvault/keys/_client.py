@@ -53,9 +53,16 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.enums.KeyType
+        :type key_type: str or ~azure.keyvault.keys.KeyType
+        :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
+        :param key_operations: (optional) Allowed key operations
+        :type key_operations: list(str or ~azure.keyvault.keys.KeyOperation)
+        :param expires: (optional) Expiry date of the key in UTC
+        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
+        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+        :type curve: ~azure.keyvault.keys.KeyCurveName or str
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -103,9 +110,15 @@ class KeyClient(KeyVaultClientBase):
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
-        :param str name: The name for the new key
+        :param str name: The name for the new key. Key Vault will generate the key's version.
+        :param bool hsm: Whether to create a hardware key (HSM) or software key
+        :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
+        :param key_operations: (optional) Allowed key operations
+        :type key_operations: list(str or ~azure.keyvault.keys.KeyOperation)
+        :param expires: (optional) Expiry date of the key in UTC
+        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -136,8 +149,15 @@ class KeyClient(KeyVaultClientBase):
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
+        :param bool hsm: Whether to create as a hardware key (HSM) or software key.
+        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+        :type curve: ~azure.keyvault.keys.KeyCurveName or str
+        :param key_operations: (optional) Allowed key operations
+        :type key_operations: list(~azure.keyvault.keys.KeyOperation)
+        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
+        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -169,7 +189,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key to delete.
         :returns: The deleted key
-        :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -193,7 +213,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -219,7 +239,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key
         :returns: The deleted key
-        :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -243,7 +263,7 @@ class KeyClient(KeyVaultClientBase):
         enabled. Requires the keys/list permission.
 
         :returns: An iterator of deleted keys
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.DeletedKey]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.DeletedKey]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -267,7 +287,7 @@ class KeyClient(KeyVaultClientBase):
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -292,7 +312,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key
         :returns: An iterator of keys without their cryptographic material
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.models.KeyProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.keys.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -344,7 +364,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the deleted key
         :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -365,9 +385,13 @@ class KeyClient(KeyVaultClientBase):
         permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
+        :param str version: (optional) The version of the key to update
+        :param key_operations: (optional) Allowed key operations
+        :type key_operations: list(str or ~azure.keyvault.keys.KeyOperation)
+        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
+        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The updated key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -443,7 +467,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -467,9 +491,9 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
-        :type key: ~azure.keyvault.keys.models.JsonWebKey
+        :type key: ~azure.keyvault.keys.JsonWebKey
         :returns: The imported key
-        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments

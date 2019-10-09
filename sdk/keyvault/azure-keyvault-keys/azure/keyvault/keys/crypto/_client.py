@@ -29,10 +29,10 @@ class CryptographyClient(KeyVaultClientBase):
     Performs cryptographic operations using Azure Key Vault keys.
 
     :param key:
-        Either a :class:`~azure.keyvault.keys.models.KeyVaultKey` instance as returned by
+        Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
         If a string, the value must be the full identifier of an Azure Key Vault key with a version.
-    :type key: str or :class:`~azure.keyvault.keys.models.KeyVaultKey`
+    :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -109,10 +109,10 @@ class CryptographyClient(KeyVaultClientBase):
     def _get_key(self, **kwargs):
         # type: (**Any) -> Optional[KeyVaultKey]
         """
-        Get the client's :class:`~azure.keyvault.keys.models.KeyVaultKey`.
+        Get the client's :class:`~azure.keyvault.keys.KeyVaultKey`.
         Can be ``None``, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.KeyVaultKey` or ``None``
+        :rtype: :class:`~azure.keyvault.keys.KeyVaultKey` or ``None``
         """
 
         if not (self._key or self._keys_get_forbidden):

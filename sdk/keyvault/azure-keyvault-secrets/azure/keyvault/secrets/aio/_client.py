@@ -42,7 +42,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
-        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
+        :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -65,7 +65,10 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
+        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
+        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
+        :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
+        :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -105,7 +108,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -150,7 +153,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         the secrets/list permission.
 
         :returns: An iterator of secrets
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.SecretProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -175,7 +178,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :returns: An iterator of secrets
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.SecretProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -222,7 +225,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -243,7 +246,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
         :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -265,7 +268,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         permission.
 
         :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -287,7 +290,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         secrets/list permission.
 
         :returns: An iterator of deleted secrets
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.DeletedSecret]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.DeletedSecret]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -333,7 +336,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :returns: The recovered secret
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
