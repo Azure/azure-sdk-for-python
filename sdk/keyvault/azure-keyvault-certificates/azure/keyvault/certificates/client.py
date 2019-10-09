@@ -85,7 +85,7 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop("enabled", None)
+        tags = kwargs.pop('tags', None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -323,7 +323,6 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -337,7 +336,6 @@ class CertificateClient(KeyVaultClientBase):
             password=password,
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=tags,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -418,7 +416,6 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -430,7 +427,6 @@ class CertificateClient(KeyVaultClientBase):
             certificate_name=name,
             certificate_version=version or "",
             certificate_attributes=attributes,
-            tags=tags,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -755,7 +751,6 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -766,7 +761,6 @@ class CertificateClient(KeyVaultClientBase):
             certificate_name=name,
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
-            tags=tags,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)

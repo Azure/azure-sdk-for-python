@@ -36,3 +36,14 @@ def deserialize_container_properties(response, obj, headers):
         **headers
     )
     return container_properties
+
+
+def get_page_ranges_result(ranges):
+    # type: (PageList) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
+    page_range = [] # type: ignore
+    clear_range = [] # type: List
+    if ranges.page_range:
+        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
+    if ranges.clear_range:
+        clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
+    return page_range, clear_range  # type: ignore

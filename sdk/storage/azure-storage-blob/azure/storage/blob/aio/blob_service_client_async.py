@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from .._shared.models import AccountPermissions, ResourceTypes
+    from .._shared.models import AccountSasPermissions, ResourceTypes
     from .lease_async import LeaseClient
     from ..models import (
         BlobProperties,
@@ -80,7 +80,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
@@ -99,7 +100,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -107,15 +107,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         super(BlobServiceClient, self).__init__(
             account_url,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
-                                      timeout=None,  # type: Optional[int]
                                       **kwargs  # type: Any
                                       ):
         # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
@@ -123,16 +121,17 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
 
-        :param datetime key_start_time:
+        :param ~datetime.datetime key_start_time:
             A DateTime value. Indicates when the key becomes valid.
-        :param datetime key_expiry_time:
+        :param ~datetime.datetime key_expiry_time:
             A DateTime value. Indicates when the key stops being valid.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The user delegation key.
-        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        :rtype: ~azure.storage.blob.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        timeout = kwargs.pop('timeout', None)
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                      timeout=timeout,
@@ -153,7 +152,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :returns: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
@@ -167,8 +167,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], **Any) -> Dict[str, Any]
+    async def get_service_stats(self, **kwargs): # type: ignore
+        # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -192,7 +192,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :return: The blob service stats.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
@@ -200,6 +201,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 8
                 :caption: Getting service stats for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -207,8 +209,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -216,7 +218,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
@@ -224,6 +227,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 8
                 :caption: Getting service properties for the blob service.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -238,7 +242,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             target_version=None,  # type: Optional[str]
             delete_retention_policy=None,  # type: Optional[RetentionPolicy]
             static_website=None,  # type: Optional[StaticWebsite]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -250,41 +253,37 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         :param logging:
             Groups the Azure Analytics Logging settings.
-        :type logging:
-            :class:`~azure.storage.blob.models.Logging`
+        :type logging: ~azure.storage.blob.Logging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for blobs.
-        :type hour_metrics:
-            :class:`~azure.storage.blob.models.Metrics`
+        :type hour_metrics: ~azure.storage.blob.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for blobs.
-        :type minute_metrics:
-            :class:`~azure.storage.blob.models.Metrics`
+        :type minute_metrics: ~azure.storage.blob.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.blob.models.CorsRule`)
+        :type cors: list[~azure.storage.blob.CorsRule]
         :param str target_version:
             Indicates the default version to use for requests if an incoming
             request's version is not specified.
         :param delete_retention_policy:
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
-        :type delete_retention_policy:
-            :class:`~azure.storage.blob.models.RetentionPolicy`
+        :type delete_retention_policy: ~azure.storage.blob.RetentionPolicy
         :param static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
-        :type static_website:
-            :class:`~azure.storage.blob.models.StaticWebsite`
+        :type static_website: ~azure.storage.blob.StaticWebsite
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
@@ -301,6 +300,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
         )
+        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -310,8 +310,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            results_per_page=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> AsyncItemPaged[ContainerProperties]
@@ -332,9 +330,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.models.ContainerProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.ContainerProperties]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
@@ -343,6 +342,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Listing the containers in the blob service.
         """
         include = 'metadata' if include_metadata else None
+        timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=name_starts_with,
@@ -361,7 +362,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             public_access=None,  # type: Optional[Union[PublicAccess, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerClient
@@ -378,12 +378,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type metadata: dict(str, str)
         :param public_access:
             Possible values include: container, blob.
-        :type public_access: str or ~azure.storage.blob.models.PublicAccess
+        :type public_access: str or ~azure.storage.blob.PublicAccess
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob.aio.container_client_async.ContainerClient
+        :rtype: ~azure.storage.blob.aio.ContainerClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
@@ -392,6 +393,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Creating a container in the blob service.
         """
         container = self.get_container_client(name)
+        timeout = kwargs.pop('timeout', None)
         kwargs.setdefault('merge_span', True)
         await container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
@@ -401,7 +403,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     async def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -413,18 +414,18 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :param ~azure.storage.blob.lease.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :param datetime if_modified_since:
+        :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param datetime if_unmodified_since:
+        :param ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -443,7 +444,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
@@ -453,6 +455,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         container = self.get_container_client(container) # type: ignore
         kwargs.setdefault('merge_span', True)
+        timeout = kwargs.pop('timeout', None)
         await container.delete_container( # type: ignore
             lease=lease,
             timeout=timeout,
@@ -465,13 +468,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The container need not already exist.
 
         :param container:
-            The container. This can either be the name of the container,
-            or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+            The container that the blob is in.
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
-        :rtype: ~azure.core.blob.aio.container_client_async.ContainerClient
+        :rtype: ~azure.core.blob.aio.ContainerClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
@@ -479,8 +482,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 8
                 :caption: Getting the container client to interact with a specific container.
         """
+        try:
+            container_name = container.name
+        except AttributeError:
+            container_name = container
+
         return ContainerClient(
-            self.url, container=container,
+            self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
@@ -497,22 +505,21 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The blob need not already exist.
 
         :param container:
-            The container that the blob is in. This can either be the name of the container,
-            or an instance of ContainerProperties.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+            The container that the blob is in.
+        :type container: str or ~azure.storage.ContainerProperties
         :param blob:
-            The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+            The blob with which to interact.
+        :type blob: str or ~azure.storage.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by
-            :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
+            :func:`~azure.storage.blob.aio.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
-        :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient
+        :rtype: ~azure.storage.blob.aio.BlobClient
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_blob_samples_service_async.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]
@@ -520,8 +527,18 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        try:
+            container_name = container.name
+        except AttributeError:
+            container_name = container
+
+        try:
+            blob_name = blob.name
+        except AttributeError:
+            blob_name = blob
+
         return BlobClient( # type: ignore
-            self.url, container=container, blob=blob, snapshot=snapshot,
+            self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

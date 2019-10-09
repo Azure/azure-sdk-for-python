@@ -50,7 +50,7 @@ from ..queue_client import QueueClient as QueueClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue.models import QueuePermissions, QueueProperties
+    from azure.storage.queue.models import QueueSasPermissions, QueueProperties
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
@@ -78,13 +78,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         account, in which case the queue must also be specified.
     :param queue: The queue. If specified, this value will override
         a queue value specified in the queue URL.
-    :type queue: str or ~azure.storage.queue.models.QueueProperties
+    :type queue: str or ~azure.storage.queue.QueueProperties
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_queue_samples_message_async.py
             :start-after: [START async_create_queue_client]
             :end-before: [END async_create_queue_client]
@@ -133,7 +134,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :raises:
             ~azure.storage.queue._generated.models._models.StorageErrorException
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
                 :start-after: [START async_create_queue]
                 :end-before: [END async_create_queue]
@@ -167,7 +169,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
                 :start-after: [START async_delete_queue]
                 :end-before: [END async_delete_queue]
@@ -190,9 +193,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
-        :rtype: ~azure.storage.queue.models.QueueProperties
+        :rtype: ~azure.storage.queue.QueueProperties
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_get_queue_properties]
                 :end-before: [END async_get_queue_properties]
@@ -223,7 +227,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_set_queue_metadata]
                 :end-before: [END async_set_queue_metadata]
@@ -249,7 +254,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return: A dictionary of access policies associated with the queue.
-        :rtype: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
+        :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
         """
         try:
             _, identifiers = await self._client.queue.get_access_policy(
@@ -280,11 +285,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             A list of SignedIdentifier access policies to associate with the queue.
             The list may contain up to 5 elements. An empty list
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.queue.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_set_access_policy]
                 :end-before: [END async_set_access_policy]
@@ -351,12 +357,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A :class:`~azure.storage.queue.models.QueueMessage` object.
+            A :class:`~azure.storage.queue.QueueMessage` object.
             This object is also populated with the content although it is not
             returned from the service.
-        :rtype: ~azure.storage.queue.models.QueueMessage
+        :rtype: ~azure.storage.queue.QueueMessage
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_enqueue_messages]
                 :end-before: [END async_enqueue_messages]
@@ -420,9 +427,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.models.Message]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.Message]
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_receive_messages]
                 :end-before: [END async_receive_messages]
@@ -490,11 +498,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A :class:`~azure.storage.queue.models.QueueMessage` object. For convenience,
+            A :class:`~azure.storage.queue.QueueMessage` object. For convenience,
             this object is also populated with the content, although it is not returned by the service.
-        :rtype: ~azure.storage.queue.models.QueueMessage
+        :rtype: ~azure.storage.queue.QueueMessage
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_update_message]
                 :end-before: [END async_update_message]
@@ -572,12 +581,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
         :return:
-            A list of :class:`~azure.storage.queue.models.QueueMessage` objects. Note that
+            A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
             time_next_visible and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
-        :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
+        :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_peek_message]
                 :end-before: [END async_peek_message]
@@ -611,7 +621,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_clear_messages]
                 :end-before: [END async_clear_messages]
@@ -647,7 +658,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :param int timeout:
             The server timeout, expressed in seconds.
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
                 :start-after: [START async_delete_message]
                 :end-before: [END async_delete_message]

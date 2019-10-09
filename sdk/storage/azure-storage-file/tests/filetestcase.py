@@ -322,6 +322,8 @@ class FileTestCase(unittest.TestCase):
             response = copy.deepcopy(response)
             headers = response.get('headers')
             if headers:
+                headers.pop('x-ms-client-request-id', None)
+
                 def internal_scrub(key, val):
                     if key.lower() == 'retry-after':
                         return '0'

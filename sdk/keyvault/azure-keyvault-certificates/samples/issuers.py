@@ -70,7 +70,7 @@ try:
 
     for issuer in issuers:
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
 
     # Finally, we delete our first issuer by name.
     client.delete_issuer(name="issuer1")

@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
-    if package_name not in PYLINT_ACCEPTABLE_FAILURES:
+    if package_name not in PYLINT_ACCEPTABLE_FAILURES and "mgmt" not in package_name:
         try:
             check_call(
                 [
