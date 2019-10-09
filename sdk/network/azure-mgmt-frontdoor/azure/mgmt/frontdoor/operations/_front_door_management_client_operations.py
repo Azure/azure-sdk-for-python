@@ -871,9 +871,9 @@ class FrontDoorManagementClientOperationsMixin(object):
         :type aggregation_interval: str or
          ~azure.mgmt.frontdoor.models.TimeseriesAggregationInterval
         :param timeseries_type: The type of Timeseries. Possible values
-         include: 'MeasurementCounts', 'LatencyP50'
+         include: 'MeasurementCounts', 'LatencyP50', 'LatencyP75', 'LatencyP95'
         :type timeseries_type: str or
-         ~azure.mgmt.frontdoor.models.TimeseriesTypes
+         ~azure.mgmt.frontdoor.models.TimeseriesType
         :param endpoint: The specific endpoint
         :type endpoint: str
         :param country: The country associated with the Timeseries. Values are

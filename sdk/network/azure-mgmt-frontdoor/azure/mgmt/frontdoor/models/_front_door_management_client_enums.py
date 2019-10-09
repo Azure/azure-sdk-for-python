@@ -41,10 +41,12 @@ class AggregationInterval(str, Enum):
     daily = "Daily"
 
 
-class TimeseriesTypes(str, Enum):
+class TimeseriesType(str, Enum):
 
     measurement_counts = "MeasurementCounts"
     latency_p50 = "LatencyP50"
+    latency_p75 = "LatencyP75"
+    latency_p95 = "LatencyP95"
 
 
 class EndpointType(str, Enum):

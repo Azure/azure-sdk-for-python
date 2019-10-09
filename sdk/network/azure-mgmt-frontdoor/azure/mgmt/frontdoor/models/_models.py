@@ -2301,8 +2301,8 @@ class Timeseries(Resource):
     :type aggregation_interval: str or
      ~azure.mgmt.frontdoor.models.AggregationInterval
     :param timeseries_type: The type of Timeseries. Possible values include:
-     'MeasurementCounts', 'LatencyP50'
-    :type timeseries_type: str or ~azure.mgmt.frontdoor.models.TimeseriesTypes
+     'MeasurementCounts', 'LatencyP50', 'LatencyP75', 'LatencyP95'
+    :type timeseries_type: str or ~azure.mgmt.frontdoor.models.TimeseriesType
     :param country: The country associated with the Timeseries. Values are
      country ISO codes as specified here-
      https://www.iso.org/iso-3166-country-codes.html
