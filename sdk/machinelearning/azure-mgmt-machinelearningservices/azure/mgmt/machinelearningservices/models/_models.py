@@ -965,7 +965,7 @@ class ComputeInstanceProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
-    :param application_sharing_policy: Sharing policy for applictions on this
+    :param application_sharing_policy: Sharing policy for applications on this
      compute instance. Policy for sharing applications on this compute instance
      among users of parent workspace. If Personal, only the creator can access
      applications on this compute instance. When Shared, any workspace user can
