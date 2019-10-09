@@ -3,6 +3,12 @@
 
 -------------------
 
+## 2019-XX-XX Version 1.0.0
+
+### Bug fixes
+
+- Fix form-data with aiohttp transport  #7749
+
 ## 2019-10-07 Version 1.0.0b4
 
 ### Features
@@ -32,7 +38,7 @@
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
 - Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
 - Some modules and classes that were importables from several differente places have been removed:
-   
+
    - `azure.core.HttpResponseError` is now only `azure.core.exceptions.HttpResponseError`
    - `azure.core.Configuration` is now only `azure.core.configuration.Configuration`
    - `azure.core.HttpRequest` is now only `azure.core.pipeline.transport.HttpRequest`
