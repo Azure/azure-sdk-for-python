@@ -63,7 +63,7 @@ class PipelineClient(PipelineClientBase):
     :keyword Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
-    :keyword HttpTranpost transport: If omitted, RequestsTransport is used for synchronous transport.
+    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
     
