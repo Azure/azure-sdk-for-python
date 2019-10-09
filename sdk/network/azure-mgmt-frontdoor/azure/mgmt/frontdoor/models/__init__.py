@@ -180,7 +180,7 @@ from ._front_door_management_client_enums import (
     ManagedRuleExclusionSelectorMatchOperator,
     ManagedRuleEnabledState,
     PolicyResourceState,
-    LatencyScoreboardAggregationInterval,
+    LatencyScorecardAggregationInterval,
     TimeseriesAggregationInterval,
 )
 
@@ -292,6 +292,6 @@ __all__ = [
     'ManagedRuleExclusionSelectorMatchOperator',
     'ManagedRuleEnabledState',
     'PolicyResourceState',
-    'LatencyScoreboardAggregationInterval',
+    'LatencyScorecardAggregationInterval',
     'TimeseriesAggregationInterval',
 ]

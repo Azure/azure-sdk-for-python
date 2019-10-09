@@ -780,7 +780,7 @@ class FrontDoorManagementClientOperationsMixin(object):
         :param aggregation_interval: The aggregation interval of the Latency
          Scorecard. Possible values include: 'Daily', 'Weekly', 'Monthly'
         :type aggregation_interval: str or
-         ~azure.mgmt.frontdoor.models.LatencyScoreboardAggregationInterval
+         ~azure.mgmt.frontdoor.models.LatencyScorecardAggregationInterval
         :param end_date_time_utc: The end DateTime of the Latency Scorecard in
          UTC
         :type end_date_time_utc: str

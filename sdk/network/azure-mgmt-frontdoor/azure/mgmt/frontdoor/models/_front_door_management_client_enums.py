@@ -305,7 +305,7 @@ class PolicyResourceState(str, Enum):
     deleting = "Deleting"
 
 
-class LatencyScoreboardAggregationInterval(str, Enum):
+class LatencyScorecardAggregationInterval(str, Enum):
 
     daily = "Daily"
     weekly = "Weekly"
