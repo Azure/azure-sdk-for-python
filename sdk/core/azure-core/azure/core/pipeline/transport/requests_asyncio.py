@@ -109,7 +109,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
             new_data = []
             async for part in request.data:
                 new_data.append(part)
-            request.data = iter(new_data)
+            data_to_send = iter(new_data)
+        else:
+            data_to_send = request.data
         try:
             response = await loop.run_in_executor(
                 None,
@@ -118,7 +120,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                     request.method,
                     request.url,
                     headers=request.headers,
-                    data=request.data,
+                    data=data_to_send,
                     files=request.files,
                     verify=kwargs.pop('connection_verify', self.connection_config.verify),
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
