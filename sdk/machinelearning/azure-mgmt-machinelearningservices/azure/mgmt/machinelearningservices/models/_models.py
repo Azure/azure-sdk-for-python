@@ -636,38 +636,15 @@ class ClusterUpdateParameters(Model):
      amlCompute.
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
-    :param datastores_mount_settings: Describes what data stores will be
-     mounted on this compute instance.
-    :type datastores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastoresMountSettings
-    :param custom_script_settings: Specification for initialization scripts to
-     customize this ComputeInstance.
-    :type custom_script_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettings
-    :param software_update_settings: Specifies policies for operating system
-     and Azure ML environment (example packages and SDK) updates.
-    :type software_update_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSoftwareUpdateSettings
-    :param ssh_settings: Specifies policy and settings for SSH access.
-    :type ssh_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
     """
 
     _attribute_map = {
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
-        'datastores_mount_settings': {'key': 'properties.datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
-        'custom_script_settings': {'key': 'properties.customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
-        'software_update_settings': {'key': 'properties.softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
-        'ssh_settings': {'key': 'properties.sshSettings', 'type': 'ComputeInstanceSshSettings'},
     }
 
     def __init__(self, **kwargs):
         super(ClusterUpdateParameters, self).__init__(**kwargs)
         self.scale_settings = kwargs.get('scale_settings', None)
-        self.datastores_mount_settings = kwargs.get('datastores_mount_settings', None)
-        self.custom_script_settings = kwargs.get('custom_script_settings', None)
-        self.software_update_settings = kwargs.get('software_update_settings', None)
-        self.ssh_settings = kwargs.get('ssh_settings', None)
 
 
 class ComputeInstance(Compute):
@@ -819,141 +796,6 @@ class ComputeInstanceCreatedBy(Model):
         self.user_id = None
 
 
-class ComputeInstanceCustomScriptSettings(Model):
-    """Specification for initialization scripts to customize this ComputeInstance.
-
-    :param startup_script: Specifies properties of initialization script to be
-     run during every start of this instance.
-    :type startup_script:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettingsStartupScript
-    """
-
-    _attribute_map = {
-        'startup_script': {'key': 'startupScript', 'type': 'ComputeInstanceCustomScriptSettingsStartupScript'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceCustomScriptSettings, self).__init__(**kwargs)
-        self.startup_script = kwargs.get('startup_script', None)
-
-
-class ComputeInstanceCustomScriptSettingsStartupScript(Model):
-    """Specifies properties of initialization script to be run during every start
-    of this instance.
-
-    :param script_location: The location of customization script. This is a
-     relative file path in the default fileshare in the parent workspace.
-    :type script_location: str
-    :param script_parameters: Parameters required for this script if any.
-    :type script_parameters: str
-    """
-
-    _attribute_map = {
-        'script_location': {'key': 'scriptLocation', 'type': 'str'},
-        'script_parameters': {'key': 'scriptParameters', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
-        self.script_location = kwargs.get('script_location', None)
-        self.script_parameters = kwargs.get('script_parameters', None)
-
-
-class ComputeInstanceDatastore(Model):
-    """Represents specification for datastore requested to be mounted on an
-    AzureML instance as well as its mounting status.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: Name of the datastore to be mounted on an AzureML instance.
-    :type name: str
-    :ivar state: Current state of the datastore on the parent AzureML
-     instance. Possible values include: 'Mounted', 'MountFailed', 'Unmounted'
-    :vartype state: str or
-     ~azure.mgmt.machinelearningservices.models.DatastoreState
-    :ivar error: Describes the error if datastore could not be successfully
-     mounted on the parent AzureML instance.
-    :vartype error: str
-    """
-
-    _validation = {
-        'state': {'readonly': True},
-        'error': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceDatastore, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.state = None
-        self.error = None
-
-
-class ComputeInstanceDatastoresMountSettings(Model):
-    """Describes what data stores will be mounted on this compute instance.
-
-    :param datastore_selection: Allows users to select between mounting All vs
-     Selected datastores from the parent workspace. The 'All' setting also
-     implies that any datastores that later become part of the workspace will
-     be automatically mounted to the compute instance on next start. Possible
-     values include: 'All', 'UserSpecified'. Default value: "All" .
-    :type datastore_selection: str or
-     ~azure.mgmt.machinelearningservices.models.DatastoreSelection
-    :param datastores: Specifies the set of data stores that will be mounted
-     on this compute instance. This should only be specified if
-     dataStoreSelection is set to 'UserSpecified'.
-    :type datastores:
-     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastore]
-    """
-
-    _attribute_map = {
-        'datastore_selection': {'key': 'datastoreSelection', 'type': 'str'},
-        'datastores': {'key': 'datastores', 'type': '[ComputeInstanceDatastore]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceDatastoresMountSettings, self).__init__(**kwargs)
-        self.datastore_selection = kwargs.get('datastore_selection', "All")
-        self.datastores = kwargs.get('datastores', None)
-
-
-class ComputeInstanceOSUpdateSettings(Model):
-    """Specifies policy for installing operation system updates.
-
-    :param os_update_type: Type of automatic operating system updates to
-     install. Possible values include: 'Security', 'Recommended'. Default
-     value: "Recommended" .
-    :type os_update_type: str or
-     ~azure.mgmt.machinelearningservices.models.OsUpdateType
-    :param update_frequency_in_days: Frequency of update checks and
-     installation. Maximum allowable frequency is 30 days. Default frequency
-     will be 14 days.
-    :type update_frequency_in_days: int
-    :param update_hour_in_utc: Hour of the day (0-23) in Universal Time at
-     which software updates can be installed, potentially requiring VM reboot.
-     Default update hour will be 2 AM UTC.
-    :type update_hour_in_utc: int
-    """
-
-    _attribute_map = {
-        'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
-        'update_frequency_in_days': {'key': 'updateFrequencyInDays', 'type': 'int'},
-        'update_hour_in_utc': {'key': 'updateHourInUtc', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceOSUpdateSettings, self).__init__(**kwargs)
-        self.os_update_type = kwargs.get('os_update_type', "Recommended")
-        self.update_frequency_in_days = kwargs.get('update_frequency_in_days', None)
-        self.update_hour_in_utc = kwargs.get('update_hour_in_utc', None)
-
-
 class ComputeInstanceProperties(Model):
     """Compute Instance properties.
 
@@ -973,18 +815,6 @@ class ComputeInstanceProperties(Model):
      Possible values include: 'Personal', 'Shared'. Default value: "Shared" .
     :type application_sharing_policy: str or
      ~azure.mgmt.machinelearningservices.models.ApplicationSharingPolicy
-    :param datastores_mount_settings: Describes what data stores will be
-     mounted on this compute instance.
-    :type datastores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceDatastoresMountSettings
-    :param custom_script_settings: Specification for initialization scripts to
-     customize this ComputeInstance.
-    :type custom_script_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCustomScriptSettings
-    :param software_update_settings: Specifies policies for operating system
-     and Azure ML environment (example packages and SDK) updates.
-    :type software_update_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSoftwareUpdateSettings
     :param ssh_settings: Specifies policy and settings for SSH access.
     :type ssh_settings:
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
@@ -1025,9 +855,6 @@ class ComputeInstanceProperties(Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
         'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
-        'datastores_mount_settings': {'key': 'datastoresMountSettings', 'type': 'ComputeInstanceDatastoresMountSettings'},
-        'custom_script_settings': {'key': 'customScriptSettings', 'type': 'ComputeInstanceCustomScriptSettings'},
-        'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'ComputeInstanceSoftwareUpdateSettings'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
         'application_uris': {'key': 'applicationUris', 'type': '[ComputeInstanceApplicationUri]'},
@@ -1041,98 +868,12 @@ class ComputeInstanceProperties(Model):
         self.vm_size = kwargs.get('vm_size', None)
         self.subnet = kwargs.get('subnet', None)
         self.application_sharing_policy = kwargs.get('application_sharing_policy', "Shared")
-        self.datastores_mount_settings = kwargs.get('datastores_mount_settings', None)
-        self.custom_script_settings = kwargs.get('custom_script_settings', None)
-        self.software_update_settings = kwargs.get('software_update_settings', None)
         self.ssh_settings = kwargs.get('ssh_settings', None)
         self.connectivity_endpoints = None
         self.application_uris = None
         self.created_by = None
         self.errors = None
         self.state = None
-
-
-class ComputeInstanceSdkUpdate(Model):
-    """Describes a specific update for ComputeInstance SDK.
-
-    :param update_name: Short name of the update.
-    :type update_name: str
-    :param update_description: Detailed description of the available SDK
-     update.
-    :type update_description: str
-    :param update_version: Version of this available update.
-    :type update_version: str
-    """
-
-    _attribute_map = {
-        'update_name': {'key': 'updateName', 'type': 'str'},
-        'update_description': {'key': 'updateDescription', 'type': 'str'},
-        'update_version': {'key': 'updateVersion', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceSdkUpdate, self).__init__(**kwargs)
-        self.update_name = kwargs.get('update_name', None)
-        self.update_description = kwargs.get('update_description', None)
-        self.update_version = kwargs.get('update_version', None)
-
-
-class ComputeInstanceSdkUpdateSettings(Model):
-    """Specifies policy for installing Azure ML environment (example packages and
-    SDK) updates.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param update_on_next_start: Specifies if any available Azure ML
-     environment updates should be installed on next instance start. Possible
-     values include: 'Disabled', 'Enabled'. Default value: "Disabled" .
-    :type update_on_next_start: str or
-     ~azure.mgmt.machinelearningservices.models.UpdateOnNextStart
-    :ivar available_updates: Describes available SDK updates for this compute
-     instance.
-    :vartype available_updates:
-     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceSdkUpdate]
-    """
-
-    _validation = {
-        'available_updates': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'update_on_next_start': {'key': 'updateOnNextStart', 'type': 'str'},
-        'available_updates': {'key': 'availableUpdates', 'type': '[ComputeInstanceSdkUpdate]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceSdkUpdateSettings, self).__init__(**kwargs)
-        self.update_on_next_start = kwargs.get('update_on_next_start', "Disabled")
-        self.available_updates = None
-
-
-class ComputeInstanceSoftwareUpdateSettings(Model):
-    """Specifies policies for operating system and Azure ML environment (example
-    packages and SDK) updates.
-
-    :param os_update_settings: Specifies policy for installing operation
-     system updates.
-    :type os_update_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceOSUpdateSettings
-    :param sdk_update_settings: Specifies policy for installing Azure ML
-     environment (example packages and SDK) updates.
-    :type sdk_update_settings:
-     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSdkUpdateSettings
-    """
-
-    _attribute_map = {
-        'os_update_settings': {'key': 'osUpdateSettings', 'type': 'ComputeInstanceOSUpdateSettings'},
-        'sdk_update_settings': {'key': 'sdkUpdateSettings', 'type': 'ComputeInstanceSdkUpdateSettings'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ComputeInstanceSoftwareUpdateSettings, self).__init__(**kwargs)
-        self.os_update_settings = kwargs.get('os_update_settings', None)
-        self.sdk_update_settings = kwargs.get('sdk_update_settings', None)
 
 
 class ComputeInstanceSshSettings(Model):

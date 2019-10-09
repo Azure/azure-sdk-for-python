@@ -24,15 +24,7 @@ try:
     from ._models_py3 import ComputeInstanceApplicationUri
     from ._models_py3 import ComputeInstanceConnectivityEndpoints
     from ._models_py3 import ComputeInstanceCreatedBy
-    from ._models_py3 import ComputeInstanceCustomScriptSettings
-    from ._models_py3 import ComputeInstanceCustomScriptSettingsStartupScript
-    from ._models_py3 import ComputeInstanceDatastore
-    from ._models_py3 import ComputeInstanceDatastoresMountSettings
-    from ._models_py3 import ComputeInstanceOSUpdateSettings
     from ._models_py3 import ComputeInstanceProperties
-    from ._models_py3 import ComputeInstanceSdkUpdate
-    from ._models_py3 import ComputeInstanceSdkUpdateSettings
-    from ._models_py3 import ComputeInstanceSoftwareUpdateSettings
     from ._models_py3 import ComputeInstanceSshSettings
     from ._models_py3 import ComputeNodesInformation
     from ._models_py3 import ComputeResource
@@ -93,15 +85,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeInstanceApplicationUri
     from ._models import ComputeInstanceConnectivityEndpoints
     from ._models import ComputeInstanceCreatedBy
-    from ._models import ComputeInstanceCustomScriptSettings
-    from ._models import ComputeInstanceCustomScriptSettingsStartupScript
-    from ._models import ComputeInstanceDatastore
-    from ._models import ComputeInstanceDatastoresMountSettings
-    from ._models import ComputeInstanceOSUpdateSettings
     from ._models import ComputeInstanceProperties
-    from ._models import ComputeInstanceSdkUpdate
-    from ._models import ComputeInstanceSdkUpdateSettings
-    from ._models import ComputeInstanceSoftwareUpdateSettings
     from ._models import ComputeInstanceSshSettings
     from ._models import ComputeNodesInformation
     from ._models import ComputeResource
@@ -163,10 +147,6 @@ from ._azure_machine_learning_workspaces_enums import (
     RemoteLoginPortPublicAccess,
     AllocationState,
     ApplicationSharingPolicy,
-    DatastoreSelection,
-    DatastoreState,
-    OsUpdateType,
-    UpdateOnNextStart,
     SshPublicAccess,
     ComputeInstanceState,
     NodeState,
@@ -189,15 +169,7 @@ __all__ = [
     'ComputeInstanceApplicationUri',
     'ComputeInstanceConnectivityEndpoints',
     'ComputeInstanceCreatedBy',
-    'ComputeInstanceCustomScriptSettings',
-    'ComputeInstanceCustomScriptSettingsStartupScript',
-    'ComputeInstanceDatastore',
-    'ComputeInstanceDatastoresMountSettings',
-    'ComputeInstanceOSUpdateSettings',
     'ComputeInstanceProperties',
-    'ComputeInstanceSdkUpdate',
-    'ComputeInstanceSdkUpdateSettings',
-    'ComputeInstanceSoftwareUpdateSettings',
     'ComputeInstanceSshSettings',
     'ComputeNodesInformation',
     'ComputeResource',
@@ -258,10 +230,6 @@ __all__ = [
     'RemoteLoginPortPublicAccess',
     'AllocationState',
     'ApplicationSharingPolicy',
-    'DatastoreSelection',
-    'DatastoreState',
-    'OsUpdateType',
-    'UpdateOnNextStart',
     'SshPublicAccess',
     'ComputeInstanceState',
     'NodeState',

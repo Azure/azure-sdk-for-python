@@ -79,31 +79,6 @@ class ApplicationSharingPolicy(str, Enum):
     shared = "Shared"
 
 
-class DatastoreSelection(str, Enum):
-
-    all = "All"
-    user_specified = "UserSpecified"
-
-
-class DatastoreState(str, Enum):
-
-    mounted = "Mounted"
-    mount_failed = "MountFailed"
-    unmounted = "Unmounted"
-
-
-class OsUpdateType(str, Enum):
-
-    security = "Security"
-    recommended = "Recommended"
-
-
-class UpdateOnNextStart(str, Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class SshPublicAccess(str, Enum):
 
     enabled = "Enabled"
