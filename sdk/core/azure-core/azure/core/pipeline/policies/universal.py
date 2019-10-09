@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
-                    Any, Union, Dict, Optional)
+                    Any, Union, Dict, Optional, AnyStr)
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
@@ -46,6 +46,8 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .base import SansIOHTTPPolicy
 
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport.base import _HttpResponseBase
 
 _LOGGER = logging.getLogger(__name__)
 ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
@@ -278,17 +280,24 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     CONTEXT_NAME = "deserialized_data"
 
     @classmethod
-    def deserialize_from_text(cls, response, content_type=None):
-        # type: (Type[ContentDecodePolicyType], HTTPResponseType, Optional[str]) -> Any
+    def deserialize_from_text(
+        cls,  # type: Type[ContentDecodePolicyType]
+        data,  # type: Optional[Union[AnyStr, IO]]
+        content_type=None,  # Optional[str]
+        response=None  # Optional[_HttpResponseBase]
+    ):
         """Decode response data according to content-type.
+
         Accept a stream of data as well, but will be load at once in memory for now.
         If no content-type, will return the string version (not bytes, not stream)
 
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str content_type: The content type.
+        :param response: If passed, exception will be annotated with that response
+        :raises ~azure.core.exceptions.DecodeError: If deserialization fails
+        :returns: A dict or XML tree, depending of the content_type
         """
-        data = response.text() # type: ignore
         if not data:
             return None
 
@@ -341,21 +350,28 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         raise DecodeError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod
-    def deserialize_from_http_generics(cls, response):
-        # type: (Type[ContentDecodePolicyType], HTTPResponseType) -> Any
+    def deserialize_from_http_generics(
+        cls,  # type: Type[ContentDecodePolicyType]
+        content,  # type: Optional[Union[AnyStr, IO]]
+        content_type=None,  # Optional[str]
+        response=None  # Optional[_HttpResponseBase]
+    ):
         """Deserialize from HTTP response.
-        Use bytes and headers to NOT use any requests/aiohttp or whatever
+
+        Use str and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
 
-        :param response: The HTTP response.
-        :type response: ~azure.core.pipeline.transport.HttpResponse
+        :param content: Content to decode, could be text or bytes/stream (will be decoded with UTF8)
+        :type content: str or bytes or stream
+        :param str content_type: Raw content type from headers. Will be check for charset.
+        :param response: If passed, exception will be annotated with that response
+        :raises ~azure.core.exceptions.DecodeError: If deserialization fails
+        :returns: A dict or XML tree, depending of the content_type
         """
         # Try to use content-type from headers if available
-        content_type = None
-        if response.content_type: # type: ignore
-            content_type = response.content_type.split(";")[0].strip().lower() # type: ignore
-
+        if content_type:
+            content_type = content_type.split(";")[0].strip().lower()
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
         # Also, since Autorest was considering that an empty body was a valid JSON,
@@ -363,10 +379,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             content_type = "application/json"
 
-        return cls.deserialize_from_text(response, content_type)
+        return cls.deserialize_from_text(content, content_type, response=response)
 
     def on_response(self, request, response):
-        # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType]) -> None
+        # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, _HttpResponseBase]) -> None
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
@@ -381,13 +397,18 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
         :raises UnicodeDecodeError: If bytes is not UTF8
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
+        :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         """
         # If response was asked as stream, do NOT read anything and quit now
         if response.context.options.get("stream", True):
             return
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
-
+        http_response = response.http_response
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
+            http_response.text(),
+            http_response.content_type,
+            response=http_response
+        )
 
 class ProxyPolicy(SansIOHTTPPolicy):
     """A proxy policy.
