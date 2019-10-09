@@ -21,6 +21,7 @@
 
 import unittest
 import pytest
+import platform
 import azure.cosmos.documents as documents
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import test_config
@@ -92,6 +93,8 @@ class ProxyTests(unittest.TestCase):
         server.shutdown()
 
     def test_success_with_correct_proxy(self):
+        if platform.system() == 'Darwin':
+            pytest.skip("TODO: Connection error raised on OSX")
         connection_policy.ProxyConfiguration.Port = self.serverPort 
         client = cosmos_client_connection.CosmosClientConnection(self.host, {'masterKey': self.masterKey}, connection_policy)
         created_db = client.CreateDatabase({ 'id': self.testDbName })

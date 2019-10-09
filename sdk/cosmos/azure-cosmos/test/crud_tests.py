@@ -56,7 +56,7 @@ from azure.cosmos.partition_key import PartitionKey
 import conftest
 from azure.cosmos import _retry_utility
 import requests
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 from requests.exceptions import ConnectionError
 
 
