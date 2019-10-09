@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport.base import PipelineClientBase
 from .pipeline.policies import ContentDecodePolicy
@@ -59,20 +60,13 @@ class PipelineClient(PipelineClientBase):
     Builds a Pipeline client.
 
     :param str base_url: URL for the request.
-    :param config: Service configuration. This is a required parameter.
-    :type config: ~azure.core.Configuration
-    :param kwargs: keyword arguments
+    :keyword Configuration config: If omitted, it will be used by the PipelineClient.
+    :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
+    :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword HttpTranpost transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
-
-    **Keyword arguments:**
-
-    *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
-
-    *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
-
-    *transport* - The HTTP Transport instance. If omitted, RequestsTransport is used for synchronous transport.
-
+    
     .. admonition:: Example:
 
         .. literalinclude:: ../examples/test_example_sync.py
@@ -83,16 +77,14 @@ class PipelineClient(PipelineClientBase):
             :caption: Builds the pipeline client.
     """
 
-    def __init__(self, base_url, config, **kwargs):
+    def __init__(self, base_url, **kwargs):
         super(PipelineClient, self).__init__(base_url)
-        if config is None:
-            raise ValueError("Config is a required parameter")
-        self._config = config
+        self._config = kwargs.get("config", None) or Configuration(**kwargs)
         self._base_url = base_url
         if kwargs.get("pipeline"):
             self._pipeline = kwargs["pipeline"]
         else:
-            self._pipeline = self._build_pipeline(config, **kwargs)
+            self._pipeline = self._build_pipeline(self._config, **kwargs)
 
     def __enter__(self):
         self._pipeline.__enter__()
