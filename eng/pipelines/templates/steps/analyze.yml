@@ -7,6 +7,7 @@ steps:
   - script: |
      pip install setuptools wheel Jinja2
      pip install doc-warden==0.3.0
+     pip install packaging
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
     displayName: 'Verify Readmes'
 
