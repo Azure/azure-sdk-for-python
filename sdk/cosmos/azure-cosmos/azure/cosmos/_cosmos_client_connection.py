@@ -26,19 +26,18 @@
 """
 from typing import Dict, Any, Optional
 import six
-import requests
-from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (  # type: ignore
+    HTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
+    DistributedTracingPolicy,
     ProxyPolicy)
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
 from . import _base as base
 from . import documents
@@ -51,6 +50,7 @@ from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider
+from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
@@ -151,15 +151,24 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
-        # creating a requests session used for connection pooling and re-used by all requests
-        requests_session = requests.Session()
-
-        transport = None
-        if self.connection_policy.ConnectionRetryConfiguration is not None:
-            adapter = HTTPAdapter(max_retries=self.connection_policy.ConnectionRetryConfiguration)
-            requests_session.mount('http://', adapter)
-            requests_session.mount('https://', adapter)
-            transport = RequestsTransport(session=requests_session)
+        retry_policy = None
+        if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
+            retry_policy = self.connection_policy.ConnectionRetryConfiguration
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
+            retry_policy = ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
+            # Convert a urllib3 retry policy to a Pipeline policy
+            retry_policy = ConnectionRetryPolicy(
+                retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
+                retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
+                retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
+                retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.BACKOFF_MAX,
+                retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
+                retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
+            )
+        else:
+            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
@@ -173,11 +182,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
             ContentDecodePolicy(),
+            retry_policy,
             CustomHookPolicy(**kwargs),
             DistributedTracingPolicy(),
             NetworkTraceLoggingPolicy(**kwargs),
             ]
 
+        transport = kwargs.pop("transport", None)
         self.pipeline_client = PipelineClient(url_connection, "empty-config", transport=transport, policies=policies)
 
         # Query compatibility mode.
@@ -188,7 +199,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount()
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
 
     @property
