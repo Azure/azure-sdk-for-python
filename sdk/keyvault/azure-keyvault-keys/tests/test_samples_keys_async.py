@@ -13,7 +13,7 @@ def print(*args):
 
 
 def test_create_key_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_key_client]
 
@@ -22,7 +22,7 @@ def test_create_key_client():
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
-    key_client = KeyClient(vault_url, credential)
+    key_client = KeyClient(vault_endpoint, credential)
 
     # [END create_key_client]
 
@@ -47,8 +47,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.key_material.kty)
-        print(key.enabled)
-        print(key.expires)
+        print(key.properties.enabled)
+        print(key.properties.expires)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -79,14 +79,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key = await key_client.get_key("key-name")
 
         # alternatively, specify a version
-        key_version = key.version
+        key_version = key.properties.version
         key = await key_client.get_key("key-name", key_version)
 
         print(key.id)
         print(key.name)
-        print(key.version)
+        print(key.properties.version)
         print(key.key_material.kty)
-        print(key.vault_url)
+        print(key.properties.vault_endpoint)
 
         # [END get_key]
         # [START update_key]
@@ -94,12 +94,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # update attributes of an existing key
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = await key_client.update_key(key.name, expires=expires, tags=tags)
+        updated_key = await key_client.update_key_properties(key.name, expires=expires, tags=tags)
 
-        print(updated_key.version)
-        print(updated_key.updated)
-        print(updated_key.expires)
-        print(updated_key.tags)
+        print(updated_key.properties.version)
+        print(updated_key.properties.updated)
+        print(updated_key.properties.expires)
+        print(updated_key.properties.tags)
         print(updated_key.key_material.kty)
 
         # [END update_key]
@@ -150,7 +150,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         async for key in key_versions:
             print(key.id)
             print(key.updated)
-            print(key.version)
+            print(key.properties.version)
             print(key.expires)
 
         # [END list_key_versions]
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         restored_key = await key_client.restore_key(key_backup)
         print(restored_key.id)
         print(restored_key.name)
-        print(restored_key.version)
+        print(restored_key.properties.version)
 
         # [END restore_key]
 

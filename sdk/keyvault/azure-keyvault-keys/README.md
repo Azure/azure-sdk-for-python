@@ -22,13 +22,18 @@ pip install azure-keyvault-keys
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5 or later
+* Python 2.7, 3.5.3, or later
 * A Key Vault. If you need to create one, you can use the
-[Azure Cloud Shell][azure_cloud_shell] to create one with this command (replace
-`<your resource group name>` and `<your key vault name>` with your own, unique
+[Azure Cloud Shell][azure_cloud_shell] to create one with these commands
+(replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
 names):
+  * (Optional) if you want a new resource group to hold the Key Vault:
+    ```sh
+    az group create --name my-resource-group --location westus2
+    ```
+  * Create the Key Vault:
     ```Bash
-    az keyvault create --resource-group <your resource group name> --name <your key vault name>
+    az keyvault create --resource-group my-resource-group --name my-key-vault
     ```
 
     Output:
@@ -36,7 +41,7 @@ names):
     {
         "id": "...",
         "location": "westus2",
-        "name": "<your key vault name>",
+        "name": "my-key-vault",
         "properties": {
             "accessPolicies": [...],
             "createMode": null,
@@ -49,14 +54,14 @@ names):
             "provisioningState": "Succeeded",
             "sku": { "name": "standard" },
             "tenantId": "...",
-            "vaultUri": "https://<your key vault name>.vault.azure.net/"
+            "vaultUri": "https://my-key-vault.vault.azure.net/"
         },
-        "resourceGroup": "<your resource group name>",
+        "resourceGroup": "my-resource-group",
         "type": "Microsoft.KeyVault/vaults"
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `KeyClient`.
+    > The `"vaultUri"` property is the `vault_endpoint` used by `KeyClient`.
 
 ### Authenticate the client
 To interact with a Key Vault's keys, you'll need an instance of the
@@ -66,20 +71,21 @@ the credential, authenticating with a service principal's client id, secret,
 and tenant id. Other authentication methods are supported. See the
 [azure-identity][azure_identity] documentation for more details.
 
- #### Create a service principal
-Use this [Azure Cloud Shell][azure_cloud_shell] snippet to create a
-service principal:
+#### Create a service principal
+This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+a more appropriate name for your service principal.
 
- * Create a service principal and configure its access to Azure resources:
+ * Create a service principal:
     ```Bash
-    az ad sp create-for-rbac -n <your-application-name> --skip-assignment
+    az ad sp create-for-rbac --name http://my-application --skip-assignment
     ```
     Output:
     ```json
     {
         "appId": "generated app id",
-        "displayName": "your-application-name",
-        "name": "http://your-application-name",
+        "displayName": "my-application",
+        "name": "http://my-application",
         "password": "random password",
         "tenant": "tenant id"
     }
@@ -96,7 +102,7 @@ following example shows a way to do this in Bash:
 
 * Authorize the service principal to perform key operations in your Key Vault:
     ```Bash
-    az keyvault set-policy --name <your key vault name> --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
+    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
     ```
     > Possible key permissions:
     > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
@@ -114,7 +120,7 @@ from azure.keyvault.keys import KeyClient
 
 credential = DefaultAzureCredential()
 
-key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
+key_client = KeyClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -171,12 +177,12 @@ print(key.name)
 # Clients may specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_key = key_client.update_key("key-name", tags=tags)
+updated_key_properties = key_client.update_key_properties("key-name", tags=tags)
 
-print(updated_key.name)
-print(updated_key.version)
-print(updated_key.updated)
-print(updated_key.tags)
+print(updated_key_properties.name)
+print(updated_key_properties.version)
+print(updated_key_properties.updated)
+print(updated_key_properties.tags)
 ```
 
 ### Delete a Key
@@ -211,7 +217,7 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 key = key_client.get_key("mykey")
 crypto_client = key_client.get_cryptography_client(key)
@@ -240,7 +246,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 # Create an RSA key
 rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
@@ -303,7 +309,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = KeyClient(vault_url=url, credential=credential, logging_enable=True)
+client = KeyClient(vault_endpoint=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

@@ -3,10 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from ..._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
+
+if TYPE_CHECKING:
+    from typing import Any, Optional, Union
+    from azure.core.credentials import AccessToken
+    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class EnvironmentCredential:
@@ -24,11 +31,6 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
-
-    User with username and password:
-      - **AZURE_CLIENT_ID**: the application's client ID
-      - **AZURE_USERNAME**: a username (usually an email address)
-      - **AZURE_PASSWORD**: that user's password
     """
 
     def __init__(self, **kwargs: "Any") -> None:

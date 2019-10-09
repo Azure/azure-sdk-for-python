@@ -2,14 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from ._constants import KnownAuthorities
 from ._credentials import (
-    InteractiveBrowserCredential,
+    AuthorizationCodeCredential,
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
     DefaultAzureCredential,
     DeviceCodeCredential,
     EnvironmentCredential,
+    InteractiveBrowserCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
@@ -17,6 +19,7 @@ from ._credentials import (
 
 
 __all__ = [
+    "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
@@ -24,6 +27,7 @@ __all__ = [
     "DeviceCodeCredential",
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
+    "KnownAuthorities",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",

@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from .utils import parse_connection_string
+from ._utils import parse_connection_string
 
 class AppConfigConnectionStringCredential(object):
     """

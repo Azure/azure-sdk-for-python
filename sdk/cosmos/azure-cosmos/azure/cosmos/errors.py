@@ -63,3 +63,13 @@ class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
 
 class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An error response with status code 412."""
+
+
+class CosmosClientTimeoutError(AzureError):
+    """An operation failed to complete within the specified timeout."""
+
+    def __init__(self, **kwargs):
+        message = "Client operation failed to complete within specified timeout."
+        self.response = None
+        self.history = None
+        super(CosmosClientTimeoutError, self).__init__(message, **kwargs)

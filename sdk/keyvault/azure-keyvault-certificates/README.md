@@ -19,13 +19,19 @@ pip install azure-keyvault-certificates
 ```
 
 ### Prerequisites
-* An [Azure subscription][azure_sub].
-* Python 2.7, 3.5.3, or later to use this package.
-* A Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command.
- Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own unique names:
-
+* An [Azure subscription][azure_sub]
+* Python 2.7, 3.5.3, or later
+* A Key Vault. If you need to create one, you can use the
+[Azure Cloud Shell][azure_cloud_shell] to create one with these commands
+(replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
+names):
+  * (Optional) if you want a new resource group to hold the Key Vault:
+    ```sh
+    az group create --name my-resource-group --location westus2
+    ```
+  * Create the Key Vault:
     ```Bash
-    az keyvault create --resource-group <your resource group name> --name <your key vault name>
+    az keyvault create --resource-group my-resource-group --name my-key-vault
     ```
 
     Output:
@@ -33,7 +39,7 @@ pip install azure-keyvault-certificates
     {
         "id": "...",
         "location": "westus2",
-        "name": "<your key vault name>",
+        "name": "my-key-vault",
         "properties": {
             "accessPolicies": [...],
             "createMode": null,
@@ -46,44 +52,46 @@ pip install azure-keyvault-certificates
             "provisioningState": "Succeeded",
             "sku": { "name": "standard" },
             "tenantId": "...",
-            "vaultUri": "https://<your key vault name>.vault.azure.net/"
+            "vaultUri": "https://my-key-vault.vault.azure.net/"
         },
-        "resourceGroup": "<your resource group name>",
+        "resourceGroup": "my-resource-group",
         "type": "Microsoft.KeyVault/vaults"
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`.
+    > The `"vaultUri"` property is the `vault_endpoint` used by `CertificateClient`
 
 ### Authenticate the client
-In order to interact with a Key Vault's certificates, you'll need an instance of the [CertificateClient][certificate_client_docs]
-class. Creating one requires a **vault url** and
-**credential**. This document demonstrates using `DefaultAzureCredential` as
-the credential, authenticating with a service principal's client id, secret,
-and tenant id. Other authentication methods are supported. See the
-[azure-identity][azure_identity] documentation for more details.
+In order to interact with a Key Vault's certificates, you'll need an instance
+of the [CertificateClient][certificate_client_docs] class. Creating one
+requires a **vault url** and **credential**. This document demonstrates using
+`DefaultAzureCredential` as the credential, authenticating with a service
+principal's client id, secret, and tenant id. Other authentication methods are
+supported. See the [azure-identity][azure_identity] documentation for more
+details.
 
- #### Create a service principal
-Use this [Azure Cloud Shell][azure_cloud_shell] snippet to create a
-service principal:
+#### Create a service principal
+This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+a more appropriate name for your service principal.
 
- * Create a service principal and configure its access to Azure resources:
+ * Create a service principal:
     ```Bash
-    az ad sp create-for-rbac -n <your-application-name> --skip-assignment
+    az ad sp create-for-rbac --name http://my-application --skip-assignment
     ```
     Output:
     ```json
     {
         "appId": "generated app id",
-        "displayName": "your-application-name",
-        "name": "http://your-application-name",
+        "displayName": "my-application",
+        "name": "http://my-application",
         "password": "random password",
         "tenant": "tenant id"
     }
     ```
 
-* Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
-(password), and **AZURE_TENANT_ID** (tenant) environment variables. The
+    * Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
+(password) and **AZURE_TENANT_ID** (tenant) environment variables. The
 following example shows a way to do this in Bash:
   ```Bash
    export AZURE_CLIENT_ID="generated app id"
@@ -93,7 +101,7 @@ following example shows a way to do this in Bash:
 
 * Authorize the service principal to perform certificate operations in your Key Vault:
     ```Bash
-    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --certificate-permissions backup create delete get import list purge recover restore update
+    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --certificate-permissions backup create delete get import list purge recover restore update
     ```
     > Possible certificate permissions: backup, create, delete, deleteissuers, get, getissuers, import, list, listissuers, managecontacts, manageissuers, purge, recover, restore, setissuers, update
 
@@ -108,7 +116,7 @@ from azure.keyvault.certificates import CertificateClient
 credential = DefaultAzureCredential()
 
 # Create a new certificate client using the default credential
-certificate_client = CertificateClient(vault_url=<your-vault-url>, credential=credential)
+certificate_client = CertificateClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 With a `CertificateClient` you can get certificates from the vault, create new certificates and
@@ -146,7 +154,6 @@ policy will be used. The `create_certificate` operation returns a long running o
 ```python
 create_certificate_poller = certificate_client.create_certificate(name="cert-name")
 
-create_certificate_poller.wait()
 print(create_certificate_poller.result())
 ```
 
@@ -157,7 +164,7 @@ having to specify version.
 certificate = certificate_client.get_certificate_with_policy(name="cert-name")
 
 print(certificate.name)
-print(certificate.version)
+print(certificate.properties.version)
 print(certificate.policy.id)
 ```
 
@@ -165,8 +172,9 @@ print(certificate.policy.id)
 Version is required.
 ```python
 certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
+
 print(certificate.name)
-print(certificate.version)
+print(certificate.properties.version)
 ```
 
 ### Update an existing Certificate
@@ -175,12 +183,12 @@ print(certificate.version)
 # You can specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_certificate= certificate_client.update_certificate(name="cert-name", tags=tags)
+updated_certificate= certificate_client.update_certificate_properties(name="cert-name", tags=tags)
 
 print(updated_certificate.name)
-print(updated_certificate.version)
-print(updated_certificate.updated)
-print(updated_certificate.tags)
+print(updated_certificate.properties.version)
+print(updated_certificate.properties.updated)
+print(updated_certificate.properties.tags)
 
 ```
 
@@ -239,10 +247,10 @@ For example, if you try to retrieve a certificate after it is deleted a `404` er
 resource not found. In the following snippet, the error is handled gracefully by catching the exception and
 displaying additional information about the error.
 ```python
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError
 try:
     certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
-except HttpResponseError as e:
+except ResourceNotFoundError as e:
     print(e.message)
 
 Output: "certificate not found:deleted_certificate"
@@ -270,7 +278,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
+client = CertificateClient(vault_endpoint=url, credential=credential, logging_enable=True))
 ```
 
 Network trace logging can also be enabled for any single operation:

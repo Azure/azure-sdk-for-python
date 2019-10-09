@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-language-textanalytics/0.2.0
+      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.10 azure-cognitiveservices-language-textanalytics/0.2.0
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -24,19 +24,19 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[]}'
     headers:
       apim-request-id:
-      - 79422b97-439d-4042-b2ca-0053d00770d3
+      - 99652aa4-e000-4263-adf2-920d0e1f5d6f
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring|1
       date:
-      - Mon, 09 Sep 2019 21:55:42 GMT
+      - Fri, 27 Sep 2019 20:56:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - f34d7b3c-5552-4b8e-89e0-164e129c66ac
+      - 97c455bd-bbb0-4b2b-bce2-1cdde2439e50
       x-content-type-options:
       - nosniff
       x-ms-transaction-count:

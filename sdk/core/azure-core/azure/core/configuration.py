@@ -46,7 +46,8 @@ class Configuration(object):
      header to requests.
     :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_config.py
             :start-after: [START configuration]
             :end-before: [END configuration]
@@ -96,7 +97,8 @@ class ConnectionConfiguration(object):
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
     :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_config.py
             :start-after: [START connection_configuration]
             :end-before: [END connection_configuration]

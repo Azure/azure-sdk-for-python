@@ -62,7 +62,8 @@ class AioHttpTransport(AsyncHttpTransport):
 
     *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
-    Example:
+    .. admonition:: Example:
+
         .. literalinclude:: ../examples/test_example_async.py
             :start-after: [START aiohttp]
             :end-before: [END aiohttp]
@@ -145,7 +146,9 @@ class AioHttpTransport(AsyncHttpTransport):
         **Keyword argument:**
 
         *stream (bool)* - Defaults to False.
+
         *proxies* - dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+
         *proxy* - will define the proxy to use all the time
         """
         await self.open()

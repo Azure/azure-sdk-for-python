@@ -37,7 +37,7 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        "tests.asynctests",
+        'stress',
         'examples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
@@ -67,7 +67,8 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'uamqp~=1.2.0',
+        "azure-core<2.0.0,>=1.0.0b4",
+        "uamqp<2.0,>=1.2.3",
         'azure-common~=1.1',
     ],
     extras_require={

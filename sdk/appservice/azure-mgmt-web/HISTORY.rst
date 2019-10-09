@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.43.0 (2019-10-01)
++++++++++++++++++++
+
+**Features**
+
+- Added operation group BillingMetersOperations
+- Added operation group WebSiteManagementClientOperationsMixin
+
+**General**
+
+- Package is now multiapi
+
 0.42.0 (2019-05-24)
 +++++++++++++++++++
 

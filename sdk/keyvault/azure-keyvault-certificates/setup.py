@@ -75,7 +75,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.keyvault"
+            "azure.keyvault",
         ]
     ),
     install_requires=["azure-core<2.0.0,>=1.0.0b2", "azure-common~=1.1", "msrest>=0.5.0"],
