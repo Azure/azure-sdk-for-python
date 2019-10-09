@@ -1,5 +1,8 @@
 # Release History
 
+## 4.0.0b5
+
+
 ## 4.0.0b4 (2019-10-08)
 ### Breaking changes
 - Enums `JsonWebKeyCurveName` and `JsonWebKeyType` have been renamed to `KeyCurveName` and `KeyType`, respectively.
