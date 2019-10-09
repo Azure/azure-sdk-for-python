@@ -47,7 +47,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .base import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport.base import _HttpResponseBase
+    from azure.core.pipeline.transport import HttpResponse, AsyncHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
@@ -284,7 +284,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         cls,  # type: Type[ContentDecodePolicyType]
         data,  # type: Optional[Union[AnyStr, IO]]
         content_type=None,  # Optional[str]
-        response=None  # Optional[_HttpResponseBase]
+        response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
     ):
         """Decode response data according to content-type.
 
@@ -354,7 +354,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         cls,  # type: Type[ContentDecodePolicyType]
         content,  # type: Optional[Union[AnyStr, IO]]
         content_type=None,  # Optional[str]
-        response=None  # Optional[_HttpResponseBase]
+        response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
     ):
         """Deserialize from HTTP response.
 
@@ -364,7 +364,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         :param content: Content to decode, could be text or bytes/stream (will be decoded with UTF8)
         :type content: str or bytes or stream
-        :param str content_type: Raw content type from headers. Will be check for charset.
+        :param str content_type: Raw content type from headers. Will be checked for charset.
         :param response: If passed, exception will be annotated with that response
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict or XML tree, depending of the content_type
@@ -381,8 +381,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(content, content_type, response=response)
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, _HttpResponseBase]) -> None
+    def on_response(self,
+        request, # type: PipelineRequest[HTTPRequestType]
+        response  # type: PipelineResponse[HTTPRequestType, Union[HttpResponse, AsyncHttpResponse]]
+    ):
+        # type: (...) -> None
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
