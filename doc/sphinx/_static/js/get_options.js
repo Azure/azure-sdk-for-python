@@ -1,4 +1,6 @@
 WINDOW_CONTENTS = window.location.href.split('/')
+SELECTED_LANGUAGE = 'python'
+
 function currentVersion(){
     if (WINDOW_CONTENTS.includes('$web') && WINDOW_CONTENTS.length > 5)
     {
@@ -80,8 +82,35 @@ function populateVersionDropDown(selector, values){
     select.val(currentVersion());  
 }
 
+function getPackageUrl(language, package, version){
+  return "https://azuresdkdocsdev.blob.core.windows.net/$web/" + language + "/" + package + "/"+ version + "/index.html"
+}
+
 function populateIndexList(selector, packageName)
 {
+  url = "https://azuresdkdocsdev.blob.core.windows.net/$web?restype=container&comp=list&prefix=" + SELECTED_LANGUAGE + "/" + packageName + "/versions/"
+
+  console.log(url)
   console.log(selector)
-  console.log(packageName)
+
+  httpGetAsync(url, function (responseText){
+    if(responseText){
+      parser = new DOMParser();
+      xmlDoc = parser.parseFromString(responseText,"text/xml");
+      
+      nameElements = Array.from(xmlDoc.getElementsByTagName('Name'))
+      options = []
+
+      for (var i in nameElements){
+        options.push(nameElements[i].textContent.split('/')[3])
+      }
+
+      for (var i in options){
+        $(selector).append('<li><a href="' + getPackageUrl('python', packageName, options[i]) + '">' + options[i] + '</a></li>')
+      }
+    }
+    else {
+      $(selector).append('<li>No discovered versions present in blob storage.</li>')
+    }
+  })
 }
