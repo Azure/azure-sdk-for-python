@@ -182,7 +182,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                     retry_active = False
                 else:
                     await asyncio.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
@@ -193,7 +193,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                     )
                     if not chunk:
                         raise StopIteration()
-                    self.downloaded += chunk
+                    self.downloaded += len(chunk)
                     return chunk
                 continue
             except requests.exceptions.StreamConsumedError:
