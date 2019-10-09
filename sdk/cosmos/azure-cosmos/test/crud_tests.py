@@ -1958,7 +1958,7 @@ class CRUDTests(unittest.TestCase):
         read_indexing_policy = created_container['indexingPolicy']
         self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
-        self.client.DeleteContainer(created_container['_self'])
+        self.client.DeleteContainer(created_container['_self']) 
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
