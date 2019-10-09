@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Coroutine
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Union
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +44,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def create_certificate(
         self, name: str, policy: Optional[CertificatePolicy] = None, **kwargs: "**Any"
-    ) -> Coroutine:
+    ) -> Union[Certificate, CertificateOperation]:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -56,8 +56,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
          ~azure.keyvault.certificates.models.CertificatePolicy
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
          returns the created Certificate if creation is successful, the CertificateOperation if not.
-        :rtype: coroutine[~azure.keyvault.certificates.models.Certificate or
-         ~azure.keyvault.certificates.models.CertificateOperation]
+        :rtype: ~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -100,7 +100,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         get_certificate_command = partial(self.get_certificate_with_policy, name=name, **kwargs)
 
         create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
-        return async_poller(command, create_certificate_operation, None, create_certificate_polling)
+        return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace_async
     async def get_certificate_with_policy(self, name: str, **kwargs: "**Any") -> Certificate:

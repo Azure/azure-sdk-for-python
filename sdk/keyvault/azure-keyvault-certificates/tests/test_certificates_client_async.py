@@ -219,8 +219,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = await client.create_certificate(name=cert_name)
-        cert = await create_certificate_poller
+        cert = await client.create_certificate(name=cert_name)
 
         self._validate_certificate_bundle(
             cert=cert, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
@@ -438,7 +437,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = await client.create_certificate(
+        create_certificate_poller = client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 
@@ -531,10 +530,9 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # get pending certificate signing request
-        create_certificate_poller = await client.create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
-        await create_certificate_poller
         pending_version_csr = await client.get_pending_certificate_signing_request(name=cert_name)
         try:
             self.assertEqual((await client.get_certificate_operation(name=cert_name)).csr, pending_version_csr)
@@ -570,10 +568,9 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = await client.create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
-        await create_certificate_poller
 
         # create a backup
         certificate_backup = await client.backup_certificate(name=cert_name)
@@ -611,12 +608,10 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        create_certificate_poller = await client.create_certificate(
+        # the poller will stop immediately because the issuer is `Unknown`
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
-
-        # the poller will stop immediately because the issuer is `Unknown`
-        await create_certificate_poller
 
         certificate_operation = await client.get_certificate_operation(name=cert_name)
 
