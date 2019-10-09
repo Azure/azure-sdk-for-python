@@ -7109,16 +7109,36 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
     :type organization_name: object
     :param authentication_type: Required. The authentication type to connect
      to Common Data Service for Apps server. 'Office365' for online scenario,
-     'Ifd' for on-premises with Ifd scenario. Type: string (or Expression with
-     resultType string). Possible values include: 'Office365', 'Ifd'
+     'Ifd' for on-premises with Ifd scenario. 'AADServicePrincipal' for
+     Server-To-Server authentication in online scenario. Type: string (or
+     Expression with resultType string). Possible values include: 'Office365',
+     'Ifd', 'AADServicePrincipal'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.DynamicsAuthenticationType
-    :param username: Required. User name to access the Common Data Service for
-     Apps instance. Type: string (or Expression with resultType string).
+    :param username: User name to access the Common Data Service for Apps
+     instance. Type: string (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Common Data Service for Apps
      instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_principal_id: The client ID of the application in Azure
+     Active Directory used for Server-To-Server authentication. Type: string
+     (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_credential_type: The service principal credential
+     type to use in Server-To-Server authentication. 'ServicePrincipalKey' for
+     key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
+     Expression with resultType string).
+    :type service_principal_credential_type: object
+    :param service_principal_credential: The credential of the service
+     principal object in Azure Active Directory. If
+     servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or
+     AzureKeyVaultSecretReference. If servicePrincipalCredentialType is
+     'ServicePrincipalCert', servicePrincipalCredential can only be
+     AzureKeyVaultSecretReference.
+    :type service_principal_credential:
+     ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -7129,7 +7149,6 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         'type': {'required': True},
         'deployment_type': {'required': True},
         'authentication_type': {'required': True},
-        'username': {'required': True},
     }
 
     _attribute_map = {
@@ -7147,6 +7166,9 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
+        'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -7160,6 +7182,9 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_credential_type = kwargs.get('service_principal_credential_type', None)
+        self.service_principal_credential = kwargs.get('service_principal_credential', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'CommonDataServiceForApps'
 
@@ -10986,15 +11011,35 @@ class DynamicsCrmLinkedService(LinkedService):
     :type organization_name: object
     :param authentication_type: Required. The authentication type to connect
      to Dynamics CRM server. 'Office365' for online scenario, 'Ifd' for
-     on-premises with Ifd scenario. Type: string (or Expression with resultType
-     string). Possible values include: 'Office365', 'Ifd'
+     on-premises with Ifd scenario, 'AADServicePrincipal' for Server-To-Server
+     authentication in online scenario. Type: string (or Expression with
+     resultType string). Possible values include: 'Office365', 'Ifd',
+     'AADServicePrincipal'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.DynamicsAuthenticationType
-    :param username: Required. User name to access the Dynamics CRM instance.
-     Type: string (or Expression with resultType string).
+    :param username: User name to access the Dynamics CRM instance. Type:
+     string (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics CRM instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_principal_id: The client ID of the application in Azure
+     Active Directory used for Server-To-Server authentication. Type: string
+     (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_credential_type: The service principal credential
+     type to use in Server-To-Server authentication. 'ServicePrincipalKey' for
+     key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
+     Expression with resultType string).
+    :type service_principal_credential_type: object
+    :param service_principal_credential: The credential of the service
+     principal object in Azure Active Directory. If
+     servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or
+     AzureKeyVaultSecretReference. If servicePrincipalCredentialType is
+     'ServicePrincipalCert', servicePrincipalCredential can only be
+     AzureKeyVaultSecretReference.
+    :type service_principal_credential:
+     ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -11005,7 +11050,6 @@ class DynamicsCrmLinkedService(LinkedService):
         'type': {'required': True},
         'deployment_type': {'required': True},
         'authentication_type': {'required': True},
-        'username': {'required': True},
     }
 
     _attribute_map = {
@@ -11023,6 +11067,9 @@ class DynamicsCrmLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
+        'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -11036,6 +11083,9 @@ class DynamicsCrmLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_credential_type = kwargs.get('service_principal_credential_type', None)
+        self.service_principal_credential = kwargs.get('service_principal_credential', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'DynamicsCrm'
 
@@ -11262,13 +11312,33 @@ class DynamicsLinkedService(LinkedService):
     :type organization_name: object
     :param authentication_type: Required. The authentication type to connect
      to Dynamics server. 'Office365' for online scenario, 'Ifd' for on-premises
-     with Ifd scenario. Type: string (or Expression with resultType string).
+     with Ifd scenario, 'AADServicePrincipal' for Server-To-Server
+     authentication in online scenario. Type: string (or Expression with
+     resultType string).
     :type authentication_type: object
-    :param username: Required. User name to access the Dynamics instance.
-     Type: string (or Expression with resultType string).
+    :param username: User name to access the Dynamics instance. Type: string
+     (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_principal_id: The client ID of the application in Azure
+     Active Directory used for Server-To-Server authentication. Type: string
+     (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_credential_type: The service principal credential
+     type to use in Server-To-Server authentication. 'ServicePrincipalKey' for
+     key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
+     Expression with resultType string).
+    :type service_principal_credential_type: object
+    :param service_principal_credential: The credential of the service
+     principal object in Azure Active Directory. If
+     servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or
+     AzureKeyVaultSecretReference. If servicePrincipalCredentialType is
+     'ServicePrincipalCert', servicePrincipalCredential can only be
+     AzureKeyVaultSecretReference.
+    :type service_principal_credential:
+     ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -11279,7 +11349,6 @@ class DynamicsLinkedService(LinkedService):
         'type': {'required': True},
         'deployment_type': {'required': True},
         'authentication_type': {'required': True},
-        'username': {'required': True},
     }
 
     _attribute_map = {
@@ -11297,6 +11366,9 @@ class DynamicsLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
+        'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -11310,6 +11382,9 @@ class DynamicsLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_credential_type = kwargs.get('service_principal_credential_type', None)
+        self.service_principal_credential = kwargs.get('service_principal_credential', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Dynamics'
 

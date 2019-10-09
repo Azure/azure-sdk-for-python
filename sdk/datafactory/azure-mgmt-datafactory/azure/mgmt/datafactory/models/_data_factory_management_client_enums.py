@@ -347,6 +347,7 @@ class DynamicsAuthenticationType(str, Enum):
 
     office365 = "Office365"
     ifd = "Ifd"
+    aad_service_principal = "AADServicePrincipal"
 
 
 class AvroCompressionCodec(str, Enum):
