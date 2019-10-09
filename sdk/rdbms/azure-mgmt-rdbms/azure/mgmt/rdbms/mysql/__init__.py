@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .my_sql_management_client import MySQLManagementClient
-from .version import VERSION
+from ._configuration import MySQLManagementClientConfiguration
+from ._my_sql_management_client import MySQLManagementClient
+__all__ = ['MySQLManagementClient', 'MySQLManagementClientConfiguration']
 
-__all__ = ['MySQLManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
