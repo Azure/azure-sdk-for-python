@@ -26,8 +26,8 @@
 """Common functions shared by both the sync and the async decorators."""
 from contextlib import contextmanager
 
-from azure.core.tracing.abstract_span import AbstractSpan
-from azure.core.settings import settings
+from ._abstract_span import AbstractSpan
+from ..settings import settings
 
 
 try:

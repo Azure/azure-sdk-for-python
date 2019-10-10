@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from .poller import NoPolling as _NoPolling
+from ._poller import NoPolling as _NoPolling
 
 class AsyncPollingMethod(object):
     """ABC class for polling method.

@@ -27,8 +27,8 @@
 
 import functools
 
-import azure.core.tracing.common as common
-from azure.core.settings import settings
+from .common import change_context, get_function_and_class_name
+from ..settings import settings
 
 try:
     from typing import TYPE_CHECKING
@@ -58,8 +58,8 @@ def distributed_trace(func=None, name_of_span=None):
         if merge_span and not passed_in_parent:
             return func(*args, **kwargs) # type: ignore
 
-        with common.change_context(passed_in_parent):
-            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
+        with change_context(passed_in_parent):
+            name = name_of_span or get_function_and_class_name(func, *args)  # type: ignore
             with span_impl_type(name=name):
                 return func(*args, **kwargs) # type: ignore
 

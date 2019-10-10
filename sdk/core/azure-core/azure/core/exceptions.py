@@ -33,7 +33,7 @@ from typing import Callable, Any, Dict, Optional, List, Union, TYPE_CHECKING
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport.base import _HttpResponseBase
+    from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
 def raise_with_traceback(exception, *args, **kwargs):

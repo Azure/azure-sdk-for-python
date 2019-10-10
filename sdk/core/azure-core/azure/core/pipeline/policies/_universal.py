@@ -44,7 +44,7 @@ from azure.core.exceptions import (
 )
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from .base import SansIOHTTPPolicy
+from ._base import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpResponse, AsyncHttpResponse
