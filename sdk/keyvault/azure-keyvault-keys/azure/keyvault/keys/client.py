@@ -6,7 +6,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .crypto import CryptographyClient
 from .models import Key, KeyProperties, DeletedKey
 
 try:
@@ -39,25 +38,6 @@ class KeyClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-
-    def get_cryptography_client(self, key, **kwargs):
-        # type: (Union[Key, str], **Any) -> CryptographyClient
-        """
-        Get a :class:`~azure.keyvault.keys.crypto.CryptographyClient` capable of performing cryptographic operations
-        with a key.
-
-        :param key:
-            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
-            :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string. If a string, the value must be the full
-            identifier of an Azure Key Vault key with a version.
-        :type key: str or :class:`~azure.keyvault.keys.Key`
-        :rtype: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
-        """
-
-        # the initializer requires a credential but won't actually use it in this case because we pass in this
-        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
-        credential = object()
-        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
 
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):

@@ -11,7 +11,6 @@ from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyPropertie
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 from .._shared.exceptions import error_map as _error_map
-from ..crypto.aio import CryptographyClient
 
 
 if TYPE_CHECKING:
@@ -36,24 +35,6 @@ class KeyClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-
-    def get_cryptography_client(self, key: Union[Key, str], **kwargs: Any) -> CryptographyClient:
-        """
-        Get a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` capable of performing cryptographic operations
-        with a key.
-
-        :param key:
-            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
-            :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string. If a string, the value must be the full
-            identifier of an Azure Key Vault key with a version.
-        :type key: str or :class:`~azure.keyvault.keys.Key`
-        :rtype: :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient`
-        """
-
-        # the initializer requires a credential but won't actually use it in this case because we pass in this
-        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
-        credential = object()
-        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> Key:

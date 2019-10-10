@@ -16,7 +16,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         key_client = vault_client.keys
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key = key_client.create_rsa_key(key_name, hsm=False)
-        client = key_client.get_cryptography_client(key)
+        client = vault_client.get_cryptography_client(key)
 
         # [START encrypt]
 
@@ -44,7 +44,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         key_client = vault_client.keys
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name, hsm=False)
-        client = key_client.get_cryptography_client(key)
+        client = vault_client.get_cryptography_client(key)
 
         key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
@@ -71,7 +71,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         key_client = vault_client.keys
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name, hsm=False)
-        client = key_client.get_cryptography_client(key)
+        client = vault_client.get_cryptography_client(key)
 
         # [START sign]
 

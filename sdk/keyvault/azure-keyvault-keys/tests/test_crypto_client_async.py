@@ -76,7 +76,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
 
         imported_key = await self._import_test_key(key_client, key_name)
-        crypto_client = key_client.get_cryptography_client(imported_key)
+        crypto_client = vault_client.get_cryptography_client(imported_key)
 
         key_id, algorithm, ciphertext, authentication_tag = await crypto_client.encrypt(
             EncryptionAlgorithm.rsa_oaep, self.plaintext
@@ -100,7 +100,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         digest = md.digest()
 
         imported_key = await self._import_test_key(key_client, key_name)
-        crypto_client = key_client.get_cryptography_client(imported_key)
+        crypto_client = vault_client.get_cryptography_client(imported_key)
 
         key_id, algorithm, signature = await crypto_client.sign(SignatureAlgorithm.rs256, digest)
         self.assertEqual(key_id, imported_key.id)
@@ -117,7 +117,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         created_key = await key_client.create_key(key_name, "RSA")
         self.assertIsNotNone(created_key)
-        crypto_client = key_client.get_cryptography_client(created_key)
+        crypto_client = vault_client.get_cryptography_client(created_key)
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
@@ -135,7 +135,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         key_client = vault_client.keys
         key = await key_client.create_rsa_key("encrypt-local", size=4096, hsm=False)
-        crypto_client = key_client.get_cryptography_client(key)
+        crypto_client = vault_client.get_cryptography_client(key)
 
         for encrypt_algorithm in EncryptionAlgorithm:
             key_id, algorithm, ciphertext, tag = await crypto_client.encrypt(encrypt_algorithm, self.plaintext)
@@ -152,7 +152,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         key_client = vault_client.keys
         key = await key_client.create_rsa_key("wrap-local", size=4096, hsm=False)
-        crypto_client = key_client.get_cryptography_client(key)
+        crypto_client = vault_client.get_cryptography_client(key)
 
         for wrap_algorithm in KeyWrapAlgorithm:
             key_id, algorithm, encrypted_key = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
@@ -171,7 +171,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         for size in (2048, 3072, 4096):
             key = await key_client.create_rsa_key("rsa-verify-{}".format(size), size=size, hsm=False)
-            crypto_client = key_client.get_cryptography_client(key)
+            crypto_client = vault_client.get_cryptography_client(key)
             for signature_algorithm, hash_function in (
                 (SignatureAlgorithm.ps256, hashlib.sha256),
                 (SignatureAlgorithm.ps384, hashlib.sha384),
@@ -205,7 +205,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in matrix.items():
             key = await key_client.create_ec_key("ec-verify-{}".format(curve.value), curve=curve, hsm=False)
-            crypto_client = key_client.get_cryptography_client(key)
+            crypto_client = vault_client.get_cryptography_client(key)
 
             digest = hash_function(self.plaintext).digest()
 

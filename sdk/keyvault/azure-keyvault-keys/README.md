@@ -214,13 +214,13 @@ wrap/unwrap, sign/verify) using a particular key.
 ```py
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.keys.crypto import EncryptionAlgorithm
+from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 key = key_client.get_key("mykey")
-crypto_client = key_client.get_cryptography_client(key)
+crypto_client = CryptographyClient(key, credential=credential)
 
 result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
