@@ -283,7 +283,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     def deserialize_from_text(
         cls,  # type: Type[ContentDecodePolicyType]
         data,  # type: Optional[Union[AnyStr, IO]]
-        content_type=None,  # Optional[str]
+        mime_type=None,  # Optional[str]
         response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
     ):
         """Decode response data according to content-type.
@@ -293,10 +293,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
-        :param str content_type: The content type.
+        :param str mime_type: The mime type. As mime type, charset is not expected.
         :param response: If passed, exception will be annotated with that response
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-        :returns: A dict or XML tree, depending of the content_type
+        :returns: A dict or XML tree, depending of the mime_type
         """
         if not data:
             return None
@@ -311,15 +311,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             # Explain to mypy the correct type.
             data_as_str = cast(str, data)
 
-        if content_type is None:
+        if mime_type is None:
             return data
 
-        if cls.JSON_REGEXP.match(content_type):
+        if cls.JSON_REGEXP.match(mime_type):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
                 raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
-        elif "xml" in (content_type or []):
+        elif "xml" in (mime_type or []):
             try:
                 try:
                     if isinstance(data, unicode):  # type: ignore
@@ -347,39 +347,32 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise_with_traceback(DecodeError, message="XML is invalid", response=response)
-        raise DecodeError("Cannot deserialize content-type: {}".format(content_type))
+        raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
 
     @classmethod
     def deserialize_from_http_generics(
         cls,  # type: Type[ContentDecodePolicyType]
-        content,  # type: Optional[Union[AnyStr, IO]]
-        content_type=None,  # Optional[str]
-        response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
+        response  # Union[HttpResponse, AsyncHttpResponse]
     ):
         """Deserialize from HTTP response.
 
-        Use str and headers to NOT use any requests/aiohttp or whatever
-        specific implementation.
         Headers will tested for "content-type"
 
-        :param content: Content to decode, could be text or bytes/stream (will be decoded with UTF8)
-        :type content: str or bytes or stream
-        :param str content_type: Raw content type from headers. Will be checked for charset.
-        :param response: If passed, exception will be annotated with that response
+        :param response: The HTTP response
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-        :returns: A dict or XML tree, depending of the content_type
+        :returns: A dict or XML tree, depending of the mime-type
         """
         # Try to use content-type from headers if available
-        if content_type:
-            content_type = content_type.split(";")[0].strip().lower()
+        if response.content_type:
+            mime_type = response.content_type.split(";")[0].strip().lower()
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
         # Also, since Autorest was considering that an empty body was a valid JSON,
         # need that test as well....
         else:
-            content_type = "application/json"
+            mime_type = "application/json"
 
-        return cls.deserialize_from_text(content, content_type, response=response)
+        return cls.deserialize_from_text(response.text(), mime_type, response=response)
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
@@ -406,12 +399,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        http_response = response.http_response
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
-            http_response.text(),
-            http_response.content_type,
-            response=http_response
-        )
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
+
 
 class ProxyPolicy(SansIOHTTPPolicy):
     """A proxy policy.

@@ -8,7 +8,6 @@
 ### Breaking changes
 
 - azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_text changed
-- azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_http_generics changed
 
 ## 2019-10-07 Version 1.0.0b4
 
