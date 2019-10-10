@@ -16,6 +16,7 @@ try:
     from ._models_py3 import ActivityPolicy
     from ._models_py3 import ActivityRun
     from ._models_py3 import ActivityRunsQueryResponse
+    from ._models_py3 import AddDataFlowToDebugSessionResponse
     from ._models_py3 import AmazonMWSLinkedService
     from ._models_py3 import AmazonMWSObjectDataset
     from ._models_py3 import AmazonMWSSource
@@ -59,6 +60,9 @@ try:
     from ._models_py3 import AzureDataLakeStoreSink
     from ._models_py3 import AzureDataLakeStoreSource
     from ._models_py3 import AzureDataLakeStoreWriteSettings
+    from ._models_py3 import AzureFileStorageLinkedService
+    from ._models_py3 import AzureFileStorageLocation
+    from ._models_py3 import AzureFileStorageReadSettings
     from ._models_py3 import AzureFunctionActivity
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
@@ -67,7 +71,9 @@ try:
     from ._models_py3 import AzureMariaDBSource
     from ._models_py3 import AzureMariaDBTableDataset
     from ._models_py3 import AzureMLBatchExecutionActivity
+    from ._models_py3 import AzureMLExecutePipelineActivity
     from ._models_py3 import AzureMLLinkedService
+    from ._models_py3 import AzureMLServiceLinkedService
     from ._models_py3 import AzureMLUpdateResourceActivity
     from ._models_py3 import AzureMLWebServiceFile
     from ._models_py3 import AzureMySqlLinkedService
@@ -124,9 +130,14 @@ try:
     from ._models_py3 import CosmosDbMongoDbApiLinkedService
     from ._models_py3 import CosmosDbMongoDbApiSink
     from ._models_py3 import CosmosDbMongoDbApiSource
+    from ._models_py3 import CosmosDbSqlApiCollectionDataset
+    from ._models_py3 import CosmosDbSqlApiSink
+    from ._models_py3 import CosmosDbSqlApiSource
     from ._models_py3 import CouchbaseLinkedService
     from ._models_py3 import CouchbaseSource
     from ._models_py3 import CouchbaseTableDataset
+    from ._models_py3 import CreateDataFlowDebugSessionRequest
+    from ._models_py3 import CreateDataFlowDebugSessionResponse
     from ._models_py3 import CreateLinkedIntegrationRuntimeRequest
     from ._models_py3 import CreateRunResponse
     from ._models_py3 import CustomActivity
@@ -137,10 +148,26 @@ try:
     from ._models_py3 import DatabricksNotebookActivity
     from ._models_py3 import DatabricksSparkJarActivity
     from ._models_py3 import DatabricksSparkPythonActivity
+    from ._models_py3 import DataFlow
+    from ._models_py3 import DataFlowDebugCommandPayload
+    from ._models_py3 import DataFlowDebugCommandRequest
+    from ._models_py3 import DataFlowDebugCommandResponse
+    from ._models_py3 import DataFlowDebugPackage
+    from ._models_py3 import DataFlowDebugPackageDebugSettings
+    from ._models_py3 import DataFlowDebugResource
+    from ._models_py3 import DataFlowDebugSessionInfo
+    from ._models_py3 import DataFlowFolder
+    from ._models_py3 import DataFlowReference
+    from ._models_py3 import DataFlowResource
+    from ._models_py3 import DataFlowSink
+    from ._models_py3 import DataFlowSource
+    from ._models_py3 import DataFlowSourceSetting
+    from ._models_py3 import DataFlowStagingInfo
     from ._models_py3 import DataLakeAnalyticsUSQLActivity
     from ._models_py3 import Dataset
     from ._models_py3 import DatasetBZip2Compression
     from ._models_py3 import DatasetCompression
+    from ._models_py3 import DatasetDebugResource
     from ._models_py3 import DatasetDeflateCompression
     from ._models_py3 import DatasetFolder
     from ._models_py3 import DatasetGZipCompression
@@ -153,6 +180,7 @@ try:
     from ._models_py3 import Db2Source
     from ._models_py3 import Db2TableDataset
     from ._models_py3 import DeleteActivity
+    from ._models_py3 import DeleteDataFlowDebugSessionRequest
     from ._models_py3 import DelimitedTextDataset
     from ._models_py3 import DelimitedTextReadSettings
     from ._models_py3 import DelimitedTextSink
@@ -182,6 +210,7 @@ try:
     from ._models_py3 import EloquaSource
     from ._models_py3 import EntityReference
     from ._models_py3 import EnvironmentVariableSetup
+    from ._models_py3 import ExecuteDataFlowActivity
     from ._models_py3 import ExecutePipelineActivity
     from ._models_py3 import ExecuteSSISPackageActivity
     from ._models_py3 import ExecutionActivity
@@ -209,6 +238,7 @@ try:
     from ._models_py3 import FtpReadSettings
     from ._models_py3 import FtpServerLinkedService
     from ._models_py3 import FtpServerLocation
+    from ._models_py3 import GetDataFactoryOperationStatusResponse
     from ._models_py3 import GetMetadataActivity
     from ._models_py3 import GetSsisObjectMetadataRequest
     from ._models_py3 import GitHubAccessTokenRequest
@@ -219,6 +249,9 @@ try:
     from ._models_py3 import GoogleBigQueryLinkedService
     from ._models_py3 import GoogleBigQueryObjectDataset
     from ._models_py3 import GoogleBigQuerySource
+    from ._models_py3 import GoogleCloudStorageLinkedService
+    from ._models_py3 import GoogleCloudStorageLocation
+    from ._models_py3 import GoogleCloudStorageReadSettings
     from ._models_py3 import GreenplumLinkedService
     from ._models_py3 import GreenplumSource
     from ._models_py3 import GreenplumTableDataset
@@ -260,7 +293,9 @@ try:
     from ._models_py3 import IntegrationRuntimeComputeProperties
     from ._models_py3 import IntegrationRuntimeConnectionInfo
     from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models_py3 import IntegrationRuntimeDataFlowProperties
     from ._models_py3 import IntegrationRuntimeDataProxyProperties
+    from ._models_py3 import IntegrationRuntimeDebugResource
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
     from ._models_py3 import IntegrationRuntimeNodeMonitoringData
@@ -287,6 +322,7 @@ try:
     from ._models_py3 import LinkedIntegrationRuntimeRequest
     from ._models_py3 import LinkedIntegrationRuntimeType
     from ._models_py3 import LinkedService
+    from ._models_py3 import LinkedServiceDebugResource
     from ._models_py3 import LinkedServiceReference
     from ._models_py3 import LinkedServiceResource
     from ._models_py3 import LogStorageSettings
@@ -299,6 +335,7 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeNode
     from ._models_py3 import ManagedIntegrationRuntimeOperationResult
     from ._models_py3 import ManagedIntegrationRuntimeStatus
+    from ._models_py3 import MappingDataFlow
     from ._models_py3 import MariaDBLinkedService
     from ._models_py3 import MariaDBSource
     from ._models_py3 import MariaDBTableDataset
@@ -488,14 +525,19 @@ try:
     from ._models_py3 import StoreReadSettings
     from ._models_py3 import StoreWriteSettings
     from ._models_py3 import SubResource
+    from ._models_py3 import SubResourceDebugResource
+    from ._models_py3 import SwitchActivity
+    from ._models_py3 import SwitchCase
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
+    from ._models_py3 import TabularSource
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataPartitionSettings
     from ._models_py3 import TeradataSource
     from ._models_py3 import TeradataTableDataset
     from ._models_py3 import TextFormat
+    from ._models_py3 import Transformation
     from ._models_py3 import Trigger
     from ._models_py3 import TriggerDependencyReference
     from ._models_py3 import TriggerPipelineReference
@@ -540,6 +582,7 @@ except (SyntaxError, ImportError):
     from ._models import ActivityPolicy
     from ._models import ActivityRun
     from ._models import ActivityRunsQueryResponse
+    from ._models import AddDataFlowToDebugSessionResponse
     from ._models import AmazonMWSLinkedService
     from ._models import AmazonMWSObjectDataset
     from ._models import AmazonMWSSource
@@ -583,6 +626,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureDataLakeStoreSink
     from ._models import AzureDataLakeStoreSource
     from ._models import AzureDataLakeStoreWriteSettings
+    from ._models import AzureFileStorageLinkedService
+    from ._models import AzureFileStorageLocation
+    from ._models import AzureFileStorageReadSettings
     from ._models import AzureFunctionActivity
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
@@ -591,7 +637,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureMariaDBSource
     from ._models import AzureMariaDBTableDataset
     from ._models import AzureMLBatchExecutionActivity
+    from ._models import AzureMLExecutePipelineActivity
     from ._models import AzureMLLinkedService
+    from ._models import AzureMLServiceLinkedService
     from ._models import AzureMLUpdateResourceActivity
     from ._models import AzureMLWebServiceFile
     from ._models import AzureMySqlLinkedService
@@ -648,9 +696,14 @@ except (SyntaxError, ImportError):
     from ._models import CosmosDbMongoDbApiLinkedService
     from ._models import CosmosDbMongoDbApiSink
     from ._models import CosmosDbMongoDbApiSource
+    from ._models import CosmosDbSqlApiCollectionDataset
+    from ._models import CosmosDbSqlApiSink
+    from ._models import CosmosDbSqlApiSource
     from ._models import CouchbaseLinkedService
     from ._models import CouchbaseSource
     from ._models import CouchbaseTableDataset
+    from ._models import CreateDataFlowDebugSessionRequest
+    from ._models import CreateDataFlowDebugSessionResponse
     from ._models import CreateLinkedIntegrationRuntimeRequest
     from ._models import CreateRunResponse
     from ._models import CustomActivity
@@ -661,10 +714,26 @@ except (SyntaxError, ImportError):
     from ._models import DatabricksNotebookActivity
     from ._models import DatabricksSparkJarActivity
     from ._models import DatabricksSparkPythonActivity
+    from ._models import DataFlow
+    from ._models import DataFlowDebugCommandPayload
+    from ._models import DataFlowDebugCommandRequest
+    from ._models import DataFlowDebugCommandResponse
+    from ._models import DataFlowDebugPackage
+    from ._models import DataFlowDebugPackageDebugSettings
+    from ._models import DataFlowDebugResource
+    from ._models import DataFlowDebugSessionInfo
+    from ._models import DataFlowFolder
+    from ._models import DataFlowReference
+    from ._models import DataFlowResource
+    from ._models import DataFlowSink
+    from ._models import DataFlowSource
+    from ._models import DataFlowSourceSetting
+    from ._models import DataFlowStagingInfo
     from ._models import DataLakeAnalyticsUSQLActivity
     from ._models import Dataset
     from ._models import DatasetBZip2Compression
     from ._models import DatasetCompression
+    from ._models import DatasetDebugResource
     from ._models import DatasetDeflateCompression
     from ._models import DatasetFolder
     from ._models import DatasetGZipCompression
@@ -677,6 +746,7 @@ except (SyntaxError, ImportError):
     from ._models import Db2Source
     from ._models import Db2TableDataset
     from ._models import DeleteActivity
+    from ._models import DeleteDataFlowDebugSessionRequest
     from ._models import DelimitedTextDataset
     from ._models import DelimitedTextReadSettings
     from ._models import DelimitedTextSink
@@ -706,6 +776,7 @@ except (SyntaxError, ImportError):
     from ._models import EloquaSource
     from ._models import EntityReference
     from ._models import EnvironmentVariableSetup
+    from ._models import ExecuteDataFlowActivity
     from ._models import ExecutePipelineActivity
     from ._models import ExecuteSSISPackageActivity
     from ._models import ExecutionActivity
@@ -733,6 +804,7 @@ except (SyntaxError, ImportError):
     from ._models import FtpReadSettings
     from ._models import FtpServerLinkedService
     from ._models import FtpServerLocation
+    from ._models import GetDataFactoryOperationStatusResponse
     from ._models import GetMetadataActivity
     from ._models import GetSsisObjectMetadataRequest
     from ._models import GitHubAccessTokenRequest
@@ -743,6 +815,9 @@ except (SyntaxError, ImportError):
     from ._models import GoogleBigQueryLinkedService
     from ._models import GoogleBigQueryObjectDataset
     from ._models import GoogleBigQuerySource
+    from ._models import GoogleCloudStorageLinkedService
+    from ._models import GoogleCloudStorageLocation
+    from ._models import GoogleCloudStorageReadSettings
     from ._models import GreenplumLinkedService
     from ._models import GreenplumSource
     from ._models import GreenplumTableDataset
@@ -784,7 +859,9 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeComputeProperties
     from ._models import IntegrationRuntimeConnectionInfo
     from ._models import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models import IntegrationRuntimeDataFlowProperties
     from ._models import IntegrationRuntimeDataProxyProperties
+    from ._models import IntegrationRuntimeDebugResource
     from ._models import IntegrationRuntimeMonitoringData
     from ._models import IntegrationRuntimeNodeIpAddress
     from ._models import IntegrationRuntimeNodeMonitoringData
@@ -811,6 +888,7 @@ except (SyntaxError, ImportError):
     from ._models import LinkedIntegrationRuntimeRequest
     from ._models import LinkedIntegrationRuntimeType
     from ._models import LinkedService
+    from ._models import LinkedServiceDebugResource
     from ._models import LinkedServiceReference
     from ._models import LinkedServiceResource
     from ._models import LogStorageSettings
@@ -823,6 +901,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeNode
     from ._models import ManagedIntegrationRuntimeOperationResult
     from ._models import ManagedIntegrationRuntimeStatus
+    from ._models import MappingDataFlow
     from ._models import MariaDBLinkedService
     from ._models import MariaDBSource
     from ._models import MariaDBTableDataset
@@ -1012,14 +1091,19 @@ except (SyntaxError, ImportError):
     from ._models import StoreReadSettings
     from ._models import StoreWriteSettings
     from ._models import SubResource
+    from ._models import SubResourceDebugResource
+    from ._models import SwitchActivity
+    from ._models import SwitchCase
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
+    from ._models import TabularSource
     from ._models import TeradataLinkedService
     from ._models import TeradataPartitionSettings
     from ._models import TeradataSource
     from ._models import TeradataTableDataset
     from ._models import TextFormat
+    from ._models import Transformation
     from ._models import Trigger
     from ._models import TriggerDependencyReference
     from ._models import TriggerPipelineReference
@@ -1057,6 +1141,8 @@ except (SyntaxError, ImportError):
     from ._models import ZohoLinkedService
     from ._models import ZohoObjectDataset
     from ._models import ZohoSource
+from ._paged_models import DataFlowDebugSessionInfoPaged
+from ._paged_models import DataFlowResourcePaged
 from ._paged_models import DatasetResourcePaged
 from ._paged_models import FactoryPaged
 from ._paged_models import IntegrationRuntimeResourcePaged
@@ -1078,6 +1164,7 @@ from ._data_factory_management_client_enums import (
     RunQueryOrderByField,
     RunQueryOrder,
     TriggerRunStatus,
+    DataFlowDebugCommandType,
     TumblingWindowFrequency,
     BlobEventTypes,
     DayOfWeek,
@@ -1112,13 +1199,13 @@ from ._data_factory_management_client_enums import (
     AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
+    OraclePartitionOption,
+    SalesforceSourceReadBehavior,
     NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
     TeradataPartitionOption,
-    OraclePartitionOption,
     StoredProcedureParameterType,
     SapTablePartitionOption,
-    SalesforceSourceReadBehavior,
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
@@ -1136,6 +1223,7 @@ from ._data_factory_management_client_enums import (
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
+    DataFlowComputeType,
     SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
 )
@@ -1147,6 +1235,7 @@ __all__ = [
     'ActivityPolicy',
     'ActivityRun',
     'ActivityRunsQueryResponse',
+    'AddDataFlowToDebugSessionResponse',
     'AmazonMWSLinkedService',
     'AmazonMWSObjectDataset',
     'AmazonMWSSource',
@@ -1190,6 +1279,9 @@ __all__ = [
     'AzureDataLakeStoreSink',
     'AzureDataLakeStoreSource',
     'AzureDataLakeStoreWriteSettings',
+    'AzureFileStorageLinkedService',
+    'AzureFileStorageLocation',
+    'AzureFileStorageReadSettings',
     'AzureFunctionActivity',
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
@@ -1198,7 +1290,9 @@ __all__ = [
     'AzureMariaDBSource',
     'AzureMariaDBTableDataset',
     'AzureMLBatchExecutionActivity',
+    'AzureMLExecutePipelineActivity',
     'AzureMLLinkedService',
+    'AzureMLServiceLinkedService',
     'AzureMLUpdateResourceActivity',
     'AzureMLWebServiceFile',
     'AzureMySqlLinkedService',
@@ -1255,9 +1349,14 @@ __all__ = [
     'CosmosDbMongoDbApiLinkedService',
     'CosmosDbMongoDbApiSink',
     'CosmosDbMongoDbApiSource',
+    'CosmosDbSqlApiCollectionDataset',
+    'CosmosDbSqlApiSink',
+    'CosmosDbSqlApiSource',
     'CouchbaseLinkedService',
     'CouchbaseSource',
     'CouchbaseTableDataset',
+    'CreateDataFlowDebugSessionRequest',
+    'CreateDataFlowDebugSessionResponse',
     'CreateLinkedIntegrationRuntimeRequest',
     'CreateRunResponse',
     'CustomActivity',
@@ -1268,10 +1367,26 @@ __all__ = [
     'DatabricksNotebookActivity',
     'DatabricksSparkJarActivity',
     'DatabricksSparkPythonActivity',
+    'DataFlow',
+    'DataFlowDebugCommandPayload',
+    'DataFlowDebugCommandRequest',
+    'DataFlowDebugCommandResponse',
+    'DataFlowDebugPackage',
+    'DataFlowDebugPackageDebugSettings',
+    'DataFlowDebugResource',
+    'DataFlowDebugSessionInfo',
+    'DataFlowFolder',
+    'DataFlowReference',
+    'DataFlowResource',
+    'DataFlowSink',
+    'DataFlowSource',
+    'DataFlowSourceSetting',
+    'DataFlowStagingInfo',
     'DataLakeAnalyticsUSQLActivity',
     'Dataset',
     'DatasetBZip2Compression',
     'DatasetCompression',
+    'DatasetDebugResource',
     'DatasetDeflateCompression',
     'DatasetFolder',
     'DatasetGZipCompression',
@@ -1284,6 +1399,7 @@ __all__ = [
     'Db2Source',
     'Db2TableDataset',
     'DeleteActivity',
+    'DeleteDataFlowDebugSessionRequest',
     'DelimitedTextDataset',
     'DelimitedTextReadSettings',
     'DelimitedTextSink',
@@ -1313,6 +1429,7 @@ __all__ = [
     'EloquaSource',
     'EntityReference',
     'EnvironmentVariableSetup',
+    'ExecuteDataFlowActivity',
     'ExecutePipelineActivity',
     'ExecuteSSISPackageActivity',
     'ExecutionActivity',
@@ -1340,6 +1457,7 @@ __all__ = [
     'FtpReadSettings',
     'FtpServerLinkedService',
     'FtpServerLocation',
+    'GetDataFactoryOperationStatusResponse',
     'GetMetadataActivity',
     'GetSsisObjectMetadataRequest',
     'GitHubAccessTokenRequest',
@@ -1350,6 +1468,9 @@ __all__ = [
     'GoogleBigQueryLinkedService',
     'GoogleBigQueryObjectDataset',
     'GoogleBigQuerySource',
+    'GoogleCloudStorageLinkedService',
+    'GoogleCloudStorageLocation',
+    'GoogleCloudStorageReadSettings',
     'GreenplumLinkedService',
     'GreenplumSource',
     'GreenplumTableDataset',
@@ -1391,7 +1512,9 @@ __all__ = [
     'IntegrationRuntimeComputeProperties',
     'IntegrationRuntimeConnectionInfo',
     'IntegrationRuntimeCustomSetupScriptProperties',
+    'IntegrationRuntimeDataFlowProperties',
     'IntegrationRuntimeDataProxyProperties',
+    'IntegrationRuntimeDebugResource',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
@@ -1418,6 +1541,7 @@ __all__ = [
     'LinkedIntegrationRuntimeRequest',
     'LinkedIntegrationRuntimeType',
     'LinkedService',
+    'LinkedServiceDebugResource',
     'LinkedServiceReference',
     'LinkedServiceResource',
     'LogStorageSettings',
@@ -1430,6 +1554,7 @@ __all__ = [
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeStatus',
+    'MappingDataFlow',
     'MariaDBLinkedService',
     'MariaDBSource',
     'MariaDBTableDataset',
@@ -1619,14 +1744,19 @@ __all__ = [
     'StoreReadSettings',
     'StoreWriteSettings',
     'SubResource',
+    'SubResourceDebugResource',
+    'SwitchActivity',
+    'SwitchCase',
     'SybaseLinkedService',
     'SybaseSource',
     'SybaseTableDataset',
+    'TabularSource',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
     'TeradataTableDataset',
     'TextFormat',
+    'Transformation',
     'Trigger',
     'TriggerDependencyReference',
     'TriggerPipelineReference',
@@ -1672,6 +1802,8 @@ __all__ = [
     'PipelineResourcePaged',
     'TriggerResourcePaged',
     'RerunTriggerResourcePaged',
+    'DataFlowResourcePaged',
+    'DataFlowDebugSessionInfoPaged',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
@@ -1684,6 +1816,7 @@ __all__ = [
     'RunQueryOrderByField',
     'RunQueryOrder',
     'TriggerRunStatus',
+    'DataFlowDebugCommandType',
     'TumblingWindowFrequency',
     'BlobEventTypes',
     'DayOfWeek',
@@ -1718,13 +1851,13 @@ __all__ = [
     'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
+    'OraclePartitionOption',
+    'SalesforceSourceReadBehavior',
     'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
     'TeradataPartitionOption',
-    'OraclePartitionOption',
     'StoredProcedureParameterType',
     'SapTablePartitionOption',
-    'SalesforceSourceReadBehavior',
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
@@ -1742,6 +1875,7 @@ __all__ = [
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',
+    'DataFlowComputeType',
     'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
 ]

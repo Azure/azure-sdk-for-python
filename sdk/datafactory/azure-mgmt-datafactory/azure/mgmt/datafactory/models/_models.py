@@ -286,6 +286,22 @@ class ActivityRunsQueryResponse(Model):
         self.continuation_token = kwargs.get('continuation_token', None)
 
 
+class AddDataFlowToDebugSessionResponse(Model):
+    """Response body structure for starting data flow debug session.
+
+    :param job_version: The ID of data flow debug job version.
+    :type job_version: str
+    """
+
+    _attribute_map = {
+        'job_version': {'key': 'jobVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AddDataFlowToDebugSessionResponse, self).__init__(**kwargs)
+        self.job_version = kwargs.get('job_version', None)
+
+
 class LinkedService(Model):
     """The Azure Data Factory nested object which contains the information and
     credential which can be used to connect with related store or compute
@@ -318,16 +334,17 @@ class LinkedService(Model):
     MongoDbV2LinkedService, MongoDbLinkedService, CassandraLinkedService,
     WebLinkedService, ODataLinkedService, HdfsLinkedService,
     MicrosoftAccessLinkedService, InformixLinkedService, OdbcLinkedService,
-    AzureMLLinkedService, TeradataLinkedService, Db2LinkedService,
-    SybaseLinkedService, PostgreSqlLinkedService, MySqlLinkedService,
-    AzureMySqlLinkedService, OracleLinkedService, FileServerLinkedService,
-    HDInsightLinkedService, CommonDataServiceForAppsLinkedService,
-    DynamicsCrmLinkedService, DynamicsLinkedService, CosmosDbLinkedService,
-    AzureKeyVaultLinkedService, AzureBatchLinkedService,
-    AzureSqlMILinkedService, AzureSqlDatabaseLinkedService,
-    SqlServerLinkedService, AzureSqlDWLinkedService,
-    AzureTableStorageLinkedService, AzureBlobStorageLinkedService,
-    AzureStorageLinkedService
+    AzureMLServiceLinkedService, AzureMLLinkedService, TeradataLinkedService,
+    Db2LinkedService, SybaseLinkedService, PostgreSqlLinkedService,
+    MySqlLinkedService, AzureMySqlLinkedService, OracleLinkedService,
+    GoogleCloudStorageLinkedService, AzureFileStorageLinkedService,
+    FileServerLinkedService, HDInsightLinkedService,
+    CommonDataServiceForAppsLinkedService, DynamicsCrmLinkedService,
+    DynamicsLinkedService, CosmosDbLinkedService, AzureKeyVaultLinkedService,
+    AzureBatchLinkedService, AzureSqlMILinkedService,
+    AzureSqlDatabaseLinkedService, SqlServerLinkedService,
+    AzureSqlDWLinkedService, AzureTableStorageLinkedService,
+    AzureBlobStorageLinkedService, AzureStorageLinkedService
 
     All required parameters must be populated in order to send to Azure.
 
@@ -363,7 +380,7 @@ class LinkedService(Model):
     }
 
     _subtype_map = {
-        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
+        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
     }
 
     def __init__(self, **kwargs):
@@ -501,10 +518,11 @@ class Dataset(Model):
     MongoDbCollectionDataset, FileShareDataset, Office365Dataset,
     AzureBlobFSDataset, AzureDataLakeStoreDataset,
     CommonDataServiceForAppsEntityDataset, DynamicsCrmEntityDataset,
-    DynamicsEntityDataset, DocumentDbCollectionDataset, CustomDataset,
-    CassandraTableDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset,
-    AzureSqlTableDataset, AzureTableDataset, AzureBlobDataset, BinaryDataset,
-    OrcDataset, JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
+    DynamicsEntityDataset, DocumentDbCollectionDataset,
+    CosmosDbSqlApiCollectionDataset, CustomDataset, CassandraTableDataset,
+    AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset,
+    AzureTableDataset, AzureBlobDataset, BinaryDataset, OrcDataset,
+    JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
     AmazonS3Dataset
 
     All required parameters must be populated in order to send to Azure.
@@ -555,7 +573,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, **kwargs):
@@ -635,26 +653,13 @@ class CopySource(Model):
     """A copy activity source.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonRedshiftSource, GoogleAdWordsSource,
-    OracleServiceCloudSource, DynamicsAXSource, ResponsysSource,
-    SalesforceMarketingCloudSource, VerticaSource, NetezzaSource, ZohoSource,
-    XeroSource, SquareSource, SparkSource, ShopifySource, ServiceNowSource,
-    QuickBooksSource, PrestoSource, PhoenixSource, PaypalSource, MarketoSource,
-    AzureMariaDBSource, MariaDBSource, MagentoSource, JiraSource, ImpalaSource,
-    HubspotSource, HiveSource, HBaseSource, GreenplumSource,
-    GoogleBigQuerySource, EloquaSource, DrillSource, CouchbaseSource,
-    ConcurSource, AzurePostgreSqlSource, AmazonMWSSource, HttpSource,
-    AzureBlobFSSource, AzureDataLakeStoreSource, Office365Source,
-    CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource, CassandraSource,
-    WebSource, TeradataSource, OracleSource, AzureDataExplorerSource,
-    AzureMySqlSource, HdfsSource, FileSystemSource, SqlDWSource, SqlMISource,
-    AzureSqlSource, SqlServerSource, SqlSource, RestSource, SapTableSource,
-    SapOpenHubSource, SapHanaSource, SapEccSource, SapCloudForCustomerSource,
-    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SapBwSource,
-    SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
-    MicrosoftAccessSource, InformixSource, RelationalSource,
-    CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
-    DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
+    sub-classes are: HttpSource, AzureBlobFSSource, AzureDataLakeStoreSource,
+    Office365Source, CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource,
+    WebSource, OracleSource, AzureDataExplorerSource, HdfsSource,
+    FileSystemSource, RestSource, SalesforceServiceCloudSource, ODataSource,
+    MicrosoftAccessSource, RelationalSource, CommonDataServiceForAppsSource,
+    DynamicsCrmSource, DynamicsSource, CosmosDbSqlApiSource,
+    DocumentDbCollectionSource, BlobSource, TabularSource, BinarySource,
     OrcSource, JsonSource, DelimitedTextSource, ParquetSource, AvroSource
 
     All required parameters must be populated in order to send to Azure.
@@ -690,7 +695,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'WebSource': 'WebSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'RestSource': 'RestSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'ODataSource': 'ODataSource', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'CosmosDbSqlApiSource': 'CosmosDbSqlApiSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'TabularSource': 'TabularSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
     }
 
     def __init__(self, **kwargs):
@@ -702,7 +707,73 @@ class CopySource(Model):
         self.type = None
 
 
-class AmazonMWSSource(CopySource):
+class TabularSource(CopySource):
+    """Copy activity sources of tabular type.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonRedshiftSource, GoogleAdWordsSource,
+    OracleServiceCloudSource, DynamicsAXSource, ResponsysSource,
+    SalesforceMarketingCloudSource, VerticaSource, NetezzaSource, ZohoSource,
+    XeroSource, SquareSource, SparkSource, ShopifySource, ServiceNowSource,
+    QuickBooksSource, PrestoSource, PhoenixSource, PaypalSource, MarketoSource,
+    AzureMariaDBSource, MariaDBSource, MagentoSource, JiraSource, ImpalaSource,
+    HubspotSource, HiveSource, HBaseSource, GreenplumSource,
+    GoogleBigQuerySource, EloquaSource, DrillSource, CouchbaseSource,
+    ConcurSource, AzurePostgreSqlSource, AmazonMWSSource, CassandraSource,
+    TeradataSource, AzureMySqlSource, SqlDWSource, SqlMISource, AzureSqlSource,
+    SqlServerSource, SqlSource, SapTableSource, SapOpenHubSource,
+    SapHanaSource, SapEccSource, SapCloudForCustomerSource, SalesforceSource,
+    SapBwSource, SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource,
+    Db2Source, InformixSource, AzureTableSource
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'CassandraSource': 'CassandraSource', 'TeradataSource': 'TeradataSource', 'AzureMySqlSource': 'AzureMySqlSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceSource': 'SalesforceSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'InformixSource': 'InformixSource', 'AzureTableSource': 'AzureTableSource'}
+    }
+
+    def __init__(self, **kwargs):
+        super(TabularSource, self).__init__(**kwargs)
+        self.query_timeout = kwargs.get('query_timeout', None)
+        self.type = 'TabularSource'
+
+
+class AmazonMWSSource(TabularSource):
     """A copy activity Amazon Marketplace Web Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -723,6 +794,10 @@ class AmazonMWSSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -738,6 +813,7 @@ class AmazonMWSSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -821,7 +897,7 @@ class AmazonRedshiftLinkedService(LinkedService):
         self.type = 'AmazonRedshift'
 
 
-class AmazonRedshiftSource(CopySource):
+class AmazonRedshiftSource(TabularSource):
     """A copy activity source for Amazon Redshift Source.
 
     All required parameters must be populated in order to send to Azure.
@@ -842,6 +918,10 @@ class AmazonRedshiftSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -863,6 +943,7 @@ class AmazonRedshiftSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
     }
@@ -1289,7 +1370,8 @@ class ControlActivity(Activity):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: WebHookActivity, AppendVariableActivity,
     SetVariableActivity, FilterActivity, ValidationActivity, UntilActivity,
-    WaitActivity, ForEachActivity, IfConditionActivity, ExecutePipelineActivity
+    WaitActivity, ForEachActivity, SwitchActivity, IfConditionActivity,
+    ExecutePipelineActivity
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1323,7 +1405,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'Switch': 'SwitchActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, **kwargs):
@@ -1538,8 +1620,8 @@ class CopySink(Model):
     DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
     AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
     SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, BinarySink,
-    ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
+    CosmosDbSqlApiSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
+    BinarySink, ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
     SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, OrcSink,
     JsonSink, DelimitedTextSink
 
@@ -1585,7 +1667,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
     def __init__(self, **kwargs):
@@ -2730,9 +2812,10 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
-    DatabricksSparkJarActivity, DatabricksNotebookActivity,
-    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
+    sub-classes are: ExecuteDataFlowActivity, AzureFunctionActivity,
+    DatabricksSparkPythonActivity, DatabricksSparkJarActivity,
+    DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
+    AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity,
     AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
     LookupActivity, AzureDataExplorerCommandActivity, DeleteActivity,
     SqlServerStoredProcedureActivity, CustomActivity,
@@ -2779,7 +2862,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLExecutePipeline': 'AzureMLExecutePipelineActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
     def __init__(self, **kwargs):
@@ -3582,6 +3665,162 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         self.type = 'AzureDataLakeStoreWriteSettings'
 
 
+class AzureFileStorageLinkedService(LinkedService):
+    """Azure File Storage linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param host: Required. Host name of the server. Type: string (or
+     Expression with resultType string).
+    :type host: object
+    :param user_id: User ID to logon the server. Type: string (or Expression
+     with resultType string).
+    :type user_id: object
+    :param password: Password to logon the server.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'host': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'host': {'key': 'typeProperties.host', 'type': 'object'},
+        'user_id': {'key': 'typeProperties.userId', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.user_id = kwargs.get('user_id', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'AzureFileStorage'
+
+
+class AzureFileStorageLocation(DatasetLocation):
+    """The location of file server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or
+     Expression with resultType string)
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or
+     Expression with resultType string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageLocation, self).__init__(**kwargs)
+
+
+class AzureFileStorageReadSettings(StoreReadSettings):
+    """Azure File Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Azure File Storage wildcardFolderPath. Type:
+     string (or Expression with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Azure File Storage wildcardFileName. Type:
+     string (or Expression with resultType string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageReadSettings, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
 class AzureFunctionActivity(ExecutionActivity):
     """Azure Function activity.
 
@@ -3885,7 +4124,7 @@ class AzureMariaDBLinkedService(LinkedService):
         self.type = 'AzureMariaDB'
 
 
-class AzureMariaDBSource(CopySource):
+class AzureMariaDBSource(TabularSource):
     """A copy activity Azure MariaDB source.
 
     All required parameters must be populated in order to send to Azure.
@@ -3906,6 +4145,10 @@ class AzureMariaDBSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -3921,6 +4164,7 @@ class AzureMariaDBSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -4060,8 +4304,90 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         self.type = 'AzureMLBatchExecution'
 
 
+class AzureMLExecutePipelineActivity(ExecutionActivity):
+    """Azure ML Execute Pipeline activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param ml_pipeline_id: Required. ID of the published Azure ML pipeline.
+     Type: string (or Expression with resultType string).
+    :type ml_pipeline_id: object
+    :param experiment_name: Run history experiment name of the pipeline run.
+     This information will be passed in the ExperimentName property of the
+     published pipeline execution request. Type: string (or Expression with
+     resultType string).
+    :type experiment_name: object
+    :param ml_pipeline_parameters: Key,Value pairs to be passed to the
+     published Azure ML pipeline endpoint. Keys must match the names of
+     pipeline parameters defined in the published pipeline. Values will be
+     passed in the ParameterAssignments property of the published pipeline
+     execution request. Type: object with key value pairs (or Expression with
+     resultType object).
+    :type ml_pipeline_parameters: object
+    :param ml_parent_run_id: The parent Azure ML Service pipeline run id. This
+     information will be passed in the ParentRunId property of the published
+     pipeline execution request. Type: string (or Expression with resultType
+     string).
+    :type ml_parent_run_id: object
+    :param continue_on_step_failure: Whether to continue execution of other
+     steps in the PipelineRun if a step fails. This information will be passed
+     in the continueOnStepFailure property of the published pipeline execution
+     request. Type: boolean (or Expression with resultType boolean).
+    :type continue_on_step_failure: object
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'ml_pipeline_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'ml_pipeline_id': {'key': 'typeProperties.mlPipelineId', 'type': 'object'},
+        'experiment_name': {'key': 'typeProperties.experimentName', 'type': 'object'},
+        'ml_pipeline_parameters': {'key': 'typeProperties.mlPipelineParameters', 'type': 'object'},
+        'ml_parent_run_id': {'key': 'typeProperties.mlParentRunId', 'type': 'object'},
+        'continue_on_step_failure': {'key': 'typeProperties.continueOnStepFailure', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureMLExecutePipelineActivity, self).__init__(**kwargs)
+        self.ml_pipeline_id = kwargs.get('ml_pipeline_id', None)
+        self.experiment_name = kwargs.get('experiment_name', None)
+        self.ml_pipeline_parameters = kwargs.get('ml_pipeline_parameters', None)
+        self.ml_parent_run_id = kwargs.get('ml_parent_run_id', None)
+        self.continue_on_step_failure = kwargs.get('continue_on_step_failure', None)
+        self.type = 'AzureMLExecutePipeline'
+
+
 class AzureMLLinkedService(LinkedService):
-    """Azure ML Web Service linked service.
+    """Azure ML Studio Web Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4082,22 +4408,23 @@ class AzureMLLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param ml_endpoint: Required. The Batch Execution REST URL for an Azure ML
-     Web Service endpoint. Type: string (or Expression with resultType string).
+     Studio Web Service endpoint. Type: string (or Expression with resultType
+     string).
     :type ml_endpoint: object
     :param api_key: Required. The API key for accessing the Azure ML model
      endpoint.
     :type api_key: ~azure.mgmt.datafactory.models.SecretBase
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
-     ML Web Service endpoint. Type: string (or Expression with resultType
-     string).
+     ML Studio Web Service endpoint. Type: string (or Expression with
+     resultType string).
     :type update_resource_endpoint: object
     :param service_principal_id: The ID of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
-     web service. Type: string (or Expression with resultType string).
+     Studio web service. Type: string (or Expression with resultType string).
     :type service_principal_id: object
     :param service_principal_key: The key of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
-     web service.
+     Studio web service.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
@@ -4140,6 +4467,88 @@ class AzureMLLinkedService(LinkedService):
         self.tenant = kwargs.get('tenant', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureML'
+
+
+class AzureMLServiceLinkedService(LinkedService):
+    """Azure ML Service linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param subscription_id: Required. Azure ML Service workspace subscription
+     ID. Type: string (or Expression with resultType string).
+    :type subscription_id: object
+    :param resource_group_name: Required. Azure ML Service workspace resource
+     group name. Type: string (or Expression with resultType string).
+    :type resource_group_name: object
+    :param ml_workspace_name: Required. Azure ML Service workspace name. Type:
+     string (or Expression with resultType string).
+    :type ml_workspace_name: object
+    :param service_principal_id: The ID of the service principal used to
+     authenticate against the endpoint of a published Azure ML Service
+     pipeline. Type: string (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_key: The key of the service principal used to
+     authenticate against the endpoint of a published Azure ML Service
+     pipeline.
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param tenant: The name or ID of the tenant to which the service principal
+     belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'subscription_id': {'required': True},
+        'resource_group_name': {'required': True},
+        'ml_workspace_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'subscription_id': {'key': 'typeProperties.subscriptionId', 'type': 'object'},
+        'resource_group_name': {'key': 'typeProperties.resourceGroupName', 'type': 'object'},
+        'ml_workspace_name': {'key': 'typeProperties.mlWorkspaceName', 'type': 'object'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
+        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureMLServiceLinkedService, self).__init__(**kwargs)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.ml_workspace_name = kwargs.get('ml_workspace_name', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'AzureMLService'
 
 
 class AzureMLUpdateResourceActivity(ExecutionActivity):
@@ -4355,7 +4764,7 @@ class AzureMySqlSink(CopySink):
         self.type = 'AzureMySqlSink'
 
 
-class AzureMySqlSource(CopySource):
+class AzureMySqlSource(TabularSource):
     """A copy activity Azure MySQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -4376,6 +4785,10 @@ class AzureMySqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -4391,6 +4804,7 @@ class AzureMySqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -4434,6 +4848,9 @@ class AzureMySqlTableDataset(Dataset):
     :param table_name: The Azure MySQL database table name. Type: string (or
      Expression with resultType string).
     :type table_name: object
+    :param table: The name of Azure MySQL database table. Type: string (or
+     Expression with resultType string).
+    :type table: object
     """
 
     _validation = {
@@ -4452,11 +4869,13 @@ class AzureMySqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureMySqlTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
+        self.table = kwargs.get('table', None)
         self.type = 'AzureMySqlTable'
 
 
@@ -4572,7 +4991,7 @@ class AzurePostgreSqlSink(CopySink):
         self.type = 'AzurePostgreSqlSink'
 
 
-class AzurePostgreSqlSource(CopySource):
+class AzurePostgreSqlSource(TabularSource):
     """A copy activity Azure PostgreSQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -4593,6 +5012,10 @@ class AzurePostgreSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -4608,6 +5031,7 @@ class AzurePostgreSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -5358,7 +5782,7 @@ class AzureSqlSink(CopySink):
         self.type = 'AzureSqlSink'
 
 
-class AzureSqlSource(CopySource):
+class AzureSqlSource(TabularSource):
     """A copy activity Azure SQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -5379,6 +5803,10 @@ class AzureSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -5404,6 +5832,7 @@ class AzureSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -5690,7 +6119,7 @@ class AzureTableSink(CopySink):
         self.type = 'AzureTableSink'
 
 
-class AzureTableSource(CopySource):
+class AzureTableSource(TabularSource):
     """A copy activity Azure Table source.
 
     All required parameters must be populated in order to send to Azure.
@@ -5711,6 +6140,10 @@ class AzureTableSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param azure_table_source_query: Azure Table source query. Type: string
      (or Expression with resultType string).
     :type azure_table_source_query: object
@@ -5730,6 +6163,7 @@ class AzureTableSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'azure_table_source_query': {'key': 'azureTableSourceQuery', 'type': 'object'},
         'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
     }
@@ -6123,6 +6557,9 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
      fire the trigger for blobs named boxes in a december folder. At least one
      of these must be provided: blobPathBeginsWith, blobPathEndsWith.
     :type blob_path_ends_with: str
+    :param ignore_empty_blobs: If set to true, blobs with zero bytes will be
+     ignored.
+    :type ignore_empty_blobs: bool
     :param events: Required. The type of events that cause this trigger to
      fire.
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
@@ -6146,6 +6583,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
         'blob_path_ends_with': {'key': 'typeProperties.blobPathEndsWith', 'type': 'str'},
+        'ignore_empty_blobs': {'key': 'typeProperties.ignoreEmptyBlobs', 'type': 'bool'},
         'events': {'key': 'typeProperties.events', 'type': '[str]'},
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
@@ -6154,6 +6592,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         super(BlobEventsTrigger, self).__init__(**kwargs)
         self.blob_path_begins_with = kwargs.get('blob_path_begins_with', None)
         self.blob_path_ends_with = kwargs.get('blob_path_ends_with', None)
+        self.ignore_empty_blobs = kwargs.get('ignore_empty_blobs', None)
         self.events = kwargs.get('events', None)
         self.scope = kwargs.get('scope', None)
         self.type = 'BlobEventsTrigger'
@@ -6421,7 +6860,7 @@ class CassandraLinkedService(LinkedService):
         self.type = 'Cassandra'
 
 
-class CassandraSource(CopySource):
+class CassandraSource(TabularSource):
     """A copy activity source for a Cassandra database.
 
     All required parameters must be populated in order to send to Azure.
@@ -6442,6 +6881,10 @@ class CassandraSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
      resultType string).
@@ -6468,6 +6911,7 @@ class CassandraSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
     }
@@ -7174,7 +7618,7 @@ class ConcurObjectDataset(Dataset):
         self.type = 'ConcurObject'
 
 
-class ConcurSource(CopySource):
+class ConcurSource(TabularSource):
     """A copy activity Concur Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -7195,6 +7639,10 @@ class ConcurSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -7210,6 +7658,7 @@ class ConcurSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -7352,13 +7801,18 @@ class CosmosDbLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string. Type: string,
+    :param connection_string: The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param account_key: The Azure key vault secret reference of accountKey in
-     connection string.
-    :type account_key:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param account_endpoint: The endpoint of the Azure CosmosDB account. Type:
+     string (or Expression with resultType string)
+    :type account_endpoint: object
+    :param database: The name of the database. Type: string (or Expression
+     with resultType string)
+    :type database: object
+    :param account_key: The account key of the Azure CosmosDB account. Type:
+     SecureString or AzureKeyVaultSecretReference.
+    :type account_key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -7367,7 +7821,6 @@ class CosmosDbLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -7378,13 +7831,17 @@ class CosmosDbLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
+        'account_endpoint': {'key': 'typeProperties.accountEndpoint', 'type': 'object'},
+        'database': {'key': 'typeProperties.database', 'type': 'object'},
+        'account_key': {'key': 'typeProperties.accountKey', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(CosmosDbLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.account_endpoint = kwargs.get('account_endpoint', None)
+        self.database = kwargs.get('database', None)
         self.account_key = kwargs.get('account_key', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'CosmosDb'
@@ -7596,6 +8053,10 @@ class CosmosDbMongoDbApiSource(CopySource):
      main purpose is to avoid hit the limitation of response size. Type:
      integer (or Expression with resultType integer).
     :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -7611,6 +8072,7 @@ class CosmosDbMongoDbApiSource(CopySource):
         'filter': {'key': 'filter', 'type': 'object'},
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -7618,7 +8080,179 @@ class CosmosDbMongoDbApiSource(CopySource):
         self.filter = kwargs.get('filter', None)
         self.cursor_methods = kwargs.get('cursor_methods', None)
         self.batch_size = kwargs.get('batch_size', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'CosmosDbMongoDbApiSource'
+
+
+class CosmosDbSqlApiCollectionDataset(Dataset):
+    """Microsoft Azure CosmosDB (SQL API) Collection dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param collection_name: Required. CosmosDB (SQL API) collection name.
+     Type: string (or Expression with resultType string).
+    :type collection_name: object
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+        'collection_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'collection_name': {'key': 'typeProperties.collectionName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiCollectionDataset, self).__init__(**kwargs)
+        self.collection_name = kwargs.get('collection_name', None)
+        self.type = 'CosmosDbSqlApiCollection'
+
+
+class CosmosDbSqlApiSink(CopySink):
+    """A copy activity Azure CosmosDB (SQL API) Collection sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param write_behavior: Describes how to write data to Azure Cosmos DB.
+     Type: string (or Expression with resultType string). Allowed values:
+     insert and upsert.
+    :type write_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiSink, self).__init__(**kwargs)
+        self.write_behavior = kwargs.get('write_behavior', None)
+        self.type = 'CosmosDbSqlApiSink'
+
+
+class CosmosDbSqlApiSource(CopySource):
+    """A copy activity Azure CosmosDB (SQL API) Collection source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query: SQL API query. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    :param page_size: Page size of the result. Type: integer (or Expression
+     with resultType integer).
+    :type page_size: object
+    :param preferred_regions: Preferred regions. Type: array of strings (or
+     Expression with resultType array of strings).
+    :type preferred_regions: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'object'},
+        'page_size': {'key': 'pageSize', 'type': 'object'},
+        'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.page_size = kwargs.get('page_size', None)
+        self.preferred_regions = kwargs.get('preferred_regions', None)
+        self.type = 'CosmosDbSqlApiSource'
 
 
 class CouchbaseLinkedService(LinkedService):
@@ -7679,7 +8313,7 @@ class CouchbaseLinkedService(LinkedService):
         self.type = 'Couchbase'
 
 
-class CouchbaseSource(CopySource):
+class CouchbaseSource(TabularSource):
     """A copy activity Couchbase server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -7700,6 +8334,10 @@ class CouchbaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -7715,6 +8353,7 @@ class CouchbaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -7782,6 +8421,58 @@ class CouchbaseTableDataset(Dataset):
         super(CouchbaseTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
         self.type = 'CouchbaseTable'
+
+
+class CreateDataFlowDebugSessionRequest(Model):
+    """Request body structure for creating data flow debug session.
+
+    :param compute_type: Compute type of the cluster. The value will be
+     overwritten by the same setting in integration runtime if provided.
+    :type compute_type: str
+    :param core_count: Core count of the cluster. The value will be
+     overwritten by the same setting in integration runtime if provided.
+    :type core_count: int
+    :param time_to_live: Time to live setting of the cluster in minutes.
+    :type time_to_live: int
+    :param integration_runtime: Set to use integration runtime setting for
+     data flow debug session.
+    :type integration_runtime:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDebugResource
+    """
+
+    _attribute_map = {
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+        'integration_runtime': {'key': 'integrationRuntime', 'type': 'IntegrationRuntimeDebugResource'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateDataFlowDebugSessionRequest, self).__init__(**kwargs)
+        self.compute_type = kwargs.get('compute_type', None)
+        self.core_count = kwargs.get('core_count', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
+        self.integration_runtime = kwargs.get('integration_runtime', None)
+
+
+class CreateDataFlowDebugSessionResponse(Model):
+    """Response body structure for creating data flow debug session.
+
+    :param status: The state of the debug session.
+    :type status: str
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateDataFlowDebugSessionResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.session_id = kwargs.get('session_id', None)
 
 
 class CreateLinkedIntegrationRuntimeRequest(Model):
@@ -8232,6 +8923,562 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
         self.type = 'DatabricksSparkPython'
 
 
+class DataFlow(Model):
+    """Azure Data Factory nested object which contains a flow with data movements
+    and transformations.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MappingDataFlow
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the data flow.
+    :type description: str
+    :param annotations: List of tags that can be used for describing the data
+     flow.
+    :type annotations: list[object]
+    :param folder: The folder that this data flow is in. If not specified,
+     Data flow will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'MappingDataFlow': 'MappingDataFlow'}
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlow, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.annotations = kwargs.get('annotations', None)
+        self.folder = kwargs.get('folder', None)
+        self.type = None
+
+
+class DataFlowDebugCommandPayload(Model):
+    """Structure of command payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param stream_name: Required. The stream name which is used for preview.
+    :type stream_name: str
+    :param row_limits: Row limits for preview response.
+    :type row_limits: int
+    :param columns: Array of column names.
+    :type columns: list[str]
+    :param expression: The expression which is used for preview.
+    :type expression: str
+    """
+
+    _validation = {
+        'stream_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'stream_name': {'key': 'streamName', 'type': 'str'},
+        'row_limits': {'key': 'rowLimits', 'type': 'int'},
+        'columns': {'key': 'columns', 'type': '[str]'},
+        'expression': {'key': 'expression', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugCommandPayload, self).__init__(**kwargs)
+        self.stream_name = kwargs.get('stream_name', None)
+        self.row_limits = kwargs.get('row_limits', None)
+        self.columns = kwargs.get('columns', None)
+        self.expression = kwargs.get('expression', None)
+
+
+class DataFlowDebugCommandRequest(Model):
+    """Request body structure for data flow debug command.
+
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    :param command: The command type. Possible values include:
+     'executePreviewQuery', 'executeStatisticsQuery', 'executeExpressionQuery'
+    :type command: str or
+     ~azure.mgmt.datafactory.models.DataFlowDebugCommandType
+    :param command_payload: The command payload object.
+    :type command_payload:
+     ~azure.mgmt.datafactory.models.DataFlowDebugCommandPayload
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'command': {'key': 'command', 'type': 'str'},
+        'command_payload': {'key': 'commandPayload', 'type': 'DataFlowDebugCommandPayload'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugCommandRequest, self).__init__(**kwargs)
+        self.session_id = kwargs.get('session_id', None)
+        self.command = kwargs.get('command', None)
+        self.command_payload = kwargs.get('command_payload', None)
+
+
+class DataFlowDebugCommandResponse(Model):
+    """Response body structure of data flow result for data preview, statistics or
+    expression preview.
+
+    :param status: The run status of data preview, statistics or expression
+     preview.
+    :type status: str
+    :param data: The result data of data preview, statistics or expression
+     preview.
+    :type data: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'data': {'key': 'data', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugCommandResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.data = kwargs.get('data', None)
+
+
+class DataFlowDebugPackage(Model):
+    """Request body structure for starting data flow debug session.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    :param data_flow: Data flow instance.
+    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowDebugResource
+    :param datasets: List of datasets.
+    :type datasets: list[~azure.mgmt.datafactory.models.DatasetDebugResource]
+    :param linked_services: List of linked services.
+    :type linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceDebugResource]
+    :param staging: Staging info for debug session.
+    :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
+    :param debug_settings: Data flow debug settings.
+    :type debug_settings:
+     ~azure.mgmt.datafactory.models.DataFlowDebugPackageDebugSettings
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'data_flow': {'key': 'dataFlow', 'type': 'DataFlowDebugResource'},
+        'datasets': {'key': 'datasets', 'type': '[DatasetDebugResource]'},
+        'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceDebugResource]'},
+        'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
+        'debug_settings': {'key': 'debugSettings', 'type': 'DataFlowDebugPackageDebugSettings'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugPackage, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.data_flow = kwargs.get('data_flow', None)
+        self.datasets = kwargs.get('datasets', None)
+        self.linked_services = kwargs.get('linked_services', None)
+        self.staging = kwargs.get('staging', None)
+        self.debug_settings = kwargs.get('debug_settings', None)
+
+
+class DataFlowDebugPackageDebugSettings(Model):
+    """Data flow debug settings.
+
+    :param source_settings: Source setting for data flow debug.
+    :type source_settings:
+     list[~azure.mgmt.datafactory.models.DataFlowSourceSetting]
+    :param parameters: Data flow parameters.
+    :type parameters: dict[str, object]
+    :param dataset_parameters: Parameters for dataset.
+    :type dataset_parameters: object
+    """
+
+    _attribute_map = {
+        'source_settings': {'key': 'sourceSettings', 'type': '[DataFlowSourceSetting]'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
+        'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugPackageDebugSettings, self).__init__(**kwargs)
+        self.source_settings = kwargs.get('source_settings', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.dataset_parameters = kwargs.get('dataset_parameters', None)
+
+
+class SubResourceDebugResource(Model):
+    """Azure Data Factory nested debug resource.
+
+    :param name: The resource name.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubResourceDebugResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
+class DataFlowDebugResource(SubResourceDebugResource):
+    """Data flow debug resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Data flow properties.
+    :type properties: ~azure.mgmt.datafactory.models.DataFlow
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataFlow'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class DataFlowDebugSessionInfo(Model):
+    """Data flow debug session info.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param data_flow_name: The name of the data flow.
+    :type data_flow_name: str
+    :param compute_type: Compute type of the cluster.
+    :type compute_type: str
+    :param core_count: Core count of the cluster.
+    :type core_count: int
+    :param node_count: Node count of the cluster. (deprecated property)
+    :type node_count: int
+    :param integration_runtime_name: Attached integration runtime name of data
+     flow debug session.
+    :type integration_runtime_name: str
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    :param start_time: Start time of data flow debug session.
+    :type start_time: str
+    :param time_to_live_in_minutes: Compute type of the cluster.
+    :type time_to_live_in_minutes: int
+    :param last_activity_time: Last activity time of data flow debug session.
+    :type last_activity_time: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'data_flow_name': {'key': 'dataFlowName', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'node_count': {'key': 'nodeCount', 'type': 'int'},
+        'integration_runtime_name': {'key': 'integrationRuntimeName', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'time_to_live_in_minutes': {'key': 'timeToLiveInMinutes', 'type': 'int'},
+        'last_activity_time': {'key': 'lastActivityTime', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugSessionInfo, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.data_flow_name = kwargs.get('data_flow_name', None)
+        self.compute_type = kwargs.get('compute_type', None)
+        self.core_count = kwargs.get('core_count', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.integration_runtime_name = kwargs.get('integration_runtime_name', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.time_to_live_in_minutes = kwargs.get('time_to_live_in_minutes', None)
+        self.last_activity_time = kwargs.get('last_activity_time', None)
+
+
+class DataFlowFolder(Model):
+    """The folder that this data flow is in. If not specified, Data flow will
+    appear at the root level.
+
+    :param name: The name of the folder that this data flow is in.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowFolder, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
+class DataFlowReference(Model):
+    """Data flow reference type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar type: Required. Data flow reference type. Default value:
+     "DataFlowReference" .
+    :vartype type: str
+    :param reference_name: Required. Reference data flow name.
+    :type reference_name: str
+    :param dataset_parameters: Reference data flow parameters from dataset.
+    :type dataset_parameters: object
+    """
+
+    _validation = {
+        'type': {'required': True, 'constant': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+        'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+    }
+
+    type = "DataFlowReference"
+
+    def __init__(self, **kwargs):
+        super(DataFlowReference, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.reference_name = kwargs.get('reference_name', None)
+        self.dataset_parameters = kwargs.get('dataset_parameters', None)
+
+
+class SubResource(Model):
+    """Azure Data Factory nested resource, which belongs to a factory.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.etag = None
+
+
+class DataFlowResource(SubResource):
+    """Data flow resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Data flow properties.
+    :type properties: ~azure.mgmt.datafactory.models.DataFlow
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataFlow'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class Transformation(Model):
+    """A data flow transformation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Transformation name.
+    :type name: str
+    :param description: Transformation description.
+    :type description: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Transformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+
+
+class DataFlowSink(Transformation):
+    """Transformation for data flow sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Transformation name.
+    :type name: str
+    :param description: Transformation description.
+    :type description: str
+    :param dataset: Dataset reference.
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowSink, self).__init__(**kwargs)
+        self.dataset = kwargs.get('dataset', None)
+
+
+class DataFlowSource(Transformation):
+    """Transformation for data flow source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Transformation name.
+    :type name: str
+    :param description: Transformation description.
+    :type description: str
+    :param dataset: Dataset reference.
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowSource, self).__init__(**kwargs)
+        self.dataset = kwargs.get('dataset', None)
+
+
+class DataFlowSourceSetting(Model):
+    """Definition of data flow source setting for debug.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_name: The data flow source name.
+    :type source_name: str
+    :param row_limit: Defines the row limit of data flow source in debug.
+    :type row_limit: int
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_name': {'key': 'sourceName', 'type': 'str'},
+        'row_limit': {'key': 'rowLimit', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowSourceSetting, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.source_name = kwargs.get('source_name', None)
+        self.row_limit = kwargs.get('row_limit', None)
+
+
+class DataFlowStagingInfo(Model):
+    """Staging info for execute data flow activity.
+
+    :param linked_service: Staging linked service reference.
+    :type linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param folder_path: Folder path for staging blob.
+    :type folder_path: str
+    """
+
+    _attribute_map = {
+        'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'folder_path': {'key': 'folderPath', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowStagingInfo, self).__init__(**kwargs)
+        self.linked_service = kwargs.get('linked_service', None)
+        self.folder_path = kwargs.get('folder_path', None)
+
+
 class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     """Data Lake Analytics U-SQL activity.
 
@@ -8379,6 +9626,31 @@ class DatasetBZip2Compression(DatasetCompression):
         self.type = 'BZip2'
 
 
+class DatasetDebugResource(SubResourceDebugResource):
+    """Dataset debug resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Dataset properties.
+    :type properties: ~azure.mgmt.datafactory.models.Dataset
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'Dataset'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetDebugResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class DatasetDeflateCompression(DatasetCompression):
     """The Deflate compression method used on a dataset.
 
@@ -8490,44 +9762,6 @@ class DatasetReference(Model):
         super(DatasetReference, self).__init__(**kwargs)
         self.reference_name = kwargs.get('reference_name', None)
         self.parameters = kwargs.get('parameters', None)
-
-
-class SubResource(Model):
-    """Azure Data Factory nested resource, which belongs to a factory.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
 
 
 class DatasetResource(SubResource):
@@ -8675,7 +9909,7 @@ class Db2LinkedService(LinkedService):
         self.type = 'Db2'
 
 
-class Db2Source(CopySource):
+class Db2Source(TabularSource):
     """A copy activity source for Db2 databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -8696,6 +9930,10 @@ class Db2Source(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -8711,6 +9949,7 @@ class Db2Source(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -8863,6 +10102,22 @@ class DeleteActivity(ExecutionActivity):
         self.log_storage_settings = kwargs.get('log_storage_settings', None)
         self.dataset = kwargs.get('dataset', None)
         self.type = 'Delete'
+
+
+class DeleteDataFlowDebugSessionRequest(Model):
+    """Request body structure for deleting data flow debug session.
+
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeleteDataFlowDebugSessionRequest, self).__init__(**kwargs)
+        self.session_id = kwargs.get('session_id', None)
 
 
 class DelimitedTextDataset(Dataset):
@@ -9337,7 +10592,8 @@ class DocumentDbCollectionSink(CopySink):
      Type: string (or Expression with resultType string).
     :type nesting_separator: object
     :param write_behavior: Describes how to write data to Azure Cosmos DB.
-     Allowed values: insert and upsert.
+     Type: string (or Expression with resultType string). Allowed values:
+     insert and upsert.
     :type write_behavior: object
     """
 
@@ -9391,6 +10647,10 @@ class DocumentDbCollectionSource(CopySource):
     :param nesting_separator: Nested properties separator. Type: string (or
      Expression with resultType string).
     :type nesting_separator: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -9405,12 +10665,14 @@ class DocumentDbCollectionSource(CopySource):
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(DocumentDbCollectionSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'DocumentDbCollectionSource'
 
 
@@ -9471,7 +10733,7 @@ class DrillLinkedService(LinkedService):
         self.type = 'Drill'
 
 
-class DrillSource(CopySource):
+class DrillSource(TabularSource):
     """A copy activity Drill server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -9492,6 +10754,10 @@ class DrillSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -9507,6 +10773,7 @@ class DrillSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -9728,7 +10995,7 @@ class DynamicsAXResourceDataset(Dataset):
         self.type = 'DynamicsAXResource'
 
 
-class DynamicsAXSource(CopySource):
+class DynamicsAXSource(TabularSource):
     """A copy activity Dynamics AX source.
 
     All required parameters must be populated in order to send to Azure.
@@ -9749,6 +11016,10 @@ class DynamicsAXSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -9764,6 +11035,7 @@ class DynamicsAXSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -10463,7 +11735,7 @@ class EloquaObjectDataset(Dataset):
         self.type = 'EloquaObject'
 
 
-class EloquaSource(CopySource):
+class EloquaSource(TabularSource):
     """A copy activity Eloqua server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -10484,6 +11756,10 @@ class EloquaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -10499,6 +11775,7 @@ class EloquaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -10560,6 +11837,66 @@ class EnvironmentVariableSetup(CustomSetupBase):
         self.variable_name = kwargs.get('variable_name', None)
         self.variable_value = kwargs.get('variable_value', None)
         self.type = 'EnvironmentVariableSetup'
+
+
+class ExecuteDataFlowActivity(ExecutionActivity):
+    """Execute data flow activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param data_flow: Required. Data flow reference.
+    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
+    :param staging: Staging info for execute data flow activity.
+    :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
+    :param integration_runtime: The integration runtime reference.
+    :type integration_runtime:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'data_flow': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'data_flow': {'key': 'typeProperties.dataFlow', 'type': 'DataFlowReference'},
+        'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
+        'integration_runtime': {'key': 'typeProperties.integrationRuntime', 'type': 'IntegrationRuntimeReference'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExecuteDataFlowActivity, self).__init__(**kwargs)
+        self.data_flow = kwargs.get('data_flow', None)
+        self.staging = kwargs.get('staging', None)
+        self.integration_runtime = kwargs.get('integration_runtime', None)
+        self.type = 'ExecuteDataFlow'
 
 
 class ExecutePipelineActivity(ControlActivity):
@@ -11806,6 +13143,27 @@ class FtpServerLocation(DatasetLocation):
         super(FtpServerLocation, self).__init__(**kwargs)
 
 
+class GetDataFactoryOperationStatusResponse(Model):
+    """Response body structure for get data factory operation status.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param status: Status of the operation.
+    :type status: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GetDataFactoryOperationStatusResponse, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.status = kwargs.get('status', None)
+
+
 class GetMetadataActivity(ExecutionActivity):
     """Activity to get metadata of dataset.
 
@@ -12092,7 +13450,7 @@ class GoogleAdWordsObjectDataset(Dataset):
         self.type = 'GoogleAdWordsObject'
 
 
-class GoogleAdWordsSource(CopySource):
+class GoogleAdWordsSource(TabularSource):
     """A copy activity Google AdWords service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12113,6 +13471,10 @@ class GoogleAdWordsSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -12128,6 +13490,7 @@ class GoogleAdWordsSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -12319,7 +13682,7 @@ class GoogleBigQueryObjectDataset(Dataset):
         self.type = 'GoogleBigQueryObject'
 
 
-class GoogleBigQuerySource(CopySource):
+class GoogleBigQuerySource(TabularSource):
     """A copy activity Google BigQuery service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12340,6 +13703,10 @@ class GoogleBigQuerySource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -12355,6 +13722,7 @@ class GoogleBigQuerySource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -12362,6 +13730,181 @@ class GoogleBigQuerySource(CopySource):
         super(GoogleBigQuerySource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.type = 'GoogleBigQuerySource'
+
+
+class GoogleCloudStorageLinkedService(LinkedService):
+    """Linked service for Google Cloud Storage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param access_key_id: The access key identifier of the Google Cloud
+     Storage Identity and Access Management (IAM) user. Type: string (or
+     Expression with resultType string).
+    :type access_key_id: object
+    :param secret_access_key: The secret access key of the Google Cloud
+     Storage Identity and Access Management (IAM) user.
+    :type secret_access_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_url: This value specifies the endpoint to access with the
+     Google Cloud Storage Connector. This is an optional property; change it
+     only if you want to try a different service endpoint or want to switch
+     between https and http. Type: string (or Expression with resultType
+     string).
+    :type service_url: object
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'access_key_id': {'key': 'typeProperties.accessKeyId', 'type': 'object'},
+        'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecretBase'},
+        'service_url': {'key': 'typeProperties.serviceUrl', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageLinkedService, self).__init__(**kwargs)
+        self.access_key_id = kwargs.get('access_key_id', None)
+        self.secret_access_key = kwargs.get('secret_access_key', None)
+        self.service_url = kwargs.get('service_url', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'GoogleCloudStorage'
+
+
+class GoogleCloudStorageLocation(DatasetLocation):
+    """The location of Google Cloud Storage dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or
+     Expression with resultType string)
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or
+     Expression with resultType string).
+    :type file_name: object
+    :param bucket_name: Specify the bucketName of Google Cloud Storage. Type:
+     string (or Expression with resultType string)
+    :type bucket_name: object
+    :param version: Specify the version of Google Cloud Storage. Type: string
+     (or Expression with resultType string).
+    :type version: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'bucket_name': {'key': 'bucketName', 'type': 'object'},
+        'version': {'key': 'version', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageLocation, self).__init__(**kwargs)
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.version = kwargs.get('version', None)
+
+
+class GoogleCloudStorageReadSettings(StoreReadSettings):
+    """Google Cloud Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Google Cloud Storage wildcardFolderPath.
+     Type: string (or Expression with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Google Cloud Storage wildcardFileName. Type:
+     string (or Expression with resultType string).
+    :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Google Cloud Storage object name.
+     Type: string (or Expression with resultType string).
+    :type prefix: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageReadSettings, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
 
 
 class GreenplumLinkedService(LinkedService):
@@ -12421,7 +13964,7 @@ class GreenplumLinkedService(LinkedService):
         self.type = 'Greenplum'
 
 
-class GreenplumSource(CopySource):
+class GreenplumSource(TabularSource):
     """A copy activity Greenplum Database source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12442,6 +13985,10 @@ class GreenplumSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -12457,6 +14004,7 @@ class GreenplumSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -12698,7 +14246,7 @@ class HBaseObjectDataset(Dataset):
         self.type = 'HBaseObject'
 
 
-class HBaseSource(CopySource):
+class HBaseSource(TabularSource):
     """A copy activity HBase server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12719,6 +14267,10 @@ class HBaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -12734,6 +14286,7 @@ class HBaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -13919,7 +15472,7 @@ class HiveObjectDataset(Dataset):
         self.type = 'HiveObject'
 
 
-class HiveSource(CopySource):
+class HiveSource(TabularSource):
     """A copy activity Hive Server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -13940,6 +15493,10 @@ class HiveSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13955,6 +15512,7 @@ class HiveSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14425,7 +15983,7 @@ class HubspotObjectDataset(Dataset):
         self.type = 'HubspotObject'
 
 
-class HubspotSource(CopySource):
+class HubspotSource(TabularSource):
     """A copy activity Hubspot Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -14446,6 +16004,10 @@ class HubspotSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -14461,6 +16023,7 @@ class HubspotSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14705,7 +16268,7 @@ class ImpalaObjectDataset(Dataset):
         self.type = 'ImpalaObject'
 
 
-class ImpalaSource(CopySource):
+class ImpalaSource(TabularSource):
     """A copy activity Impala server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -14726,6 +16289,10 @@ class ImpalaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -14741,6 +16308,7 @@ class ImpalaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -14878,7 +16446,7 @@ class InformixSink(CopySink):
         self.type = 'InformixSink'
 
 
-class InformixSource(CopySource):
+class InformixSource(TabularSource):
     """A copy activity source for Informix.
 
     All required parameters must be populated in order to send to Azure.
@@ -14899,6 +16467,10 @@ class InformixSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -14914,6 +16486,7 @@ class InformixSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -15061,6 +16634,10 @@ class IntegrationRuntimeComputeProperties(Model):
     :param max_parallel_executions_per_node: Maximum parallel executions count
      per node for managed integration runtime.
     :type max_parallel_executions_per_node: int
+    :param data_flow_properties: Data flow properties for managed integration
+     runtime.
+    :type data_flow_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDataFlowProperties
     :param v_net_properties: VNet properties for managed integration runtime.
     :type v_net_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
@@ -15077,6 +16654,7 @@ class IntegrationRuntimeComputeProperties(Model):
         'node_size': {'key': 'nodeSize', 'type': 'str'},
         'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
         'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
+        'data_flow_properties': {'key': 'dataFlowProperties', 'type': 'IntegrationRuntimeDataFlowProperties'},
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
     }
 
@@ -15087,6 +16665,7 @@ class IntegrationRuntimeComputeProperties(Model):
         self.node_size = kwargs.get('node_size', None)
         self.number_of_nodes = kwargs.get('number_of_nodes', None)
         self.max_parallel_executions_per_node = kwargs.get('max_parallel_executions_per_node', None)
+        self.data_flow_properties = kwargs.get('data_flow_properties', None)
         self.v_net_properties = kwargs.get('v_net_properties', None)
 
 
@@ -15169,6 +16748,44 @@ class IntegrationRuntimeCustomSetupScriptProperties(Model):
         self.sas_token = kwargs.get('sas_token', None)
 
 
+class IntegrationRuntimeDataFlowProperties(Model):
+    """Data flow properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param compute_type: Compute type of the cluster which will execute data
+     flow job. Possible values include: 'General', 'MemoryOptimized',
+     'ComputeOptimized'
+    :type compute_type: str or
+     ~azure.mgmt.datafactory.models.DataFlowComputeType
+    :param core_count: Core count of the cluster which will execute data flow
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
+    :type core_count: int
+    :param time_to_live: Time to live (in minutes) setting of the cluster
+     which will execute data flow job.
+    :type time_to_live: int
+    """
+
+    _validation = {
+        'time_to_live': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.compute_type = kwargs.get('compute_type', None)
+        self.core_count = kwargs.get('core_count', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
+
+
 class IntegrationRuntimeDataProxyProperties(Model):
     """Data proxy properties for a managed dedicated integration runtime.
 
@@ -15192,6 +16809,31 @@ class IntegrationRuntimeDataProxyProperties(Model):
         self.connect_via = kwargs.get('connect_via', None)
         self.staging_linked_service = kwargs.get('staging_linked_service', None)
         self.path = kwargs.get('path', None)
+
+
+class IntegrationRuntimeDebugResource(SubResourceDebugResource):
+    """Integration runtime debug resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Integration runtime properties.
+    :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'IntegrationRuntime'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeDebugResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class IntegrationRuntimeMonitoringData(Model):
@@ -15778,7 +17420,7 @@ class JiraObjectDataset(Dataset):
         self.type = 'JiraObject'
 
 
-class JiraSource(CopySource):
+class JiraSource(TabularSource):
     """A copy activity Jira Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -15799,6 +17441,10 @@ class JiraSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -15814,6 +17460,7 @@ class JiraSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -16255,6 +17902,31 @@ class LinkedIntegrationRuntimeRequest(Model):
         self.linked_factory_name = kwargs.get('linked_factory_name', None)
 
 
+class LinkedServiceDebugResource(SubResourceDebugResource):
+    """Linked service debug resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Properties of linked service.
+    :type properties: ~azure.mgmt.datafactory.models.LinkedService
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'LinkedService'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LinkedServiceDebugResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class LinkedServiceReference(Model):
     """Linked service reference type.
 
@@ -16561,7 +18233,7 @@ class MagentoObjectDataset(Dataset):
         self.type = 'MagentoObject'
 
 
-class MagentoSource(CopySource):
+class MagentoSource(TabularSource):
     """A copy activity Magento server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -16582,6 +18254,10 @@ class MagentoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -16597,6 +18273,7 @@ class MagentoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -16861,6 +18538,55 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.type = 'Managed'
 
 
+class MappingDataFlow(DataFlow):
+    """Mapping data flow.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the data flow.
+    :type description: str
+    :param annotations: List of tags that can be used for describing the data
+     flow.
+    :type annotations: list[object]
+    :param folder: The folder that this data flow is in. If not specified,
+     Data flow will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param sources: List of sources in data flow.
+    :type sources: list[~azure.mgmt.datafactory.models.DataFlowSource]
+    :param sinks: List of sinks in data flow.
+    :type sinks: list[~azure.mgmt.datafactory.models.DataFlowSink]
+    :param transformations: List of transformations in data flow.
+    :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
+    :param script: DataFlow script.
+    :type script: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'sources': {'key': 'typeProperties.sources', 'type': '[DataFlowSource]'},
+        'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
+        'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
+        'script': {'key': 'typeProperties.script', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MappingDataFlow, self).__init__(**kwargs)
+        self.sources = kwargs.get('sources', None)
+        self.sinks = kwargs.get('sinks', None)
+        self.transformations = kwargs.get('transformations', None)
+        self.script = kwargs.get('script', None)
+        self.type = 'MappingDataFlow'
+
+
 class MariaDBLinkedService(LinkedService):
     """MariaDB server linked service.
 
@@ -16918,7 +18644,7 @@ class MariaDBLinkedService(LinkedService):
         self.type = 'MariaDB'
 
 
-class MariaDBSource(CopySource):
+class MariaDBSource(TabularSource):
     """A copy activity MariaDB server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -16939,6 +18665,10 @@ class MariaDBSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -16954,6 +18684,7 @@ class MariaDBSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -17161,7 +18892,7 @@ class MarketoObjectDataset(Dataset):
         self.type = 'MarketoObject'
 
 
-class MarketoSource(CopySource):
+class MarketoSource(TabularSource):
     """A copy activity Marketo server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -17182,6 +18913,10 @@ class MarketoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -17197,6 +18932,7 @@ class MarketoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -17832,6 +19568,10 @@ class MongoDbV2Source(CopySource):
      main purpose is to avoid hit the limitation of response size. Type:
      integer (or Expression with resultType integer).
     :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -17847,6 +19587,7 @@ class MongoDbV2Source(CopySource):
         'filter': {'key': 'filter', 'type': 'object'},
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -17854,6 +19595,7 @@ class MongoDbV2Source(CopySource):
         self.filter = kwargs.get('filter', None)
         self.cursor_methods = kwargs.get('cursor_methods', None)
         self.batch_size = kwargs.get('batch_size', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'MongoDbV2Source'
 
 
@@ -17915,7 +19657,7 @@ class MySqlLinkedService(LinkedService):
         self.type = 'MySql'
 
 
-class MySqlSource(CopySource):
+class MySqlSource(TabularSource):
     """A copy activity source for MySQL databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -17936,6 +19678,10 @@ class MySqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -17951,6 +19697,7 @@ class MySqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -18107,7 +19854,7 @@ class NetezzaPartitionSettings(Model):
         self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
 
 
-class NetezzaSource(CopySource):
+class NetezzaSource(TabularSource):
     """A copy activity Netezza source.
 
     All required parameters must be populated in order to send to Azure.
@@ -18128,6 +19875,10 @@ class NetezzaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -18152,6 +19903,7 @@ class NetezzaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
@@ -18583,7 +20335,7 @@ class OdbcSink(CopySink):
         self.type = 'OdbcSink'
 
 
-class OdbcSource(CopySource):
+class OdbcSource(TabularSource):
     """A copy activity source for ODBC databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -18604,6 +20356,10 @@ class OdbcSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -18619,6 +20375,7 @@ class OdbcSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -19341,7 +21098,7 @@ class OracleServiceCloudObjectDataset(Dataset):
         self.type = 'OracleServiceCloudObject'
 
 
-class OracleServiceCloudSource(CopySource):
+class OracleServiceCloudSource(TabularSource):
     """A copy activity Oracle Service Cloud source.
 
     All required parameters must be populated in order to send to Azure.
@@ -19362,6 +21119,10 @@ class OracleServiceCloudSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -19377,6 +21138,7 @@ class OracleServiceCloudSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -20127,7 +21889,7 @@ class PaypalObjectDataset(Dataset):
         self.type = 'PaypalObject'
 
 
-class PaypalSource(CopySource):
+class PaypalSource(TabularSource):
     """A copy activity Paypal Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -20148,6 +21910,10 @@ class PaypalSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -20163,6 +21929,7 @@ class PaypalSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -20351,7 +22118,7 @@ class PhoenixObjectDataset(Dataset):
         self.type = 'PhoenixObject'
 
 
-class PhoenixSource(CopySource):
+class PhoenixSource(TabularSource):
     """A copy activity Phoenix server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -20372,6 +22139,10 @@ class PhoenixSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -20387,6 +22158,7 @@ class PhoenixSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -20776,7 +22548,7 @@ class PostgreSqlLinkedService(LinkedService):
         self.type = 'PostgreSql'
 
 
-class PostgreSqlSource(CopySource):
+class PostgreSqlSource(TabularSource):
     """A copy activity source for PostgreSQL databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -20797,6 +22569,10 @@ class PostgreSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -20812,6 +22588,7 @@ class PostgreSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -21081,7 +22858,7 @@ class PrestoObjectDataset(Dataset):
         self.type = 'PrestoObject'
 
 
-class PrestoSource(CopySource):
+class PrestoSource(TabularSource):
     """A copy activity Presto server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -21102,6 +22879,10 @@ class PrestoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21117,6 +22898,7 @@ class PrestoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -21274,7 +23056,7 @@ class QuickBooksObjectDataset(Dataset):
         self.type = 'QuickBooksObject'
 
 
-class QuickBooksSource(CopySource):
+class QuickBooksSource(TabularSource):
     """A copy activity QuickBooks server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -21295,6 +23077,10 @@ class QuickBooksSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21310,6 +23096,7 @@ class QuickBooksSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -21844,7 +23631,7 @@ class ResponsysObjectDataset(Dataset):
         self.type = 'ResponsysObject'
 
 
-class ResponsysSource(CopySource):
+class ResponsysSource(TabularSource):
     """A copy activity Responsys source.
 
     All required parameters must be populated in order to send to Azure.
@@ -21865,6 +23652,10 @@ class ResponsysSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21880,6 +23671,7 @@ class ResponsysSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -22491,7 +24283,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         self.type = 'SalesforceMarketingCloudObject'
 
 
-class SalesforceMarketingCloudSource(CopySource):
+class SalesforceMarketingCloudSource(TabularSource):
     """A copy activity Salesforce Marketing Cloud source.
 
     All required parameters must be populated in order to send to Azure.
@@ -22512,6 +24304,10 @@ class SalesforceMarketingCloudSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -22527,6 +24323,7 @@ class SalesforceMarketingCloudSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -22926,7 +24723,7 @@ class SalesforceSink(CopySink):
         self.type = 'SalesforceSink'
 
 
-class SalesforceSource(CopySource):
+class SalesforceSource(TabularSource):
     """A copy activity Salesforce source.
 
     All required parameters must be populated in order to send to Azure.
@@ -22947,6 +24744,10 @@ class SalesforceSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -22966,6 +24767,7 @@ class SalesforceSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'read_behavior': {'key': 'readBehavior', 'type': 'str'},
     }
@@ -23108,7 +24910,7 @@ class SapBWLinkedService(LinkedService):
         self.type = 'SapBW'
 
 
-class SapBwSource(CopySource):
+class SapBwSource(TabularSource):
     """A copy activity source for SapBW server via MDX.
 
     All required parameters must be populated in order to send to Azure.
@@ -23129,6 +24931,10 @@ class SapBwSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: MDX query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -23144,6 +24950,7 @@ class SapBwSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23333,7 +25140,7 @@ class SapCloudForCustomerSink(CopySink):
         self.type = 'SapCloudForCustomerSink'
 
 
-class SapCloudForCustomerSource(CopySource):
+class SapCloudForCustomerSource(TabularSource):
     """A copy activity source for SAP Cloud for Customer source.
 
     All required parameters must be populated in order to send to Azure.
@@ -23354,6 +25161,10 @@ class SapCloudForCustomerSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP Cloud for Customer OData query. For example, "$top=1".
      Type: string (or Expression with resultType string).
     :type query: object
@@ -23369,6 +25180,7 @@ class SapCloudForCustomerSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23503,7 +25315,7 @@ class SapEccResourceDataset(Dataset):
         self.type = 'SapEccResource'
 
 
-class SapEccSource(CopySource):
+class SapEccSource(TabularSource):
     """A copy activity source for SAP ECC source.
 
     All required parameters must be populated in order to send to Azure.
@@ -23524,6 +25336,10 @@ class SapEccSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
@@ -23539,6 +25355,7 @@ class SapEccSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -23621,7 +25438,7 @@ class SapHanaLinkedService(LinkedService):
         self.type = 'SapHana'
 
 
-class SapHanaSource(CopySource):
+class SapHanaSource(TabularSource):
     """A copy activity source for SAP HANA source.
 
     All required parameters must be populated in order to send to Azure.
@@ -23642,6 +25459,10 @@ class SapHanaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP HANA Sql query. Type: string (or Expression with
      resultType string).
     :type query: object
@@ -23660,6 +25481,7 @@ class SapHanaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'packet_size': {'key': 'packetSize', 'type': 'object'},
     }
@@ -23823,7 +25645,7 @@ class SapOpenHubLinkedService(LinkedService):
         self.type = 'SapOpenHub'
 
 
-class SapOpenHubSource(CopySource):
+class SapOpenHubSource(TabularSource):
     """A copy activity source for SAP Business Warehouse Open Hub Destination
     source.
 
@@ -23845,6 +25667,10 @@ class SapOpenHubSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param exclude_last_request: Whether to exclude the records of the last
      request. The default value is true. Type: boolean (or Expression with
      resultType boolean).
@@ -23866,6 +25692,7 @@ class SapOpenHubSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'exclude_last_request': {'key': 'excludeLastRequest', 'type': 'object'},
         'base_request_id': {'key': 'baseRequestId', 'type': 'object'},
     }
@@ -24176,7 +26003,7 @@ class SapTableResourceDataset(Dataset):
         self.type = 'SapTableResource'
 
 
-class SapTableSource(CopySource):
+class SapTableSource(TabularSource):
     """A copy activity source for SAP Table source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24197,6 +26024,10 @@ class SapTableSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param row_count: The number of rows to be retrieved. Type: integer(or
      Expression with resultType integer).
     :type row_count: object
@@ -24241,6 +26072,7 @@ class SapTableSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'row_count': {'key': 'rowCount', 'type': 'object'},
         'row_skips': {'key': 'rowSkips', 'type': 'object'},
         'rfc_table_fields': {'key': 'rfcTableFields', 'type': 'object'},
@@ -24906,7 +26738,7 @@ class ServiceNowObjectDataset(Dataset):
         self.type = 'ServiceNowObject'
 
 
-class ServiceNowSource(CopySource):
+class ServiceNowSource(TabularSource):
     """A copy activity ServiceNow server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24927,6 +26759,10 @@ class ServiceNowSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -24942,6 +26778,7 @@ class ServiceNowSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25328,7 +27165,7 @@ class ShopifyObjectDataset(Dataset):
         self.type = 'ShopifyObject'
 
 
-class ShopifySource(CopySource):
+class ShopifySource(TabularSource):
     """A copy activity Shopify Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -25349,6 +27186,10 @@ class ShopifySource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -25364,6 +27205,7 @@ class ShopifySource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25562,7 +27404,7 @@ class SparkObjectDataset(Dataset):
         self.type = 'SparkObject'
 
 
-class SparkSource(CopySource):
+class SparkSource(TabularSource):
     """A copy activity Spark Server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -25583,6 +27425,10 @@ class SparkSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -25598,6 +27444,7 @@ class SparkSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -25678,7 +27525,7 @@ class SqlDWSink(CopySink):
         self.type = 'SqlDWSink'
 
 
-class SqlDWSource(CopySource):
+class SqlDWSource(TabularSource):
     """A copy activity SQL Data Warehouse source.
 
     All required parameters must be populated in order to send to Azure.
@@ -25699,6 +27546,10 @@ class SqlDWSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or
      Expression with resultType string).
     :type sql_reader_query: object
@@ -25723,6 +27574,7 @@ class SqlDWSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
@@ -25817,7 +27669,7 @@ class SqlMISink(CopySink):
         self.type = 'SqlMISink'
 
 
-class SqlMISource(CopySource):
+class SqlMISource(TabularSource):
     """A copy activity Azure SQL Managed Instance source.
 
     All required parameters must be populated in order to send to Azure.
@@ -25838,6 +27690,10 @@ class SqlMISource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -25863,6 +27719,7 @@ class SqlMISource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -26021,7 +27878,7 @@ class SqlServerSink(CopySink):
         self.type = 'SqlServerSink'
 
 
-class SqlServerSource(CopySource):
+class SqlServerSource(TabularSource):
     """A copy activity SQL server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26042,6 +27899,10 @@ class SqlServerSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -26067,6 +27928,7 @@ class SqlServerSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -26291,7 +28153,7 @@ class SqlSink(CopySink):
         self.type = 'SqlSink'
 
 
-class SqlSource(CopySource):
+class SqlSource(TabularSource):
     """A copy activity SQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26312,6 +28174,10 @@ class SqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -26335,6 +28201,7 @@ class SqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
@@ -26494,7 +28361,7 @@ class SquareObjectDataset(Dataset):
         self.type = 'SquareObject'
 
 
-class SquareSource(CopySource):
+class SquareSource(TabularSource):
     """A copy activity Square Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26515,6 +28382,10 @@ class SquareSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -26530,6 +28401,7 @@ class SquareSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -27186,6 +29058,88 @@ class StoredProcedureParameter(Model):
         self.type = kwargs.get('type', None)
 
 
+class SwitchActivity(ControlActivity):
+    """This activity evaluates an expression and executes activities under the
+    cases property that correspond to the expression evaluation expected in the
+    equals property.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param on: Required. An expression that would evaluate to a string or
+     integer. This is used to determine the block of activities in cases that
+     will be executed.
+    :type on: ~azure.mgmt.datafactory.models.Expression
+    :param cases: List of cases that correspond to expected values of the 'on'
+     property. This is an optional property and if not provided, the activity
+     will execute activities provided in defaultActivities.
+    :type cases: list[~azure.mgmt.datafactory.models.SwitchCase]
+    :param default_activities: List of activities to execute if no case
+     condition is satisfied. This is an optional property and if not provided,
+     the activity will exit without any action.
+    :type default_activities: list[~azure.mgmt.datafactory.models.Activity]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'on': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'on': {'key': 'typeProperties.on', 'type': 'Expression'},
+        'cases': {'key': 'typeProperties.cases', 'type': '[SwitchCase]'},
+        'default_activities': {'key': 'typeProperties.defaultActivities', 'type': '[Activity]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwitchActivity, self).__init__(**kwargs)
+        self.on = kwargs.get('on', None)
+        self.cases = kwargs.get('cases', None)
+        self.default_activities = kwargs.get('default_activities', None)
+        self.type = 'Switch'
+
+
+class SwitchCase(Model):
+    """Switch cases with have a value and corresponding activities.
+
+    :param value: Expected value that satisfies the expression result of the
+     'on' property.
+    :type value: str
+    :param activities: List of activities to execute for satisfied case
+     condition.
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'activities': {'key': 'activities', 'type': '[Activity]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwitchCase, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.activities = kwargs.get('activities', None)
+
+
 class SybaseLinkedService(LinkedService):
     """Linked service for Sybase data source.
 
@@ -27265,7 +29219,7 @@ class SybaseLinkedService(LinkedService):
         self.type = 'Sybase'
 
 
-class SybaseSource(CopySource):
+class SybaseSource(TabularSource):
     """A copy activity source for Sybase databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -27286,6 +29240,10 @@ class SybaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -27301,6 +29259,7 @@ class SybaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -27472,7 +29431,7 @@ class TeradataPartitionSettings(Model):
         self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
 
 
-class TeradataSource(CopySource):
+class TeradataSource(TabularSource):
     """A copy activity Teradata source.
 
     All required parameters must be populated in order to send to Azure.
@@ -27493,6 +29452,10 @@ class TeradataSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Teradata query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -27517,6 +29480,7 @@ class TeradataSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
@@ -28408,7 +30372,7 @@ class VerticaLinkedService(LinkedService):
         self.type = 'Vertica'
 
 
-class VerticaSource(CopySource):
+class VerticaSource(TabularSource):
     """A copy activity Vertica source.
 
     All required parameters must be populated in order to send to Azure.
@@ -28429,6 +30393,10 @@ class VerticaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -28444,6 +30412,7 @@ class VerticaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -29216,7 +31185,7 @@ class XeroObjectDataset(Dataset):
         self.type = 'XeroObject'
 
 
-class XeroSource(CopySource):
+class XeroSource(TabularSource):
     """A copy activity Xero Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -29237,6 +31206,10 @@ class XeroSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -29252,6 +31225,7 @@ class XeroSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
@@ -29394,7 +31368,7 @@ class ZohoObjectDataset(Dataset):
         self.type = 'ZohoObject'
 
 
-class ZohoSource(CopySource):
+class ZohoSource(TabularSource):
     """A copy activity Zoho server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -29415,6 +31389,10 @@ class ZohoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -29430,6 +31408,7 @@ class ZohoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
