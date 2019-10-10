@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class KeysResult(Model):
-    """Keys extracted by a model.
+    """Keys extracted by the custom model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param clusters: Required. Object mapping ClusterIds to Key lists.
+    :param clusters: Required. Object mapping clusterIds to a list of keys.
     :type clusters: dict[str, list[str]]
     """
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TrainingFields(Model):
-    """Training Fields.
+    """List of trained field.
 
     All required parameters must be populated in order to send to Azure.
 

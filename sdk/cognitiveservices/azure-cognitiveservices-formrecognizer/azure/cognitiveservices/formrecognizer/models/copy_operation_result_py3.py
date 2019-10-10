@@ -13,25 +13,29 @@ from msrest.serialization import Model
 
 
 class CopyOperationResult(Model):
-    """Status and result of copy operation.
+    """Status and result of copy custom model operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Get status of copy operation. Possible values include:
-     'notStarted', 'running', 'succeeded', 'failed'
+    :param status: Required. Get status of copy custom model operation.
+     Possible values include: 'notStarted', 'running', 'succeeded', 'failed'
     :type status: str or
      ~azure.cognitiveservices.formrecognizer.models.OperationStatus
-    :param created_date_time: Get date time the copy operation was submitted.
+    :param created_date_time: Required. Date and time (UTC) when the copy
+     custom model operation was submitted.
     :type created_date_time: datetime
-    :param last_updated_date_time: Get last status update date time of this
-     copy operation.
+    :param last_updated_date_time: Required. Date and time (UTC) when the
+     status is last updated.
     :type last_updated_date_time: datetime
-    :param copy_result: Required. Copy operation result.
+    :param copy_result: Required. Copy custom model operation result.
     :type copy_result:
      ~azure.cognitiveservices.formrecognizer.models.CopyResult
     """
 
     _validation = {
+        'status': {'required': True},
+        'created_date_time': {'required': True},
+        'last_updated_date_time': {'required': True},
         'copy_result': {'required': True},
     }
 
@@ -42,7 +46,7 @@ class CopyOperationResult(Model):
         'copy_result': {'key': 'copyResult', 'type': 'CopyResult'},
     }
 
-    def __init__(self, *, copy_result, status=None, created_date_time=None, last_updated_date_time=None, **kwargs) -> None:
+    def __init__(self, *, status, created_date_time, last_updated_date_time, copy_result, **kwargs) -> None:
         super(CopyOperationResult, self).__init__(**kwargs)
         self.status = status
         self.created_date_time = created_date_time

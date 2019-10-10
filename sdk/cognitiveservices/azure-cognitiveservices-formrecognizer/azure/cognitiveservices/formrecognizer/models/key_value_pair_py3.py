@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class KeyValuePair(Model):
-    """Representation of a key-value pair as a list of key and value tokens.
+    """Information about the extracted key-value pair.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -24,7 +24,7 @@ class KeyValuePair(Model):
      key-value pair.
     :type value:
      ~azure.cognitiveservices.formrecognizer.models.KeyValueElement
-    :param confidence: Required. Qualitative confidence measure.
+    :param confidence: Required. Confidence value.
     :type confidence: float
     """
 

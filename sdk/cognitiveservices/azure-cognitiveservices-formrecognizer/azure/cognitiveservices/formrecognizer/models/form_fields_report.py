@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class FormFieldsReport(Model):
-    """FormFieldsReport.
+    """Report for a custom model training field.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param field_name: Required. Field Name to be extracted.
+    :param field_name: Required. Training field name.
     :type field_name: str
-    :param accuracy: Required. Accuracy of extracted label data.
+    :param accuracy: Required. Estimated extraction accuracy for this field.
     :type accuracy: float
     """
 

@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class SourcePath(Model):
-    """URI or local path to source data.
+    """Uri or local path to source data.
 
-    :param source: Get or set source path to file to score.
+    :param source: File source path.
     :type source: str
     """
 

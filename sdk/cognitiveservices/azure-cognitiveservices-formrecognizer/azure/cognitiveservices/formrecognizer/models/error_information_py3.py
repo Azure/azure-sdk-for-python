@@ -19,9 +19,6 @@ class ErrorInformation(Model):
 
     :param code: Required.
     :type code: str
-    :param innererror:
-    :type innererror:
-     ~azure.cognitiveservices.formrecognizer.models.InnerError
     :param message: Required.
     :type message: str
     """
@@ -33,12 +30,10 @@ class ErrorInformation(Model):
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, code: str, message: str, innererror=None, **kwargs) -> None:
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
         super(ErrorInformation, self).__init__(**kwargs)
         self.code = code
-        self.innererror = innererror
         self.message = message

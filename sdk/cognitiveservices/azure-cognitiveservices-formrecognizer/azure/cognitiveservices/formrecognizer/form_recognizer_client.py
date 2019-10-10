@@ -36,7 +36,7 @@ class FormRecognizerClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/formrecognizer/v2.0-preview'
+        base_url = '{endpoint}/formrecognizer/v2.0-preview'
 
         super(FormRecognizerClientConfiguration, self).__init__(base_url)
 
@@ -47,7 +47,7 @@ class FormRecognizerClientConfiguration(Configuration):
 
 
 class FormRecognizerClient(SDKClient):
-    """Extracts information from forms and images into structured data based on a model created by a set of representative training forms.
+    """Extracts information from forms and images into structured data.
 
     :ivar config: Configuration for client.
     :vartype config: FormRecognizerClientConfiguration
@@ -72,24 +72,24 @@ class FormRecognizerClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def train_custom_model(
+    def train_custom_model_async(
             self, train_request, custom_headers=None, raw=False, **operation_config):
         """Train Custom Model.
 
         Create and train a custom model. The request must include a source
-        parameter that is either an externally accessible Azure Storage blob
+        parameter that is either an externally accessible Azure storage blob
         container Uri (preferably a Shared Access Signature Uri) or valid path
         to a data folder in a locally mounted drive. When local paths are
         specified, they must follow the Linux/Unix path format and be an
         absolute path rooted to the input mount configuration setting value
         e.g., if '{Mounts:Input}' configuration setting value is '/input' then
         a valid source path would be '/input/contosodataset'. All data to be
-        trained is expected to be under the source folder or subfolders under
+        trained is expected to be under the source folder or sub folders under
         it. Models are trained using documents that are of the following
         content type - 'application/pdf', 'image/jpeg', 'image/png',
         'image/tiff'. Other type of content is ignored.
 
-        :param train_request: Input for training custom model.
+        :param train_request: Training request parameters.
         :type train_request:
          ~azure.cognitiveservices.formrecognizer.models.TrainRequest
         :param dict custom_headers: headers that will be added to the request
@@ -103,9 +103,9 @@ class FormRecognizerClient(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.train_custom_model.metadata['url']
+        url = self.train_custom_model_async.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -134,16 +134,16 @@ class FormRecognizerClient(SDKClient):
                 'Location': 'str',
             })
             return client_raw_response
-    train_custom_model.metadata = {'url': '/custom/models'}
+    train_custom_model_async.metadata = {'url': '/custom/models'}
 
     def get_custom_models(
-            self, op=None, custom_headers=None, raw=False, **operation_config):
+            self, op="full", custom_headers=None, raw=False, **operation_config):
         """List Custom Models.
 
-        Get information about all trained custom models.
+        Get information about all custom models.
 
-        :param op: Summary or full list of models to be returned. Possible
-         values include: 'full', 'summary'
+        :param op: Specify whether to return summary or full list of models.
+         Possible values include: 'full', 'summary'
         :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -159,7 +159,7 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.get_custom_models.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -194,15 +194,16 @@ class FormRecognizerClient(SDKClient):
     get_custom_models.metadata = {'url': '/custom/models'}
 
     def get_custom_model(
-            self, model_id, keys=None, custom_headers=None, raw=False, **operation_config):
+            self, model_id, include_keys=False, custom_headers=None, raw=False, **operation_config):
         """Get Custom Model.
 
-        Get detailed information about a model.
+        Get detailed information about a custom model.
 
         :param model_id: Model identifier.
         :type model_id: str
-        :param keys: Include list extracted keys in model information.
-        :type keys: bool
+        :param include_keys: Include list of extracted keys in model
+         information.
+        :type include_keys: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -217,15 +218,15 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.get_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if keys is not None:
-            query_parameters['keys'] = self._serialize.query("keys", keys, 'bool')
+        if include_keys is not None:
+            query_parameters['includeKeys'] = self._serialize.query("include_keys", include_keys, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -254,12 +255,12 @@ class FormRecognizerClient(SDKClient):
 
     def delete_custom_model(
             self, model_id, custom_headers=None, raw=False, **operation_config):
-        """Delete Model.
+        """Delete Custom Model.
 
         Mark model for deletion. Model artifacts will be permanently removed
-        within predetermined period.
+        within a predetermined period.
 
-        :param model_id: Identifier of the model to delete.
+        :param model_id: Model identifier.
         :type model_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -274,7 +275,7 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.delete_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -299,20 +300,20 @@ class FormRecognizerClient(SDKClient):
             return client_raw_response
     delete_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
-    def analyze_with_custom_model_async(
+    def analyze_with_custom_model(
             self, model_id, include_text_details=False, file_stream=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Form.
 
-        Extract key-value pairs and table(s) from a given document. The input
-        document must be of one of the supported content types -
-        'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
-        Alternatively, use 'application/json' type to specify location (URI or
-        local path) of document to be analyzed.
+        Extract key-value pairs, tables, and semantic values from a given
+        document. The input document must be of one of the supported content
+        types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+        Alternatively, use 'application/json' type to specify the location (Uri
+        or local path) of the document to be analyzed.
 
-        :param model_id: Model identifier to analyze the document with.
+        :param model_id: Model identifier.
         :type model_id: str
-        :param include_text_details: Get or set specifier to retrieve text
-         results.
+        :param include_text_details: Include text lines and element references
+         in the result.
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: object
@@ -327,9 +328,9 @@ class FormRecognizerClient(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.analyze_with_custom_model_async.metadata['url']
+        url = self.analyze_with_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -355,24 +356,24 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             client_raw_response.add_headers({
-                'Location': 'str',
+                'Operation-Location': 'str',
             })
             return client_raw_response
-    analyze_with_custom_model_async.metadata = {'url': '/custom/models/{modelId}/analyze'}
+    analyze_with_custom_model.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
-    def get_analyze_result(
+    def get_analyze_form_result(
             self, model_id, result_id, custom_headers=None, raw=False, **operation_config):
-        """Get Analyze Result.
+        """Get Analyze Form Result.
 
-        Retrieve Analyze operation status.
+        Obtain current status and the result of the analyze form operation.
 
-        :param model_id: Custom model identifier.
+        :param model_id: Model identifier.
         :type model_id: str
         :param result_id: Analyze operation result identifier.
         :type result_id: str
@@ -389,9 +390,9 @@ class FormRecognizerClient(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_analyze_result.metadata['url']
+        url = self.get_analyze_form_result.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'modelId': self._serialize.url("model_id", model_id, 'str'),
             'resultId': self._serialize.url("result_id", result_id, 'str')
         }
@@ -423,133 +424,17 @@ class FormRecognizerClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_analyze_result.metadata = {'url': '/custom/models/{modelId}/analyzeResults/{resultId}'}
-
-    def copy_custom_model_async(
-            self, model_id, target_information=None, copy_config=None, custom_headers=None, raw=False, **operation_config):
-        """Copy Model.
-
-        Copy model artifacts to target subscription.
-
-        :param model_id: Model identifier to copy.
-        :type model_id: str
-        :param target_information: Information about target subscription.
-        :type target_information:
-         ~azure.cognitiveservices.formrecognizer.models.CopyRequestTargetInformation
-        :param copy_config: Copy operation options.
-        :type copy_config:
-         ~azure.cognitiveservices.formrecognizer.models.CopyRequestCopyConfig
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
-        """
-        copy_request = models.CopyRequest(target_information=target_information, copy_config=copy_config)
-
-        # Construct URL
-        url = self.copy_custom_model_async.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(copy_request, 'CopyRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'Location': 'str',
-            })
-            return client_raw_response
-    copy_custom_model_async.metadata = {'url': '/custom/models/{modelId}/copy'}
-
-    def get_copy_result(
-            self, model_id, result_id, custom_headers=None, raw=False, **operation_config):
-        """Get Copy Result.
-
-        Retrieve Copy operation result.
-
-        :param model_id: Custom model identifier.
-        :type model_id: str
-        :param result_id: Copy operation result identifier.
-        :type result_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CopyOperationResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.formrecognizer.models.CopyOperationResult or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_copy_result.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'modelId': self._serialize.url("model_id", model_id, 'str'),
-            'resultId': self._serialize.url("result_id", result_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('CopyOperationResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_copy_result.metadata = {'url': '/custom/models/{modelId}/copyResults/{resultId}'}
+    get_analyze_form_result.metadata = {'url': '/custom/models/{modelId}/analyzeResults/{resultId}'}
 
     def analyze_receipt_async(
             self, file_stream=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Receipt.
 
         Extract field text and semantic values from a given receipt document.
+        The input document must be of one of the supported content types -
+        'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+        Alternatively, use 'application/json' type to specify the location (Uri
+        or local path) of the document to be analyzed.
 
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: object
@@ -566,7 +451,7 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.analyze_receipt_async.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -589,24 +474,25 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             client_raw_response.add_headers({
-                'Location': 'str',
+                'Operation-Location': 'str',
             })
             return client_raw_response
     analyze_receipt_async.metadata = {'url': '/prebuilt/receipt/analyze'}
 
-    def get_analyze_receipt_op_result(
+    def get_analyze_receipt_result(
             self, result_id, custom_headers=None, raw=False, **operation_config):
-        """Get Receipt Result.
+        """Get Analyze Receipt Result.
 
-        Retrieve analyze receipt operation result.
+        Track the progress and obtain the result of the analyze receipt
+        operation.
 
-        :param result_id: Analyze operation identifier.
+        :param result_id: Analyze operation result identifier.
         :type result_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -621,9 +507,9 @@ class FormRecognizerClient(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_analyze_receipt_op_result.metadata['url']
+        url = self.get_analyze_receipt_result.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'resultId': self._serialize.url("result_id", result_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -654,4 +540,4 @@ class FormRecognizerClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_analyze_receipt_op_result.metadata = {'url': '/prebuilt/receipt/analyzeResults/{resultId}'}
+    get_analyze_receipt_result.metadata = {'url': '/prebuilt/receipt/analyzeResults/{resultId}'}

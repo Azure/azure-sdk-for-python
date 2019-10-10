@@ -17,19 +17,18 @@ class FormOperationError(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error_message: Required. Message reported during the train
-     operation.
-    :type error_message: str
+    :param message: Required. Error message.
+    :type message: str
     """
 
     _validation = {
-        'error_message': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(FormOperationError, self).__init__(**kwargs)
-        self.error_message = kwargs.get('error_message', None)
+        self.message = kwargs.get('message', None)

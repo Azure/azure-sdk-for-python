@@ -13,14 +13,13 @@ from msrest.serialization import Model
 
 
 class FormDocumentReport(Model):
-    """FormDocumentReport.
+    """Report for a custom model training document.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param document_name: Required. Reference to the data that the report is
-     for.
+    :param document_name: Required. Training document name.
     :type document_name: str
-    :param pages: Required. Total number of pages trained on.
+    :param pages: Required. Total number of pages trained.
     :type pages: int
     :param errors: Required. List of errors per page.
     :type errors: list[str]

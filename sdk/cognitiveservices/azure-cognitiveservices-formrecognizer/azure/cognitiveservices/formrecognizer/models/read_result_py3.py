@@ -37,13 +37,13 @@ class ReadResult(Model):
      values include: 'en', 'es'
     :type language: str or
      ~azure.cognitiveservices.formrecognizer.models.Language
-    :param lines: A list of recognized text lines. The maximum number of lines
-     returned is 300 per page.
-     The lines are sorted top to bottom, left to right, although in certain
-     cases proximity is treated with higher priority. As the sorting order
-     depends on the detected text, it may change across images and OCR version
-     updates. Thus, business logic should be built upon the actual line
-     location instead of order.
+    :param lines: When includeTextDetails is set to true, a list of recognized
+     text lines. The maximum number of lines returned is 300 per page. The
+     lines are sorted top to bottom, left to right, although in certain cases
+     proximity is treated with higher priority. As the sorting order depends on
+     the detected text, it may change across images and OCR version updates.
+     Thus, business logic should be built upon the actual line location instead
+     of order.
     :type lines: list[~azure.cognitiveservices.formrecognizer.models.TextLine]
     """
 

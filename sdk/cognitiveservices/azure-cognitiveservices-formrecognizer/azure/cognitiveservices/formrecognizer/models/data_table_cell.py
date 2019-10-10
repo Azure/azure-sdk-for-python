@@ -19,20 +19,21 @@ class DataTableCell(Model):
 
     :param row_index: Required. Row index of the cell.
     :type row_index: int
-    :param column_index: Required. Column index of the cel.
+    :param column_index: Required. Column index of the cell.
     :type column_index: int
     :param row_span: Number of rows spanned by this cell. Default value: 1 .
     :type row_span: int
     :param column_span: Number of columns spanned by this cell. Default value:
      1 .
     :type column_span: int
-    :param text: Required. The text content of the cell.
+    :param text: Required. Text content of the cell.
     :type text: str
     :param bounding_box: Required. Bounding box of the cell.
     :type bounding_box: list[float]
-    :param confidence: Required. Qualitative confidence measure.
+    :param confidence: Required. Confidence value.
     :type confidence: float
-    :param elements: List element references.
+    :param elements: When includeTextDetails is set to true, a list of
+     references to the text elements constituting this table cell.
     :type elements: list[str]
     :param is_header: Is the current cell a header cell?. Default value: False
      .

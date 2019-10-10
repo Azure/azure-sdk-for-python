@@ -22,8 +22,7 @@ class DocumentResult(Model):
     :param page_range: Required. First and last page number where the document
      is found.
     :type page_range: list[int]
-    :param fields: Required. Dictionary of analyzed field values. If a field
-     is not detected, the corresponding field value will be set to null.
+    :param fields: Required. Dictionary of named field values.
     :type fields: dict[str,
      ~azure.cognitiveservices.formrecognizer.models.FieldValue]
     """

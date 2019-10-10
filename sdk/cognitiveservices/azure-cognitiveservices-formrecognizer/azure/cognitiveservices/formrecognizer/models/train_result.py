@@ -13,26 +13,24 @@ from msrest.serialization import Model
 
 
 class TrainResult(Model):
-    """Response of the Train API call.
+    """Custom model training result.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param training_documents: Required. List of documents used to train the
-     model and the
-     train operation error reported by each.
+    :param training_documents: Required. List of the documents used to train
+     the model and any errors reported in each document.
     :type training_documents:
      list[~azure.cognitiveservices.formrecognizer.models.FormDocumentReport]
-    :param training_fields: Training Fields.
+    :param training_fields: List of trained fields.
     :type training_fields:
      ~azure.cognitiveservices.formrecognizer.models.TrainingFields
-    :param errors: Required. Errors returned during the training operation.
+    :param errors: Errors returned during the training operation.
     :type errors:
      list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
     """
 
     _validation = {
         'training_documents': {'required': True},
-        'errors': {'required': True},
     }
 
     _attribute_map = {

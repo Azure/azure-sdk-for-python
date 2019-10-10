@@ -40,13 +40,14 @@ class FieldValue(Model):
     :param value_object: Dictionary of named field values.
     :type value_object: dict[str,
      ~azure.cognitiveservices.formrecognizer.models.FieldValue]
-    :param text: Required. Extracted text content of the recognized field.
+    :param text: Required. Text content of the extracted field.
     :type text: str
-    :param bounding_box: Bounding box of the field text, if appropriate.
+    :param bounding_box: Bounding box of the field value, if appropriate.
     :type bounding_box: list[float]
-    :param confidence: Required. Qualitative confidence measure.
+    :param confidence: Required. Confidence score.
     :type confidence: float
-    :param elements: List element references.
+    :param elements: When includeTextDetails is set to true, a list of
+     references to the text elements constituting this field.
     :type elements: list[str]
     """
 

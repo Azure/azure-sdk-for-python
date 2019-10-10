@@ -13,17 +13,25 @@ from msrest.serialization import Model
 
 
 class ModelsSummary(Model):
-    """Result of query operation to fetch summery of models.
+    """Summary of all trained custom models.
 
-    :param count: Current count of trained models.
+    All required parameters must be populated in order to send to Azure.
+
+    :param count: Required. Current count of trained custom models.
     :type count: int
-    :param limit: Max number of models that can be trained for this
+    :param limit: Required. Max number of models that can be trained for this
      subscription.
     :type limit: int
-    :param last_updated_date_time: Get or set the summary last updated
-     datetime.
+    :param last_updated_date_time: Required. Date and time (UTC) when the
+     summary is last updated.
     :type last_updated_date_time: datetime
     """
+
+    _validation = {
+        'count': {'required': True},
+        'limit': {'required': True},
+        'last_updated_date_time': {'required': True},
+    }
 
     _attribute_map = {
         'count': {'key': 'count', 'type': 'int'},
@@ -31,7 +39,7 @@ class ModelsSummary(Model):
         'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, count: int=None, limit: int=None, last_updated_date_time=None, **kwargs) -> None:
+    def __init__(self, *, count: int, limit: int, last_updated_date_time, **kwargs) -> None:
         super(ModelsSummary, self).__init__(**kwargs)
         self.count = count
         self.limit = limit

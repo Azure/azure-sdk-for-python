@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class CopyRequest(Model):
-    """Contract to initiate a copy request.
+    """Copy custom model request parameters.
 
-    :param target_information: Information about target subscription.
+    :param target_information: Subscription information about the copy target.
     :type target_information:
      ~azure.cognitiveservices.formrecognizer.models.CopyRequestTargetInformation
-    :param copy_config: Copy operation options.
+    :param copy_config: Copy custom model operation options.
     :type copy_config:
      ~azure.cognitiveservices.formrecognizer.models.CopyRequestCopyConfig
     """

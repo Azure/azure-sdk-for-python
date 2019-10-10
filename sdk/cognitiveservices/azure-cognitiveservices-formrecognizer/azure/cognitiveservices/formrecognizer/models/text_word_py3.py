@@ -21,7 +21,7 @@ class TextWord(Model):
     :type text: str
     :param bounding_box: Required. Bounding box of an extracted word.
     :type bounding_box: list[float]
-    :param confidence: Required. Qualitative confidence measure.
+    :param confidence: Required. Confidence value.
     :type confidence: float
     """
 

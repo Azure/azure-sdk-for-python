@@ -21,7 +21,8 @@ class KeyValueElement(Model):
     :type text: str
     :param bounding_box: Bounding box of the key or value.
     :type bounding_box: list[float]
-    :param elements: List of element references.
+    :param elements: When includeTextDetails is set to true, a list of
+     references to the text elements constituting this key or value.
     :type elements: list[str]
     """
 

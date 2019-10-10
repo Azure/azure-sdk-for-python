@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AnalyzeResult(Model):
-    """Analyze API call result.
+    """Analyze operation result.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -22,16 +22,14 @@ class AnalyzeResult(Model):
     :param read_results: Required. Text extracted from the input.
     :type read_results:
      list[~azure.cognitiveservices.formrecognizer.models.ReadResult]
-    :param page_results: Required. Page-level information extracted from the
-     input.
+    :param page_results: Page-level information extracted from the input.
     :type page_results:
      list[~azure.cognitiveservices.formrecognizer.models.PageResult]
-    :param document_results: Required. Document-level information extracted
-     from the input.
+    :param document_results: Document-level information extracted from the
+     input.
     :type document_results:
      list[~azure.cognitiveservices.formrecognizer.models.DocumentResult]
-    :param errors: List of errors reported during the analyze
-     operation.
+    :param errors: List of errors reported during the analyze operation.
     :type errors:
      list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
     """
@@ -39,8 +37,6 @@ class AnalyzeResult(Model):
     _validation = {
         'version': {'required': True},
         'read_results': {'required': True},
-        'page_results': {'required': True},
-        'document_results': {'required': True},
     }
 
     _attribute_map = {

@@ -35,7 +35,6 @@ try:
     from .models_model_py3 import ModelsModel
     from .keys_result_py3 import KeysResult
     from .model_py3 import Model
-    from .inner_error_py3 import InnerError
     from .error_information_py3 import ErrorInformation
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .copy_request_target_information_py3 import CopyRequestTargetInformation
@@ -70,7 +69,6 @@ except (SyntaxError, ImportError):
     from .models_model import ModelsModel
     from .keys_result import KeysResult
     from .model import Model
-    from .inner_error import InnerError
     from .error_information import ErrorInformation
     from .error_response import ErrorResponse, ErrorResponseException
     from .copy_request_target_information import CopyRequestTargetInformation
@@ -114,7 +112,6 @@ __all__ = [
     'ModelsModel',
     'KeysResult',
     'Model',
-    'InnerError',
     'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
     'CopyRequestTargetInformation',

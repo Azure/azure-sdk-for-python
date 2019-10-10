@@ -13,23 +13,17 @@ from msrest.serialization import Model
 
 
 class ModelsModel(Model):
-    """Result of query operation to fetch multiple models.
+    """Response to the list custom models operation.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param summary: Result of query operation to fetch summery of models.
+    :param summary: Summary of all trained custom models.
     :type summary:
      ~azure.cognitiveservices.formrecognizer.models.ModelsSummary
-    :param model_list: Required. Collection of models.
+    :param model_list: Collection of trained custom models.
     :type model_list:
      list[~azure.cognitiveservices.formrecognizer.models.ModelInfo]
-    :param next_link: Next link
+    :param next_link: Link to the next page of custom models.
     :type next_link: str
     """
-
-    _validation = {
-        'model_list': {'required': True},
-    }
 
     _attribute_map = {
         'summary': {'key': 'summary', 'type': 'ModelsSummary'},
@@ -37,7 +31,7 @@ class ModelsModel(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, model_list, summary=None, next_link: str=None, **kwargs) -> None:
+    def __init__(self, *, summary=None, model_list=None, next_link: str=None, **kwargs) -> None:
         super(ModelsModel, self).__init__(**kwargs)
         self.summary = summary
         self.model_list = model_list

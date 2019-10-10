@@ -13,24 +13,18 @@ from msrest.serialization import Model
 
 
 class CopyRequestCopyConfig(Model):
-    """Copy operation options.
+    """Copy custom model operation options.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param delete_source: Required. Indicate deletion of source model
-     artifacts. Default value: False .
+    :param delete_source: Delete the source model artifacts after successful
+     copy. Default value: False .
     :type delete_source: bool
     :param support_cross_tenant_copy: Indicate copy target tenancy
      requirement. Default value: False .
     :type support_cross_tenant_copy: bool
-    :param target_model_metadata: Metadata for copied model to Target
+    :param target_model_metadata: Metadata to apply to the copy target model.
     :type target_model_metadata:
      ~azure.cognitiveservices.formrecognizer.models.CopyRequestCopyConfigTargetModelMetadata
     """
-
-    _validation = {
-        'delete_source': {'required': True},
-    }
 
     _attribute_map = {
         'delete_source': {'key': 'deleteSource', 'type': 'bool'},

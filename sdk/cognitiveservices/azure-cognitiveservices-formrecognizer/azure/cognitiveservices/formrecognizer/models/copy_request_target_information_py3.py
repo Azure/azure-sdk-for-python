@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CopyRequestTargetInformation(Model):
-    """Information about target subscription.
+    """Subscription information about the copy target.
 
-    :param endpoint: Get or set endpoint path.
+    :param endpoint: Endpoint path.
     :type endpoint: str
-    :param resource_id: Get or set resource identifier.
+    :param resource_id: Resource identifier.
     :type resource_id: str
     """
 

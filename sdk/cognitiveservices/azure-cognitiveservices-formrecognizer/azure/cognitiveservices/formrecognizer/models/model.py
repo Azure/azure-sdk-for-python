@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class Model(Model):
-    """Result of a model status query operation.
+    """Response to the get custom model operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_info: Required. Basic Model info
+    :param model_info: Required. Basic custom model information.
     :type model_info: ~azure.cognitiveservices.formrecognizer.models.ModelInfo
-    :param keys: Keys extracted by model.
+    :param keys: Keys extracted by the custom model.
     :type keys: ~azure.cognitiveservices.formrecognizer.models.KeysResult
-    :param train_result: Train batch operation result.
+    :param train_result: Custom model training result.
     :type train_result:
      ~azure.cognitiveservices.formrecognizer.models.TrainResult
     """

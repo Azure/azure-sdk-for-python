@@ -13,21 +13,21 @@ from msrest.serialization import Model
 
 
 class ModelInfo(Model):
-    """A pdf document or image (jpg,png,tiff) file to analyze.
+    """Basic custom model information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_id: Required. Get or set model identifier.
+    :param model_id: Required. Model identifier.
     :type model_id: str
-    :param status: Required. Get or set the status of model. Possible values
-     include: 'creating', 'ready', 'invalid'
+    :param status: Required. Status of the model. Possible values include:
+     'creating', 'ready', 'invalid'
     :type status: str or
      ~azure.cognitiveservices.formrecognizer.models.ModelStatus
-    :param created_date_time: Required. Get or set the created date time of
-     the model.
+    :param created_date_time: Required. Date and time (UTC) when the model was
+     created.
     :type created_date_time: datetime
-    :param last_updated_date_time: Required. Get or set the model last updated
-     datetime.
+    :param last_updated_date_time: Required. Date and time (UTC) when the
+     status is last updated.
     :type last_updated_date_time: datetime
     """
 

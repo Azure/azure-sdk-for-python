@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class CopyRequestCopyConfigTargetModelMetadata(Model):
-    """Metadata for copied model to Target.
+    """Metadata to apply to the copy target model.
 
-    :param name: Name of copied model at Target.
+    :param name: Name to assign to the copy target model.
     :type name: str
-    :param description: Description of copied model.
+    :param description: Description to apply to the copy target model.
     :type description: str
-    :param tags: Tags for copied model
+    :param tags: Tags to apply to the copy target model
     :type tags: list[str]
     """
 

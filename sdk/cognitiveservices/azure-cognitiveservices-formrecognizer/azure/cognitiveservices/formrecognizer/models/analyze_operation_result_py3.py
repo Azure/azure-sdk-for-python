@@ -13,22 +13,30 @@ from msrest.serialization import Model
 
 
 class AnalyzeOperationResult(Model):
-    """Status and result of queued analyze operation.
+    """Status and result of the queued analyze operation.
 
-    :param status: Get or set status of operation. Possible values include:
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Operation status. Possible values include:
      'notStarted', 'running', 'succeeded', 'failed'
     :type status: str or
      ~azure.cognitiveservices.formrecognizer.models.OperationStatus
-    :param created_date_time: Get date and time (UTC) the batch operation was
-     submitted.
+    :param created_date_time: Required. Date and time (UTC) the analyze
+     operation was submitted.
     :type created_date_time: datetime
-    :param last_updated_date_time: Get last updated date and time (UTC) of
-     this operation.
+    :param last_updated_date_time: Required. Date and time (UTC) when the
+     status is last updated.
     :type last_updated_date_time: datetime
-    :param analyze_result: Results of Analyze operation.
+    :param analyze_result: Results of the analyze operation.
     :type analyze_result:
      ~azure.cognitiveservices.formrecognizer.models.AnalyzeResult
     """
+
+    _validation = {
+        'status': {'required': True},
+        'created_date_time': {'required': True},
+        'last_updated_date_time': {'required': True},
+    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'OperationStatus'},
@@ -37,7 +45,7 @@ class AnalyzeOperationResult(Model):
         'analyze_result': {'key': 'analyzeResult', 'type': 'AnalyzeResult'},
     }
 
-    def __init__(self, *, status=None, created_date_time=None, last_updated_date_time=None, analyze_result=None, **kwargs) -> None:
+    def __init__(self, *, status, created_date_time, last_updated_date_time, analyze_result=None, **kwargs) -> None:
         super(AnalyzeOperationResult, self).__init__(**kwargs)
         self.status = status
         self.created_date_time = created_date_time

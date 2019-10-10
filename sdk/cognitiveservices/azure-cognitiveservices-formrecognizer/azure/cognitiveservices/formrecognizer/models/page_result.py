@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PageResult(Model):
-    """Extraction information of a single page in a document.
+    """Extracted information from a single page.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -21,11 +21,10 @@ class PageResult(Model):
     :type page: int
     :param cluster_id: Cluster identifier.
     :type cluster_id: int
-    :param key_value_pairs: Required. List of key-value pairs extracted from
-     the page.
+    :param key_value_pairs: List of key-value pairs extracted from the page.
     :type key_value_pairs:
      list[~azure.cognitiveservices.formrecognizer.models.KeyValuePair]
-    :param tables: Required. List of data tables extracted from the page.
+    :param tables: List of data tables extracted from the page.
     :type tables:
      list[~azure.cognitiveservices.formrecognizer.models.DataTable]
     """
@@ -33,8 +32,6 @@ class PageResult(Model):
     _validation = {
         'page': {'required': True, 'minimum': 1},
         'cluster_id': {'minimum': 0},
-        'key_value_pairs': {'required': True},
-        'tables': {'required': True},
     }
 
     _attribute_map = {

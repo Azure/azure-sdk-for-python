@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DataTable(Model):
-    """Extraction information about a table contained in a page.
+    """Information about the extracted table contained in a page.
 
     All required parameters must be populated in order to send to Azure.
 

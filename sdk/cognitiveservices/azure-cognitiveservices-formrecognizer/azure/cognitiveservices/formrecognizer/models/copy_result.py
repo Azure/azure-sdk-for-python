@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CopyResult(Model):
-    """Results of copy model operation.
+    """Result of the copy custom model operation.
 
     All required parameters must be populated in order to send to Azure.
 
