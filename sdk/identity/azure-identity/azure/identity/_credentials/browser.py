@@ -23,9 +23,10 @@ if TYPE_CHECKING:
 
 
 class InteractiveBrowserCredential(PublicClientCredential):
-    """
-    Authenticates a user through the authorization code flow. This is an interactive flow: ``get_token`` opens a
-    browser to a login URL provided by Azure Active Directory, and waits for the user to authenticate there.
+    """Authenticates a user through the authorization code flow.
+
+    This is an interactive flow: ``get_token`` opens a browser to a login URL provided by Azure Active Directory, and
+    waits for the user to authenticate there.
 
     Azure Active Directory documentation describes the authorization code flow in more detail:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
@@ -51,9 +52,10 @@ class InteractiveBrowserCredential(PublicClientCredential):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`. This will open a browser to a login page and listen on localhost for a
-        request indicating authentication has completed.
+        """Request an access token for `scopes`.
+
+        This will open a browser to a login page and listen on localhost for a request indicating authentication has
+        completed.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -101,9 +103,10 @@ class InteractiveBrowserCredential(PublicClientCredential):
     @staticmethod
     def _parse_response(request_state, response):
         # type: (str, Mapping[str, Any]) -> List[str]
-        """
-        Validates ``response`` and returns the authorization code it contains, if authentication succeeded. Raises
-        :class:`azure.core.exceptions.ClientAuthenticationError`, if authentication failed or ``response`` is malformed.
+        """Validates ``response`` and returns the authorization code it contains, if authentication succeeded.
+
+        Raises :class:`azure.core.exceptions.ClientAuthenticationError`, if authentication failed or ``response`` is
+        malformed.
         """
 
         if "error" in response:

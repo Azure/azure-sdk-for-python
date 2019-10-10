@@ -25,11 +25,11 @@ if TYPE_CHECKING:
 
 
 class DeviceCodeCredential(PublicClientCredential):
-    """
-    Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
-    verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
-    authenticate with Azure Active Directory. If the user authenticates successfully, the credential receives
-    an access token.
+    """Authenticates users through the device code flow.
+
+    When ``get_token`` is called, this credential acquires a verification URL and code from Azure Active Directory. A
+    user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    authenticates successfully, the credential receives an access token.
 
     This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
 
@@ -65,9 +65,9 @@ class DeviceCodeCredential(PublicClientCredential):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
-        authentication flow.
+        """Request an access token for `scopes`.
+
+        This credential won't cache the token. Each call begins a new authentication flow.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -108,8 +108,7 @@ class DeviceCodeCredential(PublicClientCredential):
 
 
 class SharedTokenCacheCredential(object):
-    """
-    Authenticates using tokens in the local cache shared between Microsoft applications.
+    """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
@@ -145,9 +144,9 @@ class SharedTokenCacheCredential(object):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
-        """
-        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
-        using a cached refresh token.
+        """Get an access token for `scopes` from the shared cache.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -177,9 +176,10 @@ class SharedTokenCacheCredential(object):
 
 
 class UsernamePasswordCredential(PublicClientCredential):
-    """
-    Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
-    authentication, because it's less secure than other authentication flows.
+    """Authenticates a user with a username and password.
+
+    In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other
+    authentication flows.
 
     Authentication with this credential is not interactive, so it is **not compatible with any form of
     multi-factor authentication or consent prompting**. The application must already have the user's consent.
@@ -210,8 +210,7 @@ class UsernamePasswordCredential(PublicClientCredential):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

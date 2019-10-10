@@ -19,6 +19,7 @@
 ### Breaking changes
 
 - Tracing: AbstractSpan.set_current_span is longer supported. Use change_context instead.  #7773
+- azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_text changed
 
 ## 2019-10-07 Version 1.0.0b4
 
