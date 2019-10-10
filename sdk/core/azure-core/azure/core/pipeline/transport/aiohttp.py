@@ -89,9 +89,11 @@ class AioHttpTransport(AsyncHttpTransport):
         """Opens the connection.
         """
         if not self.session and self._session_owner:
+            jar = aiohttp.DummyCookieJar()
             self.session = aiohttp.ClientSession(
                 loop=self._loop,
                 trust_env=self._use_env_settings,
+                cookie_jar=jar
             )
         if self.session is not None:
             await self.session.__aenter__()
