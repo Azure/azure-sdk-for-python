@@ -148,7 +148,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace_async
-    async def delete_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
+    async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
@@ -170,7 +170,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Key:
+    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -196,7 +196,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_deleted_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
+    async def get_deleted_key(self, name: str, **kwargs: "Any") -> DeletedKey:
         """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
         permission.
 
@@ -219,7 +219,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs: "**Any") -> AsyncIterable[DeletedKey]:
+    def list_deleted_keys(self, **kwargs: "Any") -> "AsyncIterable[DeletedKey]":
         """List all deleted keys, including the public part of each. This is only possible in a vault with soft-delete
         enabled. Requires the keys/list permission.
 
@@ -243,7 +243,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
+    def list_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
@@ -266,7 +266,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_key_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
+    def list_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
@@ -291,7 +291,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_key(self, name: str, **kwargs: "**Any") -> None:
+    async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
         does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
 
@@ -312,7 +312,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_key(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_key(self, name: str, **kwargs: "**Any") -> Key:
+    async def recover_deleted_key(self, name: str, **kwargs: "Any") -> Key:
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -382,7 +382,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def backup_key(self, name: str, **kwargs: "**Any") -> bytes:
+    async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
         """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
         copying a key from one vault to another. Requires the key/backup permission.
 
@@ -408,7 +408,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key(self, backup: bytes, **kwargs: "**Any") -> Key:
+    async def restore_key(self, backup: bytes, **kwargs: "Any") -> Key:
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
