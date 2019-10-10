@@ -349,6 +349,13 @@ class DynamicsAuthenticationType(str, Enum):
     ifd = "Ifd"
 
 
+class OrcCompressionCodec(str, Enum):
+
+    none = "none"
+    zlib = "zlib"
+    snappy = "snappy"
+
+
 class AvroCompressionCodec(str, Enum):
 
     none = "none"
