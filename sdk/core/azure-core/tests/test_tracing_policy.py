@@ -159,3 +159,46 @@ def test_distributed_tracing_policy_with_user_agent():
         # Exception should propagate status for Opencensus
         assert network_span.status == 'Transport trouble'
 
+
+def test_span_namer():
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+
+        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+
+        def fixed_namer(http_request):
+            assert http_request is request
+            return "overridenname"
+
+        policy = DistributedTracingPolicy(network_span_namer=fixed_namer)
+
+        policy.on_request(pipeline_request)
+
+        response = HttpResponse(request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        def operation_namer(http_request):
+            assert http_request is request
+            return "operation level name"
+
+        pipeline_request.context.options['network_span_namer'] = operation_namer
+
+        policy.on_request(pipeline_request)
+
+        response = HttpResponse(request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+    # Check init kwargs
+    network_span = root_span.children[0]
+    assert network_span.name == "overridenname"
+
+    # Check operation kwargs
+    network_span = root_span.children[1]
+    assert network_span.name == "operation level name"
