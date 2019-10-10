@@ -12,20 +12,26 @@
 try:
     from ._models_py3 import DisableSerialConsoleResult
     from ._models_py3 import EnableSerialConsoleResult
-    from ._models_py3 import GetSerialConsoleResult
+    from ._models_py3 import GetSerialConsoleDisabledResult
     from ._models_py3 import GetSerialConsoleSubscriptionNotFound
     from ._models_py3 import SerialConsoleOperations
+    from ._models_py3 import SerialConsoleOperationsValueItem
+    from ._models_py3 import SerialConsoleOperationsValueItemDisplay
 except (SyntaxError, ImportError):
     from ._models import DisableSerialConsoleResult
     from ._models import EnableSerialConsoleResult
-    from ._models import GetSerialConsoleResult
+    from ._models import GetSerialConsoleDisabledResult
     from ._models import GetSerialConsoleSubscriptionNotFound
     from ._models import SerialConsoleOperations
+    from ._models import SerialConsoleOperationsValueItem
+    from ._models import SerialConsoleOperationsValueItemDisplay
 
 __all__ = [
     'DisableSerialConsoleResult',
     'EnableSerialConsoleResult',
-    'GetSerialConsoleResult',
+    'GetSerialConsoleDisabledResult',
     'GetSerialConsoleSubscriptionNotFound',
     'SerialConsoleOperations',
+    'SerialConsoleOperationsValueItem',
+    'SerialConsoleOperationsValueItemDisplay',
 ]
