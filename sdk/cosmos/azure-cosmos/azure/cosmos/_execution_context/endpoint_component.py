@@ -108,7 +108,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
     def make_hash(self, value):
         if isinstance(value, (set, tuple, list)):
             return tuple([self.make_hash(v) for v in value])
-        elif not isinstance(value, dict):
+        if not isinstance(value, dict):
             if isinstance(value, numbers.Number):
                 return float(value)
             return value

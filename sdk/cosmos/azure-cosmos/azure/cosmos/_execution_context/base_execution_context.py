@@ -25,7 +25,6 @@
 from collections import deque
 from .. import _retry_utility
 from .. import http_constants
-from .. import _base
 
 # pylint: disable=protected-access
 
