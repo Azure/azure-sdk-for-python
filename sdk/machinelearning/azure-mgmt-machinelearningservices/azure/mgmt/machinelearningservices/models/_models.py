@@ -516,13 +516,12 @@ class AmlComputeProperties(Model):
      ~azure.mgmt.machinelearningservices.models.VmPriority
     :param os_type: OS Type. Possible values include: 'Linux', 'Windows'
     :type os_type: str or ~azure.mgmt.machinelearningservices.models.OsType
-    :param virtual_machine_image_id: Custom VM image. The ARM resource
-     identifier of the virtual machine image for the compute nodes. This is of
-     the form
+    :param virtual_machine_image: Custom VM image. The ARM resource identifier
+     of the virtual machine image for the compute nodes. This is of the form
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{gallery
      name}/images/{image definition name}/versions/{version id}. The virtual
      machine image must be in the same region and subscription as the cluster.
-    :type virtual_machine_image_id:
+    :type virtual_machine_image:
      ~azure.mgmt.machinelearningservices.models.ResourceId
     :param scale_settings: Scale settings for AML Compute
     :type scale_settings:
@@ -590,7 +589,7 @@ class AmlComputeProperties(Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'vm_priority': {'key': 'vmPriority', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
-        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'ResourceId'},
+        'virtual_machine_image': {'key': 'virtualMachineImage', 'type': 'ResourceId'},
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
@@ -608,7 +607,7 @@ class AmlComputeProperties(Model):
         self.vm_size = kwargs.get('vm_size', None)
         self.vm_priority = kwargs.get('vm_priority', None)
         self.os_type = kwargs.get('os_type', None)
-        self.virtual_machine_image_id = kwargs.get('virtual_machine_image_id', None)
+        self.virtual_machine_image = kwargs.get('virtual_machine_image', None)
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
         self.subnet = kwargs.get('subnet', None)
