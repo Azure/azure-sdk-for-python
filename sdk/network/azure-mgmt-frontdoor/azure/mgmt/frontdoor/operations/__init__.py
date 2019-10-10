@@ -9,22 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_doors_operations import FrontDoorsOperations
-from .routing_rules_operations import RoutingRulesOperations
-from .health_probe_settings_operations import HealthProbeSettingsOperations
-from .load_balancing_settings_operations import LoadBalancingSettingsOperations
-from .backend_pools_operations import BackendPoolsOperations
-from .frontend_endpoints_operations import FrontendEndpointsOperations
-from .endpoints_operations import EndpointsOperations
-from .policies_operations import PoliciesOperations
+from ._profiles_operations import ProfilesOperations
+from ._preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
+from ._experiments_operations import ExperimentsOperations
+from ._front_doors_operations import FrontDoorsOperations
+from ._frontend_endpoints_operations import FrontendEndpointsOperations
+from ._endpoints_operations import EndpointsOperations
+from ._policies_operations import PoliciesOperations
+from ._managed_rule_sets_operations import ManagedRuleSetsOperations
+from ._front_door_management_client_operations import FrontDoorManagementClientOperationsMixin
 
 __all__ = [
+    'ProfilesOperations',
+    'PreconfiguredEndpointsOperations',
+    'ExperimentsOperations',
     'FrontDoorsOperations',
-    'RoutingRulesOperations',
-    'HealthProbeSettingsOperations',
-    'LoadBalancingSettingsOperations',
-    'BackendPoolsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
     'PoliciesOperations',
+    'ManagedRuleSetsOperations',
+    'FrontDoorManagementClientOperationsMixin',
 ]
