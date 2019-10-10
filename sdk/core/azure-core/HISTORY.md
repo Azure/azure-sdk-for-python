@@ -5,6 +5,11 @@
 
 ## 2019-XX-XX Version 1.0.0
 
+### Bug fixes
+
+- Fix AsyncioRequestsTransport if input stream is an async generator  #7743
+- Fix form-data with aiohttp transport  #7749
+
 ### Breaking changes
 
 - azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_text changed
