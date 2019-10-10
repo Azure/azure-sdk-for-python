@@ -221,6 +221,9 @@ class ApplicationInsightsComponent(ComponentsResource):
      application being monitored that is being sampled for Application Insights
      telemetry.
     :type sampling_percentage: float
+    :param retention_in_days: Retention period by number of days. Default
+     value: 90 .
+    :type retention_in_days: int
     """
 
     _validation = {
@@ -258,9 +261,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
+        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
     }
 
-    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, retention_in_days: int=90, **kwargs) -> None:
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -275,6 +279,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.hockey_app_token = None
         self.provisioning_state = None
         self.sampling_percentage = sampling_percentage
+        self.retention_in_days = retention_in_days
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):

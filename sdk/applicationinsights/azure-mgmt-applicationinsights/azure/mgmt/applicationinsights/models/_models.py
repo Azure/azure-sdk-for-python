@@ -221,6 +221,9 @@ class ApplicationInsightsComponent(ComponentsResource):
      application being monitored that is being sampled for Application Insights
      telemetry.
     :type sampling_percentage: float
+    :param retention_in_days: Retention period by number of days. Default
+     value: 90 .
+    :type retention_in_days: int
     """
 
     _validation = {
@@ -258,6 +261,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
+        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -275,6 +279,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.hockey_app_token = None
         self.provisioning_state = None
         self.sampling_percentage = kwargs.get('sampling_percentage', None)
+        self.retention_in_days = kwargs.get('retention_in_days', 90)
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):
