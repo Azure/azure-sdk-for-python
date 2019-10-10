@@ -131,8 +131,7 @@ class AuthnClientBase(ABC):
     @staticmethod
     def _parse_app_service_expires_on(expires_on):
         # type: (str) -> struct_time
-        """
-        Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
+        """Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
         Expects the time is given in UTC (i.e. has offset +00:00).
         """
         if not expires_on.endswith(" +00:00"):
@@ -160,8 +159,7 @@ class AuthnClientBase(ABC):
 
 
 class AuthnClient(AuthnClientBase):
-    """
-    Synchronous authentication client.
+    """Synchronous authentication client.
 
     :param str auth_url:
     :param config: Optional configuration for the HTTP pipeline.
