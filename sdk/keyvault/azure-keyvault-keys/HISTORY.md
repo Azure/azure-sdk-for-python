@@ -1,6 +1,15 @@
 # Release History
 
 ## 4.0.0b5
+### Breaking changes:
+- Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
+- Moved the optional parameters of several methods into kwargs (
+[docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+detail the new keyword arguments):
+  - `create_key` now has positional parameters `name` and `key_type`
+  - `create_ec_key` and `create_rsa_key` now have positional parameters `name` and `hsm`
+  - `update_key_properties` now has one positional parameter, `name`
+  - `import_key` now has positional parameters `name` and `key`
 
 
 ## 4.0.0b4 (2019-10-08)
