@@ -89,34 +89,24 @@ class SecretClient(AsyncKeyVaultClientBase):
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def update_secret_properties(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        content_type: Optional[str] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        **kwargs: "**Any"
-    ) -> SecretProperties:
+    async def update_secret_properties(self, name: str, **kwargs: "Any") -> SecretProperties:
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
 
         :param str name: Name of the secret
-        :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
-        :param dict(str, str) tags: (optional) Application specific metadata in the form of key-value pairs.
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **version** (str): Version of the secret to update. If unspecified, the latest version is updated.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -127,6 +117,8 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires = kwargs.pop("expires", None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -134,8 +126,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_secret(
             self.vault_endpoint,
             name,
-            secret_version=version or "",
-            content_type=content_type,
+            secret_version=kwargs.pop("version", ""),
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs

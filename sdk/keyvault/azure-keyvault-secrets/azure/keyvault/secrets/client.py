@@ -68,16 +68,8 @@ class SecretClient(KeyVaultClientBase):
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def set_secret(
-        self,
-        name,  # type: str
-        value,  # type: str
-        content_type=None,  # type: Optional[str]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type:  **Any
-    ):
-        # type: (...) -> Secret
+    def set_secret(self, name, value, **kwargs):
+        # type: (str, str, **Any) -> Secret
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
@@ -89,7 +81,6 @@ class SecretClient(KeyVaultClientBase):
         Keyword arguments
             - **enabled** (bool): Whether the secret is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
             - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
             - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
             - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
@@ -103,49 +94,38 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires = kwargs.pop("expires", None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = self._client.set_secret(
-            vault_base_url=self.vault_endpoint,
-            secret_name=name,
-            value=value,
-            secret_attributes=attributes,
-            content_type=content_type,
-            **kwargs
+            vault_base_url=self.vault_endpoint, secret_name=name, value=value, secret_attributes=attributes, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret_properties(
-        self,
-        name,  # type: str
-        version=None,  # type: Optional[str]
-        content_type=None,  # type: Optional[str]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> SecretProperties
+    def update_secret_properties(self, name, **kwargs):
+        # type: (str, **Any) -> SecretProperties
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
 
         :param str name: Name of the secret
-        :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **version** (str): Version of the secret to update. If unspecified, the latest version is updated.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -156,7 +136,9 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop('enabled', None)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires = kwargs.pop("expires", None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -164,8 +146,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.update_secret(
             self.vault_endpoint,
             name,
-            secret_version=version or "",
-            content_type=content_type,
+            secret_version=kwargs.pop("version", ""),
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs
@@ -247,9 +228,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        backup_result = self._client.backup_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
-        )
+        backup_result = self._client.backup_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -273,9 +252,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(
-            self.vault_endpoint, backup, error_map=_error_map, **kwargs
-        )
+        bundle = self._client.restore_secret(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace

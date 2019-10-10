@@ -94,7 +94,7 @@ class SecretClientTests(KeyVaultTestCase):
             enabled = not secret.properties.enabled
             updated_secret = client.update_secret_properties(
                 secret.name,
-                secret.properties.version,
+                version=secret.properties.version,
                 content_type=content_type,
                 expires=expires,
                 tags=tags,
