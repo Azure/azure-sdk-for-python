@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport.base import PipelineClientBase
 from .pipeline.policies import ContentDecodePolicy
@@ -58,19 +59,12 @@ class AsyncPipelineClient(PipelineClientBase):
     Builds an AsyncPipeline client.
 
     :param str base_url: URL for the request.
-    :param config: Service configuration. This is a required parameter.
-    :type config: ~azure.core.Configuration
-    :param kwargs: keyword arguments.
+    :keyword Configuration config: If omitted, the standard configuration is used.
+    :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
+    :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline
-
-    **Keyword arguments:**
-
-    *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
-
-    *policies* - A list of policies object. If omitted, the standard policies of the configuration object is used.
-
-    *transport* - The HTTP Transport instance. If omitted, AioHttpTransport is use for asynchronous transport.
 
     .. admonition:: Example:
 
@@ -82,16 +76,14 @@ class AsyncPipelineClient(PipelineClientBase):
             :caption: Builds the async pipeline client.
     """
 
-    def __init__(self, base_url, config, **kwargs):
+    def __init__(self, base_url, **kwargs):
         super(AsyncPipelineClient, self).__init__(base_url)
-        if config is None:
-            raise ValueError("Config is a required parameter")
-        self._config = config
+        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
         if kwargs.get("pipeline"):
             self._pipeline = kwargs["pipeline"]
         else:
-            self._pipeline = self._build_pipeline(config, **kwargs)
+            self._pipeline = self._build_pipeline(self._config, **kwargs)
 
     async def __aenter__(self):
         await self._pipeline.__aenter__()
