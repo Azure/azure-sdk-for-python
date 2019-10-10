@@ -83,15 +83,16 @@ class SecretClient(KeyVaultClientBase):
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.models.Secret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
