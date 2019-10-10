@@ -102,7 +102,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return "/".join(self._key_id)
 
     @distributed_trace_async
-    async def get_key(self, **kwargs: "Any") -> "Optional[Key]":
+    async def _get_key(self, **kwargs: "Any") -> "Optional[Key]":
         """
         Get the client's :class:`~azure.keyvault.keys.models.Key`.
         Can be `None`, if the client lacks keys/get permission.
@@ -127,7 +127,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         id and lacks keys/get permission."""
 
         if not self._internal_key:
-            key = await self.get_key(**kwargs)
+            key = await self._get_key(**kwargs)
             if not key:
                 return None
 

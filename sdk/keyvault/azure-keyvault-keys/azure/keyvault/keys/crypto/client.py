@@ -106,7 +106,7 @@ class CryptographyClient(KeyVaultClientBase):
         return "/".join(self._key_id)
 
     @distributed_trace
-    def get_key(self, **kwargs):
+    def _get_key(self, **kwargs):
         # type: (**Any) -> Optional[Key]
         """
         Get the client's :class:`~azure.keyvault.keys.models.Key`.
@@ -133,7 +133,7 @@ class CryptographyClient(KeyVaultClientBase):
         id and lacks keys/get permission."""
 
         if not self._internal_key:
-            key = self.get_key(**kwargs)
+            key = self._get_key(**kwargs)
             if not key:
                 return None
 
