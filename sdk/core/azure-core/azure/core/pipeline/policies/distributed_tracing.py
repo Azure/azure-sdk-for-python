@@ -78,12 +78,14 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
+        ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
                 return
 
-            span_name = self._network_span_namer(request.http_request)
+            namer = ctxt.pop('network_span_namer', self._network_span_namer)
+            span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name)
             span.start()
