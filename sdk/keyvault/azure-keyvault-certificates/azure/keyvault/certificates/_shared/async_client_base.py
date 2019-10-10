@@ -57,14 +57,7 @@ class AsyncKeyVaultClientBase:
 
         return config
 
-    def __init__(
-        self,
-        vault_endpoint: str,
-        credential: "TokenCredential",
-        transport: AsyncHttpTransport = None,
-        api_version: str = None,
-        **kwargs: "**Any"
-    ) -> None:
+    def __init__(self, vault_endpoint: str, credential: "TokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -75,18 +68,16 @@ class AsyncKeyVaultClientBase:
 
         self._vault_endpoint = vault_endpoint.strip(" /")
 
-        client = kwargs.pop("generated_client", None)
+        client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
             self._client = client
             return
 
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = self._create_config(credential, api_version=api_version, **kwargs)
+        config = self._create_config(credential, **kwargs)
+        transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
 
     @staticmethod
     def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:

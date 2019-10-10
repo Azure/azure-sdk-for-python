@@ -28,8 +28,17 @@ from .._shared.exceptions import error_map as _error_map
 
 
 class CertificateClient(AsyncKeyVaultClientBase):
-    """"CertificateClient defines a high level interface for
-    managing certificates in the specified vault.
+    """A high-level asynchronous interface for managing a vault's certificates.
+
+    :param str vault_endpoint: URL of the vault the client will access
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity.aio`
+
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+
     Example:
         .. literalinclude:: ../tests/test_examples_certificates_async.py
             :start-after: [START create_certificate_client]
