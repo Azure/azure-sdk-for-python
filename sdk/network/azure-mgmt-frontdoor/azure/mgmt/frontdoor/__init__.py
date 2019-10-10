@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .front_door_management_client import FrontDoorManagementClient
-from .version import VERSION
+from ._configuration import FrontDoorManagementClientConfiguration
+from ._front_door_management_client import FrontDoorManagementClient
+__all__ = ['FrontDoorManagementClient', 'FrontDoorManagementClientConfiguration']
 
-__all__ = ['FrontDoorManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

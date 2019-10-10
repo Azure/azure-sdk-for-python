@@ -516,11 +516,11 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        # get pending certiificate signing request
+        # get pending certificate signing request
         certificate = client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         ).wait()
-        pending_version_csr = client.get_pending_certificate_signing_request(name=cert_name)
+        pending_version_csr = client.get_certificate_operation(name=cert_name).csr
         try:
             self.assertEqual(client.get_certificate_operation(name=cert_name).csr, pending_version_csr)
         except Exception as ex:
