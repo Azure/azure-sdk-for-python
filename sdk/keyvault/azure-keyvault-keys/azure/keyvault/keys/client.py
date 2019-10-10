@@ -450,40 +450,37 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def import_key(
-        self,
-        name,  # type: str
-        key,  # type: JsonWebKey
-        hsm=None,  # type: Optional[bool]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def import_key(self, name, key, **kwargs):
+        # type: (str, JsonWebKey, **Any) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
-        :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
-
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **hsm** (bool): Whether the key should be backed by a hardware security module
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
         enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires = kwargs.pop("expires", None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_endpoint, name, key=key._to_generated_model(), hsm=hsm, key_attributes=attributes, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            key_attributes=attributes,
+            **kwargs
         )
         return Key._from_key_bundle(bundle)
