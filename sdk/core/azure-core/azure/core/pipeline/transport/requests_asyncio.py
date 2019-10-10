@@ -102,6 +102,16 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        if hasattr(request.data, '__aiter__'):
+            # Need to consume that async generator, since requests can't do anything with it
+            # That's not ideal, but a list is our only choice. Memory not optimal here,
+            # but providing an async generator to a requests based transport is not optimal too
+            new_data = []
+            async for part in request.data:
+                new_data.append(part)
+            data_to_send = iter(new_data)
+        else:
+            data_to_send = request.data
         try:
             response = await loop.run_in_executor(
                 None,
@@ -110,7 +120,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                     request.method,
                     request.url,
                     headers=request.headers,
-                    data=request.data,
+                    data=data_to_send,
                     files=request.files,
                     verify=kwargs.pop('connection_verify', self.connection_config.verify),
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
