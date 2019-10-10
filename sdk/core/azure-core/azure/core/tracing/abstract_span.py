@@ -13,7 +13,8 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union, Callable
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
+    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
 try:
     from typing_extensions import Protocol
@@ -89,14 +90,14 @@ class AbstractSpan(Protocol):
         """
 
     def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, HttpResponse) -> None
+        # type: (HttpRequest, HttpResponseType) -> None
         """
         Add correct attributes for a http client span.
 
         :param request: The request made
         :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
-        :type response: HttpResponse
+        :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
 
     def get_trace_parent(self):
