@@ -193,7 +193,7 @@ class QueryTest(unittest.TestCase):
         # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
         # 1 extra call to get query plan via gateway
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
-            self.validate_query_requests_count(query_iterable, 16 * 2 + 1)
+            self.validate_query_requests_count(query_iterable, 15 * 2 + 1)
         else:
             self.validate_query_requests_count(query_iterable, 17 * 2 + 1)
 
@@ -277,7 +277,7 @@ class QueryTest(unittest.TestCase):
             try:
                 list(query_iterable)
                 self.fail()
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, 400)
 
     def test_query_with_non_overlapping_pk_ranges(self):

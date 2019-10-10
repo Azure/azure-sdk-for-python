@@ -65,8 +65,8 @@ class AggregationQueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(_config.host,
-                                                {'masterKey': _config.master_key}, "Session", _config.connection_policy)
+        cls.client = cosmos_client.CosmosClient(
+            _config.host, {'masterKey': _config.master_key}, "Session", connection_policy=_config.connection_policy)
         created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = cls._create_collection(created_db)
 
