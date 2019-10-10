@@ -12,8 +12,7 @@ from .user import SharedTokenCacheCredential
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
-    """
-    A default credential capable of handling most Azure SDK authentication scenarios.
+    """A default credential capable of handling most Azure SDK authentication scenarios.
 
     The identity it uses depends on the environment. When an access token is needed, it requests one using these
     identities in turn, stopping when one provides a token:
