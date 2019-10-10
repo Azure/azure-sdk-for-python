@@ -43,7 +43,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
             this parameter should only be present if file_name is provided.
         :param str file_name:
             Name of file.
-        :param FilePermissions permission:
+        :param FileSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, create, write, delete, list.
@@ -121,7 +121,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
 
         :param str share_name:
             Name of share.
-        :param SharePermissions permission:
+        :param ShareSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, create, write, delete, list.

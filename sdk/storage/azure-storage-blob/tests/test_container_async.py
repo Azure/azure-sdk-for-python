@@ -29,7 +29,9 @@ from azure.storage.blob.aio import (
     BlobType,
     ContentSettings,
     BlobProperties,
-    ContainerPermissions
+    ContainerSasPermissions,
+    StandardBlobTier,
+    PremiumPageBlobTier
 )
 
 from testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -37,6 +39,13 @@ from testcase import StorageTestCase, TestMode, record, LogCaptured
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 #------------------------------------------------------------------------------
+
+async def _to_list(async_iterator):
+    result = []
+    async for item in async_iterator:
+        result.append(item)
+    return result
+
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -95,7 +104,7 @@ class StorageContainerTestAsync(StorageTestCase):
         return container
 
     #--Test cases for containers -----------------------------------------
-    
+
     async def _test_create_container(self):
         # Arrange
         container_name = self._get_container_reference()
@@ -159,8 +168,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
         anonymous_service = BlobClient(
             self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
@@ -376,7 +385,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_metadata(metadata, lease_id)
+        await container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = await container.get_container_properties()
@@ -430,7 +439,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        md = await container.get_container_properties(lease_id)
+        md = await container.get_container_properties(lease=lease_id)
         md = md.metadata
 
         # Assert
@@ -473,7 +482,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        props = await container.get_container_properties(lease_id)
+        props = await container.get_container_properties(lease=lease_id)
         await lease_id.break_lease()
 
         # Assert
@@ -511,7 +520,7 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        acl = await container.get_container_access_policy(lease_id)
+        acl = await container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)
@@ -549,7 +558,7 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
@@ -623,7 +632,7 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {'testid': access_policy}
@@ -664,7 +673,7 @@ class StorageContainerTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = await self._create_container()
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {i: access_policy for i in range(2)}
@@ -1069,7 +1078,6 @@ class StorageContainerTestAsync(StorageTestCase):
 
     async def _test_list_blobs_with_include_metadata(self):
         # Arrange
-        pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1194,6 +1202,173 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'blob4')
 
     @record
+    def test_delete_blobs_simple(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_simple())
+
+    async def _test_delete_blobs_simple(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            await container.get_blob_client('blob1').upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = await _to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @record
+    def test_delete_blobs_snapshot(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_snapshot())
+
+    async def _test_delete_blobs_snapshot(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            blob1_client = container.get_blob_client('blob1')
+            await blob1_client.upload_blob(data)
+            await blob1_client.create_snapshot()
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+        blobs = await _to_list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 4  # 3 blobs + 1 snapshot
+
+        # Act
+        response = await _to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            delete_snapshots='only'
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 404  # There was no snapshot
+        assert response[2].status_code == 404  # There was no snapshot
+
+        blobs = await _to_list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 3  # 3 blobs
+
+    @record
+    def test_standard_blob_tier_set_tier_api_batch(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_standard_blob_tier_set_tier_api_batch())
+
+    async def _test_standard_blob_tier_set_tier_api_batch(self):
+        container = await self._create_container()
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            try:
+                blob = container.get_blob_client('blob1')
+                data = b'hello world'
+                await blob.upload_blob(data)
+                await container.get_blob_client('blob2').upload_blob(data)
+                await container.get_blob_client('blob3').upload_blob(data)
+
+                blob_ref = await blob.get_blob_properties()
+                assert blob_ref.blob_tier is not None
+                assert blob_ref.blob_tier_inferred
+                assert blob_ref.blob_tier_change_time is None
+
+                parts = await _to_list(await container.set_standard_blob_tier_blobs(
+                    tier,
+                    'blob1',
+                    'blob2',
+                    'blob3',
+                ))
+
+                assert len(parts) == 3
+
+                assert parts[0].status_code in [200, 202]
+                assert parts[1].status_code in [200, 202]
+                assert parts[2].status_code in [200, 202]
+
+                blob_ref2 = await blob.get_blob_properties()
+                assert tier == blob_ref2.blob_tier
+                assert not blob_ref2.blob_tier_inferred
+                assert blob_ref2.blob_tier_change_time is not None
+
+            finally:
+                await container.delete_blobs(
+                    'blob1',
+                    'blob2',
+                    'blob3',
+                )
+
+    @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    @record
+    def test_premium_tier_set_tier_api_batch(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_premium_tier_set_tier_api_batch())
+
+    async def _test_premium_tier_set_tier_api_batch(self):
+        url = self._get_premium_account_url()
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
+
+        try:
+            container_name = self.get_resource_name('utpremiumcontainer')
+            container = pbs.get_container_client(container_name)
+
+            if not self.is_playback():
+                try:
+                    await container.create_container()
+                except ResourceExistsError:
+                    pass
+
+            pblob = container.get_blob_client('blob1')
+            await pblob.create_page_blob(1024)
+            await container.get_blob_client('blob2').create_page_blob(1024)
+            await container.get_blob_client('blob3').create_page_blob(1024)
+
+            blob_ref = await pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P10 == blob_ref.blob_tier
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+
+            parts = await _to_list(container.set_premium_page_blob_tier_blobs(
+                PremiumPageBlobTier.P50,
+                'blob1',
+                'blob2',
+                'blob3',
+            ))
+
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+
+            blob_ref2 = await pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+
+        finally:
+            await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+    @record
     def test_list_blobs_with_delimiter(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_delimiter())
@@ -1236,7 +1411,6 @@ class StorageContainerTestAsync(StorageTestCase):
 
     async def _test_list_blobs_with_include_multiple(self):
         # Arrange
-        pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1286,9 +1460,9 @@ class StorageContainerTestAsync(StorageTestCase):
 
         token = container.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)

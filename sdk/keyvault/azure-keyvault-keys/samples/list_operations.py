@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 # 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-keys/
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = KeyClient(vault_url=VAULT_URL, credential=credential)
+client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create keys with RSA and EC type. If the key
     # already exists in the Key Vault, then a new version of the key is created.
@@ -59,9 +59,7 @@ try:
     for key in keys:
         retrieved_key = client.get_key(key.name)
         print(
-            "Key with name '{0}' with type '{1}' was found.".format(
-                retrieved_key.name, retrieved_key.key_material.kty
-            )
+            "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key_material.kty)
         )
 
     # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure

@@ -61,7 +61,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `SecretClient`
+    > The `"vaultUri"` property is the `vault_endpoint` used by `SecretClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
@@ -120,7 +120,7 @@ After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
     credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
+    secret_client = SecretClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -221,7 +221,7 @@ This example creates a secret in the Key Vault with the specified optional argum
     from azure.keyvault.secrets.aio import SecretClient
 
     credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url=vault_url, credential=credential)
+    secret_client = SecretClient(vault_endpoint=vault_endpoint, credential=credential)
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
@@ -281,7 +281,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = SecretClient(vault_url=url, credential=credential, logging_enable=True)
+client = SecretClient(vault_endpoint=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

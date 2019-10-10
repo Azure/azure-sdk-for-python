@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, vault_endpoint
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    vault_endpoint = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_endpoint=vault_endpoint, credential=credential)
     try:
 
         print("\n.. Create Certificate")
@@ -62,19 +62,9 @@ async def run_sample():
         print("Backup created for certificate with name '{0}'.".format(cert_name))
 
         # The storage account certificate is no longer in use, so you can delete it.
+        print("\n.. Delete the certificate")
         await client.delete_certificate(name=cert_name)
-        # To ensure certificate is deleted on the server side.
-        await asyncio.sleep(30)
         print("Deleted Certificate with name '{0}'".format(cert_name))
-
-        # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-        # In order to be able to reuse the name during restoration, we must purge the certificate
-        # after the initial deletion.
-        print("\nPurging certificate...")
-        await client.purge_deleted_certificate(name=cert_name)
-        # To ensure certificate is purged on the server side.
-        await asyncio.sleep(30)
-        print("Purged Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the certificate using the backed up certificate bytes")

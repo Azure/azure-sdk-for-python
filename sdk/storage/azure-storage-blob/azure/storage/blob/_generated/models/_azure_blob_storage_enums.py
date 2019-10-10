@@ -185,6 +185,11 @@ class StorageErrorCode(str, Enum):
     blob_being_rehydrated = "BlobBeingRehydrated"
     blob_archived = "BlobArchived"
     blob_not_archived = "BlobNotArchived"
+    authorization_source_ip_mismatch = "AuthorizationSourceIPMismatch"
+    authorization_protocol_mismatch = "AuthorizationProtocolMismatch"
+    authorization_permission_mismatch = "AuthorizationPermissionMismatch"
+    authorization_service_mismatch = "AuthorizationServiceMismatch"
+    authorization_resource_type_mismatch = "AuthorizationResourceTypeMismatch"
 
 
 class GeoReplicationStatusType(str, Enum):
@@ -228,6 +233,21 @@ class AccessTierOptional(str, Enum):
     hot = "Hot"
     cool = "Cool"
     archive = "Archive"
+
+
+class PremiumPageBlobAccessTier(str, Enum):
+
+    p4 = "P4"
+    p6 = "P6"
+    p10 = "P10"
+    p15 = "P15"
+    p20 = "P20"
+    p30 = "P30"
+    p40 = "P40"
+    p50 = "P50"
+    p60 = "P60"
+    p70 = "P70"
+    p80 = "P80"
 
 
 class RehydratePriority(str, Enum):

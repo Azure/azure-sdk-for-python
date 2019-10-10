@@ -3,6 +3,35 @@
 Release History
 ===============
 
+6.0.0 (2019-10-09)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetwork has a new parameter bgp_communities
+- Model VirtualHub has a new parameter azure_firewall
+- Model VirtualHub has a new parameter security_provider_name
+- Model P2SVpnGateway has a new parameter p2s_connection_configurations
+- Model P2SVpnGateway has a new parameter vpn_server_configuration
+- Model AzureFirewall has a new parameter sku
+- Model VirtualNetworkGateway has a new parameter inbound_dns_forwarding_endpoint
+- Model VirtualNetworkGateway has a new parameter enable_dns_forwarding
+- Added operation P2sVpnGatewaysOperations.get_p2s_vpn_connection_health_detailed
+- Added operation NetworkManagementClientOperationsMixin.generatevirtualwanvpnserverconfigurationvpnprofile
+- Added operation group VpnServerConfigurationsOperations
+- Added operation group VpnServerConfigurationsAssociatedWithVirtualWanOperations
+- Added operation group AvailableServiceAliasesOperations
+
+**Breaking changes** 
+
+- Model WebApplicationFirewallPolicy has a new required parameter managed_rules
+- Model P2SVpnGateway no longer has parameter vpn_client_address_pool
+- Model P2SVpnGateway no longer has parameter custom_routes
+- Model P2SVpnGateway no longer has parameter p2_svpn_server_configuration
+- Model VirtualWAN no longer has parameter security_provider_name
+- Model VirtualWAN no longer has parameter p2_svpn_server_configurations
+- Model PolicySettings has a new signature
+
 5.1.0 (2019-10-03)
 ++++++++++++++++++
 

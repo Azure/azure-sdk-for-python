@@ -5,18 +5,18 @@
 from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.keyvault.secrets.models import Secret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
+from .._shared.exceptions import error_map as _error_map
 
 
 class SecretClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's secrets.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
 
@@ -51,7 +51,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_secret(
-            self.vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -61,10 +61,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         name: str,
         value: str,
         content_type: Optional[str] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> Secret:
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
@@ -73,12 +71,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str value: The value of the secret
         :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
         :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
         :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :rtype: ~azure.keyvault.secrets.models.Secret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -88,12 +88,18 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Set a secret's value
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = await self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            value,
+            secret_attributes=attributes,
+            content_type=content_type,
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -103,10 +109,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         name: str,
         version: Optional[str] = None,
         content_type: Optional[str] = None,
-        enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
     ) -> SecretProperties:
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
@@ -125,6 +129,10 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START update_secret]
@@ -133,18 +141,18 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Updates a secret's attributes
                 :dedent: 8
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = await self._client.update_secret(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             secret_version=version or "",
             content_type=content_type,
-            tags=tags,
             secret_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -167,7 +175,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_secrets(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
@@ -192,7 +200,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_secret_versions(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             maxresults=max_results,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
@@ -219,7 +227,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -243,7 +251,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_secret(
-            self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs
+            self.vault_endpoint, backup, error_map=_error_map, **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -266,7 +274,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.delete_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -290,7 +298,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -312,7 +320,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_secrets(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
@@ -337,7 +345,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 await secret_client.purge_deleted_secret("secret-name")
 
         """
-        await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_secret(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
@@ -357,5 +365,5 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+        bundle = await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)

@@ -59,7 +59,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`
+    > The `"vaultUri"` property is the `vault_endpoint` used by `CertificateClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's certificates, you'll need an instance
@@ -116,7 +116,7 @@ from azure.keyvault.certificates import CertificateClient
 credential = DefaultAzureCredential()
 
 # Create a new certificate client using the default credential
-certificate_client = CertificateClient(vault_url=<your-vault-url>, credential=credential)
+certificate_client = CertificateClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 With a `CertificateClient` you can get certificates from the vault, create new certificates and
@@ -154,7 +154,6 @@ policy will be used. The `create_certificate` operation returns a long running o
 ```python
 create_certificate_poller = certificate_client.create_certificate(name="cert-name")
 
-create_certificate_poller.wait()
 print(create_certificate_poller.result())
 ```
 
@@ -173,6 +172,7 @@ print(certificate.policy.id)
 Version is required.
 ```python
 certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
+
 print(certificate.name)
 print(certificate.properties.version)
 ```
@@ -247,10 +247,10 @@ For example, if you try to retrieve a certificate after it is deleted a `404` er
 resource not found. In the following snippet, the error is handled gracefully by catching the exception and
 displaying additional information about the error.
 ```python
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError
 try:
     certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
-except HttpResponseError as e:
+except ResourceNotFoundError as e:
     print(e.message)
 
 Output: "certificate not found:deleted_certificate"
@@ -278,7 +278,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
+client = CertificateClient(vault_endpoint=url, credential=credential, logging_enable=True))
 ```
 
 Network trace logging can also be enabled for any single operation:
