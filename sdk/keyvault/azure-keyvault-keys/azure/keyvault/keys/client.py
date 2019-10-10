@@ -349,25 +349,12 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_properties(
-        self,
-        name,  # type: str
-        version=None,  # type: Optional[str]
-        key_operations=None,  # type: Optional[List[str]]
-        expires=None,  # type: Optional[datetime]
-        not_before=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def update_key_properties(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises:
@@ -375,8 +362,12 @@ class KeyClient(KeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **version** (str): The version of the key to update. If unspecified, the latest version is updated.
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -387,6 +378,8 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires = kwargs.pop("expires", None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
@@ -394,8 +387,8 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.update_key(
             self.vault_endpoint,
             name,
-            key_version=version or "",
-            key_ops=key_operations,
+            key_version=kwargs.pop("version", ""),
+            key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
             error_map=_error_map,
             **kwargs
