@@ -64,7 +64,11 @@ def _default_network_span_namer(http_request):
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
-    """The policy to create spans for Azure Calls"""
+    """The policy to create spans for Azure calls.
+
+    :keyword network_span_namer: A callable to customize the span name
+    :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
+    """
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _REQUEST_ID = "x-ms-client-request-id"
     _RESPONSE_ID = "x-ms-request-id"
