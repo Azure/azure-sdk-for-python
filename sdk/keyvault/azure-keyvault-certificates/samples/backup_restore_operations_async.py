@@ -52,8 +52,8 @@ async def run_sample():
 
         # Awaiting the poller will return a certificate if creation is successful,
         # and will return the failed CertificateOperation if not.
-        await create_certificate_poller
-        print("Certificate with name '{0}' created.".format(cert_name))
+        certificate = await create_certificate_poller
+        print("Certificate with name '{0}' created.".format(certificate.name))
 
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
