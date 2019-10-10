@@ -9,6 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .profiles_operations import ProfilesOperations
+from .preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
+from .experiments_operations import ExperimentsOperations
 from .front_doors_operations import FrontDoorsOperations
 from .frontend_endpoints_operations import FrontendEndpointsOperations
 from .endpoints_operations import EndpointsOperations
@@ -16,6 +19,9 @@ from .policies_operations import PoliciesOperations
 from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
 __all__ = [
+    'ProfilesOperations',
+    'PreconfiguredEndpointsOperations',
+    'ExperimentsOperations',
     'FrontDoorsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
