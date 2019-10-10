@@ -45,11 +45,9 @@ async def run_sample():
         bank_cert_name = "BankRecoverCertificate"
         storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
+        bank_certificate = await client.create_certificate(name=bank_cert_name)
+        storage_certificate = await client.create_certificate(name=storage_cert_name)
 
-        bank_certificate = await bank_certificate_poller
-        storage_certificate = await storage_certificate_poller
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
