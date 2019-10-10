@@ -66,7 +66,7 @@ class PipelineClient(PipelineClientBase):
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../examples/test_example_sync.py
