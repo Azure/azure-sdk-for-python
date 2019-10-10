@@ -25,7 +25,7 @@ class ExportJobsOperationResultsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-05-13".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ExportJobsOperationResultsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01"
+        self.api_version = "2019-05-13"
 
         self.config = config
 

@@ -18,6 +18,7 @@ try:
     from ._models_py3 import AzureFileshareProtectedItem
     from ._models_py3 import AzureFileshareProtectedItemExtendedInfo
     from ._models_py3 import AzureFileShareProtectionPolicy
+    from ._models_py3 import AzureFileShareProvisionILRRequest
     from ._models_py3 import AzureFileShareRecoveryPoint
     from ._models_py3 import AzureFileShareRestoreRequest
     from ._models_py3 import AzureIaaSClassicComputeVMContainer
@@ -56,7 +57,6 @@ try:
     from ._models_py3 import AzureVmWorkloadProtectedItem
     from ._models_py3 import AzureVmWorkloadProtectedItemExtendedInfo
     from ._models_py3 import AzureVmWorkloadProtectionPolicy
-    from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models_py3 import AzureVmWorkloadSAPAseDatabaseWorkloadItem
     from ._models_py3 import AzureVmWorkloadSAPAseSystemProtectableItem
@@ -126,6 +126,8 @@ try:
     from ._models_py3 import DailyRetentionFormat
     from ._models_py3 import DailyRetentionSchedule
     from ._models_py3 import Day
+    from ._models_py3 import DiskExclusionProperties
+    from ._models_py3 import DiskInformation
     from ._models_py3 import DistributedNodesInfo
     from ._models_py3 import DpmBackupEngine
     from ._models_py3 import DpmContainer
@@ -139,6 +141,7 @@ try:
     from ._models_py3 import EncryptionDetails
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ExportJobsOperationResultInfo
+    from ._models_py3 import ExtendedProperties
     from ._models_py3 import FeatureSupportRequest
     from ._models_py3 import GenericContainer
     from ._models_py3 import GenericContainerExtendedInfo
@@ -157,6 +160,7 @@ try:
     from ._models_py3 import InquiryInfo
     from ._models_py3 import InquiryValidation
     from ._models_py3 import InstantItemRecoveryTarget
+    from ._models_py3 import InstantRPAdditionalDetails
     from ._models_py3 import Job
     from ._models_py3 import JobQueryObject
     from ._models_py3 import JobResource
@@ -205,6 +209,7 @@ try:
     from ._models_py3 import ProtectionPolicyQueryObject
     from ._models_py3 import ProtectionPolicyResource
     from ._models_py3 import RecoveryPoint
+    from ._models_py3 import RecoveryPointDiskConfiguration
     from ._models_py3 import RecoveryPointResource
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
@@ -246,6 +251,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileshareProtectedItem
     from ._models import AzureFileshareProtectedItemExtendedInfo
     from ._models import AzureFileShareProtectionPolicy
+    from ._models import AzureFileShareProvisionILRRequest
     from ._models import AzureFileShareRecoveryPoint
     from ._models import AzureFileShareRestoreRequest
     from ._models import AzureIaaSClassicComputeVMContainer
@@ -284,7 +290,6 @@ except (SyntaxError, ImportError):
     from ._models import AzureVmWorkloadProtectedItem
     from ._models import AzureVmWorkloadProtectedItemExtendedInfo
     from ._models import AzureVmWorkloadProtectionPolicy
-    from ._models import AzureVmWorkloadSAPAseDatabaseProtectableItem
     from ._models import AzureVmWorkloadSAPAseDatabaseProtectedItem
     from ._models import AzureVmWorkloadSAPAseDatabaseWorkloadItem
     from ._models import AzureVmWorkloadSAPAseSystemProtectableItem
@@ -354,6 +359,8 @@ except (SyntaxError, ImportError):
     from ._models import DailyRetentionFormat
     from ._models import DailyRetentionSchedule
     from ._models import Day
+    from ._models import DiskExclusionProperties
+    from ._models import DiskInformation
     from ._models import DistributedNodesInfo
     from ._models import DpmBackupEngine
     from ._models import DpmContainer
@@ -367,6 +374,7 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionDetails
     from ._models import ErrorDetail
     from ._models import ExportJobsOperationResultInfo
+    from ._models import ExtendedProperties
     from ._models import FeatureSupportRequest
     from ._models import GenericContainer
     from ._models import GenericContainerExtendedInfo
@@ -385,6 +393,7 @@ except (SyntaxError, ImportError):
     from ._models import InquiryInfo
     from ._models import InquiryValidation
     from ._models import InstantItemRecoveryTarget
+    from ._models import InstantRPAdditionalDetails
     from ._models import Job
     from ._models import JobQueryObject
     from ._models import JobResource
@@ -433,6 +442,7 @@ except (SyntaxError, ImportError):
     from ._models import ProtectionPolicyQueryObject
     from ._models import ProtectionPolicyResource
     from ._models import RecoveryPoint
+    from ._models import RecoveryPointDiskConfiguration
     from ._models import RecoveryPointResource
     from ._models import RecoveryPointTierInformation
     from ._models import Resource
@@ -480,25 +490,27 @@ from ._paged_models import WorkloadProtectableItemResourcePaged
 from ._recovery_services_backup_client_enums import (
     ProtectionState,
     HealthStatus,
-    WorkloadType,
     RecoveryType,
     CopyOptions,
     RestoreRequestType,
+    WorkloadType,
+    PolicyType,
     JobSupportedAction,
     ProtectedItemState,
-    SupportStatus,
     LastBackupStatus,
     ProtectedItemHealthStatus,
-    PolicyType,
+    RestorePointType,
     OverwriteOptions,
-    WorkloadItemType,
+    RecoveryMode,
     SQLDataDirectoryType,
-    UsagesUnit,
-    DataSourceType,
-    ProtectionStatus,
-    FabricName,
-    Type,
+    StorageType,
+    StorageTypeState,
+    EnhancedSecurityState,
+    SoftDeleteFeatureState,
+    RestorePointQueryType,
     RetentionDurationType,
+    RecoveryPointTierType,
+    RecoveryPointTierStatus,
     BackupManagementType,
     JobStatus,
     JobOperationType,
@@ -508,23 +520,23 @@ from ._recovery_services_backup_client_enums import (
     MonthOfYear,
     MabServerType,
     HttpStatusCode,
-    ValidationStatus,
+    DataSourceType,
     CreateMode,
     HealthState,
-    IntentItemType,
     ScheduleRunType,
+    SupportStatus,
+    WorkloadItemType,
+    UsagesUnit,
+    ProtectionStatus,
+    FabricName,
+    Type,
+    ValidationStatus,
+    IntentItemType,
     AzureFileShareType,
     InquiryStatus,
     BackupType,
     OperationType,
-    RestorePointType,
-    StorageType,
-    StorageTypeState,
-    EnhancedSecurityState,
     ContainerType,
-    RestorePointQueryType,
-    RecoveryPointTierType,
-    RecoveryPointTierStatus,
     BackupItemType,
     OperationStatusValues,
 )
@@ -538,6 +550,7 @@ __all__ = [
     'AzureFileshareProtectedItem',
     'AzureFileshareProtectedItemExtendedInfo',
     'AzureFileShareProtectionPolicy',
+    'AzureFileShareProvisionILRRequest',
     'AzureFileShareRecoveryPoint',
     'AzureFileShareRestoreRequest',
     'AzureIaaSClassicComputeVMContainer',
@@ -576,7 +589,6 @@ __all__ = [
     'AzureVmWorkloadProtectedItem',
     'AzureVmWorkloadProtectedItemExtendedInfo',
     'AzureVmWorkloadProtectionPolicy',
-    'AzureVmWorkloadSAPAseDatabaseProtectableItem',
     'AzureVmWorkloadSAPAseDatabaseProtectedItem',
     'AzureVmWorkloadSAPAseDatabaseWorkloadItem',
     'AzureVmWorkloadSAPAseSystemProtectableItem',
@@ -646,6 +658,8 @@ __all__ = [
     'DailyRetentionFormat',
     'DailyRetentionSchedule',
     'Day',
+    'DiskExclusionProperties',
+    'DiskInformation',
     'DistributedNodesInfo',
     'DpmBackupEngine',
     'DpmContainer',
@@ -659,6 +673,7 @@ __all__ = [
     'EncryptionDetails',
     'ErrorDetail',
     'ExportJobsOperationResultInfo',
+    'ExtendedProperties',
     'FeatureSupportRequest',
     'GenericContainer',
     'GenericContainerExtendedInfo',
@@ -677,6 +692,7 @@ __all__ = [
     'InquiryInfo',
     'InquiryValidation',
     'InstantItemRecoveryTarget',
+    'InstantRPAdditionalDetails',
     'Job',
     'JobQueryObject',
     'JobResource',
@@ -725,6 +741,7 @@ __all__ = [
     'ProtectionPolicyQueryObject',
     'ProtectionPolicyResource',
     'RecoveryPoint',
+    'RecoveryPointDiskConfiguration',
     'RecoveryPointResource',
     'RecoveryPointTierInformation',
     'Resource',
@@ -757,39 +774,41 @@ __all__ = [
     'WorkloadProtectableItem',
     'WorkloadProtectableItemResource',
     'YearlyRetentionSchedule',
-    'JobResourcePaged',
+    'RecoveryPointResourcePaged',
     'ProtectionPolicyResourcePaged',
+    'JobResourcePaged',
     'ProtectedItemResourcePaged',
     'ProtectionIntentResourcePaged',
     'BackupManagementUsagePaged',
     'BackupEngineBaseResourcePaged',
     'ProtectableContainerResourcePaged',
     'WorkloadItemResourcePaged',
-    'RecoveryPointResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
     'ClientDiscoveryValueForSingleApiPaged',
     'ProtectionState',
     'HealthStatus',
-    'WorkloadType',
     'RecoveryType',
     'CopyOptions',
     'RestoreRequestType',
+    'WorkloadType',
+    'PolicyType',
     'JobSupportedAction',
     'ProtectedItemState',
-    'SupportStatus',
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
-    'PolicyType',
+    'RestorePointType',
     'OverwriteOptions',
-    'WorkloadItemType',
+    'RecoveryMode',
     'SQLDataDirectoryType',
-    'UsagesUnit',
-    'DataSourceType',
-    'ProtectionStatus',
-    'FabricName',
-    'Type',
+    'StorageType',
+    'StorageTypeState',
+    'EnhancedSecurityState',
+    'SoftDeleteFeatureState',
+    'RestorePointQueryType',
     'RetentionDurationType',
+    'RecoveryPointTierType',
+    'RecoveryPointTierStatus',
     'BackupManagementType',
     'JobStatus',
     'JobOperationType',
@@ -799,23 +818,23 @@ __all__ = [
     'MonthOfYear',
     'MabServerType',
     'HttpStatusCode',
-    'ValidationStatus',
+    'DataSourceType',
     'CreateMode',
     'HealthState',
-    'IntentItemType',
     'ScheduleRunType',
+    'SupportStatus',
+    'WorkloadItemType',
+    'UsagesUnit',
+    'ProtectionStatus',
+    'FabricName',
+    'Type',
+    'ValidationStatus',
+    'IntentItemType',
     'AzureFileShareType',
     'InquiryStatus',
     'BackupType',
     'OperationType',
-    'RestorePointType',
-    'StorageType',
-    'StorageTypeState',
-    'EnhancedSecurityState',
     'ContainerType',
-    'RestorePointQueryType',
-    'RecoveryPointTierType',
-    'RecoveryPointTierStatus',
     'BackupItemType',
     'OperationStatusValues',
 ]
