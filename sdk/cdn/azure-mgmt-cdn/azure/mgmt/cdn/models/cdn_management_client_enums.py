@@ -275,6 +275,13 @@ class ProtocolType(str, Enum):
     ip_based = "IPBased"
 
 
+class MinimumTLSVersion(str, Enum):
+
+    none = "None"
+    tls10 = "TLS10"
+    tls12 = "TLS12"
+
+
 class CertificateType(str, Enum):
 
     shared = "Shared"
