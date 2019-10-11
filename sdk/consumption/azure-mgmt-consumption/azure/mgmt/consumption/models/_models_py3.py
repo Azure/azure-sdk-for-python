@@ -691,11 +691,11 @@ class EventSummary(Resource):
     :vartype description: str
     :ivar new_credit: New Credit.
     :vartype new_credit: ~azure.mgmt.consumption.models.Amount
-    :ivar adjustments: Adjustments.
+    :ivar adjustments: Adjustments amount.
     :vartype adjustments: ~azure.mgmt.consumption.models.Amount
     :ivar credit_expired: Credit expired.
     :vartype credit_expired: ~azure.mgmt.consumption.models.Amount
-    :ivar charges: Charges.
+    :ivar charges: Charges amount.
     :vartype charges: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: Closed balance.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
