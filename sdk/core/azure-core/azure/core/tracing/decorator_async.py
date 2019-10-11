@@ -41,6 +41,13 @@ if TYPE_CHECKING:
 
 def distributed_trace_async(func=None, name_of_span=None):
     # type: (Callable, str) -> Callable[[Any], Any]
+    """Decorator to apply to async function to get traced automatically.
+
+    Span will use the func name or "name_of_span".
+
+    :param callable func: A function to decorate
+    :param str name_of_span: The span name to replace func name if necessary
+    """
     if func is None:
         return functools.partial(distributed_trace_async, name_of_span=name_of_span)
 

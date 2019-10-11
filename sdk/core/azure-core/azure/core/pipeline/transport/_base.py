@@ -176,6 +176,11 @@ class HttpTransport(
     def send(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> PipelineResponse
         """Send the request using this HTTP sender.
+
+        :param request: The pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
 
     @abc.abstractmethod
@@ -217,7 +222,10 @@ class HttpRequest(object):
 
     @property
     def query(self):
-        """The query parameters of the request as a dict."""
+        """The query parameters of the request as a dict.
+
+        :rtype: dict[str, str]
+        """
         query = urlparse(self.url).query
         if query:
             return {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
@@ -225,7 +233,10 @@ class HttpRequest(object):
 
     @property
     def body(self):
-        """Alias to data."""
+        """Alias to data.
+
+        :rtype: bytes
+        """
         return self.data
 
     @body.setter
@@ -275,6 +286,7 @@ class HttpRequest(object):
         """Set a streamable data body.
 
         :param data: The request field data.
+        :type data: stream or generator or asyncgenerator
         """
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
@@ -289,6 +301,7 @@ class HttpRequest(object):
         """Set an XML element tree as the body of the request.
 
         :param data: The request field data.
+        :type data: XML node
         """
         if data is None:
             self.data = None
@@ -301,7 +314,7 @@ class HttpRequest(object):
     def set_json_body(self, data):
         """Set a JSON-friendly object as the body of the request.
 
-        :param data: The request field data.
+        :param data: A JSON serializable object
         """
         if data is None:
             self.data = None
@@ -314,6 +327,7 @@ class HttpRequest(object):
         """Set form-encoded data as the body of the request.
 
         :param data: The request field data.
+        :type data: dict
         """
         if data is None:
             data = {}
@@ -331,7 +345,10 @@ class HttpRequest(object):
     def set_bytes_body(self, data):
         """Set generic bytes as the body of the request.
 
+        Will set content-length.
+
         :param data: The request field data.
+        :type data: bytes
         """
         if data:
             self.headers["Content-Length"] = str(len(data))
@@ -348,9 +365,9 @@ class HttpRequest(object):
         Note that no verification are made on the boundary, this is considered advanced
         enough so you know how to respect RFC1341 7.2.1 and provide a correct boundary.
 
-        kwargs:
-        - policies: SansIOPolicy to apply at preparation time
-        - boundary: Optional boundary
+
+        :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
+        :keyword str boundary: Optional boundary
 
         :param requests: HttpRequests object
         """
@@ -410,6 +427,8 @@ class HttpRequest(object):
     def serialize(self):
         # type: () -> bytes
         """Serialize this request using application/http spec.
+
+        :rtype: bytes
         """
         return _serialize_request(self)
 
@@ -424,10 +443,6 @@ class _HttpResponseBase(object):
     :param request: The request.
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param internal_response: The object returned from the HTTP library.
-    :param int status_code: The status code of the response
-    :param dict headers: The request headers.
-    :param str reason: Status reason of response.
-    :param str content_type: The content type.
     :param int block_size: Defaults to 4096 bytes.
     """
 
@@ -503,13 +518,15 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         Should be implemented by sub-classes if streaming download
         is supported.
+
+        :rtype: iterator[bytes]
         """
 
     def parts(self):
         # type: () -> Iterator[HttpResponse]
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
-        :rtype: iterator
+        :rtype: iterator[HttpResponse]
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
@@ -571,9 +588,6 @@ class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
-
-    :param HttpRequest request: The request.
-    :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
     """
 
 

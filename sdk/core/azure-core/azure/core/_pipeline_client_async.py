@@ -58,9 +58,9 @@ class AsyncPipelineClient(PipelineClientBase):
     Builds an AsyncPipeline client.
 
     :param str base_url: URL for the request.
-    :keyword Configuration config: If omitted, the standard configuration is used.
+    :keyword ~azure.core.configuration.Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
-    :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline

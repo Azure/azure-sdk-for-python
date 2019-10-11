@@ -47,9 +47,8 @@ def get_function_and_class_name(func, *args):
     is `self`. If there are no arguments then it only returns the function name.
 
     :param func: the function passed in
-    :type func: `collections.abc.Callable`
+    :type func: callable
     :param args: List of arguments passed into the function
-    :type args: List[Any]
     """
     try:
         return func.__qualname__
@@ -70,6 +69,7 @@ def change_context(span):
 
     :param span: A span
     :type span: AbstractSpan
+    :rtype: contextmanager
     """
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None or span is None:
@@ -94,7 +94,8 @@ def with_current_context(func):
     """Passes the current spans to the new context the function will be run in.
 
     :param func: The function that will be run in the new context
-    :return: The target the pass in instead of the function
+    :return: The func wrapped with correct context
+    :rtype: callable
     """
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:
