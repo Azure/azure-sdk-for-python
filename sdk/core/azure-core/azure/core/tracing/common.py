@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
 from contextlib import contextmanager
+import warnings
 
 from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.settings import settings
@@ -74,12 +75,18 @@ def change_context(span):
     if span_impl_type is None or span is None:
         yield
     else:
-        original_span = span_impl_type.get_current_span()
         try:
-            span_impl_type.set_current_span(span)
-            yield
-        finally:
-            span_impl_type.set_current_span(original_span)
+            with span_impl_type.change_context(span):
+                yield
+        except AttributeError:
+            # This plugin does not support "change_context"
+            warnings.warn('Your tracing plugin should be updated to support "change_context"', DeprecationWarning)
+            original_span = span_impl_type.get_current_span()
+            try:
+                span_impl_type.set_current_span(span)
+                yield
+            finally:
+                span_impl_type.set_current_span(original_span)
 
 
 def with_current_context(func):
