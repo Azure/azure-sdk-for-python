@@ -196,15 +196,15 @@ class DatabaseProxy(object):
                 :name: create_container_with_settings
         """
         definition = dict(id=id)  # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             definition["partitionKey"] = partition_key
-        if indexing_policy:
+        if indexing_policy is not None:
             definition["indexingPolicy"] = indexing_policy
-        if default_ttl:
+        if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
-        if unique_key_policy:
+        if unique_key_policy is not None:
             definition["uniqueKeyPolicy"] = unique_key_policy
-        if conflict_resolution_policy:
+        if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
 
         request_options = build_options(kwargs)

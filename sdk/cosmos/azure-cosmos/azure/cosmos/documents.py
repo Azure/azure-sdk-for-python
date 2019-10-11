@@ -401,7 +401,6 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
 class _OperationType(object):
     """Represents the type of the operation
     """
-
     Create = "Create"
     Delete = "Delete"
     ExecuteJavaScript = "ExecuteJavaScript"
@@ -413,6 +412,7 @@ class _OperationType(object):
     Recreate = "Recreate"
     Replace = "Replace"
     SqlQuery = "SqlQuery"
+    QueryPlan = "QueryPlan"
     Update = "Update"
     Upsert = "Upsert"
 
@@ -438,3 +438,32 @@ class _OperationType(object):
             _OperationType.Query,
             _OperationType.SqlQuery,
         )
+
+    @staticmethod
+    def IsFeedOperation(operationType):
+        return operationType in (
+            _OperationType.Create,
+            _OperationType.Upsert,
+            _OperationType.ReadFeed,
+            _OperationType.Query,
+            _OperationType.SqlQuery,
+            _OperationType.QueryPlan,
+            _OperationType.HeadFeed,
+        )
+
+class _QueryFeature(object):
+    NoneQuery = "NoneQuery"
+    Aggregate = "Aggregate"
+    CompositeAggregate = "CompositeAggregate"
+    Distinct = "Distinct"
+    GroupBy = "GroupBy"
+    MultipleAggregates = "MultipleAggregates"
+    MultipleOrderBy = "MultipleOrderBy"
+    OffsetAndLimit = "OffsetAndLimit"
+    OrderBy = "OrderBy"
+    Top = "Top"
+
+class _DistinctType(object):
+    NoneType = "None"
+    Ordered = "Ordered"
+    Unordered = "Unordered"
