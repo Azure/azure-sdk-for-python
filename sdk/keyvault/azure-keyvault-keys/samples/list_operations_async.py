@@ -46,8 +46,8 @@ async def run_sample():
         print("\n.. Create Key")
         rsa_key = await client.create_rsa_key("rsaKeyName")
         ec_key = await client.create_ec_key("ecKey1Name")
-        print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key.kty))
-        print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key.kty))
+        print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
+        print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_type))
 
         # You need to check the type of all the keys in the vault.
         # Let's list the keys and print their key types.
@@ -59,7 +59,7 @@ async def run_sample():
             retrieved_key = await client.get_key(key.name)
             print(
                 "Key with name '{0}' with type '{1}' was found.".format(
-                    retrieved_key.name, retrieved_key.key.kty
+                    retrieved_key.name, retrieved_key.key_type
                 )
             )
 

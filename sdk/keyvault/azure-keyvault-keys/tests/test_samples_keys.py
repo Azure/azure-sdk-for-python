@@ -47,7 +47,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(key.name)
         print(key.id)
-        print(key.key.kty)
+        print(key.key_type)
         print(key.properties.expires_on)
 
         # [END create_key]
@@ -62,7 +62,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(key.id)
         print(key.name)
-        print(key.key.kty)
+        print(key.key_type)
         print(key.key.key_ops)
 
         # [END create_rsa_key]
@@ -75,7 +75,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(ec_key.id)
         print(ec_key.properties.version)
-        print(ec_key.key.kty)
+        print(ec_key.key_type)
         print(ec_key.key.crv)
 
         # [END create_ec_key]
@@ -91,7 +91,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.properties.version)
-        print(key.key.kty)
+        print(key.key_type)
         print(key.properties.vault_endpoint)
 
         # [END get_key]
@@ -106,7 +106,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(updated_key.properties.updated)
         print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
-        print(key.key.kty)
+        print(key.key_type)
 
         # [END update_key]
         # [START delete_key]

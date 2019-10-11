@@ -237,6 +237,12 @@ class Key(object):
         """The JSON web key"""
         return self._key_material
 
+    @property
+    def key_type(self):
+        # type: () -> str
+        """The key's type"""
+        return self._key_material.kty
+
 
 class DeletedKey(Key):
     """A deleted key's id, attributes, and cryptographic material, as well as when it will be purged"""

@@ -137,7 +137,7 @@ class CryptographyClient(KeyVaultClientBase):
             if not key:
                 return None
 
-            if key.key.kty.lower().startswith("ec"):
+            if key.key_type.lower().startswith("ec"):
                 self._internal_key = EllipticCurveKey.from_jwk(key.key)
             else:
                 self._internal_key = RsaKey.from_jwk(key.key)

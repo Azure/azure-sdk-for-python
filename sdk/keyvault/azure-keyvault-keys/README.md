@@ -156,12 +156,12 @@ of that key is created.
 # Create an RSA key
 rsa_key = key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
 ec_key = key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key.kty)
+print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
@@ -251,12 +251,12 @@ key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 # Create an RSA key
 rsa_key = await key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
 ec_key = await key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key.kty)
+print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys

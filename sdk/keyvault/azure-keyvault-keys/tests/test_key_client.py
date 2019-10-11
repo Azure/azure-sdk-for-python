@@ -158,7 +158,7 @@ class KeyClientTests(KeyVaultTestCase):
         # delete the new key
         deleted_key = client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key.kty, deleted_key.key.kty)
+        self.assertEqual(created_rsa_key.key_type, deleted_key.key_type)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
@@ -185,7 +185,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create key
         created_bundle = client.create_key(key_name, key_type)
-        self.assertEqual(key_type, created_bundle.key.kty)
+        self.assertEqual(key_type, created_bundle.key_type)
 
         # backup key
         key_backup = client.backup_key(created_bundle.name)
