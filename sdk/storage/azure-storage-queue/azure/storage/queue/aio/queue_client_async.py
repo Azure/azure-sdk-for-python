@@ -265,8 +265,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):  # type: ignore
-        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
+    async def set_queue_access_policy(self, signed_identifiers, timeout=None, **kwargs):  # type: ignore
+        # type: (Dict[str, AccessPolicy], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 

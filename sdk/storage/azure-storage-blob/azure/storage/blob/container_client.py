@@ -635,7 +635,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_container_access_policy(
-            self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
+            self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             **kwargs
         ):  # type: (...) -> Dict[str, Union[str, datetime]]
