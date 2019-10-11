@@ -22,6 +22,7 @@ try:
     from ._models_py3 import AzureAccountInfoObject
     from ._models_py3 import BatchLabelExample
     from ._models_py3 import ChildEntity
+    from ._models_py3 import ChildEntityModelCreateObject
     from ._models_py3 import ClosedList
     from ._models_py3 import ClosedListEntityExtractor
     from ._models_py3 import ClosedListModelCreateObject
@@ -38,7 +39,9 @@ try:
     from ._models_py3 import EntityExtractor
     from ._models_py3 import EntityLabel
     from ._models_py3 import EntityLabelObject
+    from ._models_py3 import EntityModelCreateObject
     from ._models_py3 import EntityModelInfo
+    from ._models_py3 import EntityModelUpdateObject
     from ._models_py3 import EntityPrediction
     from ._models_py3 import EntityRole
     from ._models_py3 import EntityRoleCreateObject
@@ -51,10 +54,8 @@ try:
     from ._models_py3 import FeatureInfoObject
     from ._models_py3 import FeaturesResponseObject
     from ._models_py3 import HierarchicalChildEntity
-    from ._models_py3 import HierarchicalChildModelCreateObject
     from ._models_py3 import HierarchicalChildModelUpdateObject
     from ._models_py3 import HierarchicalEntityExtractor
-    from ._models_py3 import HierarchicalEntityModel
     from ._models_py3 import HierarchicalModel
     from ._models_py3 import IntentClassifier
     from ._models_py3 import IntentPrediction
@@ -73,6 +74,7 @@ try:
     from ._models_py3 import ModelTrainingDetails
     from ._models_py3 import ModelTrainingInfo
     from ._models_py3 import ModelUpdateObject
+    from ._models_py3 import NDepthEntityExtractor
     from ._models_py3 import OperationError
     from ._models_py3 import OperationStatus
     from ._models_py3 import PatternAny
@@ -126,6 +128,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureAccountInfoObject
     from ._models import BatchLabelExample
     from ._models import ChildEntity
+    from ._models import ChildEntityModelCreateObject
     from ._models import ClosedList
     from ._models import ClosedListEntityExtractor
     from ._models import ClosedListModelCreateObject
@@ -142,7 +145,9 @@ except (SyntaxError, ImportError):
     from ._models import EntityExtractor
     from ._models import EntityLabel
     from ._models import EntityLabelObject
+    from ._models import EntityModelCreateObject
     from ._models import EntityModelInfo
+    from ._models import EntityModelUpdateObject
     from ._models import EntityPrediction
     from ._models import EntityRole
     from ._models import EntityRoleCreateObject
@@ -155,10 +160,8 @@ except (SyntaxError, ImportError):
     from ._models import FeatureInfoObject
     from ._models import FeaturesResponseObject
     from ._models import HierarchicalChildEntity
-    from ._models import HierarchicalChildModelCreateObject
     from ._models import HierarchicalChildModelUpdateObject
     from ._models import HierarchicalEntityExtractor
-    from ._models import HierarchicalEntityModel
     from ._models import HierarchicalModel
     from ._models import IntentClassifier
     from ._models import IntentPrediction
@@ -177,6 +180,7 @@ except (SyntaxError, ImportError):
     from ._models import ModelTrainingDetails
     from ._models import ModelTrainingInfo
     from ._models import ModelUpdateObject
+    from ._models import NDepthEntityExtractor
     from ._models import OperationError
     from ._models import OperationStatus
     from ._models import PatternAny
@@ -235,6 +239,7 @@ __all__ = [
     'AzureAccountInfoObject',
     'BatchLabelExample',
     'ChildEntity',
+    'ChildEntityModelCreateObject',
     'ClosedList',
     'ClosedListEntityExtractor',
     'ClosedListModelCreateObject',
@@ -251,7 +256,9 @@ __all__ = [
     'EntityExtractor',
     'EntityLabel',
     'EntityLabelObject',
+    'EntityModelCreateObject',
     'EntityModelInfo',
+    'EntityModelUpdateObject',
     'EntityPrediction',
     'EntityRole',
     'EntityRoleCreateObject',
@@ -264,10 +271,8 @@ __all__ = [
     'FeatureInfoObject',
     'FeaturesResponseObject',
     'HierarchicalChildEntity',
-    'HierarchicalChildModelCreateObject',
     'HierarchicalChildModelUpdateObject',
     'HierarchicalEntityExtractor',
-    'HierarchicalEntityModel',
     'HierarchicalModel',
     'IntentClassifier',
     'IntentPrediction',
@@ -286,6 +291,7 @@ __all__ = [
     'ModelTrainingDetails',
     'ModelTrainingInfo',
     'ModelUpdateObject',
+    'NDepthEntityExtractor',
     'OperationError',
     'OperationStatus',
     'PatternAny',

@@ -34,7 +34,7 @@ class LUISAuthoringClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/api/v2.0'
+        base_url = '{Endpoint}/luis/api/v3.0-preview'
 
         super(LUISAuthoringClientConfiguration, self).__init__(base_url)
 

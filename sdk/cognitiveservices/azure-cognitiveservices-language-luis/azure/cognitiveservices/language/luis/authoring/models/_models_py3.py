@@ -336,6 +336,20 @@ class ChildEntity(Model):
     :type id: str
     :param name: The name of a child entity.
     :type name: str
+    :param instance_of: Instance of Model.
+    :type instance_of: str
+    :param type_id: The type ID of the Entity Model.
+    :type type_id: int
+    :param readable_type: Possible values include: 'Entity Extractor', 'Child
+     Entity Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child
+     Entity Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
+     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
+     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+    :type readable_type: str or
+     ~azure.cognitiveservices.language.luis.authoring.models.enum
+    :param children: List of children
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntity]
     """
 
     _validation = {
@@ -345,12 +359,45 @@ class ChildEntity(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'instance_of': {'key': 'instanceOf', 'type': 'str'},
+        'type_id': {'key': 'typeId', 'type': 'int'},
+        'readable_type': {'key': 'readableType', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[ChildEntity]'},
     }
 
-    def __init__(self, *, id: str, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str, name: str=None, instance_of: str=None, type_id: int=None, readable_type=None, children=None, **kwargs) -> None:
         super(ChildEntity, self).__init__(**kwargs)
         self.id = id
         self.name = name
+        self.instance_of = instance_of
+        self.type_id = type_id
+        self.readable_type = readable_type
+        self.children = children
+
+
+class ChildEntityModelCreateObject(Model):
+    """A child entity extractor create object.
+
+    :param children: Child entities.
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntityModelCreateObject]
+    :param name: Entity name.
+    :type name: str
+    :param instance_of: The instance of model name
+    :type instance_of: str
+    """
+
+    _attribute_map = {
+        'children': {'key': 'children', 'type': '[ChildEntityModelCreateObject]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'instance_of': {'key': 'instanceOf', 'type': 'str'},
+    }
+
+    def __init__(self, *, children=None, name: str=None, instance_of: str=None, **kwargs) -> None:
+        super(ChildEntityModelCreateObject, self).__init__(**kwargs)
+        self.children = children
+        self.name = name
+        self.instance_of = instance_of
 
 
 class ClosedList(Model):
@@ -390,10 +437,11 @@ class ClosedListEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -531,10 +579,11 @@ class CompositeEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -601,10 +650,11 @@ class CustomPrebuiltModel(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param custom_prebuilt_domain_name: The domain name.
@@ -752,10 +802,11 @@ class EntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -807,9 +858,9 @@ class EntityLabel(Model):
     :param end_token_index: Required. The index within the utterance where the
      extracted entity ends.
     :type end_token_index: int
-    :param role: The role of the entity within the utterance.
+    :param role: The role of the predicted entity.
     :type role: str
-    :param role_id: The role Id.
+    :param role_id: The role id for the predicted entity.
     :type role_id: str
     """
 
@@ -850,7 +901,7 @@ class EntityLabelObject(Model):
     :param end_char_index: Required. The index within the utterance where the
      extracted entity ends.
     :type end_char_index: int
-    :param role: The role of the entity within the utterance.
+    :param role: The role the entity plays in the utterance.
     :type role: str
     """
 
@@ -875,6 +926,27 @@ class EntityLabelObject(Model):
         self.role = role
 
 
+class EntityModelCreateObject(Model):
+    """An entity extractor create object.
+
+    :param children: Child entities.
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntityModelCreateObject]
+    :param name: Entity name.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'children': {'key': 'children', 'type': '[ChildEntityModelCreateObject]'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, children=None, name: str=None, **kwargs) -> None:
+        super(EntityModelCreateObject, self).__init__(**kwargs)
+        self.children = children
+        self.name = name
+
+
 class ModelInfo(Model):
     """Base type used in entity types.
 
@@ -887,10 +959,11 @@ class ModelInfo(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     """
@@ -927,10 +1000,11 @@ class EntityModelInfo(ModelInfo):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -954,6 +1028,26 @@ class EntityModelInfo(ModelInfo):
     def __init__(self, *, id: str, readable_type, name: str=None, type_id: int=None, roles=None, **kwargs) -> None:
         super(EntityModelInfo, self).__init__(id=id, name=name, type_id=type_id, readable_type=readable_type, **kwargs)
         self.roles = roles
+
+
+class EntityModelUpdateObject(Model):
+    """An entity extractor update object.
+
+    :param name: Entity name.
+    :type name: str
+    :param instance_of: The instance of model name
+    :type instance_of: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'instance_of': {'key': 'instanceOf', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, instance_of: str=None, **kwargs) -> None:
+        super(EntityModelUpdateObject, self).__init__(**kwargs)
+        self.name = name
+        self.instance_of = instance_of
 
 
 class EntityPrediction(Model):
@@ -1214,15 +1308,20 @@ class HierarchicalChildEntity(ChildEntity):
     :type id: str
     :param name: The name of a child entity.
     :type name: str
+    :param instance_of: Instance of Model.
+    :type instance_of: str
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
-    :param readable_type: Possible values include: 'Entity Extractor',
-     'Hierarchical Entity Extractor', 'Hierarchical Child Entity Extractor',
-     'Composite Entity Extractor', 'List Entity Extractor', 'Prebuilt Entity
-     Extractor', 'Intent Classifier', 'Pattern.Any Entity Extractor', 'Closed
-     List Entity Extractor', 'Regex Entity Extractor'
+    :param readable_type: Possible values include: 'Entity Extractor', 'Child
+     Entity Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child
+     Entity Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
+     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
+     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
+    :param children: List of children
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntity]
     """
 
     _validation = {
@@ -1232,30 +1331,14 @@ class HierarchicalChildEntity(ChildEntity):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'instance_of': {'key': 'instanceOf', 'type': 'str'},
         'type_id': {'key': 'typeId', 'type': 'int'},
         'readable_type': {'key': 'readableType', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[ChildEntity]'},
     }
 
-    def __init__(self, *, id: str, name: str=None, type_id: int=None, readable_type=None, **kwargs) -> None:
-        super(HierarchicalChildEntity, self).__init__(id=id, name=name, **kwargs)
-        self.type_id = type_id
-        self.readable_type = readable_type
-
-
-class HierarchicalChildModelCreateObject(Model):
-    """HierarchicalChildModelCreateObject.
-
-    :param name:
-    :type name: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, name: str=None, **kwargs) -> None:
-        super(HierarchicalChildModelCreateObject, self).__init__(**kwargs)
-        self.name = name
+    def __init__(self, *, id: str, name: str=None, instance_of: str=None, type_id: int=None, readable_type=None, children=None, **kwargs) -> None:
+        super(HierarchicalChildEntity, self).__init__(id=id, name=name, instance_of=instance_of, type_id=type_id, readable_type=readable_type, children=children, **kwargs)
 
 
 class HierarchicalChildModelUpdateObject(Model):
@@ -1286,10 +1369,11 @@ class HierarchicalEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -1322,26 +1406,6 @@ class HierarchicalEntityExtractor(Model):
         self.readable_type = readable_type
         self.roles = roles
         self.children = children
-
-
-class HierarchicalEntityModel(Model):
-    """A hierarchical entity extractor.
-
-    :param children: Child entities.
-    :type children: list[str]
-    :param name: Entity name.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'children': {'key': 'children', 'type': '[str]'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, children=None, name: str=None, **kwargs) -> None:
-        super(HierarchicalEntityModel, self).__init__(**kwargs)
-        self.children = children
-        self.name = name
 
 
 class HierarchicalModel(Model):
@@ -1385,10 +1449,11 @@ class IntentClassifier(ModelInfo):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param custom_prebuilt_domain_name: The domain name.
@@ -1481,7 +1546,7 @@ class JSONEntity(Model):
     :type end_pos: int
     :param entity: Required. The entity name.
     :type entity: str
-    :param role: The role of the entity within the utterance.
+    :param role: The role the entity plays in the utterance.
     :type role: str
     """
 
@@ -1791,10 +1856,11 @@ class ModelInfoResponse(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -1922,6 +1988,65 @@ class ModelUpdateObject(Model):
         self.name = name
 
 
+class NDepthEntityExtractor(Model):
+    """N-Depth Entity Extractor.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The ID of the Entity Model.
+    :type id: str
+    :param name: Name of the Entity Model.
+    :type name: str
+    :param type_id: The type ID of the Entity Model.
+    :type type_id: int
+    :param readable_type: Required. Possible values include: 'Entity
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
+    :type readable_type: str or
+     ~azure.cognitiveservices.language.luis.authoring.models.enum
+    :param roles:
+    :type roles:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityRole]
+    :param custom_prebuilt_domain_name: The domain name.
+    :type custom_prebuilt_domain_name: str
+    :param custom_prebuilt_model_name: The intent name or entity name.
+    :type custom_prebuilt_model_name: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntity]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'readable_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type_id': {'key': 'typeId', 'type': 'int'},
+        'readable_type': {'key': 'readableType', 'type': 'str'},
+        'roles': {'key': 'roles', 'type': '[EntityRole]'},
+        'custom_prebuilt_domain_name': {'key': 'customPrebuiltDomainName', 'type': 'str'},
+        'custom_prebuilt_model_name': {'key': 'customPrebuiltModelName', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[ChildEntity]'},
+    }
+
+    def __init__(self, *, id: str, readable_type, name: str=None, type_id: int=None, roles=None, custom_prebuilt_domain_name: str=None, custom_prebuilt_model_name: str=None, children=None, **kwargs) -> None:
+        super(NDepthEntityExtractor, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type_id = type_id
+        self.readable_type = readable_type
+        self.roles = roles
+        self.custom_prebuilt_domain_name = custom_prebuilt_domain_name
+        self.custom_prebuilt_model_name = custom_prebuilt_model_name
+        self.children = children
+
+
 class OperationError(Model):
     """Operation error details when invoking an operation on the API.
 
@@ -2000,10 +2125,11 @@ class PatternAnyEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -2541,10 +2667,11 @@ class PrebuiltEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -2713,10 +2840,11 @@ class RegexEntityExtractor(Model):
     :param type_id: The type ID of the Entity Model.
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
-     Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
-     'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
+     Extractor', 'Child Entity Extractor', 'Hierarchical Entity Extractor',
+     'Hierarchical Child Entity Extractor', 'Composite Entity Extractor', 'List
+     Entity Extractor', 'Prebuilt Entity Extractor', 'Intent Classifier',
+     'Pattern.Any Entity Extractor', 'Closed List Entity Extractor', 'Regex
+     Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
