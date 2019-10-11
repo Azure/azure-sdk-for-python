@@ -333,7 +333,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handles(
+    def begin_close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             recursive=False,  # type: bool
             timeout=None, # type: Optional[int]
