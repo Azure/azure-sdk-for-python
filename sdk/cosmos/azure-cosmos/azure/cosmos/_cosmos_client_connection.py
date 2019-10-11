@@ -2702,7 +2702,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return __GetBodiesFromQueryResult(result)
 
-    def _GetQueryPlanThroughGateway(self, query, resource_link):
+    def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
                                     documents._QueryFeature.Distinct + "," +
@@ -2729,7 +2729,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                 None,
                                 query,
                                 options,
-                                is_query_plan=True)
+                                is_query_plan=True,
+                                **kwargs)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
