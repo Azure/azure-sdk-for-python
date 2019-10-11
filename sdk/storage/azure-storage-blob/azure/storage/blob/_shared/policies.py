@@ -35,8 +35,9 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     SansIOHTTPPolicy,
     NetworkTraceLoggingPolicy,
-    HTTPPolicy)
-from azure.core.pipeline.policies.base import RequestHistory
+    HTTPPolicy,
+    RequestHistory
+)
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from ..version import VERSION

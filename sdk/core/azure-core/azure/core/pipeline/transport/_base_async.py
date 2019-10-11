@@ -29,14 +29,14 @@ import abc
 from collections.abc import AsyncIterator
 
 from typing import AsyncIterator as AsyncIteratorType, Generic, TypeVar
-from .base import (
+from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
 )
-from ..base_async import _await_result
+from .._base_async import _await_result
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore

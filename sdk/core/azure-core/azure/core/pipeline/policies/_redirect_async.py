@@ -27,7 +27,7 @@ from typing import Any, Callable, Optional
 
 from azure.core.exceptions import TooManyRedirectsError
 from . import AsyncHTTPPolicy
-from .redirect import RedirectPolicy
+from ._redirect import RedirectPolicy
 
 
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore

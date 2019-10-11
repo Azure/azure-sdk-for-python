@@ -40,7 +40,7 @@ from azure.core.exceptions import (
     ServiceRequestError
 )
 
-from .base import HTTPPolicy, RequestHistory
+from ._base import HTTPPolicy, RequestHistory
 
 
 _LOGGER = logging.getLogger(__name__)

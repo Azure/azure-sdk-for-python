@@ -15,7 +15,7 @@ from ..._constants import Endpoints, EnvironmentVariables
 
 if TYPE_CHECKING:
     from typing import Any, Optional
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
 
 
 class ManagedIdentityCredential(object):

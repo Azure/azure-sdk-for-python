@@ -39,7 +39,7 @@ except ImportError:
 if TYPE_CHECKING:
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
     from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
+    from azure.core.tracing._abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
     from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
     from typing import Any, Optional, Dict, List, Union, Tuple
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]

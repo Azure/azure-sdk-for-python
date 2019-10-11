@@ -37,13 +37,13 @@ from azure.core.exceptions import (
     ServiceResponseError
 )
 from azure.core.pipeline import Pipeline
-from .base import HttpRequest
-from .base_async import (
+from ._base import HttpRequest
+from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from .requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransport, RequestsTransportResponse
 
 
 _LOGGER = logging.getLogger(__name__)

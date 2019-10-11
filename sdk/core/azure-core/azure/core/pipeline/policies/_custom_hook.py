@@ -27,7 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from .base import SansIOHTTPPolicy
+from ._base import SansIOHTTPPolicy
 
 class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback

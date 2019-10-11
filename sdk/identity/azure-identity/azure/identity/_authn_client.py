@@ -8,13 +8,18 @@ import time
 
 from msal import TokenCache
 
-from azure.core import Configuration, HttpRequest
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
+    DistributedTracingPolicy
+)
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from azure.identity._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
 
 try:
