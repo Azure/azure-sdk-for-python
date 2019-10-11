@@ -712,24 +712,24 @@ class ComputeInstance(Compute):
         self.compute_type = 'ComputeInstance'
 
 
-class ComputeInstanceApplicationUri(Model):
+class ComputeInstanceApplication(Model):
     """Defines an Aml Instance application and its connectivity endpoint URI.
 
-    :param application_name: Name of the ComputeInstance application.
-    :type application_name: str
-    :param application_uri: Application' endpoint URI.
-    :type application_uri: str
+    :param display_name: Name of the ComputeInstance application.
+    :type display_name: str
+    :param endpoint_uri: Application' endpoint URI.
+    :type endpoint_uri: str
     """
 
     _attribute_map = {
-        'application_name': {'key': 'applicationName', 'type': 'str'},
-        'application_uri': {'key': 'applicationUri', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
     }
 
-    def __init__(self, *, application_name: str=None, application_uri: str=None, **kwargs) -> None:
-        super(ComputeInstanceApplicationUri, self).__init__(**kwargs)
-        self.application_name = application_name
-        self.application_uri = application_uri
+    def __init__(self, *, display_name: str=None, endpoint_uri: str=None, **kwargs) -> None:
+        super(ComputeInstanceApplication, self).__init__(**kwargs)
+        self.display_name = display_name
+        self.endpoint_uri = endpoint_uri
 
 
 class ComputeInstanceConnectivityEndpoints(Model):
@@ -821,10 +821,10 @@ class ComputeInstanceProperties(Model):
      available for this ComputeInstance.
     :vartype connectivity_endpoints:
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceConnectivityEndpoints
-    :ivar application_uris: Describes available applications and their
-     endpoints on this ComputeInstance.
-    :vartype application_uris:
-     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplicationUri]
+    :ivar applications: Describes available applications and their endpoints
+     on this ComputeInstance.
+    :vartype applications:
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplication]
     :ivar created_by: Describes information on user who created this
      ComputeInstance.
     :vartype created_by:
@@ -844,7 +844,7 @@ class ComputeInstanceProperties(Model):
 
     _validation = {
         'connectivity_endpoints': {'readonly': True},
-        'application_uris': {'readonly': True},
+        'applications': {'readonly': True},
         'created_by': {'readonly': True},
         'errors': {'readonly': True},
         'state': {'readonly': True},
@@ -856,7 +856,7 @@ class ComputeInstanceProperties(Model):
         'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
-        'application_uris': {'key': 'applicationUris', 'type': '[ComputeInstanceApplicationUri]'},
+        'applications': {'key': 'applications', 'type': '[ComputeInstanceApplication]'},
         'created_by': {'key': 'createdBy', 'type': 'ComputeInstanceCreatedBy'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
@@ -869,7 +869,7 @@ class ComputeInstanceProperties(Model):
         self.application_sharing_policy = application_sharing_policy
         self.ssh_settings = ssh_settings
         self.connectivity_endpoints = None
-        self.application_uris = None
+        self.applications = None
         self.created_by = None
         self.errors = None
         self.state = None

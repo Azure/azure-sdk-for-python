@@ -21,7 +21,7 @@ try:
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import Compute
     from ._models_py3 import ComputeInstance
-    from ._models_py3 import ComputeInstanceApplicationUri
+    from ._models_py3 import ComputeInstanceApplication
     from ._models_py3 import ComputeInstanceConnectivityEndpoints
     from ._models_py3 import ComputeInstanceCreatedBy
     from ._models_py3 import ComputeInstanceProperties
@@ -82,7 +82,7 @@ except (SyntaxError, ImportError):
     from ._models import ClusterUpdateParameters
     from ._models import Compute
     from ._models import ComputeInstance
-    from ._models import ComputeInstanceApplicationUri
+    from ._models import ComputeInstanceApplication
     from ._models import ComputeInstanceConnectivityEndpoints
     from ._models import ComputeInstanceCreatedBy
     from ._models import ComputeInstanceProperties
@@ -166,7 +166,7 @@ __all__ = [
     'ClusterUpdateParameters',
     'Compute',
     'ComputeInstance',
-    'ComputeInstanceApplicationUri',
+    'ComputeInstanceApplication',
     'ComputeInstanceConnectivityEndpoints',
     'ComputeInstanceCreatedBy',
     'ComputeInstanceProperties',
