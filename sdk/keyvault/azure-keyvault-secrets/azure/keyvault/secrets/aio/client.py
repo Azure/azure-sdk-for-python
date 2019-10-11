@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, AsyncIterable, Optional, Dict
+from typing import Any, AsyncIterable, Dict
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -32,7 +32,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Secret:
+    async def get_secret(self, name: str, **kwargs: "Any") -> Secret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -42,6 +42,9 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
+        Keyword arguments
+            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
+
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START get_secret]
@@ -50,7 +53,9 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a secret
                 :dedent: 8
         """
-        bundle = await self._client.get_secret(self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs)
+        bundle = await self._client.get_secret(
+            self.vault_endpoint, name, kwargs.pop("version", ""), error_map=_error_map, **kwargs
+        )
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async

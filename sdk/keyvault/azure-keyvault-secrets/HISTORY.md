@@ -6,7 +6,7 @@
 [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
 detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
-  - `update_secret` and `update_secret_properties` now have positional parameter `name`
+  - `get_secret`, `update_secret`, and `update_secret_properties` now have positional parameter `name`
 
 
 ## 4.0.0b4 (2019-10-08)

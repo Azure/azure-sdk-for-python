@@ -55,7 +55,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = secret_client.get_secret("secret-name", secret.properties.version)
+        secret = secret_client.get_secret("secret-name", version=secret.properties.version)
 
         print(secret.id)
         print(secret.name)

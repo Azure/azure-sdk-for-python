@@ -84,7 +84,7 @@ class SecretClientTests(KeyVaultTestCase):
 
         self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
         self._assert_secret_attributes_equal(
-            created.properties, client.get_secret(created.name, created.properties.version).properties
+            created.properties, client.get_secret(created.name, version=created.properties.version).properties
         )
 
         def _update_secret(secret):

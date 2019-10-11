@@ -8,7 +8,7 @@
 detail the new keyword arguments):
   - `create_key` now has positional parameters `name` and `key_type`
   - `create_ec_key` and `create_rsa_key` now have positional parameters `name` and `hsm`
-  - `update_key_properties` now has one positional parameter, `name`
+  - `get_key` and `update_key_properties` now have one positional parameter, `name`
   - `import_key` now has positional parameters `name` and `key`
 
 

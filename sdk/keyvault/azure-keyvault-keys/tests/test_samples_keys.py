@@ -86,7 +86,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # alternatively, specify a version
         key_version = key.properties.version
-        key = key_client.get_key("key-name", key_version)
+        key = key_client.get_key("key-name", version=key_version)
 
         print(key.id)
         print(key.name)

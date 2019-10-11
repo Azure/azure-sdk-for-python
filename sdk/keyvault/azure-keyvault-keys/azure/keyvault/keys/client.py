@@ -176,8 +176,8 @@ class KeyClient(KeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def get_key(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> Key
+    def get_key(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -188,6 +188,9 @@ class KeyClient(KeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
+        Keyword arguments
+            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
+
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
                 :start-after: [START get_key]
@@ -197,7 +200,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_key(
-            self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
+            self.vault_endpoint, name, key_version=kwargs.pop("version", ""), error_map=_error_map, **kwargs
         )
         return Key._from_key_bundle(bundle)
 
@@ -477,10 +480,6 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_endpoint,
-            name,
-            key=key._to_generated_model(),
-            key_attributes=attributes,
-            **kwargs
+            self.vault_endpoint, name, key=key._to_generated_model(), key_attributes=attributes, **kwargs
         )
         return Key._from_key_bundle(bundle)

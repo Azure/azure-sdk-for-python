@@ -39,8 +39,8 @@ class SecretClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_secret(self, name, version=None, **kwargs):
-        # type: (str, str, **Any) -> Secret
+    def get_secret(self, name, **kwargs):
+        # type: (str, **Any) -> Secret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -49,6 +49,9 @@ class SecretClient(KeyVaultClientBase):
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Keyword arguments
+            - **version** (str): A specific version of the secret to get. If unspecified, gets the latest version.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -61,7 +64,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.get_secret(
             vault_base_url=self._vault_endpoint,
             secret_name=name,
-            secret_version=version or "",
+            secret_version=kwargs.pop("version", ""),
             error_map=_error_map,
             **kwargs
         )

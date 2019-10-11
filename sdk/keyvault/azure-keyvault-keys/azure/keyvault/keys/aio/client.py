@@ -170,7 +170,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
+    async def get_key(self, name: str, **kwargs: "Any") -> Key:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -181,6 +181,9 @@ class KeyClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
+        Keyword arguments
+            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
+
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START get_key]
@@ -189,10 +192,9 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        if version is None:
-            version = ""
-
-        bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
+        bundle = await self._client.get_key(
+            self.vault_endpoint, name, key_version=kwargs.pop("version", ""), error_map=_error_map, **kwargs
+        )
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -460,10 +462,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.import_key(
-            self.vault_endpoint,
-            name,
-            key=key._to_generated_model(),
-            key_attributes=attributes,
-            **kwargs,
+            self.vault_endpoint, name, key=key._to_generated_model(), key_attributes=attributes, **kwargs
         )
         return Key._from_key_bundle(bundle)

@@ -147,7 +147,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
         # get the created key with version
-        key = await client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
+        key = await client.get_key(created_rsa_key.name, version=created_rsa_key.properties.version)
         self.assertEqual(key.properties.version, created_rsa_key.properties.version)
         self._assert_key_attributes_equal(created_rsa_key.properties, key.properties)
 
