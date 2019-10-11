@@ -57,7 +57,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         secret = await secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = await secret_client.get_secret("secret-name", version=secret_version)
+        secret = await secret_client.get_secret("secret-name", secret_version)
 
         print(secret.id)
         print(secret.name)

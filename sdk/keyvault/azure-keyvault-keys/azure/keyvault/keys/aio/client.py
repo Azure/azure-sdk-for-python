@@ -170,7 +170,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_key(self, name: str, **kwargs: "Any") -> Key:
+    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -181,9 +181,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
-        Keyword arguments
-            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
-
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
                 :start-after: [START get_key]
@@ -192,9 +189,10 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = await self._client.get_key(
-            self.vault_endpoint, name, key_version=kwargs.pop("version", ""), error_map=_error_map, **kwargs
-        )
+        if version is None:
+            version = ""
+
+        bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -338,11 +336,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key_properties(self, name: str, **kwargs: "Any") -> Key:
+    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
+        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises:
@@ -350,7 +349,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - **version** (str): The version of the key to update. If unspecified, the latest version is updated.
             - **enabled** (bool): Whether the key is enabled for use.
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
@@ -375,7 +373,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_key(
             self.vault_endpoint,
             name,
-            key_version=kwargs.pop("version", ""),
+            key_version=version or "",
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
             error_map=_error_map,

@@ -39,8 +39,8 @@ class SecretClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_secret(self, name, **kwargs):
-        # type: (str, **Any) -> Secret
+    def get_secret(self, name, version=None, **kwargs):
+        # type: (str, str, **Any) -> Secret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -49,9 +49,6 @@ class SecretClient(KeyVaultClientBase):
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
-
-        Keyword arguments
-            - **version** (str): A specific version of the secret to get. If unspecified, gets the latest version.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -64,7 +61,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.get_secret(
             vault_base_url=self._vault_endpoint,
             secret_name=name,
-            secret_version=kwargs.pop("version", ""),
+            secret_version=version or "",
             error_map=_error_map,
             **kwargs
         )
@@ -112,20 +109,20 @@ class SecretClient(KeyVaultClientBase):
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret_properties(self, name, **kwargs):
-        # type: (str, **Any) -> SecretProperties
+    def update_secret_properties(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], **Any) -> SecretProperties
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
 
         :param str name: Name of the secret
+        :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - **version** (str): Version of the secret to update. If unspecified, the latest version is updated.
             - **enabled** (bool): Whether the secret is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
@@ -153,7 +150,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.update_secret(
             self.vault_endpoint,
             name,
-            secret_version=kwargs.pop("version", ""),
+            secret_version=version or "",
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs

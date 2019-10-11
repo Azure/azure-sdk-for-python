@@ -80,7 +80,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # alternatively, specify a version
         key_version = key.properties.version
-        key = await key_client.get_key("key-name", version=key_version)
+        key = await key_client.get_key("key-name", key_version)
 
         print(key.id)
         print(key.name)

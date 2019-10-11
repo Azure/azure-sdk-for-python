@@ -176,8 +176,8 @@ class KeyClient(KeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def get_key(self, name, **kwargs):
-        # type: (str, **Any) -> Key
+    def get_key(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], **Any) -> Key
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -188,9 +188,6 @@ class KeyClient(KeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
-        Keyword arguments
-            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
-
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
                 :start-after: [START get_key]
@@ -200,7 +197,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_key(
-            self.vault_endpoint, name, key_version=kwargs.pop("version", ""), error_map=_error_map, **kwargs
+            self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
         )
         return Key._from_key_bundle(bundle)
 
@@ -352,12 +349,13 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_properties(self, name, **kwargs):
-        # type: (str, **Any) -> Key
+    def update_key_properties(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], **Any) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
+        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises:
@@ -365,7 +363,6 @@ class KeyClient(KeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - **version** (str): The version of the key to update. If unspecified, the latest version is updated.
             - **enabled** (bool): Whether the key is enabled for use.
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
@@ -390,7 +387,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.update_key(
             self.vault_endpoint,
             name,
-            key_version=kwargs.pop("version", ""),
+            key_version=version or "",
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
             error_map=_error_map,
@@ -480,6 +477,10 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.import_key(
-            self.vault_endpoint, name, key=key._to_generated_model(), key_attributes=attributes, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            key_attributes=attributes,
+            **kwargs
         )
         return Key._from_key_bundle(bundle)

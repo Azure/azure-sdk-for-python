@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, AsyncIterable, Dict
+from typing import Any, AsyncIterable, Optional, Dict
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -32,7 +32,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, **kwargs: "Any") -> Secret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Secret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -42,9 +42,6 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
-        Keyword arguments
-            - **version** (str): A specific version of the key to get. If unspecified, gets the latest version.
-
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START get_secret]
@@ -53,9 +50,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a secret
                 :dedent: 8
         """
-        bundle = await self._client.get_secret(
-            self.vault_endpoint, name, kwargs.pop("version", ""), error_map=_error_map, **kwargs
-        )
+        bundle = await self._client.get_secret(self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs)
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -96,19 +91,21 @@ class SecretClient(AsyncKeyVaultClientBase):
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def update_secret_properties(self, name: str, **kwargs: "Any") -> SecretProperties:
+    async def update_secret_properties(
+        self, name: str, version: "Optional[str]" = None, **kwargs: "Any"
+    ) -> SecretProperties:
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
 
         :param str name: Name of the secret
+        :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - **version** (str): Version of the secret to update. If unspecified, the latest version is updated.
             - **enabled** (bool): Whether the secret is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
@@ -135,7 +132,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_secret(
             self.vault_endpoint,
             name,
-            secret_version=kwargs.pop("version", ""),
+            secret_version=version or "",
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs
