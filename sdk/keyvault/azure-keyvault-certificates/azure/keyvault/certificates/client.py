@@ -48,7 +48,7 @@ class CertificateClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def create_certificate(
+    def begin_create_certificate(
         self,
         name,  # type: str
         policy=None,  # type: Optional[CertificatePolicy]
