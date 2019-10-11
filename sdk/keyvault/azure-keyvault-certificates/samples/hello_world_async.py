@@ -67,8 +67,7 @@ async def run_sample():
 
         # create_certificate returns a poller. Awaiting the poller will return the certificate
         # if creation is successful, and the CertificateOperation if not.
-        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
-        certificate = await create_certificate_poller
+        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name

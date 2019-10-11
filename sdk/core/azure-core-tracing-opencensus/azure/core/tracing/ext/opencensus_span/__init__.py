@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 __version__ = "1.0.0b4"
 
-class OpenCensusSpan(object):
+class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="span"):

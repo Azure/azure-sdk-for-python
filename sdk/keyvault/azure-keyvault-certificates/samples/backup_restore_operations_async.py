@@ -48,12 +48,12 @@ async def run_sample():
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
         # An async poller is returned.
-        create_certificate_poller = await client.create_certificate(name=cert_name)
+        create_certificate_poller = client.create_certificate(name=cert_name)
 
-        # Awaiting the poller will return a certificate if creation is successful, and will return the failed
-        # CertificateOperation if not.
-        await create_certificate_poller
-        print("Certificate with name '{0}' created.".format(cert_name))
+        # Awaiting the poller will return a certificate if creation is successful,
+        # and will return the failed CertificateOperation if not.
+        certificate = await create_certificate_poller
+        print("Certificate with name '{0}' created.".format(certificate.name))
 
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.

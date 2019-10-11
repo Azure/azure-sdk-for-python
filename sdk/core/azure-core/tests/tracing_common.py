@@ -7,6 +7,8 @@ from azure.core.tracing import HttpSpanMixin, SpanKind
 
 
 class FakeSpan(HttpSpanMixin, object):
+    # Keep a fake context of the current one
+    CONTEXT = []
 
     def __init__(self, span=None, name="span"):
         # type: (Optional[Span], Optional[str]) -> None
@@ -20,8 +22,14 @@ class FakeSpan(HttpSpanMixin, object):
         :type name: str
         """
         self._span = span
-        self._name = name
+        self.name = name
         self._kind = SpanKind.UNSPECIFIED
+        self.attributes = {}
+        self.children = []
+        if self.CONTEXT:
+            self.CONTEXT[-1].children.append(self)
+        self.CONTEXT.append(self)
+        self.status = None
 
     @property
     def span_instance(self):
@@ -60,7 +68,9 @@ class FakeSpan(HttpSpanMixin, object):
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
-        pass
+        if exception_value:
+            self.status = exception_value.args[0]
+        self.CONTEXT.pop()
 
     def start(self):
         # type: () -> None
@@ -70,7 +80,7 @@ class FakeSpan(HttpSpanMixin, object):
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        pass
+        self.CONTEXT.pop()
 
     def to_header(self):
         # type: () -> Dict[str, str]
@@ -78,9 +88,7 @@ class FakeSpan(HttpSpanMixin, object):
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
-        temp_headers = {} # type: Dict[str, str]
-        # FIXME
-        return temp_headers
+        return {'traceparent': '123456789'}
 
     def add_attribute(self, key, value):
         # type: (str, Union[str, int]) -> None
@@ -92,7 +100,7 @@ class FakeSpan(HttpSpanMixin, object):
         :param value: The value of the key value pair
         :type value: str
         """
-        self.span_instance.set_attribute(key, value)
+        self.attributes[key] = value
 
     def get_trace_parent(self):
         """Return traceparent string as defined in W3C trace context specification.
@@ -141,7 +149,7 @@ class FakeSpan(HttpSpanMixin, object):
         """
         Get the current span from the execution context. Return None otherwise.
         """
-        return cls.get_current_tracer().get_current_span()
+        return cls.CONTEXT[-1]
 
     @classmethod
     def get_current_tracer(cls):
@@ -149,21 +157,23 @@ class FakeSpan(HttpSpanMixin, object):
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
-        return tracer()
+        raise NotImplementedError()
 
     @classmethod
     def change_context(cls, span):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
         """
-        return cls.get_current_tracer().use_span(span, end_on_exit=False)
+        cls.CONTEXT.append(span)
+        yield
+        cls.CONTEXT.pop()
 
     @classmethod
     def set_current_span(cls, span):
         # type: (Span) -> None
         """Not supported by OpenTelemetry.
         """
-        raise NotImplementedError("set_current_span is not supported by OpenTelemetry plugin. Use ChangeContext instead.")
+        raise NotImplementedError()
 
     @classmethod
     def set_current_tracer(cls, tracer):
@@ -173,8 +183,7 @@ class FakeSpan(HttpSpanMixin, object):
         :param tracer: The tracer to set the current tracer as
         :type tracer: :class: OpenTelemetry.trace.Tracer
         """
-        # Do nothing, if you're able to get two tracer with OpenTelemetry that's a surprise!
-        pass
+        raise NotImplementedError()
 
     @classmethod
     def with_current_context(cls, func):
@@ -184,4 +193,4 @@ class FakeSpan(HttpSpanMixin, object):
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
-        return Context.with_current_context(func)
+        return func

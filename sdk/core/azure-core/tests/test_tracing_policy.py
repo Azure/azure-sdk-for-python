@@ -8,6 +8,7 @@ import logging
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from tracing_common import FakeSpan
 import time
 import pytest
@@ -20,7 +21,8 @@ except ImportError:
 
 def test_distributed_tracing_policy_solo():
     """Test policy with no other policy and happy path"""
-    with FakeSpan(name="parent"):
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
         policy = DistributedTracingPolicy()
 
         request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
@@ -34,9 +36,7 @@ def test_distributed_tracing_policy_solo():
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
 
-        ctx = trace.span_context
-        header = trace.propagator.to_headers(ctx)
-        assert request.headers.get("traceparent") == header.get("traceparent")
+        assert request.headers.get("traceparent") == '123456789'
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
         time.sleep(0.001)
@@ -46,30 +46,33 @@ def test_distributed_tracing_policy_solo():
         except:
             policy.on_exception(pipeline_request)
 
-    network_span = parent.children[0]
-    assert network_span.span_data.name == "/temp"
-    assert network_span.span_data.attributes.get("http.method") == "GET"
-    assert network_span.span_data.attributes.get("component") == "http"
-    assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
-    assert network_span.span_data.attributes.get("http.user_agent") is None
-    assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
-    assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
-    assert network_span.span_data.attributes.get("http.status_code") == 202
+    # Check on_response
+    network_span = root_span.children[0]
+    assert network_span.name == "/temp"
+    assert network_span.attributes.get("http.method") == "GET"
+    assert network_span.attributes.get("component") == "http"
+    assert network_span.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+    assert network_span.attributes.get("http.user_agent") is None
+    assert network_span.attributes.get("x-ms-request-id") == "some request id"
+    assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
+    assert network_span.attributes.get("http.status_code") == 202
 
-    network_span = parent.children[1]
-    assert network_span.span_data.name == "/temp"
-    assert network_span.span_data.attributes.get("http.method") == "GET"
-    assert network_span.span_data.attributes.get("component") == "http"
-    assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
-    assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
-    assert network_span.span_data.attributes.get("http.user_agent") is None
-    assert network_span.span_data.attributes.get("x-ms-request-id") == None
-    assert network_span.span_data.attributes.get("http.status_code") == 504
+    # Check on_exception
+    network_span = root_span.children[1]
+    assert network_span.name == "/temp"
+    assert network_span.attributes.get("http.method") == "GET"
+    assert network_span.attributes.get("component") == "http"
+    assert network_span.attributes.get("http.url") == "http://127.0.0.1/temp?query=query"
+    assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
+    assert network_span.attributes.get("http.user_agent") is None
+    assert network_span.attributes.get("x-ms-request-id") == None
+    assert network_span.attributes.get("http.status_code") == 504
 
 
 def test_distributed_tracing_policy_badurl(caplog):
     """Test policy with a bad url that will throw, and be sure policy ignores it"""
-    with FakeSpan(name="parent"):
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
         policy = DistributedTracingPolicy()
 
         request = HttpRequest("GET", "http://[[[")
@@ -85,8 +88,6 @@ def test_distributed_tracing_policy_badurl(caplog):
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
 
-        ctx = trace.span_context
-        header = trace.propagator.to_headers(ctx)
         assert request.headers.get("traceparent") is None  # Got not network trace
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
@@ -97,13 +98,14 @@ def test_distributed_tracing_policy_badurl(caplog):
         except:
             policy.on_exception(pipeline_request)
 
-    assert len(parent.children) == 0
+    assert len(root_span.children) == 0
 
 
 def test_distributed_tracing_policy_with_user_agent():
     """Test policy working with user agent."""
+    settings.tracing_implementation.set_value(FakeSpan)
     with mock.patch.dict('os.environ', {"AZURE_HTTP_USER_AGENT": "mytools"}):
-        with FakeSpan(name="parent"):
+        with FakeSpan(name="parent") as root_span:
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1")
@@ -121,9 +123,7 @@ def test_distributed_tracing_policy_with_user_agent():
             response.headers["x-ms-request-id"] = "some request id"
             pipeline_response = PipelineResponse(request, response, PipelineContext(None))
 
-            ctx = trace.span_context
-            header = trace.propagator.to_headers(ctx)
-            assert request.headers.get("traceparent") == header.get("traceparent")
+            assert request.headers.get("traceparent") == '123456789'
 
             policy.on_response(pipeline_request, pipeline_response)
 
@@ -136,25 +136,68 @@ def test_distributed_tracing_policy_with_user_agent():
 
             user_agent.on_response(pipeline_request, pipeline_response)
 
-        network_span = parent.children[0]
-        assert network_span.span_data.name == "/"
-        assert network_span.span_data.attributes.get("http.method") == "GET"
-        assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
-        assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
-        assert network_span.span_data.attributes.get("x-ms-request-id") == "some request id"
-        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
-        assert network_span.span_data.attributes.get("http.status_code") == 202
+        network_span = root_span.children[0]
+        assert network_span.name == "/"
+        assert network_span.attributes.get("http.method") == "GET"
+        assert network_span.attributes.get("component") == "http"
+        assert network_span.attributes.get("http.url") == "http://127.0.0.1"
+        assert network_span.attributes.get("http.user_agent").endswith("mytools")
+        assert network_span.attributes.get("x-ms-request-id") == "some request id"
+        assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
+        assert network_span.attributes.get("http.status_code") == 202
 
-        network_span = parent.children[1]
-        assert network_span.span_data.name == "/"
-        assert network_span.span_data.attributes.get("http.method") == "GET"
-        assert network_span.span_data.attributes.get("component") == "http"
-        assert network_span.span_data.attributes.get("http.url") == "http://127.0.0.1"
-        assert network_span.span_data.attributes.get("http.user_agent").endswith("mytools")
-        assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
-        assert network_span.span_data.attributes.get("x-ms-request-id") is None
-        assert network_span.span_data.attributes.get("http.status_code") == 504
+        network_span = root_span.children[1]
+        assert network_span.name == "/"
+        assert network_span.attributes.get("http.method") == "GET"
+        assert network_span.attributes.get("component") == "http"
+        assert network_span.attributes.get("http.url") == "http://127.0.0.1"
+        assert network_span.attributes.get("http.user_agent").endswith("mytools")
+        assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
+        assert network_span.attributes.get("x-ms-request-id") is None
+        assert network_span.attributes.get("http.status_code") == 504
         # Exception should propagate status for Opencensus
-        assert network_span.span_data.status.message == 'Transport trouble'
+        assert network_span.status == 'Transport trouble'
 
+
+def test_span_namer():
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+
+        request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+
+        def fixed_namer(http_request):
+            assert http_request is request
+            return "overridenname"
+
+        policy = DistributedTracingPolicy(network_span_namer=fixed_namer)
+
+        policy.on_request(pipeline_request)
+
+        response = HttpResponse(request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        def operation_namer(http_request):
+            assert http_request is request
+            return "operation level name"
+
+        pipeline_request.context.options['network_span_namer'] = operation_namer
+
+        policy.on_request(pipeline_request)
+
+        response = HttpResponse(request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+    # Check init kwargs
+    network_span = root_span.children[0]
+    assert network_span.name == "overridenname"
+
+    # Check operation kwargs
+    network_span = root_span.children[1]
+    assert network_span.name == "operation level name"

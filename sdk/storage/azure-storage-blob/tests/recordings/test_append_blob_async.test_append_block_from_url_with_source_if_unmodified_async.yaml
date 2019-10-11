@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 70126eb6-cbc8-11e9-81d1-001a7dda7113
+      - 592d1050-d998-11e9-ba77-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -23,18 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:15 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC54424746"'
+      : '"0x8D73BBC3D846372"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 70126eb6-cbc8-11e9-81d1-001a7dda7113
-      x-ms-request-id: 0681a0f7-401e-00d2-6cd5-5fd01a000000
+      x-ms-request-id: 151ec7a3-101e-0035-63a5-6dfe2f000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -43,7 +42,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainer50332140
         - restype=container
         - ''
@@ -51,13 +50,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7020fc40-cbc8-11e9-93b8-001a7dda7113
+      - 596654ae-d998-11e9-a2bf-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -71,18 +70,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC544666B6"'
+      : '"0x8D73BBC3D979D5E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 7020fc40-cbc8-11e9-93b8-001a7dda7113
-      x-ms-request-id: 0681a100-401e-00d2-73d5-5fd01a000000
+      x-ms-request-id: 151ec7b1-101e-0035-6da5-6dfe2f000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -91,7 +89,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainersource50332140
         - restype=container
         - ''
@@ -101,15 +99,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 70276542-cbc8-11e9-ad7a-001a7dda7113
+      - 597fa82e-d998-11e9-a391-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -123,18 +121,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC544CE74F"'
+      : '"0x8D73BBC3DAF4EB8"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 70276542-cbc8-11e9-ad7a-001a7dda7113
-      x-ms-request-id: 0681a129-401e-00d2-17d5-5fd01a000000
+      x-ms-request-id: 151ec7c4-101e-0035-7aa5-6dfe2f000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -144,7 +141,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainersource50332140/blob50332140
         - ''
         - ''
@@ -1304,13 +1301,13 @@ interactions:
       Content-Length:
       - '65536'
       Content-Type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 7029d46e-cbc8-11e9-9457-001a7dda7113
+      - 598dc7ee-d998-11e9-aa51-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1324,21 +1321,20 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC5450B88F"'
+      : '"0x8D73BBC3DD3530C"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset: '0'
       x-ms-blob-committed-block-count: '1'
-      x-ms-client-request-id: 7029d46e-cbc8-11e9-9457-001a7dda7113
       x-ms-content-crc64: 8JbTPz/hqu4=
-      x-ms-request-id: 0681a131-401e-00d2-1fd5-5fd01a000000
+      x-ms-request-id: 151ec7c8-101e-0035-7ca5-6dfe2f000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1348,7 +1344,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainersource50332140/blob50332140
         - comp=appendblock
         - ''
@@ -1356,13 +1352,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 702dba06-cbc8-11e9-9cdc-001a7dda7113
+      - 59b07e36-d998-11e9-9339-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -1382,13 +1378,13 @@ interactions:
       : application/xml; charset=utf-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:16 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC5450B88F"'
+      : '"0x8D73BBC3DD3530C"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -1399,13 +1395,11 @@ interactions:
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-committed-block-count: '1'
       x-ms-blob-type: AppendBlob
-      x-ms-client-request-id: 702dba06-cbc8-11e9-9cdc-001a7dda7113
-      x-ms-creation-time: Sat, 31 Aug 2019 08:22:14 GMT
+      x-ms-creation-time: Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 0681a143-401e-00d2-2fd5-5fd01a000000
+      x-ms-request-id: 151ec7da-101e-0035-0ca5-6dfe2f000000
       x-ms-server-encrypted: 'true'
-      x-ms-tag-count: '0'
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -1414,7 +1408,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainersource50332140/blob50332140
         - ''
         - ''
@@ -1424,15 +1418,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 70316ac0-cbc8-11e9-96ab-001a7dda7113
+      - 59c21eee-d998-11e9-bd28-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1446,18 +1440,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC545CC8B4"'
+      : '"0x8D73BBC3E1628E4"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 70316ac0-cbc8-11e9-96ab-001a7dda7113
-      x-ms-request-id: c37b4331-001e-0055-03d5-5f437f000000
+      x-ms-request-id: a08912d4-901e-0004-14a5-6d1f3c000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1467,7 +1460,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainer50332140/blob50332140
         - ''
         - ''
@@ -1477,17 +1470,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7039f1a2-cbc8-11e9-8b4b-001a7dda7113
+      - 59f4b64a-d998-11e9-88c0-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersource50332140/blob50332140?se=2019-08-31T09%3A22%3A14Z&sp=rd&sv=2019-02-02&sr=b&sig=MaS60yv3p7cSU0X1Le8%2BzfFgOJnBtZzyGoU5vG6Qaf8%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersource50332140/blob50332140?se=2019-09-17T23%3A13%3A17Z&sp=rd&sv=2019-02-02&sr=b&sig=4DGxB3NzLKEOh2wu/oi5b43INZ/pTJmYcJwccHmSmQA%3D
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-source-if-unmodified-since:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-source-range:
       - bytes=0-65535
       x-ms-version:
@@ -1506,20 +1499,19 @@ interactions:
       : YWxOoYx6sr6CQfz1B+0thw==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC5468FFF2"'
+      : '"0x8D73BBC3E3484D2"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset: '0'
       x-ms-blob-committed-block-count: '1'
-      x-ms-client-request-id: 7039f1a2-cbc8-11e9-8b4b-001a7dda7113
-      x-ms-request-id: c37b433c-001e-0055-0dd5-5f437f000000
+      x-ms-request-id: a08912e2-901e-0004-1da5-6d1f3c000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -1529,7 +1521,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainer50332140/blob50332140
         - comp=appendblock
         - ''
@@ -1537,13 +1529,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 70465748-cbc8-11e9-92da-001a7dda7113
+      - 5a14499a-d998-11e9-8316-001a7dda7113
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -1563,13 +1555,13 @@ interactions:
       : application/xml; charset=utf-8
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:13 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D72DEC5468FFF2"'
+      : '"0x8D73BBC3E3484D2"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Sat, 31 Aug 2019 08:22:14 GMT
+      : Tue, 17 Sep 2019 22:13:17 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -1580,13 +1572,11 @@ interactions:
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-committed-block-count: '1'
       x-ms-blob-type: AppendBlob
-      x-ms-client-request-id: 70465748-cbc8-11e9-92da-001a7dda7113
-      x-ms-creation-time: Sat, 31 Aug 2019 08:22:14 GMT
+      x-ms-creation-time: Tue, 17 Sep 2019 22:13:17 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: c37b436d-001e-0055-35d5-5f437f000000
+      x-ms-request-id: a08912f4-901e-0004-2ba5-6d1f3c000000
       x-ms-server-encrypted: 'true'
-      x-ms-tag-count: '0'
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -1595,7 +1585,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainer50332140/blob50332140
         - ''
         - ''
@@ -1605,17 +1595,17 @@ interactions:
       Content-Length:
       - '0'
       If-Unmodified-Since:
-      - Fri, 30 Aug 2019 17:22:14 GMT
+      - Tue, 17 Sep 2019 07:13:17 GMT
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 7049b114-cbc8-11e9-b0b8-001a7dda7113
+      - 5a21d910-d998-11e9-9789-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersource50332140/blob50332140?se=2019-08-31T09%3A22%3A14Z&sp=rd&sv=2019-02-02&sr=b&sig=MaS60yv3p7cSU0X1Le8%2BzfFgOJnBtZzyGoU5vG6Qaf8%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersource50332140/blob50332140?se=2019-09-17T23%3A13%3A17Z&sp=rd&sv=2019-02-02&sr=b&sig=4DGxB3NzLKEOh2wu/oi5b43INZ/pTJmYcJwccHmSmQA%3D
       x-ms-date:
-      - Sat, 31 Aug 2019 08:22:14 GMT
+      - Tue, 17 Sep 2019 22:13:18 GMT
       x-ms-source-range:
       - bytes=0-65535
       x-ms-version:
@@ -1625,7 +1615,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:d20c9701-101e-00e0-5ad5-5fd06d000000\nTime:2019-08-31T08:22:16.2832040Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d9e9e8fe-501e-001b-74a5-6dac38000000\nTime:2019-09-17T22:13:20.0894440Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -1635,13 +1625,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Sat, 31 Aug 2019 08:22:16 GMT
+      : Tue, 17 Sep 2019 22:13:19 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 7049b114-cbc8-11e9-b0b8-001a7dda7113
       x-ms-error-code: ConditionNotMet
-      x-ms-request-id: d20c9701-101e-00e0-5ad5-5fd06d000000
+      x-ms-request-id: d9e9e8fe-501e-001b-74a5-6dac38000000
       x-ms-version: '2019-02-02'
     status:
       code: 412
@@ -1650,7 +1639,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.blob.core.windows.net
+        - emilystageaccount.blob.core.windows.net
         - /utcontainer50332140/blob50332140
         - comp=appendblock
         - ''

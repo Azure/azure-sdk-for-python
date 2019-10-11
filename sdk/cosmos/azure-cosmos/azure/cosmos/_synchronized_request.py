@@ -23,6 +23,7 @@
 """
 
 import json
+import time
 
 from six.moves.urllib.parse import urlparse
 import six
@@ -96,7 +97,13 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
-    global_endpoint_manager.refresh_endpoint_list(None)
+    client_timeout = kwargs.get('timeout')
+    start_time = time.time()
+    global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    if client_timeout is not None:
+        kwargs['timeout'] = client_timeout - (time.time() - start_time)
+        if kwargs['timeout'] <= 0:
+            raise errors.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
@@ -149,7 +156,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         return (response.stream_download(pipeline_client._pipeline), headers)
 
     data = response.body()
-    if not six.PY2:
+    if data and not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode("utf-8")
 

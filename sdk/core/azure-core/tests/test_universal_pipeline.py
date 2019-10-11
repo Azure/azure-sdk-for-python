@@ -147,12 +147,15 @@ def test_raw_deserializer():
     assert result["ugly"] is True
 
     # Be sure I catch the correct exception if it's neither XML nor JSON
-    with pytest.raises(DecodeError):
-        response = build_response(b'gibberish', content_type="application/xml")
-        raw_deserializer.on_response(None, response,)
-    with pytest.raises(DecodeError):
-        response = build_response(b'{{gibberish}}', content_type="application/xml")
+    response = build_response(b'gibberish', content_type="application/xml")
+    with pytest.raises(DecodeError) as err:
         raw_deserializer.on_response(None, response)
+    assert err.value.response is response.http_response
+
+    response = build_response(b'{{gibberish}}', content_type="application/xml")
+    with pytest.raises(DecodeError) as err:
+        raw_deserializer.on_response(None, response)
+    assert err.value.response is response.http_response
 
     # Simple JSON
     response = build_response(b'{"success": true}', content_type="application/json")

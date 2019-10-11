@@ -4,8 +4,7 @@
 # ------------------------------------
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
-import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Coroutine
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Union
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +43,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def create_certificate(
         self, name: str, policy: Optional[CertificatePolicy] = None, **kwargs: "**Any"
-    ) -> Coroutine:
+    ) -> Union[Certificate, CertificateOperation]:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -56,8 +55,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
          ~azure.keyvault.certificates.models.CertificatePolicy
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
          returns the created Certificate if creation is successful, the CertificateOperation if not.
-        :rtype: coroutine[~azure.keyvault.certificates.models.Certificate or
-         ~azure.keyvault.certificates.models.CertificateOperation]
+        :rtype: ~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -100,7 +99,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         get_certificate_command = partial(self.get_certificate_with_policy, name=name, **kwargs)
 
         create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
-        return async_poller(command, create_certificate_operation, None, create_certificate_polling)
+        return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace_async
     async def get_certificate_with_policy(self, name: str, **kwargs: "**Any") -> Certificate:
@@ -704,58 +703,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self.vault_endpoint, certificate_name=name, cancellation_requested=True, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
-
-    @distributed_trace_async
-    async def get_pending_certificate_signing_request(
-        self, name: str, custom_headers: Optional[Dict[str, str]] = None, **kwargs: "**Any"
-    ) -> str:
-        """Gets the Base64 pending certificate signing request (PKCS-10).
-
-        :param str name: The name of the certificate
-        :param custom_headers: headers that will be added to the request
-        :type custom_headers: dict[str, str]
-        :return: Base64 encoded pending certificate signing request (PKCS-10).
-        :rtype: str
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-        vault_base_url = self.vault_endpoint
-        # Construct URL
-        url = "/certificates/{certificate-name}/pending"
-        path_format_arguments = {
-            "vaultBaseUrl": self._client._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
-            "certificate-name": self._client._serialize.url("certificate_name", name, "str"),
-        }
-        url = self._client._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters["api-version"] = self._client._serialize.query(
-            name="self.api_version", data=self._client.api_version, data_type="str"
-        )
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters["Accept"] = "application/pkcs10"
-        if self._client._config.generate_client_request_id:
-            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client._client.get(url=url, params=query_parameters, headers=header_parameters)
-        pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            self._client.map_error(status_code=response.status_code, response=response, error_map=_error_map)
-            raise self._client.models.KeyVaultErrorException(response, self._client._deserialize)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = response.body() if hasattr(response, "body") else response.content
-
-        return deserialized
 
     @distributed_trace_async
     async def merge_certificate(self, name: str, x509_certificates: List[bytearray], **kwargs: "**Any") -> Certificate:

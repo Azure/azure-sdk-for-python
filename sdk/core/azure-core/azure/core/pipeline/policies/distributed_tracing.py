@@ -38,55 +38,67 @@ except ImportError:
 
 if TYPE_CHECKING:
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
     from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
     from typing import Any, Optional, Dict, List, Union, Tuple
+    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
+def _default_network_span_namer(http_request):
+    # type (HttpRequest) -> str
+    """Extract the path to be used as network span name.
+
+    :param http_request: The HTTP request
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
+    :returns: The string to use as network span name
+    :rtype: str
+    """
+    path = urllib.parse.urlparse(http_request.url).path
+    if not path:
+        path = "/"
+    return path
+
+
 class DistributedTracingPolicy(SansIOHTTPPolicy):
-    """The policy to create spans for Azure Calls"""
+    """The policy to create spans for Azure calls.
+
+    :keyword network_span_namer: A callable to customize the span name
+    :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
+    """
     TRACING_CONTEXT = "TRACING_CONTEXT"
+    _REQUEST_ID = "x-ms-client-request-id"
+    _RESPONSE_ID = "x-ms-request-id"
 
-    def __init__(self):
-        # type: () -> None
-        self.parent_span_dict = {}  # type: Dict[AbstractSpan, List[Union[AbstractSpan, Any]]]
-        self._request_id = "x-ms-client-request-id"
-        self._response_id = "x-ms-request-id"
-
-    def set_header(self, request, span):  # pylint: disable=no-self-use
-        # type: (PipelineRequest, Any) -> None
-        """
-        Sets the header information on the span.
-        """
-        headers = span.to_header()
-        request.http_request.headers.update(headers)
+    def __init__(self, **kwargs):
+        self._network_span_namer = kwargs.get('network_span_namer', _default_network_span_namer)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
+        ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
                 return
 
-            path = urllib.parse.urlparse(request.http_request.url).path
-            if not path:
-                path = "/"
+            namer = ctxt.pop('network_span_namer', self._network_span_namer)
+            span_name = namer(request.http_request)
 
-            span = span_impl_type(name=path)
+            span = span_impl_type(name=span_name)
             span.start()
 
-            self.set_header(request, span)
+            headers = span.to_header()
+            request.http_request.headers.update(headers)
 
             request.context[self.TRACING_CONTEXT] = span
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.warning("Unable to start network span: %s", err)
 
     def end_span(self, request, response=None, exc_info=None):
-        # type: (PipelineRequest, Optional[HttpResponse], Optional[Tuple]) -> None
+        # type: (PipelineRequest, Optional[HttpResponseType], Optional[Tuple]) -> None
         """Ends the span that is tracing the network and updates its status."""
         if self.TRACING_CONTEXT not in request.context:
             return
@@ -95,11 +107,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         http_request = request.http_request  # type: HttpRequest
         if span is not None:
             span.set_http_attributes(http_request, response=response)
-            request_id = http_request.headers.get(self._request_id)
+            request_id = http_request.headers.get(self._REQUEST_ID)
             if request_id is not None:
-                span.add_attribute(self._request_id, request_id)
-            if response and self._response_id in response.headers:
-                span.add_attribute(self._response_id, response.headers[self._response_id])
+                span.add_attribute(self._REQUEST_ID, request_id)
+            if response and self._RESPONSE_ID in response.headers:
+                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
             if exc_info:
                 span.__exit__(*exc_info)
             else:

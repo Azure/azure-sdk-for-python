@@ -1968,7 +1968,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
+        await blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
         # Assert
 
@@ -1988,7 +1988,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
+            await blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2008,7 +2008,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
+        await blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
         # Assert
 
@@ -2028,7 +2028,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
+            await blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2047,7 +2047,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        await blob.upload_page(data, 0, 511, if_match=etag)
+        await blob.upload_page(data, offset=0, length=512, if_match=etag)
 
         # Assert
 
@@ -2065,7 +2065,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, 0, 511, if_match='0x111111111111111')
+            await blob.upload_page(data, offset=0, length=512, if_match='0x111111111111111')
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2083,7 +2083,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.upload_page(data, 0, 511, if_none_match='0x111111111111111')
+        await blob.upload_page(data, offset=0, length=512, if_none_match='0x111111111111111')
 
         # Assert
 
@@ -2102,7 +2102,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, 0, 511, if_none_match=etag)
+            await blob.upload_page(data, offset=0, length=512, if_none_match=etag)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2119,7 +2119,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         ranges = await blob.get_page_ranges(if_modified_since=test_datetime)
@@ -2141,7 +2141,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -2162,7 +2162,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         ranges = await blob.get_page_ranges(if_unmodified_since=test_datetime)
@@ -2184,7 +2184,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -2203,7 +2203,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
         etag = (await blob.get_blob_properties()).etag
 
         # Act
@@ -2224,7 +2224,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -2243,7 +2243,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
         ranges = await blob.get_page_ranges(if_none_match='0x111111111111111')
@@ -2264,7 +2264,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
 
-        await asyncio.gather(blob.upload_page(data, 0, 511), blob.upload_page(data, 1024, 1535))
+        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
         etag = (await blob.get_blob_properties()).etag
 
         # Act

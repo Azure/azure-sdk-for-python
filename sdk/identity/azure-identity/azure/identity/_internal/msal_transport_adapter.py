@@ -48,8 +48,7 @@ class MsalTransportResponse:
 
 
 class MsalTransportAdapter(object):
-    """
-    Wraps an azure-core pipeline with the shape of requests.Session.
+    """Wraps an azure-core pipeline with the shape of ``requests.Session``.
 
     Used as a context manager, patches msal.authority to intercept calls to requests.
     """

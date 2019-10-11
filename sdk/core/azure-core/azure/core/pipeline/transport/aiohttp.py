@@ -89,10 +89,11 @@ class AioHttpTransport(AsyncHttpTransport):
         """Opens the connection.
         """
         if not self.session and self._session_owner:
+            jar = aiohttp.DummyCookieJar()
             self.session = aiohttp.ClientSession(
                 loop=self._loop,
                 trust_env=self._use_env_settings,
-                skip_auto_headers=['Content-Type']
+                cookie_jar=jar
             )
         if self.session is not None:
             await self.session.__aenter__()
@@ -169,6 +170,11 @@ class AioHttpTransport(AsyncHttpTransport):
             cert=config.pop('connection_cert', self.connection_config.cert),
             verify=config.pop('connection_verify', self.connection_config.verify)
         )
+        # If we know for sure there is not body, disable "auto content type"
+        # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
+        # and that break services like storage signature
+        if not request.data and not request.files:
+            config['skip_auto_headers'] = ['Content-Type']
         try:
             stream_response = config.pop("stream", False)
             result = await self.session.request(
@@ -231,14 +237,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                     retry_active = False
                 else:
                     await asyncio.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
                     chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
                         raise StopIteration()
-                    self.downloaded += chunk
+                    self.downloaded += len(chunk)
                     return chunk
                 continue
             except StreamConsumedError:

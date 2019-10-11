@@ -17,10 +17,10 @@ if TYPE_CHECKING:
 
 
 class EnvironmentCredential:
-    """
-    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
-    password, depending on environment variable settings. Configuration is attempted in this order, using these
-    environment variables:
+    """A credential configured by environment variables.
+
+    This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
+    a user with a username and password. Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
       - **AZURE_CLIENT_ID**: the service principal's client ID
@@ -52,8 +52,7 @@ class EnvironmentCredential:
             )
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
