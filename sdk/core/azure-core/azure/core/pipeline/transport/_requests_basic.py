@@ -55,10 +55,6 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     :param HttpRequest request: The request.
     :param requests_response: The object returned from the HTTP library.
     :param int block_size: Size in bytes.
-    :param int status_code: The status code of the response.
-    :param dict headers: The request headers.
-    :param str reason: Status reason of response.
-    :param str content_type: The content type.
     """
     def __init__(self, request, requests_response, block_size=None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
@@ -81,8 +77,6 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param generator iter_content_func: Iterator for response data.
-    :param int content_length: size of body in bytes.
     """
     def __init__(self, pipeline, response):
         self.pipeline = pipeline
@@ -159,13 +153,9 @@ class RequestsTransport(HttpTransport):
     - You provide the configured session if you want to, or a basic session is created.
     - All kwargs received by "send" are sent to session.request directly
 
-    **Keyword argument:**
-
-    *session (requests.Session)* - Request session to use instead of the default one.
-
-    *session_owner (bool)* - Decide if the session provided by user is owned by this transport. Default to True.
-
-    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
+    :keyword requests.Session session: Request session to use instead of the default one.
+    :keyword bool session_owner: Decide if the session provided by user is owned by this transport. Default to True.
+    :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
     .. admonition:: Example:
 
@@ -226,12 +216,9 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        **Keyword arguments:**
-
-        *session* - will override the driver session and use yours. Should NOT be done unless really required.
-        Anything else is sent straight to requests.
-
-        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         response = None

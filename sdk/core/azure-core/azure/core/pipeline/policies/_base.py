@@ -58,7 +58,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: igno
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline is
      instantiated and all policies chained.
-    :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HTTPTransport
+    :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HttpTransport
     """
 
     def __init__(self):
@@ -109,7 +109,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     # pylint: disable=no-self-use
-    def on_exception(self, _request):  # pylint: disable=unused-argument
+    def on_exception(self, request):  # pylint: disable=unused-argument
         # type: (PipelineRequest) -> Union[bool, Awaitable[bool]]
         """Is executed if an exception is raised while executing the next policy.
 
@@ -120,10 +120,10 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: False.
+        :return: False by default, override with True to stop the exception.
         :rtype: bool
 
-    .. admonition:: Example:
+        .. admonition:: Example:
 
             .. literalinclude:: ../examples/test_example_sansio.py
                 :start-after: [START on_exception]
