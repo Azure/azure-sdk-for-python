@@ -30,10 +30,10 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
-    RedirectPolicy, 
-    ContentDecodePolicy, 
-    BearerTokenCredentialPolicy, 
-    ProxyPolicy, 
+    RedirectPolicy,
+    ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
+    ProxyPolicy,
     DistributedTracingPolicy
 )
 

@@ -13,10 +13,10 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
-    ContentDecodePolicy, 
-    NetworkTraceLoggingPolicy, 
-    ProxyPolicy, 
-    RetryPolicy, 
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
     DistributedTracingPolicy
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest

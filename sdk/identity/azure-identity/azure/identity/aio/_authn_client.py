@@ -12,10 +12,10 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    AsyncRetryPolicy, 
-    ContentDecodePolicy, 
-    NetworkTraceLoggingPolicy, 
-    ProxyPolicy, 
+    AsyncRetryPolicy,
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
     DistributedTracingPolicy
 )
 from azure.core.pipeline.transport import AsyncioRequestsTransport
