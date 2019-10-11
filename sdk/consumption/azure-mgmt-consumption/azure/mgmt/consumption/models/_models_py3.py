@@ -543,9 +543,10 @@ class CreditSummary(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :param balance_summary: Summary of balances associated with this credit
+    :ivar balance_summary: Summary of balances associated with this credit
      summary.
-    :type balance_summary: ~azure.mgmt.consumption.models.CreditBalanceSummary
+    :vartype balance_summary:
+     ~azure.mgmt.consumption.models.CreditBalanceSummary
     :ivar pending_credit_adjustments: Pending credit adjustments.
     :vartype pending_credit_adjustments: ~azure.mgmt.consumption.models.Amount
     :ivar expired_credit: Expired credit.
@@ -559,6 +560,7 @@ class CreditSummary(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'balance_summary': {'readonly': True},
         'pending_credit_adjustments': {'readonly': True},
         'expired_credit': {'readonly': True},
         'pending_eligible_charges': {'readonly': True},
@@ -569,15 +571,15 @@ class CreditSummary(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'balance_summary': {'key': 'properties.BalanceSummary', 'type': 'CreditBalanceSummary'},
+        'balance_summary': {'key': 'properties.balanceSummary', 'type': 'CreditBalanceSummary'},
         'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
         'expired_credit': {'key': 'properties.expiredCredit', 'type': 'Amount'},
         'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'Amount'},
     }
 
-    def __init__(self, *, balance_summary=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(CreditSummary, self).__init__(**kwargs)
-        self.balance_summary = balance_summary
+        self.balance_summary = None
         self.pending_credit_adjustments = None
         self.expired_credit = None
         self.pending_eligible_charges = None
