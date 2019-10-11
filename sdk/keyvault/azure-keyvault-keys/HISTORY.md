@@ -7,8 +7,7 @@
 [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
 detail the new keyword arguments):
   - `create_key` now has positional parameters `name` and `key_type`
-  - `create_ec_key` and `create_rsa_key` now have positional parameters `name`
-     and `hsm`
+  - `create_ec_key` and `create_rsa_key` now have one positional parameter, `name`
   - `update_key_properties` now has two positional parameters, `name` and
      (optional) `version`
   - `import_key` now has positional parameters `name` and `key`

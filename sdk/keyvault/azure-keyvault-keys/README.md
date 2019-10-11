@@ -154,12 +154,12 @@ of that key is created.
 
 ```python
 # Create an RSA key
-rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
 print(rsa_key.key_material.kty)
 
 # Create an elliptic curve key
-ec_key = key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
 print(ec_key.key_material.kty)
 ```
@@ -249,12 +249,12 @@ credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 # Create an RSA key
-rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = await key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
 print(rsa_key.key_material.kty)
 
 # Create an elliptic curve key
-ec_key = await key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = await key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
 print(ec_key.key_material.kty)
 ```

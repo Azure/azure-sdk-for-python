@@ -54,7 +54,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START create_rsa_key]
 
         # create an rsa key in a hardware security module
-        key = await key_client.create_rsa_key("key-name", hsm=True, size=2048)
+        key = await key_client.create_rsa_key("key-name", hardware_protected=True, size=2048)
 
         print(key.id)
         print(key.name)
@@ -65,7 +65,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # create an elliptic curve (ec) key
         key_curve = "P-256"
-        ec_key = await key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
+        ec_key = await key_client.create_ec_key("key-name", curve=key_curve)
 
         print(ec_key.id)
         print(ec_key.name)
@@ -125,9 +125,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
 
         for i in range(4):
-            await key_client.create_ec_key("key{}".format(i), hsm=False)
+            await key_client.create_ec_key("key{}".format(i))
         for i in range(4):
-            await key_client.create_rsa_key("key{}".format(i), hsm=False)
+            await key_client.create_rsa_key("key{}".format(i))
 
         # [START list_keys]
 

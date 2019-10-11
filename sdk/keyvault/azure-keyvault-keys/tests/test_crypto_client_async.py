@@ -134,7 +134,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         """Encrypt locally, decrypt with Key Vault"""
 
         key_client = vault_client.keys
-        key = await key_client.create_rsa_key("encrypt-local", size=4096, hsm=False)
+        key = await key_client.create_rsa_key("encrypt-local", size=4096)
         crypto_client = vault_client.get_cryptography_client(key)
 
         for encrypt_algorithm in EncryptionAlgorithm:
@@ -151,7 +151,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         """Wrap locally, unwrap with Key Vault"""
 
         key_client = vault_client.keys
-        key = await key_client.create_rsa_key("wrap-local", size=4096, hsm=False)
+        key = await key_client.create_rsa_key("wrap-local", size=4096)
         crypto_client = vault_client.get_cryptography_client(key)
 
         for wrap_algorithm in KeyWrapAlgorithm:
@@ -170,7 +170,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
 
         for size in (2048, 3072, 4096):
-            key = await key_client.create_rsa_key("rsa-verify-{}".format(size), size=size, hsm=False)
+            key = await key_client.create_rsa_key("rsa-verify-{}".format(size), size=size)
             crypto_client = vault_client.get_cryptography_client(key)
             for signature_algorithm, hash_function in (
                 (SignatureAlgorithm.ps256, hashlib.sha256),
@@ -204,7 +204,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in matrix.items():
-            key = await key_client.create_ec_key("ec-verify-{}".format(curve.value), curve=curve, hsm=False)
+            key = await key_client.create_ec_key("ec-verify-{}".format(curve.value), curve=curve)
             crypto_client = vault_client.get_cryptography_client(key)
 
             digest = hash_function(self.plaintext).digest()

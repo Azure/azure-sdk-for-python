@@ -45,7 +45,7 @@ try:
     key_size = 2048
     key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
     key_name = "rsaKeyName"
-    rsa_key = client.create_rsa_key(key_name, size=key_size, hsm=False, key_operations=key_ops)
+    rsa_key = client.create_rsa_key(key_name, size=key_size, key_operations=key_ops)
     print("RSA Key with name '{0}' created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
 
     # Let's create an Elliptic Curve key with algorithm curve type P-256.
@@ -53,7 +53,7 @@ try:
     print("\n.. Create an EC Key")
     key_curve = "P-256"
     key_name = "ECKeyName"
-    ec_key = client.create_ec_key(key_name, curve=key_curve, hsm=False)
+    ec_key = client.create_ec_key(key_name, curve=key_curve)
     print("EC Key with name '{0}' created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
 
     # Let's get the rsa key details using its name

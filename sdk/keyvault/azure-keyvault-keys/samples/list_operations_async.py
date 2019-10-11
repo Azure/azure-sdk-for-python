@@ -44,8 +44,8 @@ async def run_sample():
         # Let's create keys with RSA and EC type. If the key
         # already exists in the Key Vault, then a new version of the key is created.
         print("\n.. Create Key")
-        rsa_key = await client.create_rsa_key("rsaKeyName", hsm=False)
-        ec_key = await client.create_ec_key("ecKey1Name", hsm=False)
+        rsa_key = await client.create_rsa_key("rsaKeyName")
+        ec_key = await client.create_ec_key("ecKey1Name")
         print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
         print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
 
@@ -66,7 +66,7 @@ async def run_sample():
         # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure
         # it reflects the new key size. Calling create_rsa_key on an existing key creates a new version of the key in
         # the Key Vault with the new key size.
-        new_key = await client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
+        new_key = await client.create_rsa_key(rsa_key.name, size=3072)
         print("New version was created for Key with name '{0}' with the updated size.".format(new_key.name))
 
         # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.

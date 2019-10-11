@@ -26,23 +26,23 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    def _create_rsa_key(self, client, key_name, hsm):
+    def _create_rsa_key(self, client, key_name, hsm=False):
         # create key with optional arguments
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_operations=key_ops, tags=tags)
+        created_key = client.create_rsa_key(key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags)
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         kty = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_endpoint, key_name, kty, key_ops)
         return created_key
 
-    def _create_ec_key(self, client, key_name, hsm):
+    def _create_ec_key(self, client, key_name, hsm=False):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = client.create_ec_key(key_name, hsm=hsm, enabled=enabled, tags=tags)
+        created_key = client.create_ec_key(key_name, hardware_protected=hsm, enabled=enabled, tags=tags)
         key_type = "EC-HSM" if hsm else "EC"
         self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.properties.enabled)
@@ -131,14 +131,14 @@ class KeyClientTests(KeyVaultTestCase):
         # create ec key
         self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
-        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", hsm=False, curve="P-256")
+        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
         # import key
         self._import_test_key(client, "import-test-key")
 
         # create rsa key
-        created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
+        created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key")
 
         # get the created key with version
         key = client.get_key(created_rsa_key.name, created_rsa_key.properties.version)

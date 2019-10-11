@@ -92,19 +92,20 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def create_rsa_key(self, name, hsm, **kwargs):
-        # type: (str, bool, **Any) -> Key
+    def create_rsa_key(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
         :param str name: The name for the new key
-        :param bool hsm: Whether the key should be created in a hardware security module
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
             - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
@@ -119,16 +120,16 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Create RSA key
                 :dedent: 8
         """
+        hsm = kwargs.pop("hardware_protected", False)
         return self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace
-    def create_ec_key(self, name, hsm, **kwargs):
-        # type: (str, bool, **Any) -> Key
+    def create_ec_key(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
-        :param bool hsm: Whether the key should be created in a hardware security module
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -136,6 +137,8 @@ class KeyClient(KeyVaultClientBase):
         Keyword arguments
             - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
               Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
@@ -150,6 +153,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Create an elliptic curve key
                 :dedent: 8
         """
+        hsm = kwargs.pop("hardware_protected", False)
         return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace

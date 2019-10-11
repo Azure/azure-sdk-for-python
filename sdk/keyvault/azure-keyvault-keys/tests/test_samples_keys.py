@@ -58,7 +58,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create an rsa key with size specification
         # RSA key can be created with default size of '2048'
-        key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, key_operations=key_ops)
+        key = key_client.create_rsa_key("key-name", hardware_protected=True, size=key_size, key_operations=key_ops)
 
         print(key.id)
         print(key.name)
@@ -71,7 +71,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create an EC (Elliptic curve) key with curve specification
         # EC key can be created with default curve of 'P-256'
-        ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
+        ec_key = key_client.create_ec_key("key-name", curve=key_curve)
 
         print(ec_key.id)
         print(ec_key.properties.version)
@@ -130,9 +130,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key_client = vault_client.keys
 
         for i in range(4):
-            key_client.create_ec_key("key{}".format(i), hsm=False)
+            key_client.create_ec_key("key{}".format(i))
         for i in range(4):
-            key_client.create_rsa_key("key{}".format(i), hsm=False)
+            key_client.create_rsa_key("key{}".format(i))
 
         # [START list_keys]
 
