@@ -275,7 +275,7 @@ class ProtocolType(str, Enum):
     ip_based = "IPBased"
 
 
-class MinimumTLSVersion(str, Enum):
+class MinimumTlsVersion(str, Enum):
 
     none = "None"
     tls10 = "TLS10"

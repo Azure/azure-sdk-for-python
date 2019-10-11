@@ -204,7 +204,7 @@ from .cdn_management_client_enums import (
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
     ProtocolType,
-    MinimumTLSVersion,
+    MinimumTlsVersion,
     CertificateType,
     ResourceType,
 )
@@ -323,7 +323,7 @@ __all__ = [
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
     'ProtocolType',
-    'MinimumTLSVersion',
+    'MinimumTlsVersion',
     'CertificateType',
     'ResourceType',
 ]

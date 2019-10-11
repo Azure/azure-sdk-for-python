@@ -26,7 +26,7 @@ class CustomDomainHttpsParameters(Model):
     :type protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
     :param minimum_tls_version: TLS protocol version that will be used for
      Https. Possible values include: 'None', 'TLS10', 'TLS12'
-    :type minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTLSVersion
+    :type minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
     :param certificate_source: Required. Constant filled by server.
     :type certificate_source: str
     """
@@ -38,7 +38,7 @@ class CustomDomainHttpsParameters(Model):
 
     _attribute_map = {
         'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'minimum_tls_version': {'key': 'minimumTLSVersion', 'type': 'MinimumTLSVersion'},
+        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'MinimumTlsVersion'},
         'certificate_source': {'key': 'certificateSource', 'type': 'str'},
     }
 
