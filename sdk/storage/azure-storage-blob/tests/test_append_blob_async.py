@@ -13,7 +13,7 @@ import asyncio
 import os
 import unittest
 
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy

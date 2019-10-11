@@ -29,7 +29,6 @@ __version__ = VERSION
 
 from ._pipeline_client import PipelineClient
 from ._match_conditions import MatchConditions
-from .exceptions import HttpResponseError # pylint: disable=unused-import
 
 
 __all__ = [
