@@ -1,5 +1,11 @@
 # Change Log azure-storage-file
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `file_permission_key` parameter has been renamed to `permission_key`
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
