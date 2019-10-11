@@ -3,6 +3,7 @@
 ## 4.0.0b5
 ### Breaking changes
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
+- Renamed `create_certificate` to `begin_create_certificate`
 
 ## 4.0.0b4 (2019-10-08)
 ### Breaking changes
