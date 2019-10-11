@@ -13,6 +13,34 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Amount(Model):
+    """The amount plus currency .
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar currency: Amount currency.
+    :vartype currency: str
+    :ivar value: Amount.
+    :vartype value: decimal.Decimal
+    """
+
+    _validation = {
+        'currency': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'currency': {'key': 'currency', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'decimal'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Amount, self).__init__(**kwargs)
+        self.currency = None
+        self.value = None
+
+
 class Resource(Model):
     """The Resource model definition.
 
@@ -480,9 +508,9 @@ class CreditBalanceSummary(Model):
     sending a request.
 
     :ivar estimated_balance: Estimated balance.
-    :vartype estimated_balance: decimal.Decimal
+    :vartype estimated_balance: ~azure.mgmt.consumption.models.Amount
     :ivar current_balance: Current balance.
-    :vartype current_balance: decimal.Decimal
+    :vartype current_balance: ~azure.mgmt.consumption.models.Amount
     """
 
     _validation = {
@@ -491,8 +519,8 @@ class CreditBalanceSummary(Model):
     }
 
     _attribute_map = {
-        'estimated_balance': {'key': 'estimatedBalance', 'type': 'decimal'},
-        'current_balance': {'key': 'currentBalance', 'type': 'decimal'},
+        'estimated_balance': {'key': 'estimatedBalance', 'type': 'Amount'},
+        'current_balance': {'key': 'currentBalance', 'type': 'Amount'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -519,11 +547,11 @@ class CreditSummary(Resource):
      summary.
     :type balance_summary: ~azure.mgmt.consumption.models.CreditBalanceSummary
     :ivar pending_credit_adjustments: Pending Credit Adjustments.
-    :vartype pending_credit_adjustments: decimal.Decimal
+    :vartype pending_credit_adjustments: ~azure.mgmt.consumption.models.Amount
     :ivar expired_credit: Expired Credit.
-    :vartype expired_credit: decimal.Decimal
+    :vartype expired_credit: ~azure.mgmt.consumption.models.Amount
     :ivar pending_eligible_charges: Pending Eligible Charges.
-    :vartype pending_eligible_charges: decimal.Decimal
+    :vartype pending_eligible_charges: ~azure.mgmt.consumption.models.Amount
     """
 
     _validation = {
@@ -542,9 +570,9 @@ class CreditSummary(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'balance_summary': {'key': 'properties.BalanceSummary', 'type': 'CreditBalanceSummary'},
-        'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'decimal'},
-        'expired_credit': {'key': 'properties.expiredCredit', 'type': 'decimal'},
-        'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'decimal'},
+        'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
+        'expired_credit': {'key': 'properties.expiredCredit', 'type': 'Amount'},
+        'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'Amount'},
     }
 
     def __init__(self, *, balance_summary=None, **kwargs) -> None:
@@ -660,15 +688,15 @@ class EventSummary(Resource):
     :ivar description: Transaction description.
     :vartype description: str
     :ivar new_credit: New Credit.
-    :vartype new_credit: decimal.Decimal
+    :vartype new_credit: ~azure.mgmt.consumption.models.Amount
     :ivar adjustments: Adjustments.
-    :vartype adjustments: decimal.Decimal
+    :vartype adjustments: ~azure.mgmt.consumption.models.Amount
     :ivar credit_expired: Credit Expired.
-    :vartype credit_expired: decimal.Decimal
+    :vartype credit_expired: ~azure.mgmt.consumption.models.Amount
     :ivar charges: Charges.
-    :vartype charges: decimal.Decimal
+    :vartype charges: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: Closed Balance.
-    :vartype closed_balance: decimal.Decimal
+    :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :param event_type: The type of event. Possible values include:
      'SettledCharges', 'PendingCharges', 'PendingAdjustments',
      'PendingNewCredit', 'PendingExpiredCredit', 'UnKnown', 'NewCredit'
@@ -699,11 +727,11 @@ class EventSummary(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'new_credit': {'key': 'properties.newCredit', 'type': 'decimal'},
-        'adjustments': {'key': 'properties.adjustments', 'type': 'decimal'},
-        'credit_expired': {'key': 'properties.creditExpired', 'type': 'decimal'},
-        'charges': {'key': 'properties.charges', 'type': 'decimal'},
-        'closed_balance': {'key': 'properties.closedBalance', 'type': 'decimal'},
+        'new_credit': {'key': 'properties.newCredit', 'type': 'Amount'},
+        'adjustments': {'key': 'properties.adjustments', 'type': 'Amount'},
+        'credit_expired': {'key': 'properties.creditExpired', 'type': 'Amount'},
+        'charges': {'key': 'properties.charges', 'type': 'Amount'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
         'event_type': {'key': 'properties.eventType', 'type': 'str'},
         'invoice_number': {'key': 'properties.invoiceNumber', 'type': 'str'},
     }
@@ -872,9 +900,9 @@ class LotSummary(Resource):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar original_amount: Original Amount.
-    :vartype original_amount: decimal.Decimal
+    :vartype original_amount: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: Closed Balance.
-    :vartype closed_balance: decimal.Decimal
+    :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :ivar source: Lot source. Possible values include: 'PurchasedCredit',
      'PromotionalCredit'
     :vartype source: str or ~azure.mgmt.consumption.models.LotSource
@@ -904,8 +932,8 @@ class LotSummary(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'original_amount': {'key': 'properties.originalAmount', 'type': 'decimal'},
-        'closed_balance': {'key': 'properties.closedBalance', 'type': 'decimal'},
+        'original_amount': {'key': 'properties.originalAmount', 'type': 'Amount'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
         'source': {'key': 'properties.source', 'type': 'str'},
         'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},

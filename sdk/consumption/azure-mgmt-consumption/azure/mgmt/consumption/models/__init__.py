@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Amount
     from ._models_py3 import Balance
     from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
     from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
@@ -48,6 +49,7 @@ try:
     from ._models_py3 import TagsResult
     from ._models_py3 import UsageDetail
 except (SyntaxError, ImportError):
+    from ._models import Amount
     from ._models import Balance
     from ._models import BalancePropertiesAdjustmentDetailsItem
     from ._models import BalancePropertiesNewPurchasesDetailsItem
@@ -111,6 +113,7 @@ from ._consumption_management_client_enums import (
 )
 
 __all__ = [
+    'Amount',
     'Balance',
     'BalancePropertiesAdjustmentDetailsItem',
     'BalancePropertiesNewPurchasesDetailsItem',
