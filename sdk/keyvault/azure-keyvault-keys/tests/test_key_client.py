@@ -53,7 +53,7 @@ class KeyClientTests(KeyVaultTestCase):
     def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
         key_curve = "P-256"
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
@@ -64,7 +64,7 @@ class KeyClientTests(KeyVaultTestCase):
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
@@ -82,7 +82,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)
-        self.assertEqual(key_ops, key_bundle.key_material.key_ops)
+        self.assertEqual(key_ops, key_bundle.key.key_ops)
         return key_bundle
 
     def _import_test_key(self, client, name):
@@ -132,7 +132,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
         created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", curve="P-256")
-        self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
+        self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
         self._import_test_key(client, "import-test-key")
@@ -158,7 +158,7 @@ class KeyClientTests(KeyVaultTestCase):
         # delete the new key
         deleted_key = client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key_material.kty, deleted_key.key_material.kty)
+        self.assertEqual(created_rsa_key.key.kty, deleted_key.key.kty)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
@@ -185,7 +185,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create key
         created_bundle = client.create_key(key_name, key_type)
-        self.assertEqual(key_type, created_bundle.key_material.kty)
+        self.assertEqual(key_type, created_bundle.key.kty)
 
         # backup key
         key_backup = client.backup_key(created_bundle.name)

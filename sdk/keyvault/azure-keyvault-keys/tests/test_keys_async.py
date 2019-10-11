@@ -55,7 +55,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
         key_curve = "P-256"
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
@@ -66,7 +66,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
@@ -139,7 +139,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         await self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
         created_ec_key_curve = await client.create_ec_key(name="crud-P-256-ec-key", curve="P-256")
-        self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
+        self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
         await self._import_test_key(client, "import-test-key")
@@ -166,7 +166,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # delete the new key
         deleted_key = await client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key_material, deleted_key.key_material)
+        self.assertEqual(created_rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,

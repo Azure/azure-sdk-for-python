@@ -8,6 +8,7 @@ detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
   - `update_secret_properties` now has positional parameters `name` and
     (optional) `version`
+- `Key.key_material` renamed to `Key.key`
 
 
 ## 4.0.0b4 (2019-10-08)

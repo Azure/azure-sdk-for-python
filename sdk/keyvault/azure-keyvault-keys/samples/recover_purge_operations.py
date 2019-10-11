@@ -42,8 +42,8 @@ try:
     print("\n.. Create keys")
     rsa_key = client.create_rsa_key("rsaKeyName")
     ec_key = client.create_ec_key("ecKeyName")
-    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
-    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
+    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key.kty))
+    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key.kty))
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):

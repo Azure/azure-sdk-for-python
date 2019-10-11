@@ -46,7 +46,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(key.id)
         print(key.name)
-        print(key.key_material.kty)
+        print(key.key.kty)
         print(key.properties.enabled)
         print(key.properties.expires_on)
 
@@ -58,7 +58,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(key.id)
         print(key.name)
-        print(key.key_material.kty)
+        print(key.key.kty)
 
         # [END create_rsa_key]
         # [START create_ec_key]
@@ -69,8 +69,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(ec_key.id)
         print(ec_key.name)
-        print(ec_key.key_material.kty)
-        print(ec_key.key_material.crv)
+        print(ec_key.key.kty)
+        print(ec_key.key.crv)
 
         # [END create_ec_key]
         # [START get_key]
@@ -85,7 +85,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.properties.version)
-        print(key.key_material.kty)
+        print(key.key.kty)
         print(key.properties.vault_endpoint)
 
         # [END get_key]
@@ -100,7 +100,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(updated_key.properties.updated)
         print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
-        print(updated_key.key_material.kty)
+        print(updated_key.key.kty)
 
         # [END update_key]
         # [START delete_key]

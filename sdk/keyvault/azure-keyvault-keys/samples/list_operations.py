@@ -47,8 +47,8 @@ try:
     print("\n.. Create Key")
     rsa_key = client.create_rsa_key("rsaKeyName")
     ec_key = client.create_ec_key("ecKeyName")
-    print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
-    print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
+    print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key.kty))
+    print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key.kty))
 
     # You need to check the type of all the keys in the vault.
     # Let's list the keys and print their key types.
@@ -59,7 +59,7 @@ try:
     for key in keys:
         retrieved_key = client.get_key(key.name)
         print(
-            "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key_material.kty)
+            "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key.kty)
         )
 
     # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure

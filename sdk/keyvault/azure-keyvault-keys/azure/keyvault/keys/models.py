@@ -232,7 +232,7 @@ class Key(object):
         return self._properties
 
     @property
-    def key_material(self):
+    def key(self):
         # type: () -> _models.JsonWebKey
         """The JSON web key"""
         return self._key_material
