@@ -42,14 +42,6 @@ class StorageContainerTest(StorageTestCase):
         container_name = self.get_resource_name(prefix)
         return container_name
 
-    def _generate_oauth_token(self):
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
-        )
-
     def _create_container(self, bsc, prefix=TEST_CONTAINER_PREFIX):
         container_name = self._get_container_reference(prefix)
         container = bsc.get_container_client(container_name)

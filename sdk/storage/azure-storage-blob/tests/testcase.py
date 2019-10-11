@@ -11,14 +11,14 @@ import inspect
 import os
 import os.path
 import time
-from unittest import SkipTest
 
-import adal
-import vcr
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
+
 import zlib
 import math
-import uuid
-import unittest
 import sys
 import random
 import logging
@@ -53,7 +53,7 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
-    
+
     def _account_url (self, name):
         return 'https://{}.blob.core.windows.net'.format(name)
 
@@ -166,13 +166,15 @@ class StorageTestCase(AzureMgmtTestCase):
                 self.assertEqual(i[1], size)
 
     def generate_oauth_token(self):
-        from azure.identity import ClientSecretCredential
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
-        )
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+                self.get_settings_value("TENANT_ID")
+            )
+        else:
+            return mock.MagicMock()
 
     def generate_fake_token(self):
         return FakeTokenCredential()

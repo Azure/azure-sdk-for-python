@@ -21,9 +21,6 @@ from testcase import (
 
 
 class TestAuthSamples(StorageTestCase):
-    active_directory_application_id = settings.ACTIVE_DIRECTORY_APPLICATION_ID
-    active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-    active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -87,9 +84,9 @@ class TestAuthSamples(StorageTestCase):
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
         token_credential = ClientSecretCredential(
-            self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET"),
+            self.get_settings_value("TENANT_ID")
         )
 
         # Instantiate a BlobServiceClient using a token credential

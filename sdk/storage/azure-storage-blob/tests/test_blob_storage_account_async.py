@@ -143,7 +143,7 @@ class BlobStorageAccountTestAsync(AsyncBlobTestCase):
         blob_props = await blob_client.get_blob_properties()
 
         # Assert
-        self.assertEquals('rehydrate-pending-to-cool', blob_props.archive_status)
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')

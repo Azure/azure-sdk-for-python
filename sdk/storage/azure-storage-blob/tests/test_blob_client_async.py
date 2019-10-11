@@ -114,8 +114,6 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertIsNotNone(service)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertEqual(service.credential, self.token_credential)
-            self.assertFalse(hasattr(service.credential, 'account_key'))
-            self.assertTrue(hasattr(service.credential, 'get_token'))
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
