@@ -546,11 +546,11 @@ class CreditSummary(Resource):
     :param balance_summary: Summary of balances associated with this credit
      summary.
     :type balance_summary: ~azure.mgmt.consumption.models.CreditBalanceSummary
-    :ivar pending_credit_adjustments: Pending Credit Adjustments.
+    :ivar pending_credit_adjustments: Pending credit adjustments.
     :vartype pending_credit_adjustments: ~azure.mgmt.consumption.models.Amount
-    :ivar expired_credit: Expired Credit.
+    :ivar expired_credit: Expired credit.
     :vartype expired_credit: ~azure.mgmt.consumption.models.Amount
-    :ivar pending_eligible_charges: Pending Eligible Charges.
+    :ivar pending_eligible_charges: Pending eligible charges.
     :vartype pending_eligible_charges: ~azure.mgmt.consumption.models.Amount
     """
 
@@ -683,7 +683,7 @@ class EventSummary(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar transaction_date: Transaction Date.
+    :ivar transaction_date: Transaction date.
     :vartype transaction_date: datetime
     :ivar description: Transaction description.
     :vartype description: str
@@ -691,17 +691,17 @@ class EventSummary(Resource):
     :vartype new_credit: ~azure.mgmt.consumption.models.Amount
     :ivar adjustments: Adjustments.
     :vartype adjustments: ~azure.mgmt.consumption.models.Amount
-    :ivar credit_expired: Credit Expired.
+    :ivar credit_expired: Credit expired.
     :vartype credit_expired: ~azure.mgmt.consumption.models.Amount
     :ivar charges: Charges.
     :vartype charges: ~azure.mgmt.consumption.models.Amount
-    :ivar closed_balance: Closed Balance.
+    :ivar closed_balance: Closed balance.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :param event_type: The type of event. Possible values include:
      'SettledCharges', 'PendingCharges', 'PendingAdjustments',
      'PendingNewCredit', 'PendingExpiredCredit', 'UnKnown', 'NewCredit'
     :type event_type: str or ~azure.mgmt.consumption.models.EventType
-    :ivar invoice_number: Invoice Number.
+    :ivar invoice_number: Invoice number.
     :vartype invoice_number: str
     """
 
@@ -899,18 +899,18 @@ class LotSummary(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar original_amount: Original Amount.
+    :ivar original_amount: Original amount.
     :vartype original_amount: ~azure.mgmt.consumption.models.Amount
-    :ivar closed_balance: Closed Balance.
+    :ivar closed_balance: Closed balance.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
     :ivar source: Lot source. Possible values include: 'PurchasedCredit',
      'PromotionalCredit'
     :vartype source: str or ~azure.mgmt.consumption.models.LotSource
-    :ivar start_date: Start Date.
+    :ivar start_date: Start date.
     :vartype start_date: datetime
-    :ivar expiration_date: Expiration Date.
+    :ivar expiration_date: Expiration date.
     :vartype expiration_date: datetime
-    :ivar po_number: PO Number.
+    :ivar po_number: PO number.
     :vartype po_number: str
     """
 
