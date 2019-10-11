@@ -33,9 +33,7 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
 
-    **Keyword argument:**
-
-    *raw_response_hook* - Callback function. Will be invoked on response.
+    :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
     def __init__(self, **kwargs): # pylint: disable=unused-argument,super-init-not-called
         self._callback = None

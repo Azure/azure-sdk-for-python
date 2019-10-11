@@ -58,9 +58,7 @@ class AioHttpTransport(AsyncHttpTransport):
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
 
-    **Keyword argument:**
-
-    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
+    :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
     .. admonition:: Example:
 
@@ -144,13 +142,9 @@ class AioHttpTransport(AsyncHttpTransport):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        **Keyword argument:**
-
-        *stream (bool)* - Defaults to False.
-
-        *proxies* - dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-
-        *proxy* - will define the proxy to use all the time
+        :keyword bool stream: Defaults to False.
+        :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
 

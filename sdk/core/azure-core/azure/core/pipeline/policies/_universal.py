@@ -109,11 +109,8 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     :param str base_user_agent: Sets the base user agent value.
 
-    **Keyword arguments:**
-
-    *user_agent_overwrite (bool)* - Overwrites User-Agent when True. Defaults to False.
-
-    *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
+    :keyword bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
+    :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
 
     .. admonition:: Example:
 

@@ -51,7 +51,10 @@ class AbstractSpan(Protocol):
     @property
     def kind(self):
         # type: () -> Optional[SpanKind]
-        """Get the span kind of this span."""
+        """Get the span kind of this span.
+
+        :rtype: SpanKind
+        """
 
     @kind.setter
     def kind(self, value):
@@ -167,6 +170,8 @@ class AbstractSpan(Protocol):
     def change_context(cls, span):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
+
+        :rtype: contextmanager
         """
 
     @classmethod
@@ -176,6 +181,7 @@ class AbstractSpan(Protocol):
 
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
+        :rtype: callable
         """
 
 class HttpSpanMixin(object):
