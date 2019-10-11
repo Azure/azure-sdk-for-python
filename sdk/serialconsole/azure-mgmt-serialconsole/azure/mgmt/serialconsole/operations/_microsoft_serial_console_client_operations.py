@@ -69,12 +69,14 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
     list_operations.metadata = {'url': '/providers/Microsoft.SerialConsole/operations'}
 
     def get_console_status(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, default, custom_headers=None, raw=False, **operation_config):
         """Get the disabled status for a subscription.
 
         Gets whether or not Serial Console is disabled for a given
         subscription.
 
+        :param default: Default parameter. Leave the value as "default".
+        :type default: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -87,7 +89,8 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
         # Construct URL
         url = self.get_console_status.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'default': self._serialize.url("default", default, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -125,15 +128,17 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    get_console_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/default'}
+    get_console_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/{default}'}
 
     def disable_console(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, default, custom_headers=None, raw=False, **operation_config):
         """Disable Serial Console for a subscription.
 
         Disables the Serial Console service for all VMs and VM scale sets in
         the provided subscription.
 
+        :param default: Default parameter. Leave the value as "default".
+        :type default: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -146,7 +151,8 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
         # Construct URL
         url = self.disable_console.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'default': self._serialize.url("default", default, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,15 +190,17 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    disable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/default/disableConsole'}
+    disable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/{default}/disableConsole'}
 
     def enable_console(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, default, custom_headers=None, raw=False, **operation_config):
         """Enable Serial Console for a subscription.
 
         Enables the Serial Console service for all VMs and VM scale sets in the
         provided subscription.
 
+        :param default: Default parameter. Leave the value as "default".
+        :type default: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -205,7 +213,8 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
         # Construct URL
         url = self.enable_console.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'default': self._serialize.url("default", default, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -243,4 +252,4 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    enable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/default/enableConsole'}
+    enable_console.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SerialConsole/consoleServices/{default}/enableConsole'}

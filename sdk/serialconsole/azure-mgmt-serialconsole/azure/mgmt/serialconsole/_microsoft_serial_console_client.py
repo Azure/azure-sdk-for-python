@@ -18,7 +18,7 @@ from . import models
 
 
 class MicrosoftSerialConsoleClient(MicrosoftSerialConsoleClientOperationsMixin, SDKClient):
-    """The Azure Serial Console allows you to access the serial console of a Virtual Machine or VM scale set
+    """The Azure Serial Console allows you to access the serial console of a Virtual Machine or VM scale set instance
 
     :ivar config: Configuration for client.
     :vartype config: MicrosoftSerialConsoleClientConfiguration
