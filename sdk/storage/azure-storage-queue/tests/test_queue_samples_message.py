@@ -59,7 +59,7 @@ class TestMessageQueueSamples(QueueTestCase):
 
             # Authenticate with the sas token
             # [START create_queue_client]
-            q = QueueClient(
+            q = QueueClient.from_queue_url(
                 queue_url=queue_client.url,
                 credential=sas_token
             )
