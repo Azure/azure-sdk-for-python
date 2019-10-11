@@ -39,7 +39,7 @@ class EventsByBillingProfileOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_profile_id, start_date, end_date, custom_headers=None, raw=False, **operation_config):
         """Lists the events by billingAccountId and billingProfileId for given
         start and end date.
 
@@ -47,6 +47,10 @@ class EventsByBillingProfileOperations(object):
         :type billing_account_id: str
         :param billing_profile_id: Azure Billing Profile ID.
         :type billing_profile_id: str
+        :param start_date: Start date
+        :type start_date: str
+        :param end_date: End date
+        :type end_date: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -71,8 +75,8 @@ class EventsByBillingProfileOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['startDate'] = self._serialize.query("self.config.start_date", self.config.start_date, 'str')
-                query_parameters['endDate'] = self._serialize.query("self.config.end_date", self.config.end_date, 'str')
+                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
+                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
 
             else:
                 url = next_link
