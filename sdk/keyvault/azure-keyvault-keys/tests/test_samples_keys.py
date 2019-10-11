@@ -63,7 +63,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.key_type)
-        print(key.key.key_ops)
+        print(key.key_operations)
 
         # [END create_rsa_key]
         # [START create_ec_key]

@@ -82,7 +82,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)
-        self.assertEqual(key_ops, key_bundle.key.key_ops)
+        self.assertEqual(key_ops, key_bundle.key_operations)
         return key_bundle
 
     def _import_test_key(self, client, name):

@@ -75,7 +75,7 @@ class CryptographyClient(KeyVaultClientBase):
         if isinstance(key, Key):
             self._key = key
             self._key_id = parse_vault_id(key.id)
-            self._allowed_ops = frozenset(self._key.key.key_ops)
+            self._allowed_ops = frozenset(self._key.key_operations)
         elif isinstance(key, six.text_type):
             self._key = None
             self._key_id = parse_vault_id(key)
@@ -120,7 +120,7 @@ class CryptographyClient(KeyVaultClientBase):
                 self._key = self._client.get_key(
                     self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, **kwargs
                 )
-                self._allowed_ops = frozenset(self._key.key.key_ops)
+                self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)

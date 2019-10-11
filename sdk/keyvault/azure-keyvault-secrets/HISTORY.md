@@ -10,6 +10,11 @@ detail the new keyword arguments):
     (optional) `version`
 - `Key.key_material` renamed to `Key.key`
 
+### New features:
+- `Key` has new properties:
+  - `key_operations` is a list of permitted operations
+  - `key_type` is the key's type, e.g. "RSA" or "EC"
+  
 
 ## 4.0.0b4 (2019-10-08)
 ### Breaking changes:
