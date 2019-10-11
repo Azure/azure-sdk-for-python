@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bdc30590-9c16-11e9-a749-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:49 GMT
+      - Wed, 09 Oct 2019 18:44:17 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/mycontainer?restype=container
+    uri: https://pyacrstoragebfbb17d1.blob.core.windows.net/mycontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:50 GMT
-      ETag:
-      - '"0x8D6FE3AA2314F32"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:50 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:44:18 GMT
+      etag:
+      - '"0x8D74CE8B13DAC48"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:44:18 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - dfe71083-701e-00eb-2e23-309afc000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,29 +49,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bde2c562-9c16-11e9-a8a7-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:50 GMT
+      - Wed, 09 Oct 2019 18:44:18 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/mycontainer?restype=container
+    uri: https://pyacrstoragebfbb17d1.blob.core.windows.net/mycontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:50 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:44:18 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - dfe71097-701e-00eb-3d23-309afc000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

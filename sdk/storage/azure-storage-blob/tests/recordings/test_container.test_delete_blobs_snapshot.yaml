@@ -11,31 +11,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 40b10828-e56c-11e9-b82e-1831bf6ae40e
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container617e10e3?restype=container
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      ETag:
-      - '"0x8D7479024A3C2B8"'
-      Last-Modified:
-      - Wed, 02 Oct 2019 23:27:51 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      etag:
+      - '"0x8D74D9D01F9AA70"'
+      last-modified:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - a9ba22f4-f01e-000e-1079-7956ef000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -57,37 +53,33 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 40c694ba-e56c-11e9-8ad0-1831bf6ae40e
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container617e10e3/blob1
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3/blob1
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      ETag:
-      - '"0x8D7479024A9838C"'
-      Last-Modified:
-      - Wed, 02 Oct 2019 23:27:51 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      etag:
+      - '"0x8D74D9D02099FDF"'
+      last-modified:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
       - vo7q9sPVKY0=
-      x-ms-request-id:
-      - a9ba2317-f01e-000e-2d79-7956ef000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -107,35 +99,31 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 40cb385e-e56c-11e9-b5fb-1831bf6ae40e
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container617e10e3/blob1?comp=snapshot
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3/blob1?comp=snapshot
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      ETag:
-      - '"0x8D7479024A9838C"'
-      Last-Modified:
-      - Wed, 02 Oct 2019 23:27:51 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      etag:
+      - '"0x8D74D9D02099FDF"'
+      last-modified:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - a9ba233a-f01e-000e-4f79-7956ef000000
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-snapshot:
-      - '2019-10-02T23:27:51.2566284Z'
+      - '2019-10-10T16:15:03.6774754Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -157,37 +145,33 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 40d1f4a4-e56c-11e9-b182-1831bf6ae40e
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container617e10e3/blob2
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3/blob2
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      ETag:
-      - '"0x8D7479024B654D8"'
-      Last-Modified:
-      - Wed, 02 Oct 2019 23:27:51 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      etag:
+      - '"0x8D74D9D0235E7ED"'
+      last-modified:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
       - vo7q9sPVKY0=
-      x-ms-request-id:
-      - a9ba2351-f01e-000e-6679-7956ef000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -211,37 +195,33 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 40d8731e-e56c-11e9-ba1f-1831bf6ae40e
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container617e10e3/blob3
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3/blob3
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      ETag:
-      - '"0x8D7479024BC968D"'
-      Last-Modified:
-      - Wed, 02 Oct 2019 23:27:51 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      etag:
+      - '"0x8D74D9D024309A7"'
+      last-modified:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
       - vo7q9sPVKY0=
-      x-ms-request-id:
-      - a9ba2371-f01e-000e-0379-7956ef000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -259,65 +239,61 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 40de09b6-e56c-11e9-998e-1831bf6ae40e
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/container617e10e3?include=snapshots&restype=container&comp=list
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"container617e10e3\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-02T23:27:51.2566284Z</Snapshot><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024A9838C</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://pyacrstorage617e10e3.blob.core.windows.net/\" ContainerName=\"container617e10e3\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-10T16:15:03.6774754Z</Snapshot><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D02099FDF</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024A9838C</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D02099FDF</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024B654D8</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D0235E7ED</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob3</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024BC968D</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob3</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D024309A7</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
         /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
         /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:03 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - a9ba2383-f01e-000e-1579-7956ef000000
       x-ms-version:
       - '2019-02-02'
     status:
       code: 200
       message: OK
 - request:
-    body: "--===============3459304103527371314==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+    body: "--===============0106877234==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /container617e10e3/blob1? HTTP/1.1\r\nx-ms-delete-snapshots:
-      only\r\nx-ms-date: Wed, 02 Oct 2019 23:27:51 GMT\r\nx-ms-client-request-id:
-      40e6f4c2-e56c-11e9-98d9-1831bf6ae40e\r\nAuthorization: SharedKey storagename:cXMhY5oqSdhqhzne+vC5WMw/O7h7DlpjGh/XiWSku/c=\r\n\r\n\r\n--===============3459304103527371314==\r\nContent-Type:
+      only\r\nx-ms-date: Thu, 10 Oct 2019 16:15:04 GMT\r\nx-ms-client-request-id:
+      1e3146da-eb79-11e9-ba42-2816a845e8c6\r\nAuthorization: SharedKey pyacrstorage617e10e3:Fjlw2FzmUQ3ZWmd3mpZQ0+tf4nFd/3Ijch7vT4GKR7Y=\r\n\r\n\r\n--===============0106877234==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /container617e10e3/blob2? HTTP/1.1\r\nx-ms-delete-snapshots: only\r\nx-ms-date:
-      Wed, 02 Oct 2019 23:27:51 GMT\r\nx-ms-client-request-id: 40e6f4c3-e56c-11e9-b7b3-1831bf6ae40e\r\nAuthorization:
-      SharedKey storagename:ugyealFbrFB7Aazr7Bo+FjX0vItAuSCpgCyU3qvHoGE=\r\n\r\n\r\n--===============3459304103527371314==\r\nContent-Type:
+      Thu, 10 Oct 2019 16:15:04 GMT\r\nx-ms-client-request-id: 1e316f7a-eb79-11e9-9dab-2816a845e8c6\r\nAuthorization:
+      SharedKey pyacrstorage617e10e3:haPv7Lar/Y05VvfJelGNK6+M3FzD27fOZQ3Cd7JhgUk=\r\n\r\n\r\n--===============0106877234==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /container617e10e3/blob3? HTTP/1.1\r\nx-ms-delete-snapshots: only\r\nx-ms-date:
-      Wed, 02 Oct 2019 23:27:51 GMT\r\nx-ms-client-request-id: 40e6f4c4-e56c-11e9-8760-1831bf6ae40e\r\nAuthorization:
-      SharedKey storagename:a1nviBTPatxPjnp1/fzj5yzi7CW7ibCrQDUj4nbQMHs=\r\n\r\n\r\n--===============3459304103527371314==--\r\n"
+      Thu, 10 Oct 2019 16:15:04 GMT\r\nx-ms-client-request-id: 1e319680-eb79-11e9-8cc8-2816a845e8c6\r\nAuthorization:
+      SharedKey pyacrstorage617e10e3:DO6Ux5HQCU/cCIf4+vN8xR+0AJhFiI8YSdfaRE7CmZU=\r\n\r\n\r\n--===============0106877234==--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -326,46 +302,45 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1224'
+      - '1194'
       Content-Type:
-      - multipart/mixed; boundary================3459304103527371314==
+      - multipart/mixed; boundary================0106877234==
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 40e7420a-e56c-11e9-ae20-1831bf6ae40e
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:51 GMT
+      - Thu, 10 Oct 2019 16:15:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.blob.core.windows.net/?comp=batch
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/?comp=batch
   response:
     body:
-      string: "--batchresponse_bf2693d9-6669-4afc-99bd-42df497f92af\r\nContent-Type:
+      string: "--batchresponse_5e6ad170-7b0e-45f1-9ce7-7e3a1765ad5a\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: a9ba23a7-f01e-000e-3879-7956ef1edacc\r\nx-ms-version:
-        2019-02-02\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_bf2693d9-6669-4afc-99bd-42df497f92af\r\nContent-Type:
+        true\r\nx-ms-request-id: f0d294a1-d01e-00c0-3c85-7fbb271e5c6a\r\nx-ms-version:
+        2019-02-02\r\nx-ms-client-request-id: 1e3146da-eb79-11e9-ba42-2816a845e8c6\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_5e6ad170-7b0e-45f1-9ce7-7e3a1765ad5a\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 404 The specified blob does
-        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: a9ba23a7-f01e-000e-3879-7956ef1edace\r\nx-ms-version:
-        2019-02-02\r\nContent-Length: 216\r\nContent-Type: application/xml\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
-        specified blob does not exist.\nRequestId:a9ba23a7-f01e-000e-3879-7956ef1edace\nTime:2019-10-02T23:27:51.4521191Z</Message></Error>\r\n--batchresponse_bf2693d9-6669-4afc-99bd-42df497f92af\r\nContent-Type:
+        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: f0d294a1-d01e-00c0-3c85-7fbb271e5c6c\r\nx-ms-version:
+        2019-02-02\r\nx-ms-client-request-id: 1e316f7a-eb79-11e9-9dab-2816a845e8c6\r\nContent-Length:
+        216\r\nContent-Type: application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml
+        version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:f0d294a1-d01e-00c0-3c85-7fbb271e5c6c\nTime:2019-10-10T16:15:04.3854492Z</Message></Error>\r\n--batchresponse_5e6ad170-7b0e-45f1-9ce7-7e3a1765ad5a\r\nContent-Type:
         application/http\r\nContent-ID: 2\r\n\r\nHTTP/1.1 404 The specified blob does
-        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: a9ba23a7-f01e-000e-3879-7956ef1edacf\r\nx-ms-version:
-        2019-02-02\r\nContent-Length: 216\r\nContent-Type: application/xml\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
-        specified blob does not exist.\nRequestId:a9ba23a7-f01e-000e-3879-7956ef1edacf\nTime:2019-10-02T23:27:51.4521191Z</Message></Error>\r\n--batchresponse_bf2693d9-6669-4afc-99bd-42df497f92af--"
+        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: f0d294a1-d01e-00c0-3c85-7fbb271e5c6d\r\nx-ms-version:
+        2019-02-02\r\nx-ms-client-request-id: 1e319680-eb79-11e9-8cc8-2816a845e8c6\r\nContent-Length:
+        216\r\nContent-Type: application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml
+        version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:f0d294a1-d01e-00c0-3c85-7fbb271e5c6d\nTime:2019-10-10T16:15:04.3854492Z</Message></Error>\r\n--batchresponse_5e6ad170-7b0e-45f1-9ce7-7e3a1765ad5a--"
     headers:
-      Content-Type:
-      - multipart/mixed; boundary=batchresponse_bf2693d9-6669-4afc-99bd-42df497f92af
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      Server:
+      content-type:
+      - multipart/mixed; boundary=batchresponse_5e6ad170-7b0e-45f1-9ce7-7e3a1765ad5a
+      date:
+      - Thu, 10 Oct 2019 16:15:04 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - a9ba23a7-f01e-000e-3879-7956ef000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -381,43 +356,39 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 40f0bd98-e56c-11e9-bc6d-1831bf6ae40e
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 02 Oct 2019 23:27:52 GMT
+      - Thu, 10 Oct 2019 16:15:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/container617e10e3?include=snapshots&restype=container&comp=list
+    uri: https://pyacrstorage617e10e3.blob.core.windows.net/container617e10e3?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"container617e10e3\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024A9838C</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://pyacrstorage617e10e3.blob.core.windows.net/\" ContainerName=\"container617e10e3\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D02099FDF</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024B654D8</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D0235E7ED</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob3</Name><Properties><Creation-Time>Wed,
-        02 Oct 2019 23:27:51 GMT</Creation-Time><Last-Modified>Wed, 02 Oct 2019 23:27:51
-        GMT</Last-Modified><Etag>0x8D7479024BC968D</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob3</Name><Properties><Creation-Time>Thu,
+        10 Oct 2019 16:15:03 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 16:15:03
+        GMT</Last-Modified><Etag>0x8D74D9D024309A7</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
         /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
         /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 02 Oct 2019 23:27:50 GMT
-      Server:
+      date:
+      - Thu, 10 Oct 2019 16:15:04 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - a9ba23c8-f01e-000e-5879-7956ef000000
       x-ms-version:
       - '2019-02-02'
     status:

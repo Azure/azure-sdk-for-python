@@ -1,0 +1,106 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:27:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage916f1ebc.blob.core.windows.net/utcontainer916f1ebc?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 01:27:12 GMT
+      etag: '"0x8D74DEA2432179E"'
+      last-modified: Fri, 11 Oct 2019 01:27:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage916f1ebc.blob.core.windows.net
+        - /utcontainer916f1ebc
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Type:
+      - application/xml; charset=utf-8
+      If-Unmodified-Since:
+      - Fri, 11 Oct 2019 01:42:12 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:27:12 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage916f1ebc.blob.core.windows.net/utcontainer916f1ebc?restype=container&comp=acl
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 01:27:12 GMT
+      etag: '"0x8D74DEA2436C708"'
+      last-modified: Fri, 11 Oct 2019 01:27:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage916f1ebc.blob.core.windows.net
+        - /utcontainer916f1ebc
+        - restype=container&comp=acl
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:27:12 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorage916f1ebc.blob.core.windows.net/utcontainer916f1ebc?restype=container&comp=acl
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
+        />"
+    headers:
+      content-type: application/xml
+      date: Fri, 11 Oct 2019 01:27:12 GMT
+      etag: '"0x8D74DEA2436C708"'
+      last-modified: Fri, 11 Oct 2019 01:27:12 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage916f1ebc.blob.core.windows.net
+        - /utcontainer916f1ebc
+        - restype=container&comp=acl
+        - ''
+version: 1

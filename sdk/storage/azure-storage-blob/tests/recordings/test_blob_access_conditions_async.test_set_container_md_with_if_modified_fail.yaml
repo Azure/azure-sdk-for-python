@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:27:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragecfdf1f75.blob.core.windows.net/utcontainercfdf1f75?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Oct 2019 01:27:26 GMT
+      etag: '"0x8D74DEA2D28C576"'
+      last-modified: Fri, 11 Oct 2019 01:27:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragecfdf1f75.blob.core.windows.net
+        - /utcontainercfdf1f75
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      If-Modified-Since:
+      - Fri, 11 Oct 2019 01:42:27 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 11 Oct 2019 01:27:27 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragecfdf1f75.blob.core.windows.net/utcontainercfdf1f75?restype=container&comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:7a67c35e-a01e-0084-80d3-7ffee3000000\nTime:2019-10-11T01:27:27.1917512Z</Message></Error>"
+    headers:
+      content-length: '252'
+      content-type: application/xml
+      date: Fri, 11 Oct 2019 01:27:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ConditionNotMet
+      x-ms-version: '2019-02-02'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragecfdf1f75.blob.core.windows.net
+        - /utcontainercfdf1f75
+        - restype=container&comp=metadata
+        - ''
+version: 1

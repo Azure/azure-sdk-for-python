@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bcbd5538-9c16-11e9-89fa-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
+      - Wed, 09 Oct 2019 18:39:27 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/mymetadatacontainer?restype=container
+    uri: https://pyacrstoraged8b2183f.blob.core.windows.net/mymetadatacontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      ETag:
-      - '"0x8D6FE3AA12BFEC1"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      etag:
+      - '"0x8D74CE804A74BC4"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 48006fab-a01e-00e9-0823-309806000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,35 +49,31 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bcdd6eae-9c16-11e9-b9f6-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
+      - Wed, 09 Oct 2019 18:39:29 GMT
       x-ms-meta-type:
       - test
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/mymetadatacontainer?restype=container&comp=metadata
+    uri: https://pyacrstoraged8b2183f.blob.core.windows.net/mymetadatacontainer?restype=container&comp=metadata
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      ETag:
-      - '"0x8D6FE3AA134860E"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      etag:
+      - '"0x8D74CE804B2CF78"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 48006fc3-a01e-00e9-1923-309806000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -95,31 +87,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bce6210c-9c16-11e9-aa5a-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
+      - Wed, 09 Oct 2019 18:39:29 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/mymetadatacontainer?restype=container
+    uri: https://pyacrstoraged8b2183f.blob.core.windows.net/mymetadatacontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      ETag:
-      - '"0x8D6FE3AA134860E"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      etag:
+      - '"0x8D74CE804B2CF78"'
+      last-modified:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-default-encryption-scope:
+      - $account-encryption-key
+      x-ms-deny-encryption-scope-override:
+      - 'false'
       x-ms-has-immutability-policy:
       - 'false'
       x-ms-has-legal-hold:
@@ -130,10 +122,8 @@ interactions:
       - unlocked
       x-ms-meta-type:
       - test
-      x-ms-request-id:
-      - 48006fe6-a01e-00e9-3a23-309806000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -149,29 +139,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - bcee7a14-9c16-11e9-84c8-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
+      - Wed, 09 Oct 2019 18:39:29 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/mymetadatacontainer?restype=container
+    uri: https://pyacrstoraged8b2183f.blob.core.windows.net/mymetadatacontainer?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:48 GMT
-      Server:
+      date:
+      - Wed, 09 Oct 2019 18:39:29 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4800700d-a01e-00e9-5e23-309806000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
