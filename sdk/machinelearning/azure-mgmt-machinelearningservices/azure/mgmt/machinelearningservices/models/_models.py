@@ -514,7 +514,8 @@ class AmlComputeProperties(Model):
      'Dedicated', 'LowPriority'
     :type vm_priority: str or
      ~azure.mgmt.machinelearningservices.models.VmPriority
-    :param os_type: OS Type. Possible values include: 'Linux', 'Windows'
+    :param os_type: OS Type. Possible values include: 'Linux', 'Windows'.
+     Default value: "Linux" .
     :type os_type: str or ~azure.mgmt.machinelearningservices.models.OsType
     :param virtual_machine_image: Custom VM image. The ARM resource identifier
      of the virtual machine image for the compute nodes. This is of the form
@@ -606,7 +607,7 @@ class AmlComputeProperties(Model):
         super(AmlComputeProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
         self.vm_priority = kwargs.get('vm_priority', None)
-        self.os_type = kwargs.get('os_type', None)
+        self.os_type = kwargs.get('os_type', "Linux")
         self.virtual_machine_image = kwargs.get('virtual_machine_image', None)
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
@@ -829,8 +830,8 @@ class ComputeInstanceProperties(Model):
      ComputeInstance.
     :vartype created_by:
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceCreatedBy
-    :ivar errors: Errors. Collection of errors encountered by various compute
-     nodes during node setup.
+    :ivar errors: Errors. Collection of errors encountered on this
+     ComputeInstance.
     :vartype errors:
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
     :ivar state: The current state of this ComputeInstance. Possible values
