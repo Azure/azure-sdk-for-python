@@ -36,7 +36,7 @@ except ImportError:
 
 from azure.core.exceptions import TooManyRedirectsError
 
-from .base import HTTPPolicy, RequestHistory
+from ._base import HTTPPolicy, RequestHistory
 
 
 _LOGGER = logging.getLogger(__name__)

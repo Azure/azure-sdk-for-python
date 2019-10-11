@@ -43,10 +43,10 @@ from azure.core.pipeline import (
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
+    RequestsTransportResponse,
 )
-from azure.core.pipeline.transport import RequestsTransportResponse
 
-from azure.core.pipeline.policies.universal import (
+from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
     UserAgentPolicy
@@ -62,7 +62,7 @@ def test_user_agent():
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
         assert request.headers["user-agent"].endswith("mytools")
 
-@mock.patch('azure.core.pipeline.policies.universal._LOGGER')
+@mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     request = PipelineRequest(universal_request, PipelineContext(None))
