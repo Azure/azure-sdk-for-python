@@ -2,31 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
-import warnings
+"""Fake implementation of AbstractSpan for tests."""
+from azure.core.tracing import HttpSpanMixin, SpanKind
 
-from opencensus.trace import Span, execution_context
-from opencensus.trace.tracer import Tracer
-from opencensus.trace.span import SpanKind as OpenCensusSpanKind
-from opencensus.trace.link import Link
-from opencensus.trace.propagation import trace_context_http_header_format
 
-from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable
-
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-__version__ = "1.0.0b4"
-
-class OpenCensusSpan(HttpSpanMixin, object):
-    """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
+class FakeSpan(HttpSpanMixin, object):
+    # Keep a fake context of the current one
+    CONTEXT = []
 
     def __init__(self, span=None, name="span"):
         # type: (Optional[Span], Optional[str]) -> None
@@ -34,21 +16,28 @@ class OpenCensusSpan(HttpSpanMixin, object):
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
         configure the azure exporter else will just create a new tracer.
 
-        :param span: The OpenCensus span to wrap
-        :type span: :class: opencensus.trace.Span
-        :param name: The name of the OpenCensus span to create if a new span is needed
+        :param span: The OpenTelemetry span to wrap
+        :type span: :class: OpenTelemetry.trace.Span
+        :param name: The name of the OpenTelemetry span to create if a new span is needed
         :type name: str
         """
-        tracer = self.get_current_tracer()
-        self._span_instance = span or tracer.start_span(name=name)
+        self._span = span
+        self.name = name
+        self._kind = SpanKind.UNSPECIFIED
+        self.attributes = {}
+        self.children = []
+        if self.CONTEXT:
+            self.CONTEXT[-1].children.append(self)
+        self.CONTEXT.append(self)
+        self.status = None
 
     @property
     def span_instance(self):
         # type: () -> Span
         """
-        :return: The OpenCensus span that is being wrapped.
+        :return: The OpenTelemetry span that is being wrapped.
         """
-        return self._span_instance
+        return self._span
 
     def span(self, name="span"):
         # type: (Optional[str]) -> OpenCensusSpan
@@ -64,47 +53,34 @@ class OpenCensusSpan(HttpSpanMixin, object):
     def kind(self):
         # type: () -> Optional[SpanKind]
         """Get the span kind of this span."""
-        value = self.span_instance.span_kind
-        return (
-            SpanKind.CLIENT if value == OpenCensusSpanKind.CLIENT else
-            SpanKind.SERVER if value == OpenCensusSpanKind.SERVER else
-            SpanKind.UNSPECIFIED if value == OpenCensusSpanKind.UNSPECIFIED else
-            None
-        )
+        return self._kind
 
 
     @kind.setter
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
-        kind = (
-            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
-            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
-            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
-            None
-        )
-        if kind is None:
-            raise ValueError("Kind {} is not supported in OpenCensus".format(value))
-        self.span_instance.span_kind = kind
+        self._kind = value
 
     def __enter__(self):
         """Start a span."""
-        self.span_instance.__enter__()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
-        self.span_instance.__exit__(exception_type, exception_value, traceback)
+        if exception_value:
+            self.status = exception_value.args[0]
+        self.CONTEXT.pop()
 
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
-        self.__enter__()
+        pass
 
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        self.__exit__(None, None, None)
+        self.CONTEXT.pop()
 
     def to_header(self):
         # type: () -> Dict[str, str]
@@ -112,15 +88,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
-        tracer_from_context = self.get_current_tracer()
-        temp_headers = {} # type: Dict[str, str]
-        if tracer_from_context is not None:
-            ctx = tracer_from_context.span_context
-            try:
-                temp_headers = tracer_from_context.propagator.to_headers(ctx)
-            except AttributeError:
-                pass
-        return temp_headers
+        return {'traceparent': '123456789'}
 
     def add_attribute(self, key, value):
         # type: (str, Union[str, int]) -> None
@@ -132,7 +100,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :param value: The value of the key value pair
         :type value: str
         """
-        self.span_instance.add_attribute(key, value)
+        self.attributes[key] = value
 
     def get_trace_parent(self):
         """Return traceparent string as defined in W3C trace context specification.
@@ -171,9 +139,9 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
+        ctx = extract(_get_headers_from_http_request_headers, headers)
         current_span = cls.get_current_span()
-        current_span.add_link(Link(ctx.trace_id, ctx.span_id))
+        current_span.add_link(ctx)
 
     @classmethod
     def get_current_span(cls):
@@ -181,7 +149,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         Get the current span from the execution context. Return None otherwise.
         """
-        return execution_context.get_current_span()
+        return cls.CONTEXT[-1]
 
     @classmethod
     def get_current_tracer(cls):
@@ -189,31 +157,23 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
-        return execution_context.get_opencensus_tracer()
-
-    @classmethod
-    def set_current_span(cls, span):
-        # type: (Span) -> None
-        """
-        Set the given span as the current span in the execution context.
-
-        :param span: The span to set the current span as
-        :type span: :class: opencensus.trace.Span
-        """
-        warnings.warn("set_current_span is deprecated, use change_context instead", DeprecationWarning)
-        return execution_context.set_current_span(span)
+        raise NotImplementedError()
 
     @classmethod
     def change_context(cls, span):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
         """
-        original_span = cls.get_current_span()
-        try:
-            execution_context.set_current_span(span)
-            yield
-        finally:
-            execution_context.set_current_span(original_span)
+        cls.CONTEXT.append(span)
+        yield
+        cls.CONTEXT.pop()
+
+    @classmethod
+    def set_current_span(cls, span):
+        # type: (Span) -> None
+        """Not supported by OpenTelemetry.
+        """
+        raise NotImplementedError()
 
     @classmethod
     def set_current_tracer(cls, tracer):
@@ -221,9 +181,9 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         Set the given tracer as the current tracer in the execution context.
         :param tracer: The tracer to set the current tracer as
-        :type tracer: :class: opencensus.trace.Tracer
+        :type tracer: :class: OpenTelemetry.trace.Tracer
         """
-        return execution_context.set_opencensus_tracer(tracer)
+        raise NotImplementedError()
 
     @classmethod
     def with_current_context(cls, func):
@@ -233,9 +193,4 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
-        try:
-            import opencensus.ext.threading  # pylint: disable=unused-import
-        except ImportError:
-            raise ValueError("In order to trace threads with Opencensus, please install opencensus-ext-threading")
-        # Noop, once opencensus-ext-threading is installed threads get context for free.
         return func
