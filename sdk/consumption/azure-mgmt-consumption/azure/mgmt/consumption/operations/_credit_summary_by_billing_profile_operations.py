@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TagsOperations(object):
-    """TagsOperations operations.
+class CreditSummaryByBillingProfileOperations(object):
+    """CreditSummaryByBillingProfileOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,29 +39,20 @@ class TagsOperations(object):
         self.config = config
 
     def get(
-            self, scope, custom_headers=None, raw=False, **operation_config):
-        """Get all available tag keys for the defined scope.
+            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
+        """The credit summary by billingAccountId and billingProfileId.
 
-        :param scope: The scope associated with tags operations. This includes
-         '/subscriptions/{subscriptionId}/' for subscription scope,
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
-         for resourceGroup scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
-         Billing Account scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
-         for Department scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
-        :type scope: str
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
+        :param billing_profile_id: Azure Billing Profile ID.
+        :type billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TagsResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.TagsResult or
+        :return: CreditSummary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CreditSummary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -69,7 +60,8 @@ class TagsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,11 +88,11 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TagsResult', response)
+            deserialized = self._deserialize('CreditSummary', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/tags'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/providers/Microsoft.Consumption/credits/balanceSummary'}

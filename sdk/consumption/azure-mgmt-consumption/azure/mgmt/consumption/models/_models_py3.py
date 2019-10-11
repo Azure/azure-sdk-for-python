@@ -473,6 +473,88 @@ class CloudError(Model):
     }
 
 
+class CreditBalanceSummary(Model):
+    """Summary of credit balances.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar estimated_balance: Estimated balance.
+    :vartype estimated_balance: decimal.Decimal
+    :ivar current_balance: Current balance.
+    :vartype current_balance: decimal.Decimal
+    """
+
+    _validation = {
+        'estimated_balance': {'readonly': True},
+        'current_balance': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'estimated_balance': {'key': 'estimatedBalance', 'type': 'decimal'},
+        'current_balance': {'key': 'currentBalance', 'type': 'decimal'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CreditBalanceSummary, self).__init__(**kwargs)
+        self.estimated_balance = None
+        self.current_balance = None
+
+
+class CreditSummary(Resource):
+    """A credit summary resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param balance_summary: Summary of balances associated with this credit
+     summary.
+    :type balance_summary: ~azure.mgmt.consumption.models.CreditBalanceSummary
+    :ivar pending_credit_adjustments: Pending Credit Adjustments.
+    :vartype pending_credit_adjustments: decimal.Decimal
+    :ivar expired_credit: Expired Credit.
+    :vartype expired_credit: decimal.Decimal
+    :ivar pending_eligible_charges: Pending Eligible Charges.
+    :vartype pending_eligible_charges: decimal.Decimal
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'pending_credit_adjustments': {'readonly': True},
+        'expired_credit': {'readonly': True},
+        'pending_eligible_charges': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'balance_summary': {'key': 'properties.BalanceSummary', 'type': 'CreditBalanceSummary'},
+        'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'decimal'},
+        'expired_credit': {'key': 'properties.expiredCredit', 'type': 'decimal'},
+        'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'decimal'},
+    }
+
+    def __init__(self, *, balance_summary=None, **kwargs) -> None:
+        super(CreditSummary, self).__init__(**kwargs)
+        self.balance_summary = balance_summary
+        self.pending_credit_adjustments = None
+        self.expired_credit = None
+        self.pending_eligible_charges = None
+
+
 class CurrentSpend(Model):
     """The current amount of cost which is being tracked for a budget.
 
@@ -557,6 +639,86 @@ class ErrorResponseException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class EventSummary(Resource):
+    """An event summary resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar transaction_date: Transaction Date.
+    :vartype transaction_date: datetime
+    :ivar description: Transaction description.
+    :vartype description: str
+    :ivar new_credit: New Credit.
+    :vartype new_credit: decimal.Decimal
+    :ivar adjustments: Adjustments.
+    :vartype adjustments: decimal.Decimal
+    :ivar credit_expired: Credit Expired.
+    :vartype credit_expired: decimal.Decimal
+    :ivar charges: Charges.
+    :vartype charges: decimal.Decimal
+    :ivar closed_balance: Closed Balance.
+    :vartype closed_balance: decimal.Decimal
+    :param event_type: The type of event. Possible values include:
+     'SettledCharges', 'PendingCharges', 'PendingAdjustments',
+     'PendingNewCredit', 'PendingExpiredCredit', 'UnKnown', 'NewCredit'
+    :type event_type: str or ~azure.mgmt.consumption.models.EventType
+    :ivar invoice_number: Invoice Number.
+    :vartype invoice_number: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'transaction_date': {'readonly': True},
+        'description': {'readonly': True},
+        'new_credit': {'readonly': True},
+        'adjustments': {'readonly': True},
+        'credit_expired': {'readonly': True},
+        'charges': {'readonly': True},
+        'closed_balance': {'readonly': True},
+        'invoice_number': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'new_credit': {'key': 'properties.newCredit', 'type': 'decimal'},
+        'adjustments': {'key': 'properties.adjustments', 'type': 'decimal'},
+        'credit_expired': {'key': 'properties.creditExpired', 'type': 'decimal'},
+        'charges': {'key': 'properties.charges', 'type': 'decimal'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'decimal'},
+        'event_type': {'key': 'properties.eventType', 'type': 'str'},
+        'invoice_number': {'key': 'properties.invoiceNumber', 'type': 'str'},
+    }
+
+    def __init__(self, *, event_type=None, **kwargs) -> None:
+        super(EventSummary, self).__init__(**kwargs)
+        self.transaction_date = None
+        self.description = None
+        self.new_credit = None
+        self.adjustments = None
+        self.credit_expired = None
+        self.charges = None
+        self.closed_balance = None
+        self.event_type = event_type
+        self.invoice_number = None
 
 
 class Filters(Model):
@@ -693,6 +855,71 @@ class ForecastPropertiesConfidenceLevelsItem(Model):
         self.percentage = None
         self.bound = bound
         self.value = None
+
+
+class LotSummary(Resource):
+    """A lot summary resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar original_amount: Original Amount.
+    :vartype original_amount: decimal.Decimal
+    :ivar closed_balance: Closed Balance.
+    :vartype closed_balance: decimal.Decimal
+    :ivar source: Lot source. Possible values include: 'PurchasedCredit',
+     'PromotionalCredit'
+    :vartype source: str or ~azure.mgmt.consumption.models.LotSource
+    :ivar start_date: Start Date.
+    :vartype start_date: datetime
+    :ivar expiration_date: Expiration Date.
+    :vartype expiration_date: datetime
+    :ivar po_number: PO Number.
+    :vartype po_number: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'original_amount': {'readonly': True},
+        'closed_balance': {'readonly': True},
+        'source': {'readonly': True},
+        'start_date': {'readonly': True},
+        'expiration_date': {'readonly': True},
+        'po_number': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'original_amount': {'key': 'properties.originalAmount', 'type': 'decimal'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'decimal'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
+        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
+        'po_number': {'key': 'properties.poNumber', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LotSummary, self).__init__(**kwargs)
+        self.original_amount = None
+        self.closed_balance = None
+        self.source = None
+        self.start_date = None
+        self.expiration_date = None
+        self.po_number = None
 
 
 class ManagementGroupAggregatedCostResult(Resource):

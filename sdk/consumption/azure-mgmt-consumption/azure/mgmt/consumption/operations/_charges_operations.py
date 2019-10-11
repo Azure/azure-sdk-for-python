@@ -24,7 +24,7 @@ class ChargesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-06-01. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01. Constant value: "2019-10-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ChargesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -42,10 +42,10 @@ class ChargesOperations(object):
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the charges based for the defined scope.
 
-        :param scope: The scope associated with usage details operations. This
+        :param scope: The scope associated with charges operations. This
          includes
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
-         for Department scope and
+         for Department scope, and
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope. For department and enrollment accounts,
          you can also add billing period to the scope using

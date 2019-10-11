@@ -23,16 +23,24 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param start_date: Start date
+    :type start_date: str
+    :param end_date: End date
+    :type end_date: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, start_date, end_date, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if start_date is None:
+            raise ValueError("Parameter 'start_date' must not be None.")
+        if end_date is None:
+            raise ValueError("Parameter 'end_date' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -46,3 +54,5 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.start_date = start_date
+        self.end_date = end_date

@@ -17,12 +17,16 @@ try:
     from ._models_py3 import BudgetTimePeriod
     from ._models_py3 import ChargesListResult
     from ._models_py3 import ChargeSummary
+    from ._models_py3 import CreditBalanceSummary
+    from ._models_py3 import CreditSummary
     from ._models_py3 import CurrentSpend
     from ._models_py3 import ErrorDetails
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import EventSummary
     from ._models_py3 import Filters
     from ._models_py3 import Forecast
     from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
+    from ._models_py3 import LotSummary
     from ._models_py3 import ManagementGroupAggregatedCostResult
     from ._models_py3 import Marketplace
     from ._models_py3 import MeterDetails
@@ -51,12 +55,16 @@ except (SyntaxError, ImportError):
     from ._models import BudgetTimePeriod
     from ._models import ChargesListResult
     from ._models import ChargeSummary
+    from ._models import CreditBalanceSummary
+    from ._models import CreditSummary
     from ._models import CurrentSpend
     from ._models import ErrorDetails
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import EventSummary
     from ._models import Filters
     from ._models import Forecast
     from ._models import ForecastPropertiesConfidenceLevelsItem
+    from ._models import LotSummary
     from ._models import ManagementGroupAggregatedCostResult
     from ._models import Marketplace
     from ._models import MeterDetails
@@ -78,7 +86,9 @@ except (SyntaxError, ImportError):
     from ._models import TagsResult
     from ._models import UsageDetail
 from ._paged_models import BudgetPaged
+from ._paged_models import EventSummaryPaged
 from ._paged_models import ForecastPaged
+from ._paged_models import LotSummaryPaged
 from ._paged_models import MarketplacePaged
 from ._paged_models import OperationPaged
 from ._paged_models import ReservationDetailPaged
@@ -94,6 +104,8 @@ from ._consumption_management_client_enums import (
     Grain,
     ChargeType,
     Bound,
+    EventType,
+    LotSource,
     Datagrain,
     Metrictype,
 )
@@ -106,12 +118,16 @@ __all__ = [
     'BudgetTimePeriod',
     'ChargesListResult',
     'ChargeSummary',
+    'CreditBalanceSummary',
+    'CreditSummary',
     'CurrentSpend',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
+    'EventSummary',
     'Filters',
     'Forecast',
     'ForecastPropertiesConfidenceLevelsItem',
+    'LotSummary',
     'ManagementGroupAggregatedCostResult',
     'Marketplace',
     'MeterDetails',
@@ -141,6 +157,8 @@ __all__ = [
     'ReservationTransactionPaged',
     'ForecastPaged',
     'OperationPaged',
+    'EventSummaryPaged',
+    'LotSummaryPaged',
     'BillingFrequency',
     'CategoryType',
     'TimeGrainType',
@@ -148,6 +166,8 @@ __all__ = [
     'Grain',
     'ChargeType',
     'Bound',
+    'EventType',
+    'LotSource',
     'Datagrain',
     'Metrictype',
 ]

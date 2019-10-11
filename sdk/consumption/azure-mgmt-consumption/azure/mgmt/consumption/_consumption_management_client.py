@@ -27,6 +27,9 @@ from .operations import PriceSheetOperations
 from .operations import ForecastsOperations
 from .operations import Operations
 from .operations import AggregatedCostOperations
+from .operations import EventsByBillingProfileOperations
+from .operations import LotsByBillingProfileOperations
+from .operations import CreditSummaryByBillingProfileOperations
 from . import models
 
 
@@ -64,23 +67,33 @@ class ConsumptionManagementClient(SDKClient):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
+    :ivar events_by_billing_profile: EventsByBillingProfile operations
+    :vartype events_by_billing_profile: azure.mgmt.consumption.operations.EventsByBillingProfileOperations
+    :ivar lots_by_billing_profile: LotsByBillingProfile operations
+    :vartype lots_by_billing_profile: azure.mgmt.consumption.operations.LotsByBillingProfileOperations
+    :ivar credit_summary_by_billing_profile: CreditSummaryByBillingProfile operations
+    :vartype credit_summary_by_billing_profile: azure.mgmt.consumption.operations.CreditSummaryByBillingProfileOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param start_date: Start date
+    :type start_date: str
+    :param end_date: End date
+    :type end_date: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, start_date, end_date, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, start_date, end_date, base_url)
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-01'
+        self.api_version = '2019-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -111,4 +124,10 @@ class ConsumptionManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.events_by_billing_profile = EventsByBillingProfileOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.lots_by_billing_profile = LotsByBillingProfileOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.credit_summary_by_billing_profile = CreditSummaryByBillingProfileOperations(
             self._client, self.config, self._serialize, self._deserialize)
