@@ -12,8 +12,6 @@ from .client_credential import CertificateCredential, ClientSecretCredential
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline.policies import HTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class EnvironmentCredential:
@@ -51,7 +49,7 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
