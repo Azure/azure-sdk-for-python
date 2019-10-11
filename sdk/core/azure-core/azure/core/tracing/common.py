@@ -27,8 +27,8 @@
 from contextlib import contextmanager
 import warnings
 
-from azure.core.tracing.abstract_span import AbstractSpan
-from azure.core.settings import settings
+from ._abstract_span import AbstractSpan
+from ..settings import settings
 
 
 try:

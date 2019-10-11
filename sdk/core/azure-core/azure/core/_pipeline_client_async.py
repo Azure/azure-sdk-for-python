@@ -26,11 +26,9 @@
 
 import logging
 from .configuration import Configuration
-from .pipeline import Pipeline
-from .pipeline.transport.base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy
-from .pipeline.transport import RequestsTransport
-from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from .pipeline import AsyncPipeline
+from .pipeline.transport._base import PipelineClientBase
+from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy
 
 try:
     from typing import TYPE_CHECKING
@@ -54,31 +52,31 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class PipelineClient(PipelineClientBase):
+class AsyncPipelineClient(PipelineClientBase):
     """Service client core methods.
 
-    Builds a Pipeline client.
+    Builds an AsyncPipeline client.
 
     :param str base_url: URL for the request.
     :keyword Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[policy] policies: If omitted, the standard policies of the configuration object is used.
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
-    :return: A pipeline object.
-    :rtype: ~azure.core.pipeline.Pipeline
+    :return: An async pipeline object.
+    :rtype: ~azure.core.pipeline.AsyncPipeline
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
-            :start-after: [START build_pipeline_client]
-            :end-before: [END build_pipeline_client]
+        .. literalinclude:: ../examples/test_example_async.py
+            :start-after: [START build_async_pipeline_client]
+            :end-before: [END build_async_pipeline_client]
             :language: python
             :dedent: 4
-            :caption: Builds the pipeline client.
+            :caption: Builds the async pipeline client.
     """
 
     def __init__(self, base_url, **kwargs):
-        super(PipelineClient, self).__init__(base_url)
+        super(AsyncPipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
         if kwargs.get("pipeline"):
@@ -86,15 +84,15 @@ class PipelineClient(PipelineClientBase):
         else:
             self._pipeline = self._build_pipeline(self._config, **kwargs)
 
-    def __enter__(self):
-        self._pipeline.__enter__()
+    async def __aenter__(self):
+        await self._pipeline.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self._pipeline.__exit__(*exc_details)
+    async def __aexit__(self, *args):
+        await self.close()
 
-    def close(self):
-        self.__exit__()
+    async def close(self):
+        await self._pipeline.__aexit__()
 
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
         transport = kwargs.get('transport')
@@ -114,6 +112,7 @@ class PipelineClient(PipelineClientBase):
             ]
 
         if not transport:
-            transport = RequestsTransport(**kwargs)
+            from .pipeline.transport import AioHttpTransport
+            transport = AioHttpTransport(**kwargs)
 
-        return Pipeline(transport, policies)
+        return AsyncPipeline(transport, policies)
