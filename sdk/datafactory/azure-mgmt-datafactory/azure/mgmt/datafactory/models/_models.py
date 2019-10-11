@@ -15019,8 +15019,9 @@ class HDInsightPigActivity(ExecutionActivity):
     :param storage_linked_services: Storage linked service references.
     :type storage_linked_services:
      list[~azure.mgmt.datafactory.models.LinkedServiceReference]
-    :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list[object]
+    :param arguments: User specified arguments to HDInsightActivity. Type:
+     array (or Expression with resultType array).
+    :type arguments: object
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
     :type get_debug_info: str or
@@ -15050,7 +15051,7 @@ class HDInsightPigActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'storage_linked_services': {'key': 'typeProperties.storageLinkedServices', 'type': '[LinkedServiceReference]'},
-        'arguments': {'key': 'typeProperties.arguments', 'type': '[object]'},
+        'arguments': {'key': 'typeProperties.arguments', 'type': 'object'},
         'get_debug_info': {'key': 'typeProperties.getDebugInfo', 'type': 'str'},
         'script_path': {'key': 'typeProperties.scriptPath', 'type': 'object'},
         'script_linked_service': {'key': 'typeProperties.scriptLinkedService', 'type': 'LinkedServiceReference'},
@@ -28420,7 +28421,7 @@ class SSISAccessCredential(Model):
     :param user_name: Required. UseName for windows authentication.
     :type user_name: object
     :param password: Required. Password for windows authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
@@ -28432,7 +28433,7 @@ class SSISAccessCredential(Model):
     _attribute_map = {
         'domain': {'key': 'domain', 'type': 'object'},
         'user_name': {'key': 'userName', 'type': 'object'},
-        'password': {'key': 'password', 'type': 'SecureString'},
+        'password': {'key': 'password', 'type': 'SecretBase'},
     }
 
     def __init__(self, **kwargs):
@@ -28789,7 +28790,7 @@ class SSISPackageLocation(Model):
      'SSISDB', 'File'
     :type type: str or ~azure.mgmt.datafactory.models.SsisPackageLocationType
     :param package_password: Password of the package.
-    :type package_password: ~azure.mgmt.datafactory.models.SecureString
+    :type package_password: ~azure.mgmt.datafactory.models.SecretBase
     :param access_credential: The package access credential.
     :type access_credential:
      ~azure.mgmt.datafactory.models.SSISAccessCredential
@@ -28805,7 +28806,7 @@ class SSISPackageLocation(Model):
     _attribute_map = {
         'package_path': {'key': 'packagePath', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'package_password': {'key': 'typeProperties.packagePassword', 'type': 'SecureString'},
+        'package_password': {'key': 'typeProperties.packagePassword', 'type': 'SecretBase'},
         'access_credential': {'key': 'typeProperties.accessCredential', 'type': 'SSISAccessCredential'},
         'configuration_path': {'key': 'typeProperties.configurationPath', 'type': 'object'},
     }
