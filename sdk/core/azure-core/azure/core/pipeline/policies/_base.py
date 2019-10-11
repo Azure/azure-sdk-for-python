@@ -123,7 +123,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         :return: False by default, override with True to stop the exception.
         :rtype: bool
 
-    .. admonition:: Example:
+        .. admonition:: Example:
 
             .. literalinclude:: ../examples/test_example_sansio.py
                 :start-after: [START on_exception]
