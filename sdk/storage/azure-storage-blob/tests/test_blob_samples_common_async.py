@@ -9,24 +9,16 @@
 import os
 import asyncio
 from azure.core.exceptions import ResourceExistsError
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestCommonBlobSamplesAsync(StorageTestCase):
-
-    connection_string = settings.BLOB_CONNECTION_STRING
+class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -45,11 +37,15 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         return super(TestCommonBlobSamplesAsync, self).tearDown()
 
     #--Begin Blob Samples-----------------------------------------------------------------
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_blob_snapshots_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_blob_snapshots_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("containerformyblobsasync")
@@ -78,17 +74,15 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         # Delete container
         await blob_service_client.delete_container("containerformyblobsasync")
 
-    @record
-    def test_blob_snapshots_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_snapshots_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_soft_delete_and_undelete_blob_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_soft_delete_and_undelete_blob_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Create a retention policy to retain deleted blobs
         from azure.storage.blob import RetentionPolicy
@@ -128,17 +122,15 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         # Delete container
         await blob_service_client.delete_container("containerfordeletedblobsasync")
 
-    @record
-    def test_soft_delete_and_undelete_blob_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_soft_delete_and_undelete_blob_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_acquire_lease_on_blob_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_acquire_lease_on_blob_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("leasemyblobscontainerasync")
@@ -164,17 +156,15 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
         # Delete container
         await blob_service_client.delete_container("leasemyblobscontainerasync")
 
-    @record
-    def test_acquire_lease_on_blob_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_acquire_lease_on_blob_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_copy_blob_from_url_and_abort_copy_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_copy_blob_from_url_and_abort_copy_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("copyblobcontainerasync")
@@ -206,10 +196,3 @@ class TestCommonBlobSamplesAsync(StorageTestCase):
 
         finally:
             await blob_service_client.delete_container("copyblobcontainerasync")
-
-    @record
-    def test_copy_blob_from_url_and_abort_copy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_blob_from_url_and_abort_copy_async())

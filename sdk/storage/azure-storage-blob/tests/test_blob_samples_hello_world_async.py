@@ -9,24 +9,17 @@
 import os
 import asyncio
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'BlockDestination.txt'
 
 
-class TestBlobSamplesAsync(StorageTestCase):
-
-    connection_string = settings.BLOB_CONNECTION_STRING
+class TestBlobSamplesAsync(AsyncBlobTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -50,11 +43,15 @@ class TestBlobSamplesAsync(StorageTestCase):
         return super(TestBlobSamplesAsync, self).tearDown()
 
     #--Begin Blob Samples-----------------------------------------------------------------
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_container_sample_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_create_container_sample_async(self):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("mycontainerasync")
@@ -72,17 +69,15 @@ class TestBlobSamplesAsync(StorageTestCase):
             # Delete the container
             await container_client.delete_container()
 
-    @record
-    def test_create_container_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_container_sample_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_block_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_block_blob_sample_async(self):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("myblockcontainerasync")
@@ -115,17 +110,15 @@ class TestBlobSamplesAsync(StorageTestCase):
             # Delete the container
             await container_client.delete_container()
 
-    @record
-    def test_block_blob_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_block_blob_sample_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_page_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_page_blob_sample_async(self):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("mypagecontainerasync")
@@ -154,17 +147,15 @@ class TestBlobSamplesAsync(StorageTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @record
-    def test_page_blob_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_page_blob_sample_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_append_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
+        connection_string = self.connection_string(storage_account, storage_account_key)
 
-    async def _test_append_blob_sample_async(self):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("myappendcontainerasync")
@@ -192,10 +183,3 @@ class TestBlobSamplesAsync(StorageTestCase):
         finally:
             # Delete container
             await container_client.delete_container()
-
-    @record
-    def test_append_blob_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_append_blob_sample_async())
