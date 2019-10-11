@@ -199,7 +199,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key.name] = key
 
         # list keys
-        result = client.list_keys(max_page_size=max_keys)
+        result = client.list_properties_of_keys(max_page_size=max_keys)
         async for key in result:
             if key.name in expected.keys():
                 self._assert_key_attributes_equal(expected[key.name].properties, key)

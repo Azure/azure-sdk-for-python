@@ -245,7 +245,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
+    def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information

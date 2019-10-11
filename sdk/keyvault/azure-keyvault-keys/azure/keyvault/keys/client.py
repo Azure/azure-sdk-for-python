@@ -255,7 +255,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs):
+    def list_properties_of_keys(self, **kwargs):
         # type: (**Any) -> ItemPaged[KeyProperties]
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 

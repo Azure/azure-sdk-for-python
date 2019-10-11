@@ -105,7 +105,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_secrets]
 
         # list secrets
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_properties_of_secrets()
 
         for secret in secrets:
             # the list doesn't include values or versions of the secrets

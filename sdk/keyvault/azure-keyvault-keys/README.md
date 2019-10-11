@@ -200,7 +200,7 @@ print(deleted_key.deleted_date)
 This example lists all the keys in the client's vault.
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 for key in keys:
     # the list doesn't include values or versions of the keys
@@ -263,7 +263,7 @@ print(ec_key.key_material.kty)
 This example lists all the keys in the client's vault:
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 async for key in keys:
     print(key.name)

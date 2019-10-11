@@ -55,7 +55,7 @@ try:
     # List operations don 't return the keys with their type information.
     # So, for each returned key we call get_key to get the key with its type information.
     print("\n.. List keys from the Key Vault")
-    keys = client.list_keys()
+    keys = client.list_properties_of_keys()
     for key in keys:
         retrieved_key = client.get_key(key.name)
         print(

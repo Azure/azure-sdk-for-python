@@ -161,7 +161,7 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_secrets(self, **kwargs):
+    def list_properties_of_secrets(self, **kwargs):
         # type: (**Any) -> ItemPaged[SecretProperties]
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.

@@ -132,7 +132,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_keys]
 
         # list keys
-        keys = key_client.list_keys()
+        keys = key_client.list_properties_of_keys()
 
         async for key in keys:
             print(key.id)

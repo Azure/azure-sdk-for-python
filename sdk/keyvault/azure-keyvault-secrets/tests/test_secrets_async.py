@@ -136,7 +136,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_secrets(max_results=max_secrets)
+        result = client.list_properties_of_secrets(max_results=max_secrets)
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()

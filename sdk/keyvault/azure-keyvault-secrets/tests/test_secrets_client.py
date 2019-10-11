@@ -140,7 +140,7 @@ class SecretClientTests(KeyVaultTestCase):
                 expected[secret.name] = secret
 
         # list secrets
-        result = list(client.list_secrets(max_page_size=max_secrets))
+        result = list(client.list_properties_of_secrets(max_page_size=max_secrets))
         self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()

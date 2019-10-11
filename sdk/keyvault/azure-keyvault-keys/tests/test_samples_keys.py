@@ -137,7 +137,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_keys]
 
         # get an iterator of keys
-        keys = key_client.list_keys()
+        keys = key_client.list_properties_of_keys()
 
         for key in keys:
             print(key.id)

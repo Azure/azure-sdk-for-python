@@ -107,7 +107,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_secrets]
 
         # gets a list of secrets in the vault
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_properties_of_secrets()
 
         async for secret in secrets:
             # the list doesn't include values or versions of the secrets

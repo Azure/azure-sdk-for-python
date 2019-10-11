@@ -200,7 +200,7 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
@@ -231,10 +231,11 @@ This example creates a secret in the Key Vault with the specified optional argum
 ```
 
 ### Async list secrets
-This example lists all the secrets in the specified Key Vault.
+This example lists properties of all the secrets in the specified Key Vault.
+Note that secret values are not included.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets

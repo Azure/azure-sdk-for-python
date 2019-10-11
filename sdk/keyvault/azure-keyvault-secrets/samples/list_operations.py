@@ -52,7 +52,7 @@ def run_sample():
         # List operations don 't return the secrets with value information.
         # So, for each returned secret we call get_secret to get the secret with its value information.
         print("\n.. List secrets from the Key Vault")
-        secrets = client.list_secrets()
+        secrets = client.list_properties_of_secrets()
         for secret in secrets:
             retrieved_secret = client.get_secret(secret.name)
             print(
