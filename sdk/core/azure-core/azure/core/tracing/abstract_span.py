@@ -13,7 +13,8 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union, Callable
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
+    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
 try:
     from typing_extensions import Protocol
@@ -89,14 +90,14 @@ class AbstractSpan(Protocol):
         """
 
     def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, HttpResponse) -> None
+        # type: (HttpRequest, Optional[HttpResponseType]) -> None
         """
         Add correct attributes for a http client span.
 
         :param request: The request made
         :type request: HttpRequest
         :param response: The response received by the server. Is None if no response received.
-        :type response: HttpResponse
+        :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
 
     def get_trace_parent(self):
@@ -163,6 +164,12 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
+    def change_context(cls, span):
+        # type: (Span) -> ContextManager
+        """Change the context for the life of this context manager.
+        """
+
+    @classmethod
     def with_current_context(cls, func):
         # type: (Callable) -> Callable
         """Passes the current spans to the new context the function will be run in.
@@ -170,3 +177,34 @@ class AbstractSpan(Protocol):
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
+
+class HttpSpanMixin(object):
+    """Can be used to get HTTP span attributes settings for free.
+    """
+    _SPAN_COMPONENT = "component"
+    _HTTP_USER_AGENT = "http.user_agent"
+    _HTTP_METHOD = "http.method"
+    _HTTP_URL = "http.url"
+    _HTTP_STATUS_CODE = "http.status_code"
+
+    def set_http_attributes(self, request, response=None):
+        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+        """
+        Add correct attributes for a http client span.
+
+        :param request: The request made
+        :type request: HttpRequest
+        :param response: The response received by the server. Is None if no response received.
+        :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        self.kind = SpanKind.CLIENT
+        self.add_attribute(self._SPAN_COMPONENT, "http")
+        self.add_attribute(self._HTTP_METHOD, request.method)
+        self.add_attribute(self._HTTP_URL, request.url)
+        user_agent = request.headers.get("User-Agent")
+        if user_agent:
+            self.add_attribute(self._HTTP_USER_AGENT, user_agent)
+        if response:
+            self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
+        else:
+            self.add_attribute(self._HTTP_STATUS_CODE, 504)
