@@ -48,7 +48,6 @@ class RedirectPolicy(HTTPPolicy):
     A redirect policy in the pipeline can be configured directly or per operation.
 
     :keyword bool permit_redirects: Whether the client allows redirects. Defaults to True.
-
     :keyword int redirect_max: The maximum allowed redirects. Defaults to 30.
 
     .. admonition:: Example:

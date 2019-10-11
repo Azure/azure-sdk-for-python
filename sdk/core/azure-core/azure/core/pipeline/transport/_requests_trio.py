@@ -54,8 +54,6 @@ class TrioStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param generator iter_content_func: Iterator for response data.
-    :param int content_length: size of body in bytes.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
         self.pipeline = pipeline
@@ -160,7 +158,6 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
 
         :param request: The HttpRequest
         :type request: ~azure.core.pipeline.transport.HttpRequest
-        :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 

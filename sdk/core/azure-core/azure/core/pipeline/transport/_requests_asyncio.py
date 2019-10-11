@@ -87,7 +87,6 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
         :param request: The HttpRequest
         :type request: ~azure.core.pipeline.transport.HttpRequest
-        :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 

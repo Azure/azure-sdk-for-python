@@ -55,10 +55,6 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     :param HttpRequest request: The request.
     :param requests_response: The object returned from the HTTP library.
     :param int block_size: Size in bytes.
-    :param int status_code: The status code of the response.
-    :param dict headers: The request headers.
-    :param str reason: Status reason of response.
-    :param str content_type: The content type.
     """
     def __init__(self, request, requests_response, block_size=None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
@@ -81,8 +77,6 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param generator iter_content_func: Iterator for response data.
-    :param int content_length: size of body in bytes.
     """
     def __init__(self, pipeline, response):
         self.pipeline = pipeline

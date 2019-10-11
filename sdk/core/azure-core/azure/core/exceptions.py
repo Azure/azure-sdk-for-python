@@ -43,8 +43,6 @@ def raise_with_traceback(exception, *args, **kwargs):
 
     :param Exception exception: Error type to be raised.
     :param args: Any additional args to be included with exception.
-    :param kwargs: Keyword arguments to include with the exception.
-
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
     message = kwargs.pop('message', '')
