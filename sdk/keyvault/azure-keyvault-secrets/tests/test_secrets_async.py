@@ -20,7 +20,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
-        self.assertEqual(s1.expires, s2.expires)
+        self.assertEqual(s1.expires_on, s2.expires_on)
         self.assertEqual(s1.created, s2.created)
         self.assertEqual(s1.updated, s2.updated)
         self.assertEqual(s1.recovery_level, s2.recovery_level)
@@ -91,14 +91,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 secret.name,
                 version=secret.properties.version,
                 content_type=content_type,
-                expires=expires,
+                expires_on=expires,
                 tags=tags,
                 enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)
             self.assertEqual(content_type, updated_secret.content_type)
-            self.assertEqual(expires, updated_secret.expires)
+            self.assertEqual(expires, updated_secret.expires_on)
             self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
             self.assertNotEqual(secret.properties.updated, updated_secret.updated)
             return updated_secret

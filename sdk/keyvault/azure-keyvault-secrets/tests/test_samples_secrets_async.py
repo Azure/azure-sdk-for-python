@@ -38,15 +38,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START set_secret]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
+        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires_on=expires_on)
 
         print(secret.id)
         print(secret.name)
         print(secret.properties.enabled)
-        print(secret.properties.expires)
+        print(secret.properties.expires_on)
 
         # [END set_secret]
 

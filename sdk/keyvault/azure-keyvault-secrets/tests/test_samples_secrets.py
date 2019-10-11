@@ -39,14 +39,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START set_secret]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
+        secret = secret_client.set_secret("secret-name", "secret-value", expires_on=expires_on)
 
         print(secret.name)
         print(secret.properties.version)
-        print(secret.properties.expires)
+        print(secret.properties.expires_on)
 
         # [END set_secret]
         # [START get_secret]

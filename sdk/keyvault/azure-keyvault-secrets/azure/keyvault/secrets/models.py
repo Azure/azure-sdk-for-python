@@ -97,7 +97,7 @@ class SecretProperties(object):
         return self._attributes.not_before
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """
         When the secret expires, in UTC

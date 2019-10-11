@@ -39,16 +39,16 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = await key_client.create_key("key-name", "RSA", size=key_size, key_operations=key_ops, expires=expires)
+        key = await key_client.create_key("key-name", "RSA", size=key_size, key_operations=key_ops, expires_on=expires_on)
 
         print(key.id)
         print(key.name)
         print(key.key_material.kty)
         print(key.properties.enabled)
-        print(key.properties.expires)
+        print(key.properties.expires_on)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -92,13 +92,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START update_key]
 
         # update attributes of an existing key
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = await key_client.update_key_properties(key.name, expires=expires, tags=tags)
+        updated_key = await key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
         print(updated_key.properties.updated)
-        print(updated_key.properties.expires)
+        print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
         print(updated_key.key_material.kty)
 
@@ -151,7 +151,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.id)
             print(key.updated)
             print(key.properties.version)
-            print(key.expires)
+            print(key.expires_on)
 
         # [END list_key_versions]
         # [START list_deleted_keys]

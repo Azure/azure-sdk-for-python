@@ -58,7 +58,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             - **enabled** (bool): Whether the key is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -70,10 +70,10 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
-        expires = kwargs.pop("expires", None)
+        expires_on = kwargs.pop("expires_on", None)
 
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
@@ -104,7 +104,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
@@ -135,7 +135,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             - **enabled** (bool): Whether the key is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -354,7 +354,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             - **enabled** (bool): Whether the key is enabled for use.
             - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
@@ -367,9 +367,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
-        expires = kwargs.pop("expires", None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.update_key(
@@ -451,14 +451,14 @@ class KeyClient(AsyncKeyVaultClientBase):
             - **enabled** (bool): Whether the key is enabled for use.
             - **hsm** (bool): Whether the key should be backed by a hardware security module
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
-        expires = kwargs.pop("expires", None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.import_key(

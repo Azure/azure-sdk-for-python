@@ -22,7 +22,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(k1.vault_endpoint, k2.vault_endpoint)
         self.assertEqual(k1.enabled, k2.enabled)
         self.assertEqual(k1.not_before, k2.not_before)
-        self.assertEqual(k1.expires, k2.expires)
+        self.assertEqual(k1.expires_on, k2.expires_on)
         self.assertEqual(k1.created, k2.created)
         self.assertEqual(k1.updated, k2.updated)
         self.assertEqual(k1.tags, k2.tags)
@@ -79,7 +79,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     async def _update_key_properties(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key_properties(key.name, expires=expires, tags=tags)
+        key_bundle = await client.update_key_properties(key.name, expires_on=expires, tags=tags)
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)

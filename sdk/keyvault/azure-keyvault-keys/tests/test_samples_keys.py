@@ -40,15 +40,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START create_key]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = key_client.create_key("key-name", "RSA-HSM", expires=expires)
+        key = key_client.create_key("key-name", "RSA-HSM", expires_on=expires_on)
 
         print(key.name)
         print(key.id)
         print(key.key_material.kty)
-        print(key.properties.expires)
+        print(key.properties.expires_on)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -98,13 +98,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START update_key]
 
         # update attributes of an existing key
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = key_client.update_key_properties(key.name, expires=expires, tags=tags)
+        updated_key = key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
         print(updated_key.properties.updated)
-        print(updated_key.properties.expires)
+        print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
         print(key.key_material.kty)
 

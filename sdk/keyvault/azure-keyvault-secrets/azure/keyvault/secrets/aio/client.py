@@ -73,7 +73,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
             - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -85,9 +85,11 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
-        expires = kwargs.pop("expires", None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
         bundle = await self._client.set_secret(self.vault_endpoint, name, value, secret_attributes=attributes, **kwargs)
@@ -111,7 +113,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
             - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
-            - **expires** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -123,9 +125,11 @@ class SecretClient(AsyncKeyVaultClientBase):
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
-        expires = kwargs.pop("expires", None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
         bundle = await self._client.update_secret(
