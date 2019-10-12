@@ -5,6 +5,8 @@
 **Breaking changes**
 
 - `set_container_access_policy` has required parameter `signed_identifiers`.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+
 
 ## Version 12.0.0b4:
 
