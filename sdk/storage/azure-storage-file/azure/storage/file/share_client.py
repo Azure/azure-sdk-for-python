@@ -552,19 +552,17 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if signed_identifiers:
-            if len(signed_identifiers) > 5:
-                raise ValueError(
-                    'Too many access policies provided. The server does not support setting '
-                    'more than 5 access policies on a single resource.')
-            identifiers = []
-            for key, value in signed_identifiers.items():
-                if value:
-                    value.start = serialize_iso(value.start)
-                    value.expiry = serialize_iso(value.expiry)
-                identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers # type: ignore
-
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers # type: ignore
         try:
             return self._client.share.set_access_policy( # type: ignore
                 share_acl=signed_identifiers or None,
