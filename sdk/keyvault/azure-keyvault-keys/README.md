@@ -180,9 +180,9 @@ tags = {"foo": "updated tag"}
 updated_key_properties = key_client.update_key_properties("key-name", tags=tags)
 
 print(updated_key_properties.name)
-print(updated_key_properties.version)
-print(updated_key_properties.updated)
-print(updated_key_properties.tags)
+print(updated_key_properties.properties.version)
+print(updated_key_properties.properties.updated)
+print(updated_key_properties.properties.tags)
 ```
 
 ### Delete a Key

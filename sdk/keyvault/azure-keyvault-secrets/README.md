@@ -192,7 +192,7 @@ for the vault, this permanently deletes the secret.
     deleted_secret = secret_client.delete_secret("secret-name")
 
     print(deleted_secret.name)
-    print(deleted_secret.properties.deleted_date)
+    print(deleted_secret.deleted_date)
 ```
 
 ### List secrets
