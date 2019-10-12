@@ -618,8 +618,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = {
             'clients': self._client,
             'config': self._config,
-            'offset': offset,
-            'length': length,
+            'start_range': offset,
+            'end_range': length,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,

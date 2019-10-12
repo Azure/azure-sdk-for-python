@@ -1069,7 +1069,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(read_bytes, 1024)
         self.assertEqual(b'MDAwMDAwMDA=', downloader.properties.content_settings.content_md5)
-        self.assertEqual(downloader.download_size, 1024)
+        self.assertEqual(downloader.size, 1024)
 
     @record
     def test_get_blob_range_to_stream_with_overall_md5_async(self):

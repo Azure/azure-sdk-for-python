@@ -866,7 +866,7 @@ class StorageGetBlobTest(StorageTestCase):
             read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertEqual(downloader.download_size, 1024)
+        self.assertEqual(downloader.size, 1024)
         self.assertEqual(read_bytes, 1024)
         self.assertEqual(b'MDAwMDAwMDA=', downloader.properties.content_settings.content_md5)
 
