@@ -518,7 +518,7 @@ class StorageShareTest(FileTestCase):
         share.create_share()
 
         # Act
-        resp = share.set_share_access_policy()
+        resp = share.set_share_access_policy(signed_identifiers=dict())
 
         # Assert
         acl = share.get_share_access_policy()
