@@ -7,8 +7,6 @@ function currentVersion(){
       return WINDOW_CONTENTS[6];
     }
     else {
-      $('#versionSelector').hide();
-
       return ''
     }
 }
@@ -19,8 +17,6 @@ function currentPackage(){
       return WINDOW_CONTENTS[5];
     }
     else {
-      $('#versionSelector').hide();
-
       return ''
     }
 }
@@ -36,39 +32,49 @@ function httpGetAsync(targetUrl, callback)
     xmlHttp.send(null);
 }
 
-function populateOptions(){
-    var versionRequestUrl = "https://azuresdkdocsdev.blob.core.windows.net/$web?restype=container&comp=list&prefix=python/" + currentPackage() + "/versions/"
-    httpGetAsync(versionRequestUrl, populationCallback)
+function showSelectors(selectors){
+  selectors.forEach(function(item, index){
+    $(item).show()
+  })
 }
 
-function populationCallback(response){
-    if(response){
-      data_stored = response
+function hideSelectors(selectors){
+  selectors.forEach(function(item, index){
+    $(item).hide()
+  })
+}
 
-      parser = new DOMParser();
-      xmlDoc = parser.parseFromString(response,"text/xml");
-      
-      nameElements = Array.from(xmlDoc.getElementsByTagName('Name'))
-      options = []
+function populateOptions(optionSelector, otherSelectors){
+  if(currentPackage()){
+    var versionRequestUrl = "https://azuresdkdocsdev.blob.core.windows.net/$web?restype=container&comp=list&prefix=python/" + currentPackage() + "/versions/"
+    
+    httpGetAsync(versionRequestUrl, function(responseText){
+      if(response){
+        data_stored = response
 
-      for (var i in nameElements){
-        options.push(nameElements[i].textContent.split('/')[3])
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(response,"text/xml");
+        
+        nameElements = Array.from(xmlDoc.getElementsByTagName('Name'))
+        options = []
+
+        for (var i in nameElements){
+          options.push(nameElements[i].textContent.split('/')[3])
+        }
+
+        populateVersionDropDown(optionSelector, options)
+        showSelectors(otherSelectors)
+
+        $(optionSelector).change(function(){
+          targetVersion = $(this).val()
+
+          url = WINDOW_CONTENTS.slice()
+          url[6] = targetVersion
+          window.location.href = url.join('/')
+        });
       }
-
-      console.log(options)
-
-      populateVersionDropDown('#versionSelector', options)
-
-      $('#versionSelector').change(function(){
-        targetVersion = $(this).val()
-
-        console.log(targetVersion)
-
-        url = WINDOW_CONTENTS.slice()
-        url[6] = targetVersion
-        window.location.href = url.join('/')
-      });
-    }
+    })
+  }
 }
 
 function populateVersionDropDown(selector, values){
@@ -89,9 +95,6 @@ function getPackageUrl(language, package, version){
 function populateIndexList(selector, packageName)
 {
   url = "https://azuresdkdocsdev.blob.core.windows.net/$web?restype=container&comp=list&prefix=" + SELECTED_LANGUAGE + "/" + packageName + "/versions/"
-
-  console.log(url)
-  console.log(selector)
 
   httpGetAsync(url, function (responseText){
     if(responseText){
@@ -114,3 +117,5 @@ function populateIndexList(selector, packageName)
     }
   })
 }
+
+populateOptions('#versionSelector', ['#versionSelector', '#versionSelectorHeader'])
