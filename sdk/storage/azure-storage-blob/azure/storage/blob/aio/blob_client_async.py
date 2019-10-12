@@ -317,7 +317,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=length,
             **kwargs)
         downloader = StorageStreamDownloader(**options)
-        await downloader._setup()
+        await downloader._setup()  # pylint: disable=protected-access
         return downloader
 
     @distributed_trace_async
