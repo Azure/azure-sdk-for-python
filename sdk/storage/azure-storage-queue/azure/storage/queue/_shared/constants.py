@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 
 import sys
+from .._generated.version import VERSION
 
-
-X_MS_VERSION = '2018-03-28'
+X_MS_VERSION = VERSION
 
 # Socket timeout in seconds
 DEFAULT_SOCKET_TIMEOUT = 20

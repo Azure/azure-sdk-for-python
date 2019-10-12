@@ -25,15 +25,16 @@ from azure.storage.blob import (
     BlobClient,
     BlobType,
     StorageErrorCode,
-    BlobPermissions,
-    ContainerPermissions,
+    BlobSasPermissions,
+    ContainerSasPermissions,
     ContentSettings,
     BlobProperties,
     RetentionPolicy,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
-)
+    AccountSasPermissions,
+    StandardBlobTier)
+from azure.storage.blob._generated.models import RehydratePriority
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -229,7 +230,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_with_special_chars(self):
-        pytest.skip("Will be fixed in #7407")
         # Arrange
 
         # Act
@@ -334,7 +334,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = blob.download_blob(offset=0, length=5)
 
         # Assert
-        self.assertEqual(b"".join(list(data)), self.byte_data[:6])
+        self.assertEqual(b"".join(list(data)), self.byte_data[:5])
 
     @record
     def test_get_blob_with_lease(self):
@@ -473,7 +473,6 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_list_blobs_server_encryption(self):
         #Arrange
-        self._create_block_blob()
         self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs()
@@ -864,6 +863,50 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_content = copyblob.download_blob().content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
 
+    @record
+    def test_copy_blob_with_blob_tier_specified(self):
+        # Arrange
+        blob_name = self._create_block_blob()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cool
+        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+
+    @record
+    def test_copy_blob_with_rehydrate_priority(self):
+        # Arrange
+        blob_name = self._create_block_blob()
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        blob_tier = StandardBlobTier.Archive
+        rehydrate_priority = RehydratePriority.high
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = copyblob.start_copy_from_url(sourceblob,
+                                            standard_blob_tier=blob_tier,
+                                            rehydrate_priority=rehydrate_priority)
+        copy_blob_properties = copyblob.get_blob_properties()
+        copyblob.set_standard_blob_tier(StandardBlobTier.Hot)
+        second_resp = copyblob.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertIsNotNone(copy.get('copy_id'))
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+        self.assertEqual(second_resp.archive_status, 'rehydrate-pending-to-hot')
+
     # TODO: external copy was supported since 2019-02-02
     # @record
     # def test_copy_blob_with_external_blob_fails(self):
@@ -902,10 +945,10 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
         target_blob_name = 'targetblob'
@@ -1125,7 +1168,7 @@ class StorageCommonBlobTest(StorageTestCase):
             container = self.bsc.create_container(container_name, public_access='blob')
         except ResourceExistsError:
             container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data)
+        blob = container.upload_blob(blob_name, data, overwrite=True)
 
         # Act
         response = requests.get(blob.url)
@@ -1144,10 +1187,10 @@ class StorageCommonBlobTest(StorageTestCase):
             container = self.bsc.create_container(container_name, public_access='blob')
         except ResourceExistsError:
             container = self.bsc.get_container_client(container_name)
-        blob = container.upload_blob(blob_name, data)
+        blob = container.upload_blob(blob_name, data, overwrite=True)
 
         # Act
-        service = BlobClient(blob.url)
+        service = BlobClient.from_blob_url(blob.url)
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().content_as_bytes()
 
@@ -1165,12 +1208,12 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().content_as_bytes()
 
@@ -1189,11 +1232,11 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
 
         token = blob_snapshot_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        service = BlobClient(blob_snapshot_client.url, credential=token)
+        service = BlobClient.from_blob_url(blob_snapshot_client.url, credential=token)
 
         # Act
         snapshot_content = service.download_blob().content_as_bytes()
@@ -1222,7 +1265,7 @@ class StorageCommonBlobTest(StorageTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = BlobPermissions.READ
+        access_policy.permission = BlobSasPermissions(read=True)
         identifiers = {'testid': access_policy}
 
         resp = container.set_container_access_policy(identifiers)
@@ -1230,7 +1273,7 @@ class StorageCommonBlobTest(StorageTestCase):
         token = blob.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        service = BlobClient(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
         result = service.download_blob().content_as_bytes()
 
@@ -1248,15 +1291,15 @@ class StorageCommonBlobTest(StorageTestCase):
 
         token = self.bsc.generate_shared_access_signature(
             ResourceTypes(container=True, object=True),
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
         blob = BlobClient(
-            self.bsc.url, container=self.container_name, blob=blob_name, credential=token)
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
         container = ContainerClient(
-            self.bsc.url, container=self.container_name, credential=token)
+            self.bsc.url, container_name=self.container_name, credential=token)
         container.get_container_properties()
         blob_response = requests.get(blob.url)
         container_response = requests.get(container.url, params={'restype':'container'})
@@ -1314,7 +1357,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
 
         token = blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest',
@@ -1322,7 +1365,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         # Use the generated identity sas
-        new_blob_client = BlobClient(blob_client.url, credential=token)
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
         content = new_blob_client.download_blob()
 
         # Assert
@@ -1360,12 +1403,12 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
         response = requests.get(sas_blob.url)
 
         # Assert
@@ -1384,7 +1427,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
             content_disposition='inline',
@@ -1392,7 +1435,7 @@ class StorageCommonBlobTest(StorageTestCase):
             content_language='fr',
             content_type='text',
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(sas_blob.url)
@@ -1418,10 +1461,10 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
@@ -1444,10 +1487,10 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.DELETE,
+            permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.delete(sas_blob.url)
@@ -1498,10 +1541,10 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
         token = container.generate_shared_access_signature(
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_container = ContainerClient(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         info = sas_container.get_account_information()
@@ -1521,10 +1564,10 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         info = sas_blob.get_account_information()
@@ -1542,10 +1585,10 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob = BlobClient(source_blob.url, credential=sas_token)
+        blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
 
         # Act
@@ -1568,7 +1611,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            max_connections=2,
+            max_concurrency=2,
             credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
@@ -1589,7 +1632,7 @@ class StorageCommonBlobTest(StorageTestCase):
         with open(FILE_PATH, 'wb') as stream:
             download_blob_from_url(
                 source_blob.url, stream,
-                max_connections=2,
+                max_concurrency=2,
                 credential=self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
         # Assert
@@ -1656,10 +1699,10 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         uploaded = upload_blob_to_url(sas_blob.url, data)
@@ -1776,6 +1819,20 @@ class StorageCommonBlobTest(StorageTestCase):
         content = blob.download_blob().content_as_bytes()
         self.assertEqual(data, content)
 
+    def test_set_blob_permission_from_string(self):
+        # Arrange
+        permission1 = BlobSasPermissions(read=True, write=True)
+        permission2 = BlobSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
+
+    def test_set_blob_permission(self):
+        # Arrange
+        permission = BlobSasPermissions.from_string('wrdx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.delete, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrdx')
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

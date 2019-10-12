@@ -17,7 +17,7 @@ from azure.storage.blob.aio import (
     BlobType,
     BlobBlock,
 )
-from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobPermissions
+from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -87,11 +87,11 @@ class StorageCPKAsyncTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    async def _create_block_blob(self, blob_name=None, data=None, cpk=None, max_connections=1):
+    async def _create_block_blob(self, blob_name=None, data=None, cpk=None, max_concurrency=1):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
-        resp = await blob_client.upload_blob(data, cpk=cpk, max_connections=max_connections)
+        resp = await blob_client.upload_blob(data, cpk=cpk, max_concurrency=max_concurrency)
         return blob_client, resp
 
     async def _create_append_blob(self, cpk=None):
@@ -159,7 +159,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
         blob_client, upload_response = await self._create_block_blob(data=self.byte_data, cpk=TEST_ENCRYPTION_KEY,
-                                                                     max_connections=2)
+                                                                     max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
@@ -192,7 +192,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
         blob_client, upload_response = await self._create_block_blob(data=self.byte_data, cpk=TEST_ENCRYPTION_KEY,
-                                                                     max_connections=2)
+                                                                     max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
@@ -254,7 +254,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = await self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
@@ -265,10 +265,10 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act part 1: make put block from url calls
         await destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url,
-                                                           source_offset=0, source_length=4 * 1024 - 1,
+                                                           source_offset=0, source_length=4 * 1024,
                                                            cpk=TEST_ENCRYPTION_KEY)
         await destination_blob_client.stage_block_from_url(block_id=2, source_url=source_blob_url,
-                                                           source_offset=4 * 1024, source_length=8 * 1024,
+                                                           source_offset=4 * 1024, source_length=4 * 1024,
                                                            cpk=TEST_ENCRYPTION_KEY)
 
         # Assert blocks
@@ -295,13 +295,15 @@ class StorageCPKAsyncTest(StorageTestCase):
         blob = await destination_blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(await blob.content_as_bytes(), self.byte_data[0: 8 * 1024 + 1])
+        self.assertEqual(await blob.content_as_bytes(), self.byte_data[0: 8 * 1024])
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @record
     def test_put_block_from_url_and_commit_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_commit())
 
@@ -341,7 +343,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         self.config.use_byte_buffer = True  # chunk upload
         source_blob_client, _ = await self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
@@ -351,8 +353,8 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         append_blob_prop = await destination_blob_client.append_block_from_url(source_blob_url,
-                                                                               source_range_start=0,
-                                                                               source_range_end=4 * 1024 - 1,
+                                                                               source_offset=0,
+                                                                               source_length=4 * 1024,
                                                                                cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -414,8 +416,8 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_page(self.byte_data,
-                                                       start_range=0,
-                                                       end_range=len(self.byte_data) - 1,
+                                                       offset=0,
+                                                       length=len(self.byte_data),
                                                        cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -430,7 +432,7 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act get the blob content
         blob = await blob_client.download_blob(offset=0,
-                                               length=len(self.byte_data) - 1,
+                                               length=len(self.byte_data),
                                                cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
@@ -448,7 +450,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = await self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
@@ -458,9 +460,9 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_pages_from_url(source_blob_url,
-                                                                 range_start=0,
-                                                                 range_end=len(self.byte_data) - 1,
-                                                                 source_range_start=0,
+                                                                 offset=0,
+                                                                 length=len(self.byte_data),
+                                                                 source_offset=0,
                                                                  cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -476,7 +478,7 @@ class StorageCPKAsyncTest(StorageTestCase):
 
         # Act get the blob content
         blob = await blob_client.download_blob(offset=0,
-                                               length=len(self.byte_data) - 1,
+                                               length=len(self.byte_data),
                                                cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
@@ -496,7 +498,7 @@ class StorageCPKAsyncTest(StorageTestCase):
         blob_client = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         page_blob_prop = await blob_client.upload_blob(self.byte_data,
                                                        blob_type=BlobType.PageBlob,
-                                                       max_connections=2,
+                                                       max_concurrency=2,
                                                        cpk=TEST_ENCRYPTION_KEY)
 
         # Assert

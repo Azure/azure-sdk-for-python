@@ -37,7 +37,7 @@ class Metrics(GeneratedMetrics):
         statistics for called API operations.
     :ivar retention_policy: Required. Determines how long the associated data should
         persist.
-    :vartype retention_policy: ~azure.storage.file.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.file.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -138,14 +138,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
         self.start = start
@@ -252,7 +252,7 @@ class SharePropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.models.ShareProperties)
+    :vartype current_page: list(~azure.storage.file.ShareProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only shares whose names
@@ -319,9 +319,9 @@ class Handle(DictMixin):
     :type client_ip: str
     :param open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
-    :type open_time: datetime
+    :type open_time: ~datetime.datetime
     :param last_reconnect_time: Time handle was last connected to (UTC)
-    :type last_reconnect_time: datetime
+    :type last_reconnect_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):
@@ -357,7 +357,7 @@ class HandlesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.models.Handle)
+    :vartype current_page: list(~azure.storage.file.Handle)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
@@ -523,10 +523,10 @@ class FileProperties(DictMixin):
         Whether encryption is enabled.
     :ivar copy:
         The copy properties.
-    :vartype copy: ~azure.storage.file.models.CopyProperties
+    :vartype copy: ~azure.storage.file.CopyProperties
     :ivar content_settings:
         The content settings for the file.
-    :vartype content_settings: ~azure.storage.file.models.ContentSettings
+    :vartype content_settings: ~azure.storage.file.ContentSettings
     """
 
     def __init__(self, **kwargs):
@@ -630,20 +630,10 @@ class CopyProperties(DictMixin):
         return copy
 
 
-class FilePermissions(object):
-    """FilePermissions class to be used with
+class FileSasPermissions(object):
+    """FileSasPermissions class to be used with
     generating shared access signature operations.
 
-    :cvar FilePermissions FilePermissions.CREATE:
-        Create a new file or copy a file to a new file.
-    :cvar FilePermissions FilePermissions.DELETE:
-        Delete the file.
-    :cvar FilePermissions FilePermissions.READ:
-        Read the content, properties, metadata. Use the file as the source of a copy
-        operation.
-    :cvar FilePermissions FilePermissions.WRITE:
-        Create or write content, properties, metadata. Resize the file. Use the file
-        as the destination of a copy operation within the same account.
     :param bool read:
         Read the content, properties, metadata. Use the file as the source of a copy
         operation.
@@ -654,62 +644,36 @@ class FilePermissions(object):
         as the destination of a copy operation within the same account.
     :param bool delete:
         Delete the file.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    CREATE = None  # type: FilePermissions
-    DELETE = None  # type: FilePermissions
-    READ = None  # type: FilePermissions
-    WRITE = None  # type: FilePermissions
-
-    def __init__(self, read=False, create=False, write=False, delete=False,
-                 _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.create = create or ('c' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-
-    def __or__(self, other):
-        return FilePermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return FilePermissions(_str=str(self) + str(other))
+    def __init__(self, read=False, create=False, write=False, delete=False):
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('c' if self.create else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else ''))
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+
+        parsed = cls(p_read, p_create, p_write, p_delete)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 
-FilePermissions.CREATE = FilePermissions(create=True) # type: ignore
-FilePermissions.DELETE = FilePermissions(delete=True) # type: ignore
-FilePermissions.READ = FilePermissions(read=True) # type: ignore
-FilePermissions.WRITE = FilePermissions(write=True) # type: ignore
-
-
-class SharePermissions(object):
-    """SharePermissions class to be used to be used with
+class ShareSasPermissions(object):
+    """ShareSasPermissions class to be used to be used with
     generating shared access signature and access policy operations.
 
-    :cvar SharePermissions SharePermissions.DELETE:
-        Delete any file in the share.
-        Note: You cannot grant permissions to delete a share with a service SAS. Use
-        an account SAS instead.
-    :cvar SharePermissions SharePermissions.LIST:
-        List files and directories in the share.
-    :cvar SharePermissions SharePermissions.READ:
-        Read the content, properties or metadata of any file in the share. Use any
-        file in the share as the source of a copy operation.
-    :cvar SharePermissions SharePermissions.WRITE:
-        For any file in the share, create or write content, properties or metadata.
-        Resize the file. Use the file as the destination of a copy operation within
-        the same account.
-        Note: You cannot grant permissions to read or write share properties or
-        metadata with a service SAS. Use an account SAS instead.
     :param bool read:
         Read the content, properties or metadata of any file in the share. Use any
         file in the share as the source of a copy operation.
@@ -725,42 +689,31 @@ class SharePermissions(object):
         an account SAS instead.
     :param bool list:
         List files and directories in the share.
-    :param str _str:
-        A string representing the permissions
     """
+    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else ''))
 
-    LIST = None  # type: SharePermissions
-    DELETE = None  # type: SharePermissions
-    READ = None  # type: SharePermissions
-    WRITE = None  # type: SharePermissions
-
-    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-
-    def __or__(self, other):
-        return SharePermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return SharePermissions(_str=str(self) + str(other))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
 
-SharePermissions.DELETE = SharePermissions(delete=True) # type: ignore
-SharePermissions.LIST = SharePermissions(list=True) # type: ignore
-SharePermissions.READ = SharePermissions(read=True) # type: ignore
-SharePermissions.WRITE = SharePermissions(write=True) # type: ignore
-
+        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 class NTFSAttributes(object):
     """

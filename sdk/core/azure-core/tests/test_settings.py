@@ -167,18 +167,6 @@ class TestConverters(object):
         with pytest.raises(ValueError):
             m.convert_logging("junk")
 
-    def test_convert_implementation(self):
-        if "opencensus" in sys.modules:
-            del sys.modules["opencensus"]
-        assert m.convert_tracing_impl(None) is None
-        assert m.convert_tracing_impl("opencensus") is not None
-        import opencensus
-
-        assert m.convert_tracing_impl(None) is not None
-        assert m.convert_tracing_impl("opencensus") is not None
-        with pytest.raises(ValueError):
-            m.convert_tracing_impl("does not exist!!")
-
 
 _standard_settings = ["log_level", "tracing_enabled"]
 

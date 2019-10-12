@@ -5,15 +5,18 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Any
+from typing import Iterable, Union, Type
 import time
 
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClientAsync  # type: ignore
 
+from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
+from azure.core.settings import settings  # type: ignore
+
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
-from ..producer import _error, _set_partition_key
+from ..producer import _error, _set_partition_key, _set_trace_message
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -63,7 +66,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         super(EventHubProducer, self).__init__()
         self._loop = loop or asyncio.get_event_loop()
         self._max_message_size_on_link = None
-        self._running = False
         self._client = client
         self._target = target
         self._partition = partition
@@ -74,7 +76,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = None
-        self._redirected = None
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition
@@ -87,7 +88,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
     def _create_handler(self):
         self._handler = SendClientAsync(
             self._target,
-            auth=self._client._get_auth(),  # pylint:disable=protected-access
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout,
             error_policy=self._retry_policy,
@@ -97,18 +98,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             properties=self._client._create_properties(  # pylint: disable=protected-access
                 self._client._config.user_agent),  # pylint:disable=protected-access
             loop=self._loop)
-
-    async def _open(self):
-        """
-        Open the EventHubProducer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
-
-        """
-        if not self._running and self._redirected:
-            self._client._process_redirect_uri(self._redirected)  # pylint: disable=protected-access
-            self._target = self._redirected.address
-        await super(EventHubProducer, self)._open()
 
     async def _open_with_retry(self):
         return await self._do_retryable_operation(self._open, operation_need_param=False)
@@ -124,7 +113,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                     error = OperationTimeoutError("send operation timed out")
                 log.info("%r send operation timed out. (%r)", self._name, error)
                 raise error
-            self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
+            self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
             self._handler.queue_message(*self._unsent_events)
             await self._handler.wait_async()
             self._unsent_events = self._handler.pending_messages
@@ -213,12 +202,19 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        # Tracing code
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        child = None
+        if span_impl_type is not None:
+            child = span_impl_type(name="Azure.EventHubs.send")
+            child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
+            wrapper_event_data._trace_message(child)  # pylint: disable=protected-access
         else:
             if isinstance(event_data, EventDataBatch):
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -227,21 +223,24 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
+                event_data = _set_trace_message(event_data, child)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
+
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
-        await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
 
-    async def close(self, exception=None):
-        # type: (Exception) -> None
+        if span_impl_type is not None:
+            with child:
+                self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
+                await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+        else:
+            await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+
+    async def close(self):
+        # type: () -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
+        this will be a no op.
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -252,4 +251,4 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 :caption: Close down the handler.
 
         """
-        await super(EventHubProducer, self).close(exception)
+        await super(EventHubProducer, self).close()

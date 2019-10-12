@@ -17,6 +17,7 @@ try:
     from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
     from ._models_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from ._models_py3 import Catalog
+    from ._models_py3 import CatalogBillingPlansItem
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ExtendedErrorInfo
     from ._models_py3 import ExtendedStatusInfo
@@ -25,6 +26,8 @@ try:
     from ._models_py3 import OperationResponse
     from ._models_py3 import Patch
     from ._models_py3 import PatchPropertiesRenewProperties
+    from ._models_py3 import PaymentDetail
+    from ._models_py3 import Price
     from ._models_py3 import Properties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
@@ -32,6 +35,7 @@ try:
     from ._models_py3 import RenewPropertiesResponseBillingCurrencyTotal
     from ._models_py3 import RenewPropertiesResponsePricingCurrencyTotal
     from ._models_py3 import ReservationMergeProperties
+    from ._models_py3 import ReservationOrderBillingPlanInformation
     from ._models_py3 import ReservationOrderResponse
     from ._models_py3 import ReservationProperties
     from ._models_py3 import ReservationResponse
@@ -50,6 +54,7 @@ except (SyntaxError, ImportError):
     from ._models import CalculatePriceResponsePropertiesBillingCurrencyTotal
     from ._models import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from ._models import Catalog
+    from ._models import CatalogBillingPlansItem
     from ._models import Error, ErrorException
     from ._models import ExtendedErrorInfo
     from ._models import ExtendedStatusInfo
@@ -58,6 +63,8 @@ except (SyntaxError, ImportError):
     from ._models import OperationResponse
     from ._models import Patch
     from ._models import PatchPropertiesRenewProperties
+    from ._models import PaymentDetail
+    from ._models import Price
     from ._models import Properties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
@@ -65,6 +72,7 @@ except (SyntaxError, ImportError):
     from ._models import RenewPropertiesResponseBillingCurrencyTotal
     from ._models import RenewPropertiesResponsePricingCurrencyTotal
     from ._models import ReservationMergeProperties
+    from ._models import ReservationOrderBillingPlanInformation
     from ._models import ReservationOrderResponse
     from ._models import ReservationProperties
     from ._models import ReservationResponse
@@ -81,7 +89,9 @@ from ._paged_models import ReservationResponsePaged
 from ._azure_reservation_api_enums import (
     ReservationStatusCode,
     ErrorResponseCode,
+    ReservationBillingPlan,
     ReservationTerm,
+    PaymentStatus,
     ReservedResourceType,
     InstanceFlexibility,
     AppliedScopeType,
@@ -95,6 +105,7 @@ __all__ = [
     'CalculatePriceResponsePropertiesBillingCurrencyTotal',
     'CalculatePriceResponsePropertiesPricingCurrencyTotal',
     'Catalog',
+    'CatalogBillingPlansItem',
     'Error', 'ErrorException',
     'ExtendedErrorInfo',
     'ExtendedStatusInfo',
@@ -103,6 +114,8 @@ __all__ = [
     'OperationResponse',
     'Patch',
     'PatchPropertiesRenewProperties',
+    'PaymentDetail',
+    'Price',
     'Properties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
@@ -110,6 +123,7 @@ __all__ = [
     'RenewPropertiesResponseBillingCurrencyTotal',
     'RenewPropertiesResponsePricingCurrencyTotal',
     'ReservationMergeProperties',
+    'ReservationOrderBillingPlanInformation',
     'ReservationOrderResponse',
     'ReservationProperties',
     'ReservationResponse',
@@ -125,7 +139,9 @@ __all__ = [
     'OperationResponsePaged',
     'ReservationStatusCode',
     'ErrorResponseCode',
+    'ReservationBillingPlan',
     'ReservationTerm',
+    'PaymentStatus',
     'ReservedResourceType',
     'InstanceFlexibility',
     'AppliedScopeType',

@@ -12,7 +12,7 @@ def print(*args):
 
 
 def test_create_certificate():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_certificate_client]
 
@@ -21,7 +21,7 @@ def test_create_certificate():
 
     # Create a Certificate using default Azure credentials
     credential = DefaultAzureCredential()
-    certificate_client = CertificateClient(vault_url, credential)
+    certificate_client = CertificateClient(vault_endpoint, credential)
 
     # [END create_certificate_client]
 
@@ -33,25 +33,30 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates.aio import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
-                                        )
+        cert_policy = CertificatePolicy(
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            validity_in_months=24,
+            san_dns_names=["sdk.azure-int.net"],
+        )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # awaiting the certificate poller gives us the result of the long running operation
-        create_certificate_result = await create_certificate_poller
-        print(create_certificate_result)
+        certificate = await create_certificate_poller
+
+        print(certificate.id)
+        print(certificate.name)
+        print(certificate.policy.issuer_name)
 
         # [END create_certificate]
 
@@ -62,26 +67,18 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
+        updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
 
-        print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.version)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -103,24 +100,28 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
-                                        )
+        cert_policy = CertificatePolicy(
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            validity_in_months=24,
+            san_dns_names=["sdk.azure-int.net"],
+        )
 
         create_certificate_pollers = []
         for i in range(4):
-            create_certificate_pollers.append(await certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy))
+            create_certificate_pollers.append(
+                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+            )
 
         for poller in create_certificate_pollers:
             await poller
@@ -145,8 +146,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
-            print(certificate.version)
+            print(certificate.properties.updated)
+            print(certificate.properties.version)
 
         # [END list_certificate_versions]
         # [START list_deleted_certificates]
@@ -167,24 +168,26 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         import asyncio
+
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
-                                        )
+        cert_policy = CertificatePolicy(
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            validity_in_months=24,
+            san_dns_names=["sdk.azure-int.net"],
+        )
 
         cert_name = "cert-name"
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         await create_certificate_poller
 
@@ -206,7 +209,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         restored_certificate = await certificate_client.restore_certificate(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 
@@ -214,24 +217,26 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
         from azure.core.exceptions import HttpResponseError
+
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
-                                        )
+        cert_policy = CertificatePolicy(
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            validity_in_months=24,
+            san_dns_names=["sdk.azure-int.net"],
+        )
 
         cert_name = "cert-name"
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
         await create_certificate_poller
 
         await certificate_client.delete_certificate(name=cert_name)
@@ -259,7 +264,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates.aio import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, Contact
 
         certificate_client = vault_client.certificates
 
@@ -267,12 +272,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            Contact(email='admin@contoso.com',
-                    name='John Doe',
-                    phone='1111111111'),
-            Contact(email='admin2@contoso.com',
-                    name='John Doe2',
-                    phone='2222222222')
+            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = await certificate_client.create_contacts(contacts=contact_list)
@@ -317,23 +318,16 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START create_issuer]
 
         # First we specify the AdministratorDetails for a issuer.
-        admin_details = [AdministratorDetails(
-            first_name="John",
-            last_name="Doe",
-            email="admin@microsoft.com",
-            phone="4255555555"
-        )]
+        admin_details = [
+            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+        ]
 
         issuer = await certificate_client.create_issuer(
-            name="issuer1",
-            provider="Test",
-            account_id="keyvaultuser",
-            admin_details=admin_details,
-            enabled=True
+            name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -349,7 +343,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         issuer = await certificate_client.get_issuer(name="issuer1")
 
         print(issuer.name)
-        print(issuer.provider)
+        print(issuer.properties.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -360,12 +354,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END get_issuer]
 
-        await certificate_client.create_issuer(
-            name="issuer2",
-            provider="Test",
-            account_id="keyvaultuser",
-            enabled=True
-        )
+        await certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
         # [START list_issuers]
 
@@ -382,7 +371,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_issuer = await certificate_client.delete_issuer(name="issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.provider)
+        print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
         for admin_detail in deleted_issuer.admin_details:

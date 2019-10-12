@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -31,13 +31,14 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service. Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
     try:
         # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
@@ -45,15 +46,11 @@ async def run_sample():
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
+        bank_certificate = await client.create_certificate(name=bank_cert_name)
+        storage_certificate = await client.create_certificate(name=storage_cert_name)
 
-        # await the creation of the bank and storage certificate
-        await bank_certificate_poller
-        await storage_certificate_poller
-
-        print("Certificate with name '{0}' was created.".format(bank_cert_name))
-        print("Certificate with name '{0}' was created.".format(storage_cert_name))
+        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
         # Let's list the certificates.
         print("\n.. List certificates from the Key Vault")
@@ -67,19 +64,22 @@ async def run_sample():
         tags = {"a": "b"}
 
         updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
-        await updated_bank_certificate_poller
+        bank_certificate = await updated_bank_certificate_poller
         print(
-            "Certificate with name '{0}' was created again with tags '{1}'".format(bank_cert_name, tags)
+            "Certificate with name '{0}' was created again with tags '{1}'".format(
+                bank_certificate.name, bank_certificate.properties.tags
+            )
         )
 
         # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
         print("\n.. List versions of the certificate using its name")
         certificate_versions = client.list_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
-            print("Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
-                certificate_version.name,
-                certificate_version.version,
-                certificate_version.tags))
+            print(
+                "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
+                    certificate_version.name, certificate_version.version, certificate_version.tags
+                )
+            )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
         await client.delete_certificate(name=bank_cert_name)
@@ -90,7 +90,9 @@ async def run_sample():
         deleted_certificates = client.list_deleted_certificates()
         async for deleted_certificate in deleted_certificates:
             print(
-                "Certificate with name '{0}' has recovery id '{1}'".format(deleted_certificate.name, deleted_certificate.recovery_id)
+                "Certificate with name '{0}' has recovery id '{1}'".format(
+                    deleted_certificate.name, deleted_certificate.recovery_id
+                )
             )
 
     except HttpResponseError as e:

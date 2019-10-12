@@ -1,6 +1,19 @@
 # Release History
 
-## 4.0.0b4
+## 4.0.0b5
+
+
+## 4.0.0b4 (2019-10-08)
+### Breaking changes:
+- `Secret` now has attribute `properties`, which holds certain properties of the
+secret, such as `version`. This changes the shape of the returned `Secret` type,
+as certain properties of `Secret` (such as `version`) have to be accessed
+through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
+for details.
+- `update_secret` has been renamed to `update_secret_properties`
+- The `vault_url` parameter of `SecretClient` has been renamed to `vault_endpoint`
+- The property `vault_url` has been renamed to `vault_endpoint` in all models
+
 ### Fixes and improvements
 - `list_secrets` and `list_secret_versions` return the correct type
 

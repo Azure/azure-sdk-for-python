@@ -16,7 +16,7 @@ def print(*args):
 
 
 def test_create_secret_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
@@ -25,7 +25,7 @@ def test_create_secret_client():
 
     # Create a SecretClient using default Azure credentials
     credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
+    secret_client = SecretClient(vault_endpoint, credentials)
 
     # [END create_secret_client]
 
@@ -45,8 +45,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
 
         print(secret.name)
-        print(secret.version)
-        print(secret.expires)
+        print(secret.properties.version)
+        print(secret.properties.expires)
 
         # [END set_secret]
         # [START get_secret]
@@ -55,12 +55,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = secret_client.get_secret("secret-name", secret.version)
+        secret = secret_client.get_secret("secret-name", secret.properties.version)
 
         print(secret.id)
         print(secret.name)
-        print(secret.version)
-        print(secret.vault_url)
+        print(secret.properties.version)
+        print(secret.properties.vault_endpoint)
 
         # [END get_secret]
         # [START update_secret]
@@ -69,12 +69,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         content_type = "text/plain"
         tags = {"foo": "updated tag"}
-        updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
+        updated_secret_properties = secret_client.update_secret_properties(
+            "secret-name", content_type=content_type, tags=tags
+        )
 
-        print(updated_secret.version)
-        print(updated_secret.updated)
-        print(updated_secret.content_type)
-        print(updated_secret.tags)
+        print(updated_secret_properties.version)
+        print(updated_secret_properties.updated)
+        print(updated_secret_properties.content_type)
+        print(updated_secret_properties.tags)
 
         # [END update_secret]
         # [START delete_secret]

@@ -22,13 +22,18 @@ pip install azure-keyvault-secrets
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5 or later
+* Python 2.7, 3.5.3, or later
 * A Key Vault. If you need to create one, you can use the
-[Azure Cloud Shell][azure_cloud_shell] to create one with this command (replace
-`<your resource group name>` and `<your key vault name>` with your own, unique
+[Azure Cloud Shell][azure_cloud_shell] to create one with these commands
+(replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
 names):
+  * (Optional) if you want a new resource group to hold the Key Vault:
+    ```sh
+    az group create --name my-resource-group --location westus2
+    ```
+  * Create the Key Vault:
     ```Bash
-    az keyvault create --resource-group <your resource group name> --name <your key vault name>
+    az keyvault create --resource-group my-resource-group --name my-key-vault
     ```
 
     Output:
@@ -36,7 +41,7 @@ names):
     {
         "id": "...",
         "location": "westus2",
-        "name": "<your key vault name>",
+        "name": "my-key-vault",
         "properties": {
             "accessPolicies": [...],
             "createMode": null,
@@ -49,14 +54,14 @@ names):
             "provisioningState": "Succeeded",
             "sku": { "name": "standard" },
             "tenantId": "...",
-            "vaultUri": "https://<your key vault name>.vault.azure.net/"
+            "vaultUri": "https://my-key-vault.vault.azure.net/"
         },
-        "resourceGroup": "<your resource group name>",
+        "resourceGroup": "my-resource-group",
         "type": "Microsoft.KeyVault/vaults"
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `SecretClient`.
+    > The `"vaultUri"` property is the `vault_endpoint` used by `SecretClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
@@ -66,20 +71,21 @@ the credential, authenticating with a service principal's client id, secret,
 and tenant id. Other authentication methods are supported. See the
 [azure-identity][azure_identity] documentation for more details.
 
- #### Create a service principal
-Use this [Azure Cloud Shell][azure_cloud_shell] snippet to create a
-service principal:
+#### Create a service principal
+This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+a more appropriate name for your service principal.
 
- * Create a service principal and configure its access to Azure resources:
+ * Create a service principal:
     ```Bash
-    az ad sp create-for-rbac -n <your-application-name> --skip-assignment
+    az ad sp create-for-rbac --name http://my-application --skip-assignment
     ```
     Output:
     ```json
     {
         "appId": "generated app id",
-        "displayName": "your-application-name",
-        "name": "http://your-application-name",
+        "displayName": "my-application",
+        "name": "http://my-application",
         "password": "random password",
         "tenant": "tenant id"
     }
@@ -96,7 +102,7 @@ following example shows a way to do this in Bash:
 
 * Authorize the service principal to perform key operations in your Key Vault:
     ```Bash
-    az keyvault set-policy --name <your key vault name> --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
+    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
     ```
     > Possible key permissions:
     > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
@@ -114,7 +120,7 @@ After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
     credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
+    secret_client = SecretClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -148,7 +154,7 @@ already exists, a new version of that secret is created.
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Retrieve a Secret
@@ -171,11 +177,11 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
     # You can specify additional application-specific metadata in the form of tags.
     tags = {"foo": "updated tag"}
 
-    updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
+    updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret.updated)
-    print(updated_secret.content_type)
-    print(updated_secret.tags)
+    print(updated_secret_properties.updated)
+    print(updated_secret_properties.content_type)
+    print(updated_secret_properties.tags)
 ```
 
 ### Delete a Secret
@@ -186,7 +192,7 @@ for the vault, this permanently deletes the secret.
     deleted_secret = secret_client.delete_secret("secret-name")
 
     print(deleted_secret.name)
-    print(deleted_secret.deleted_date)
+    print(deleted_secret.properties.deleted_date)
 ```
 
 ### List secrets
@@ -194,11 +200,11 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secrets = secret_client.list_secrets()
+    secret_properties = secret_client.list_secrets()
 
-    for secret in secrets:
+    for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
-        print(secret.name)
+        print(secret_property.name)
 ```
 
 ### Async operations
@@ -215,24 +221,24 @@ This example creates a secret in the Key Vault with the specified optional argum
     from azure.keyvault.secrets.aio import SecretClient
 
     credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url=vault_url, credential=credential)
+    secret_client = SecretClient(vault_endpoint=vault_endpoint, credential=credential)
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Async list secrets
 This example lists all the secrets in the specified Key Vault.
 
 ```python
-    secrets = secret_client.list_secrets()
+    secret_properties = secret_client.list_secrets()
 
-    async for secret in secrets:
+    async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
-        print(secret.name)
+        print(secret_property.name)
 ```
 
 ## Troubleshooting
@@ -275,7 +281,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = SecretClient(vault_url=url, credential=credential, logging_enable=True)
+client = SecretClient(vault_endpoint=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

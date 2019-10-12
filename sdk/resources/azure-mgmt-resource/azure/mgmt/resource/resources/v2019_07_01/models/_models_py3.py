@@ -540,6 +540,118 @@ class DeploymentValidateResult(Model):
         self.properties = properties
 
 
+class DeploymentWhatIf(Model):
+    """Deployment What-if operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentWhatIfProperties
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentWhatIfProperties'},
+    }
+
+    def __init__(self, *, properties, location: str=None, **kwargs) -> None:
+        super(DeploymentWhatIf, self).__init__(**kwargs)
+        self.location = location
+        self.properties = properties
+
+
+class DeploymentWhatIfProperties(DeploymentProperties):
+    """Deployment What-if properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param template: The template content. You use this element when you want
+     to pass the template syntax directly in the request rather than link to an
+     existing template. It can be a JObject or well-formed JSON string. Use
+     either the templateLink property or the template property, but not both.
+    :type template: object
+    :param template_link: The URI of the template. Use either the templateLink
+     property or the template property, but not both.
+    :type template_link:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.TemplateLink
+    :param parameters: Name and value pairs that define the deployment
+     parameters for the template. You use this element when you want to provide
+     the parameter values directly in the request rather than link to an
+     existing parameter file. Use either the parametersLink property or the
+     parameters property, but not both. It can be a JObject or a well formed
+     JSON string.
+    :type parameters: object
+    :param parameters_link: The URI of parameters file. You use this element
+     to link to an existing parameters file. Use either the parametersLink
+     property or the parameters property, but not both.
+    :type parameters_link:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.ParametersLink
+    :param mode: Required. The mode that is used to deploy resources. This
+     value can be either Incremental or Complete. In Incremental mode,
+     resources are deployed without deleting existing resources that are not
+     included in the template. In Complete mode, resources are deployed and
+     existing resources in the resource group that are not included in the
+     template are deleted. Be careful when using Complete mode as you may
+     unintentionally delete resources. Possible values include: 'Incremental',
+     'Complete'
+    :type mode: str or
+     ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentMode
+    :param debug_setting: The debug setting of the deployment.
+    :type debug_setting:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.DebugSetting
+    :param on_error_deployment: The deployment on error behavior.
+    :type on_error_deployment:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.OnErrorDeployment
+    :param what_if_settings: Optional What-If operation settings.
+    :type what_if_settings:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentWhatIfSettings
+    """
+
+    _validation = {
+        'mode': {'required': True},
+    }
+
+    _attribute_map = {
+        'template': {'key': 'template', 'type': 'object'},
+        'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
+        'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
+        'mode': {'key': 'mode', 'type': 'DeploymentMode'},
+        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
+        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'what_if_settings': {'key': 'whatIfSettings', 'type': 'DeploymentWhatIfSettings'},
+    }
+
+    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, what_if_settings=None, **kwargs) -> None:
+        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, **kwargs)
+        self.what_if_settings = what_if_settings
+
+
+class DeploymentWhatIfSettings(Model):
+    """Deployment What-If operation settings.
+
+    :param result_format: The format of the What-If results. Possible values
+     include: 'ResourceIdOnly', 'FullResourcePayloads'
+    :type result_format: str or
+     ~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfResultFormat
+    """
+
+    _attribute_map = {
+        'result_format': {'key': 'resultFormat', 'type': 'WhatIfResultFormat'},
+    }
+
+    def __init__(self, *, result_format=None, **kwargs) -> None:
+        super(DeploymentWhatIfSettings, self).__init__(**kwargs)
+        self.result_format = result_format
+
+
 class ErrorAdditionalInfo(Model):
     """The resource management error additional info.
 
@@ -1512,3 +1624,118 @@ class TemplateLink(Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = uri
         self.content_version = content_version
+
+
+class WhatIfChange(Model):
+    """Information about a single resource change predicted by What-If operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. Resource ID
+    :type resource_id: str
+    :param change_type: Required. Type of change that will be made to the
+     resource when the deployment is executed. Possible values include:
+     'Create', 'Delete', 'Ignore', 'Deploy', 'NoChange', 'Modify'
+    :type change_type: str or
+     ~azure.mgmt.resource.resources.v2019_07_01.models.ChangeType
+    :param before: The snapshot of the resource before the deployment is
+     executed.
+    :type before: object
+    :param after: The predicted snapshot of the resource after the deployment
+     is executed.
+    :type after: object
+    :param delta: The predicted changes to resource properties.
+    :type delta:
+     list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
+    """
+
+    _validation = {
+        'resource_id': {'required': True},
+        'change_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'change_type': {'key': 'changeType', 'type': 'ChangeType'},
+        'before': {'key': 'before', 'type': 'object'},
+        'after': {'key': 'after', 'type': 'object'},
+        'delta': {'key': 'delta', 'type': '[WhatIfPropertyChange]'},
+    }
+
+    def __init__(self, *, resource_id: str, change_type, before=None, after=None, delta=None, **kwargs) -> None:
+        super(WhatIfChange, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.change_type = change_type
+        self.before = before
+        self.after = after
+        self.delta = delta
+
+
+class WhatIfOperationResult(Model):
+    """Result of the What-If operation. Contains a list of predicted changes and a
+    URL link to get to the next set of results.
+
+    :param status: Status of the What-If operation.
+    :type status: str
+    :param changes: List of resource changes predicted by What-If operation.
+    :type changes:
+     list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfChange]
+    :param error: Error when What-If operation fails.
+    :type error:
+     ~azure.mgmt.resource.resources.v2019_07_01.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'changes': {'key': 'properties.changes', 'type': '[WhatIfChange]'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, status: str=None, changes=None, error=None, **kwargs) -> None:
+        super(WhatIfOperationResult, self).__init__(**kwargs)
+        self.status = status
+        self.changes = changes
+        self.error = error
+
+
+class WhatIfPropertyChange(Model):
+    """The predicted change to the resource property.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param path: Required. The path of the property.
+    :type path: str
+    :param property_change_type: Required. The type of property change.
+     Possible values include: 'Create', 'Delete', 'Modify', 'Array'
+    :type property_change_type: str or
+     ~azure.mgmt.resource.resources.v2019_07_01.models.PropertyChangeType
+    :param before: The value of the property before the deployment is
+     executed.
+    :type before: object
+    :param after: The value of the property after the deployment is executed.
+    :type after: object
+    :param children: Nested property changes.
+    :type children:
+     list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
+    """
+
+    _validation = {
+        'path': {'required': True},
+        'property_change_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'property_change_type': {'key': 'propertyChangeType', 'type': 'PropertyChangeType'},
+        'before': {'key': 'before', 'type': 'object'},
+        'after': {'key': 'after', 'type': 'object'},
+        'children': {'key': 'children', 'type': '[WhatIfPropertyChange]'},
+    }
+
+    def __init__(self, *, path: str, property_change_type, before=None, after=None, children=None, **kwargs) -> None:
+        super(WhatIfPropertyChange, self).__init__(**kwargs)
+        self.path = path
+        self.property_change_type = property_change_type
+        self.before = before
+        self.after = after
+        self.children = children

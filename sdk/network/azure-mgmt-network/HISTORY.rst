@@ -3,6 +3,55 @@
 Release History
 ===============
 
+6.0.0 (2019-10-09)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetwork has a new parameter bgp_communities
+- Model VirtualHub has a new parameter azure_firewall
+- Model VirtualHub has a new parameter security_provider_name
+- Model P2SVpnGateway has a new parameter p2s_connection_configurations
+- Model P2SVpnGateway has a new parameter vpn_server_configuration
+- Model AzureFirewall has a new parameter sku
+- Model VirtualNetworkGateway has a new parameter inbound_dns_forwarding_endpoint
+- Model VirtualNetworkGateway has a new parameter enable_dns_forwarding
+- Added operation P2sVpnGatewaysOperations.get_p2s_vpn_connection_health_detailed
+- Added operation NetworkManagementClientOperationsMixin.generatevirtualwanvpnserverconfigurationvpnprofile
+- Added operation group VpnServerConfigurationsOperations
+- Added operation group VpnServerConfigurationsAssociatedWithVirtualWanOperations
+- Added operation group AvailableServiceAliasesOperations
+
+**Breaking changes** 
+
+- Model WebApplicationFirewallPolicy has a new required parameter managed_rules
+- Model P2SVpnGateway no longer has parameter vpn_client_address_pool
+- Model P2SVpnGateway no longer has parameter custom_routes
+- Model P2SVpnGateway no longer has parameter p2_svpn_server_configuration
+- Model VirtualWAN no longer has parameter security_provider_name
+- Model VirtualWAN no longer has parameter p2_svpn_server_configurations
+- Model PolicySettings has a new signature
+
+5.1.0 (2019-10-03)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetworkGateway has a new parameter vpn_gateway_generation
+- Model ExpressRoutePort has a new parameter identity
+- Model VirtualNetworkGatewayConnection has a new parameter traffic_selector_policies
+- Model ExpressRouteLink has a new parameter mac_sec_config
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter traffic_selector_policies
+- Model NetworkInterfaceIPConfiguration has a new parameter private_link_connection_properties
+- Model ApplicationGatewayRequestRoutingRule has a new parameter priority
+- Added operation VirtualNetworkGatewayConnectionsOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewayConnectionsOperations.start_packet_capture
+- Added operation ConnectionMonitorsOperations.update_tags
+- Added operation VirtualNetworkGatewaysOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewaysOperations.start_packet_capture
+- Added operation group VirtualRoutersOperations
+- Added operation group VirtualRouterPeeringsOperations
+
 5.0.0 (2019-08-27)
 ++++++++++++++++++
 
