@@ -28,12 +28,11 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - pwsh: |
-          cd $(Build.SourcesDirectory)/doc/sphinx
-          pip install -r requirements.txt
-          ./make.bat html
+          pip install -r $(Build.SourcesDirectory)/doc/sphinx/requirements.txt
+          python $(Build.SourcesDirectory)/doc/sphinx/generate_versioned_index.py
           mkdir $(Build.ArtifactStagingDirectory)/sphinx
-          Copy-Item -Path $(Build.SourcesDirectory)/doc/sphinx/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
-        displayName: 'Generate Sphinx Docs'
+          Copy-Item -Path $(Build.SourcesDirectory)/docs/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
+        displayName: 'Generate Documentation Index'
 
       - upload: $(Build.ArtifactStagingDirectory)
         artifact: docfolder

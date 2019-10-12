@@ -132,7 +132,7 @@ def create_docs_folder():
     os.mkdir(os.path.join(docs_folder, 'ref'))
 
     # copy index
-    shutil.copy(docs_folder, os.path.join(doc_folder, 'index.rst'))
+    shutil.copy(index, os.path.join(docs_folder, 'index.rst'))
 
 
 # output everything to the _docs
@@ -169,3 +169,4 @@ if __name__ == "__main__":
     write_toc_tree(categorized_menu_items)
 
     # ready to run sphinx!
+    logging.info('Index prepped and ready for generation. Use the command `sphinx-build -b html -c {sphinx_conf} {source_dir} {output_dir} to generate.'.format(source_dir = docs_folder, sphinx_conf = location, output_dir = os.path.join(docs_folder, './html')))
