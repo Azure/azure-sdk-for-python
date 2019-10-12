@@ -1,0 +1,41 @@
+trigger: none
+
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
+variables:
+  PythonVersion: '3.6'
+
+jobs:
+  - job: 'Generate_Documentation_Index'
+
+    variables:
+      skipComponentGovernanceDetection: true
+  
+    timeoutInMinutes: 120
+  
+    pool:
+      vmImage: 'vs2017-win2016'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - pwsh: |
+          cd $(Build.SourcesDirectory)/doc/sphinx
+          pip install -r requirements.txt
+          ./make.bat html
+          mkdir $(Build.ArtifactStagingDirectory)/sphinx
+          Copy-Item -Path $(Build.SourcesDirectory)/doc/sphinx/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
+        displayName: 'Generate Sphinx Docs'
+
+      - upload: $(Build.ArtifactStagingDirectory)
+        artifact: docfolder
+        condition: succeededOrFailed()
+        displayName: 'Publish Artifacts'
