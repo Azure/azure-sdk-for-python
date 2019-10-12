@@ -34,6 +34,5 @@ if __name__ == "__main__":
     #import all modules from current package
     logging.info("Importing all modules from package [{0}] to verify dependency".format(package_name))
     import_script_all = 'from {0} import *'.format(package_name)
-
     exec(import_script_all)
     logging.info("Verified module dependency, no issues found")
