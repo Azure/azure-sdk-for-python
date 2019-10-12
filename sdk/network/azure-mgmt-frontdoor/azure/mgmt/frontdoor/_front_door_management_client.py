@@ -14,9 +14,10 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import FrontDoorManagementClientConfiguration
 from .operations import FrontDoorManagementClientOperationsMixin
-from .operations import ProfilesOperations
+from .operations import NetworkExperimentProfilesOperations
 from .operations import PreconfiguredEndpointsOperations
 from .operations import ExperimentsOperations
+from .operations import ReportsOperations
 from .operations import FrontDoorsOperations
 from .operations import FrontendEndpointsOperations
 from .operations import EndpointsOperations
@@ -31,12 +32,14 @@ class FrontDoorManagementClient(FrontDoorManagementClientOperationsMixin, SDKCli
     :ivar config: Configuration for client.
     :vartype config: FrontDoorManagementClientConfiguration
 
-    :ivar profiles: Profiles operations
-    :vartype profiles: azure.mgmt.frontdoor.operations.ProfilesOperations
+    :ivar network_experiment_profiles: NetworkExperimentProfiles operations
+    :vartype network_experiment_profiles: azure.mgmt.frontdoor.operations.NetworkExperimentProfilesOperations
     :ivar preconfigured_endpoints: PreconfiguredEndpoints operations
     :vartype preconfigured_endpoints: azure.mgmt.frontdoor.operations.PreconfiguredEndpointsOperations
     :ivar experiments: Experiments operations
     :vartype experiments: azure.mgmt.frontdoor.operations.ExperimentsOperations
+    :ivar reports: Reports operations
+    :vartype reports: azure.mgmt.frontdoor.operations.ReportsOperations
     :ivar front_doors: FrontDoors operations
     :vartype front_doors: azure.mgmt.frontdoor.operations.FrontDoorsOperations
     :ivar frontend_endpoints: FrontendEndpoints operations
@@ -68,11 +71,13 @@ class FrontDoorManagementClient(FrontDoorManagementClientOperationsMixin, SDKCli
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.profiles = ProfilesOperations(
+        self.network_experiment_profiles = NetworkExperimentProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.preconfigured_endpoints = PreconfiguredEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.experiments = ExperimentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reports = ReportsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.front_doors = FrontDoorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
