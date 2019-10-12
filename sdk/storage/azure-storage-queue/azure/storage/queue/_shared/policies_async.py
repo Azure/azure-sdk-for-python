@@ -129,15 +129,6 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         return response
 
 
-class NoRetry(AsyncStorageRetryPolicy):
-
-    def __init__(self):
-        super(NoRetry, self).__init__(retry_total=0)
-
-    def increment(self, *args, **kwargs):  # pylint: disable=unused-argument,arguments-differ
-        return False
-
-
 class ExponentialRetry(AsyncStorageRetryPolicy):
     """Exponential retry."""
 

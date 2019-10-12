@@ -546,15 +546,6 @@ class StorageRetryPolicy(HTTPPolicy):
         return response
 
 
-class NoRetry(StorageRetryPolicy):
-
-    def __init__(self):
-        super(NoRetry, self).__init__(retry_total=0)
-
-    def increment(self, *args, **kwargs):  # pylint: disable=unused-argument,arguments-differ
-        return False
-
-
 class ExponentialRetry(StorageRetryPolicy):
     """Exponential retry."""
 
