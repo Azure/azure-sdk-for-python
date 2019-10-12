@@ -88,7 +88,7 @@ class BlobStorageAccountTestAsync(StorageTestCase):
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
-        actual_data = await blob.download_blob().content_as_bytes()
+        actual_data = await blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------

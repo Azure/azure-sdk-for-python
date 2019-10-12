@@ -284,7 +284,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         stream = await blob.download_blob()
-        data = await stream.content_as_bytes()
+        data = await stream.readall()
         self.assertIsNotNone(data)
         content = data.decode('utf-8')
         self.assertEqual(content, blob_data)
@@ -304,7 +304,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             await blob.upload_blob(blob_data, length=len(blob_data))
 
-            data = await (await blob.download_blob()).content_as_bytes()
+            data = await (await blob.download_blob()).readall()
             content = data.decode('utf-8')
             self.assertEqual(content, blob_data)
 
@@ -328,7 +328,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
         stream = await blob.download_blob(lease=lease)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
         self.assertEqual(content, data)
 
     @record
@@ -365,7 +365,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         stream = await blob.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data)
@@ -386,7 +386,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         stream = await snapshot.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data)
@@ -410,9 +410,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         blob_previous = await snapshot.download_blob()
-        blob_previous_bytes = await blob_previous.content_as_bytes()
+        blob_previous_bytes = await blob_previous.readall()
         blob_latest = await blob.download_blob()
-        blob_latest_bytes = await blob_latest.content_as_bytes()
+        blob_latest_bytes = await blob_latest.readall()
 
         # Assert
         self.assertEqual(blob_previous_bytes, self.byte_data)
@@ -431,7 +431,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         stream = await blob.download_blob(offset=0, length=5)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data[:5])
@@ -452,7 +452,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         stream = await blob.download_blob(lease=lease)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
         await lease.release()
 
         # Assert
@@ -1141,7 +1141,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.assertEqual(copy['copy_status'], 'success')
         self.assertIsNotNone(copy['copy_id'])
 
-        copy_content = await (await copyblob.download_blob()).content_as_bytes()
+        copy_content = await (await copyblob.download_blob()).readall()
         self.assertEqual(copy_content, self.byte_data)
 
     @record
@@ -1264,7 +1264,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         props = await self._wait_for_async_copy(target_blob)
         self.assertEqual(props.copy.status, 'success')
-        actual_data = await (await target_blob.download_blob()).content_as_bytes()
+        actual_data = await (await target_blob.download_blob()).readall()
         self.assertEqual(actual_data, data)
 
     @record
@@ -1288,7 +1288,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         actual_data = await copied_blob.download_blob()
-        bytes_data = await (await copied_blob.download_blob()).content_as_bytes()
+        bytes_data = await (await copied_blob.download_blob()).readall()
         self.assertEqual(bytes_data, b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
@@ -1490,7 +1490,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         stream = await blob.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -1581,7 +1581,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url)
         # self._set_test_proxy(service, self.settings)
-        content = await (await service.download_blob()).content_as_bytes()
+        content = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(data, content)
@@ -1609,7 +1609,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
-        content = await (await service.download_blob()).content_as_bytes()
+        content = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -1643,7 +1643,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
-        result = await (await service.download_blob()).content_as_bytes()
+        result = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(self.byte_data, result)
@@ -1846,7 +1846,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         response.raise_for_status()
         self.assertTrue(response.ok)
-        data = await (await blob.download_blob()).content_as_bytes()
+        data = await (await blob.download_blob()).readall()
         self.assertEqual(updated_data, data)
 
     @record
@@ -2141,7 +2141,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
     @record
@@ -2166,7 +2166,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
     @record
@@ -2192,7 +2192,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
                 blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(b"existing_data", content)
 
     @record
@@ -2220,7 +2220,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
     @record
@@ -2245,7 +2245,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_text()
+        stream = await blob.download_blob(encoding='UTF-8')
+        content = await stream.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2273,7 +2274,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
     @record

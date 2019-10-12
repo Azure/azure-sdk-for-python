@@ -1499,7 +1499,7 @@ class StorageContainerTestAsync(StorageTestCase):
             await blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = await (await blob.download_blob()).content_as_bytes()
+            blob_data = await (await blob.download_blob()).readall()
             self.assertIsNotNone(blob)
             self.assertEqual(blob_data.decode('utf-8'), blob_content)
 

@@ -126,12 +126,12 @@ class StoragePageBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(actual_data.readall(), expected_data)
 
     def assertRangeEqual(self, container_name, blob_name, expected_data, offset, length):
         blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob(offset=offset, length=length)
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(actual_data.readall(), expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -182,7 +182,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob(lease=lease)
-        self.assertEqual(b"".join(list(content)), data)
+        self.assertEqual(content.readall(), data)
 
     @record
     def test_update_page(self):
@@ -1378,6 +1378,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_on_create(self):
+        pytest.skip("premium")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1430,6 +1431,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_set_tier_api(self):
+        pytest.skip("premium")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1481,6 +1483,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_copy_blob(self):
+        pytest.skip("premium")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1561,7 +1564,7 @@ class StoragePageBlobTest(StorageTestCase):
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
-        content = blob_client.download_blob().content_as_bytes()
+        content = blob_client.download_blob().readall()
 
         # Assert
         self.assertEqual(sparse_page_blob_size, len(content))
@@ -1597,7 +1600,7 @@ class StoragePageBlobTest(StorageTestCase):
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
-        content = blob_client.download_blob().content_as_bytes(max_concurrency=3)
+        content = blob_client.download_blob(max_concurrency=3).readall()
 
         # Assert
         self.assertEqual(sparse_page_blob_size, len(content))

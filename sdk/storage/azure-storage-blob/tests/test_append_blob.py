@@ -89,7 +89,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     def assertBlobEqual(self, blob, expected_data):
         stream = blob.download_blob()
-        actual_data = b"".join(list(stream))
+        actual_data = stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):

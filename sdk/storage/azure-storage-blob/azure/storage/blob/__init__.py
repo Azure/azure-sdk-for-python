@@ -136,17 +136,16 @@ def upload_blob_to_url(
             **kwargs)
 
 
-def _download_to_stream(client, handle, max_concurrency, **kwargs):
+def _download_to_stream(client, handle, **kwargs):
     """Download data to specified open file-handle."""
     stream = client.download_blob(**kwargs)
-    stream.download_to_stream(handle, max_concurrency=max_concurrency)
+    stream.readinto(handle)
 
 
 def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
         overwrite=False,  # type: bool
-        max_concurrency=1,  # type: int
         credential=None,  # type: Any
         **kwargs):
     # type: (...) -> None
@@ -172,9 +171,9 @@ def download_blob_from_url(
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
-            _download_to_stream(client, output, max_concurrency, **kwargs)
+            _download_to_stream(client, output, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError("The file '{}' already exists.".format(output))
             with open(output, 'wb') as file_handle:
-                _download_to_stream(client, file_handle, max_concurrency, **kwargs)
+                _download_to_stream(client, file_handle, **kwargs)
