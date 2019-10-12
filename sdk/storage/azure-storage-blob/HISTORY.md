@@ -1,5 +1,10 @@
 # Change Log azure-storage-blob
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `set_container_access_policy` has required parameter `signed_identifiers`.
 
 ## Version 12.0.0b4:
 

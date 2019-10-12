@@ -1,5 +1,11 @@
 # Change Log azure-storage-queue
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `set_queue_access_policy` has required parameter `signed_identifiers`.
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
