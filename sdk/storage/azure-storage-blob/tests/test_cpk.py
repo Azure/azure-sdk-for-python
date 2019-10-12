@@ -466,7 +466,7 @@ class StorageCPKTest(StorageTestCase):
     #
     #     # Act
     #     blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
-    #     self.assertEquals(blob.readall(), data)
+    #     self.assertEqual(blob.readall(), data)
     #
     #     # with self.assertRaises(HttpResponseError):
     #     #     blob_client.clear_page(0, 511)
@@ -478,10 +478,10 @@ class StorageCPKTest(StorageTestCase):
     #     self.assertIsNotNone(resp.get('etag'))
     #     self.assertIsNotNone(resp.get('last_modified'))
     #     self.assertIsNotNone(resp.get('blob_sequence_number'))
-    #     self.assertEquals(blob.readall(), b'\x00' * 512)
+    #     self.assertEqual(blob.readall(), b'\x00' * 512)
     #
     #     blob = blob_client.download_blob(512, 1023, cpk=TEST_ENCRYPTION_KEY)
-    #     self.assertEquals(blob.readall(), data[512:])
+    #     self.assertEqual(blob.readall(), data[512:])
 
     @record
     def test_get_set_blob_metadata(self):

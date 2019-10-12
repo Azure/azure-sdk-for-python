@@ -125,7 +125,7 @@ class BlobStorageAccountTest(StorageTestCase):
         blob_props = blob_client.get_blob_properties()
 
         # Assert
-        self.assertEquals('rehydrate-pending-to-cool', blob_props.archive_status)
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @record
     def test_rehydration_status(self):

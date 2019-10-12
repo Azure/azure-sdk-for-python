@@ -163,7 +163,7 @@ class BlobStorageAccountTestAsync(StorageTestCase):
         blob_props = await blob_client.get_blob_properties()
 
         # Assert
-        self.assertEquals('rehydrate-pending-to-cool', blob_props.archive_status)
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @record
     def test_set_standard_blob_tier_with_rehydrate_priority_async(self):
