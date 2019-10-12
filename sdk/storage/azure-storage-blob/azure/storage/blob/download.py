@@ -280,6 +280,8 @@ class _ChunkIterator(object):
 
         return self._current_content
 
+    next = __next__  # Python 2 compatibility.
+
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
