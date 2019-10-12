@@ -59,12 +59,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str directory_url:
-        The full URI to the directory. This can also be a URL to the storage account
-        or share, in which case the directory and/or share must also be specified.
-    :param share: The share for the directory. If specified, this value will override
+    :param str account_url:
+        The URI to the account. The method `from_directory_url` must be used in order to 
+        use the full URI to the directory.
+    :param share_name: The share for the directory. If specified, this value will override
         a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :type share_name: str
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -76,9 +76,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         shared access key.
     """
     def __init__( # type: ignore
-            self, directory_url,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
+            self, account_url,  # type: str
+            share_name, # type: str
+            directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
             loop=None,  # type: Any
@@ -87,8 +87,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(DirectoryClient, self).__init__(
-            directory_url,
-            share=share,
+            account_url,
+            share_name=share_name,
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
@@ -111,7 +111,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
+            self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
@@ -137,7 +137,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
-            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
+            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 

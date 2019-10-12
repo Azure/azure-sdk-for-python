@@ -114,11 +114,11 @@ class FileClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str file_url: The full URI to the file. This can also be a URL to the storage account
-        or share, in which case the file and/or share must also be specified.
-    :param share: The share for the file. If specified, this value will override
+    :param str account_url: The full URI to the account. The method `from_file_url` must be used 
+        in order to use the full File URL.
+    :param share_name: The share for the file. If specified, this value will override
         a share value specified in the file URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :type share_name: str
     :param str file_path:
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
@@ -130,31 +130,28 @@ class FileClient(StorageAccountHostsMixin):
         shared access key.
     """
     def __init__( # type: ignore
-            self, file_url,  # type: str
-            share=None,  # type: Optional[Union[str, ShareProperties]]
-            file_path=None,  # type: Optional[str]
+            self, account_url,  # type: str
+            share_name,  # type: str
+            file_path,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         try:
-            if not file_url.lower().startswith('http'):
-                file_url = "https://" + file_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("File URL must be a string.")
-        parsed_url = urlparse(file_url.rstrip('/'))
-        if not parsed_url.path and not (share and file_path):
-            raise ValueError("Please specify a share and file name.")
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not (share_name and file_path):
+            raise ValueError("Please specify a share name and file name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(file_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
         if hasattr(credential, 'get_token'):
             raise ValueError("Token credentials not supported by the File service.")
 
-        path_share, path_file = "", ""
         path_snapshot = None
-        if parsed_url.path:
-            path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
@@ -167,21 +164,51 @@ class FileClient(StorageAccountHostsMixin):
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(path_share) # type: ignore
-        if file_path:
-            self.file_path = file_path.split('/')
-        else:
-            self.file_path = [unquote(p) for p in path_file.split('/')]
-
+        self.share_name = share_name
+        self.file_path = file_path.split('/')
         self.file_name = self.file_path[-1]
         self.directory_path = "/".join(self.file_path[:-1])
+
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_file_url(
+            cls, file_url,  # type: str
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> None)
+        """A client to interact with a specific file, although that file may not yet exist.
+
+        :param str file_url: The full URI to the file.
+        :param str snapshot:
+            An optional file snapshot on which to operate.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
+        """
+        try:
+            if not file_url.lower().startswith('http'):
+                file_url = "https://" + file_url
+        except AttributeError:
+            raise ValueError("File URL must be a string.")
+        parsed_url = urlparse(file_url.rstrip('/'))
+
+        if not (parsed_url.netloc and parsed_url.path):
+            raise ValueError("Invalid URL: {}".format(file_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+
+        path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
+        path_snapshot, _ = parse_query(parsed_url.query)
+        snapshot= snapshot or path_snapshot
+        share_name = unquote(path_share)
+        file_path = [unquote(p) for p in path_file.split('/')]
+        return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -200,7 +227,7 @@ class FileClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
+            share_name=None, # type: str
             file_path=None, # type: Optional[str]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
@@ -211,9 +238,9 @@ class FileClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
+        :param share_name: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.ShareProperties
+        :type share_name: str or ~azure.storage.file.ShareProperties
         :param str file_path:
             The file path.
         :param str snapshot:
@@ -236,7 +263,7 @@ class FileClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[FileSasPermissions, str]]
