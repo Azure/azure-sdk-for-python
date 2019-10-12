@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
+from .._shared.policies_async import ExponentialRetry, LinearRetry
 from .._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -55,7 +55,6 @@ __all__ = [
     'StorageErrorCode',
     'ExponentialRetry',
     'LinearRetry',
-    'NoRetry',
     'LocationMode',
     'BlockState',
     'StandardBlobTier',
