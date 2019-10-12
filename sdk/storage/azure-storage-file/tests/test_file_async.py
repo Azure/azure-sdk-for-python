@@ -39,8 +39,6 @@ from asyncfiletestcase import (
 TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
-INPUT_FILE_PATH = 'file_input.temp.dat'
-OUTPUT_FILE_PATH = 'file_output.temp.dat'
 LARGE_FILE_SIZE = 64 * 1024 + 5
 
 
@@ -64,6 +62,13 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = b'viscaelbarcelona' * 64
         self.remote_share_name = None
+    
+    def _teardown(self, file_name):
+        if os.path.isfile(file_name):
+            try:
+                os.remove(file_name)
+            except:
+                pass
 
     # --Helpers-----------------------------------------------------------------
 
@@ -1268,6 +1273,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = 'file_from_path_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1286,6 +1292,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data)
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1300,6 +1307,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = 'path_with_progress_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1329,6 +1337,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             len(data),
             fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1343,6 +1352,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = 'create_file_from_stream_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1362,6 +1372,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1376,6 +1387,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = 'stream_non_seekable_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1393,6 +1405,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1407,6 +1420,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = '_stream_with_progress_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1434,6 +1448,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             len(data),
             fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1448,6 +1463,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = 'stream_truncated_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1464,6 +1480,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1478,6 +1495,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_name = self.get_resource_name(TEST_FILE_PREFIX)
         await self._setup_share(fsc)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
+        INPUT_FILE_PATH = '_with_progress_truncated_async.temp.dat'
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
         file_client = FileClient(
@@ -1506,7 +1524,8 @@ class StorageFileTestAsync(AsyncFileTestCase):
             file_size,
             fsc._config.max_range_size,
             progress, unknown_size=False)
-    
+        self._teardown(INPUT_FILE_PATH)
+
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test

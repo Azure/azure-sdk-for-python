@@ -63,15 +63,8 @@ class FileTestCase(AzureMgmtTestCase):
         return "https://{}.file.core.windows.net".format(name)
 
     def get_random_bytes(self, size):
-        if self.is_live:
-            rand = random.Random()
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            rand = random.Random(checksum)
-        result = bytearray(size)
-        for i in range(size):
-            result[i] = int(rand.random()*255)  # random() is consistent between python 2 and 3
-        return bytes(result)
+        # recordings don't like random data.
+        return b'a' * size
 
     def get_random_text_data(self, size):
         '''Returns random unicode text data exceeding the size threshold for

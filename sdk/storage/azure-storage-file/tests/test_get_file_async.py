@@ -28,7 +28,6 @@ from asyncfiletestcase import (
 # ------------------------------------------------------------------------------
 
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
 
 
 # ------------------------------------------------------------------------------
@@ -59,14 +58,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
 
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(fsc.delete_share(self.share_name, delete_snapshots='include'))
-            except:
-                pass
-
+    def _teardown(self, FILE_PATH)
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
@@ -372,6 +364,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'file_to_stream_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file()
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -381,6 +374,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -405,6 +399,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'file_with_iter_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             download = await file_client.download_file()
             async for data in download:
@@ -413,6 +408,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -444,6 +440,7 @@ class StorageGetFileTest(AsyncFileTestCase):
                 progress.append((current, total))
 
         # Act
+        FILE_PATH = 'stream_with_progress_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -458,6 +455,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -485,6 +483,7 @@ class StorageGetFileTest(AsyncFileTestCase):
                 progress.append((current, total))
 
         # Act
+        FILE_PATH = 'stream_non_parallel_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -499,6 +498,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -529,6 +529,7 @@ class StorageGetFileTest(AsyncFileTestCase):
                 progress.append((current, total))
 
         # Act
+        FILE_PATH = 'file_to_stream_small_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -543,6 +544,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -578,6 +580,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'stream_from_snapshot_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await snapshot_client.download_file()
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -587,6 +590,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
 
     @ResourceGroupPreparer()
@@ -630,6 +634,7 @@ class StorageGetFileTest(AsyncFileTestCase):
                 progress.append((current, total))
 
         # Act
+        FILE_PATH = 'stream_with_progress_from_snapshot_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await snapshot_client.download_file(raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -644,6 +649,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -680,7 +686,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             total = response.context['data_stream_total']
             if current is not None:
                 progress.append((current, total))
-
+        FILE_PATH = 'stream_non_parallel_from_snapshot_async.temp.dat'
         # Act
         with open(FILE_PATH, 'wb') as stream:
             props = await snapshot_client.download_file(raw_response_hook=callback)
@@ -696,6 +702,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -738,6 +745,7 @@ class StorageGetFileTest(AsyncFileTestCase):
                 progress.append((current, total))
 
         # Act
+        FILE_PATH = 'small_from_snapshot_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await snapshot_client.download_file(raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -752,6 +760,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -777,6 +786,7 @@ class StorageGetFileTest(AsyncFileTestCase):
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
+        FILE_PATH = '_get_file_to_path_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=1, length=end_range)
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -786,6 +796,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -811,6 +822,7 @@ class StorageGetFileTest(AsyncFileTestCase):
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
+        FILE_PATH = 'path_with_single_byte_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=0, length=0)
             props = await props.download_to_stream(stream)
@@ -821,6 +833,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             actual = stream.read()
             self.assertEqual(1, len(actual))
             self.assertEqual(self.byte_data[0], actual[0])
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -886,6 +899,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         # Act
         start_range = 3
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
+        FILE_PATH = 'path_with_progress_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=start_range, length=end_range, raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -900,6 +914,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -920,6 +935,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'file_to_path_small_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=1, length=4)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -929,6 +945,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -949,6 +966,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'to_path_non_parallel_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=1, length=3)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -958,6 +976,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -987,6 +1006,7 @@ class StorageGetFileTest(AsyncFileTestCase):
 
         # Act
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
+        FILE_PATH = 'invalid_range_parallel_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=1, length=end_range)
             props = await props.download_to_stream(stream, max_concurrency=2)
@@ -996,6 +1016,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[1:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1022,6 +1043,7 @@ class StorageGetFileTest(AsyncFileTestCase):
 
         # Act
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
+        FILE_PATH = 'invalid_range_non_parallel_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=1, length=end_range)
             props = await props.download_to_stream(stream, max_concurrency=1)
@@ -1031,6 +1053,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[1:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1277,6 +1300,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'file_non_seekable_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
             file_props = await file_client.download_file()
@@ -1287,6 +1311,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1311,14 +1336,14 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'non_seekable_parallel_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
                 data = await file_client.download_file()
                 await data.download_to_stream(non_seekable_stream, max_concurrency=2)
-
-                # Assert
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1350,6 +1375,7 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'seekable_from_snapshot_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
             file_props = await snapshot_client.download_file()
@@ -1360,6 +1386,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1395,12 +1422,14 @@ class StorageGetFileTest(AsyncFileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        FILE_PATH = 'parallel_from_snapshot_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
                 data = await snapshot_client.download_file()
                 await data.download_to_stream(non_seekable_stream, max_concurrency=2)
+        self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
