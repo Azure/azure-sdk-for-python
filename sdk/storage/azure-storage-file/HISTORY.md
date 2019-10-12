@@ -10,6 +10,7 @@ To use a share_url, the method `from_share_url` must be used.
 To use a directory_url, the method `from_directory_url` must be used.
 - `FileClient` now accepts only `account_url` with mandatory string params `share_name` and 
 `file_path`. To use a file_url, the method `from_file_url` must be used.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 
 ## Version 12.0.0b4:
 
