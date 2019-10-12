@@ -60,9 +60,9 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2019_08_01.models.RecommendationPaged[~azure.mgmt.web.v2019_08_01.models.Recommendation]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -133,7 +133,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters.metadata['url']
@@ -185,7 +185,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_subscription.metadata['url']
@@ -249,9 +249,9 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2019_08_01.models.RecommendationPaged[~azure.mgmt.web.v2019_08_01.models.Recommendation]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -335,9 +335,9 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2019_08_01.models.RecommendationPaged[~azure.mgmt.web.v2019_08_01.models.Recommendation]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -416,7 +416,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_all_for_hosting_environment.metadata['url']
@@ -474,7 +474,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters_for_hosting_environment.metadata['url']
@@ -537,10 +537,10 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RecommendationRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.RecommendationRule or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.RecommendationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_rule_details_by_hosting_environment.metadata['url']
@@ -611,7 +611,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_hosting_environment.metadata['url']
@@ -678,9 +678,9 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2019_08_01.models.RecommendationPaged[~azure.mgmt.web.v2019_08_01.models.Recommendation]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -764,9 +764,9 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2019_08_01.models.RecommendationPaged[~azure.mgmt.web.v2019_08_01.models.Recommendation]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -843,7 +843,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_all_for_web_app.metadata['url']
@@ -898,7 +898,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_all_filters_for_web_app.metadata['url']
@@ -960,10 +960,10 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RecommendationRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.RecommendationRule or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.RecommendationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_rule_details_by_web_app.metadata['url']
@@ -1032,7 +1032,7 @@ class RecommendationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.disable_recommendation_for_site.metadata['url']

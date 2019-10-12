@@ -59,9 +59,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServicePlan
         :rtype:
-         ~azure.mgmt.web.models.AppServicePlanPaged[~azure.mgmt.web.models.AppServicePlan]
+         ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPaged[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -142,9 +142,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServicePlan
         :rtype:
-         ~azure.mgmt.web.models.AppServicePlanPaged[~azure.mgmt.web.models.AppServicePlan]
+         ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPaged[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -225,7 +225,7 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AppServicePlan or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.AppServicePlan or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -336,7 +336,8 @@ class AppServicePlansOperations:
         :param name: Name of the App Service plan.
         :type name: str
         :param app_service_plan: Details of the App Service plan.
-        :type app_service_plan: ~azure.mgmt.web.models.AppServicePlan
+        :type app_service_plan:
+         ~azure.mgmt.web.v2018_02_01.models.AppServicePlan
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -344,10 +345,10 @@ class AppServicePlansOperations:
          polling object for personal polling strategy
         :return: An instance of AppServicePlan or
          ClientRawResponse<AppServicePlan> if raw==True
-        :rtype: ~~azure.mgmt.web.models.AppServicePlan or
-         ~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.AppServicePlan]
+        :rtype: ~~azure.mgmt.web.v2018_02_01.models.AppServicePlan or
+         ~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -445,17 +446,17 @@ class AppServicePlansOperations:
         :type name: str
         :param app_service_plan: Details of the App Service plan.
         :type app_service_plan:
-         ~azure.mgmt.web.models.AppServicePlanPatchResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AppServicePlan or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.AppServicePlan or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -521,10 +522,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.Capability] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.Capability] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_capabilities.metadata['url']
@@ -588,10 +589,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hybrid_connection.metadata['url']
@@ -719,10 +720,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnectionKey or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.HybridConnectionKey or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionKey or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_hybrid_connection_keys.metadata['url']
@@ -788,9 +789,9 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of str
-        :rtype: ~azure.mgmt.web.models.StrPaged[str]
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.StrPaged[str]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -876,10 +877,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnectionLimits or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.HybridConnectionLimits or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionLimits or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hybrid_connection_plan_limit.metadata['url']
@@ -940,9 +941,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of HybridConnection
         :rtype:
-         ~azure.mgmt.web.models.HybridConnectionPaged[~azure.mgmt.web.models.HybridConnection]
+         ~azure.mgmt.web.v2018_02_01.models.HybridConnectionPaged[~azure.mgmt.web.v2018_02_01.models.HybridConnection]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1027,9 +1028,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetricDefinition
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1121,9 +1122,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1282,9 +1283,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Site
-        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.SitePaged[~azure.mgmt.web.v2018_02_01.models.Site]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1374,7 +1376,7 @@ class AppServicePlansOperations:
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_server_farm_skus.metadata['url']
@@ -1439,9 +1441,9 @@ class AppServicePlansOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmUsageQuota
         :rtype:
-         ~azure.mgmt.web.models.CsmUsageQuotaPaged[~azure.mgmt.web.models.CsmUsageQuota]
+         ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2018_02_01.models.CsmUsageQuota]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1525,10 +1527,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.VnetInfo] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetInfo] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_vnets.metadata['url']
@@ -1590,7 +1592,7 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1660,10 +1662,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_gateway.metadata['url']
@@ -1725,17 +1727,18 @@ class AppServicePlansOperations:
          is supported.
         :type gateway_name: str
         :param connection_envelope: Definition of the gateway.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway
+        :type connection_envelope:
+         ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_gateway.metadata['url']
@@ -1805,10 +1808,10 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.VnetRoute] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_routes_for_vnet.metadata['url']
@@ -1873,7 +1876,7 @@ class AppServicePlansOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.VnetRoute] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute] or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1938,14 +1941,14 @@ class AppServicePlansOperations:
         :param route_name: Name of the Virtual Network route.
         :type route_name: str
         :param route: Definition of the Virtual Network route.
-        :type route: ~azure.mgmt.web.models.VnetRoute
+        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetRoute or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.VnetRoute or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2076,14 +2079,14 @@ class AppServicePlansOperations:
         :param route_name: Name of the Virtual Network route.
         :type route_name: str
         :param route: Definition of the Virtual Network route.
-        :type route: ~azure.mgmt.web.models.VnetRoute
+        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetRoute or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.VnetRoute or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

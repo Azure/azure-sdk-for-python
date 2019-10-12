@@ -55,10 +55,11 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: DomainAvailabilityCheckResult or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.DomainAvailabilityCheckResult or
+        :rtype:
+         ~azure.mgmt.web.v2019_08_01.models.DomainAvailabilityCheckResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         identifier = models.NameIdentifier(name=name)
 
@@ -118,9 +119,9 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Domain
         :rtype:
-         ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
+         ~azure.mgmt.web.v2019_08_01.models.DomainPaged[~azure.mgmt.web.v2019_08_01.models.Domain]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -197,10 +198,11 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: DomainControlCenterSsoRequest or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.DomainControlCenterSsoRequest or
+        :rtype:
+         ~azure.mgmt.web.v2019_08_01.models.DomainControlCenterSsoRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_control_center_sso_request.metadata['url']
@@ -259,9 +261,9 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of NameIdentifier
         :rtype:
-         ~azure.mgmt.web.models.NameIdentifierPaged[~azure.mgmt.web.models.NameIdentifier]
+         ~azure.mgmt.web.v2019_08_01.models.NameIdentifierPaged[~azure.mgmt.web.v2019_08_01.models.NameIdentifier]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
 
@@ -346,9 +348,9 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Domain
         :rtype:
-         ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
+         ~azure.mgmt.web.v2019_08_01.models.DomainPaged[~azure.mgmt.web.v2019_08_01.models.Domain]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -429,10 +431,10 @@ class DomainsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Domain or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.Domain or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Domain or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -537,7 +539,7 @@ class DomainsOperations:
         :param domain_name: Name of the domain.
         :type domain_name: str
         :param domain: Domain registration information.
-        :type domain: ~azure.mgmt.web.models.Domain
+        :type domain: ~azure.mgmt.web.v2019_08_01.models.Domain
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -545,10 +547,10 @@ class DomainsOperations:
          polling object for personal polling strategy
         :return: An instance of Domain or ClientRawResponse<Domain> if
          raw==True
-        :rtype: ~~azure.mgmt.web.models.Domain or
-         ~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.Domain]
+        :rtype: ~~azure.mgmt.web.v2019_08_01.models.Domain or
+         ~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.Domain]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -600,7 +602,7 @@ class DomainsOperations:
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -650,17 +652,17 @@ class DomainsOperations:
         :param domain_name: Name of the domain.
         :type domain_name: str
         :param domain: Domain registration information.
-        :type domain: ~azure.mgmt.web.models.DomainPatchResource
+        :type domain: ~azure.mgmt.web.v2019_08_01.models.DomainPatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Domain or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.Domain or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Domain or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -727,9 +729,9 @@ class DomainsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DomainOwnershipIdentifier
         :rtype:
-         ~azure.mgmt.web.models.DomainOwnershipIdentifierPaged[~azure.mgmt.web.models.DomainOwnershipIdentifier]
+         ~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifierPaged[~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifier]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -813,10 +815,10 @@ class DomainsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifier
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ownership_identifier.metadata['url']
@@ -885,10 +887,10 @@ class DomainsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifier
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
@@ -959,7 +961,7 @@ class DomainsOperations:
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_ownership_identifier.metadata['url']
@@ -1021,10 +1023,10 @@ class DomainsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.DomainOwnershipIdentifier
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
@@ -1093,7 +1095,7 @@ class DomainsOperations:
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.renew.metadata['url']

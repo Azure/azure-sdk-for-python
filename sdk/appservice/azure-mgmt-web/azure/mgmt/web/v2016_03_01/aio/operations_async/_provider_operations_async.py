@@ -54,7 +54,7 @@ class ProviderOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ApplicationStack
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackPaged[~azure.mgmt.web.models.ApplicationStack]
+         ~azure.mgmt.web.v2016_03_01.models.ApplicationStackPaged[~azure.mgmt.web.v2016_03_01.models.ApplicationStack]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -135,7 +135,7 @@ class ProviderOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmOperationDescription
         :rtype:
-         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
+         ~azure.mgmt.web.v2016_03_01.models.CsmOperationDescriptionPaged[~azure.mgmt.web.v2016_03_01.models.CsmOperationDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -214,7 +214,7 @@ class ProviderOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ApplicationStack
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackPaged[~azure.mgmt.web.models.ApplicationStack]
+         ~azure.mgmt.web.v2016_03_01.models.ApplicationStackPaged[~azure.mgmt.web.v2016_03_01.models.ApplicationStack]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

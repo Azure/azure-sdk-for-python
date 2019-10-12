@@ -51,9 +51,9 @@ class ResourceHealthMetadataOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceHealthMetadata
         :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataPaged[~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -134,9 +134,9 @@ class ResourceHealthMetadataOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceHealthMetadata
         :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataPaged[~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -220,9 +220,9 @@ class ResourceHealthMetadataOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceHealthMetadata
         :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataPaged[~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -304,10 +304,10 @@ class ResourceHealthMetadataOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ResourceHealthMetadata or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_site.metadata['url']
@@ -373,9 +373,9 @@ class ResourceHealthMetadataOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceHealthMetadata
         :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadataPaged[~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -461,10 +461,10 @@ class ResourceHealthMetadataOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ResourceHealthMetadata or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceHealthMetadata or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_site_slot.metadata['url']

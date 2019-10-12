@@ -55,9 +55,9 @@ class ProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ApplicationStackResource
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackResourcePaged[~azure.mgmt.web.models.ApplicationStackResource]
+         ~azure.mgmt.web.v2019_08_01.models.ApplicationStackResourcePaged[~azure.mgmt.web.v2019_08_01.models.ApplicationStackResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -122,9 +122,9 @@ class ProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmOperationDescription
         :rtype:
-         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
+         ~azure.mgmt.web.v2019_08_01.models.CsmOperationDescriptionPaged[~azure.mgmt.web.v2019_08_01.models.CsmOperationDescription]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -189,9 +189,9 @@ class ProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ApplicationStackResource
         :rtype:
-         ~azure.mgmt.web.models.ApplicationStackResourcePaged[~azure.mgmt.web.models.ApplicationStackResource]
+         ~azure.mgmt.web.v2019_08_01.models.ApplicationStackResourcePaged[~azure.mgmt.web.v2019_08_01.models.ApplicationStackResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

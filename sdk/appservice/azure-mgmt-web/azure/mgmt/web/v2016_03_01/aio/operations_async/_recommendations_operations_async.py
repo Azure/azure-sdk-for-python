@@ -61,7 +61,7 @@ class RecommendationsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2016_03_01.models.RecommendationPaged[~azure.mgmt.web.v2016_03_01.models.Recommendation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -261,7 +261,7 @@ class RecommendationsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2016_03_01.models.RecommendationPaged[~azure.mgmt.web.v2016_03_01.models.Recommendation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -359,7 +359,7 @@ class RecommendationsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Recommendation
         :rtype:
-         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+         ~azure.mgmt.web.v2016_03_01.models.RecommendationPaged[~azure.mgmt.web.v2016_03_01.models.Recommendation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -571,7 +571,7 @@ class RecommendationsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RecommendationRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.RecommendationRule or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.RecommendationRule or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

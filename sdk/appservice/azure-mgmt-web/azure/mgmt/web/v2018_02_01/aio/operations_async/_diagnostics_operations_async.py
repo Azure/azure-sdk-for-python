@@ -56,9 +56,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorResponsePaged[~azure.mgmt.web.v2018_02_01.models.DetectorResponse]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -148,10 +148,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hosting_environment_detector_response.metadata['url']
@@ -219,9 +219,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorResponsePaged[~azure.mgmt.web.v2018_02_01.models.DetectorResponse]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -311,10 +311,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response.metadata['url']
@@ -382,9 +382,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
-         ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
+         ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategoryPaged[~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -468,10 +468,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticCategory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category.metadata['url']
@@ -535,9 +535,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
-         ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.AnalysisDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.AnalysisDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -624,10 +624,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis.metadata['url']
@@ -699,10 +699,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis.metadata['url']
@@ -773,9 +773,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.DetectorDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -863,9 +863,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.DetectorDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -959,10 +959,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector.metadata['url']
@@ -1033,9 +1033,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorResponsePaged[~azure.mgmt.web.v2018_02_01.models.DetectorResponse]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1128,10 +1128,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response_slot.metadata['url']
@@ -1202,9 +1202,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
-         ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
+         ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategoryPaged[~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1291,10 +1291,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticCategory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category_slot.metadata['url']
@@ -1361,9 +1361,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
-         ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.AnalysisDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.AnalysisDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1453,10 +1453,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis_slot.metadata['url']
@@ -1531,10 +1531,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis_slot.metadata['url']
@@ -1608,9 +1608,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.DetectorDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1701,9 +1701,9 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.DetectorDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1800,10 +1800,10 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector_slot.metadata['url']

@@ -57,7 +57,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorResponsePaged[~azure.mgmt.web.v2016_03_01.models.DetectorResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -152,7 +152,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -224,7 +224,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorResponsePaged[~azure.mgmt.web.v2016_03_01.models.DetectorResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -319,7 +319,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -391,7 +391,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
-         ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
+         ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategoryPaged[~azure.mgmt.web.v2016_03_01.models.DiagnosticCategory]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -480,7 +480,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticCategory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -548,7 +548,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
-         ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.AnalysisDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.AnalysisDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -640,7 +640,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -716,7 +716,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -791,7 +791,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.DetectorDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -884,7 +884,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.DetectorDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -983,8 +983,8 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1058,7 +1058,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorResponse
         :rtype:
-         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorResponsePaged[~azure.mgmt.web.v2016_03_01.models.DetectorResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1156,7 +1156,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1231,7 +1231,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
-         ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
+         ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategoryPaged[~azure.mgmt.web.v2016_03_01.models.DiagnosticCategory]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1323,7 +1323,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticCategory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1394,7 +1394,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
-         ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.AnalysisDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.AnalysisDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1489,7 +1489,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1568,7 +1568,7 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1646,7 +1646,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.DetectorDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1742,7 +1742,7 @@ class DiagnosticsOperations:
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DetectorDefinition
         :rtype:
-         ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
+         ~azure.mgmt.web.v2016_03_01.models.DetectorDefinitionPaged[~azure.mgmt.web.v2016_03_01.models.DetectorDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1844,8 +1844,8 @@ class DiagnosticsOperations:
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2016_03_01.models.DiagnosticDetectorResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
