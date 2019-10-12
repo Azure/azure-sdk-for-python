@@ -131,14 +131,14 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def _update_progress(self, length):
         if self.progress_lock:
-            with self.progress_lock:
+            with self.progress_lock:  # pylint: disable=not-context-manager
                 self.progress_total += length
         else:
             self.progress_total += length
 
     def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
-            with self.stream_lock:
+            with self.stream_lock:  # pylint: disable=not-context-manager
                 self.stream.seek(self.stream_start + (chunk_start - self.start_index))
                 self.stream.write(chunk_data)
         else:

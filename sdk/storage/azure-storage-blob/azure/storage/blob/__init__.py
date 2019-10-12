@@ -101,8 +101,6 @@ __all__ = [
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        max_concurrency=1,  # type: int
-        encoding='UTF-8', # type: str
         credential=None,  # type: Any
         **kwargs):
     # type: (...) -> dict[str, Any]
@@ -124,16 +122,13 @@ def upload_blob_to_url(
         blob URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :param int max_concurrency:
+        The number of parallel connections with which to download.
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return client.upload_blob(
-            data=data,
-            blob_type=BlobType.BlockBlob,
-            max_concurrency=max_concurrency,
-            encoding=encoding,
-            **kwargs)
+        return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
 
 
 def _download_to_stream(client, handle, **kwargs):
@@ -167,6 +162,8 @@ def download_blob_from_url(
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :param int max_concurrency:
+        The number of parallel connections with which to download.
     :rtype: None
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
