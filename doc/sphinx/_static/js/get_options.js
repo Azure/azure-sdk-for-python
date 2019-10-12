@@ -49,11 +49,11 @@ function populateOptions(optionSelector, otherSelectors){
     var versionRequestUrl = "https://azuresdkdocsdev.blob.core.windows.net/$web?restype=container&comp=list&prefix=python/" + currentPackage() + "/versions/"
     
     httpGetAsync(versionRequestUrl, function(responseText){
-      if(response){
-        data_stored = response
+      if(responseText){
+        data_stored = responseText
 
         parser = new DOMParser();
-        xmlDoc = parser.parseFromString(response,"text/xml");
+        xmlDoc = parser.parseFromString(responseText,"text/xml");
         
         nameElements = Array.from(xmlDoc.getElementsByTagName('Name'))
         options = []
