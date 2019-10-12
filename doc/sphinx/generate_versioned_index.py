@@ -13,6 +13,7 @@ import logging
 import json
 import os
 import glob
+import shutil
 
 import pdb
 
@@ -22,6 +23,8 @@ CONFIG_FILE = os.path.join(
 logging.getLogger().setLevel(logging.INFO)
 location = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.abspath(os.path.join(location, "..", ".."))
+docs_folder = os.path.join(root_dir, '_docs')
+index = os.path.join(location, 'index.rst')
 
 TOC_TEMPLATE = """
 .. toctree::
@@ -90,7 +93,7 @@ def get_repo_packages(base_dir):
 
 def write_landing_pages(package_names):
     for pkg in package_names:
-        with open(os.path.join(location, 'ref/{}.rst'.format(pkg)), 'w') as f:
+        with open(os.path.join(docs_folder, 'ref/{}.rst'.format(pkg)), 'w') as f:
             content = LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["="] * len(pkg)))
             f.write(content)
 
@@ -103,7 +106,7 @@ def write_toc_tree(categorized_menu_items):
 
         toc_tree_contents += category_toc_contents
 
-    with open(os.path.join(location, 'toc_tree.rst'), 'w') as f:
+    with open(os.path.join(docs_folder, 'toc_tree.rst'), 'w') as f:
         f.write(toc_tree_contents)
 
 
@@ -120,6 +123,17 @@ def get_categorized_menu_items(package_names):
 
     return categorized_menu_items
     
+def create_docs_folder():
+    # delete existing
+    shutil.rmtree(docs_folder, ignore_errors=True)
+    
+    # recreate
+    os.mkdir(docs_folder)
+    os.mkdir(os.path.join(docs_folder, 'ref'))
+
+    # copy index
+    shutil.copy(docs_folder, os.path.join(doc_folder, 'index.rst'))
+
 
 # output everything to the _docs
 if __name__ == "__main__":
@@ -142,6 +156,8 @@ if __name__ == "__main__":
 
     service_mapping = read_config_file()
     all_packages = get_repo_packages(root_dir)
+
+    create_docs_folder()
 
     # write all the landing pages that will reach out to the appropriate location
     write_landing_pages(all_packages)
