@@ -1,7 +1,20 @@
 {% extends "!layout.html" %}
 
+{% block sidebartitle %}
+    {{ super() }}
+    <a href="https://azure.github.io/azure-sdk-for-python">Project Homepage</a>
+    
+{% endblock %}
+
+{% block menu %}
+    <p class="caption" id="versionSelectorHeader" style="display: none;">
+        Package version
+    </p>
+    <select value="myValue" id="versionSelector" style="display: none;"></select>
+    {{ super() }}
+{% endblock %}
+
 {% block footer %}
-{{ super() }}
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-62780441-36"></script>
 <script>
