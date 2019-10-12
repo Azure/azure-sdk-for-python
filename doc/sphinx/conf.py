@@ -21,7 +21,7 @@ from shutil import copyfile
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../azure'))
+# sys.path.insert(0, os.path.abspath('../azure'))
 
 # FIX FOR EXAMPLE REFERENCES
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
@@ -58,9 +58,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.5', None),
-    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None)
+    'python': ('https://docs.python.org/3.7', None)
 }
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,7 +79,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Azure SDK for Python'
-copyright = u'2016, Microsoft'
+copyright = u'2019, Microsoft'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
