@@ -737,7 +737,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
