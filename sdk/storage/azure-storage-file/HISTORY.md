@@ -1,5 +1,16 @@
 # Change Log azure-storage-file
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`. 
+To use a share_url, the method `from_share_url` must be used.
+- `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
+To use a directory_url, the method `from_directory_url` must be used.
+- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and 
+`file_path`. To use a file_url, the method `from_file_url` must be used.
+
 ## Version 12.0.0b4:
 
 **Breaking changes**

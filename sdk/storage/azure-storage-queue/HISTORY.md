@@ -1,5 +1,12 @@
 # Change Log azure-storage-queue
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`. 
+To use a queue_url, the method `from_queue_url` must be used.
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
