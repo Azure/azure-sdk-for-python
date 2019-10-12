@@ -8,7 +8,7 @@ from .file_client_async import FileClient
 from .directory_client_async import DirectoryClient
 from .share_client_async import ShareClient
 from .file_service_client_async import FileServiceClient
-from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
+from .._shared.policies_async import ExponentialRetry, LinearRetry
 from .._shared.models import (
     LocationMode,
     ResourceTypes,
@@ -40,7 +40,6 @@ __all__ = [
     'FileServiceClient',
     'ExponentialRetry',
     'LinearRetry',
-    'NoRetry',
     'LocationMode',
     'ResourceTypes',
     'AccountSasPermissions',

@@ -9,7 +9,7 @@ from .file_client import FileClient
 from .directory_client import DirectoryClient
 from .share_client import ShareClient
 from .file_service_client import FileServiceClient
-from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
+from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -45,7 +45,6 @@ __all__ = [
     'FileServiceClient',
     'ExponentialRetry',
     'LinearRetry',
-    'NoRetry',
     'LocationMode',
     'ResourceTypes',
     'AccountSasPermissions',

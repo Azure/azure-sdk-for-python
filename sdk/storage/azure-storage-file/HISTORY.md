@@ -5,6 +5,8 @@
 **Breaking changes**
 
 - `file_permission_key` parameter has been renamed to `permission_key`
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+
 
 ## Version 12.0.0b4:
 
