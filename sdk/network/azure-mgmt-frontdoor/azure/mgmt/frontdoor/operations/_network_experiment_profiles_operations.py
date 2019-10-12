@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class ExperimentsOperations(object):
-    """ExperimentsOperations operations.
+class NetworkExperimentProfilesOperations(object):
+    """NetworkExperimentProfilesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,35 +40,27 @@ class ExperimentsOperations(object):
 
         self.config = config
 
-    def list_by_profile(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of Experiments.
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Network Experiment Profiles under a subscription.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: The Profile identifier associated with the Tenant
-         and Partner
-        :type profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Experiment
+        :return: An iterator like instance of Profile
         :rtype:
-         ~azure.mgmt.frontdoor.models.ExperimentPaged[~azure.mgmt.frontdoor.models.Experiment]
+         ~azure.mgmt.frontdoor.models.ProfilePaged[~azure.mgmt.frontdoor.models.Profile]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_profile.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-                    'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -108,14 +100,84 @@ class ExperimentsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ExperimentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ProfilePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/NetworkExperimentProfiles'}
+
+    def list_by_resource_group(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Network Experiment Profiles within a resource group
+        under a subscription.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Profile
+        :rtype:
+         ~azure.mgmt.frontdoor.models.ProfilePaged[~azure.mgmt.frontdoor.models.Profile]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ProfilePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles'}
 
     def get(
-            self, resource_group_name, profile_name, experiment_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an Experiment by ExperimentName.
+            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an NetworkExperiment Profile by ProfileName.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -123,16 +185,13 @@ class ExperimentsOperations(object):
         :param profile_name: The Profile identifier associated with the Tenant
          and Partner
         :type profile_name: str
-        :param experiment_name: The Experiment identifier associated with the
-         Experiment
-        :type experiment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Experiment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.frontdoor.models.Experiment or
+        :return: Profile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.frontdoor.models.Profile or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
@@ -142,8 +201,7 @@ class ExperimentsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'experimentName': self._serialize.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -170,25 +228,24 @@ class ExperimentsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, profile_name, experiment_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'experimentName': self._serialize.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,7 +265,7 @@ class ExperimentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Experiment')
+        body_content = self._serialize.body(parameters, 'Profile')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -220,11 +277,11 @@ class ExperimentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -233,38 +290,34 @@ class ExperimentsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, profile_name, experiment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates an Experiment.
+            self, profile_name, resource_group_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates an NetworkExperiment Profile.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: The Profile identifier associated with the Tenant
          and Partner
         :type profile_name: str
-        :param experiment_name: The Experiment identifier associated with the
-         Experiment
-        :type experiment_name: str
-        :param parameters: The Experiment resource
-        :type parameters: ~azure.mgmt.frontdoor.models.Experiment
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param parameters: An Network Experiment Profile
+        :type parameters: ~azure.mgmt.frontdoor.models.Profile
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Experiment or
-         ClientRawResponse<Experiment> if raw==True
+        :return: An instance of LROPoller that returns Profile or
+         ClientRawResponse<Profile> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.Experiment]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.Profile]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.Experiment]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.Profile]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
-            experiment_name=experiment_name,
+            resource_group_name=resource_group_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -272,7 +325,7 @@ class ExperimentsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -287,18 +340,19 @@ class ExperimentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}'}
 
 
     def _update_initial(
-            self, resource_group_name, profile_name, experiment_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, enabled_state=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ProfileUpdateModel(enabled_state=enabled_state, tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'experimentName': self._serialize.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -318,7 +372,7 @@ class ExperimentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ExperimentUpdateModel')
+        body_content = self._serialize.body(parameters, 'ProfileUpdateModel')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -330,9 +384,9 @@ class ExperimentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -341,10 +395,10 @@ class ExperimentsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, profile_name, experiment_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates an Experiment by Experiment id.
+            self, resource_group_name, profile_name, enabled_state=None, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates an NetworkExperimentProfiles by NetworkExperimentProfile name.
 
-        Updates an Experiment.
+        Updates an NetworkExperimentProfiles.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -352,37 +406,37 @@ class ExperimentsOperations(object):
         :param profile_name: The Profile identifier associated with the Tenant
          and Partner
         :type profile_name: str
-        :param experiment_name: The Experiment identifier associated with the
-         Experiment
-        :type experiment_name: str
-        :param parameters: The Experiment Update Model
-        :type parameters: ~azure.mgmt.frontdoor.models.ExperimentUpdateModel
+        :param enabled_state: The enabled state of the Profile. Possible
+         values include: 'Enabled', 'Disabled'
+        :type enabled_state: str or ~azure.mgmt.frontdoor.models.State
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Experiment or
-         ClientRawResponse<Experiment> if raw==True
+        :return: An instance of LROPoller that returns Profile or
+         ClientRawResponse<Profile> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.Experiment]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.Profile]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.Experiment]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.Profile]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
-            experiment_name=experiment_name,
-            parameters=parameters,
+            enabled_state=enabled_state,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Experiment', response)
+            deserialized = self._deserialize('Profile', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -397,18 +451,17 @@ class ExperimentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, profile_name, experiment_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'experimentName': self._serialize.url("experiment_name", experiment_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
+            'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -437,8 +490,8 @@ class ExperimentsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, profile_name, experiment_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an Experiment.
+            self, resource_group_name, profile_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an NetworkExperiment Profile by ProfileName.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -446,9 +499,6 @@ class ExperimentsOperations(object):
         :param profile_name: The Profile identifier associated with the Tenant
          and Partner
         :type profile_name: str
-        :param experiment_name: The Experiment identifier associated with the
-         Experiment
-        :type experiment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -464,7 +514,6 @@ class ExperimentsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
-            experiment_name=experiment_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -482,4 +531,4 @@ class ExperimentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}'}
