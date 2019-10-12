@@ -13,9 +13,7 @@ import os
 logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Import all modules in package"
-    )
+    parser = argparse.ArgumentParser(description="Import all modules in package")
 
     parser.add_argument(
         "-t",
@@ -27,12 +25,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    #get target package name from target package path
+    # get target package name from target package path
     target_pkg = os.path.basename(os.path.abspath(args.target_package))
-    package_name = target_pkg.replace('-','.')
+    package_name = target_pkg.replace("-", ".")
 
-    #import all modules from current package
-    logging.info("Importing all modules from package [{0}] to verify dependency".format(package_name))
-    import_script_all = 'from {0} import *'.format(package_name)
+    # import all modules from current package
+    logging.info(
+        "Importing all modules from package [{0}] to verify dependency".format(
+            package_name
+        )
+    )
+    import_script_all = "from {0} import *".format(package_name)
     exec(import_script_all)
     logging.info("Verified module dependency, no issues found")
