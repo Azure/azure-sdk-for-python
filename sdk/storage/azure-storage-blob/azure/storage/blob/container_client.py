@@ -804,7 +804,6 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            encoding='UTF-8', # type: str
             **kwargs
         ):
         # type: (...) -> BlobClient
@@ -905,6 +904,7 @@ class ContainerClient(StorageAccountHostsMixin):
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
+        encoding = kwargs.pop('encoding', 'UTF-8')
         blob.upload_blob(
             data,
             blob_type=blob_type,

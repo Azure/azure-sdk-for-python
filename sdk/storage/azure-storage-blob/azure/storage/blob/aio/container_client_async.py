@@ -699,7 +699,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        encoding=kwargs.pop('encoding', 'UTF-8')
+        encoding = kwargs.pop('encoding', 'UTF-8')
         await blob.upload_blob(
             data,
             blob_type=blob_type,
