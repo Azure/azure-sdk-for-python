@@ -149,15 +149,6 @@ class StorageFileClientTest(FileTestCase):
                 'You need to provide either an account key or SAS token when creating a storage service.')
 
     @record
-    def test_create_service_missing_arguments_async(self):
-        # Arrange
-
-        for service_type in SERVICES:
-            # Act
-            with self.assertRaises(ValueError):
-                service_type(None)
-
-    @record
     def test_create_service_with_socket_timeout_async(self):
         # Arrange
 
