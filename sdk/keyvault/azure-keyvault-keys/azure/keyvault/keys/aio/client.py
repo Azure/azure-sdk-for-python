@@ -472,4 +472,3 @@ class KeyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
         return Key._from_key_bundle(bundle)
-
