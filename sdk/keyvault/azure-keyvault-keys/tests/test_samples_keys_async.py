@@ -136,7 +136,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for key in keys:
             print(key.id)
-            print(key.created)
+            print(key.created_on)
             print(key.name)
             print(key.updated)
             print(key.enabled)

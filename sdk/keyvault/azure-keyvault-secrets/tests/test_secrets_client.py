@@ -20,7 +20,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
         self.assertEqual(s1.expires_on, s2.expires_on)
-        self.assertEqual(s1.created, s2.created)
+        self.assertEqual(s1.created_on, s2.created_on)
         self.assertEqual(s1.updated, s2.updated)
         self.assertEqual(s1.recovery_level, s2.recovery_level)
         self.assertEqual(s1.key_id, s2.key_id)
@@ -35,7 +35,7 @@ class SecretClientTests(KeyVaultTestCase):
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
         self.assertTrue(
-            secret_attributes.properties.created and secret_attributes.properties.updated,
+            secret_attributes.properties.created_on and secret_attributes.properties.updated,
             "Missing required date attributes.",
         )
 

@@ -28,7 +28,8 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated,
+            "Missing required date attributes.",
         )
 
     async def _import_test_key(self, client, name):
@@ -78,9 +79,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         imported_key = await self._import_test_key(key_client, key_name)
         crypto_client = vault_client.get_cryptography_client(imported_key)
 
-        result = await crypto_client.encrypt(
-            EncryptionAlgorithm.rsa_oaep, self.plaintext
-        )
+        result = await crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         self.assertEqual(result.key_id, imported_key.id)
 
         result = await crypto_client.decrypt(result.algorithm, result.ciphertext)

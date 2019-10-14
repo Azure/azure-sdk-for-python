@@ -107,7 +107,7 @@ class SecretProperties(object):
         return self._attributes.expires
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """
         When the secret was created, in UTC
