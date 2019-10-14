@@ -909,4 +909,4 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(command, start_close, None, polling_method)
+        return await async_poller(command, start_close, None, polling_method)
