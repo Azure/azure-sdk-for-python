@@ -28,6 +28,11 @@ class KeyClient(KeyVaultClientBase):
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.HttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.RequestsTransport`.
+
     Example:
         .. literalinclude:: ../tests/test_samples_keys.py
             :start-after: [START create_key_client]
