@@ -97,7 +97,7 @@ class SecretProperties(object):
         return self._attributes.not_before
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """
         When the secret expires, in UTC
@@ -107,7 +107,7 @@ class SecretProperties(object):
         return self._attributes.expires
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """
         When the secret was created, in UTC
@@ -117,7 +117,7 @@ class SecretProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the secret was last updated, in UTC
