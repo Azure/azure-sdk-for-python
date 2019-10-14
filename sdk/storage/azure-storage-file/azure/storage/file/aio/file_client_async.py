@@ -876,7 +876,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
 
         :param handle:
