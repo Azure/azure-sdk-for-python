@@ -23,11 +23,11 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create a new RSA Key (create_rsa_key)
 #
-# 2. Create a new EC Key (create_rsa_key)
+# 2. Create a new EC Key (create_ec_key)
 #
 # 3. Get an existing key (get_key)
 #
-# 4. Update an existing key (set_key)
+# 4. Update an existing key's properties (update_key_properties)
 #
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
@@ -66,9 +66,9 @@ async def run_sample():
         # for cryptographic operations. The update method allows the user to modify the metadata (key attributes)
         # associated with a key previously stored within Key Vault.
         print("\n.. Update a Key by name")
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         updated_ec_key = await client.update_key_properties(
-            ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+            ec_key.name, version=ec_key.properties.version, expires_on=expires_on, enabled=False
         )
         print(
             "Key with name '{0}' was updated on date '{1}'".format(
@@ -77,7 +77,7 @@ async def run_sample():
         )
         print(
             "Key with name '{0}' was updated to expire on '{1}'".format(
-                updated_ec_key.name, updated_ec_key.properties.expires
+                updated_ec_key.name, updated_ec_key.properties.expires_on
             )
         )
 

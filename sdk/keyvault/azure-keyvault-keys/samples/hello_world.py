@@ -67,14 +67,14 @@ try:
     print("\n.. Update a Key by name")
     expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
     updated_ec_key = client.update_key_properties(
-        ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+        ec_key.name, ec_key.properties.version, expires_on=expires, enabled=False
     )
     print(
         "Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated)
     )
     print(
         "Key with name '{0}' was updated to expire on '{1}'".format(
-            updated_ec_key.name, updated_ec_key.properties.expires
+            updated_ec_key.name, updated_ec_key.properties.expires_on
         )
     )
 

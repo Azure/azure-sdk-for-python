@@ -74,7 +74,7 @@ def run_sample():
         for secret_version in secret_versions:
             print(
                 "Bank Secret with name '{0}' has version: '{1}'.".format(
-                    secret_version.name, secret_version.properties.version
+                    secret_version.name, secret_version.version
                 )
             )
 
@@ -105,8 +105,8 @@ def run_sample():
 
 
 if __name__ == "__main__":
-    try:
-        run_sample()
+    # try:
+    run_sample()
 
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+    # except Exception as e:
+        # print("Top level Error: {0}".format(str(e)))

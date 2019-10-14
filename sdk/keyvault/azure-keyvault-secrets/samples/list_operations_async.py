@@ -76,7 +76,7 @@ async def run_sample():
         print("\n.. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
         async for secret in secret_versions:
-            print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.properties.version))
+            print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.version))
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
         await client.delete_secret(bank_secret.name)
