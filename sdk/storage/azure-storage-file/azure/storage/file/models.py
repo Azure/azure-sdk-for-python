@@ -786,5 +786,3 @@ class NTFSAttributes(object):
                      no_scrub_data)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
-
-
