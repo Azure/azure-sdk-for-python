@@ -51,7 +51,7 @@ class CertificateClient(KeyVaultClientBase):
     def begin_create_certificate(
         self,
         name,  # type: str
-        policy=None,  # type: Optional[CertificatePolicy]
+        policy,  # type: CertificatePolicy
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller
@@ -90,10 +90,6 @@ class CertificateClient(KeyVaultClientBase):
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
-
-        if not policy:
-            # pylint: disable=protected-access
-            policy = CertificatePolicy.get_default_certificate_policy()
 
         cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_endpoint,
@@ -733,7 +729,7 @@ class CertificateClient(KeyVaultClientBase):
 
         Performs the merging of a certificate or certificate chain with a key pair currently
         available in the service. This operation requires the certificates/create permission.
-        Make sure when creating the certificate to merge using create_certificate that you set
+        Make sure when creating the certificate to merge using begin_create_certificate that you set
         it's issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
         by an issuer known to it.
 

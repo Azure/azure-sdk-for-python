@@ -152,7 +152,7 @@ the same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default
 policy will be used. The `begin_create_certificate` operation returns a long running operation poller.
 ```python
-create_certificate_poller = certificate_client.begin_create_certificate(name="cert-name")
+create_certificate_poller = certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 
 print(create_certificate_poller.result())
 ```
@@ -219,12 +219,12 @@ See
 for more information.
 
 ### Asynchronously create a Certificate
-`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with the
+`begin_create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with the
 same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default policy
-will be used. The `create_certificate` operation is a coroutine.
+will be used. The `begin_create_certificate` operation returns an async poller.
 ```python
-create_certificate_result = await certificate_client.create_certificate(name="cert-name")
+create_certificate_result = await certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 print(create_certificate_result)
 ```
 

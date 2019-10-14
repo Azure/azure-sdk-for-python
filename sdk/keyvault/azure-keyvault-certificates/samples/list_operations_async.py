@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -21,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
-# 1. Create certificate (create_certificate)
+# 1. Create certificate (begin_create_certificate)
 #
 # 2. List certificates from the Key Vault (list_certificates)
 #
@@ -46,8 +47,8 @@ async def run_sample():
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate = await client.create_certificate(name=bank_cert_name)
-        storage_certificate = await client.create_certificate(name=storage_cert_name)
+        bank_certificate = await client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default())
+        storage_certificate = await client.begin_create_certificate(name=storage_cert_name, policy=CertificatePolicy.get_default())
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))
@@ -58,12 +59,12 @@ async def run_sample():
         async for certificate in certificates:
             print("Certificate with name '{0}' was found.".format(certificate.name))
 
-        # You've decided to add tags to the certificate you created. Calling create_certificate on an existing
+        # You've decided to add tags to the certificate you created. Calling begin_create_certificate on an existing
         # certificate creates a new version of the certificate in the Key Vault with the new value.
 
         tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
+        updated_bank_certificate_poller = await client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags)
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(

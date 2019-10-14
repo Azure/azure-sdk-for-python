@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates.aio import CertificateClient, CertificatePolicy
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -20,7 +20,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(certificates) resource for Azure Key Vault
 #
-# 1. Create a certificate (create_certificate)
+# 1. Create a certificate (begin_create_certificate)
 #
 # 2. Backup a certificate (backup_certificate)
 #
@@ -48,7 +48,7 @@ async def run_sample():
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
         # An async poller is returned.
-        create_certificate_poller = client.create_certificate(name=cert_name)
+        create_certificate_poller = client.begin_create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
 
         # Awaiting the poller will return a certificate if creation is successful,
         # and will return the failed CertificateOperation if not.

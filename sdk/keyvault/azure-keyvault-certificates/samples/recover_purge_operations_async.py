@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -20,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a certificate (create_certificate)
+# 1. Create a certificate (begin_create_certificate)
 #
 # 2. Delete a certificate (delete_certificate)
 #
@@ -45,8 +46,8 @@ async def run_sample():
         bank_cert_name = "BankRecoverCertificate"
         storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate = await client.create_certificate(name=bank_cert_name)
-        storage_certificate = await client.create_certificate(name=storage_cert_name)
+        bank_certificate = await client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default())
+        storage_certificate = await client.begin_create_certificate(name=storage_cert_name, policy=CertificatePolicy.get_default())
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))

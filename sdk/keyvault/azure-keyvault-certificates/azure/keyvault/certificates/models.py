@@ -624,7 +624,7 @@ class CertificatePolicy(object):
             raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
 
     @classmethod
-    def get_default_certificate_policy(cls):
+    def get_default(cls):
         return cls(
             issuer_name="Self",
             subject_name="CN=DefaultPolicy"

@@ -49,7 +49,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy)
 
         # awaiting the certificate poller gives us the result of the long running operation
         certificate = await create_certificate_poller
@@ -120,7 +120,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         create_certificate_pollers = []
         for i in range(4):
             create_certificate_pollers.append(
-                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+                certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy)
             )
 
         for poller in create_certificate_pollers:
@@ -187,7 +187,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy)
 
         await create_certificate_poller
 
@@ -236,7 +236,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy)
         await create_certificate_poller
 
         await certificate_client.delete_certificate(name=cert_name)

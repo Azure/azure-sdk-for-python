@@ -232,7 +232,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        certificate = client.begin_create_certificate(name=cert_name).result()
+        certificate = client.begin_create_certificate(name=cert_name, policy=CertificatePolicy.get_default()).result()
         self._validate_certificate_bundle(cert=certificate, cert_name=cert_name, cert_policy=cert_policy)
 
         self.assertEqual(client.get_certificate_operation(name=cert_name).status.lower(), "completed")

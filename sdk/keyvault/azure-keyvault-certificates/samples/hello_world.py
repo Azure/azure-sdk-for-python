@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a new certificate (create_certificate)
+# 1. Create a new certificate (begin_create_certificate)
 #
 # 2. Get an existing certificate (get_certificate)
 #
@@ -61,10 +61,10 @@ try:
     )
     cert_name = "HelloWorldCertificate"
 
-    # create_certificate returns a poller. Calling result() on the poller will return the certificate
+    # begin_create_certificate returns a poller. Calling result() on the poller will return the certificate
     # if creation is successful, and the CertificateOperation if not. The wait() call on the poller will
     # wait until the long running operation is complete.
-    certificate = client.create_certificate(name=cert_name, policy=cert_policy).result()
+    certificate = client.begin_create_certificate(name=cert_name, policy=cert_policy).result()
     print("Certificate with name '{0}' created".format(certificate.name))
 
     # Let's get the bank certificate using its name
