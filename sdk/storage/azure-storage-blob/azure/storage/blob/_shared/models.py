@@ -252,11 +252,11 @@ class ResourceTypes(object):
 
     @classmethod
     def from_string(cls, string):
-        service = 's' in string
-        container = 'c' in string
-        object = 'o' in string
+        res_service = 's' in string
+        res_container = 'c' in string
+        res_object = 'o' in string
 
-        parsed = cls(service, container, object)
+        parsed = cls(res_service, res_container, res_object)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 
@@ -355,11 +355,11 @@ class Services(object):
 
     @classmethod
     def from_string(cls, string):
-        blob = 'b' in string
-        queue = 'q' in string
-        file = 'f' in string
+        res_blob = 'b' in string
+        res_queue = 'q' in string
+        res_file = 'f' in string
 
-        parsed = cls(blob, queue, file)
+        parsed = cls(res_blob, res_queue, res_file)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 

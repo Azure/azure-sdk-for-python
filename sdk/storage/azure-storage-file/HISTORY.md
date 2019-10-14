@@ -6,9 +6,11 @@
 
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
-- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions`, `ResourceTypes`, `NTFSAttributes`, 
-and `Services` now have method `from_string` which takes parameters as a string.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+
+**New features**
+
+- `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 ## Version 12.0.0b4:
 
@@ -20,6 +22,11 @@ and `Services` now have method `from_string` which takes parameters as a string.
   - enum-like list parameters have been removed from all three of them.
   - `__add__` and `__or__` methods are removed.
 - `max_connections` is now renamed to `max_concurrency`.
+
+**New features**
+
+- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which 
+takes parameters as a string.
 
 ## Version 12.0.0b3:
 
