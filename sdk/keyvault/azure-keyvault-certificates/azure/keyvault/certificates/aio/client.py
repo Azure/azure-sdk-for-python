@@ -82,7 +82,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         if not policy:
             # pylint: disable=protected-access
-            policy = CertificatePolicy._get_default_certificate_policy()
+            policy = CertificatePolicy.get_default_certificate_policy()
         cert_bundle = await self._client.create_certificate(
             vault_base_url=self.vault_endpoint,
             certificate_name=name,

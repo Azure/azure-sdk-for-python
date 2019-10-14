@@ -624,26 +624,10 @@ class CertificatePolicy(object):
             raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
 
     @classmethod
-    def _get_default_certificate_policy(cls):
-        lifetime_actions = [LifetimeAction(days_before_expiry=90, action_type=ActionType.auto_renew)]
+    def get_default_certificate_policy(cls):
         return cls(
             issuer_name="Self",
-            subject_name="CN=DefaultPolicy",
-            exportable=True,
-            key_type="RSA",
-            key_size=2048,
-            reuse_key=True,
-            key_usage=[
-                KeyUsageType.crl_sign,
-                KeyUsageType.data_encipherment,
-                KeyUsageType.digital_signature,
-                KeyUsageType.key_agreement,
-                KeyUsageType.key_cert_sign,
-                KeyUsageType.key_encipherment,
-            ],
-            lifetime_actions=lifetime_actions,
-            content_type=SecretContentType.PKCS12,
-            validity_in_months=12,
+            subject_name="CN=DefaultPolicy"
         )
 
     def __repr__(self):
