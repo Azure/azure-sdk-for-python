@@ -5,6 +5,7 @@
 **Breaking changes**
 
 - `file_permission_key` parameter has been renamed to `permission_key`
+- `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 
 
