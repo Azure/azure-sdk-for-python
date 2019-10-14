@@ -1,0 +1,148 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:31 GMT
+      etag: '"0x8D750D1F1610CA5"'
+      last-modified: Mon, 14 Oct 2019 18:11:32 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage9b981baa.file.core.windows.net
+        - /utshare9b981baa
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa?restype=share&comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:32 GMT
+      etag: '"0x8D750D1F1610CA5"'
+      last-modified: Mon, 14 Oct 2019 18:11:32 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot: '2019-10-14T18:11:32.0000000Z'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage9b981baa.file.core.windows.net
+        - /utshare9b981baa
+        - restype=share&comp=snapshot
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:33 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:32 GMT
+      etag: '"0x8D750D1F17E661E"'
+      last-modified: Mon, 14 Oct 2019 18:11:32 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-10-14T18:11:32.6194206Z'
+      x-ms-file-creation-time: '2019-10-14T18:11:32.6194206Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-10-14T18:11:32.6194206Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 14360243790124752681*12651442272663931040
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage9b981baa.file.core.windows.net
+        - /utshare9b981baa/dir1
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa/dir1?restype=directory&sharesnapshot=2019-10-14T18:11:32.0000000Z
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:33e689d0-601a-005a-49ba-82f72e000000\nTime:2019-10-14T18:11:32.7172819Z</Message></Error>"
+    headers:
+      content-length: '223'
+      content-type: application/xml
+      date: Mon, 14 Oct 2019 18:11:32 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ResourceNotFound
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage9b981baa.file.core.windows.net
+        - /utshare9b981baa/dir1
+        - restype=directory&sharesnapshot=2019-10-14T18:11:32.0000000Z
+        - ''
+version: 1

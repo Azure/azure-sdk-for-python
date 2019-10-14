@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:12:00 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragee15b18a9.file.core.windows.net/utsharee15b18a9?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:58 GMT
+      etag: '"0x8D750D201AE6A9B"'
+      last-modified: Mon, 14 Oct 2019 18:11:59 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragee15b18a9.file.core.windows.net
+        - /utsharee15b18a9
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:12:01 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstoragee15b18a9.file.core.windows.net/utsharee15b18a9/missing1%2Fmissing2?restype=directory
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
+        specified parent path does not exist.\nRequestId:2c4e7cae-701a-0048-56ba-82df9f000000\nTime:2019-10-14T18:11:59.8687407Z</Message></Error>"
+    headers:
+      content-length: '224'
+      content-type: application/xml
+      date: Mon, 14 Oct 2019 18:11:58 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ParentNotFound
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified parent path does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragee15b18a9.file.core.windows.net
+        - /utsharee15b18a9/missing1%2Fmissing2
+        - restype=directory
+        - ''
+version: 1

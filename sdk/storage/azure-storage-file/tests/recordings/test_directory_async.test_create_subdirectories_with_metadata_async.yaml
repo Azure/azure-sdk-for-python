@@ -1,0 +1,176 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:10 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageaf941bb1.file.core.windows.net/utshareaf941bb1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:09 GMT
+      etag: '"0x8D750D1E3F3EE10"'
+      last-modified: Mon, 14 Oct 2019 18:11:09 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaf941bb1.file.core.windows.net
+        - /utshareaf941bb1
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:11 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageaf941bb1.file.core.windows.net/utshareaf941bb1/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:09 GMT
+      etag: '"0x8D750D1E409BC1E"'
+      last-modified: Mon, 14 Oct 2019 18:11:10 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-10-14T18:11:10.0444702Z'
+      x-ms-file-creation-time: '2019-10-14T18:11:10.0444702Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-10-14T18:11:10.0444702Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 2188183775857227479*8540755219957784926
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaf941bb1.file.core.windows.net
+        - /utshareaf941bb1/dir1
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:11 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '42'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageaf941bb1.file.core.windows.net/utshareaf941bb1/dir1%2Fdir2?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:09 GMT
+      etag: '"0x8D750D1E4135AD2"'
+      last-modified: Mon, 14 Oct 2019 18:11:10 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-creation-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 2188183775857227479*8540755219957784926
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaf941bb1.file.core.windows.net
+        - /utshareaf941bb1/dir1%2Fdir2
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:11:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorageaf941bb1.file.core.windows.net/utshareaf941bb1/dir1%2Fdir2?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:11:09 GMT
+      etag: '"0x8D750D1E4135AD2"'
+      last-modified: Mon, 14 Oct 2019 18:11:10 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-creation-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2019-10-14T18:11:10.1075154Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 2188183775857227479*8540755219957784926
+      x-ms-meta-hello: world
+      x-ms-meta-number: '42'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaf941bb1.file.core.windows.net
+        - /utshareaf941bb1/dir1%2Fdir2
+        - restype=directory
+        - ''
+version: 1

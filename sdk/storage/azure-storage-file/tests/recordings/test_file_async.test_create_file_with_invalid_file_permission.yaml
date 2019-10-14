@@ -1,0 +1,79 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:16:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage3f51905.file.core.windows.net/utshare3f51905?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 14 Oct 2019 18:16:57 GMT
+      etag: '"0x8D750D2B364EAF4"'
+      last-modified: Mon, 14 Oct 2019 18:16:57 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage3f51905.file.core.windows.net
+        - /utshare3f51905
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Mon, 14 Oct 2019 18:16:59 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - abcde
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage3f51905.file.core.windows.net/utshare3f51905/file3f51905
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
+        specified file permission is not valid.\nRequestId:dbe52571-a01a-003d-64bb-823311000000\nTime:2019-10-14T18:16:58.1028935Z</Message></Error>"
+    headers:
+      content-length: '233'
+      content-type: application/xml
+      date: Mon, 14 Oct 2019 18:16:57 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: FileInvalidPermission
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: The specified file permission is not valid.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage3f51905.file.core.windows.net
+        - /utshare3f51905/file3f51905
+        - ''
+        - ''
+version: 1
