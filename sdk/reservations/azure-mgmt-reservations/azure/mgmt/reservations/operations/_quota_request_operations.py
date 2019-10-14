@@ -42,7 +42,9 @@ class QuotaRequestOperations(object):
 
 
     def _create_initial(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.QuotaRequestOneResourceProperties()
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -70,7 +72,7 @@ class QuotaRequestOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimitBase')
+        body_content = self._serialize.body(create_quota_request, 'QuotaRequestOneResourceProperties')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -82,9 +84,9 @@ class QuotaRequestOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('QuotaRequestOneResourceSubmitResponse', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -93,7 +95,7 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def create(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
@@ -114,22 +116,25 @@ class QuotaRequestOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
-        :param create_quota_request: Quota requests payload.
-        :type create_quota_request:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
+        :param properties: The quota request addition properties.
+        :type properties:
+         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns
+         QuotaRequestOneResourceProperties or
+         ClientRawResponse<QuotaRequestOneResourceProperties> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.reservations.models.QuotaRequestOneResourceProperties]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.reservations.models.QuotaRequestOneResourceProperties]]
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
@@ -137,15 +142,15 @@ class QuotaRequestOperations(object):
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
-            create_quota_request=create_quota_request,
             if_match=if_match,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -164,7 +169,9 @@ class QuotaRequestOperations(object):
 
 
     def _patch_method_initial(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.QuotaRequestOneResourceProperties()
+
         # Construct URL
         url = self.patch_method.metadata['url']
         path_format_arguments = {
@@ -192,7 +199,7 @@ class QuotaRequestOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimitBase')
+        body_content = self._serialize.body(create_quota_request, 'QuotaRequestOneResourceProperties')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -204,9 +211,9 @@ class QuotaRequestOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('QuotaRequestOneResourceSubmitResponse', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -215,7 +222,7 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def patch_method(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
@@ -236,22 +243,25 @@ class QuotaRequestOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
-        :param create_quota_request: Quota requests payload.
-        :type create_quota_request:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
+        :param properties: The quota request addition properties.
+        :type properties:
+         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns object or
-         ClientRawResponse<object> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :return: An instance of LROPoller that returns
+         QuotaRequestOneResourceProperties or
+         ClientRawResponse<QuotaRequestOneResourceProperties> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.reservations.models.QuotaRequestOneResourceProperties]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.reservations.models.QuotaRequestOneResourceProperties]]
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
@@ -259,15 +269,15 @@ class QuotaRequestOperations(object):
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
-            create_quota_request=create_quota_request,
             if_match=if_match,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
