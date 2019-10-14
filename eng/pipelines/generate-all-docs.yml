@@ -39,13 +39,6 @@ jobs:
             "$(BuildTargetingString)"
             --toxenv=sphinx
 
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Artifacts'
-        inputs:
-          artifactName: 'docs'
-          pathtoPublish: '$(Build.SourcesDirectory)/_docs'
-
       - task: PublishPipelineArtifact@0
         inputs:
           artifactName: 'docs' 
