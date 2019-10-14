@@ -240,7 +240,11 @@ class StorageContainerTest(StorageTestCase):
     def test_list_containers_with_public_access(self):
         # Arrange
         container = self._create_container()
-        resp = container.set_container_access_policy(public_access=PublicAccess.Blob)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+        resp = container.set_container_access_policy(signed_identifiers, public_access=PublicAccess.Blob)
 
         # Act
         containers = list(self.bsc.list_containers(name_starts_with=container.container_name))
@@ -416,7 +420,11 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        response = container.set_container_access_policy()
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        response = container.set_container_access_policy(signed_identifier)
 
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
@@ -424,7 +432,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        self.assertEqual(len(acl.get('signed_identifiers')), 1)
         self.assertIsNone(acl.get('public_access'))
 
     @record
@@ -468,7 +476,12 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_access_policy(lease=lease_id)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+
+        container.set_container_access_policy(signed_identifiers, lease=lease_id)
 
         # Assert
         acl = container.get_container_access_policy()
@@ -481,7 +494,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        container.set_container_access_policy(public_access='container')
+        container.set_container_access_policy(signed_identifiers=dict(), public_access='container')
 
         # Assert
         acl = container.get_container_access_policy()
