@@ -806,7 +806,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
 
         # Act
-        resp = queue_client.set_queue_access_policy()
+        resp = queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         self.assertIsNone(resp)
@@ -898,7 +898,7 @@ class StorageQueueTest(QueueTestCase):
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
-            queue_client.set_queue_access_policy()
+            queue_client.set_queue_access_policy(signed_identifiers=dict())
 
             # Assert
 

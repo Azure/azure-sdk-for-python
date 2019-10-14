@@ -4,12 +4,8 @@
 
 **Breaking changes**
 
+- `set_container_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
-
-## Version 12.0.0b5:
-
-**Breaking changes**
-
 - `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
 - The public attributes of `StorageStreamDownloader` have been limited:
   - `name` (str): The name of the blob.
@@ -27,9 +23,6 @@
 **New features**
 
 - Added async module-level `upload_blob_to_url` and `download_blob_from_url` functions.
-
-
-
 
 ## Version 12.0.0b4:
 
