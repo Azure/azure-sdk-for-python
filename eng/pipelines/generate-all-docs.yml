@@ -36,7 +36,7 @@ jobs:
         inputs:
           scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
           arguments: >-
-            "${{ parameters.BuildTargetingString }}"
+            "$(BuildTargetingString)"
             --toxenv=sphinx
 
       - task: PublishBuildArtifacts@1
