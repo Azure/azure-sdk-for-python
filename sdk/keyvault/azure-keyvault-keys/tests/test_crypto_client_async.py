@@ -28,7 +28,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated,
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
             "Missing required date attributes.",
         )
 

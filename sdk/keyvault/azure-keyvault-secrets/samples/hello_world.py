@@ -58,7 +58,7 @@ def run_sample():
         print("\n.. Update a Secret by name")
         expires = bank_secret.properties.expires_on + datetime.timedelta(days=365)
         updated_secret_properties = client.update_secret_properties(secret.name, expires_on=expires)
-        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated))
+        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated_on))
         print(
             "Secret with name '{0}' was updated to expire on '{1}'".format(
                 secret.name, updated_secret_properties.expires_on

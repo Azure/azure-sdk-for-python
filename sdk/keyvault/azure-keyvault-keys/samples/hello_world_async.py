@@ -72,7 +72,7 @@ async def run_sample():
         )
         print(
             "Key with name '{0}' was updated on date '{1}'".format(
-                updated_ec_key.name, updated_ec_key.properties.updated
+                updated_ec_key.name, updated_ec_key.properties.updated_on
             )
         )
         print(

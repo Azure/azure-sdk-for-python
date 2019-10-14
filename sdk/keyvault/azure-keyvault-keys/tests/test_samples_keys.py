@@ -103,7 +103,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         updated_key = key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
-        print(updated_key.properties.updated)
+        print(updated_key.properties.updated_on)
         print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
         print(key.key_type)

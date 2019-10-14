@@ -179,7 +179,7 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 
     updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret_properties.updated)
+    print(updated_secret_properties.updated_on)
     print(updated_secret_properties.content_type)
     print(updated_secret_properties.tags)
 ```

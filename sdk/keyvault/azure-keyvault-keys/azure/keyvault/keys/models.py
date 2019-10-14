@@ -143,7 +143,7 @@ class KeyProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the key was last updated, in UTC

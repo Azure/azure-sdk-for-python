@@ -60,7 +60,7 @@ async def run_sample():
         updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
         print(
             "Secret with name '{0}' was updated on date '{1}'".format(
-                updated_secret_properties.name, updated_secret_properties.updated
+                updated_secret_properties.name, updated_secret_properties.updated_on
             )
         )
         print(

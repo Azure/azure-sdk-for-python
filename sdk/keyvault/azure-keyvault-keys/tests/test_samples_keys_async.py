@@ -97,7 +97,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         updated_key = await key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
-        print(updated_key.properties.updated)
+        print(updated_key.properties.updated_on)
         print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
         print(updated_key.key_type)
@@ -138,7 +138,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.id)
             print(key.created_on)
             print(key.name)
-            print(key.updated)
+            print(key.updated_on)
             print(key.enabled)
 
         # [END list_keys]
@@ -149,7 +149,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for key in key_versions:
             print(key.id)
-            print(key.updated)
+            print(key.updated_on)
             print(key.properties.version)
             print(key.expires_on)
 

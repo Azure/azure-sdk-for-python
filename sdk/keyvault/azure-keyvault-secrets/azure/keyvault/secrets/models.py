@@ -117,7 +117,7 @@ class SecretProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the secret was last updated, in UTC

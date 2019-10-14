@@ -74,7 +74,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         print(updated_secret_properties.version)
-        print(updated_secret_properties.updated)
+        print(updated_secret_properties.updated_on)
         print(updated_secret_properties.content_type)
         print(updated_secret_properties.tags)
 
@@ -124,7 +124,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # the list doesn't include the values at each version
             print(secret.id)
             print(secret.enabled)
-            print(secret.updated)
+            print(secret.updated_on)
 
         # [END list_secret_versions]
         # [START list_deleted_secrets]

@@ -70,7 +70,7 @@ try:
         ec_key.name, ec_key.properties.version, expires_on=expires, enabled=False
     )
     print(
-        "Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated)
+        "Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.properties.updated_on)
     )
     print(
         "Key with name '{0}' was updated to expire on '{1}'".format(

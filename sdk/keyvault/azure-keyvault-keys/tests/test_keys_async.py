@@ -24,7 +24,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(k1.not_before, k2.not_before)
         self.assertEqual(k1.expires_on, k2.expires_on)
         self.assertEqual(k1.created_on, k2.created_on)
-        self.assertEqual(k1.updated, k2.updated)
+        self.assertEqual(k1.updated_on, k2.updated_on)
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
@@ -63,7 +63,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated,
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
             "Missing required date attributes.",
         )
 
@@ -76,7 +76,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated,
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
             "Missing required date attributes.",
         )
 
@@ -86,7 +86,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         key_bundle = await client.update_key_properties(key.name, expires_on=expires, tags=tags)
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)
+        self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
