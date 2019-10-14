@@ -1,5 +1,11 @@
 # Change Log azure-storage-queue
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
