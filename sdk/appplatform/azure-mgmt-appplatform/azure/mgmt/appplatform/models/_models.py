@@ -381,7 +381,7 @@ class ConfigServerGitProperty(Model):
     :type host_key_algorithm: str
     :param private_key: Private sshKey algorithm of git repository.
     :type private_key: str
-    :param strict_host_key_checking: Stric host key checking or not.
+    :param strict_host_key_checking: Strict host key checking or not.
     :type strict_host_key_checking: bool
     """
 
@@ -688,7 +688,7 @@ class GitPatternRepository(Model):
     :type host_key_algorithm: str
     :param private_key: Private sshKey algorithm of git repository.
     :type private_key: str
-    :param strict_host_key_checking: Stric host key checking or not.
+    :param strict_host_key_checking: Strict host key checking or not.
     :type strict_host_key_checking: bool
     """
 
@@ -809,7 +809,7 @@ class MetricSpecification(Model):
     :param aggregation_type: Only provide one value for this field. Valid
      values: Average, Minimum, Maximum, Total, Count.
     :type aggregation_type: str
-    :param supported_aggregation_types: Supported agregation types
+    :param supported_aggregation_types: Supported aggregation types
     :type supported_aggregation_types: list[str]
     :param supported_time_grain_types: Supported time grain types
     :type supported_time_grain_types: list[str]
@@ -1220,7 +1220,7 @@ class TraceProperties(Model):
     :vartype state: str or ~azure.mgmt.appplatform.models.TraceProxyState
     :param error: Error when apply trace proxy changes.
     :type error: ~azure.mgmt.appplatform.models.Error
-    :param enabled: Indicates whether enable the tracing functioanlity
+    :param enabled: Indicates whether enable the tracing functionality
     :type enabled: bool
     :param app_insight_instrumentation_key: Target application insight
      instrumentation key
