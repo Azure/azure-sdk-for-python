@@ -1257,15 +1257,15 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         await cr3.upload_blob(data)
 
         blob_list = []
-        def recursive_walk(prefix):
-            for b in prefix:
+        async def recursive_walk(prefix):
+            async for b in prefix:
                 if b.get('prefix'):
-                    recursive_walk(b)
+                    await recursive_walk(b)
                 else:
                     blob_list.append(b.name)
 
         # Act
-        recursive_walk(container.walk_blobs())
+        await recursive_walk(container.walk_blobs())
 
         # Assert
         self.assertEqual(len(blob_list), 4)
