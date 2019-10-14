@@ -73,15 +73,17 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.bsc = BlobServiceClient(self._account_url(name), credential=key, transport=AiohttpTestTransport())
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
-        self.bsc2 = BlobServiceClient(self._account_url(name), credential=key)
-        self.remote_container_name = None
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
             try:
                 await container.create_container(timeout=5)
             except ResourceExistsError:
                 pass
-    
+
+    async def _setup_remote(self, name, key):
+        self.bsc2 = BlobServiceClient(self._account_url(name), credential=key)
+        self.remote_container_name = 'rmt'
+
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
@@ -165,7 +167,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertTrue(exists)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -179,7 +181,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -197,7 +199,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertTrue(exists)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -211,7 +213,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z")
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -226,7 +228,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self._get_container_reference(), blob_name)
         with self.assertRaises(ResourceNotFoundError):
             await blob.get_blob_properties()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -247,7 +249,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(data)
         content = data.decode('utf-8')
         self.assertEqual(content, blob_data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -265,7 +267,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             data = await (await blob.download_blob()).content_as_bytes()
             content = data.decode('utf-8')
             self.assertEqual(content, blob_data)
-        
+
 
         # Assert
     @ResourceGroupPreparer()
@@ -287,7 +289,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         stream = await blob.download_blob(lease=lease)
         content = await stream.content_as_bytes()
         self.assertEqual(content, data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -307,7 +309,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('etag'))
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(md, metadata)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -324,7 +326,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(content, self.byte_data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -344,7 +346,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(content, self.byte_data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -370,7 +372,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(blob_previous_bytes, self.byte_data)
         self.assertEqual(blob_latest_bytes, b'hello world again')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -387,7 +389,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(content, self.byte_data[:5])
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -406,7 +408,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(content, self.byte_data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -420,7 +422,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with self.assertRaises(ResourceNotFoundError):
             await blob.download_blob()
-        
+
 
         # Assert
     @ResourceGroupPreparer()
@@ -443,7 +445,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         props = await blob.get_blob_properties()
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -464,7 +466,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         props = await blob.get_blob_properties()
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -484,7 +486,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, len(self.byte_data))
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -499,7 +501,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         with self.assertRaises(HttpResponseError) as e:
             await blob.get_blob_properties()  # Invalid snapshot value of 1
-        
+
 
         # Assert
         # TODO: No error code returned
@@ -519,7 +521,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
         with self.assertRaises(HttpResponseError) as e:
             (await blob.get_blob_properties()).metadata  # Invalid snapshot value of 1
-        
+
 
         # Assert
         # TODO: No error code returned
@@ -539,7 +541,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertTrue(data.properties.server_encrypted)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -555,7 +557,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertTrue(props.server_encrypted)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -577,7 +579,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         for blob in blob_list:
             self.assertTrue(blob.server_encrypted)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -599,7 +601,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertFalse(props.server_encrypted)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -625,7 +627,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(blob)
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.size, len(self.byte_data))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -647,7 +649,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.lease.status, 'locked')
         self.assertEqual(props.lease.state, 'leased')
         self.assertEqual(props.lease.duration, 'infinite')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -663,7 +665,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertIsNotNone(md)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -689,7 +691,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(md['number'], '42')
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -705,7 +707,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertIsNone(resp)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -719,7 +721,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with self.assertRaises(ResourceNotFoundError):
             await blob.delete_blob()
-        
+
 
         # Assert
 
@@ -746,7 +748,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertEqual(blobs[0].name, blob_name)
         self.assertIsNone(blobs[0].snapshot)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -768,7 +770,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             blobs.append(b)
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -792,7 +794,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         async for b in container.list_blobs(include='snapshots'):
             blobs.append(b)
         self.assertEqual(len(blobs), 0)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -816,7 +818,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             # Assert
             self.assertEqual(len(blob_list), 1)
             self._assert_blob_is_soft_deleted(blob_list[0])
-            
+
 
             # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
             blob_list = []
@@ -838,7 +840,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         finally:
             await self._disable_soft_delete()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -894,7 +896,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
                 self._assert_blob_not_soft_deleted(blob)
         finally:
             await self._disable_soft_delete()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -947,7 +949,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         finally:
             await self._disable_soft_delete()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -995,7 +997,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         finally:
             await self._disable_soft_delete()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1044,7 +1046,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         finally:
             await self._disable_soft_delete()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1069,7 +1071,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         copy_content = await (await copyblob.download_blob()).content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
-        
+
 
     # @ResourceGroupPreparer()
     # @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1098,10 +1100,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
-    async def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob()
 
@@ -1112,15 +1116,17 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         with self.assertRaises(ResourceNotFoundError):
             await target_blob.start_copy_from_url(source_blob.url)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
-    async def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
@@ -1139,7 +1145,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.copy.status, 'success')
         actual_data = await (await target_blob.download_blob()).content_as_bytes()
         self.assertEqual(actual_data, data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1163,7 +1169,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         bytes_data = await (await copied_blob.download_blob()).content_as_bytes()
         self.assertEqual(bytes_data, b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1184,7 +1190,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(copy_resp['copy_status'], 'success')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1201,7 +1207,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1220,7 +1226,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(lease)
         self.assertIsNotNone(lease2)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1239,7 +1245,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await blob.upload_blob(b'hello 3', length=7, lease=lease)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1256,7 +1262,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(lease.id, lease_id)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1277,7 +1283,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertNotEqual(first_lease_id, lease.id)
         self.assertEqual(lease.id, lease_id)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1302,7 +1308,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(lease.id)
         self.assertIsNotNone(lease_time)
         self.assertIsNotNone(resp.get('etag'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1320,7 +1326,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(first_id, lease.id)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1338,7 +1344,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertIsNotNone(lease.id)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1356,7 +1362,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(content, b'hello world')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1373,7 +1379,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1390,7 +1396,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertFalse(response.ok)
         self.assertNotEqual(-1, response.text.find('ResourceNotFound'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1416,7 +1422,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1443,7 +1449,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1470,7 +1476,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(self.byte_data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1503,7 +1509,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertEqual(self.byte_data, result)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1536,7 +1542,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(blob_response.ok)
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1565,7 +1571,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1593,7 +1599,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         response.raise_for_status()
         self.assertTrue(response.ok)
         self.assertEqual(self.byte_data, response.content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1630,7 +1636,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(response.headers['content-encoding'], 'utf-8')
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1661,7 +1667,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(response.ok)
         data = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(updated_data, data)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1690,7 +1696,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(response.ok)
         with self.assertRaises(HttpResponseError):
             await sas_blob.download_blob()
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1703,7 +1709,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1718,7 +1724,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1733,7 +1739,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1758,7 +1764,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1785,7 +1791,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1796,6 +1802,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
@@ -1816,7 +1823,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @StorageAccountPreparer(name_prefix='pyacrstorage', parameter_name='rmt')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
@@ -1824,6 +1831,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'to_file_with_credential.async.dat'
@@ -1841,7 +1849,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @StorageAccountPreparer(name_prefix='pyacrstorage', parameter_name='rmt')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
@@ -1849,6 +1857,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'to_stream_with_credential.async.dat'
@@ -1867,13 +1876,15 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
-    async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
+    async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             return
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'with_existing_file.async.dat'
@@ -1893,13 +1904,15 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
-    async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key):
+    async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             return
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'existing_file_overwrite.async.dat'
@@ -1947,7 +1960,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(uploaded)
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1971,7 +1984,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(uploaded)
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1996,7 +2009,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(b"existing_data", content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -2023,7 +2036,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(uploaded)
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -2047,7 +2060,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(uploaded)
         content = await (await blob.download_blob()).content_as_text()
         self.assertEqual(data, content)
-        
+
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
