@@ -13,6 +13,9 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ClientAuthenticationError
 )
+from azure.core.pipeline.transport import (
+    AioHttpTransport
+)
 
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -429,39 +432,63 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             await service.delete_container(container_name)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_GRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_location_lock_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        # Fail the first request and set the retry policy to retry to secondary
+        # The given test account must be GRS
+        class MockTransport(AioHttpTransport):
+            CALL_NUMBER = 1
+            ENABLE = False
+            async def send(self, request, **kwargs):
+                if MockTransport.ENABLE:
+                    if MockTransport.CALL_NUMBER == 2:
+                        assert request.url.find('-secondary')
+                        # Here's our hack
+                        # Replace with primary so the test works even
+                        # if secondary is not ready
+                        request.url = request.url.replace('-secondary', '')
+
+                response = await super(MockTransport, self).send(request, **kwargs)
+
+                if MockTransport.ENABLE:
+                    assert response.status_code == 200
+                    if MockTransport.CALL_NUMBER == 1:
+                        response.status_code = 408
+                    elif MockTransport.CALL_NUMBER == 2:
+                        pass
+                    else:
+                        pytest.fail("This test is not supposed to do more calls")
+                    MockTransport.CALL_NUMBER += 1
+                return response
+
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry,
+            transport=MockTransport())
+        container = service.get_container_client('containername')
+        created = await container.create_container()
 
         # Act
-        # Fail the first request and set the retry policy to retry to secondary
-        response_callback = ResponseCallback(status=200, new_status=408).override_first_status
-        #context = _OperationContext(location_lock=True)
+        MockTransport.ENABLE = True
 
         # Assert
-        # Confirm that the first request gets retried to secondary
-        # The given test account must be GRS
         def retry_callback(retry_count=None, location_mode=None, **kwargs):
-            self.assertEqual(LocationMode.SECONDARY, location_mode)
-
-        # Confirm that the second list request done with the same context sticks
-        # to the final location of the first list request (aka secondary) despite
-        # the client normally trying primary first
-        requests = []
-        def request_callback(request):
-            if not requests:
-                requests.append(request)
+            # This call should be called once, with the decision to try secondary
+            retry_callback.called = True
+            if MockTransport.CALL_NUMBER == 1:
+                self.assertEqual(LocationMode.SECONDARY, location_mode)
+            elif MockTransport.CALL_NUMBER == 2:
+                self.assertEqual(LocationMode.SECONDARY, location_mode)
             else:
-                self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
+                pytest.fail("This test is not supposed to retry more than once")
+        retry_callback.called = False
 
         containers = service.list_containers(
             results_per_page=1, retry_hook=retry_callback)
         await containers.__anext__()
-        await containers.__anext__()
+        assert retry_callback.called
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
