@@ -14,6 +14,8 @@ detail the new keyword arguments):
 - `CryptographyClient` operations return class instances instead of tuples. The
 new classes have the same attributes as the tuples.
 - Renamed `list_keys` to `list_properties_of_keys`
+- `Key` properties `created`, `expires`, and `updated` renamed to `created_on`,
+`expires_on`, and `updated_on`
 
 
 ## 4.0.0b4 (2019-10-08)
