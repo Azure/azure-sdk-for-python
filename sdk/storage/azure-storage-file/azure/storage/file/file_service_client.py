@@ -198,7 +198,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            services=Services.FILE,
+            services=Services(file=True),
             resource_types=resource_types,
             permission=permission,
             expiry=expiry,

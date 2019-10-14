@@ -584,7 +584,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
         token = qsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
+            ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
