@@ -105,8 +105,8 @@ def run_sample():
 
 
 if __name__ == "__main__":
-    # try:
-    run_sample()
+    try:
+        run_sample()
 
-    # except Exception as e:
-        # print("Top level Error: {0}".format(str(e)))
+    except Exception as e:
+        print("Top level Error: {0}".format(str(e)))
