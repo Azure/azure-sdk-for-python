@@ -879,17 +879,14 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         # type: (...) -> Any
         """Close open file handles.
 
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
-
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
         :type handle: str or ~azure.storage.file.Handle
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         try:
             handle_id = handle.id  # type: ignore
