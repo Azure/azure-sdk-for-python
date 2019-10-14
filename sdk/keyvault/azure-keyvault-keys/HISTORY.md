@@ -11,6 +11,8 @@ detail the new keyword arguments):
   - `update_key_properties` now has two positional parameters, `name` and
      (optional) `version`
   - `import_key` now has positional parameters `name` and `key`
+- `CryptographyClient` operations return class instances instead of tuples. The
+new classes have the same attributes as the tuples.
 
 
 ## 4.0.0b4 (2019-10-08)

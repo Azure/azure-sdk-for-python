@@ -22,8 +22,11 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-        # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-        key_id, algorithm, ciphertext, authentication_tag = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        # the result holds the ciphertext and identifies the encryption key and algorithm used
+        result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        ciphertext = result.ciphertext
+        print(result.key_id)
+        print(result.algorithm)
 
         # [END encrypt]
 
@@ -52,15 +55,18 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-        key_id, wrap_algorithm, wrapped_bytes = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        # the result holds the encrypted key and identifies the encryption key and algorithm used
+        result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        encrypted_key = result.encrypted_key
+        print(result.key_id)
+        print(result.algorithm)
 
         # [END wrap]
 
         # [START unwrap]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         unwrapped_bytes = result.unwrapped_bytes
 
         # [END unwrap]
@@ -81,7 +87,12 @@ class TestCryptoExamples(KeyVaultTestCase):
         digest = hashlib.sha256(b"plaintext").digest()
 
         # sign returns a tuple with the signature and the metadata required to verify it
-        key_id, algorithm, signature = client.sign(SignatureAlgorithm.rs256, digest)
+        result = client.sign(SignatureAlgorithm.rs256, digest)
+
+        # the result contains the signature and identifies the key and algorithm used
+        print(result.key_id)
+        print(result.algorithm)
+        signature = result.signature
 
         # [END sign]
 

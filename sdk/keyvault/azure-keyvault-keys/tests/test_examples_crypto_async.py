@@ -24,9 +24,10 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-        key_id, algorithm, ciphertext, authentication_tag = await client.encrypt(
-            EncryptionAlgorithm.rsa_oaep, b"plaintext"
-        )
+        result = await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        print(result.key_id)
+        print(result.algorithm)
+        ciphertext = result.ciphertext
 
         # [END encrypt]
 
@@ -57,14 +58,17 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-        key_id, wrap_algorithm, wrapped_bytes = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        result = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        print(result.key_id)
+        print(result.algorithm)
+        encrypted_key = result.encrypted_key
 
         # [END wrap]
 
         # [START unwrap]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+        result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
 
         # [END unwrap]
 
@@ -85,7 +89,10 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         digest = hashlib.sha256(b"plaintext").digest()
 
         # sign returns a tuple with the signature and the metadata required to verify it
-        key_id, algorithm, signature = await client.sign(SignatureAlgorithm.rs256, digest)
+        result = await client.sign(SignatureAlgorithm.rs256, digest)
+        print(result.key_id)
+        print(result.algorithm)
+        signature = result.signature
 
         # [END sign]
 

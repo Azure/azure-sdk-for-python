@@ -164,9 +164,11 @@ class CryptographyClient(KeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-            # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag =
-                client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            # the result holds the ciphertext and identifies the encryption key and algorithm used
+            result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            ciphertext = result.ciphertext
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -184,7 +186,7 @@ class CryptographyClient(KeyVaultClientBase):
                 value=plaintext,
                 **kwargs
             ).result
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
 
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
@@ -209,12 +211,6 @@ class CryptographyClient(KeyVaultClientBase):
             print(result.decrypted_bytes)
 
         """
-
-        authentication_data = kwargs.pop("authentication_data", None)
-        authentication_tag = kwargs.pop("authentication_tag", None)
-        if authentication_data and not authentication_tag:
-            raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
-
         result = self._client.decrypt(
             vault_base_url=self._key_id.vault_endpoint,
             key_name=self._key_id.name,
@@ -242,8 +238,11 @@ class CryptographyClient(KeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-            # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-            key_id, wrap_algorithm, wrapped_bytes = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            # the result holds the encrypted key and identifies the encryption key and algorithm used
+            result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            encrypted_key = result.encrypted_key
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -317,7 +316,12 @@ class CryptographyClient(KeyVaultClientBase):
             digest = hashlib.sha256(b"plaintext").digest()
 
             # sign returns a tuple with the signature and the metadata required to verify it
-            key_id, algorithm, signature = client.sign(SignatureAlgorithm.rs256, digest)
+            result = client.sign(SignatureAlgorithm.rs256, digest)
+
+            # the result contains the signature and identifies the key and algorithm used
+            signature = result.signature
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -353,8 +357,6 @@ class CryptographyClient(KeyVaultClientBase):
             assert verified.result is True
 
         """
-        #    def verify(self, vault_base_url, key_name, key_version, algorithm, digest, signature, cls=None, **kwargs):
-
         local_key = self._get_local_key(**kwargs)
         if local_key:
             if "verify" not in self._allowed_ops:

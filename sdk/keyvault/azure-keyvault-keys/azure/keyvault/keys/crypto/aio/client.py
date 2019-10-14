@@ -157,9 +157,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-            # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag =
-                await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            # the result holds the ciphertext and identifies the encryption key and algorithm used
+            result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            ciphertext = result.ciphertext
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -172,7 +174,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = await self._client.encrypt(
                 self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
             ).result
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
 
     @distributed_trace_async
     async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "**Any") -> DecryptResult:
@@ -196,12 +198,6 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             print(result.decrypted_bytes)
 
         """
-
-        authentication_data = kwargs.pop("authentication_data", None)
-        authentication_tag = kwargs.pop("authentication_tag", None)
-        if authentication_data and not authentication_tag:
-            raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
-
         result = await self._client.decrypt(
             vault_base_url=self._key_id.vault_endpoint,
             key_name=self._key_id.name,
@@ -228,8 +224,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-            # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-            key_id, wrap_algorithm, wrapped_bytes = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            # the result holds the encrypted key and identifies the encryption key and algorithm used
+            result = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            encrypted_key = result.encrypted_key
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -300,7 +299,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             digest = hashlib.sha256(b"plaintext").digest()
 
             # sign returns a tuple with the signature and the metadata required to verify it
-            key_id, algorithm, signature = await client.sign(SignatureAlgorithm.rs256, digest)
+            result = await client.sign(SignatureAlgorithm.rs256, digest)
+
+            # the result contains the signature and identifies the key and algorithm used
+            signature = result.signature
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
