@@ -1,5 +1,4 @@
 WINDOW_CONTENTS = window.location.href.split('/')
-SELECTED_LANGUAGE = 'python'
 
 function currentVersion(){
     if (WINDOW_CONTENTS.includes('$web') && WINDOW_CONTENTS.length > 5)
@@ -118,4 +117,6 @@ function populateIndexList(selector, packageName)
   })
 }
 
+// language specific
+SELECTED_LANGUAGE = 'python'
 populateOptions('#versionSelector', ['#versionSelector', '#versionSelectorHeader'])
