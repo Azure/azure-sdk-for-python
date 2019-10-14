@@ -241,7 +241,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
-        self.assertNotEqual(cert.properties.updated, cert_bundle.properties.updated)
+        self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
 
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name)

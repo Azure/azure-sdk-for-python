@@ -188,7 +188,7 @@ class CertificateProperties(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """The datetime when the certificate expires.
 
@@ -197,7 +197,7 @@ class CertificateProperties(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
@@ -206,7 +206,7 @@ class CertificateProperties(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 
@@ -651,17 +651,17 @@ class CertificatePolicy(object):
         if (
             self.enabled is not None
             or self.not_before is not None
-            or self.expires is not None
-            or self.created is not None
-            or self.updated is not None
+            or self.expires_on is not None
+            or self.created_on is not None
+            or self.updated_on is not None
             or self.recovery_level
         ):
             attributes = models.CertificateAttributes(
                 enabled=self.enabled,
                 not_before=self.not_before,
-                expires=self.expires,
-                created=self.enabled,
-                updated=self.updated,
+                expires=self.expires_on,
+                created=self.created_on,
+                updated=self.updated_on,
                 recovery_level=self.recovery_level,
             )
         else:
@@ -1001,7 +1001,7 @@ class CertificatePolicy(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """The datetime when the certificate expires.
 
@@ -1010,7 +1010,7 @@ class CertificatePolicy(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
@@ -1019,7 +1019,7 @@ class CertificatePolicy(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 
@@ -1221,7 +1221,7 @@ class Issuer(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
@@ -1230,7 +1230,7 @@ class Issuer(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 

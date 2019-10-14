@@ -126,13 +126,7 @@ illustrated in the [examples](#examples) below.
 
 ### Certificate
   A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective,
-  Key Vault APIs accept and return certificates as the Certificate type. In addition to the
-  certificate data, the following attributes may be specified:
-* expires: Identifies the expiration time on or after which the certificate data should not be retrieved.
-* not_before: Identifies the time after which the certificate will be active.
-* enabled: Specifies whether the certificate data can be retrieved.
-* created: Indicates when this version of the certificate was created.
-* updated: Indicates when this version of the certificate was updated.
+  Key Vault APIs accept and return certificates as the Certificate type.
 
 ### Certificate Client:
 
@@ -187,7 +181,7 @@ updated_certificate= certificate_client.update_certificate_properties(name="cert
 
 print(updated_certificate.name)
 print(updated_certificate.properties.version)
-print(updated_certificate.properties.updated)
+print(updated_certificate.properties.updated_on)
 print(updated_certificate.properties.tags)
 
 ```

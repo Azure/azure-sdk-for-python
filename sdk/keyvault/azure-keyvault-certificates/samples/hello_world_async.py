@@ -81,7 +81,7 @@ async def run_sample():
         updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
         print(
             "Certificate with name '{0}' was updated on date '{1}'".format(
-                bank_certificate.name, updated_certificate.properties.updated
+                bank_certificate.name, updated_certificate.properties.updated_on
             )
         )
         print(

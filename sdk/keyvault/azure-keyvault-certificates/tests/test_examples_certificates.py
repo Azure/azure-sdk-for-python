@@ -84,7 +84,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
         print(updated_certificate.properties.version)
-        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.updated_on)
         print(updated_certificate.properties.tags)
 
         # [END update_certificate]
@@ -133,9 +133,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificates:
             print(certificate.id)
-            print(certificate.created)
+            print(certificate.created_on)
             print(certificate.name)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.enabled)
 
         # [END list_certificates]
@@ -146,7 +146,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.version)
 
         # [END list_certificate_versions]
