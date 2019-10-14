@@ -3328,6 +3328,9 @@ class OSProfile(Model):
      should be allowed on the virtual machine. <br><br>This may only be set to
      False when no extensions are present on the virtual machine.
     :type allow_extension_operations: bool
+    :param require_guest_provision_signal: Specifies whether the guest
+     provision signal is required from the virtual machine.
+    :type require_guest_provision_signal: bool
     """
 
     _attribute_map = {
@@ -3339,6 +3342,7 @@ class OSProfile(Model):
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
         'allow_extension_operations': {'key': 'allowExtensionOperations', 'type': 'bool'},
+        'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3351,6 +3355,7 @@ class OSProfile(Model):
         self.linux_configuration = kwargs.get('linux_configuration', None)
         self.secrets = kwargs.get('secrets', None)
         self.allow_extension_operations = kwargs.get('allow_extension_operations', None)
+        self.require_guest_provision_signal = kwargs.get('require_guest_provision_signal', None)
 
 
 class Plan(Model):
