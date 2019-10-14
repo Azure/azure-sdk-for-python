@@ -468,7 +468,7 @@ class KeyClient(KeyVaultClientBase):
 
         Keyword arguments
             - **enabled** (bool): Whether the key is enabled for use.
-            - **hsm** (bool): Whether the key should be backed by a hardware security module
+            - **hardware_protected** (bool): Whether the key should be backed by a hardware security module
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
             - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
@@ -485,6 +485,7 @@ class KeyClient(KeyVaultClientBase):
             name,
             key=key._to_generated_model(),
             key_attributes=attributes,
+            hsm=kwargs.pop("hardware_protected", None),
             **kwargs
         )
         return Key._from_key_bundle(bundle)
