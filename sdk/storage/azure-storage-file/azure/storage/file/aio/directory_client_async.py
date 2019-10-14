@@ -265,11 +265,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -280,8 +277,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         try:
             handle_id = handle.id # type: ignore
@@ -301,7 +298,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(
+        return await async_poller(
             command,
             start_close,
             None,
