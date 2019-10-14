@@ -13,6 +13,7 @@ detail the new keyword arguments):
   - `import_key` now has positional parameters `name` and `key`
 - `CryptographyClient` operations return class instances instead of tuples. The
 new classes have the same attributes as the tuples.
+- Renamed `list_keys` to `list_properties_of_keys`
 
 
 ## 4.0.0b4 (2019-10-08)

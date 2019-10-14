@@ -8,13 +8,8 @@ detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
   - `update_secret_properties` now has positional parameters `name` and
     (optional) `version`
-- `Key.key_material` renamed to `Key.key`
+- Renamed `list_secrets` to `list_properties_of_secrets`
 
-### New features:
-- `Key` has new properties:
-  - `key_operations` is a list of permitted operations
-  - `key_type` is the key's type, e.g. "RSA" or "EC"
-  
 
 ## 4.0.0b4 (2019-10-08)
 ### Breaking changes:
