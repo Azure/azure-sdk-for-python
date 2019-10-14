@@ -1031,6 +1031,27 @@ class QuotaLimitsResponse(Model):
         self.next_link = next_link
 
 
+class QuotaPropertiesName(Model):
+    """Name of the resource provide by the resource Provider. Please use this name
+    property for quotaRequests.
+
+    :param value: Resource name.
+    :type value: str
+    :param localized_value: Resource display name.
+    :type localized_value: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
+        super(QuotaPropertiesName, self).__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value
+
+
 class QuotaRequestDetails(Model):
     """The details of the quota Request.
 
@@ -1113,7 +1134,7 @@ class QuotaRequestOneResourceProperties(Model):
     :type unit: str
     :param name1: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
-    :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
+    :type name1: ~azure.mgmt.reservations.models.QuotaPropertiesName
     :ivar resource_type: The Resource Type Name.
     :vartype resource_type: object
     :ivar quota_period: The quota period over which the usage values are
@@ -1145,13 +1166,13 @@ class QuotaRequestOneResourceProperties(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
-        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
-        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
+        'limit': {'key': 'properties.limit', 'type': 'int'},
+        'current_value': {'key': 'properties.currentValue', 'type': 'int'},
+        'unit': {'key': 'properties.unit', 'type': 'str'},
+        'name1': {'key': 'properties.name', 'type': 'QuotaPropertiesName'},
+        'resource_type': {'key': 'properties.resourceType', 'type': 'object'},
+        'quota_period': {'key': 'properties.quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'properties.properties', 'type': 'object'},
     }
 
     def __init__(self, *, limit: int=None, unit: str=None, name1=None, properties=None, **kwargs) -> None:
@@ -1206,7 +1227,7 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :type unit: str
     :param name2: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
-    :type name2: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
+    :type name2: ~azure.mgmt.reservations.models.QuotaPropertiesName
     :ivar resource_type: The Resource Type Name.
     :vartype resource_type: object
     :ivar quota_period: The quota period over which the usage values are
@@ -1244,13 +1265,13 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'provisioning_state': {'key': 'properties.properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.properties.requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.properties.properties.limit', 'type': 'int'},
-        'current_value': {'key': 'properties.properties.properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.properties.properties.unit', 'type': 'str'},
-        'name2': {'key': 'properties.properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'properties.properties.properties.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'properties.properties.properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties.properties.properties', 'type': 'object'},
+        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
+        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
+        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
+        'name2': {'key': 'properties.properties.name', 'type': 'QuotaPropertiesName'},
+        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
+        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
     }
 
     def __init__(self, *, limit: int=None, unit: str=None, name2=None, properties=None, **kwargs) -> None:

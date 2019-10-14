@@ -45,6 +45,7 @@ try:
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import QuotaLimitsResponse
+    from ._models_py3 import QuotaPropertiesName
     from ._models_py3 import QuotaRequestDetails
     from ._models_py3 import QuotaRequestOneResourceProperties
     from ._models_py3 import QuotaRequestOneResourceSubmitResponse
@@ -107,6 +108,7 @@ except (SyntaxError, ImportError):
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import QuotaLimitsResponse
+    from ._models import QuotaPropertiesName
     from ._models import QuotaRequestDetails
     from ._models import QuotaRequestOneResourceProperties
     from ._models import QuotaRequestOneResourceSubmitResponse
@@ -185,6 +187,7 @@ __all__ = [
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'QuotaLimitsResponse',
+    'QuotaPropertiesName',
     'QuotaRequestDetails',
     'QuotaRequestOneResourceProperties',
     'QuotaRequestOneResourceSubmitResponse',
