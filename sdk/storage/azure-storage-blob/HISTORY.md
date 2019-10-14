@@ -1,6 +1,21 @@
 # Change Log azure-storage-blob
 
 
+## Version 12.0.0b5:
+
+**Breaking changes**
+
+- `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
+- The public attributes of `StorageStreamDownloader` have been limited:
+  - `name` (str): The name of the blob.
+  - `container` (str): The container the blob is being downloaded from.
+  - `properties` (`BlobProperties`): The properties of the blob.
+  - `size` (int): The size of the download. Either the total blob size, or the length of a subsection if sepcified. Previously called `download_size`.
+- `StorageStreamDownloader` now has new functions:
+  - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
+  - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
