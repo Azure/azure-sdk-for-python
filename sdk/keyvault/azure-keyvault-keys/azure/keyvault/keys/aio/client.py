@@ -25,6 +25,11 @@ class KeyClient(AsyncKeyVaultClientBase):
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
 
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
             :start-after: [START create_key_client]
