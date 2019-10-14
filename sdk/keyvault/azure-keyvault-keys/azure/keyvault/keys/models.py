@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
     from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
+    from .enums import KeyOperation
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
@@ -122,7 +123,7 @@ class KeyProperties(object):
         return self._attributes.not_before
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """
         When the key will expire, in UTC
@@ -132,7 +133,7 @@ class KeyProperties(object):
         return self._attributes.expires
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """
         When the key was created, in UTC
@@ -142,7 +143,7 @@ class KeyProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the key was last updated, in UTC
@@ -232,10 +233,22 @@ class Key(object):
         return self._properties
 
     @property
-    def key_material(self):
+    def key(self):
         # type: () -> _models.JsonWebKey
         """The JSON web key"""
         return self._key_material
+
+    @property
+    def key_type(self):
+        # type: () -> str
+        """The key's type. See :class:`~azure.keyvault.keys.enums.KeyType` for possible values."""
+        return self._key_material.kty
+
+    @property
+    def key_operations(self):
+        # type: () -> list[KeyOperation]
+        """Permitted operations. See :class:`~azure.keyvault.keys.enums.KeyOperation` for possible values."""
+        return self._key_material.key_ops
 
 
 class DeletedKey(Key):

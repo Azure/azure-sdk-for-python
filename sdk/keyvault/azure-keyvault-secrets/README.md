@@ -179,7 +179,7 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 
     updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret_properties.updated)
+    print(updated_secret_properties.updated_on)
     print(updated_secret_properties.content_type)
     print(updated_secret_properties.tags)
 ```
@@ -200,7 +200,7 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
@@ -231,10 +231,11 @@ This example creates a secret in the Key Vault with the specified optional argum
 ```
 
 ### Async list secrets
-This example lists all the secrets in the specified Key Vault.
+This example lists properties of all the secrets in the specified Key Vault.
+Note that secret values are not included.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
