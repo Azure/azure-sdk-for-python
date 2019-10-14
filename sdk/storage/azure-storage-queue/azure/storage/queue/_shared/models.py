@@ -235,8 +235,6 @@ class ResourceTypes(object):
     :param bool object:
         Access to object-level APIs for blobs, queue messages, and
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :param str _str:
-        A string representing the resource types.
     """
 
     def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
@@ -337,8 +335,6 @@ class Services(object):
         Access for the `~azure.storage.queue.queue_service_client.QueueServiceClient`
     :param bool file:
         Access for the `~azure.storage.file.file_service_client.FileServiceClient`
-    :param str _str:
-        A string representing the services.
     """
 
     def __init__(self, blob=False, queue=False, file=False):
