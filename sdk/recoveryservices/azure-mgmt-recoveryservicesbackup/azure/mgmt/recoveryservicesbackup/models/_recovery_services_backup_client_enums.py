@@ -402,6 +402,15 @@ class ScheduleRunType(str, Enum):
     weekly = "Weekly"
 
 
+class OperationStatusValues(str, Enum):
+
+    invalid = "Invalid"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
 class SupportStatus(str, Enum):
 
     invalid = "Invalid"
@@ -534,12 +543,3 @@ class BackupItemType(str, Enum):
     azure_file_share = "AzureFileShare"
     sap_hana_database = "SAPHanaDatabase"
     sap_ase_database = "SAPAseDatabase"
-
-
-class OperationStatusValues(str, Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"

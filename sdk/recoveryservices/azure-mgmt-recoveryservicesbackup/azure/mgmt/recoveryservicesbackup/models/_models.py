@@ -12,6 +12,128 @@
 from msrest.serialization import Model
 
 
+class AADProperties(Model):
+    """AADProperties.
+
+    :param service_principal_client_id:
+    :type service_principal_client_id: str
+    :param tenant_id:
+    :type tenant_id: str
+    :param authority:
+    :type authority: str
+    :param audience:
+    :type audience: str
+    :param service_principal_object_id:
+    :type service_principal_object_id: str
+    """
+
+    _attribute_map = {
+        'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'authority': {'key': 'authority', 'type': 'str'},
+        'audience': {'key': 'audience', 'type': 'str'},
+        'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AADProperties, self).__init__(**kwargs)
+        self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.authority = kwargs.get('authority', None)
+        self.audience = kwargs.get('audience', None)
+        self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
+
+
+class Resource(Model):
+    """ARM Resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.e_tag = kwargs.get('e_tag', None)
+
+
+class AADPropertiesResource(Resource):
+    """AADPropertiesResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: AADPropertiesResource properties
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.AADProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'AADProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AADPropertiesResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class FeatureSupportRequest(Model):
     """Base class for feature request.
 
@@ -5695,52 +5817,6 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
         self.data_directory_paths = None
 
 
-class Resource(Model):
-    """ARM Resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id represents the complete path to the resource.
-    :vartype id: str
-    :ivar name: Resource name associated with the resource.
-    :vartype name: str
-    :ivar type: Resource type represents the complete path of the form
-     Namespace/ResourceType/ResourceType/...
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param e_tag: Optional ETag.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.e_tag = kwargs.get('e_tag', None)
-
-
 class BackupEngineBaseResource(Resource):
     """The base backup engine class. All workload specific backup engines derive
     from this class.
@@ -6657,6 +6733,211 @@ class ContainerIdentityInfo(Model):
         self.aad_tenant_id = kwargs.get('aad_tenant_id', None)
         self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
         self.audience = kwargs.get('audience', None)
+
+
+class CrossRegionRestoreRequest(Model):
+    """CrossRegionRestoreRequest.
+
+    :param cross_region_restore_access_details: Access details for cross
+     region restore
+    :type cross_region_restore_access_details:
+     ~azure.mgmt.recoveryservicesbackup.models.CrrAccessToken
+    :param restore_request: Request object for triggering restore
+    :type restore_request:
+     ~azure.mgmt.recoveryservicesbackup.models.RestoreRequest
+    """
+
+    _attribute_map = {
+        'cross_region_restore_access_details': {'key': 'crossRegionRestoreAccessDetails', 'type': 'CrrAccessToken'},
+        'restore_request': {'key': 'restoreRequest', 'type': 'RestoreRequest'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CrossRegionRestoreRequest, self).__init__(**kwargs)
+        self.cross_region_restore_access_details = kwargs.get('cross_region_restore_access_details', None)
+        self.restore_request = kwargs.get('restore_request', None)
+
+
+class CrossRegionRestoreRequestResource(Resource):
+    """CrossRegionRestoreRequestResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: CrossRegionRestoreRequestResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.CrossRegionRestoreRequest
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CrossRegionRestoreRequest'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CrossRegionRestoreRequestResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class CrrAccessToken(Model):
+    """Container level access token for CRR.
+
+    :param access_token_string: Access token used for authentication
+    :type access_token_string: str
+    :param subscription_id: Subscription Id of the source vault
+    :type subscription_id: str
+    :param resource_group_name: Resource Group name of the source vault
+    :type resource_group_name: str
+    :param resource_name: Resource Name of the source vault
+    :type resource_name: str
+    :param resource_id: Resource Id of the source vault
+    :type resource_id: str
+    :param recovery_point_id: Recovery Point Id
+    :type recovery_point_id: str
+    :param recovery_point_time: Recovery Point Time
+    :type recovery_point_time: str
+    :param container_name: Container Unique name
+    :type container_name: str
+    :param container_type: Container Type
+    :type container_type: str
+    :param backup_management_type: Backup Management Type
+    :type backup_management_type: str
+    :param datasource_type: Datasource Type
+    :type datasource_type: str
+    :param datasource_name: Datasource Friendly Name
+    :type datasource_name: str
+    :param datasource_id: Datasource Id
+    :type datasource_id: str
+    :param datasource_container_name: Datasource Container Unique Name
+    :type datasource_container_name: str
+    :param coordinator_service_stamp_id: CoordinatorServiceStampId to be used
+     by BCM in restore call
+    :type coordinator_service_stamp_id: str
+    :param coordinator_service_stamp_uri: CoordinatorServiceStampUri to be
+     used by BCM in restore call
+    :type coordinator_service_stamp_uri: str
+    :param protection_service_stamp_id: ProtectionServiceStampId to be used by
+     BCM in restore call
+    :type protection_service_stamp_id: str
+    :param protection_service_stamp_uri: ProtectionServiceStampUri to be used
+     by BCM in restore call
+    :type protection_service_stamp_uri: str
+    :param token_extended_information: Extended Information about the token
+     like FileSpec etc.
+    :type token_extended_information: str
+    """
+
+    _attribute_map = {
+        'access_token_string': {'key': 'accessTokenString', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
+        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'container_type': {'key': 'containerType', 'type': 'str'},
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
+        'datasource_name': {'key': 'datasourceName', 'type': 'str'},
+        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
+        'datasource_container_name': {'key': 'datasourceContainerName', 'type': 'str'},
+        'coordinator_service_stamp_id': {'key': 'coordinatorServiceStampId', 'type': 'str'},
+        'coordinator_service_stamp_uri': {'key': 'coordinatorServiceStampUri', 'type': 'str'},
+        'protection_service_stamp_id': {'key': 'protectionServiceStampId', 'type': 'str'},
+        'protection_service_stamp_uri': {'key': 'protectionServiceStampUri', 'type': 'str'},
+        'token_extended_information': {'key': 'tokenExtendedInformation', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CrrAccessToken, self).__init__(**kwargs)
+        self.access_token_string = kwargs.get('access_token_string', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.resource_name = kwargs.get('resource_name', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.recovery_point_id = kwargs.get('recovery_point_id', None)
+        self.recovery_point_time = kwargs.get('recovery_point_time', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.container_type = kwargs.get('container_type', None)
+        self.backup_management_type = kwargs.get('backup_management_type', None)
+        self.datasource_type = kwargs.get('datasource_type', None)
+        self.datasource_name = kwargs.get('datasource_name', None)
+        self.datasource_id = kwargs.get('datasource_id', None)
+        self.datasource_container_name = kwargs.get('datasource_container_name', None)
+        self.coordinator_service_stamp_id = kwargs.get('coordinator_service_stamp_id', None)
+        self.coordinator_service_stamp_uri = kwargs.get('coordinator_service_stamp_uri', None)
+        self.protection_service_stamp_id = kwargs.get('protection_service_stamp_id', None)
+        self.protection_service_stamp_uri = kwargs.get('protection_service_stamp_uri', None)
+        self.token_extended_information = kwargs.get('token_extended_information', None)
+
+
+class CrrAccessTokenResource(Resource):
+    """Container level access token for CRR.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: CrrAccessTokenResource properties
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.CrrAccessToken
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CrrAccessToken'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CrrAccessTokenResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class DailyRetentionFormat(Model):
@@ -9042,7 +9323,8 @@ class OperationStatusExtendedInfo(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: OperationStatusJobExtendedInfo,
-    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo
+    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo,
+    OperationStatusRecoveryPointExtendedInfo
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9059,7 +9341,7 @@ class OperationStatusExtendedInfo(Model):
     }
 
     _subtype_map = {
-        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo'}
+        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo', 'OperationStatusRecoveryPointExtendedInfo': 'OperationStatusRecoveryPointExtendedInfo'}
     }
 
     def __init__(self, **kwargs):
@@ -9149,6 +9431,39 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         super(OperationStatusProvisionILRExtendedInfo, self).__init__(**kwargs)
         self.recovery_target = kwargs.get('recovery_target', None)
         self.object_type = 'OperationStatusProvisionILRExtendedInfo'
+
+
+class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
+    """Operation status extended info for Updated Recovery Point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param updated_recovery_point: Recovery Point info with updated source
+     snapshot URI
+    :type updated_recovery_point:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPoint
+    :param deleted_backup_item_version: In case the share is in soft-deleted
+     state, populate this field with deleted backup item
+    :type deleted_backup_item_version: str
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'updated_recovery_point': {'key': 'updatedRecoveryPoint', 'type': 'RecoveryPoint'},
+        'deleted_backup_item_version': {'key': 'deletedBackupItemVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationStatusRecoveryPointExtendedInfo, self).__init__(**kwargs)
+        self.updated_recovery_point = kwargs.get('updated_recovery_point', None)
+        self.deleted_backup_item_version = kwargs.get('deleted_backup_item_version', None)
+        self.object_type = 'OperationStatusRecoveryPointExtendedInfo'
 
 
 class PointInTimeRange(Model):
