@@ -28,7 +28,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 #
-# 5. Restore a certificate (restore_certificate)
+# 5. Restore a certificate (restore_certificate_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a certificate client that will be used to call the service.
@@ -65,7 +65,7 @@ try:
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the certificate from the backup")
-    certificate = client.restore_certificate(certificate_backup)
+    certificate = client.restore_certificate_backup(certificate_backup)
     print("Restored Certificate with name '{0}'".format(certificate.name))
 
 except HttpResponseError as e:

@@ -460,7 +460,7 @@ class CertificateClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_certificate(self, backup, **kwargs):
+    def restore_certificate_backup(self, backup, **kwargs):
         # type: (bytes, **Any) -> Certificate
         """Restores a backed up certificate to a vault.
 

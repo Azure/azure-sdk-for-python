@@ -206,7 +206,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START restore_certificate]
 
         # restores a certificate backup
-        restored_certificate = await certificate_client.restore_certificate(certificate_backup)
+        restored_certificate = await certificate_client.restore_certificate_backup(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
         print(restored_certificate.properties.version)

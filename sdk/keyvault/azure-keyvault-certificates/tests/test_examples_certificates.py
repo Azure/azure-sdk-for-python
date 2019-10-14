@@ -202,7 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START restore_certificate]
 
         # restore a certificate backup
-        restored_certificate = certificate_client.restore_certificate(backup=certificate_backup)
+        restored_certificate = certificate_client.restore_certificate_backup(backup=certificate_backup)
 
         print(restored_certificate.id)
         print(restored_certificate.name)

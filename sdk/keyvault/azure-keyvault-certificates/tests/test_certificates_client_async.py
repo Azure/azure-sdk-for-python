@@ -580,7 +580,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.delete_certificate(name=cert_name)
 
         # restore certificate
-        restored_certificate = await client.restore_certificate(backup=certificate_backup)
+        restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
             cert=restored_certificate, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
         )

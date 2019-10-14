@@ -437,7 +437,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_certificate(self, backup: bytes, **kwargs: "**Any") -> Certificate:
+    async def restore_certificate_backup(self, backup: bytes, **kwargs: "**Any") -> Certificate:
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault.
