@@ -70,7 +70,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START get_certificate]
 
         # get the certificate
-        certificate = certificate_client.get_certificate_with_policy(name=cert_name)
+        certificate = certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)

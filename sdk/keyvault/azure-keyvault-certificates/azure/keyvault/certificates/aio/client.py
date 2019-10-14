@@ -96,19 +96,19 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         command = partial(self.get_certificate_operation, name=name, **kwargs)
 
-        get_certificate_command = partial(self.get_certificate_with_policy, name=name, **kwargs)
+        get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
 
         create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
         return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace_async
-    async def get_certificate_with_policy(self, name: str, **kwargs: "**Any") -> Certificate:
-        """Gets a certificate and returns it's management policy as well.
+    async def get_certificate(self, name: str, **kwargs: "**Any") -> Certificate:
+        """Gets a certificate with its management policy attached.
 
 
         This operation requires the certificates/get permission. Does not accept the
         version of the certificate as a parameter. If you wish to specify version, use
-        the get_certificate function and specify version.
+        the get_certificate_version function and specify the desired version.
 
         :param str name: The name of the certificate in the given vault.
         :returns: An instance of Certificate
@@ -135,11 +135,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_certificate(self, name: str, version: str, **kwargs: "**Any") -> Certificate:
-        """Gets a certificate by version without returning it's management policy.
+    async def get_certificate_version(self, name: str, version: str, **kwargs: "**Any") -> Certificate:
+        """Gets a specific version of a certificate without returning its management policy.
 
-        If you wish to not specify a version or to get the certificate's policy as well,
-        use the get_certificate_with_policy function.
+        If you wish to get the latest version of your certificate, or to get the certificate's policy as well,
+        use the get_certificate function.
 
         :param str name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.

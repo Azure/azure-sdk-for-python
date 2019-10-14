@@ -69,7 +69,7 @@ try:
 
     # Let's get the bank certificate using its name
     print("\n.. Get a Certificate by name")
-    bank_certificate = client.get_certificate_with_policy(name=cert_name)
+    bank_certificate = client.get_certificate(name=cert_name)
     print("Certificate with name '{0}' was found'.".format(bank_certificate.name))
 
     # After one year, the bank account is still active, and we have decided to update the tags.

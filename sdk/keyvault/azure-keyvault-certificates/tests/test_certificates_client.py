@@ -238,7 +238,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(client.get_certificate_operation(name=cert_name).status.lower(), "completed")
 
         # get certificate
-        cert = client.get_certificate_with_policy(name=cert_name)
+        cert = client.get_certificate(name=cert_name)
         self._validate_certificate_bundle(cert=cert, cert_name=cert_name, cert_policy=cert_policy)
 
         # update certificate
@@ -255,7 +255,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            client.get_certificate(name=cert_name, version=deleted_cert_bundle.properties.version)
+            client.get_certificate_version(name=cert_name, version=deleted_cert_bundle.properties.version)
             self.fail("Get should fail")
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
@@ -404,7 +404,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # validate the recovered certificates
         expected = {k: v for k, v in certs.items() if k.startswith("certrec")}
-        actual = {k: client.get_certificate(name=k, version="") for k in expected.keys()}
+        actual = {k: client.get_certificate_version(name=k, version="") for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer()

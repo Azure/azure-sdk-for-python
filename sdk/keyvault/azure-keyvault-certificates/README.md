@@ -158,20 +158,20 @@ print(create_certificate_poller.result())
 ```
 
 ### Retrieve a Certificate
-`get_certificate_with_policy` retrieves a certificate previously stored in the Key Vault without
+`get_certificate` retrieves a certificate previously stored in the Key Vault without
 having to specify version.
 ```python
-certificate = certificate_client.get_certificate_with_policy(name="cert-name")
+certificate = certificate_client.get_certificate(name="cert-name")
 
 print(certificate.name)
 print(certificate.properties.version)
 print(certificate.policy.id)
 ```
 
-`get_certificate` retrieves a certificate based on the certificate name and the version of the certificate.
+`get_certificate_version` retrieves a certificate based on the certificate name and the version of the certificate.
 Version is required.
 ```python
-certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
+certificate = certificate_client.get_certificate_version(name="cert-name", version="cert-version")
 
 print(certificate.name)
 print(certificate.properties.version)
@@ -247,7 +247,7 @@ displaying additional information about the error.
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 try:
-    certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
+    certificate_client.get_certificate(name="deleted_certificate")
 except ResourceNotFoundError as e:
     print(e.message)
 
@@ -281,7 +281,7 @@ client = CertificateClient(vault_endpoint=url, credential=credential, logging_en
 
 Network trace logging can also be enabled for any single operation:
  ```python
-certificate = certificate_client.get_certificate_with_policy(name="cert-name", logging_enable=True)
+certificate = certificate_client.get_certificate(name="cert-name", logging_enable=True)
 ```
 
 ## Next steps
