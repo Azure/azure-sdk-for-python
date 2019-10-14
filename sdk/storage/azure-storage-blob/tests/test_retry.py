@@ -313,92 +313,8 @@ class StorageRetryTest(StorageTestCase):
             service.delete_container(container_name)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_secondary_location_mode(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        container_name = self.get_resource_name('utcontainer')
-        retry = ExponentialRetry(initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
-
-        # Act
-        try:
-            container = service.create_container(container_name)
-            container.location_mode = LocationMode.SECONDARY
-
-            # Override the response from secondary if it's 404 as that simply means
-            # the container hasn't replicated. We're just testing we try secondary,
-            # so that's fine.
-            response_callback = ResponseCallback(status=404, new_status=200).override_first_status
-
-            # Assert
-            def request_callback(request):
-                self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
-
-            request_callback = request_callback
-            container.get_container_properties(
-                raw_request_hook=request_callback, raw_response_hook=response_callback)
-        finally:
-            # Delete will go to primary, so disable the request validation
-            service.delete_container(container_name)
-
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_retry_to_secondary_with_put(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        container_name = self.get_resource_name('utcontainer')
-        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
-
-        # Act
-        try:
-            # Fail the first create attempt
-            response_callback = ResponseCallback(status=201, new_status=408).override_first_status
-
-            # Assert
-            # Confirm that the create request does *not* get retried to secondary
-            # This should actually throw InvalidPermissions if sent to secondary,
-            # but validate the location_mode anyways.
-            def retry_callback(location_mode=None, **kwargs):
-                self.assertEqual(LocationMode.PRIMARY, location_mode)
-
-            with self.assertRaises(ResourceExistsError):
-                service.create_container(
-                    container_name, raw_response_hook=response_callback, retry_hook=retry_callback)
-
-        finally:
-            service.delete_container(container_name)
-
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_retry_to_secondary_with_get(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        container_name = self.get_resource_name('utcontainer')
-        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry)
-
-        # Act
-        try:
-            container = service.create_container(container_name)
-            response_callback = ResponseCallback(status=200, new_status=408).override_first_status
-
-            # Assert
-            # Confirm that the get request gets retried to secondary
-            def retry_callback(retry_count=None, location_mode=None, **kwargs):
-                # Only check this every other time, sometimes the secondary location fails due to delay
-                if retry_count % 2 == 0:
-                    self.assertEqual(LocationMode.SECONDARY, location_mode)
-
-            container.get_container_properties(
-                raw_response_hook=response_callback, retry_hook=retry_callback)
-        finally:
-            service.delete_container(container_name)
-
-    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_GRS')
-    def test_location_lock(self, resource_group, location, storage_account, storage_account_key):
+    def test_retry_secondary(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
         This test is special, since in pratical term, we don't have time to wait
@@ -420,7 +336,8 @@ class StorageRetryTest(StorageTestCase):
             def send(self, request, **kwargs):
                 if MockTransport.ENABLE:
                     if MockTransport.CALL_NUMBER == 2:
-                        assert request.url.find('-secondary')
+                        if request.method != 'PUT':
+                            assert '-secondary' in request.url
                         # Here's our hack
                         # Replace with primary so the test works even
                         # if secondary is not ready
@@ -429,11 +346,12 @@ class StorageRetryTest(StorageTestCase):
                 response = super(MockTransport, self).send(request, **kwargs)
 
                 if MockTransport.ENABLE:
-                    assert response.status_code == 200
+                    assert response.status_code in [200, 201, 409]
                     if MockTransport.CALL_NUMBER == 1:
                         response.status_code = 408
                     elif MockTransport.CALL_NUMBER == 2:
-                        pass
+                        if response.status_code == 409:  # We can't really retry on PUT
+                            response.status_code = 201
                     else:
                         pytest.fail("This test is not supposed to do more calls")
                     MockTransport.CALL_NUMBER += 1
@@ -444,14 +362,28 @@ class StorageRetryTest(StorageTestCase):
             BlobServiceClient, storage_account, storage_account_key, retry_policy=retry,
             transport=MockTransport()
         )
-        # Create a container
-        container = service.get_container_client('containername')
-        created = container.create_container()
 
         # Act
         MockTransport.ENABLE = True
 
         # Assert
+
+        # Try put
+        def put_retry_callback(retry_count=None, location_mode=None, **kwargs):
+            # This call should be called once, with the decision to try secondary
+            put_retry_callback.called = True
+            if MockTransport.CALL_NUMBER == 1:
+                self.assertEqual(LocationMode.PRIMARY, location_mode)
+            elif MockTransport.CALL_NUMBER == 2:
+                self.assertEqual(LocationMode.PRIMARY, location_mode)
+            else:
+                pytest.fail("This test is not supposed to retry more than once")
+        put_retry_callback.called = False
+
+        container = service.get_container_client('containername')
+        created = container.create_container(retry_hook=put_retry_callback)
+        assert put_retry_callback.called
+
         def retry_callback(retry_count=None, location_mode=None, **kwargs):
             # This call should be called once, with the decision to try secondary
             retry_callback.called = True
@@ -463,9 +395,18 @@ class StorageRetryTest(StorageTestCase):
                 pytest.fail("This test is not supposed to retry more than once")
         retry_callback.called = False
 
+        # Try list
+        MockTransport.CALL_NUMBER = 1
+        retry_callback.called = False
         containers = service.list_containers(
             results_per_page=1, retry_hook=retry_callback)
         next(containers)
+        assert retry_callback.called
+
+        # Try get
+        MockTransport.CALL_NUMBER = 1
+        retry_callback.called = False
+        container.get_container_properties(retry_hook=retry_callback)
         assert retry_callback.called
 
     @ResourceGroupPreparer()
