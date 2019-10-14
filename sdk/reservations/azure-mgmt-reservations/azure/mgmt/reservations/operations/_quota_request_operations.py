@@ -122,9 +122,8 @@ class QuotaRequestOperations(object):
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
-        :param properties: The quota request addition properties.
-        :type properties:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
+        :param properties:
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -250,9 +249,8 @@ class QuotaRequestOperations(object):
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
-        :param properties: The quota request addition properties.
-        :type properties:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
+        :param properties:
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
