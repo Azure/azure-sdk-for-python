@@ -6,7 +6,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .crypto import CryptographyClient
 from .models import Key, KeyProperties, DeletedKey
 
 try:
@@ -16,7 +15,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, List, Optional, Union
+    from typing import Any, List, Optional, Union
     from datetime import datetime
     from azure.core.paging import ItemPaged
     from .models import JsonWebKey
@@ -40,58 +39,30 @@ class KeyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def get_cryptography_client(self, key, **kwargs):
-        # type: (Union[Key, str], **Any) -> CryptographyClient
-        """
-        Get a :class:`~azure.keyvault.keys.crypto.CryptographyClient` capable of performing cryptographic operations
-        with a key.
-
-        :param key:
-            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
-            :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string. If a string, the value must be the full
-            identifier of an Azure Key Vault key with a version.
-        :type key: str or :class:`~azure.keyvault.keys.Key`
-        :rtype: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
-        """
-
-        # the initializer requires a credential but won't actually use it in this case because we pass in this
-        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
-        credential = object()
-        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
-
     @distributed_trace
-    def create_key(
-        self,
-        name,  # type: str
-        key_type,  # type: str
-        size=None,  # type: Optional[int]
-        key_operations=None,  # type: Optional[List[str]]
-        expires=None,  # type: Optional[datetime]
-        not_before=None,  # type: Optional[datetime]
-        curve=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def create_key(self, name, key_type, **kwargs):
+        # type: (str, Union[str, azure.keyvault.keys.enums.KeyType], **Any) -> Key
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
         :type key_type: str or ~azure.keyvault.keys.enums.KeyType
-        :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **size** (int): RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys.
+              To create an RSA key, consider using :func:`create_rsa_key` instead.
+            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+              Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256 elliptic curve.
+              To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -101,10 +72,11 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Create a key
                 :dedent: 8
         """
-        enabled = kwargs.pop('enabled', None)
-
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
@@ -112,43 +84,33 @@ class KeyClient(KeyVaultClientBase):
             vault_base_url=self.vault_endpoint,
             key_name=name,
             kty=key_type,
-            key_size=size,
+            key_size=kwargs.pop("size", None),
             key_attributes=attributes,
-            key_ops=key_operations,
-            curve=curve,
+            key_ops=kwargs.pop("key_operations", None),
             **kwargs
         )
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def create_rsa_key(
-        self,
-        name,  # type: str
-        hsm,  # type: bool
-        size=None,  # type: Optional[int]
-        key_operations=None,  # type: Optional[List[str]]
-        expires=None,  # type: Optional[datetime]
-        not_before=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def create_rsa_key(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
-        :param str name: The name for the new key. Key Vault will generate the key's version.
-        :param bool hsm: Whether to create a hardware key (HSM) or software key
-        :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
+        :param str name: The name for the new key
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -158,48 +120,30 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Create RSA key
                 :dedent: 8
         """
-        key_type = "RSA-HSM" if hsm else "RSA"
-
-        return self.create_key(
-            name,
-            key_type=key_type,
-            size=size,
-            key_operations=key_operations,
-            expires=expires,
-            not_before=not_before,
-            **kwargs
-        )
+        hsm = kwargs.pop("hardware_protected", False)
+        return self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace
-    def create_ec_key(
-        self,
-        name,  # type: str
-        hsm,  # type: bool
-        curve=None,  # type: Optional[str]
-        key_operations=None,  # type: Optional[List[str]]
-        expires=None,  # type: Optional[datetime]
-        not_before=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def create_ec_key(self, name, **kwargs):
+        # type: (str, **Any) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
-        :param bool hsm: Whether to create as a hardware key (HSM) or software key.
-        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
-        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+              Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -209,17 +153,8 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Create an elliptic curve key
                 :dedent: 8
         """
-        key_type = "EC-HSM" if hsm else "EC"
-
-        return self.create_key(
-            name,
-            key_type=key_type,
-            curve=curve,
-            key_operations=key_operations,
-            expires=expires,
-            not_before=not_before,
-            **kwargs
-        )
+        hsm = kwargs.pop("hardware_protected", False)
+        return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace
     def delete_key(self, name, **kwargs):
@@ -321,7 +256,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs):
+    def list_properties_of_keys(self, **kwargs):
         # type: (**Any) -> ItemPaged[KeyProperties]
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
@@ -418,25 +353,13 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_properties(
-        self,
-        name,  # type: str
-        version=None,  # type: Optional[str]
-        key_operations=None,  # type: Optional[List[str]]
-        expires=None,  # type: Optional[datetime]
-        not_before=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def update_key_properties(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], **Any) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
+        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises:
@@ -444,8 +367,11 @@ class KeyClient(KeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -455,16 +381,18 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Update a key's attributes
                 :dedent: 8
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = self._client.update_key(
             self.vault_endpoint,
             name,
             key_version=version or "",
-            key_ops=key_operations,
+            key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
             error_map=_error_map,
             **kwargs
@@ -526,45 +454,38 @@ class KeyClient(KeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
-    def import_key(
-        self,
-        name,  # type: str
-        key,  # type: JsonWebKey
-        hsm=None,  # type: Optional[bool]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Key
+    def import_key(self, name, key, **kwargs):
+        # type: (str, JsonWebKey, **Any) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
-        :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the key is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
-
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **hardware_protected** (bool): Whether the key should be backed by a hardware security module
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = self._client.import_key(
             self.vault_endpoint,
             name,
             key=key._to_generated_model(),
-            hsm=hsm,
             key_attributes=attributes,
+            hsm=kwargs.pop("hardware_protected", None),
             **kwargs
         )
         return Key._from_key_bundle(bundle)
