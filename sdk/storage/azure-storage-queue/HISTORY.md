@@ -5,7 +5,11 @@
 **Breaking changes**
 
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+
+ **New features**
+ 
+- `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 
 ## Version 12.0.0b4:
@@ -18,6 +22,10 @@
   - enum-like list parameters have been removed from both of them.
   - `__add__` and `__or__` methods are removed.
 - `max_connections` is now renamed to `max_concurrency`.
+
+**New features**
+
+- `AccountSasPermissions`, `QueueSasPermissions` now have method `from_string` which takes parameters as a string.
 
 ## Version 12.0.0b3:
 

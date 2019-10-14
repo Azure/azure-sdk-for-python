@@ -221,7 +221,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            services=Services.BLOB,
+            services=Services(blob=True),
             resource_types=resource_types,
             permission=permission,
             expiry=expiry,
