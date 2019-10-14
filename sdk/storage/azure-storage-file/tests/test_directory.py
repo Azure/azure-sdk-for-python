@@ -348,7 +348,7 @@ class StorageDirectoryTest(FileTestCase):
         # Act
         directory_client.set_http_headers(file_attributes='None', file_creation_time=new_creation_time,
                                           file_last_write_time=new_last_write_time,
-                                          file_permission_key=permission_key)
+                                          permission_key=permission_key)
         directory_properties = directory_client.get_directory_properties()
 
         # Assert

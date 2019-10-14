@@ -669,7 +669,7 @@ class ShareClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_permission_for_share(  # type: ignore
-            self, file_permission_key,  # type: str
+            self, permission_key,  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
@@ -678,7 +678,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         This 'permission' can be used for the files/directories in the share.
 
-        :param str file_permission_key:
+        :param str permission_key:
             Key of the file permission to retrieve
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -687,7 +687,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         try:
             return self._client.share.get_permission(  # type: ignore
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 cls=deserialize_permission,
                 timeout=timeout,
                 **kwargs)
