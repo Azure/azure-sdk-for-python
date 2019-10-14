@@ -53,7 +53,7 @@ class StorageGetFileTest(FileTestCase):
             )
             file_client.upload_file(self.byte_data)
 
-    def _teardown(self, FILE_PATH)
+    def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)

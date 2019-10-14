@@ -7,7 +7,7 @@ import unittest
 import platform
 
 from azure.core.exceptions import AzureError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file import (
     VERSION,
     FileServiceClient,
@@ -271,7 +271,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_client_request_id_echo(self, resource_group, location, storage_account, storage_account_key):
         # client request id is different for every request, so it will never match the recorded one
         if not self.is_live:
@@ -299,7 +299,7 @@ class StorageFileClientTest(FileTestCase):
         service.get_service_properties(raw_response_hook=callback)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
 

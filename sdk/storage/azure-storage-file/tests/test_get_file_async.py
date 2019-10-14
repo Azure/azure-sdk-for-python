@@ -58,7 +58,7 @@ class StorageGetFileTest(AsyncFileTestCase):
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
 
-    def _teardown(self, FILE_PATH)
+    def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
