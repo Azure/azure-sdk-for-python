@@ -123,6 +123,23 @@ def upload_blob_to_url(
         operation will fail with a ResourceExistsError.
     :keyword int max_concurrency:
         The number of parallel connections with which to download.
+    :keyword int length:
+        Number of bytes to read from the stream. This is optional, but
+        should be supplied for optimal performance.
+    :keyword metadata:
+        Name-value pairs associated with the blob as metadata.
+    :type metadata: dict(str, str)
+    :keyword bool validate_content:
+        If true, calculates an MD5 hash for each chunk of the blob. The storage
+        service checks the hash of the content that has arrived with the hash
+        that was sent. This is primarily valuable for detecting bitflips on
+        the wire if using http instead of https as https (the default) will
+        already validate. Note that this MD5 hash is not stored with the
+        blob. Also note that if enabled, the memory-efficient upload algorithm
+        will not be used, because computing the MD5 hash requires buffering
+        entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+    :keyword str encoding:
+        Encoding to use if text is supplied as input. Defaults to UTF-8.
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
@@ -162,8 +179,24 @@ def download_blob_from_url(
         in, this value is ignored.
     :keyword int max_concurrency:
         The number of parallel connections with which to download.
+    :keyword int offset:
+        Start of byte range to use for downloading a section of the blob.
+        Must be set if length is provided.
+    :keyword int length:
+        Number of bytes to read from the stream. This is optional, but
+        should be supplied for optimal performance.
+    :keyword bool validate_content:
+        If true, calculates an MD5 hash for each chunk of the blob. The storage
+        service checks the hash of the content that has arrived with the hash
+        that was sent. This is primarily valuable for detecting bitflips on
+        the wire if using http instead of https as https (the default) will
+        already validate. Note that this MD5 hash is not stored with the
+        blob. Also note that if enabled, the memory-efficient upload algorithm
+        will not be used, because computing the MD5 hash requires buffering
+        entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
     :rtype: None
     """
+    overwrite = kwargs.pop('overwrite', False)
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
             _download_to_stream(client, output, **kwargs)
