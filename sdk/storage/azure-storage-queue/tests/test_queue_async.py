@@ -865,7 +865,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
 
         # Act
-        resp = await queue_client.set_queue_access_policy()
+        resp = await queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         self.assertIsNone(resp)
@@ -958,7 +958,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
-            await queue_client.set_queue_access_policy()
+            await queue_client.set_queue_access_policy(signed_identifiers=dict())
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')

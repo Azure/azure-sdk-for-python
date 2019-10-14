@@ -575,7 +575,7 @@ class StorageShareTest(AsyncFileTestCase):
         await share.create_share()
 
         # Act
-        resp = await share.set_share_access_policy()
+        resp = await share.set_share_access_policy(signed_identifiers=dict())
 
         # Assert
         acl = await share.get_share_access_policy()

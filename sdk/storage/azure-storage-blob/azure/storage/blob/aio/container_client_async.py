@@ -427,7 +427,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def set_container_access_policy(
-            self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
+            self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             **kwargs  # type: Any
         ):  # type: (...) -> Dict[str, Union[str, datetime]]
@@ -473,18 +473,17 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         lease = kwargs.pop('lease', None)
-        if signed_identifiers:
-            if len(signed_identifiers) > 5:
-                raise ValueError(
-                    'Too many access policies provided. The server does not support setting '
-                    'more than 5 access policies on a single resource.')
-            identifiers = []
-            for key, value in signed_identifiers.items():
-                if value:
-                    value.start = serialize_iso(value.start)
-                    value.expiry = serialize_iso(value.expiry)
-                identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-            signed_identifiers = identifiers # type: ignore
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
+        signed_identifiers = identifiers # type: ignore
 
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
