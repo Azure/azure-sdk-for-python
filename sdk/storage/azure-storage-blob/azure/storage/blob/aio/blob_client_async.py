@@ -292,11 +292,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             The number of parallel connections with which to download.
-        :param str encoding:
+        :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.

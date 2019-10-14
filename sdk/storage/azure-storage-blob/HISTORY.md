@@ -19,6 +19,16 @@
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+- Module level functions `upload_blob_to_url` and `download_blob_from_url` functions options are now keyword only:
+  - `overwrite`
+  - `max_concurrency`
+  - `encoding`
+
+**New features**
+
+- Added async module-level `upload_blob_to_url` and `download_blob_from_url` functions.
+
+
 
 
 ## Version 12.0.0b4:

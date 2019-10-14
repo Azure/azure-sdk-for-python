@@ -112,16 +112,16 @@ def upload_blob_to_url(
     :param data:
         The data to upload. This can be bytes, text, an iterable or a file-like object.
     :type data: bytes or str or Iterable
-    :param bool overwrite:
-        Whether the blob to be uploaded should overwrite the current data.
-        If True, upload_blob_to_url will overwrite any existing data. If set to False, the
-        operation will fail with a ResourceExistsError.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :param int max_concurrency:
+    :keyword bool overwrite:
+        Whether the blob to be uploaded should overwrite the current data.
+        If True, upload_blob_to_url will overwrite any existing data. If set to False, the
+        operation will fail with a ResourceExistsError.
+    :keyword int max_concurrency:
         The number of parallel connections with which to download.
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
@@ -139,7 +139,6 @@ def _download_to_stream(client, handle, **kwargs):
 def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
-        overwrite=False,  # type: bool
         credential=None,  # type: Any
         **kwargs):
     # type: (...) -> None
@@ -151,17 +150,17 @@ def download_blob_from_url(
         Where the data should be downloaded to. This could be either a file path to write to,
         or an open IO handle to write to.
     :type output: str or writable stream.
-    :param bool overwrite:
-        Whether the local file should be overwritten if it already exists. The default value is
-        `False` - in which case a ValueError will be raised if the file already exists. If set to
-        `True`, an attempt will be made to write to the existing file. If a stream handle is passed
-        in, this value is ignored.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :param int max_concurrency:
+    :keyword bool overwrite:
+        Whether the local file should be overwritten if it already exists. The default value is
+        `False` - in which case a ValueError will be raised if the file already exists. If set to
+        `True`, an attempt will be made to write to the existing file. If a stream handle is passed
+        in, this value is ignored.
+    :keyword int max_concurrency:
         The number of parallel connections with which to download.
     :rtype: None
     """
