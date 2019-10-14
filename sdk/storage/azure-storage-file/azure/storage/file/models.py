@@ -742,28 +742,19 @@ class NTFSAttributes(object):
         Enable/disable 'NoScrubData' attribute for DIRECTORY or FILE
     """
     def __init__(self, read_only=False, hidden=False, system=False, none=False, directory=False, archive=False,
-                 temporary=False, offline=False, not_content_indexed=False, no_scrub_data=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read_only = read_only or ('ReadOnly' in _str)
-        self.hidden = hidden or ('Hidden' in _str)
-        self.system = system or ('System' in _str)
-        self.none = none or ('None' in _str)
-        self.directory = directory or ('Directory' in _str)
-        self.archive = archive or ('Archive' in _str)
-        self.temporary = temporary or ('Temporary' in _str)
-        self.offline = offline or ('Offline' in _str)
-        self.not_content_indexed = not_content_indexed or ('NotContentIndexed' in _str)
-        self.no_scrub_data = no_scrub_data or ('NoScrubData' in _str)
+                 temporary=False, offline=False, not_content_indexed=False, no_scrub_data=False):
 
-    def __or__(self, other):
-        return NTFSAttributes(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return NTFSAttributes(_str=str(self) + str(other))
-
-    def __str__(self):
-        concatenated_params = (('ReadOnly|' if self.read_only else '') +
+        self.read_only = read_only
+        self.hidden = hidden
+        self.system = system
+        self.none = none
+        self.directory = directory
+        self.archive = archive
+        self.temporary = temporary
+        self.offline = offline
+        self.not_content_indexed = not_content_indexed
+        self.no_scrub_data = no_scrub_data
+        self._str = (('ReadOnly|' if self.read_only else '') +
                                ('Hidden|' if self.hidden else '') +
                                ('System|' if self.system else '') +
                                ('None|' if self.none else '') +
@@ -774,16 +765,26 @@ class NTFSAttributes(object):
                                ('NotContentIndexed|' if self.not_content_indexed else '') +
                                ('NoScrubData|' if self.no_scrub_data else ''))
 
+    def __str__(self):
+        concatenated_params = self._str
         return concatenated_params.strip('|')
 
+    @classmethod
+    def from_string(cls, string):
+        read_only = "ReadOnly" in string
+        hidden = "Hidden" in string
+        system = "System" in string
+        none = "None" in string
+        directory = "Directory" in string
+        archive = "Archive" in string
+        temporary = "Temporary" in string
+        offline = "Offline" in string
+        not_content_indexed = "NotContentIndexed" in string
+        no_scrub_data = "NoScrubData" in string
 
-NTFSAttributes.READ_ONLY = NTFSAttributes(read_only=True)
-NTFSAttributes.HIDDEN = NTFSAttributes(hidden=True)
-NTFSAttributes.SYSTEM = NTFSAttributes(system=True)
-NTFSAttributes.NONE = NTFSAttributes(none=True)
-NTFSAttributes.DIRECTORY = NTFSAttributes(directory=True)
-NTFSAttributes.ARCHIVE = NTFSAttributes(archive=True)
-NTFSAttributes.TEMPORARY = NTFSAttributes(temporary=True)
-NTFSAttributes.OFFLINE = NTFSAttributes(offline=True)
-NTFSAttributes.NOT_CONTENT_INDEXED = NTFSAttributes(not_content_indexed=True)
-NTFSAttributes.NO_SCRUB_DATA = NTFSAttributes(no_scrub_data=True)
+        parsed = cls(read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed,
+                     no_scrub_data)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
+
+

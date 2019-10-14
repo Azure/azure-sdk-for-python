@@ -225,16 +225,6 @@ class ResourceTypes(object):
     """
     Specifies the resource types that are accessible with the account SAS.
 
-    :cvar ResourceTypes ResourceTypes.CONTAINER:
-        Access to container-level APIs (e.g., Create/Delete Container,
-        Create/Delete Queue, Create/Delete Share,
-        List Blobs/Files and Directories)
-    :cvar ResourceTypes ResourceTypes.OBJECT:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :cvar ResourceTypes ResourceTypes.SERVICE:
-        Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Containers/Queues/Shares)
@@ -249,32 +239,26 @@ class ResourceTypes(object):
         A string representing the resource types.
     """
 
-    SERVICE = None  # type: ResourceTypes
-    CONTAINER = None  # type: ResourceTypes
-    OBJECT = None  # type: ResourceTypes
-
-    def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
-        if not _str:
-            _str = ''
-        self.service = service or ('s' in _str)
-        self.container = container or ('c' in _str)
-        self.object = object or ('o' in _str)
-
-    def __or__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __str__(self):
-        return (('s' if self.service else '') +
+    def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
+        self.service = service
+        self.container = container
+        self.object = object
+        self._str = (('s' if self.service else '') +
                 ('c' if self.container else '') +
                 ('o' if self.object else ''))
 
+    def __str__(self):
+        return self._str
 
-ResourceTypes.SERVICE = ResourceTypes(service=True)
-ResourceTypes.CONTAINER = ResourceTypes(container=True)
-ResourceTypes.OBJECT = ResourceTypes(object=True)
+    @classmethod
+    def from_string(cls, string):
+        service = 's' in string
+        container = 'c' in string
+        object = 'o' in string
+
+        parsed = cls(service, container, object)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
 
 
 class AccountSasPermissions(object):
@@ -347,9 +331,6 @@ class AccountSasPermissions(object):
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
-    :cvar Services Services.BLOB: The blob service.
-    :cvar Services Services.FILE: The file service
-    :cvar Services Services.QUEUE: The queue service.
     :param bool blob:
         Access for the `~azure.storage.blob.blob_service_client.BlobServiceClient`
     :param bool queue:
@@ -360,32 +341,26 @@ class Services(object):
         A string representing the services.
     """
 
-    BLOB = None # type: Services
-    QUEUE = None # type: Services
-    FILE = None # type: Services
-
-    def __init__(self, blob=False, queue=False, file=False, _str=None):
-        if not _str:
-            _str = ''
-        self.blob = blob or ('b' in _str)
-        self.queue = queue or ('q' in _str)
-        self.file = file or ('f' in _str)
-
-    def __or__(self, other):
-        return Services(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return Services(_str=str(self) + str(other))
-
-    def __str__(self):
-        return (('b' if self.blob else '') +
+    def __init__(self, blob=False, queue=False, file=False):
+        self.blob = blob
+        self.queue = queue
+        self.file = file
+        self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
                 ('f' if self.file else ''))
 
+    def __str__(self):
+        return self._str
 
-Services.BLOB = Services(blob=True)
-Services.QUEUE = Services(queue=True)
-Services.FILE = Services(file=True)
+    @classmethod
+    def from_string(cls, string):
+        blob = 'b' in string
+        queue = 'q' in string
+        file = 'f' in string
+
+        parsed = cls(blob, queue, file)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
 
 
 class UserDelegationKey(object):
