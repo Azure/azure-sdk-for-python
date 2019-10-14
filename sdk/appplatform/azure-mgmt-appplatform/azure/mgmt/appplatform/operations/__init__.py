@@ -14,7 +14,6 @@ from ._apps_operations import AppsOperations
 from ._bindings_operations import BindingsOperations
 from ._deployments_operations import DeploymentsOperations
 from ._operations import Operations
-from ._app_platform_management_client_operations import AppPlatformManagementClientOperationsMixin
 
 __all__ = [
     'ServicesOperations',
@@ -22,5 +21,4 @@ __all__ = [
     'BindingsOperations',
     'DeploymentsOperations',
     'Operations',
-    'AppPlatformManagementClientOperationsMixin',
 ]

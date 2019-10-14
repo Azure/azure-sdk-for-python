@@ -13,7 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AppPlatformManagementClientConfiguration
-from .operations import AppPlatformManagementClientOperationsMixin
 from .operations import ServicesOperations
 from .operations import AppsOperations
 from .operations import BindingsOperations
@@ -22,7 +21,7 @@ from .operations import Operations
 from . import models
 
 
-class AppPlatformManagementClient(AppPlatformManagementClientOperationsMixin, SDKClient):
+class AppPlatformManagementClient(SDKClient):
     """REST API for Azure Spring Cloud
 
     :ivar config: Configuration for client.
