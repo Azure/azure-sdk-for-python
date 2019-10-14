@@ -103,12 +103,14 @@ class QuotaRequestOperations(object):
         location for the specific resource in the parameter. To use, first make
         a Get request to get quota information. This information consists of a
         list of resources and information regarding those resources. For all
-        the resources in that list which require an update to their quotas,
+        the resources in that list which requires an update to their quotas,
         update their limit fields in the response from the Get request to their
-        new values. Then, submit this updated JSON object to this quota request
-        API. This will update the quotas to the values specified. The location
-        header in the response will be used to track the status of the quota
-        request.
+        new values. Then, submit individual request for each resource using the
+        updated JSON object to this quota request API. This will update the
+        quotas to the values specified. The AzureAsyncOperation header in the
+        response will be used to track the status of the quota request. Please
+        poll the url provided in AzureAsyncOperation Header to get the status.
+        .
 
         :param subscription_id: Azure subscription id.
         :type subscription_id: str
@@ -168,12 +170,12 @@ class QuotaRequestOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
 
 
-    def _patch_method_initial(
+    def _update_initial(
             self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, **operation_config):
         create_quota_request = models.QuotaRequestOneResourceProperties()
 
         # Construct URL
-        url = self.patch_method.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
@@ -221,7 +223,7 @@ class QuotaRequestOperations(object):
 
         return deserialized
 
-    def patch_method(
+    def update(
             self, subscription_id, provider_id, location, if_match, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
@@ -230,12 +232,13 @@ class QuotaRequestOperations(object):
         location for the specific resource in the parameter. To use, first make
         a Get request to get quota information. This information consists of a
         list of resources and information regarding those resources. For all
-        the resources in that list which require an update to their quotas,
+        the resources in that list which requires an update to their quotas,
         update their limit fields in the response from the Get request to their
-        new values. Then, submit this updated JSON object to this quota request
-        API. This will update the quotas to the values specified. The location
-        header in the response will be used to track the status of the quota
-        request.
+        new values. Then, submit individual request for each resource using the
+        updated JSON object to this quota request API. This will update the
+        quotas to the values specified. The AzureAsyncOperation header in the
+        response will be used to track the status of the quota request. Please
+        poll the url provided in AzureAsyncOperation Header to get the status.
 
         :param subscription_id: Azure subscription id.
         :type subscription_id: str
@@ -265,7 +268,7 @@ class QuotaRequestOperations(object):
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
-        raw_result = self._patch_method_initial(
+        raw_result = self._update_initial(
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
@@ -292,4 +295,4 @@ class QuotaRequestOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    patch_method.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits/{resourceName}'}

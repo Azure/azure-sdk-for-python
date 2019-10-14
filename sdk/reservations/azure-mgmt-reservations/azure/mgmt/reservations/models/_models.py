@@ -1090,78 +1090,6 @@ class QuotaRequestOneResourceProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: The quota request status.
-    :vartype provisioning_state: object
-    :ivar message: User friendly status message.
-    :vartype message: str
-    :ivar request_submit_time: The quota request submit time. The date
-     conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
-     ISO 8601 standard.
-    :vartype request_submit_time: datetime
-    :param limit: The quota limit.
-    :type limit: int
-    :ivar current_value: The current resource usages information.
-    :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
-     unit field provided in the Get quota response.
-    :type unit: str
-    :param name: Name of the resource provide by the resource Provider. Please
-     use this name property for quotaRequests.
-    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :ivar resource_type: The Resource Type Name.
-    :vartype resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
-     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
-     one second). This parameter is optional because, for some resources like
-     compute, the period doesn’t matter.
-    :vartype quota_period: str
-    :param properties: Additional properties for the specific resource
-     provider.
-    :type properties: object
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
-        'current_value': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'quota_period': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
-        'message': {'key': 'message', 'type': 'str'},
-        'request_submit_time': {'key': 'requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.limit', 'type': 'int'},
-        'current_value': {'key': 'properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.unit', 'type': 'str'},
-        'name': {'key': 'properties.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(QuotaRequestOneResourceProperties, self).__init__(**kwargs)
-        self.provisioning_state = None
-        self.message = None
-        self.request_submit_time = None
-        self.limit = kwargs.get('limit', None)
-        self.current_value = None
-        self.unit = kwargs.get('unit', None)
-        self.name = kwargs.get('name', None)
-        self.resource_type = None
-        self.quota_period = None
-        self.properties = kwargs.get('properties', None)
-
-
-class QuotaRequestOneResourceSubmitResponse(Model):
-    """Quota submit request response.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :ivar id: The quota request Id.
     :vartype id: str
     :ivar name: The name of the quota request.
@@ -1214,20 +1142,20 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
-        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
-        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
+        'message': {'key': 'message', 'type': 'str'},
+        'request_submit_time': {'key': 'requestSubmitTime', 'type': 'iso-8601'},
+        'limit': {'key': 'properties.limit', 'type': 'int'},
+        'current_value': {'key': 'properties.currentValue', 'type': 'int'},
+        'unit': {'key': 'properties.unit', 'type': 'str'},
+        'name1': {'key': 'properties.name', 'type': 'CurrentQuotaLimitBaseName'},
+        'resource_type': {'key': 'properties.resourceType', 'type': 'object'},
+        'quota_period': {'key': 'properties.quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'properties.properties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
+        super(QuotaRequestOneResourceProperties, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1238,6 +1166,108 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.current_value = None
         self.unit = kwargs.get('unit', None)
         self.name1 = kwargs.get('name1', None)
+        self.resource_type = None
+        self.quota_period = None
+        self.properties = kwargs.get('properties', None)
+
+
+class QuotaRequestOneResourceSubmitResponse(Model):
+    """Quota submit request response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The quota request Id.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type: str
+    :ivar id1: The quota request Id.
+    :vartype id1: str
+    :ivar name1: The name of the quota request.
+    :vartype name1: str
+    :ivar type1: Type of resource. "Microsoft.Capacity/ServiceLimits"
+    :vartype type1: str
+    :ivar provisioning_state: The quota request status.
+    :vartype provisioning_state: object
+    :ivar message: User friendly status message.
+    :vartype message: str
+    :ivar request_submit_time: The quota request submit time. The date
+     conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
+     ISO 8601 standard.
+    :vartype request_submit_time: datetime
+    :param limit: The quota limit.
+    :type limit: int
+    :ivar current_value: The current resource usages information.
+    :vartype current_value: int
+    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+     unit field provided in the Get quota response.
+    :type unit: str
+    :param name2: Name of the resource provide by the resource Provider.
+     Please use this name property for quotaRequests.
+    :type name2: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
+    :ivar resource_type: The Resource Type Name.
+    :vartype resource_type: object
+    :ivar quota_period: The quota period over which the usage values are
+     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
+     one second). This parameter is optional because, for some resources like
+     compute, the period doesn’t matter.
+    :vartype quota_period: str
+    :param properties: Additional properties for the specific resource
+     provider.
+    :type properties: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'id1': {'readonly': True},
+        'name1': {'readonly': True},
+        'type1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'message': {'readonly': True},
+        'request_submit_time': {'readonly': True},
+        'current_value': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'quota_period': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id1': {'key': 'properties.id', 'type': 'str'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
+        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
+        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
+        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
+        'name2': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
+        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
+        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.id1 = None
+        self.name1 = None
+        self.type1 = None
+        self.provisioning_state = None
+        self.message = None
+        self.request_submit_time = None
+        self.limit = kwargs.get('limit', None)
+        self.current_value = None
+        self.unit = kwargs.get('unit', None)
+        self.name2 = kwargs.get('name2', None)
         self.resource_type = None
         self.quota_period = None
         self.properties = kwargs.get('properties', None)
