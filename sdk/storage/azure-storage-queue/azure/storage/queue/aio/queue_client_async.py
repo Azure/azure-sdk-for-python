@@ -110,7 +110,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     ):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        super(QueueClient, self).__init__(account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs)
+        super(QueueClient, self).__init__(
+            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
+        )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._loop = loop
 

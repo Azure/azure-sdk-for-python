@@ -114,7 +114,7 @@ class FileClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account. The method `from_file_url` must be used 
+    :param str account_url: The full URI to the account. The method `from_file_url` must be used
         in order to use the full File URL.
     :param share_name: The share for the file. If specified, this value will override
         a share value specified in the file URL.
@@ -181,7 +181,7 @@ class FileClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> None)
+        # type: (...) -> None
         """A client to interact with a specific file, although that file may not yet exist.
 
         :param str file_url: The full URI to the file.
@@ -205,7 +205,7 @@ class FileClient(StorageAccountHostsMixin):
 
         path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, _ = parse_query(parsed_url.query)
-        snapshot= snapshot or path_snapshot
+        snapshot = snapshot or path_snapshot
         share_name = unquote(path_share)
         file_path = [unquote(p) for p in path_file.split('/')]
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)

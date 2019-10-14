@@ -110,9 +110,10 @@ class QueueClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_queue_url(cls, queue_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> None
         """A client to interact with a specific Queue.
 
-        :param str queue_url: The full URI to the queue, including SAS token if used. 
+        :param str queue_url: The full URI to the queue, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, and account

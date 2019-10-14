@@ -100,8 +100,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         return DirectoryClient(
-            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
@@ -115,8 +115,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
         """
         return FileClient(
-            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
+            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async
     async def create_share( # type: ignore

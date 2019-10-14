@@ -63,7 +63,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The URI to the account. The method `from_directory_url` must be used in order to 
+        The URI to the account. The method `from_directory_url` must be used in order to
         use the full URI to the directory.
     :param share_name: The share for the directory. If specified, this value will override
         a share value specified in the directory URL.
@@ -126,6 +126,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             credential=None, # type: Optional[Any]
             **kwargs # type: Optional[Any]
         ):
+        # type: (...) -> DirectoryClient
         """
         :param str directory_url:
             The full URI to the directory.
@@ -217,9 +218,9 @@ class DirectoryClient(StorageAccountHostsMixin):
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, **kwargs)
+            self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -243,8 +244,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
-            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace

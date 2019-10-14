@@ -107,7 +107,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account. The method `from_file_url` must be used 
+    :param str account_url: The full URI to the account. The method `from_file_url` must be used
         in order to use the full File URL.
     :param share_name: The share for the file. If specified, this value will override
         a share value specified in the file URL.
@@ -136,7 +136,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         super(FileClient, self).__init__(
-            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, loop=loop, **kwargs
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
+            credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop

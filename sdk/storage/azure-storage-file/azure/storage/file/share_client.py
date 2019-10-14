@@ -119,6 +119,7 @@ class ShareClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
+        # type: (...) -> ShareClient
         """
         :param str share_url: The full URI to the share.
         :param share: The share with which to interact. If specified, this value will override
@@ -296,8 +297,8 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.DirectoryClient
         """
         return DirectoryClient(
-            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
@@ -311,8 +312,9 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.FileClient
         """
         return FileClient(
-            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
+            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
     def create_share( # type: ignore
