@@ -466,7 +466,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                          file_creation_time="preserve",  # type: Union[str, datetime]
                          file_last_write_time="preserve",  # type: Union[str, datetime]
                          file_permission=None,   # type: Optional[str]
-                         file_permission_key=None,   # type: Optional[str]
+                         permission_key=None,   # type: Optional[str]
                          timeout=None,  # type: Optional[int]
                          **kwargs):  # type: ignore
         # type: (...) -> Dict[str, Any]
@@ -492,21 +492,21 @@ class DirectoryClient(StorageAccountHostsMixin):
             input, it must have owner, group and dacl. Note: Only one of the
             x-ms-file-permission or x-ms-file-permission-key should be specified.
         :type file_permission: str
-        :param file_permission_key: Key of the permission to be set for the
+        :param permission_key: Key of the permission to be set for the
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
-        :type file_permission_key: str
+        :type permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
             return self._client.directory.set_properties(  # type: ignore
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
