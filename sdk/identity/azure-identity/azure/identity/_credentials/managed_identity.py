@@ -7,7 +7,13 @@ import os
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    NetworkTraceLoggingPolicy,
+    RetryPolicy,
+)
 
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
@@ -58,7 +64,13 @@ class _ManagedIdentityBase(object):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
         config = config or self._create_config(**kwargs)
-        policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
+        policies = [
+            ContentDecodePolicy(),
+            config.headers_policy,
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
 
     @staticmethod
