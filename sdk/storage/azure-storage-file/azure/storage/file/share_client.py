@@ -174,12 +174,12 @@ class ShareClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
             cache_control=None,  # type: Optional[str]
             content_disposition=None,  # type: Optional[str]
             content_encoding=None,  # type: Optional[str]
             content_language=None,  # type: Optional[str]
-            content_type=None
+            content_type=None,
+            **kwargs  # type: Any
         ):  # type: (...) -> str
         """Generates a shared access signature for the share.
         Use the returned signature with the credential parameter of any FileServiceClient,
@@ -216,10 +216,6 @@ class ShareClient(StorageAccountHostsMixin):
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. Possible values are
-            both HTTPS and HTTP (https,http) or HTTPS only (https). The default value
-            is https,http. Note that HTTP only is not a permitted value.
         :param str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
@@ -235,9 +231,12 @@ class ShareClient(StorageAccountHostsMixin):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        protocol = kwargs.pop('protocol', None)
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
         sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
