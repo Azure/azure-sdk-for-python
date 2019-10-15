@@ -119,7 +119,7 @@ class MicrosoftSerialConsoleClientOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('GetSerialConsoleDisabledResult', response)
+            deserialized = self._deserialize('SerialConsoleStatus', response)
         if response.status_code == 404:
             deserialized = self._deserialize('GetSerialConsoleSubscriptionNotFound', response)
 

@@ -56,24 +56,6 @@ class EnableSerialConsoleResult(Model):
         self.disabled = kwargs.get('disabled', None)
 
 
-class GetSerialConsoleDisabledResult(Model):
-    """Serial Console GET Result.
-
-    Returns whether or not Serial Console is disabled.
-
-    :param disabled: Whether or not Serial Console is disabled.
-    :type disabled: bool
-    """
-
-    _attribute_map = {
-        'disabled': {'key': 'disabled', 'type': 'bool'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GetSerialConsoleDisabledResult, self).__init__(**kwargs)
-        self.disabled = kwargs.get('disabled', None)
-
-
 class GetSerialConsoleSubscriptionNotFound(Model):
     """Serial Console subscription not found.
 
@@ -166,3 +148,21 @@ class SerialConsoleOperationsValueItemDisplay(Model):
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
         self.description = kwargs.get('description', None)
+
+
+class SerialConsoleStatus(Model):
+    """Serial Console GET Result.
+
+    Returns whether or not Serial Console is disabled.
+
+    :param disabled: Whether or not Serial Console is disabled.
+    :type disabled: bool
+    """
+
+    _attribute_map = {
+        'disabled': {'key': 'disabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SerialConsoleStatus, self).__init__(**kwargs)
+        self.disabled = kwargs.get('disabled', None)
