@@ -61,45 +61,51 @@ def print_message(message):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
-@pytest.mark.liveTest
-def test_github_issue_7079(live_servicebus_config, standard_queue):
-    sb_client = ServiceBusClient.from_connection_string(
-        live_servicebus_config['conn_str'], debug=False)
-    queue = sb_client.get_queue(standard_queue)
-
-    with queue.get_sender() as sender:
-        for i in range(5):
-            sender.send(Message(f"Message {i}"))
-    messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
-    batch = messages.fetch_next()
-    count = len(batch)
-
-    messages.reconnect()
-    for message in messages:
-       _logger.debug(message)
-       count += 1
-    assert count == 5
-
-@pytest.mark.liveTest
-def test_github_issue_6178(live_servicebus_config, standard_queue):
-    sb_client = ServiceBusClient.from_connection_string(
-        live_servicebus_config['conn_str'], debug=False)
-    queue = sb_client.get_queue(standard_queue)
-
-    for i in range(3):
-        queue.send(Message(f"Message {i}"))
-
-    messages = queue.get_receiver(idle_timeout=60)
-    for message in messages:
-        _logger.debug(message)
-        _logger.debug(message.sequence_number)
-        _logger.debug(message.enqueued_time)
-        _logger.debug(message.expired)
-        message.complete()
-        time.sleep(40)
-
 
 class ServiceBusQueueTests(AzureMgmtTestCase):
+
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_github_issue_7079(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+        queue = sb_client.get_queue(servicebus_queue.name)
+
+        with queue.get_sender() as sender:
+            for i in range(5):
+                sender.send(Message(f"Message {i}"))
+        messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+        batch = messages.fetch_next()
+        count = len(batch)
+
+        messages.reconnect()
+        for message in messages:
+           _logger.debug(message)
+           count += 1
+        assert count == 5
+
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+        queue = sb_client.get_queue(servicebus_queue.name)
+
+        for i in range(3):
+            queue.send(Message(f"Message {i}"))
+
+        messages = queue.get_receiver(idle_timeout=60)
+        for message in messages:
+            _logger.debug(message)
+            _logger.debug(message.sequence_number)
+            _logger.debug(message.enqueued_time)
+            _logger.debug(message.expired)
+            message.complete()
+            time.sleep(40)
 
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
@@ -760,7 +766,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert not results[0][0]
             assert isinstance(results[0][1], MessageSendFailed)
     
-#TODO: KIBRANTN: THIS TEST IS BROKEN
+
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -798,7 +804,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             finally:
                 messages[0].complete()
                 messages[1].complete()
-                time.sleep(30)
+                # This magic number is because of a 30 second lock renewal window.  Chose 31 seconds because at 30, you'll see "off by .05 seconds" flaky failures
+                # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
+                # a slightly more robust test in absence of that.
+                assert (messages[2].locked_until - datetime.now()) <= timedelta(seconds=31)
+                time.sleep((messages[2].locked_until - datetime.now()).total_seconds())
                 with pytest.raises(MessageLockExpired):
                     messages[2].complete()
     
@@ -943,7 +953,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with pytest.raises(MessageSettleFailed):
             messages[0].complete()
     
-#TODO: KIBRANTN: THIS TEST IS BROKEN ON THE ASSERT FALSE
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')

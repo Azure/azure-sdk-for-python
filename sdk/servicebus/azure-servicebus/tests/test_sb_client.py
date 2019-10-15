@@ -156,13 +156,16 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with pytest.raises(TypeError):
             client.send([Message("test1"), "test2"])
 
-#TODO: KIBRANTN: THIS TEST FAILS
+
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest')
-    def test_sb_client_wrong_conn_str(self, servicebus_queue_authorization_rule_connection_string, servicebus_queue, **kwargs):
+    @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_one', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest_queue_two', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_queue_two')
+    def test_sb_client_incorrect_queue_conn_str(self, servicebus_queue_authorization_rule_connection_string, wrong_queue, **kwargs):
+        
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with pytest.raises(AzureHttpError):
-            client.get_queue(servicebus_queue.name)
+            client.get_queue(wrong_queue.name)

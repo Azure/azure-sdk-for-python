@@ -165,7 +165,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
         assert len(messages) == 6
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_by_session_client_conn_str_receive_handler_with_no_session(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
@@ -457,7 +457,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.complete()
 
 
-#TODO: kibrantn: THIS TEST IS BROKEN, doesn't throw sessionlockexpired
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -499,11 +498,15 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             finally:
                 messages[0].complete()
                 messages[1].complete()
-                time.sleep(30)
+
+                # This magic number is because of a 30 second lock renewal window.  Chose 31 seconds because at 30, you'll see "off by .05 seconds" flaky failures
+                # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
+                # a slightly more robust test in absence of that.
+                assert (receiver.locked_until - datetime.now()) <= timedelta(seconds=31)
+                time.sleep((receiver.locked_until - datetime.now()).total_seconds())
                 with pytest.raises(SessionLockExpired):
                     messages[2].complete()
 
-#TODO: kibrantn: THIS TEST IS BROKEN, session is not expired.
 
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
