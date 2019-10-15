@@ -133,18 +133,21 @@ class CertificateClientTests(KeyVaultTestCase):
     def _validate_lifetime_actions(self, cert_bundle_lifetime_actions, cert_policy_lifetime_actions):
         self.assertIsNotNone(cert_bundle_lifetime_actions)
         if cert_policy_lifetime_actions:
-            for (bundle_lifetime_action, policy_lifetime_action) in itertools.zip_longest(
-                cert_bundle_lifetime_actions, cert_bundle_lifetime_actions
-            ):
-                self.assertEqual(bundle_lifetime_action.action_type, policy_lifetime_action.action_type)
-                if policy_lifetime_action.lifetime_percentage:
-                    self.assertEqual(
-                        bundle_lifetime_action.lifetime_percentage, policy_lifetime_action.lifetime_percentage
-                    )
-                if policy_lifetime_action.days_before_expiry:
-                    self.assertEqual(
-                        bundle_lifetime_action.days_before_expiry, policy_lifetime_action.days_before_expiry
-                    )
+            policy_lifetime_actions = cert_policy_lifetime_actions
+            for bundle_lifetime_action in cert_bundle_lifetime_actions:
+                for policy_lifetime_action in policy_lifetime_actions:
+                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type.value:
+                        if policy_lifetime_action.trigger.lifetime_percentage:
+                            self.assertEqual(
+                                bundle_lifetime_action.lifetime_percentage, policy_lifetime_action.trigger.lifetime_percentage
+                            )
+                        if policy_lifetime_action.trigger.days_before_expiry:
+                            self.assertEqual(
+                                bundle_lifetime_action.days_before_expiry, policy_lifetime_action.trigger.days_before_expiry
+                            )
+                        policy_lifetime_actions.remove(policy_lifetime_action)
+                        break
+            self.assertFalse(policy_lifetime_actions)
 
     async def _validate_certificate_list(self, certificates, expected):
         async for cert in certificates:
@@ -197,10 +200,10 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
+            LifetimeAction(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
         ]
         cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=True),
+            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
             secret_properties=SecretProperties(content_type="application/x-pkcs12"),
             issuer_parameters=IssuerParameters(name="Self"),
             lifetime_actions=lifetime_actions,
@@ -208,12 +211,8 @@ class CertificateClientTests(KeyVaultTestCase):
                 subject="CN=DefaultPolicy",
                 validity_in_months=12,
                 key_usage=[
-                    "cRLSign",
-                    "dataEncipherment",
                     "digitalSignature",
-                    "keyAgreement",
-                    "keyCertSign",
-                    "keyEncipherment",
+                    "keyEncipherment"
                 ],
             ),
         )

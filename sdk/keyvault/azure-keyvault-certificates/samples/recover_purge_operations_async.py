@@ -49,26 +49,26 @@ async def run_sample():
         bank_certificate = await client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default())
         storage_certificate = await client.begin_create_certificate(name=storage_cert_name, policy=CertificatePolicy.get_default())
 
-        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+        print("KeyVaultCertificate with name '{0}' was created.".format(bank_certificate.name))
+        print("KeyVaultCertificate with name '{0}' was created.".format(storage_certificate.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete a Certificate")
+        print("\n.. Delete a KeyVaultCertificate")
         deleted_bank_certificate = await client.delete_certificate(name=bank_cert_name)
         # To ensure certificate is deleted on the server side.
         await asyncio.sleep(30)
 
         print(
-            "Certificate with name '{0}' was deleted on date {1}.".format(
+            "KeyVaultCertificate with name '{0}' was deleted on date {1}.".format(
                 deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
             )
         )
 
         # We accidentally deleted the bank account certificate. Let's recover it.
         # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n.. Recover Deleted Certificate")
+        print("\n.. Recover Deleted KeyVaultCertificate")
         recovered_bank_certificate = await client.recover_deleted_certificate(deleted_bank_certificate.name)
-        print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
+        print("Recovered KeyVaultCertificate with name '{0}'.".format(recovered_bank_certificate.name))
 
         # Let's delete storage account now.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.

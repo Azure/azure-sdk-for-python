@@ -19,7 +19,7 @@ def test_create_certificate():
     from azure.identity.aio import DefaultAzureCredential
     from azure.keyvault.certificates.aio import CertificateClient
 
-    # Create a Certificate using default Azure credentials
+    # Create a KeyVaultCertificate using default Azure credentials
     credential = DefaultAzureCredential()
     certificate_client = CertificateClient(vault_endpoint, credential)
 

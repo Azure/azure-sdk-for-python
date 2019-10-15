@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from .models import (
-    Certificate,
+    KeyVaultCertificate,
     CertificateProperties,
     CertificatePolicy,
     DeletedCertificate,
@@ -66,7 +66,7 @@ class CertificateClient(KeyVaultClientBase):
          ~azure.keyvault.certificates.models.CertificatePolicy
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
          gives you the certificate if creation is successful, the CertificateOperation if not.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.KeyVaultCertificate or
          ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -111,7 +111,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_certificate(self, name, **kwargs):
-        # type: (str, **Any) -> Certificate
+        # type: (str, **Any) -> KeyVaultCertificate
         """Gets a certificate with its management policy attached.
 
 
@@ -120,8 +120,8 @@ class CertificateClient(KeyVaultClientBase):
         the get_certificate_version function and specify the desired version.
 
         :param str name: The name of the certificate in the given vault.
-        :returns: An instance of Certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :returns: An instance of KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -141,11 +141,11 @@ class CertificateClient(KeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def get_certificate_version(self, name, version, **kwargs):
-        # type: (str, str, **Any) -> Certificate
+        # type: (str, str, **Any) -> KeyVaultCertificate
         """Gets a specific version of a certificate without returning its management policy.
 
         If you wish to get the latest version of your certificate, or to get the certificate's policy as well,
@@ -153,8 +153,8 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
-        :returns: An instance of Certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :returns: An instance of KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -174,7 +174,7 @@ class CertificateClient(KeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def delete_certificate(self, name, **kwargs):
@@ -255,7 +255,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_certificate(self, name, **kwargs):
-        # type: (str, **Any) -> Certificate
+        # type: (str, **Any) -> KeyVaultCertificate
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
@@ -266,7 +266,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str name: The name of the deleted certificate
         :return: The recovered certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -280,7 +280,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.recover_deleted_certificate(
             vault_base_url=self.vault_endpoint, certificate_name=name, **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def import_certificate(
@@ -291,7 +291,7 @@ class CertificateClient(KeyVaultClientBase):
         policy=None,  # type: Optional[CertificatePolicy]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> Certificate
+        # type: (...) -> KeyVaultCertificate
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
@@ -308,8 +308,8 @@ class CertificateClient(KeyVaultClientBase):
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :returns: The imported Certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :returns: The imported KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -333,7 +333,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_attributes=attributes,
             **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def get_policy(self, certificate_name, **kwargs):
@@ -383,7 +383,7 @@ class CertificateClient(KeyVaultClientBase):
         version=None,  # type: Optional[str]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> Certificate
+        # type: (...) -> KeyVaultCertificate
         """Updates the specified attributes associated with the given certificate.
 
         The UpdateCertificate operation applies the specified update on the
@@ -393,8 +393,8 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate in the given key
             vault.
         :param str version: The version of the certificate.
-        :returns: The updated Certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :returns: The updated KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -424,7 +424,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_attributes=attributes,
             **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def backup_certificate(self, name, **kwargs):
@@ -457,15 +457,15 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_certificate_backup(self, backup, **kwargs):
-        # type: (bytes, **Any) -> Certificate
+        # type: (bytes, **Any) -> KeyVaultCertificate
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault.
         this operation requires the certificates/restore permission.
 
         :param bytes backup: The backup blob associated with a certificate bundle.
-        :return: The restored Certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :return: The restored KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -479,7 +479,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.restore_certificate(
             vault_base_url=self.vault_endpoint, certificate_bundle_backup=backup, **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def list_deleted_certificates(self, include_pending=None, **kwargs):
@@ -724,7 +724,7 @@ class CertificateClient(KeyVaultClientBase):
         x509_certificates,  # type: List[bytearray]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> Certificate
+        # type: (...) -> KeyVaultCertificate
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         Performs the merging of a certificate or certificate chain with a key pair currently
@@ -737,7 +737,7 @@ class CertificateClient(KeyVaultClientBase):
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytearray]
         :return: The merged certificate
-        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -758,7 +758,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_attributes=attributes,
             **kwargs
         )
-        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
     def get_issuer(self, name, **kwargs):

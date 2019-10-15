@@ -43,7 +43,7 @@ async def run_sample():
     try:
         # Let's create a certificate for holding bank account credentials valid for 1 year.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n.. Create Certificate")
+        print("\n.. Create KeyVaultCertificate")
 
         # Before creating your certificate, let's create the management policy for your certificate.
         # Here you specify the properties of the key, secret, and issuer backing your certificate,
@@ -68,33 +68,33 @@ async def run_sample():
         # begin_create_certificate returns a poller. Awaiting the poller will return the certificate
         # if creation is successful, and the CertificateOperation if not.
         certificate = await client.begin_create_certificate(name=cert_name, policy=cert_policy)
-        print("Certificate with name '{0}' created".format(certificate.name))
+        print("KeyVaultCertificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
-        print("\n.. Get a Certificate by name")
+        print("\n.. Get a KeyVaultCertificate by name")
         bank_certificate = await client.get_certificate(name=cert_name)
-        print("Certificate with name '{0}' was found.".format(bank_certificate.name))
+        print("KeyVaultCertificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
-        print("\n.. Update a Certificate by name")
+        print("\n.. Update a KeyVaultCertificate by name")
         tags = {"a": "b"}
         updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
         print(
-            "Certificate with name '{0}' was updated on date '{1}'".format(
+            "KeyVaultCertificate with name '{0}' was updated on date '{1}'".format(
                 bank_certificate.name, updated_certificate.properties.updated_on
             )
         )
         print(
-            "Certificate with name '{0}' was updated with tags '{1}'".format(
+            "KeyVaultCertificate with name '{0}' was updated with tags '{1}'".format(
                 bank_certificate.name, updated_certificate.properties.tags
             )
         )
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete Certificate")
+        print("\n.. Delete KeyVaultCertificate")
         deleted_certificate = await client.delete_certificate(name=bank_certificate.name)
-        print("Deleting Certificate..")
-        print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
+        print("Deleting KeyVaultCertificate..")
+        print("KeyVaultCertificate with name '{0}' was deleted.".format(deleted_certificate.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

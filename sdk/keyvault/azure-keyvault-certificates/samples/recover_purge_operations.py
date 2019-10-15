@@ -50,17 +50,17 @@ try:
 
     bank_certificate = bank_certificate_poller.result()
     storage_certificate = storage_certificate_poller.result()
-    print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-    print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+    print("KeyVaultCertificate with name '{0}' was created.".format(bank_certificate.name))
+    print("KeyVaultCertificate with name '{0}' was created.".format(storage_certificate.name))
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
-    print("\n.. Delete a Certificate")
+    print("\n.. Delete a KeyVaultCertificate")
     deleted_bank_certificate = client.delete_certificate(name=bank_cert_name)
     # To ensure certificate is deleted on the server side.
     time.sleep(30)
 
     print(
-        "Certificate with name '{0}' was deleted on date {1}.".format(
+        "KeyVaultCertificate with name '{0}' was deleted on date {1}.".format(
             deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
         )
     )

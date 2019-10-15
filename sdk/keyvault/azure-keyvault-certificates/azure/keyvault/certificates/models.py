@@ -8,7 +8,7 @@ from datetime import datetime
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
-from .enums import ActionType, KeyUsageType, KeyCurveName, KeyType, SecretContentType
+from .enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType
 
 try:
     from typing import TYPE_CHECKING
@@ -260,7 +260,7 @@ class CertificateProperties(object):
         return self._vault_id.version
 
 
-class Certificate(object):
+class KeyVaultCertificate(object):
     """Consists of a certificate and its attributes
 
     :param policy: The management policy for the certificate.
@@ -286,11 +286,11 @@ class Certificate(object):
 
     def __repr__(self):
         # type () -> str
-        return "<Certificate [{}]>".format(self.id)[:1024]
+        return "<KeyVaultCertificate [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_certificate_bundle(cls, certificate_bundle):
-        # type: (models.CertificateBundle) -> Certificate
+        # type: (models.CertificateBundle) -> KeyVaultCertificate
         """Construct a certificate from an autorest-generated certificateBundle"""
         # pylint:disable=protected-access
         return cls(
@@ -677,9 +677,9 @@ class CertificatePolicy(object):
                             days_before_expiry=lifetime_action.days_before_expiry,
                         ),
                         action=models.Action(
-                            action_type=lifetime_action.action_type.value
-                            if not isinstance(lifetime_action.action_type, str) and lifetime_action.action_type
-                            else lifetime_action.action_type
+                            action_type=lifetime_action.action.value
+                            if not isinstance(lifetime_action.action, str) and lifetime_action.action
+                            else lifetime_action.action
                         ),
                     )
                 )
@@ -757,7 +757,7 @@ class CertificatePolicy(object):
         if certificate_policy_bundle.lifetime_actions:
             lifetime_actions = [
                 LifetimeAction(
-                    action_type=(ActionType(item.action.action_type) if item.action.action_type else None),
+                    action=(CertificatePolicyAction(item.action.action_type) if item.action.action_type else None),
                     lifetime_percentage=item.trigger.lifetime_percentage,
                     days_before_expiry=item.trigger.days_before_expiry,
                 )
@@ -1276,8 +1276,8 @@ class LifetimeAction(object):
     """Action and its trigger that will be performed by certificate Vault over the
     lifetime of a certificate.
 
-    :param action_type: The type of the action. For valid values, see ActionType
-    :type action_type: str or ~azure.keyvault.certificates.enums.ActionType
+    :param action: The type of the action. For valid values, see CertificatePolicyAction
+    :type action: str or ~azure.keyvault.certificates.enums.CertificatePolicyAction
     :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value
         should be between 1 and 99.
     :param int days_before_expiry: Days before expiry to attempt renewal. Value should be between
@@ -1285,16 +1285,16 @@ class LifetimeAction(object):
         should be between 1 and 972 (36 * 27).
     """
 
-    def __init__(self, action_type, lifetime_percentage=None, days_before_expiry=None):
-        # type: (ActionType, Optional[int], Optional[int]) -> None
+    def __init__(self, action, lifetime_percentage=None, days_before_expiry=None):
+        # type: (CertificatePolicyAction, Optional[int], Optional[int]) -> None
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
-        self._action_type = action_type
+        self._action = action
 
     def __repr__(self):
         # type () -> str
-        return "LifetimeAction(action_type={}, lifetime_percentage={}, days_before_expiry={})".format(
-            self.action_type, self.lifetime_percentage, self.days_before_expiry
+        return "LifetimeAction(action={}, lifetime_percentage={}, days_before_expiry={})".format(
+            self.action, self.lifetime_percentage, self.days_before_expiry
         )[:1024]
 
     @property
@@ -1316,17 +1316,17 @@ class LifetimeAction(object):
         return self._days_before_expiry
 
     @property
-    def action_type(self):
+    def action(self):
         # type: () -> str
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: str or ~azure.keyvault.certificates.enums.ActionType
+        :rtype: str or ~azure.keyvault.certificates.enums.CertificatePolicyAction
         """
-        return self._action_type
+        return self._action
 
 
-class DeletedCertificate(Certificate):
+class DeletedCertificate(KeyVaultCertificate):
     """A Deleted Certificate consisting of its previous id, attributes and its
     tags, as well as information on when it will be purged.
 
