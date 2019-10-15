@@ -203,12 +203,11 @@ class AutomaticRepairsPolicy(Model):
     :param enabled: Specifies whether automatic repairs should be enabled on
      the virtual machine scale set. The default value is false.
     :type enabled: bool
-    :param grace_period: The amount of time automatic repairs process waits
-     after a state changing operation completes on virtual machine scale set.
-     This property allows automatic repairs process to wait for specified
-     amount of time to allow the application to start and stabilize in order to
-     avoid premature repairs. The time duration should be specified in ISO 8601
-     format. The default value is 5 minutes (PT5M).
+    :param grace_period: The amount of time for which automatic repairs are
+     suspended due to a state change on VM. The grace time starts after the
+     state change has completed. This helps avoid premature or accidental
+     repairs. The time duration should be specified in ISO 8601 format. The
+     default value is 5 minutes (PT5M).
     :type grace_period: str
     :param max_instance_repairs_percent: The percentage (capacity of scaleset)
      of virtual machines that will be simultaneously repaired. The default
