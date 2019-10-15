@@ -55,48 +55,6 @@ from .models import (
 __version__ = VERSION
 
 
-__all__ = [
-    'BlobServiceClient',
-    'ContainerClient',
-    'BlobClient',
-    'BlobType',
-    'LeaseClient',
-    'StorageErrorCode',
-    'UserDelegationKey',
-    'ExponentialRetry',
-    'LinearRetry',
-    'LocationMode',
-    'BlockState',
-    'StandardBlobTier',
-    'PremiumPageBlobTier',
-    'SequenceNumberAction',
-    'PublicAccess',
-    'Logging',
-    'Metrics',
-    'RetentionPolicy',
-    'StaticWebsite',
-    'CorsRule',
-    'ContainerProperties',
-    'ContainerPropertiesPaged',
-    'BlobProperties',
-    'BlobPropertiesPaged',
-    'BlobPrefix',
-    'LeaseProperties',
-    'ContentSettings',
-    'CopyProperties',
-    'BlobBlock',
-    'PageRange',
-    'AccessPolicy',
-    'ContainerSasPermissions',
-    'BlobSasPermissions',
-    'ResourceTypes',
-    'AccountSasPermissions',
-    'StorageStreamDownloader',
-    'CustomerProvidedEncryptionKey',
-    'RehydratePriority'
-]
-
-
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -205,3 +163,47 @@ def download_blob_from_url(
                 raise ValueError("The file '{}' already exists.".format(output))
             with open(output, 'wb') as file_handle:
                 _download_to_stream(client, file_handle, **kwargs)
+
+
+__all__ = [
+    'upload_blob_to_url',
+    'download_blob_from_url',
+    'BlobServiceClient',
+    'ContainerClient',
+    'BlobClient',
+    'BlobType',
+    'LeaseClient',
+    'StorageErrorCode',
+    'UserDelegationKey',
+    'ExponentialRetry',
+    'LinearRetry',
+    'LocationMode',
+    'BlockState',
+    'StandardBlobTier',
+    'PremiumPageBlobTier',
+    'SequenceNumberAction',
+    'PublicAccess',
+    'Logging',
+    'Metrics',
+    'RetentionPolicy',
+    'StaticWebsite',
+    'CorsRule',
+    'ContainerProperties',
+    'ContainerPropertiesPaged',
+    'BlobProperties',
+    'BlobPropertiesPaged',
+    'BlobPrefix',
+    'LeaseProperties',
+    'ContentSettings',
+    'CopyProperties',
+    'BlobBlock',
+    'PageRange',
+    'AccessPolicy',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
+    'ResourceTypes',
+    'AccountSasPermissions',
+    'StorageStreamDownloader',
+    'CustomerProvidedEncryptionKey',
+    'RehydratePriority'
+]

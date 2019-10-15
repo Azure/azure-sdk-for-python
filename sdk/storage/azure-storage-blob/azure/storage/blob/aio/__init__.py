@@ -48,45 +48,6 @@ from .blob_service_client_async import BlobServiceClient
 from .lease_async import LeaseClient
 
 
-__all__ = [
-    'BlobServiceClient',
-    'ContainerClient',
-    'BlobClient',
-    'BlobType',
-    'LeaseClient',
-    'StorageErrorCode',
-    'ExponentialRetry',
-    'LinearRetry',
-    'LocationMode',
-    'BlockState',
-    'StandardBlobTier',
-    'PremiumPageBlobTier',
-    'SequenceNumberAction',
-    'PublicAccess',
-    'Logging',
-    'Metrics',
-    'RetentionPolicy',
-    'StaticWebsite',
-    'CorsRule',
-    'ContainerProperties',
-    'ContainerPropertiesPaged',
-    'BlobProperties',
-    'BlobPropertiesPaged',
-    'BlobPrefix',
-    'LeaseProperties',
-    'ContentSettings',
-    'CopyProperties',
-    'BlobBlock',
-    'PageRange',
-    'AccessPolicy',
-    'ContainerSasPermissions',
-    'BlobSasPermissions',
-    'ResourceTypes',
-    'AccountSasPermissions',
-    'StorageStreamDownloader',
-]
-
-
 async def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -195,3 +156,44 @@ async def download_blob_from_url(
                 raise ValueError("The file '{}' already exists.".format(output))
             with open(output, 'wb') as file_handle:
                 await _download_to_stream(client, file_handle, **kwargs)
+
+
+__all__ = [
+    'upload_blob_to_url',
+    'download_blob_from_url',
+    'BlobServiceClient',
+    'ContainerClient',
+    'BlobClient',
+    'BlobType',
+    'LeaseClient',
+    'StorageErrorCode',
+    'ExponentialRetry',
+    'LinearRetry',
+    'LocationMode',
+    'BlockState',
+    'StandardBlobTier',
+    'PremiumPageBlobTier',
+    'SequenceNumberAction',
+    'PublicAccess',
+    'Logging',
+    'Metrics',
+    'RetentionPolicy',
+    'StaticWebsite',
+    'CorsRule',
+    'ContainerProperties',
+    'ContainerPropertiesPaged',
+    'BlobProperties',
+    'BlobPropertiesPaged',
+    'BlobPrefix',
+    'LeaseProperties',
+    'ContentSettings',
+    'CopyProperties',
+    'BlobBlock',
+    'PageRange',
+    'AccessPolicy',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
+    'ResourceTypes',
+    'AccountSasPermissions',
+    'StorageStreamDownloader',
+]
