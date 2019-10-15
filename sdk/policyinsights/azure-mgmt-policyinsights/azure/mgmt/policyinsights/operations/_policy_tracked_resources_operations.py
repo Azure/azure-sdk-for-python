@@ -18,6 +18,8 @@ from .. import models
 class PolicyTrackedResourcesOperations(object):
     """PolicyTrackedResourcesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -66,8 +68,7 @@ class PolicyTrackedResourcesOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_query_results_for_management_group.metadata['url']
@@ -102,6 +103,11 @@ class PolicyTrackedResourcesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -110,12 +116,10 @@ class PolicyTrackedResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults'}
@@ -146,8 +150,7 @@ class PolicyTrackedResourcesOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_query_results_for_subscription.metadata['url']
@@ -181,6 +184,11 @@ class PolicyTrackedResourcesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -189,12 +197,10 @@ class PolicyTrackedResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults'}
@@ -227,8 +233,7 @@ class PolicyTrackedResourcesOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_query_results_for_resource_group.metadata['url']
@@ -263,6 +268,11 @@ class PolicyTrackedResourcesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -271,12 +281,10 @@ class PolicyTrackedResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults'}
@@ -307,8 +315,7 @@ class PolicyTrackedResourcesOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_query_results_for_resource.metadata['url']
@@ -342,6 +349,11 @@ class PolicyTrackedResourcesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -350,12 +362,10 @@ class PolicyTrackedResourcesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.PolicyTrackedResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults'}

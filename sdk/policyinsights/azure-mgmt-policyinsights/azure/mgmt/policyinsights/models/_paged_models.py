@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class PolicyTrackedResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PolicyTrackedResource <azure.mgmt.policyinsights.models.PolicyTrackedResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PolicyTrackedResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PolicyTrackedResourcePaged, self).__init__(*args, **kwargs)
 class RemediationDeploymentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`RemediationDeployment <azure.mgmt.policyinsights.models.RemediationDeployment>` object
@@ -25,3 +38,16 @@ class RemediationDeploymentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RemediationDeploymentPaged, self).__init__(*args, **kwargs)
+class RemediationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Remediation <azure.mgmt.policyinsights.models.Remediation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Remediation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RemediationPaged, self).__init__(*args, **kwargs)

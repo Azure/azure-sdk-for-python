@@ -18,6 +18,8 @@ from .. import models
 class PolicyEventsOperations(object):
     """PolicyEventsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -128,7 +130,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -224,7 +225,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -323,7 +323,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -419,7 +418,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -519,7 +517,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -619,7 +616,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -719,7 +715,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -822,7 +817,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyEventsQueryResults', response)
 
@@ -880,7 +874,6 @@ class PolicyEventsOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('str', response)
 
