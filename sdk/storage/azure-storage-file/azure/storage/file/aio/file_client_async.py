@@ -467,7 +467,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
-
+        if length is not None:
+            length = offset + length - 1  # Service actually uses an end-range inclusive index
         downloader = StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
@@ -666,13 +667,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
-
-        content_range = "bytes={0}-{1}".format(offset, length)
-        content_length = length - offset + 1
+        end_range = offset + length - 1  # Reformat to an inclusive range index
+        content_range = "bytes={0}-{1}".format(offset, end_range)
         try:
             return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
-                content_length=content_length,
+                content_length=length,
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
@@ -709,8 +709,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             https://myaccount.file.core.windows.net/myshare/mydir/myfile
             https://otheraccount.file.core.windows.net/myshare/mydir/myfile?sastoken
         :param int source_offset:
-            Start of byte range to use for updating a section of the file.
-            The range can be up to 4 MB in size.
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+            The service will read the same number of bytes as the destination range (length-offset).
         :param int timeout:
             The timeout parameter is expressed in seconds.
         '''
@@ -753,6 +753,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         content_range = None
         if offset is not None:
             if length is not None:
+                length = offset + length - 1  # Reformat to an inclusive range index
                 content_range = "bytes={0}-{1}".format(offset, length)
             else:
                 content_range = "bytes={0}-".format(offset)
@@ -794,7 +795,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("offset must be an integer that aligns with 512 file size")
         if length is None or length % 512 != 511:
             raise ValueError("length must be an integer that aligns with 512 file size")
-        content_range = "bytes={0}-{1}".format(offset, length)
+        end_range = length + offset - 1  # Reformat to an inclusive range index
+        content_range = "bytes={0}-{1}".format(offset, end_range)
         try:
             return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,
