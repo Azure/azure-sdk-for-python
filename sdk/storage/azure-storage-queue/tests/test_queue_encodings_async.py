@@ -124,8 +124,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
             message_decode_policy=TextBase64DecodePolicy(),
@@ -143,8 +143,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
@@ -178,8 +178,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport()) 
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
@@ -200,8 +200,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextXMLEncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),

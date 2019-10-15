@@ -59,12 +59,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str directory_url:
-        The full URI to the directory. This can also be a URL to the storage account
-        or share, in which case the directory and/or share must also be specified.
-    :param share: The share for the directory. If specified, this value will override
-        a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        directory, use the from_directory_url classmethod.
+    :param share_name:
+        The name of the share for the directory.
+    :type share_name: str
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -78,9 +78,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
-            self, directory_url,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
+            self, account_url,  # type: str
+            share_name, # type: str
+            directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
             **kwargs # type: Optional[Any]
@@ -89,8 +89,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(DirectoryClient, self).__init__(
-            directory_url,
-            share=share,
+            account_url,
+            share_name=share_name,
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
@@ -113,9 +113,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -139,9 +139,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
-            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, **kwargs): # type: ignore
@@ -267,11 +267,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             recursive=False,  # type: bool
             **kwargs # type: Any
         ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -282,8 +279,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -304,7 +301,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(
+        return await async_poller(
             command,
             start_close,
             None,

@@ -310,6 +310,10 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 8
                 :caption: Gets the share client.
         """
+        try:
+            share_name = share.name
+        except AttributeError:
+            share_name = share
         return ShareClient(
-            self.url, share=share, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
+            self.url, share_name=share_name, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
             _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)

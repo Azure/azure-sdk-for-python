@@ -57,10 +57,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str share_url: The full URI to the share.
-    :param share: The share with which to interact. If specified, this value will override
-        a share value specified in the share URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        share, use the from_share_url classmethod.
+    :param share_name:
+        The name of the share with which to interact.
+    :type share_name: str
     :param str snapshot:
         An optional share snapshot on which to operate.
     :param credential:
@@ -71,8 +73,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
-            self, share_url,  # type: str
-            share=None,  # type: Optional[Union[str, ShareProperties]]
+            self, account_url,  # type: str
+            share_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
@@ -81,8 +83,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(ShareClient, self).__init__(
-            share_url,
-            share=share,
+            account_url,
+            share_name=share_name,
             snapshot=snapshot,
             credential=credential,
             loop=loop,
@@ -101,8 +103,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         return DirectoryClient(
-            self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
@@ -116,8 +118,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
         """
         return FileClient(
-            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
+            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async
     async def create_share(self, **kwargs):  # type: ignore

@@ -198,7 +198,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            services=Services.FILE,
+            services=Services(file=True),
             resource_types=resource_types,
             permission=permission,
             expiry=expiry,
@@ -426,6 +426,10 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Gets the share client.
         """
+        try:
+            share_name = share.name
+        except AttributeError:
+            share_name = share
         return ShareClient(
-            self.url, share=share, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
+            self.url, share_name=share_name, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
             _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)

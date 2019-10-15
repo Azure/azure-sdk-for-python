@@ -107,11 +107,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str file_url: The full URI to the file. This can also be a URL to the storage account
-        or share, in which case the file and/or share must also be specified.
-    :param share: The share for the file. If specified, this value will override
-        a share value specified in the file URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        file, use the from_file_url classmethod.
+    :param share_name:
+        The name of the share for the file.
+    :type share_name: str
     :param str file_path:
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
@@ -127,9 +128,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     def __init__(  # type: ignore
         self,
-        file_url,  # type: str
-        share=None,  # type: Optional[Union[str, ShareProperties]]
-        file_path=None,  # type: Optional[str]
+        account_url,  # type: str
+        share_name,  # type: str
+        file_path,  # type: str
         snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
@@ -138,7 +139,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(FileClient, self).__init__(
-            file_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, loop=loop, **kwargs
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
+            credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
@@ -882,11 +884,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         handle=None,  # type: Union[str, HandleItem]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -894,8 +893,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :type handle: str or ~azure.storage.file.Handle
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -916,4 +915,4 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(command, start_close, None, polling_method)
+        return await async_poller(command, start_close, None, polling_method)

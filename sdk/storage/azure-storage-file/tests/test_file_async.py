@@ -254,7 +254,7 @@ class StorageFileAsyncTest(FileTestCase):
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
         file_client = FileClient(
             self.get_file_url(),
-            share="vhds",
+            share_name="vhds",
             file_path="vhd_dir/my.vhd",
             credential=sas
         )
@@ -277,7 +277,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         async with FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY) as file_client:
 
@@ -302,7 +302,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         async with FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY) as file_client:
 
@@ -383,7 +383,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path="missingdir/" + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
@@ -408,7 +408,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
@@ -433,7 +433,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
@@ -553,7 +553,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_props = await file_client.get_file_properties()
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
@@ -581,7 +581,7 @@ class StorageFileAsyncTest(FileTestCase):
         snapshot = await share_client.create_snapshot()
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
@@ -607,7 +607,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
@@ -681,7 +681,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -877,7 +877,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -901,7 +901,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -933,7 +933,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.create_file(1024)
@@ -942,7 +942,7 @@ class StorageFileAsyncTest(FileTestCase):
         snapshot = await share_client.create_snapshot()
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -968,7 +968,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -981,7 +981,7 @@ class StorageFileAsyncTest(FileTestCase):
         snapshot = await share_client.create_snapshot()
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1010,7 +1010,7 @@ class StorageFileAsyncTest(FileTestCase):
         source_client = await self._create_file()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path='file1copy',
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1041,7 +1041,7 @@ class StorageFileAsyncTest(FileTestCase):
         target_file_name = 'targetfile'
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1072,7 +1072,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1107,7 +1107,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1134,7 +1134,7 @@ class StorageFileAsyncTest(FileTestCase):
         target_file_name = 'targetfile'
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=target_file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1157,7 +1157,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             transport=AiohttpTestTransport())
@@ -1181,7 +1181,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
@@ -1228,7 +1228,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.upload_file(binary_data)
@@ -1256,7 +1256,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1291,7 +1291,7 @@ class StorageFileAsyncTest(FileTestCase):
         index = 1024
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1323,7 +1323,7 @@ class StorageFileAsyncTest(FileTestCase):
         count = 1024
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1355,7 +1355,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1388,7 +1388,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1432,7 +1432,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1466,7 +1466,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1498,7 +1498,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1540,7 +1540,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1571,7 +1571,7 @@ class StorageFileAsyncTest(FileTestCase):
             stream.write(data)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1609,7 +1609,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = text.encode('utf-8')
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1633,7 +1633,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = text.encode('utf-16')
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1661,7 +1661,7 @@ class StorageFileAsyncTest(FileTestCase):
         encoded_data = data.encode('utf-8')
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1684,7 +1684,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(512)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1710,7 +1710,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_range_size=4 * 1024)
@@ -1741,7 +1741,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
         content = await file_client.download_file()
@@ -1797,7 +1797,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client = await self._create_file()
         token = self.fsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
+            ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -1805,7 +1805,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
 
@@ -1835,7 +1835,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
         response = requests.get(file_client.url)
@@ -1869,7 +1869,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
         response = requests.get(file_client.url)
@@ -1901,7 +1901,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client_admin.file_name,
             credential=token)
 
@@ -1933,7 +1933,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=file_client_admin.file_name,
             credential=token)
 
