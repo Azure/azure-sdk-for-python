@@ -14,6 +14,8 @@ try:
     from ._models_py3 import AttestationProviderListResult
     from ._models_py3 import AttestationServiceCreationParams
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import JSONWebKey
+    from ._models_py3 import JSONWebKeySet
     from ._models_py3 import OperationList
     from ._models_py3 import OperationsDefinition
     from ._models_py3 import OperationsDisplayDefinition
@@ -25,6 +27,8 @@ except (SyntaxError, ImportError):
     from ._models import AttestationProviderListResult
     from ._models import AttestationServiceCreationParams
     from ._models import AzureEntityResource
+    from ._models import JSONWebKey
+    from ._models import JSONWebKeySet
     from ._models import OperationList
     from ._models import OperationsDefinition
     from ._models import OperationsDisplayDefinition
@@ -40,6 +44,8 @@ __all__ = [
     'AttestationProviderListResult',
     'AttestationServiceCreationParams',
     'AzureEntityResource',
+    'JSONWebKey',
+    'JSONWebKeySet',
     'OperationList',
     'OperationsDefinition',
     'OperationsDisplayDefinition',

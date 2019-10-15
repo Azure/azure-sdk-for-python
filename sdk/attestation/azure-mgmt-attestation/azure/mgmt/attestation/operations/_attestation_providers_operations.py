@@ -102,7 +102,7 @@ class AttestationProvidersOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Attestation/attestationProviders/{providerName}'}
 
     def create(
-            self, resource_group_name, provider_name, attestation_policy=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, provider_name, attestation_policy=None, policy_signing_certificates=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the Attestation Provider.
 
         :param resource_group_name: The name of the resource group. The name
@@ -112,6 +112,11 @@ class AttestationProvidersOperations(object):
         :type provider_name: str
         :param attestation_policy: Name of attestation policy.
         :type attestation_policy: str
+        :param policy_signing_certificates: JSON Web Key Set defining a set of
+         X.509 Certificates that will represent the parent certificate for the
+         signing certificate used for policy operations
+        :type policy_signing_certificates:
+         ~azure.mgmt.attestation.models.JSONWebKeySet
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -123,8 +128,8 @@ class AttestationProvidersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         creation_params = None
-        if attestation_policy is not None:
-            creation_params = models.AttestationServiceCreationParams(attestation_policy=attestation_policy)
+        if attestation_policy is not None or policy_signing_certificates is not None:
+            creation_params = models.AttestationServiceCreationParams(attestation_policy=attestation_policy, policy_signing_certificates=policy_signing_certificates)
 
         # Construct URL
         url = self.create.metadata['url']
