@@ -130,11 +130,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         file_path=None,  # type: Optional[str]
         snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
         credential=None,  # type: Optional[Any]
-        loop=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
         super(FileClient, self).__init__(
             file_url, share=share, file_path=file_path, snapshot=snapshot, credential=credential, loop=loop, **kwargs
         )
@@ -145,14 +145,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     async def create_file(  # type: ignore
         self,
         size,  # type: int
-        content_settings=None,  # type: Optional[ContentSettings]
-        metadata=None,  # type: Optional[Dict[str, str]]
         file_attributes="none",  # type: Union[str, NTFSAttributes]
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
         file_permission=None,  # type: Optional[str]
         permission_key=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -162,13 +159,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
-        :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
-        :param metadata:
-            Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -192,6 +182,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword ~azure.storage.file.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :keyword metadata:
+            Name-value pairs associated with the file as metadata.
+        :type metadata: dict(str, str)
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -204,6 +201,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Create a file.
         """
+        content_settings = kwargs.pop('content_settings', None)
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
@@ -242,17 +242,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     async def upload_file(
         self, data,  # type: Any
         length=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[Dict[str, str]]
-        content_settings=None,  # type: Optional[ContentSettings]
-        validate_content=False,  # type: bool
-        max_concurrency=1,  # type: Optional[int]
         file_attributes="none",  # type: Union[str, NTFSAttributes]
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
         file_permission=None,  # type: Optional[str]
         permission_key=None,  # type: Optional[str]
-        encoding="UTF-8",  # type: str
-        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -262,24 +256,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :param metadata:
-            Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
-        :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
-        :param bool validate_content:
-            If true, calculates an MD5 hash for each range of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file.
-        :param int max_concurrency:
-            Maximum number of parallel connections to use.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
-        :param str encoding:
-            Defaults to UTF-8.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -303,7 +279,24 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-
+        :keyword metadata:
+            Name-value pairs associated with the file as metadata.
+        :type metadata: dict(str, str)
+        :keyword ~azure.storage.file.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash for each range of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https as https (the default) will
+            already validate. Note that this MD5 hash is not stored with the
+            file.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use.
+        :keyword str encoding:
+            Defaults to UTF-8.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -316,6 +309,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Upload a file.
         """
+        metadata = kwargs.pop('metadata', None)
+        content_settings = kwargs.pop('content_settings', None)
+        max_concurrency = kwargs.pop('max_concurrency', 1)
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
+        encoding = kwargs.pop('encoding', 'UTF-8')
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
 
@@ -356,8 +355,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     async def start_copy_from_url(
         self,
         source_url,  # type: str
-        metadata=None,  # type: Optional[Dict[str, str]]
-        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -369,10 +366,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
@@ -385,6 +382,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Copy a file from a URL
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
@@ -396,8 +395,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id, timeout=None, **kwargs):
-        # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
+    async def abort_copy(self, copy_id, **kwargs):
+        # type: (Union[str, FileProperties], Any) -> Dict[str, Any]
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -409,6 +408,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :type copy_id: str or ~azure.storage.file.FileProperties
         :rtype: None
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             copy_id = copy_id.copy.id
         except AttributeError:
@@ -426,8 +426,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         self,
         offset=None,  # type: Optional[int]
         length=None,  # type: Optional[int]
-        validate_content=False,  # type: bool
-        timeout=None,  # type: Optional[int]
         **kwargs
     ):
         # type: (...) -> Iterable[bytes]
@@ -439,7 +437,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
@@ -448,7 +446,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             file. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
@@ -461,6 +459,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Download a file.
         """
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
@@ -483,12 +483,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         return downloader
 
     @distributed_trace_async
-    async def delete_file(self, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[Any]) -> None
+    async def delete_file(self, **kwargs):
+        # type: (Any) -> None
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -501,22 +501,24 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Delete a file.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.file.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_file_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> FileProperties
+    async def get_file_properties(self, **kwargs):
+        # type: (Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
         :rtype: ~azure.storage.file.FileProperties
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             file_props = await self._client.file.get_properties(
                 sharesnapshot=self.snapshot, timeout=timeout, cls=deserialize_file_properties, **kwargs
@@ -536,7 +538,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
-                               timeout=None,  # type: Optional[int]
                                **kwargs  # Any
                                ):  # type: ignore
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
@@ -544,8 +545,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
@@ -568,9 +567,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         file_content_length = kwargs.pop("size", None)
         file_http_headers = FileHTTPHeaders(
             file_cache_control=content_settings.cache_control,
@@ -598,8 +600,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_file_metadata(self, metadata=None, timeout=None, **kwargs):  # type: ignore
-        # type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
+    async def set_file_metadata(self, metadata=None, **kwargs):  # type: ignore
+        # type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
 
@@ -610,11 +612,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
@@ -630,9 +633,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         data,  # type: bytes
         start_range,  # type: int
         end_range,  # type: int
-        validate_content=False,  # type: Optional[bool]
-        timeout=None,  # type: Optional[int]
-        encoding="UTF-8",
         **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -650,20 +650,23 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
+        encoding = kwargs.pop('encoding', 'UTF-8')
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -719,7 +722,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         '''
 
@@ -740,7 +743,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         self,
         start_range=None,  # type: Optional[int]
         end_range=None,  # type: Optional[int]
-        timeout=None,  # type: Optional[int]
         **kwargs
     ):
         # type: (...) -> List[dict[str, int]]
@@ -754,11 +756,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Specifies the end offset of bytes over which to get ranges.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
@@ -781,7 +784,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         self,
         start_range,  # type: int
         end_range,  # type: int
-        timeout=None,  # type: Optional[int]
         **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -798,11 +800,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
@@ -824,17 +827,18 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def resize_file(self, size, timeout=None, **kwargs):  # type: ignore
-        # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
+    async def resize_file(self, size, **kwargs):  # type: ignore
+        # type: (int, Any) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
         :param int size:
             Size to resize file to (in bytes)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.file.set_http_headers(  # type: ignore
                 file_content_length=size,
@@ -850,15 +854,16 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> AsyncItemPaged
+    def list_handles(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged
         """Lists handles for file.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.file.list_handles,
@@ -873,7 +878,6 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     async def close_handles(
         self,
         handle=None,  # type: Union[str, HandleItem]
-        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -886,11 +890,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
         :type handle: str or ~azure.storage.file.Handle
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A long-running poller to get operation status.
         :rtype: ~azure.core.polling.LROPoller
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             handle_id = handle.id  # type: ignore
         except AttributeError:
