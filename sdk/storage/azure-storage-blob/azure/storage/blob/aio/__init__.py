@@ -4,14 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._shared.policies_async import ExponentialRetry, LinearRetry
-from .models import (
-    ContainerPropertiesPaged,
-    BlobPropertiesPaged,
-    BlobPrefix,
-    BlobPrefixPaged
-)
-from .download_async import StorageStreamDownloader
 from .blob_client_async import BlobClient
 from .container_client_async import ContainerClient
 from .blob_service_client_async import BlobServiceClient
@@ -23,11 +15,4 @@ __all__ = [
     'ContainerClient',
     'BlobClient',
     'LeaseClient',
-    'ExponentialRetry',
-    'LinearRetry',
-    'ContainerPropertiesPaged',
-    'BlobPropertiesPaged',
-    'BlobPrefix',
-    'StorageStreamDownloader',
-    'BlobPrefixPaged'
 ]

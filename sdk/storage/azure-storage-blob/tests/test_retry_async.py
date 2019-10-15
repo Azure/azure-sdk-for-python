@@ -18,12 +18,11 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob import LocationMode
+from azure.storage.blob._shared.policies_async import LinearRetry, ExponentialRetry
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LinearRetry,
-    ExponentialRetry,
 )
 
 from testcase import (

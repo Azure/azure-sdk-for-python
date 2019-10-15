@@ -33,8 +33,6 @@ if TYPE_CHECKING:
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
     from ..models import (
-        AccountSasPermissions,
-        ResourceTypes,
         QueueProperties,
         Logging,
         Metrics,

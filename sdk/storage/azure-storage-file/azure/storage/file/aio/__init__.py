@@ -8,11 +8,6 @@ from .file_client_async import FileClient
 from .directory_client_async import DirectoryClient
 from .share_client_async import ShareClient
 from .file_service_client_async import FileServiceClient
-from .._shared.policies_async import ExponentialRetry, LinearRetry
-from .models import (
-    HandlesPaged,
-    SharePropertiesPaged,
-    DirectoryPropertiesPaged)
 
 
 __all__ = [
@@ -20,9 +15,4 @@ __all__ = [
     'DirectoryClient',
     'ShareClient',
     'FileServiceClient',
-    'ExponentialRetry',
-    'LinearRetry',
-    'HandlesPaged',
-    'SharePropertiesPaged',
-    'DirectoryPropertiesPaged',
 ]
