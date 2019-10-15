@@ -17,9 +17,8 @@ from azure.storage.queue import (
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy)
+    TextXMLDecodePolicy)
+from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
 
 from queuetestcase import (
     QueueTestCase
@@ -71,6 +70,8 @@ class StorageQueueEncodingTest(QueueTestCase):
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
+        assert isinstance(queue._config.message_encode_policy, TextXMLEncodePolicy)
+        assert isinstance(queue._config.message_decode_policy, TextXMLDecodePolicy)
         self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()          
@@ -189,6 +190,19 @@ class StorageQueueEncodingTest(QueueTestCase):
 
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
+        
+    def test_message_no_encoding(self):
+        # Arrange
+        queue = QueueClient(
+            queue_url="https://account.blob.core.windows.net",
+            queue="queue",
+            credential="account_key",
+            message_encode_policy=None,
+            message_decode_policy=None)
+        
+        # Asserts
+        assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
+        assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
 
 
 # ------------------------------------------------------------------------------
