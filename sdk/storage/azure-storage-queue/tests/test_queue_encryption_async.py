@@ -35,8 +35,6 @@ from azure.storage.queue import (
     VERSION,
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
 )
 
 from azure.storage.queue.aio import (
@@ -76,13 +74,13 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageQueueEncryptionTestAsync(AsyncQueueTestCase):
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
+    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue_name = self.get_resource_name(prefix)
-        queue = qsc.get_queue_client(queue_name)
+        queue = qsc.get_queue_client(queue_name, **kwargs)
         return queue
 
-    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
-        queue = self._get_queue_reference(qsc, prefix)
+    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
+        queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
             created = await queue.create_queue()
         except ResourceExistsError:
@@ -220,10 +218,8 @@ class StorageQueueEncryptionTestAsync(AsyncQueueTestCase):
     async def test_update_encrypted_binary_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue = await self._create_queue(qsc)
+        queue = await self._create_queue(qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy())
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = BinaryBase64EncodePolicy()
-        queue._config.message_decode_policy = BinaryBase64DecodePolicy()
 
         binary_message = self.get_random_bytes(100)
         await queue.enqueue_message(binary_message)
@@ -253,10 +249,8 @@ class StorageQueueEncryptionTestAsync(AsyncQueueTestCase):
         if not self.is_live:
             return
         # Arrange
-        queue = await self._create_queue(qsc)
+        queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = NoEncodePolicy()
-        queue._config.message_decode_policy = NoDecodePolicy()
 
         raw_text = u'Update Me'
         await queue.enqueue_message(raw_text)
@@ -284,10 +278,8 @@ class StorageQueueEncryptionTestAsync(AsyncQueueTestCase):
         if not self.is_live:
             return
         # Arrange
-        queue = await self._create_queue(qsc)
+        queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = NoEncodePolicy()
-        queue._config.message_decode_policy = NoDecodePolicy()
 
         message_dict = {'val1': 1, 'val2': '2'}
         json_text = dumps(message_dict)
