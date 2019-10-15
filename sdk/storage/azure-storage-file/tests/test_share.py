@@ -198,7 +198,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -342,7 +342,7 @@ class StorageShareTest(FileTestCase):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
-        share.create_share(metadata)
+        share.create_share(metadata=metadata)
 
         # Act
 
@@ -406,7 +406,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -421,7 +421,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
         snapshot = client.create_snapshot()
         snapshot_client = self.fsc.get_share_client(client.share_name, snapshot=snapshot)
 
