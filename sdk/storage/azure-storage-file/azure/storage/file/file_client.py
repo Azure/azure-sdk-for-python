@@ -244,6 +244,7 @@ class FileClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
+            **kwargs # type: Any
         ):
         # type: (...) -> str
         """Generates a shared access signature for the file.
