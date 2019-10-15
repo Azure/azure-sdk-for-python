@@ -120,7 +120,7 @@ class CustomizationPoliciesOperations(object):
             self, region_id, pc_name, customization_policy_name, custom_headers=None, raw=False, **operation_config):
         """Implements get of customization policy.
 
-        Returns resource pool templates by its name.
+        Returns customization policy by its name.
 
         :param region_id: The region Id (westus, eastus)
         :type region_id: str
