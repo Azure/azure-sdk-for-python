@@ -59,7 +59,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # Authenticate with the sas token
             # [START async_create_queue_client]
             from azure.storage.queue.aio import QueueClient
-            q = QueueClient(
+            q = QueueClient.from_queue_url(
                 queue_url=queue_client.url,
                 credential=sas_token
             )

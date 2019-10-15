@@ -61,10 +61,12 @@ class ShareClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str share_url: The full URI to the share.
-    :param share: The share with which to interact. If specified, this value will override
-        a share value specified in the share URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the share,
+        use the from_share_url classmethod.
+    :param share_name:
+        The name of the share with which to interact.
+    :type share_name: str
     :param str snapshot:
         An optional share snapshot on which to operate.
     :param credential:
@@ -73,30 +75,27 @@ class ShareClient(StorageAccountHostsMixin):
         shared access key.
     """
     def __init__( # type: ignore
-            self, share_url,  # type: str
-            share=None,  # type: Optional[Union[str, ShareProperties]]
+            self, account_url,  # type: str
+            share_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         try:
-            if not share_url.lower().startswith('http'):
-                share_url = "https://" + share_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("Share URL must be a string.")
-        parsed_url = urlparse(share_url.rstrip('/'))
-        if not parsed_url.path and not share:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(share_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
         if hasattr(credential, 'get_token'):
             raise ValueError("Token credentials not supported by the File service.")
 
-        path_share = ""
         path_snapshot = None
-        if parsed_url.path:
-            path_share = parsed_url.path.lstrip('/').partition('/')[0]
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
@@ -108,14 +107,43 @@ class ShareClient(StorageAccountHostsMixin):
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(path_share)
+
+        self.share_name = share_name
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_share_url(cls, share_url,  # type: str
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> ShareClient
+        """
+        :param str share_url: The full URI to the share.
+        :param str snapshot:
+            An optional share snapshot on which to operate.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
+        """
+        try:
+            if not share_url.lower().startswith('http'):
+                share_url = "https://" + share_url
+        except AttributeError:
+            raise ValueError("Share URL must be a string.")
+        parsed_url = urlparse(share_url.rstrip('/'))
+        if not (parsed_url.path and parsed_url.netloc):
+            raise ValueError("Invalid URL: {}".format(share_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        path_snapshot, _ = parse_query(parsed_url.query)
+        share_name = unquote(parsed_url.path.lstrip('/'))
+        snapshot = snapshot or unquote(path_snapshot)
+
+        return cls(account_url, share_name, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -133,7 +161,7 @@ class ShareClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share, # type: Union[str, ShareProperties]
+            share_name, # type: str
             snapshot=None,  # type: Optional[str]
             credential=None, # type: Optional[Any]
             **kwargs # type: Any
@@ -143,9 +171,9 @@ class ShareClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
+        :param share_name: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.ShareProperties
+        :type share_name: str
         :param str snapshot:
             The optional share snapshot on which to operate.
         :param credential:
@@ -166,7 +194,7 @@ class ShareClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, share_name=share_name, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
@@ -267,8 +295,8 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.DirectoryClient
         """
         return DirectoryClient(
-            self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
@@ -282,8 +310,9 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.FileClient
         """
         return FileClient(
-            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
+            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
     def create_share( # type: ignore

@@ -62,12 +62,12 @@ class DirectoryClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str directory_url:
-        The full URI to the directory. This can also be a URL to the storage account
-        or share, in which case the directory and/or share must also be specified.
-    :param share: The share for the directory. If specified, this value will override
-        a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the directory,
+        use the from_directory_url classmethod.
+    :param share_name:
+        The name of the share for the directory.
+    :type share_name: str
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -79,30 +79,27 @@ class DirectoryClient(StorageAccountHostsMixin):
         shared access key.
     """
     def __init__( # type: ignore
-            self, directory_url,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
+            self, account_url,  # type: str
+            share_name, # type: str
+            directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
         try:
-            if not directory_url.lower().startswith('http'):
-                directory_url = "https://" + directory_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("Share URL must be a string.")
-        parsed_url = urlparse(directory_url.rstrip('/'))
-        if not parsed_url.path and not share:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(directory_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
         if hasattr(credential, 'get_token'):
             raise ValueError("Token credentials not supported by the File service.")
 
-        share, path_dir = "", ""
-        if parsed_url.path:
-            share, _, path_dir = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
@@ -114,16 +111,52 @@ class DirectoryClient(StorageAccountHostsMixin):
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
-        try:
-            self.share_name = share.name # type: ignore
-        except AttributeError:
-            self.share_name = share or unquote(share)
-        self.directory_path = directory_path or path_dir
+
+        self.share_name = share_name
+        self.directory_path = directory_path
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(DirectoryClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_directory_url(cls, directory_url,  # type: str
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            credential=None, # type: Optional[Any]
+            **kwargs # type: Optional[Any]
+        ):
+        # type: (...) -> DirectoryClient
+        """
+        :param str directory_url:
+            The full URI to the directory.
+        :param str snapshot:
+            An optional share snapshot on which to operate.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
+        """
+        try:
+            if not directory_url.lower().startswith('http'):
+                directory_url = "https://" + directory_url
+        except AttributeError:
+            raise ValueError("Directory URL must be a string.")
+        parsed_url = urlparse(directory_url.rstrip('/'))
+        if not parsed_url.path and not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(directory_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        path_snapshot, _ = parse_query(parsed_url.query)
+
+        share_name, _, path_dir = parsed_url.path.lstrip('/').partition('/')
+        share_name = unquote(share_name)
+
+        directory_path = path_dir
+        snapshot = snapshot or path_snapshot
+
+        return cls(
+            account_url=account_url, share_name=share_name, directory_path=directory_path,
+            credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -145,7 +178,7 @@ class DirectoryClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
+            share_name=None, # type: str
             directory_path=None, # type: Optional[str]
             credential=None, # type: Optional[Any]
             **kwargs # type: Any
@@ -155,9 +188,9 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param share: The share. This can either be the name of the share,
+        :param share_name: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share: str or ~azure.storage.file.ShareProperties
+        :type share_name: str
         :param str directory_path:
             The directory path.
         :param credential:
@@ -169,7 +202,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
+            account_url, share_name=share_name, directory_path=directory_path, credential=credential, **kwargs)
 
     def get_file_client(self, file_name, **kwargs):
         # type: (str, Any) -> FileClient
@@ -185,9 +218,9 @@ class DirectoryClient(StorageAccountHostsMixin):
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, **kwargs)
+            self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -211,8 +244,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
-            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace

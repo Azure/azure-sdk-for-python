@@ -135,7 +135,7 @@ class StorageShareTest(FileTestCase):
         share_props = await share.get_share_properties()
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -183,7 +183,7 @@ class StorageShareTest(FileTestCase):
 
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -880,7 +880,7 @@ class StorageShareTest(FileTestCase):
         )
         sas_client = FileClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
         )

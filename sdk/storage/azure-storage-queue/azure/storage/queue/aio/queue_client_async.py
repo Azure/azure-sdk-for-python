@@ -74,11 +74,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str queue_url: The full URI to the queue. This can also be a URL to the storage
-        account, in which case the queue must also be specified.
-    :param queue: The queue. If specified, this value will override
-        a queue value specified in the queue URL.
-    :type queue: str or ~azure.storage.queue.QueueProperties
+    :param str account_url:
+        The URL to the storage account. In order to create a client given the full URI to the queue,
+        use the from_queue_url classmethod.
+    :param queue_name: The name of the queue.
+    :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -103,15 +103,17 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
     def __init__(
         self,
-        queue_url,  # type: str
-        queue=None,  # type: Optional[Union[QueueProperties, str]]
+        account_url,  # type: str
+        queue_name,  # type: str
         credential=None,  # type: Optional[Any]
         loop=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        super(QueueClient, self).__init__(queue_url, queue=queue, credential=credential, loop=loop, **kwargs)
+        super(QueueClient, self).__init__(
+            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
+        )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._loop = loop
 
@@ -388,10 +390,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             )
             queue_message = QueueMessage(content=new_message.message_text)
             queue_message.id = enqueued[0].message_id
-            queue_message.insertion_time = enqueued[0].insertion_time
-            queue_message.expiration_time = enqueued[0].expiration_time
+            queue_message.inserted_on = enqueued[0].insertion_time
+            queue_message.expires_on = enqueued[0].expiration_time
             queue_message.pop_receipt = enqueued[0].pop_receipt
-            queue_message.time_next_visible = enqueued[0].time_next_visible
+            queue_message.next_visible_on = enqueued[0].time_next_visible
             return queue_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -514,15 +516,15 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
-            insertion_time = message.insertion_time
-            expiration_time = message.expiration_time
+            inserted_on = message.inserted_on
+            expires_on = message.expires_on
             dequeue_count = message.dequeue_count
         except AttributeError:
             message_id = message
             message_text = content
             receipt = pop_receipt
-            insertion_time = None
-            expiration_time = None
+            inserted_on = None
+            expires_on = None
             dequeue_count = None
 
         if receipt is None:
@@ -547,11 +549,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             )
             new_message = QueueMessage(content=message_text)
             new_message.id = message_id
-            new_message.insertion_time = insertion_time
-            new_message.expiration_time = expiration_time
+            new_message.inserted_on = inserted_on
+            new_message.expires_on = expires_on
             new_message.dequeue_count = dequeue_count
             new_message.pop_receipt = response["popreceipt"]
-            new_message.time_next_visible = response["time_next_visible"]
+            new_message.next_visible_on = response["time_next_visible"]
             return new_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -581,7 +583,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :return:
             A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
-            time_next_visible and pop_receipt will not be populated as peek does
+            next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
 

@@ -43,7 +43,7 @@ class QueueClient(StorageAccountHostsMixin):
     """A client to interact with a specific Queue.
 
     :ivar str url:
-        The full endpoint URL to the Queue, including SAS token if used. This could be
+        The full endpoint URL to the account, including SAS token if used. This could be
         either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
@@ -60,11 +60,11 @@ class QueueClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str queue_url: The full URI to the queue. This can also be a URL to the storage
-        account, in which case the queue must also be specified.
-    :param queue: The queue. If specified, this value will override
-        a queue value specified in the queue URL.
-    :type queue: str or ~azure.storage.queue.QueueProperties
+    :param str account_url:
+        The URL to the storage account. In order to create a client given the full URI to the queue,
+        use the from_queue_url classmethod.
+    :param queue_name: The name of the queue.
+    :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -80,39 +80,62 @@ class QueueClient(StorageAccountHostsMixin):
             :caption: Create the queue client with url and credential.
     """
     def __init__(
-            self, queue_url,  # type: str
-            queue=None,  # type: Optional[Union[QueueProperties, str]]
+            self, account_url,  # type: str
+            queue_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         try:
-            if not queue_url.lower().startswith('http'):
-                queue_url = "https://" + queue_url
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
         except AttributeError:
-            raise ValueError("Queue URL must be a string.")
-        parsed_url = urlparse(queue_url.rstrip('/'))
-        if not parsed_url.path and not queue:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not queue_name:
             raise ValueError("Please specify a queue name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(parsed_url))
 
-        path_queue = ""
-        if parsed_url.path:
-            path_queue = parsed_url.path.lstrip('/').partition('/')[0]
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
-        try:
-            self.queue_name = queue.name # type: ignore
-        except AttributeError:
-            self.queue_name = queue or unquote(path_queue)
+
+        self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy') or TextXMLEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy') or TextXMLDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+
+    @classmethod
+    def from_queue_url(cls, queue_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> None
+        """A client to interact with a specific Queue.
+
+        :param str queue_url: The full URI to the queue, including SAS token if used.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, and account
+            shared access key, or an instance of a TokenCredentials class from azure.identity.
+        """
+        try:
+            if not queue_url.lower().startswith('http'):
+                queue_url = "https://" + queue_url
+        except AttributeError:
+            raise ValueError("Queue URL must be a string.")
+        parsed_url = urlparse(queue_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(queue_url))
+        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
+        try:
+            queue_name = unquote(parsed_url.path.lstrip('/'))
+        except AttributeError:
+            raise ValueError("Invalid URL: {}".format(queue_url))
+
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -130,7 +153,7 @@ class QueueClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            queue,  # type: Union[str, QueueProperties]
+            queue_name,  # type: str
             credential=None,  # type: Any
             **kwargs  # type: Any
         ):
@@ -139,9 +162,9 @@ class QueueClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param queue: The queue. This can either be the name of the queue,
+        :param queue_name: The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type queue: str or ~azure.storage.queue.QueueProperties
+        :type queue_name: str or ~azure.storage.queue.QueueProperties
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -161,7 +184,7 @@ class QueueClient(StorageAccountHostsMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue=queue, credential=credential, **kwargs) # type: ignore
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs) # type: ignore
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
@@ -513,10 +536,10 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
             queue_message = QueueMessage(content=new_message.message_text)
             queue_message.id = enqueued[0].message_id
-            queue_message.insertion_time = enqueued[0].insertion_time
-            queue_message.expiration_time = enqueued[0].expiration_time
+            queue_message.inserted_on = enqueued[0].insertion_time
+            queue_message.expires_on = enqueued[0].expiration_time
             queue_message.pop_receipt = enqueued[0].pop_receipt
-            queue_message.time_next_visible = enqueued[0].time_next_visible
+            queue_message.next_visible_on = enqueued[0].time_next_visible
             return queue_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -631,15 +654,15 @@ class QueueClient(StorageAccountHostsMixin):
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
-            insertion_time = message.insertion_time
-            expiration_time = message.expiration_time
+            inserted_on = message.inserted_on
+            expires_on = message.expires_on
             dequeue_count = message.dequeue_count
         except AttributeError:
             message_id = message
             message_text = content
             receipt = pop_receipt
-            insertion_time = None
-            expiration_time = None
+            inserted_on = None
+            expires_on = None
             dequeue_count = None
 
         if receipt is None:
@@ -664,11 +687,11 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
             new_message = QueueMessage(content=message_text)
             new_message.id = message_id
-            new_message.insertion_time = insertion_time
-            new_message.expiration_time = expiration_time
+            new_message.inserted_on = inserted_on
+            new_message.expires_on = expires_on
             new_message.dequeue_count = dequeue_count
             new_message.pop_receipt = response['popreceipt']
-            new_message.time_next_visible = response['time_next_visible']
+            new_message.next_visible_on = response['time_next_visible']
             return new_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -698,7 +721,7 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :return:
             A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
-            time_next_visible and pop_receipt will not be populated as peek does
+            next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
 
