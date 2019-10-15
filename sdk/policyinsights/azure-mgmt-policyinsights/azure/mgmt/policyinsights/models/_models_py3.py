@@ -21,79 +21,6 @@ class CloudError(Model):
     }
 
 
-class ErrorDefinition(Model):
-    """Error definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar code: Service specific error code which serves as the substatus for
-     the HTTP error code.
-    :vartype code: str
-    :ivar message: Description of the error.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: Internal error details.
-    :vartype details: list[~azure.mgmt.policyinsights.models.ErrorDefinition]
-    :ivar additional_info: Additional scenario specific error details.
-    :vartype additional_info:
-     list[~azure.mgmt.policyinsights.models.TypedErrorInfo]
-    """
-
-    _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[TypedErrorInfo]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ErrorDefinition, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
-
-
-class ErrorResponse(Model):
-    """Error response.
-
-    :param error: The error details.
-    :type error: ~azure.mgmt.policyinsights.models.ErrorDefinition
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
-
-
 class ExpressionEvaluationDetails(Model):
     """Evaluation details of policy language expressions.
 
@@ -285,56 +212,6 @@ class PolicyDefinitionSummary(Model):
         self.results = results
 
 
-class PolicyDetails(Model):
-    """The policy details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar policy_definition_id: The ID of the policy definition.
-    :vartype policy_definition_id: str
-    :ivar policy_assignment_id: The ID of the policy assignment.
-    :vartype policy_assignment_id: str
-    :ivar policy_assignment_display_name: The display name of the policy
-     assignment.
-    :vartype policy_assignment_display_name: str
-    :ivar policy_assignment_scope: The scope of the policy assignment.
-    :vartype policy_assignment_scope: str
-    :ivar policy_set_definition_id: The ID of the policy set definition.
-    :vartype policy_set_definition_id: str
-    :ivar policy_definition_reference_id: The policy definition reference ID
-     within the policy set definition.
-    :vartype policy_definition_reference_id: str
-    """
-
-    _validation = {
-        'policy_definition_id': {'readonly': True},
-        'policy_assignment_id': {'readonly': True},
-        'policy_assignment_display_name': {'readonly': True},
-        'policy_assignment_scope': {'readonly': True},
-        'policy_set_definition_id': {'readonly': True},
-        'policy_definition_reference_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
-        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
-        'policy_assignment_display_name': {'key': 'policyAssignmentDisplayName', 'type': 'str'},
-        'policy_assignment_scope': {'key': 'policyAssignmentScope', 'type': 'str'},
-        'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
-        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(PolicyDetails, self).__init__(**kwargs)
-        self.policy_definition_id = None
-        self.policy_assignment_id = None
-        self.policy_assignment_display_name = None
-        self.policy_assignment_scope = None
-        self.policy_set_definition_id = None
-        self.policy_definition_reference_id = None
-
-
 class PolicyEvaluationDetails(Model):
     """Policy evaluation details.
 
@@ -355,183 +232,6 @@ class PolicyEvaluationDetails(Model):
         super(PolicyEvaluationDetails, self).__init__(**kwargs)
         self.evaluated_expressions = evaluated_expressions
         self.if_not_exists_details = if_not_exists_details
-
-
-class PolicyEvent(Model):
-    """Policy event record.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param odataid: OData entity ID; always set to null since policy event
-     records do not have an entity ID.
-    :type odataid: str
-    :param odatacontext: OData context string; used by OData clients to
-     resolve type information based on metadata.
-    :type odatacontext: str
-    :param timestamp: Timestamp for the policy event record.
-    :type timestamp: datetime
-    :param resource_id: Resource ID.
-    :type resource_id: str
-    :param policy_assignment_id: Policy assignment ID.
-    :type policy_assignment_id: str
-    :param policy_definition_id: Policy definition ID.
-    :type policy_definition_id: str
-    :param effective_parameters: Effective parameters for the policy
-     assignment.
-    :type effective_parameters: str
-    :param is_compliant: Flag which states whether the resource is compliant
-     against the policy assignment it was evaluated against.
-    :type is_compliant: bool
-    :param subscription_id: Subscription ID.
-    :type subscription_id: str
-    :param resource_type: Resource type.
-    :type resource_type: str
-    :param resource_location: Resource location.
-    :type resource_location: str
-    :param resource_group: Resource group name.
-    :type resource_group: str
-    :param resource_tags: List of resource tags.
-    :type resource_tags: str
-    :param policy_assignment_name: Policy assignment name.
-    :type policy_assignment_name: str
-    :param policy_assignment_owner: Policy assignment owner.
-    :type policy_assignment_owner: str
-    :param policy_assignment_parameters: Policy assignment parameters.
-    :type policy_assignment_parameters: str
-    :param policy_assignment_scope: Policy assignment scope.
-    :type policy_assignment_scope: str
-    :param policy_definition_name: Policy definition name.
-    :type policy_definition_name: str
-    :param policy_definition_action: Policy definition action, i.e. effect.
-    :type policy_definition_action: str
-    :param policy_definition_category: Policy definition category.
-    :type policy_definition_category: str
-    :param policy_set_definition_id: Policy set definition ID, if the policy
-     assignment is for a policy set.
-    :type policy_set_definition_id: str
-    :param policy_set_definition_name: Policy set definition name, if the
-     policy assignment is for a policy set.
-    :type policy_set_definition_name: str
-    :param policy_set_definition_owner: Policy set definition owner, if the
-     policy assignment is for a policy set.
-    :type policy_set_definition_owner: str
-    :param policy_set_definition_category: Policy set definition category, if
-     the policy assignment is for a policy set.
-    :type policy_set_definition_category: str
-    :param policy_set_definition_parameters: Policy set definition parameters,
-     if the policy assignment is for a policy set.
-    :type policy_set_definition_parameters: str
-    :param management_group_ids: Comma separated list of management group IDs,
-     which represent the hierarchy of the management groups the resource is
-     under.
-    :type management_group_ids: str
-    :param policy_definition_reference_id: Reference ID for the policy
-     definition inside the policy set, if the policy assignment is for a policy
-     set.
-    :type policy_definition_reference_id: str
-    :param tenant_id: Tenant ID for the policy event record.
-    :type tenant_id: str
-    :param principal_oid: Principal object ID for the user who initiated the
-     resource operation that triggered the policy event.
-    :type principal_oid: str
-    """
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'odataid': {'key': '@odata\\.id', 'type': 'str'},
-        'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
-        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
-        'effective_parameters': {'key': 'effectiveParameters', 'type': 'str'},
-        'is_compliant': {'key': 'isCompliant', 'type': 'bool'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'resource_tags': {'key': 'resourceTags', 'type': 'str'},
-        'policy_assignment_name': {'key': 'policyAssignmentName', 'type': 'str'},
-        'policy_assignment_owner': {'key': 'policyAssignmentOwner', 'type': 'str'},
-        'policy_assignment_parameters': {'key': 'policyAssignmentParameters', 'type': 'str'},
-        'policy_assignment_scope': {'key': 'policyAssignmentScope', 'type': 'str'},
-        'policy_definition_name': {'key': 'policyDefinitionName', 'type': 'str'},
-        'policy_definition_action': {'key': 'policyDefinitionAction', 'type': 'str'},
-        'policy_definition_category': {'key': 'policyDefinitionCategory', 'type': 'str'},
-        'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
-        'policy_set_definition_name': {'key': 'policySetDefinitionName', 'type': 'str'},
-        'policy_set_definition_owner': {'key': 'policySetDefinitionOwner', 'type': 'str'},
-        'policy_set_definition_category': {'key': 'policySetDefinitionCategory', 'type': 'str'},
-        'policy_set_definition_parameters': {'key': 'policySetDefinitionParameters', 'type': 'str'},
-        'management_group_ids': {'key': 'managementGroupIds', 'type': 'str'},
-        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'principal_oid': {'key': 'principalOid', 'type': 'str'},
-    }
-
-    def __init__(self, *, additional_properties=None, odataid: str=None, odatacontext: str=None, timestamp=None, resource_id: str=None, policy_assignment_id: str=None, policy_definition_id: str=None, effective_parameters: str=None, is_compliant: bool=None, subscription_id: str=None, resource_type: str=None, resource_location: str=None, resource_group: str=None, resource_tags: str=None, policy_assignment_name: str=None, policy_assignment_owner: str=None, policy_assignment_parameters: str=None, policy_assignment_scope: str=None, policy_definition_name: str=None, policy_definition_action: str=None, policy_definition_category: str=None, policy_set_definition_id: str=None, policy_set_definition_name: str=None, policy_set_definition_owner: str=None, policy_set_definition_category: str=None, policy_set_definition_parameters: str=None, management_group_ids: str=None, policy_definition_reference_id: str=None, tenant_id: str=None, principal_oid: str=None, **kwargs) -> None:
-        super(PolicyEvent, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.odataid = odataid
-        self.odatacontext = odatacontext
-        self.timestamp = timestamp
-        self.resource_id = resource_id
-        self.policy_assignment_id = policy_assignment_id
-        self.policy_definition_id = policy_definition_id
-        self.effective_parameters = effective_parameters
-        self.is_compliant = is_compliant
-        self.subscription_id = subscription_id
-        self.resource_type = resource_type
-        self.resource_location = resource_location
-        self.resource_group = resource_group
-        self.resource_tags = resource_tags
-        self.policy_assignment_name = policy_assignment_name
-        self.policy_assignment_owner = policy_assignment_owner
-        self.policy_assignment_parameters = policy_assignment_parameters
-        self.policy_assignment_scope = policy_assignment_scope
-        self.policy_definition_name = policy_definition_name
-        self.policy_definition_action = policy_definition_action
-        self.policy_definition_category = policy_definition_category
-        self.policy_set_definition_id = policy_set_definition_id
-        self.policy_set_definition_name = policy_set_definition_name
-        self.policy_set_definition_owner = policy_set_definition_owner
-        self.policy_set_definition_category = policy_set_definition_category
-        self.policy_set_definition_parameters = policy_set_definition_parameters
-        self.management_group_ids = management_group_ids
-        self.policy_definition_reference_id = policy_definition_reference_id
-        self.tenant_id = tenant_id
-        self.principal_oid = principal_oid
-
-
-class PolicyEventsQueryResults(Model):
-    """Query results.
-
-    :param odatacontext: OData context string; used by OData clients to
-     resolve type information based on metadata.
-    :type odatacontext: str
-    :param odatacount: OData entity count; represents the number of policy
-     event records returned.
-    :type odatacount: int
-    :param value: Query results.
-    :type value: list[~azure.mgmt.policyinsights.models.PolicyEvent]
-    """
-
-    _validation = {
-        'odatacount': {'minimum': 0},
-    }
-
-    _attribute_map = {
-        'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
-        'odatacount': {'key': '@odata\\.count', 'type': 'int'},
-        'value': {'key': 'value', 'type': '[PolicyEvent]'},
-    }
-
-    def __init__(self, *, odatacontext: str=None, odatacount: int=None, value=None, **kwargs) -> None:
-        super(PolicyEventsQueryResults, self).__init__(**kwargs)
-        self.odatacontext = odatacontext
-        self.odatacount = odatacount
-        self.value = value
 
 
 class PolicyState(Model):
@@ -711,55 +411,6 @@ class PolicyStatesQueryResults(Model):
         self.value = value
 
 
-class PolicyTrackedResource(Model):
-    """Policy tracked resource record.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar tracked_resource_id: The ID of the policy tracked resource.
-    :vartype tracked_resource_id: str
-    :ivar policy_details: The details of the policy that require the tracked
-     resource.
-    :vartype policy_details: ~azure.mgmt.policyinsights.models.PolicyDetails
-    :ivar created_by: The details of the policy triggered deployment that
-     created the tracked resource.
-    :vartype created_by:
-     ~azure.mgmt.policyinsights.models.TrackedResourceModificationDetails
-    :ivar last_modified_by: The details of the policy triggered deployment
-     that modified the tracked resource.
-    :vartype last_modified_by:
-     ~azure.mgmt.policyinsights.models.TrackedResourceModificationDetails
-    :ivar last_update_utc: Timestamp of the last update to the tracked
-     resource.
-    :vartype last_update_utc: datetime
-    """
-
-    _validation = {
-        'tracked_resource_id': {'readonly': True},
-        'policy_details': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'last_update_utc': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tracked_resource_id': {'key': 'trackedResourceId', 'type': 'str'},
-        'policy_details': {'key': 'policyDetails', 'type': 'PolicyDetails'},
-        'created_by': {'key': 'createdBy', 'type': 'TrackedResourceModificationDetails'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'TrackedResourceModificationDetails'},
-        'last_update_utc': {'key': 'lastUpdateUtc', 'type': 'iso-8601'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(PolicyTrackedResource, self).__init__(**kwargs)
-        self.tracked_resource_id = None
-        self.policy_details = None
-        self.created_by = None
-        self.last_modified_by = None
-        self.last_update_utc = None
-
-
 class QueryFailure(Model):
     """Error response.
 
@@ -822,8 +473,6 @@ class QueryOptions(Model):
 
     :param top: Maximum number of records to return.
     :type top: int
-    :param filter: OData filter expression.
-    :type filter: str
     :param order_by: Ordering expression using OData notation. One or more
      comma-separated column names with an optional "desc" (the default) or
      "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
@@ -839,6 +488,8 @@ class QueryOptions(Model):
     :param to: ISO 8601 formatted timestamp specifying the end time of the
      interval to query. When not specified, the service uses request time.
     :type to: datetime
+    :param filter: OData filter expression.
+    :type filter: str
     :param apply: OData apply expression for aggregations.
     :type apply: str
     :param expand: The $expand query parameter. For example, to expand
@@ -848,196 +499,25 @@ class QueryOptions(Model):
 
     _attribute_map = {
         'top': {'key': '', 'type': 'int'},
-        'filter': {'key': '', 'type': 'str'},
         'order_by': {'key': '', 'type': 'str'},
         'select': {'key': '', 'type': 'str'},
         'from_property': {'key': '', 'type': 'iso-8601'},
         'to': {'key': '', 'type': 'iso-8601'},
+        'filter': {'key': '', 'type': 'str'},
         'apply': {'key': '', 'type': 'str'},
         'expand': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, *, top: int=None, filter: str=None, order_by: str=None, select: str=None, from_property=None, to=None, apply: str=None, expand: str=None, **kwargs) -> None:
+    def __init__(self, *, top: int=None, order_by: str=None, select: str=None, from_property=None, to=None, filter: str=None, apply: str=None, expand: str=None, **kwargs) -> None:
         super(QueryOptions, self).__init__(**kwargs)
         self.top = top
-        self.filter = filter
         self.order_by = order_by
         self.select = select
         self.from_property = from_property
         self.to = to
+        self.filter = filter
         self.apply = apply
         self.expand = expand
-
-
-class Remediation(Model):
-    """The remediation definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param policy_assignment_id: The resource ID of the policy assignment that
-     should be remediated.
-    :type policy_assignment_id: str
-    :param policy_definition_reference_id: The policy definition reference ID
-     of the individual definition that should be remediated. Required when the
-     policy assignment being remediated assigns a policy set definition.
-    :type policy_definition_reference_id: str
-    :ivar provisioning_state: The status of the remediation.
-    :vartype provisioning_state: str
-    :ivar created_on: The time at which the remediation was created.
-    :vartype created_on: datetime
-    :ivar last_updated_on: The time at which the remediation was last updated.
-    :vartype last_updated_on: datetime
-    :param filters: The filters that will be applied to determine which
-     resources to remediate.
-    :type filters: ~azure.mgmt.policyinsights.models.RemediationFilters
-    :param deployment_status: The deployment status summary for all
-     deployments created by the remediation.
-    :type deployment_status:
-     ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
-    :ivar id: The ID of the remediation.
-    :vartype id: str
-    :ivar type: The type of the remediation.
-    :vartype type: str
-    :ivar name: The name of the remediation.
-    :vartype name: str
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'created_on': {'readonly': True},
-        'last_updated_on': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
-        'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
-        'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
-        'filters': {'key': 'properties.filters', 'type': 'RemediationFilters'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'RemediationDeploymentSummary'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, policy_assignment_id: str=None, policy_definition_reference_id: str=None, filters=None, deployment_status=None, **kwargs) -> None:
-        super(Remediation, self).__init__(**kwargs)
-        self.policy_assignment_id = policy_assignment_id
-        self.policy_definition_reference_id = policy_definition_reference_id
-        self.provisioning_state = None
-        self.created_on = None
-        self.last_updated_on = None
-        self.filters = filters
-        self.deployment_status = deployment_status
-        self.id = None
-        self.type = None
-        self.name = None
-
-
-class RemediationDeployment(Model):
-    """Details of a single deployment created by the remediation.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar remediated_resource_id: Resource ID of the resource that is being
-     remediated by the deployment.
-    :vartype remediated_resource_id: str
-    :ivar deployment_id: Resource ID of the template deployment that will
-     remediate the resource.
-    :vartype deployment_id: str
-    :ivar status: Status of the remediation deployment.
-    :vartype status: str
-    :ivar resource_location: Location of the resource that is being
-     remediated.
-    :vartype resource_location: str
-    :ivar error: Error encountered while remediated the resource.
-    :vartype error: ~azure.mgmt.policyinsights.models.ErrorDefinition
-    :ivar created_on: The time at which the remediation was created.
-    :vartype created_on: datetime
-    :ivar last_updated_on: The time at which the remediation deployment was
-     last updated.
-    :vartype last_updated_on: datetime
-    """
-
-    _validation = {
-        'remediated_resource_id': {'readonly': True},
-        'deployment_id': {'readonly': True},
-        'status': {'readonly': True},
-        'resource_location': {'readonly': True},
-        'error': {'readonly': True},
-        'created_on': {'readonly': True},
-        'last_updated_on': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'remediated_resource_id': {'key': 'remediatedResourceId', 'type': 'str'},
-        'deployment_id': {'key': 'deploymentId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'last_updated_on': {'key': 'lastUpdatedOn', 'type': 'iso-8601'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(RemediationDeployment, self).__init__(**kwargs)
-        self.remediated_resource_id = None
-        self.deployment_id = None
-        self.status = None
-        self.resource_location = None
-        self.error = None
-        self.created_on = None
-        self.last_updated_on = None
-
-
-class RemediationDeploymentSummary(Model):
-    """The deployment status summary for all deployments created by the
-    remediation.
-
-    :param total_deployments: The number of deployments required by the
-     remediation.
-    :type total_deployments: int
-    :param successful_deployments: The number of deployments required by the
-     remediation that have succeeded.
-    :type successful_deployments: int
-    :param failed_deployments: The number of deployments required by the
-     remediation that have failed.
-    :type failed_deployments: int
-    """
-
-    _attribute_map = {
-        'total_deployments': {'key': 'totalDeployments', 'type': 'int'},
-        'successful_deployments': {'key': 'successfulDeployments', 'type': 'int'},
-        'failed_deployments': {'key': 'failedDeployments', 'type': 'int'},
-    }
-
-    def __init__(self, *, total_deployments: int=None, successful_deployments: int=None, failed_deployments: int=None, **kwargs) -> None:
-        super(RemediationDeploymentSummary, self).__init__(**kwargs)
-        self.total_deployments = total_deployments
-        self.successful_deployments = successful_deployments
-        self.failed_deployments = failed_deployments
-
-
-class RemediationFilters(Model):
-    """The filters that will be applied to determine which resources to remediate.
-
-    :param locations: The resource locations that will be remediated.
-    :type locations: list[str]
-    """
-
-    _attribute_map = {
-        'locations': {'key': 'locations', 'type': '[str]'},
-    }
-
-    def __init__(self, *, locations=None, **kwargs) -> None:
-        super(RemediationFilters, self).__init__(**kwargs)
-        self.locations = locations
 
 
 class SummarizeResults(Model):
@@ -1130,68 +610,3 @@ class SummaryResults(Model):
         self.query_results_uri = query_results_uri
         self.non_compliant_resources = non_compliant_resources
         self.non_compliant_policies = non_compliant_policies
-
-
-class TrackedResourceModificationDetails(Model):
-    """The details of the policy triggered deployment that created or modified the
-    tracked resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar policy_details: The details of the policy that created or modified
-     the tracked resource.
-    :vartype policy_details: ~azure.mgmt.policyinsights.models.PolicyDetails
-    :ivar deployment_id: The ID of the deployment that created or modified the
-     tracked resource.
-    :vartype deployment_id: str
-    :ivar deployment_time: Timestamp of the deployment that created or
-     modified the tracked resource.
-    :vartype deployment_time: datetime
-    """
-
-    _validation = {
-        'policy_details': {'readonly': True},
-        'deployment_id': {'readonly': True},
-        'deployment_time': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'policy_details': {'key': 'policyDetails', 'type': 'PolicyDetails'},
-        'deployment_id': {'key': 'deploymentId', 'type': 'str'},
-        'deployment_time': {'key': 'deploymentTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(TrackedResourceModificationDetails, self).__init__(**kwargs)
-        self.policy_details = None
-        self.deployment_id = None
-        self.deployment_time = None
-
-
-class TypedErrorInfo(Model):
-    """Scenario specific error details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar type: The type of included error details.
-    :vartype type: str
-    :ivar info: The scenario specific error details.
-    :vartype info: object
-    """
-
-    _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(TypedErrorInfo, self).__init__(**kwargs)
-        self.type = None
-        self.info = None

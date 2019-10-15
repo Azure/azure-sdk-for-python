@@ -13,9 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import PolicyInsightsClientConfiguration
-from .operations import PolicyTrackedResourcesOperations
-from .operations import RemediationsOperations
-from .operations import PolicyEventsOperations
 from .operations import PolicyStatesOperations
 from .operations import Operations
 from . import models
@@ -27,12 +24,6 @@ class PolicyInsightsClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: PolicyInsightsClientConfiguration
 
-    :ivar policy_tracked_resources: PolicyTrackedResources operations
-    :vartype policy_tracked_resources: azure.mgmt.policyinsights.operations.PolicyTrackedResourcesOperations
-    :ivar remediations: Remediations operations
-    :vartype remediations: azure.mgmt.policyinsights.operations.RemediationsOperations
-    :ivar policy_events: PolicyEvents operations
-    :vartype policy_events: azure.mgmt.policyinsights.operations.PolicyEventsOperations
     :ivar policy_states: PolicyStates operations
     :vartype policy_states: azure.mgmt.policyinsights.operations.PolicyStatesOperations
     :ivar operations: Operations operations
@@ -51,15 +42,10 @@ class PolicyInsightsClient(SDKClient):
         super(PolicyInsightsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2019-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.policy_tracked_resources = PolicyTrackedResourcesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.remediations = RemediationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.policy_events = PolicyEventsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.policy_states = PolicyStatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
