@@ -74,8 +74,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The URL to the storage account. The `from_queue_url` method should be used
-        if you want to use the full queue URI instead.
+    :param str account_url:
+        The URL to the storage account. In order to create a client given the full URI to the queue,
+        use the from_queue_url classmethod.
     :param queue_name: The name of the queue.
     :type queue_name: str
     :param credential:
