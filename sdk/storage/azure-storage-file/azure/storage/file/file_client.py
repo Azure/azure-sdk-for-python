@@ -249,7 +249,7 @@ class FileClient(StorageAccountHostsMixin):
             content_encoding=None,  # type: Optional[str]
             content_language=None,  # type: Optional[str]
             content_type=None,  # type: Optional[str]
-            ** kwargs  # type: Any
+            **kwargs  # type: Any
         ):
         # type: (...) -> str
         """Generates a shared access signature for the file.
