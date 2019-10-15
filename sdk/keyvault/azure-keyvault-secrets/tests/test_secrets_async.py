@@ -220,7 +220,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         await client.delete_secret(created_bundle.name)
 
         # restore secret
-        restored = await client.restore_secret(secret_backup)
+        restored = await client.restore_secret_backup(secret_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 

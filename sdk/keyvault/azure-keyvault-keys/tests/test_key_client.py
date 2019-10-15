@@ -195,7 +195,7 @@ class KeyClientTests(KeyVaultTestCase):
         client.delete_key(created_bundle.name)
 
         # restore key
-        restored = client.restore_key(key_backup)
+        restored = client.restore_key_backup(key_backup)
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
     @ResourceGroupPreparer()

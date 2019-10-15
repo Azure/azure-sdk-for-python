@@ -293,7 +293,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # can add test case to see if we do get_deleted should return error
 
         # restore key
-        restored = await client.restore_key(key_backup)
+        restored = await client.restore_key_backup(key_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
