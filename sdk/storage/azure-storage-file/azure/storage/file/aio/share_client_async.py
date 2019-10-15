@@ -67,6 +67,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
             self, share_url,  # type: str
@@ -522,7 +524,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def create_directory(self, directory_name, **kwargs):
-        # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
+        # type: (str, Any) -> DirectoryClient
         """Creates a directory in the share and returns a client to interact
         with the directory.
 

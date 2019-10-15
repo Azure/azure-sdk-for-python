@@ -121,6 +121,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
 
     def __init__(  # type: ignore

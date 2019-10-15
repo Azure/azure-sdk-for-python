@@ -943,7 +943,6 @@ class FileClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         '''
-        timeout = kwargs.pop('timeout', None)
         options = self._upload_range_from_url_options(
             source_url=source_url,
             range_start=range_start,

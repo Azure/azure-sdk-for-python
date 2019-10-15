@@ -74,6 +74,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
             self, directory_url,  # type: str
@@ -142,7 +144,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
-    async def create_directory( self, **kwargs): # type: ignore
+    async def create_directory(self, **kwargs): # type: ignore
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
@@ -236,7 +238,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
     @distributed_trace
     def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Optional[int], Any) -> AsyncItemPaged
+        # type: (bool, Any) -> AsyncItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -332,7 +334,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
     @distributed_trace_async
     async def set_directory_metadata(self, metadata, **kwargs): # type: ignore
-        # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
+        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
         Each call to this operation replaces all existing metadata
@@ -489,23 +491,23 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             Maximum number of parallel connections to use.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :returns: FileClient
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
@@ -541,7 +543,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     @distributed_trace_async
     async def delete_file(
             self, file_name,  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -563,5 +564,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Delete a file in a directory.
         """
+        timeout = kwargs.pop('timeout', None)
         file_client = self.get_file_client(file_name)
         await file_client.delete_file(timeout=timeout, **kwargs)
