@@ -5,7 +5,6 @@
 import time
 from typing import TYPE_CHECKING
 
-
 from msal import TokenCache
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
@@ -14,11 +13,11 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     ContentDecodePolicy,
+    DistributedTracingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
-    DistributedTracingPolicy
 )
-from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.pipeline.transport import AioHttpTransport
 
 from .._authn_client import AuthnClientBase
 
@@ -47,7 +46,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
             DistributedTracingPolicy(),
         ]
         if not transport:
-            transport = AsyncioRequestsTransport(**kwargs)
+            transport = AioHttpTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
         super().__init__(**kwargs)
 
