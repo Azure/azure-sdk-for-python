@@ -6,6 +6,8 @@
 
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
+to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
 
  **New features**
  
