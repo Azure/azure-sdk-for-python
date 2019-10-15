@@ -17,76 +17,61 @@ class TimeframeType(str, Enum):
     week_to_date = "WeekToDate"
     month_to_date = "MonthToDate"
     year_to_date = "YearToDate"
+    the_last_week = "TheLastWeek"
+    the_last_month = "TheLastMonth"
+    the_last_year = "TheLastYear"
     custom = "Custom"
 
 
 class GranularityType(str, Enum):
 
     daily = "Daily"
-    monthly = "Monthly"
+    hourly = "Hourly"
 
 
-class ReportConfigColumnType(str, Enum):
+class QueryColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
 
 
-class OperatorType(str, Enum):
+class SortDirection(str, Enum):
 
-    in_enum = "In"
-    contains = "Contains"
-
-
-class ChartType(str, Enum):
-
-    area = "Area"
-    line = "Line"
-    stacked_column = "StackedColumn"
-    grouped_column = "GroupedColumn"
-    table = "Table"
+    ascending = "Ascending"
+    descending = "Descending"
 
 
-class AccumulatedType(str, Enum):
+class StatusType(str, Enum):
 
-    true = "true"
-    false = "false"
-
-
-class MetricType(str, Enum):
-
-    actual_cost = "ActualCost"
-    amortized_cost = "AmortizedCost"
-    ahub = "AHUB"
+    active = "Active"
+    inactive = "Inactive"
 
 
-class KpiTypeType(str, Enum):
+class RecurrenceType(str, Enum):
 
-    forecast = "Forecast"
-    budget = "Budget"
-
-
-class PivotTypeType(str, Enum):
-
-    dimension = "Dimension"
-    tag_key = "TagKey"
-
-
-class CategoryType(str, Enum):
-
-    cost = "Cost"
-    usage = "Usage"
-
-
-class TimeGrainType(str, Enum):
-
+    daily = "Daily"
+    weekly = "Weekly"
     monthly = "Monthly"
-    quarterly = "Quarterly"
     annually = "Annually"
 
 
-class NotificationOperatorType(str, Enum):
+class FormatType(str, Enum):
 
-    equal_to = "EqualTo"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+    csv = "Csv"
+
+
+class ExecutionType(str, Enum):
+
+    on_demand = "OnDemand"
+    scheduled = "Scheduled"
+
+
+class ExecutionStatus(str, Enum):
+
+    queued = "Queued"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+    timeout = "Timeout"
+    new_data_not_available = "NewDataNotAvailable"
+    data_not_available = "DataNotAvailable"

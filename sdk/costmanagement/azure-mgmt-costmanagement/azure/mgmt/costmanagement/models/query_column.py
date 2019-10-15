@@ -9,14 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dimensions_operations import DimensionsOperations
-from .query_operations import QueryOperations
-from .exports_operations import ExportsOperations
-from .operations import Operations
+from msrest.serialization import Model
 
-__all__ = [
-    'DimensionsOperations',
-    'QueryOperations',
-    'ExportsOperations',
-    'Operations',
-]
+
+class QueryColumn(Model):
+    """QueryColumn.
+
+    :param name:
+    :type name: str
+    :param type:
+    :type type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QueryColumn, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)

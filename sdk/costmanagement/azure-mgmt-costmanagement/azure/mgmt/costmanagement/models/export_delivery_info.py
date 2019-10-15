@@ -12,29 +12,25 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class ExportDeliveryInfo(Model):
+    """The delivery information associated with a export.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :param destination: Required. Has destination for the export being
+     delivered.
+    :type destination:
+     ~azure.mgmt.costmanagement.models.ExportDeliveryDestination
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'destination': {'required': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'ExportDeliveryDestination'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+        super(ExportDeliveryInfo, self).__init__(**kwargs)
+        self.destination = kwargs.get('destination', None)
