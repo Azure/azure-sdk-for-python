@@ -57,30 +57,34 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str share_url: The full URI to the share.
-    :param share: The share with which to interact. If specified, this value will override
-        a share value specified in the share URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        share, use the from_share_url classmethod.
+    :param share_name:
+        The name of the share with which to interact.
+    :type share_name: str
     :param str snapshot:
         An optional share snapshot on which to operate.
     :param credential:
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
-            self, share_url,  # type: str
-            share=None,  # type: Optional[Union[str, ShareProperties]]
+            self, account_url,  # type: str
+            share_name,  # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
         super(ShareClient, self).__init__(
-            share_url,
-            share=share,
+            account_url,
+            share_name=share_name,
             snapshot=snapshot,
             credential=credential,
             loop=loop,
@@ -99,8 +103,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         return DirectoryClient(
-            self.url, directory_path=directory_path or "", snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
@@ -114,26 +118,22 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
         """
         return FileClient(
-            self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
+            self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async
-    async def create_share( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            quota=None, # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> Dict[str, Any]
+    async def create_share(self, **kwargs):  # type: ignore
+        # type: (Any) -> Dict[str, Any]
         """Creates a new Share under the account. If a share with the
         same name already exists, the operation fails.
 
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the share as metadata.
         :type metadata: dict(str, str)
-        :param int quota:
+        :keyword int quota:
             The quota to be allotted.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -147,6 +147,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 8
                 :caption: Creates a file share.
         """
+        metadata = kwargs.pop('metadata', None)
+        quota = kwargs.pop('quota', None)
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -163,8 +166,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def create_snapshot( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None,  # type: Optional[int]
+            self,
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> Dict[str, Any]
@@ -178,10 +180,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         is taken, with a DateTime value appended to indicate the time at which the
         snapshot was taken.
 
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the share as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
@@ -195,6 +197,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: Creates a snapshot of the file share.
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
@@ -209,7 +213,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     @distributed_trace_async
     async def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -218,7 +221,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -231,6 +234,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: Deletes the share and any snapshots.
         """
+        timeout = kwargs.pop('timeout', None)
         delete_include = None
         if delete_snapshots:
             delete_include = DeleteSnapshotsOptionType.include
@@ -244,13 +248,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_share_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> ShareProperties
+    async def get_share_properties(self, **kwargs):
+        # type: (Any) -> ShareProperties
         """Returns all user-defined metadata and system properties for the
         specified share. The data returned does not include the shares's
         list of files or directories.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: The share properties.
         :rtype: ~azure.storage.file.ShareProperties
@@ -264,6 +268,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: Gets the share properties.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             props = await self._client.share.get_properties(
                 timeout=timeout,
@@ -277,14 +282,14 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         return props # type: ignore
 
     @distributed_trace_async
-    async def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
-        # type: (int, Optional[int], Any) ->  Dict[str, Any]
+    async def set_share_quota(self, quota, **kwargs): # type: ignore
+        # type: (int, Any) ->  Dict[str, Any]
         """Sets the quota for the share.
 
         :param int quota:
             Specifies the maximum size of the share, in gigabytes.
             Must be greater than 0, and less than or equal to 5TB.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -298,6 +303,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: Sets the share quota.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.share.set_quota( # type: ignore
                 timeout=timeout,
@@ -308,8 +314,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
-        # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
+    async def set_share_metadata(self, metadata, **kwargs): # type: ignore
+        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
         Each call to this operation replaces all existing metadata
@@ -319,7 +325,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param metadata:
             Name-value pairs associated with the share as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -333,6 +339,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: Sets the share metadata.
         """
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
@@ -345,16 +352,17 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_share_access_policy(self, timeout=None, **kwargs):
-        # type: (Optional[int], **Any) -> Dict[str, Any]
+    async def get_share_access_policy(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the share. The permissions
         indicate whether files in a share may be accessed publicly.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
         :rtype: dict[str, str]
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             response, identifiers = await self._client.share.get_access_policy(
                 timeout=timeout,
@@ -368,8 +376,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         }
 
     @distributed_trace_async
-    async def set_share_access_policy(self, signed_identifiers, timeout=None, **kwargs): # type: ignore
-        # type: (Dict[str, AccessPolicy], Optional[int], **Any) -> Dict[str, str]
+    async def set_share_access_policy(self, signed_identifiers, **kwargs): # type: ignore
+        # type: (Dict[str, AccessPolicy], Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -379,11 +387,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, :class:`~azure.storage.file.AccessPolicy`)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -406,18 +415,19 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_share_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], **Any) -> int
+    async def get_share_stats(self, **kwargs): # type: ignore
+        # type: (Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
 
         Note that this value may not include all recently created
         or recently re-sized files.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             stats = await self._client.share.get_statistics(
                 timeout=timeout,
@@ -431,7 +441,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             self, directory_name=None,  # type: Optional[str]
             name_starts_with=None,  # type: Optional[str]
             marker=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
         ):
         # type: (...) -> Iterable[dict[str,str]]
@@ -446,7 +455,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
 
@@ -459,13 +468,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 12
                 :caption: List directories and files in the share.
         """
+        timeout = kwargs.pop('timeout', None)
         directory = self.get_directory_client(directory_name)
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
     @distributed_trace_async
     async def create_permission_for_share(self, file_permission,  # type: str
-                                          timeout=None,  # type: Optional[int]
                                           **kwargs  # type: Any
                                           ):
         # type: (...) -> str
@@ -477,11 +486,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :param str file_permission:
             File permission, a Portable SDDL
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: a file permission key
         :rtype: str
         """
+        timeout = kwargs.pop('timeout', None)
         options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
             return await self._client.share.create_permission(**options)
@@ -491,7 +501,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     @distributed_trace_async
     async def get_permission_for_share(  # type: ignore
             self, permission_key,  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> str
@@ -501,11 +510,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :param str permission_key:
             Key of the file permission to retrieve
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: a file permission(a portable SDDL)
         :rtype: str
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.share.get_permission(  # type: ignore
                 file_permission_key=permission_key,
@@ -516,22 +526,22 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
-        # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
+    async def create_directory(self, directory_name, **kwargs):
+        # type: (str, Any) -> DirectoryClient
         """Creates a directory in the share and returns a client to interact
         with the directory.
 
         :param str directory_name:
             The name of the directory.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
-        await directory.create_directory(metadata, timeout, **kwargs)
+        await directory.create_directory(**kwargs)
         return directory # type: ignore
