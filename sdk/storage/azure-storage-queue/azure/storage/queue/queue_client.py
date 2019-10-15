@@ -536,10 +536,10 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
             queue_message = QueueMessage(content=new_message.message_text)
             queue_message.id = enqueued[0].message_id
-            queue_message.insertion_time = enqueued[0].insertion_time
-            queue_message.expiration_time = enqueued[0].expiration_time
+            queue_message.inserted_on = enqueued[0].insertion_time
+            queue_message.expires_on = enqueued[0].expiration_time
             queue_message.pop_receipt = enqueued[0].pop_receipt
-            queue_message.time_next_visible = enqueued[0].time_next_visible
+            queue_message.next_visible_on = enqueued[0].time_next_visible
             return queue_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -654,15 +654,15 @@ class QueueClient(StorageAccountHostsMixin):
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
-            insertion_time = message.insertion_time
-            expiration_time = message.expiration_time
+            inserted_on = message.inserted_on
+            expires_on = message.expires_on
             dequeue_count = message.dequeue_count
         except AttributeError:
             message_id = message
             message_text = content
             receipt = pop_receipt
-            insertion_time = None
-            expiration_time = None
+            inserted_on = None
+            expires_on = None
             dequeue_count = None
 
         if receipt is None:
@@ -687,11 +687,11 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
             new_message = QueueMessage(content=message_text)
             new_message.id = message_id
-            new_message.insertion_time = insertion_time
-            new_message.expiration_time = expiration_time
+            new_message.inserted_on = inserted_on
+            new_message.expires_on = expires_on
             new_message.dequeue_count = dequeue_count
             new_message.pop_receipt = response['popreceipt']
-            new_message.time_next_visible = response['time_next_visible']
+            new_message.next_visible_on = response['time_next_visible']
             return new_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -721,7 +721,7 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :return:
             A list of :class:`~azure.storage.queue.QueueMessage` objects. Note that
-            time_next_visible and pop_receipt will not be populated as peek does
+            next_visible_on and pop_receipt will not be populated as peek does
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.QueueMessage`)
 
