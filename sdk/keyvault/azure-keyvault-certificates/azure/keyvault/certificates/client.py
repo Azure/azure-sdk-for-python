@@ -292,15 +292,8 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def import_certificate(
-        self,
-        name,  # type: str
-        certificate_bytes,  # type: bytes
-        password=None,  # type: Optional[str]
-        policy=None,  # type: Optional[CertificatePolicy]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> KeyVaultCertificate
+    def import_certificate(self, name, certificate_bytes, **kwargs):
+        # type: (str, bytes, Any) -> KeyVaultCertificate
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
@@ -312,11 +305,6 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :param bytes certificate_bytes: Bytes of the certificate object to import. This certificate
             needs to contain the private key.
-        :param str password: If the private key in the passed in certificate is encrypted, it is the
-            password used for encryption.
-        :param policy: The management policy for the certificate.
-        :type policy:
-         ~azure.keyvault.certificates.models.CertificatePolicy
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -324,9 +312,15 @@ class CertificateClient(KeyVaultClientBase):
         Keyword arguments
             - *enabled (bool)* - Determines whether the object is enabled.
             - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - *password (str)* - If the private key in the passed in certificate is encrypted, it is the
+              password used for encryption.
+            - *policy (~azure.keyvault.certificates.models.CertificatePolicy)* - The management policy for
+              the certificate
         """
 
         enabled = kwargs.pop("enabled", None)
+        password = kwargs.pop("password", None)
+        policy = kwargs.pop("policy", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -491,8 +485,8 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], **Any) -> Iterable[DeletedCertificate]
+    def list_deleted_certificates(self, **kwargs):
+        # type: (**Any) -> Iterable[DeletedCertificate]
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
@@ -501,12 +495,14 @@ class CertificateClient(KeyVaultClientBase):
         deletion-specific information. This operation requires the certificates/get/list
         permission. This operation can only be enabled on soft-delete enabled vaults.
 
-        :param bool include_pending: Specifies whether to include certificates which are not
-            completely provisioned.
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificate]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *include_pending (bool)* - Specifies whether to include certificates which are
+              not completely deleted.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -517,6 +513,8 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
+        include_pending = kwargs.pop("include_pending", None)
+
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_endpoint,
             maxresults=max_page_size,
@@ -528,20 +526,22 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], **Any) -> Iterable[CertificateProperties]
+    def list_certificates(self, **kwargs):
+        # type: (**Any) -> Iterable[CertificateProperties]
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
         in the key vault. This operation requires the
         certificates/list permission.
 
-        :param bool include_pending: Specifies whether to include certificates
-            which are not completely provisioned.
         :returns: An iterator like instance of CertificateProperties
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *include_pending (bool)* - Specifies whether to include certificates which are
+              not completely deleted.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -552,6 +552,8 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
+        include_pending = kwargs.pop("include_pending", None)
+
         return self._client.get_certificates(
             vault_base_url=self._vault_endpoint,
             maxresults=max_page_size,
@@ -798,17 +800,8 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def create_issuer(
-        self,
-        name,  # type: str,
-        provider,  # type: str,
-        account_id=None,  # type: Optional[str]
-        password=None,  # type: Optional[str]
-        organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> CertificateIssuer
+    def create_issuer(self, name, provider, **kwargs):
+        # type: (str, str, Any) -> CertificateIssuer
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified
@@ -817,17 +810,17 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str name: The name of the issuer.
         :param str provider: The issuer provider.
-        :param str account_id: The user name/account name/account id.
-        :param str password: The password/secret/account key.
-        :param str organization_id: Id of the organization.
-        :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
             - *enabled (bool)* - Determines whether the object is enabled.
+            - *account_id (str)* - The user name/account name/account id.
+            - *password (str)* - The password/secret/account key.
+            - *organization_id (str)* - Id of the organization.
+            - *admin_details (list[~azure.keyvault.certificates.models.AdministratorDetails])*
+              - Details of the organization administrators of the certificate issuer.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -839,6 +832,10 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
+        account_id = kwargs.pop("account_id", None)
+        password = kwargs.pop("password", None)
+        organization_id = kwargs.pop("organization_id", None)
+        admin_details = kwargs.pop("admin_details", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -878,39 +875,34 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def update_issuer(
-        self,
-        name,  # type: str,
-        provider=None,  # type: Optional[str],
-        account_id=None,  # type: Optional[str]
-        password=None,  # type: Optional[str]
-        organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> CertificateIssuer
+    def update_issuer(self, name, **kwargs):
+        # type: (str, Any) -> CertificateIssuer
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
         This operation requires the certificates/setissuers permission.
 
         :param str name: The name of the issuer.
-        :param str provider: The issuer provider.
-        :param str account_id: The username / account name / account key.
-        :param str password: The password / secret / account key.
-        :param str organization_id: Id of the organization
-        :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
-        :param bool enabled: Determines whether the issuer is enabled.
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
             - *enabled (bool)* - Determines whether the object is enabled.
+            - *provider (str)* - The issuer provider.
+            - *account_id (str)* - The user name/account name/account id.
+            - *password (str)* - The password/secret/account key.
+            - *organization_id (str)* - Id of the organization.
+            - *admin_details (list[~azure.keyvault.certificates.models.AdministratorDetails])*
+              - Details of the organization administrators of the certificate issuer.
         """
 
         enabled = kwargs.pop("enabled", None)
+        provider = kwargs.pop("provider", None)
+        account_id = kwargs.pop("account_id", None)
+        password = kwargs.pop("password", None)
+        organization_id = kwargs.pop("organization_id", None)
+        admin_details = kwargs.pop("admin_details", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
