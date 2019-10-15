@@ -5,7 +5,8 @@
 **Breaking changes**
 
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `NoEncodePolicy` and `NoDecodePolicy` have been removed. Use `message_encode_policy=None` and `message_decode_policy=None`.
 
  **New features**
  
