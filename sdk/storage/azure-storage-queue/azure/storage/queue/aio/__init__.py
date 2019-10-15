@@ -4,27 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.storage.queue.version import VERSION
+from .._shared.policies_async import ExponentialRetry, LinearRetry
 from .queue_client_async import QueueClient
 from .queue_service_client_async import QueueServiceClient
 from .models import MessagesPaged, QueuePropertiesPaged
-from ..models import (
-    Logging, Metrics, RetentionPolicy, CorsRule, AccessPolicy,
-    QueueMessage, QueueSasPermissions, QueueProperties)
 
-__version__ = VERSION
 
 __all__ = [
+    'ExponentialRetry',
+    'LinearRetry',
     'QueueClient',
     'QueueServiceClient',
-    'Logging',
-    'Metrics',
-    'RetentionPolicy',
-    'CorsRule',
-    'AccessPolicy',
-    'QueueMessage',
     'MessagesPaged',
-    'QueueSasPermissions',
-    'QueueProperties',
     'QueuePropertiesPaged'
 ]

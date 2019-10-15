@@ -26,7 +26,7 @@ class TestQueueServiceSamples(AsyncQueueTestCase):
 
         # [START async_set_queue_service_properties]
         # Create service properties
-        from azure.storage.queue.aio import Logging, Metrics, CorsRule, RetentionPolicy
+        from azure.storage.queue import Logging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
         logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))

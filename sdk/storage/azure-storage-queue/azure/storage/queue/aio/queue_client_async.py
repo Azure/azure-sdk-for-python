@@ -29,20 +29,20 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.core.async_paging import AsyncItemPaged
 
-from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.storage.queue._shared.request_handlers import add_metadata_headers, serialize_iso
-from azure.storage.queue._shared.response_handlers import (
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized,
 )
-from azure.storage.queue._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from azure.storage.queue._generated.aio import AzureQueueStorage
-from azure.storage.queue._generated.models import StorageErrorException, SignedIdentifier
-from azure.storage.queue._generated.models import QueueMessage as GenQueueMessage
+from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from .._generated.aio import AzureQueueStorage
+from .._generated.models import StorageErrorException, SignedIdentifier
+from .._generated.models import QueueMessage as GenQueueMessage
 
-from azure.storage.queue.models import QueueMessage, AccessPolicy
-from azure.storage.queue.aio.models import MessagesPaged
+from ..models import QueueMessage, AccessPolicy
+from .models import MessagesPaged
 from .._shared.policies_async import ExponentialRetry
 from ..queue_client import QueueClient as QueueClientBase
 
@@ -50,7 +50,7 @@ from ..queue_client import QueueClient as QueueClientBase
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue.models import QueueSasPermissions, QueueProperties
+    from .models import QueueSasPermissions, QueueProperties
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):

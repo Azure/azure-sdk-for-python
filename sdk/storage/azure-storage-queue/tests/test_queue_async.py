@@ -23,14 +23,14 @@ from azure.core.exceptions import (
     ClientAuthenticationError)
 
 from azure.core.pipeline.transport import AioHttpTransport
-
-from azure.storage.queue.aio import QueueServiceClient, QueueClient
 from azure.storage.queue import (
     QueueSasPermissions,
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
 )
+from azure.storage.queue.aio import QueueServiceClient, QueueClient
+
 
 from asyncqueuetestcase import (
     AsyncQueueTestCase

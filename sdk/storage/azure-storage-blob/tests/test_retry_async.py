@@ -17,11 +17,11 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob import LocationMode
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LocationMode,
     LinearRetry,
     ExponentialRetry,
 )
