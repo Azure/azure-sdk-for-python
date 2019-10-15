@@ -263,7 +263,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
 
         certificate_client = vault_client.certificates
 
@@ -271,8 +271,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = certificate_client.create_contacts(contacts=contact_list)

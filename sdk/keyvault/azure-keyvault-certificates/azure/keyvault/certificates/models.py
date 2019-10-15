@@ -1037,7 +1037,7 @@ class CertificatePolicy(object):
         return self._attributes.recovery_level if self._attributes else None
 
 
-class Contact(object):
+class CertificateContact(object):
     """The contact information for the vault certificates.
 
     :param str email: Email address of a contact for the certificate.
@@ -1053,16 +1053,16 @@ class Contact(object):
 
     def __repr__(self):
         # type () -> str
-        return "Contact(email={}, name={}, phone={})".format(self.email, self.name, self.phone)[:1024]
+        return "CertificateContact(email={}, name={}, phone={})".format(self.email, self.name, self.phone)[:1024]
 
     def _to_certificate_contacts_item(self):
-        # type: (Contact) -> models.Contact
+        # type: (CertificateContact) -> models.Contact
         return models.Contact(email_address=self.email, name=self.name, phone=self.phone)
 
     @classmethod
     def _from_certificate_contacts_item(cls, contact_item):
-        # type: (models.Contact) -> Contact
-        """Construct a Contact from an autorest-generated ContactItem."""
+        # type: (models.Contact) -> CertificateContact
+        """Construct a CertificateContact from an autorest-generated ContactItem."""
         return cls(email=contact_item.email_address, name=contact_item.name, phone=contact_item.phone)
 
     @property

@@ -8,7 +8,7 @@ import itertools
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy
+from azure.keyvault.certificates import AdministratorDetails, CertificateContact, CertificatePolicy
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
@@ -335,8 +335,8 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         contact_list = [
-            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         # create certificate contacts

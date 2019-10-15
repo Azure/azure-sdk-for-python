@@ -18,7 +18,7 @@ from azure.keyvault.certificates.models import (
     CertificatePolicy,
     DeletedCertificate,
     CertificateProperties,
-    Contact,
+    CertificateContact,
     Issuer,
     IssuerProperties,
 )
@@ -568,7 +568,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> List[Contact]:
+    async def create_contacts(self, contacts: Iterable[CertificateContact], **kwargs: "**Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:
@@ -579,9 +579,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         operation requires the certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
-        :type contacts: list[~azure.keyvault.certificates.models.Contact]
+        :type contacts: list[~azure.keyvault.certificates.models.CertificateContact]
         :returns: The created list of contacts
-        :rtype: list[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -597,10 +597,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
             contact_list=[c._to_certificate_contacts_item() for c in contacts],
             **kwargs
         )
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
-    async def get_contacts(self, **kwargs: "**Any") -> List[Contact]:
+    async def get_contacts(self, **kwargs: "**Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:
@@ -612,7 +612,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: list[azure.keyvault.certificates.models.Contact]
+        :rtype: list[azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -624,10 +624,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         contacts = await self._client.get_certificate_contacts(vault_base_url=self._vault_endpoint, **kwargs)
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
-    async def delete_contacts(self, **kwargs: "**Any") -> List[Contact]:
+    async def delete_contacts(self, **kwargs: "**Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:
@@ -638,7 +638,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: list[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -650,7 +650,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         contacts = await self._client.delete_certificate_contacts(vault_base_url=self.vault_endpoint, **kwargs)
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
     async def get_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:

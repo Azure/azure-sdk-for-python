@@ -18,7 +18,7 @@ from .models import (
     DeletedCertificate,
     Issuer,
     IssuerProperties,
-    Contact,
+    CertificateContact,
     CertificateOperation,
 )
 from ._polling import CreateCertificatePoller
@@ -594,16 +594,16 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_contacts(self, contacts, **kwargs):
-        # type: (Iterable[Contact], **Any) -> List[Contact]
+        # type: (Iterable[CertificateContact], **Any) -> List[CertificateContact]
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
         operation requires the certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
-        :type contacts: list[~azure.keyvault.certificates.models.Contact]
+        :type contacts: list[~azure.keyvault.certificates.models.CertificateContact]
         :returns: The created list of contacts
-        :rtype: list[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -619,11 +619,11 @@ class CertificateClient(KeyVaultClientBase):
             contact_list=[c._to_certificate_contacts_item() for c in contacts],
             **kwargs
         )
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def get_contacts(self, **kwargs):
-        # type: (**Any) -> List[Contact]
+        # type: (**Any) -> List[CertificateContact]
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -631,7 +631,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: list[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -643,18 +643,18 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         contacts = self._client.get_certificate_contacts(vault_base_url=self._vault_endpoint, **kwargs)
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def delete_contacts(self, **kwargs):
-        # type: (**Any) -> List[Contact]
+        # type: (**Any) -> List[CertificateContact]
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: list[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -666,7 +666,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_endpoint, **kwargs)
-        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
+        return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def get_certificate_operation(self, name, **kwargs):
