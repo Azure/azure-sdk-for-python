@@ -365,7 +365,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: bytes
         """
@@ -378,7 +378,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :rtype: str
         """

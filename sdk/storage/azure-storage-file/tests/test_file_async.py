@@ -1798,7 +1798,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_client = await self._create_file()
         token = self.fsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
+            ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
