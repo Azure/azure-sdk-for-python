@@ -6,6 +6,8 @@
 
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- Now only the async clients `QueueServiceClient` and `QueueClient`can be imported 
+from the subnamespace `azure.storage.queue.aio`.
 
  **New features**
  
