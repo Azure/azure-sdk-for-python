@@ -311,30 +311,30 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :param str account_name:
-            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
-        :param str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :param str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :param str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :param str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :param str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
         :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key.
             When present, the SAS is signed with the user delegation key instead.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
+        :keyword str account_name:
+            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
+        :keyword str cache_control:
+            Response header value for Cache-Control when resource is accessed
+            using this shared access signature.
+        :keyword str content_disposition:
+            Response header value for Content-Disposition when resource is accessed
+            using this shared access signature.
+        :keyword str content_encoding:
+            Response header value for Content-Encoding when resource is accessed
+            using this shared access signature.
+        :keyword str content_language:
+            Response header value for Content-Language when resource is accessed
+            using this shared access signature.
+        :keyword str content_type:
+            Response header value for Content-Type when resource is accessed
+            using this shared access signature.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
@@ -492,21 +492,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
-        :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
-            If True, upload_blob will silently overwrite the existing data. If set to False, the
-            operation will fail with ResourceExistsError. The exception to the above is with Append
-            blob types. In this case, if data already exists, an error will not be raised and
-            the data will be appended to the existing blob. If you set overwrite=True, then the existing
-            blob will be deleted, and a new one created.
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.ContentSettings content_settings:
+        :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
+            If True, upload_blob will silently overwrite the existing data. If set to False, the
+            operation will fail with ResourceExistsError. The exception to the above is with Append
+            blob types. In this case, if data already exists, an error will not be raised and
+            the data will be appended to the existing blob. If you set overwrite=True, then the existing
+            blob will be deleted, and a new one created.
+        :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
@@ -515,55 +515,55 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param ~azure.storage.blob.LeaseClient lease:
+        :keyword ~azure.storage.blob.LeaseClient lease:
             If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID.
             Required if the blob has an active lease.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
+        :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
+        :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param int maxsize_condition:
+        :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
             to exceed that limit or if the blob size is already greater than the
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
@@ -645,7 +645,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
@@ -654,37 +654,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param lease:
+        :keyword lease:
             If specified, download_blob only succeeds if the blob's lease is active
             and matches this ID. Required if the blob has an active lease.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
@@ -757,32 +757,32 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -809,7 +809,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -833,37 +833,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.BlobProperties
 
@@ -941,32 +941,32 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
@@ -1015,37 +1015,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             replaces all existing metadata attached to the blob. To remove all
             metadata from the blob, call this operation with no metadata headers.
         :type metadata: dict(str, str)
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
         """
@@ -1129,49 +1129,49 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             to a 512-byte boundary.
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set properties on the blob.
-        :param int sequence_number:
-            Only for Page blobs. The sequence number is a user-controlled value that you can use to
-            track requests. The value of the sequence number must be between 0
-            and 2^63 - 1.The default value is 0.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param lease:
+        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
+        :keyword int sequence_number:
+            Only for Page blobs. The sequence number is a user-controlled value that you can use to
+            track requests. The value of the sequence number must be between 0
+            and 2^63 - 1.The default value is 0.
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
-            A page blob tier value to set the blob to. The tier correlates to the size of the
-            blob and number of allowed IOPS. This is only applicable to page blobs on
-            premium storage accounts.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
@@ -1239,37 +1239,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
@@ -1328,37 +1328,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
@@ -1473,31 +1473,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             pairs are specified, the destination blob is created with the specified
             metadata, and metadata is not copied from the source blob or file.
         :type metadata: dict(str, str)
-        :param ~datetime.datetime source_if_modified_since:
+        :param bool incremental_copy:
+            Copies the snapshot of the source page blob to a destination page blob.
+            The snapshot is copied such that only the differential changes between
+            the previously copied snapshot are transferred to the destination.
+            The copied snapshots are complete copies of the original snapshot and
+            can be read or copied from as usual. Defaults to False.
+        :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source
             blob has been modified since the specified date/time.
-        :param ~datetime.datetime source_if_unmodified_since:
+        :keyword ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source blob
             has not been modified since the specified date/time.
-        :param str source_if_match:
+        :keyword str source_if_match:
             An ETag value, or the wildcard character (*). Specify this conditional
             header to copy the source blob only if its ETag matches the value
             specified. If the ETag values do not match, the Blob service returns
             status code 412 (Precondition Failed). This header cannot be specified
             if the source is an Azure File.
-        :param str source_if_none_match:
+        :keyword str source_if_none_match:
             An ETag value, or the wildcard character (*). Specify this conditional
             header to copy the blob only if its ETag does not match the value
             specified. If the values are identical, the Blob service returns status
             code 412 (Precondition Failed). This header cannot be specified if the
             source is an Azure File.
-        :param ~datetime.datetime destination_if_modified_since:
+        :keyword ~datetime.datetime destination_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1505,7 +1511,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has been modified since the specified date/time.
             If the destination blob has not been modified, the Blob service returns
             status code 412 (Precondition Failed).
-        :param ~datetime.datetime destination_if_unmodified_since:
+        :keyword ~datetime.datetime destination_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1513,46 +1519,40 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has not been modified since the specified
             date/time. If the destination blob has been modified, the Blob service
             returns status code 412 (Precondition Failed).
-        :param str destination_if_match:
+        :keyword str destination_if_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for
             this conditional header to copy the blob only if the specified ETag value
             matches the ETag value for an existing destination blob. If the ETag for
             the destination blob does not match the ETag specified for If-Match, the
             Blob service returns status code 412 (Precondition Failed).
-        :param str destination_if_none_match:
+        :keyword str destination_if_none_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for
             this conditional header to copy the blob only if the specified ETag value
             does not match the ETag value for the destination blob. Specify the wildcard
             character (*) to perform the operation only if the destination blob does not
             exist. If the specified condition isn't met, the Blob service returns status
             code 412 (Precondition Failed).
-        :param destination_lease:
+        :keyword destination_lease:
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
         :type destination_lease: ~azure.storage.blob.LeaseClient or str
-        :param source_lease:
+        :keyword source_lease:
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
         :type source_lease: ~azure.storage.blob.LeaseClient or str
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param bool incremental_copy:
-            Copies the snapshot of the source page blob to a destination page blob.
-            The snapshot is copied such that only the differential changes between
-            the previously copied snapshot are transferred to the destination.
-            The copied snapshots are complete copies of the original snapshot and
-            can be read or copied from as usual. Defaults to False.
-        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
+        :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
+        :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
+        :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :param bool requires_sync:
+        :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, str or ~datetime.datetime]
@@ -1641,28 +1641,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Proposed lease ID, in a GUID string format. The Blob Service
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
         :rtype: ~azure.storage.blob.LeaseClient
@@ -1696,11 +1696,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
-        :param ~azure.storage.blob.RehydratePriority rehydrate_priority:
+        :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
@@ -1776,7 +1776,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
              the block_id parameter must be the same size for each block.
         :param data: The blob data.
         :param int length: Size of the block.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
@@ -1785,18 +1785,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
@@ -1875,16 +1875,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param bytearray source_content_md5:
             Specify the md5 calculated for the range of
             bytes that must be read from the copy source.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
@@ -1920,11 +1920,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Specifies whether to return the list of committed
             blocks, the list of uncommitted blocks, or both lists together.
             Possible values include: 'committed', 'uncommitted', 'all'
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
@@ -2018,7 +2018,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param list block_list:
             List of Blockblobs.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
@@ -2027,29 +2027,29 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
@@ -2063,7 +2063,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -2088,7 +2088,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
@@ -2178,28 +2178,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
@@ -2256,28 +2256,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -2331,32 +2331,32 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
+        :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -2442,43 +2442,43 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param int if_sequence_number_lte:
+        :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_lt:
+        :keyword int if_sequence_number_lt:
             If the blob's sequence number is less than the specified
             value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_eq:
+        :keyword int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
             header to write the page only if the blob's ETag value matches the
             value specified. If the values do not match, the Blob service fails.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
@@ -2490,7 +2490,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -2600,22 +2600,22 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The service will read the same number of bytes as the destination range (length-offset).
         :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
-        :param ~datetime.datetime source_if_modified_since:
+        :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param ~datetime.datetime source_if_unmodified_since:
+        :keyword ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the source resource has not been modified since the specified date/time.
-        :param str source_if_match:
+        :keyword str source_if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the source resource's ETag matches the value specified.
-        :param str source_if_none_match:
+        :keyword str source_if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the source resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
@@ -2623,42 +2623,42 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param str lease:
             Required if the blob has an active lease.
-        :param int if_sequence_number_lte:
+        :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_lt:
+        :keyword int if_sequence_number_lt:
             If the blob's sequence number is less than the specified
             value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_eq:
+        :keyword int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         """
 
@@ -2732,46 +2732,46 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param int if_sequence_number_lte:
+        :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_lt:
+        :keyword int if_sequence_number_lt:
             If the blob's sequence number is less than the specified
             value, the request proceeds; otherwise it fails.
-        :param int if_sequence_number_eq:
+        :keyword int if_sequence_number_eq:
             If the blob's sequence number is equal to the specified
             value, the request proceeds; otherwise it fails.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
             header to write the page only if the blob's ETag value matches the
             value specified. If the values do not match, the Blob service fails.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -2852,58 +2852,58 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Content of the block.
         :param int length:
             Size of the block in bytes.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param int maxsize_condition:
+        :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
             to exceed that limit or if the blob size is already greater than the
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :param int appendpos_condition:
+        :keyword int appendpos_condition:
             Optional conditional header, used only for the Append Block operation.
             A number indicating the byte offset to compare. Append Block will
             succeed only if the append position is equal to this number. If it
             is not, the request will fail with the AppendPositionConditionNotMet error
             (HTTP status code 412 - Precondition Failed).
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
@@ -3000,72 +3000,72 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
         :param int source_length:
             This indicates the end of the range of bytes that has to be taken from the copy source.
-        :param bytearray source_content_md5:
+        :keyword bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
-        :param int maxsize_condition:
+        :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
             to exceed that limit or if the blob size is already greater than the
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :param int appendpos_condition:
+        :keyword int appendpos_condition:
             Optional conditional header, used only for the Append Block operation.
             A number indicating the byte offset to compare. Append Block will
             succeed only if the append position is equal to this number. If it
             is not, the request will fail with the
             AppendPositionConditionNotMet error
             (HTTP status code 412 - Precondition Failed).
-        :param ~azure.storage.blob.LeaseClient or str lease:
+        :keyword ~azure.storage.blob.LeaseClient or str lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~datetime.datetime source_if_modified_since:
+        :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the source resource has been modified since the specified time.
-        :param ~datetime.datetime source_if_unmodified_since:
+        :keyword ~datetime.datetime source_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the source resource has not been modified since the specified date/time.
-        :param str source_if_match:
+        :keyword str source_if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the source resource's ETag matches the value specified.
-        :param str source_if_none_match:
+        :keyword str source_if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the source resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the source resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :param int timeout:
+        :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
