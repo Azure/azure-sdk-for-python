@@ -107,10 +107,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account. The method `from_file_url` must be used
-        in order to use the full File URL.
-    :param share_name: The share for the file. If specified, this value will override
-        a share value specified in the file URL.
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        file, use the from_file_url classmethod.
+    :param share_name:
+        The name of the share for the file.
     :type share_name: str
     :param str file_path:
         The file path to the file with which to interact. If specified, this value will override

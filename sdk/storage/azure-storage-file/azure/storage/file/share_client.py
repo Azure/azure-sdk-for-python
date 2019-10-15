@@ -61,10 +61,11 @@ class ShareClient(StorageAccountHostsMixin):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account. The `from_share_url` method must be used
-    if you want to use the complete share URL.
-    :param share_name: The share with which to interact. If specified, this value will override
-        a share value specified in the share URL.
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the share,
+        use the from_share_url classmethod.
+    :param share_name:
+        The name of the share with which to interact.
     :type share_name: str
     :param str snapshot:
         An optional share snapshot on which to operate.
@@ -122,9 +123,6 @@ class ShareClient(StorageAccountHostsMixin):
         # type: (...) -> ShareClient
         """
         :param str share_url: The full URI to the share.
-        :param share: The share with which to interact. If specified, this value will override
-            a share value specified in the share URL.
-        :type share: str or ~azure.storage.file.ShareProperties
         :param str snapshot:
             An optional share snapshot on which to operate.
         :param credential:

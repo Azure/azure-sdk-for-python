@@ -60,10 +60,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The URI to the account. The method `from_directory_url` must be used in order to
-        use the full URI to the directory.
-    :param share_name: The share for the directory. If specified, this value will override
-        a share value specified in the directory URL.
+        The URI to the storage account. In order to create a client given the full URI to the
+        directory, use the from_directory_url classmethod.
+    :param share_name:
+        The name of the share for the directory.
     :type share_name: str
     :param str directory_path:
         The directory path for the directory with which to interact.
