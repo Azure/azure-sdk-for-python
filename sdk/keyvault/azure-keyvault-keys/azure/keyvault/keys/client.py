@@ -432,7 +432,7 @@ class KeyClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_key(self, backup, **kwargs):
+    def restore_key_backup(self, backup, **kwargs):
         # type: (bytes, **Any) -> Key
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
@@ -449,8 +449,8 @@ class KeyClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
-                :start-after: [START restore_key]
-                :end-before: [END restore_key]
+                :start-after: [START restore_key_backup]
+                :end-before: [END restore_key_backup]
                 :language: python
                 :caption: Restore a key backup
                 :dedent: 8

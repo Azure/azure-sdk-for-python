@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (delete_key)
 #
-# 4. Restore a key (restore_key)
+# 4. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a key client that will be used to call the service.

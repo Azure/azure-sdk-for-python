@@ -241,7 +241,7 @@ class SecretClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_secret(self, backup, **kwargs):
+    def restore_secret_backup(self, backup, **kwargs):
         # type: (bytes, **Any) -> SecretProperties
         """Restore a backed up secret. Requires the secrets/restore permission.
 
@@ -254,8 +254,8 @@ class SecretClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
-                :start-after: [START restore_secret]
-                :end-before: [END restore_secret]
+                :start-after: [START restore_secret_backup]
+                :end-before: [END restore_secret_backup]
                 :language: python
                 :caption: Restore a backed up secret
                 :dedent: 8

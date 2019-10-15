@@ -157,14 +157,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_secret]
         deleted_secret = secret_client.delete_secret("secret-name")
-        # [START restore_secret]
+        # [START restore_secret_backup]
 
         # restores a backed up secret
-        restored_secret = secret_client.restore_secret(secret_backup)
+        restored_secret = secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
 
-        # [END restore_secret]
+        # [END restore_secret_backup]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
