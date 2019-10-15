@@ -3328,6 +3328,9 @@ class OSProfile(Model):
      should be allowed on the virtual machine. <br><br>This may only be set to
      False when no extensions are present on the virtual machine.
     :type allow_extension_operations: bool
+    :param require_guest_provision_signal: Specifies whether the guest
+     provision signal is required from the virtual machine.
+    :type require_guest_provision_signal: bool
     """
 
     _attribute_map = {
@@ -3339,9 +3342,10 @@ class OSProfile(Model):
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
         'allow_extension_operations': {'key': 'allowExtensionOperations', 'type': 'bool'},
+        'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
     }
 
-    def __init__(self, *, computer_name: str=None, admin_username: str=None, admin_password: str=None, custom_data: str=None, windows_configuration=None, linux_configuration=None, secrets=None, allow_extension_operations: bool=None, **kwargs) -> None:
+    def __init__(self, *, computer_name: str=None, admin_username: str=None, admin_password: str=None, custom_data: str=None, windows_configuration=None, linux_configuration=None, secrets=None, allow_extension_operations: bool=None, require_guest_provision_signal: bool=None, **kwargs) -> None:
         super(OSProfile, self).__init__(**kwargs)
         self.computer_name = computer_name
         self.admin_username = admin_username
@@ -3351,6 +3355,7 @@ class OSProfile(Model):
         self.linux_configuration = linux_configuration
         self.secrets = secrets
         self.allow_extension_operations = allow_extension_operations
+        self.require_guest_provision_signal = require_guest_provision_signal
 
 
 class Plan(Model):
@@ -6998,6 +7003,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
 class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """Describes a virtual machine scale set network profile.
 
+    :param health_probe: A reference to a load balancer probe used to
+     determine the health of an instance in the virtual machine scale set. The
+     reference will be in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+    :type health_probe:
+     ~azure.mgmt.compute.v2019_03_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
@@ -7005,11 +7016,13 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """
 
     _attribute_map = {
+        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
     }
 
-    def __init__(self, *, network_interface_configurations=None, **kwargs) -> None:
+    def __init__(self, *, health_probe=None, network_interface_configurations=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
+        self.health_probe = health_probe
         self.network_interface_configurations = network_interface_configurations
 
 

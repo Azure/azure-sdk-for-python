@@ -3328,6 +3328,9 @@ class OSProfile(Model):
      should be allowed on the virtual machine. <br><br>This may only be set to
      False when no extensions are present on the virtual machine.
     :type allow_extension_operations: bool
+    :param require_guest_provision_signal: Specifies whether the guest
+     provision signal is required from the virtual machine.
+    :type require_guest_provision_signal: bool
     """
 
     _attribute_map = {
@@ -3339,6 +3342,7 @@ class OSProfile(Model):
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
         'allow_extension_operations': {'key': 'allowExtensionOperations', 'type': 'bool'},
+        'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3351,6 +3355,7 @@ class OSProfile(Model):
         self.linux_configuration = kwargs.get('linux_configuration', None)
         self.secrets = kwargs.get('secrets', None)
         self.allow_extension_operations = kwargs.get('allow_extension_operations', None)
+        self.require_guest_provision_signal = kwargs.get('require_guest_provision_signal', None)
 
 
 class Plan(Model):
@@ -6998,6 +7003,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
 class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """Describes a virtual machine scale set network profile.
 
+    :param health_probe: A reference to a load balancer probe used to
+     determine the health of an instance in the virtual machine scale set. The
+     reference will be in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+    :type health_probe:
+     ~azure.mgmt.compute.v2019_03_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
@@ -7005,11 +7016,13 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """
 
     _attribute_map = {
+        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
+        self.health_probe = kwargs.get('health_probe', None)
         self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
 
 
