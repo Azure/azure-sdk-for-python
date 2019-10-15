@@ -745,9 +745,7 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
         """
-        metadata = kwargs.pop('metadata', None)
-        timeout = kwargs.pop('timeout', None)
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
-        directory.create_directory(metadata=metadata, timeout=timeout, **kwargs)
+        directory.create_directory(**kwargs)
         return directory # type: ignore

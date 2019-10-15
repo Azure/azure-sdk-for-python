@@ -518,22 +518,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Upload a file to a directory.
         """
-        metadata = kwargs.pop('metadata', None)
-        content_settings = kwargs.pop('content_settings', None)
-        validate_content = kwargs.pop('validate_content', False)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
         file_client = self.get_file_client(file_name)
         await file_client.upload_file(
             data,
             length=length,
-            metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            max_concurrency=max_concurrency,
-            timeout=timeout,
-            encoding=encoding,
             **kwargs)
         return file_client # type: ignore
 
@@ -561,6 +549,5 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Delete a file in a directory.
         """
-        timeout = kwargs.pop('timeout', None)
         file_client = self.get_file_client(file_name)
-        await file_client.delete_file(timeout=timeout, **kwargs)
+        await file_client.delete_file(**kwargs)
