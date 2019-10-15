@@ -328,6 +328,8 @@ class FileClient(StorageAccountHostsMixin):
         :keyword str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
@@ -337,6 +339,7 @@ class FileClient(StorageAccountHostsMixin):
         content_encoding = kwargs.pop('content_encoding', None)
         content_language = kwargs.pop('content_language', None)
         content_type = kwargs.pop('content_type', None)
+
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
         sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
