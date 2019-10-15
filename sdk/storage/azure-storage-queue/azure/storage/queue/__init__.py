@@ -7,7 +7,7 @@
 from .version import VERSION
 from .queue_client import QueueClient
 from .queue_service_client import QueueServiceClient
-from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
+from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -44,7 +44,6 @@ __all__ = [
     'QueueServiceClient',
     'ExponentialRetry',
     'LinearRetry',
-    'NoRetry',
     'LocationMode',
     'ResourceTypes',
     'AccountSasPermissions',

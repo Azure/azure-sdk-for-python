@@ -63,7 +63,7 @@ async def _upload_file_helper(
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
-            file_permission_key=file_permission_key,
+            permission_key=file_permission_key,
             timeout=timeout,
             **kwargs
         )
@@ -151,7 +151,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
         file_permission=None,  # type: Optional[str]
-        file_permission_key=None,  # type: Optional[str]
+        permission_key=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
@@ -188,10 +188,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             input, it must have owner, group and dacl. Note: Only one of the
             x-ms-file-permission or x-ms-file-permission-key should be specified.
         :type file_permission: str
-        :param file_permission_key: Key of the permission to be set for the
+        :param permission_key: Key of the permission to be set for the
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
-        :type file_permission_key: str
+        :type permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -219,7 +219,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition,
             )
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
+        file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         try:
             return await self._client.file.create(  # type: ignore
                 file_content_length=size,
@@ -228,7 +228,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 headers=headers,
                 timeout=timeout,
@@ -250,7 +250,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         file_creation_time="now",  # type: Union[str, datetime]
         file_last_write_time="now",  # type: Union[str, datetime]
         file_permission=None,  # type: Optional[str]
-        file_permission_key=None,  # type: Optional[str]
+        permission_key=None,  # type: Optional[str]
         encoding="UTF-8",  # type: str
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
@@ -299,10 +299,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             input, it must have owner, group and dacl. Note: Only one of the
             x-ms-file-permission or x-ms-file-permission-key should be specified.
         :type file_permission: str
-        :param file_permission_key: Key of the permission to be set for the
+        :param permission_key: Key of the permission to be set for the
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
-        :type file_permission_key: str
+        :type permission_key: str
 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -348,7 +348,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
-            file_permission_key=file_permission_key,
+            file_permission_key=permission_key,
             **kwargs
         )
 
@@ -535,7 +535,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                                file_creation_time="preserve",  # type: Union[str, datetime]
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
-                               file_permission_key=None,  # type: Optional[str]
+                               permission_key=None,  # type: Optional[str]
                                timeout=None,  # type: Optional[int]
                                **kwargs  # Any
                                ):  # type: ignore
@@ -564,10 +564,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             input, it must have owner, group and dacl. Note: Only one of the
             x-ms-file-permission or x-ms-file-permission-key should be specified.
         :type file_permission: str
-        :param file_permission_key: Key of the permission to be set for the
+        :param permission_key: Key of the permission to be set for the
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
-        :type file_permission_key: str
+        :type permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -580,7 +580,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition,
         )
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
             return await self._client.file.set_http_headers(  # type: ignore
                 file_content_length=file_content_length,
@@ -589,7 +589,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs
@@ -876,11 +876,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -888,8 +885,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :type handle: str or ~azure.storage.file.Handle
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         try:
             handle_id = handle.id  # type: ignore
@@ -909,4 +906,4 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(command, start_close, None, polling_method)
+        return await async_poller(command, start_close, None, polling_method)

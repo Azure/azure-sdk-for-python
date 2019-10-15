@@ -2,118 +2,70 @@ interactions:
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 16:16:38 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 15 Oct 2019 16:09:14 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      content-length:
-      - '0'
-      date:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      etag:
-      - '"0x8D74D9D3B4C9F33"'
-      last-modified:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 201
-      message: Created
+      content-length: ['0']
+      date: ['Tue, 15 Oct 2019 16:09:15 GMT']
+      etag: ['"0x8D7518A070D5791"']
+      last-modified: ['Tue, 15 Oct 2019 16:09:16 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-version: ['2019-02-02']
+    status: {code: 201, message: Created}
 - request:
-    body: null
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-15T16:09:16Z</Start><Expiry>2019-10-15T17:09:16Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['257']
+      Content-Type: [application/xml; charset=utf-8]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 15 Oct 2019 16:09:16 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container&comp=acl
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      content-length:
-      - '0'
-      date:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      etag:
-      - '"0x8D74D9D3B592441"'
-      last-modified:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
+      content-length: ['0']
+      date: ['Tue, 15 Oct 2019 16:09:15 GMT']
+      etag: ['"0x8D7518A0720D3A2"']
+      last-modified: ['Tue, 15 Oct 2019 16:09:16 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-version: ['2019-02-02']
+    status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: [application/xml]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 15 Oct 2019 16:09:16 GMT']
+      x-ms-version: ['2019-02-02']
     method: GET
     uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container&comp=acl
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
-        />"
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-15T16:09:16.0000000Z</Start><Expiry>2019-10-15T17:09:16.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"}
     headers:
-      content-type:
-      - application/xml
-      date:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      etag:
-      - '"0x8D74D9D3B592441"'
-      last-modified:
-      - Thu, 10 Oct 2019 16:16:39 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
+      content-type: [application/xml]
+      date: ['Tue, 15 Oct 2019 16:09:15 GMT']
+      etag: ['"0x8D7518A0720D3A2"']
+      last-modified: ['Tue, 15 Oct 2019 16:09:16 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+      x-ms-version: ['2019-02-02']
+    status: {code: 200, message: OK}
 version: 1

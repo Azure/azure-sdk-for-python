@@ -265,11 +265,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -280,8 +277,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             its files, its subdirectories and their files. Default value is False.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
         try:
             handle_id = handle.id # type: ignore
@@ -301,7 +298,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(
+        return await async_poller(
             command,
             start_close,
             None,
@@ -361,7 +358,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                                file_creation_time="preserve",  # type: Union[str, datetime]
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
-                               file_permission_key=None,  # type: Optional[str]
+                               permission_key=None,  # type: Optional[str]
                                timeout=None,  # type: Optional[int]
                                **kwargs):  # type: ignore
         # type: (...) -> Dict[str, Any]
@@ -387,21 +384,21 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             input, it must have owner, group and dacl. Note: Only one of the
             x-ms-file-permission or x-ms-file-permission-key should be specified.
         :type file_permission: str
-        :param file_permission_key: Key of the permission to be set for the
+        :param permission_key: Key of the permission to be set for the
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
-        :type file_permission_key: str
+        :type permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
             return await self._client.directory.set_properties(  # type: ignore
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)

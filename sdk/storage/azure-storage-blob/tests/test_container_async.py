@@ -260,7 +260,11 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
     async def test_list_containers_with_public_access(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
-        resp = await container.set_container_access_policy(public_access=PublicAccess.Blob)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        resp = await container.set_container_access_policy(signed_identifier, public_access=PublicAccess.Blob)
 
         # Act
         containers = []
@@ -469,7 +473,11 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        response = await container.set_container_access_policy()
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        response = await container.set_container_access_policy(signed_identifier)
 
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
@@ -477,7 +485,7 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         # Assert
         acl = await container.get_container_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        self.assertEqual(len(acl.get('signed_identifiers')), 1)
         self.assertIsNone(acl.get('public_access'))
 
     @ResourceGroupPreparer()
@@ -509,7 +517,11 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_access_policy(lease=lease_id)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifier, lease=lease_id)
 
         # Assert
         acl = await container.get_container_access_policy()
@@ -524,7 +536,11 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        await container.set_container_access_policy(public_access='container')
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifier, public_access='container')
 
         # Assert
         acl = await container.get_container_access_policy()

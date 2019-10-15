@@ -118,7 +118,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
         from azure.storage.blob import ResourceTypes, AccountSasPermissions
 
         sas_token = blob_service_client.generate_shared_access_signature(
-            resource_types=ResourceTypes.OBJECT,
+            resource_types=ResourceTypes(object=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )

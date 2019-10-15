@@ -391,8 +391,8 @@ class QueueClient(StorageAccountHostsMixin):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_queue_access_policy(self, signed_identifiers=None, timeout=None, **kwargs):
-        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], Optional[Any]) -> None
+    def set_queue_access_policy(self, signed_identifiers, timeout=None, **kwargs):
+        # type: (Dict[str, AccessPolicy], Optional[int], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -424,18 +424,17 @@ class QueueClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Set an access policy on the queue.
         """
-        if signed_identifiers:
-            if len(signed_identifiers) > 15:
-                raise ValueError(
-                    'Too many access policies provided. The server does not support setting '
-                    'more than 15 access policies on a single resource.')
-            identifiers = []
-            for key, value in signed_identifiers.items():
-                if value:
-                    value.start = serialize_iso(value.start)
-                    value.expiry = serialize_iso(value.expiry)
-                identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers # type: ignore
+        if len(signed_identifiers) > 15:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 15 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers # type: ignore
         try:
             self._client.queue.set_access_policy(
                 queue_acl=signed_identifiers or None,

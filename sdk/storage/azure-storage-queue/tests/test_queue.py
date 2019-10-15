@@ -542,7 +542,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         queue_client.enqueue_message(u'message1')
         token = qsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
+            ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
@@ -806,7 +806,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
 
         # Act
-        resp = queue_client.set_queue_access_policy()
+        resp = queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         self.assertIsNone(resp)
@@ -898,7 +898,7 @@ class StorageQueueTest(QueueTestCase):
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
-            queue_client.set_queue_access_policy()
+            queue_client.set_queue_access_policy(signed_identifiers=dict())
 
             # Assert
 

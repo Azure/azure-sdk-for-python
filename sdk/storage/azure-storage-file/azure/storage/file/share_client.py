@@ -536,8 +536,8 @@ class ShareClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], **Any) -> Dict[str, str]
+    def set_share_access_policy(self, signed_identifiers, timeout=None, **kwargs): # type: ignore
+        # type: (Dict[str, AccessPolicy], Optional[int], **Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether files in a share may be accessed publicly.
@@ -552,19 +552,17 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if signed_identifiers:
-            if len(signed_identifiers) > 5:
-                raise ValueError(
-                    'Too many access policies provided. The server does not support setting '
-                    'more than 5 access policies on a single resource.')
-            identifiers = []
-            for key, value in signed_identifiers.items():
-                if value:
-                    value.start = serialize_iso(value.start)
-                    value.expiry = serialize_iso(value.expiry)
-                identifiers.append(SignedIdentifier(id=key, access_policy=value))
-            signed_identifiers = identifiers # type: ignore
-
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
+        identifiers = []
+        for key, value in signed_identifiers.items():
+            if value:
+                value.start = serialize_iso(value.start)
+                value.expiry = serialize_iso(value.expiry)
+            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers # type: ignore
         try:
             return self._client.share.set_access_policy( # type: ignore
                 share_acl=signed_identifiers or None,
@@ -671,7 +669,7 @@ class ShareClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_permission_for_share(  # type: ignore
-            self, file_permission_key,  # type: str
+            self, permission_key,  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
@@ -680,7 +678,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         This 'permission' can be used for the files/directories in the share.
 
-        :param str file_permission_key:
+        :param str permission_key:
             Key of the file permission to retrieve
         :param int timeout:
             The timeout parameter is expressed in seconds.
@@ -689,7 +687,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         try:
             return self._client.share.get_permission(  # type: ignore
-                file_permission_key=file_permission_key,
+                file_permission_key=permission_key,
                 cls=deserialize_permission,
                 timeout=timeout,
                 **kwargs)

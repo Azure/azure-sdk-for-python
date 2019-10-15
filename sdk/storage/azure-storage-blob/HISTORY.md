@@ -1,5 +1,15 @@
 # Change Log azure-storage-blob
 
+## Version 12.0.0:
+
+**Breaking changes**
+
+- `set_container_access_policy` has required parameter `signed_identifiers`.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+
+**New features**
+
+- `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 ## Version 12.0.0b4:
 
@@ -37,6 +47,8 @@ changed include:
 - Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
 - Added support to set rehydrate blob priority for Block Blob, including Set Standard Blob Tier/Copy Blob APIs
 - Added blob tier support for Block Blob, including Upload Blob/Commit Block List/Copy Blob APIs.
+- `AccountSasPermissions`, `BlobSasPermissions`, `ContainerSasPermissions` now have method `from_string` 
+which takes parameters as a string.
 
 **Fixes and improvements**
 - Downloading page blobs now take advantage of their sparseness.
