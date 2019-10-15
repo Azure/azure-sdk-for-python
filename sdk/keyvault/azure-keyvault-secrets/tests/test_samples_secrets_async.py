@@ -165,14 +165,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
         )
 
-        # [START restore_secret]
+        # [START restore_secret_backup]
 
         # restores a backed up secret
-        restored_secret = await secret_client.restore_secret(secret_backup)
+        restored_secret = await secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
 
-        # [END restore_secret]
+        # [END restore_secret_backup]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)

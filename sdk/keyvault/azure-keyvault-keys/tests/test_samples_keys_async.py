@@ -187,15 +187,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         await key_client.delete_key(key_name)
 
-        # [START restore_key]
+        # [START restore_key_backup]
 
         # restores a backup
-        restored_key = await key_client.restore_key(key_backup)
+        restored_key = await key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.name)
         print(restored_key.properties.version)
 
-        # [END restore_key]
+        # [END restore_key_backup]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)

@@ -217,7 +217,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_secret(self, backup: bytes, **kwargs: "**Any") -> SecretProperties:
+    async def restore_secret_backup(self, backup: bytes, **kwargs: "Any") -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
@@ -229,8 +229,8 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
-                :start-after: [START restore_secret]
-                :end-before: [END restore_secret]
+                :start-after: [START restore_secret_backup]
+                :end-before: [END restore_secret_backup]
                 :language: python
                 :caption: Restore a backed up secret
                 :dedent: 8

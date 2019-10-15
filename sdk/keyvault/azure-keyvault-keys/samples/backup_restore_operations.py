@@ -25,7 +25,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (delete_key)
 #
-# 4. Restore a key (restore_key)
+# 4. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a key client that will be used to call the service.
@@ -54,7 +54,7 @@ try:
 
     # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the key using the backed up key bytes")
-    key = client.restore_key(key_backup)
+    key = client.restore_key_backup(key_backup)
     print("Restored Key with name '{0}'".format(key.name))
 
 except HttpResponseError as e:

@@ -222,7 +222,7 @@ class SecretClientTests(KeyVaultTestCase):
         client.delete_secret(created_bundle.name)
 
         # restore secret
-        restored = client.restore_secret(secret_backup)
+        restored = client.restore_secret_backup(secret_backup)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
     @ResourceGroupPreparer()
