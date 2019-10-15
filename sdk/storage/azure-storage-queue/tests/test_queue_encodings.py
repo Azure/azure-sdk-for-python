@@ -194,8 +194,8 @@ class StorageQueueEncodingTest(QueueTestCase):
     def test_message_no_encoding(self):
         # Arrange
         queue = QueueClient(
-            queue_url="https://account.blob.core.windows.net",
-            queue="queue",
+            account_url="https://account.blob.core.windows.net",
+            queue_name="queue",
             credential="account_key",
             message_encode_policy=None,
             message_decode_policy=None)
