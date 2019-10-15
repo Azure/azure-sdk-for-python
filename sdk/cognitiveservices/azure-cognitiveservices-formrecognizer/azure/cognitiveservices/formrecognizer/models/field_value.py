@@ -40,7 +40,7 @@ class FieldValue(Model):
     :param value_object: Dictionary of named field values.
     :type value_object: dict[str,
      ~azure.cognitiveservices.formrecognizer.models.FieldValue]
-    :param text: Required. Text content of the extracted field.
+    :param text: Text content of the extracted field.
     :type text: str
     :param bounding_box: Bounding box of the field value, if appropriate.
     :type bounding_box: list[float]
@@ -49,12 +49,14 @@ class FieldValue(Model):
     :param elements: When includeTextDetails is set to true, a list of
      references to the text elements constituting this field.
     :type elements: list[str]
+    :param page: The 1-based page number in the input document.
+    :type page: int
     """
 
     _validation = {
         'type': {'required': True},
-        'text': {'required': True},
         'confidence': {'required': True},
+        'page': {'minimum': 1},
     }
 
     _attribute_map = {
@@ -71,6 +73,7 @@ class FieldValue(Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
         'elements': {'key': 'elements', 'type': '[str]'},
+        'page': {'key': 'page', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -88,3 +91,4 @@ class FieldValue(Model):
         self.bounding_box = kwargs.get('bounding_box', None)
         self.confidence = kwargs.get('confidence', None)
         self.elements = kwargs.get('elements', None)
+        self.page = kwargs.get('page', None)

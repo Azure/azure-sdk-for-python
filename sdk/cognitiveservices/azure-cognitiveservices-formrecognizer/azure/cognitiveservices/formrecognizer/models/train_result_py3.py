@@ -20,10 +20,13 @@ class TrainResult(Model):
     :param training_documents: Required. List of the documents used to train
      the model and any errors reported in each document.
     :type training_documents:
-     list[~azure.cognitiveservices.formrecognizer.models.FormDocumentReport]
-    :param training_fields: List of trained fields.
-    :type training_fields:
-     ~azure.cognitiveservices.formrecognizer.models.TrainingFields
+     list[~azure.cognitiveservices.formrecognizer.models.TrainingDocumentInfo]
+    :param fields: List of fields used to train the model and the train
+     operation error reported by each.
+    :type fields:
+     list[~azure.cognitiveservices.formrecognizer.models.FormFieldsReport]
+    :param average_model_accuracy: Average accuracy.
+    :type average_model_accuracy: float
     :param errors: Errors returned during the training operation.
     :type errors:
      list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
@@ -34,13 +37,15 @@ class TrainResult(Model):
     }
 
     _attribute_map = {
-        'training_documents': {'key': 'trainingDocuments', 'type': '[FormDocumentReport]'},
-        'training_fields': {'key': 'trainingFields', 'type': 'TrainingFields'},
+        'training_documents': {'key': 'trainingDocuments', 'type': '[TrainingDocumentInfo]'},
+        'fields': {'key': 'fields', 'type': '[FormFieldsReport]'},
+        'average_model_accuracy': {'key': 'averageModelAccuracy', 'type': 'float'},
         'errors': {'key': 'errors', 'type': '[FormOperationError]'},
     }
 
-    def __init__(self, *, training_documents, training_fields=None, errors=None, **kwargs) -> None:
+    def __init__(self, *, training_documents, fields=None, average_model_accuracy: float=None, errors=None, **kwargs) -> None:
         super(TrainResult, self).__init__(**kwargs)
         self.training_documents = training_documents
-        self.training_fields = training_fields
+        self.fields = fields
+        self.average_model_accuracy = average_model_accuracy
         self.errors = errors

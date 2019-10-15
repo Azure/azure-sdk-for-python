@@ -23,8 +23,8 @@ class TrainRequest(Model):
      for training.
     :type source_filter:
      ~azure.cognitiveservices.formrecognizer.models.TrainSourceFilter
-    :param use_label_file: Specify if label file should be used for training.
-     Default value: False .
+    :param use_label_file: Use label file for training a model. Default value:
+     False .
     :type use_label_file: bool
     """
 

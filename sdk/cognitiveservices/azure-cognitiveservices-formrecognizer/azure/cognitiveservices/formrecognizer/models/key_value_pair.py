@@ -17,6 +17,8 @@ class KeyValuePair(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param label: A user defined label for the key/value pair entry.
+    :type label: str
     :param key: Required. Information about the extracted key in a key-value
      pair.
     :type key: ~azure.cognitiveservices.formrecognizer.models.KeyValueElement
@@ -35,6 +37,7 @@ class KeyValuePair(Model):
     }
 
     _attribute_map = {
+        'label': {'key': 'label', 'type': 'str'},
         'key': {'key': 'key', 'type': 'KeyValueElement'},
         'value': {'key': 'value', 'type': 'KeyValueElement'},
         'confidence': {'key': 'confidence', 'type': 'float'},
@@ -42,6 +45,7 @@ class KeyValuePair(Model):
 
     def __init__(self, **kwargs):
         super(KeyValuePair, self).__init__(**kwargs)
+        self.label = kwargs.get('label', None)
         self.key = kwargs.get('key', None)
         self.value = kwargs.get('value', None)
         self.confidence = kwargs.get('confidence', None)

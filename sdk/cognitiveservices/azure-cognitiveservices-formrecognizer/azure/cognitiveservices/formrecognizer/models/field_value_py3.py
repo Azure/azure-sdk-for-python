@@ -40,7 +40,7 @@ class FieldValue(Model):
     :param value_object: Dictionary of named field values.
     :type value_object: dict[str,
      ~azure.cognitiveservices.formrecognizer.models.FieldValue]
-    :param text: Required. Text content of the extracted field.
+    :param text: Text content of the extracted field.
     :type text: str
     :param bounding_box: Bounding box of the field value, if appropriate.
     :type bounding_box: list[float]
@@ -49,12 +49,14 @@ class FieldValue(Model):
     :param elements: When includeTextDetails is set to true, a list of
      references to the text elements constituting this field.
     :type elements: list[str]
+    :param page: The 1-based page number in the input document.
+    :type page: int
     """
 
     _validation = {
         'type': {'required': True},
-        'text': {'required': True},
         'confidence': {'required': True},
+        'page': {'minimum': 1},
     }
 
     _attribute_map = {
@@ -71,9 +73,10 @@ class FieldValue(Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
         'elements': {'key': 'elements', 'type': '[str]'},
+        'page': {'key': 'page', 'type': 'int'},
     }
 
-    def __init__(self, *, type, text: str, confidence: float, value_string: str=None, value_date=None, value_time=None, value_phone_number: str=None, value_number: float=None, value_integer: int=None, value_array=None, value_object=None, bounding_box=None, elements=None, **kwargs) -> None:
+    def __init__(self, *, type, confidence: float, value_string: str=None, value_date=None, value_time=None, value_phone_number: str=None, value_number: float=None, value_integer: int=None, value_array=None, value_object=None, text: str=None, bounding_box=None, elements=None, page: int=None, **kwargs) -> None:
         super(FieldValue, self).__init__(**kwargs)
         self.type = type
         self.value_string = value_string
@@ -88,3 +91,4 @@ class FieldValue(Model):
         self.bounding_box = bounding_box
         self.confidence = confidence
         self.elements = elements
+        self.page = page

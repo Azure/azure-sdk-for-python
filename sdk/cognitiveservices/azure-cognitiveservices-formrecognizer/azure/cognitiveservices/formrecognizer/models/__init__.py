@@ -25,9 +25,8 @@ try:
     from .analyze_operation_result_py3 import AnalyzeOperationResult
     from .train_source_filter_py3 import TrainSourceFilter
     from .train_request_py3 import TrainRequest
-    from .form_document_report_py3 import FormDocumentReport
+    from .training_document_info_py3 import TrainingDocumentInfo
     from .form_fields_report_py3 import FormFieldsReport
-    from .training_fields_py3 import TrainingFields
     from .train_result_py3 import TrainResult
     from .source_path_py3 import SourcePath
     from .model_info_py3 import ModelInfo
@@ -59,9 +58,8 @@ except (SyntaxError, ImportError):
     from .analyze_operation_result import AnalyzeOperationResult
     from .train_source_filter import TrainSourceFilter
     from .train_request import TrainRequest
-    from .form_document_report import FormDocumentReport
+    from .training_document_info import TrainingDocumentInfo
     from .form_fields_report import FormFieldsReport
-    from .training_fields import TrainingFields
     from .train_result import TrainResult
     from .source_path import SourcePath
     from .model_info import ModelInfo
@@ -102,9 +100,8 @@ __all__ = [
     'AnalyzeOperationResult',
     'TrainSourceFilter',
     'TrainRequest',
-    'FormDocumentReport',
+    'TrainingDocumentInfo',
     'FormFieldsReport',
-    'TrainingFields',
     'TrainResult',
     'SourcePath',
     'ModelInfo',

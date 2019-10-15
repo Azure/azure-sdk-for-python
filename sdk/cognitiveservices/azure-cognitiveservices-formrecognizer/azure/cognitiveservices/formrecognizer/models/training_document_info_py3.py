@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class FormDocumentReport(Model):
+class TrainingDocumentInfo(Model):
     """Report for a custom model training document.
 
     All required parameters must be populated in order to send to Azure.
@@ -21,7 +21,7 @@ class FormDocumentReport(Model):
     :type document_name: str
     :param pages: Required. Total number of pages trained.
     :type pages: int
-    :param errors: Required. List of errors per page.
+    :param errors: Required. List of errors.
     :type errors: list[str]
     :param status: Required. Status of the training operation. Possible values
      include: 'succeeded', 'partiallySucceeded', 'failed'
@@ -43,9 +43,9 @@ class FormDocumentReport(Model):
         'status': {'key': 'status', 'type': 'TrainStatus'},
     }
 
-    def __init__(self, **kwargs):
-        super(FormDocumentReport, self).__init__(**kwargs)
-        self.document_name = kwargs.get('document_name', None)
-        self.pages = kwargs.get('pages', None)
-        self.errors = kwargs.get('errors', None)
-        self.status = kwargs.get('status', None)
+    def __init__(self, *, document_name: str, pages: int, errors, status, **kwargs) -> None:
+        super(TrainingDocumentInfo, self).__init__(**kwargs)
+        self.document_name = document_name
+        self.pages = pages
+        self.errors = errors
+        self.status = status
