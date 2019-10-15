@@ -9,8 +9,10 @@ detail the new keyword arguments):
   - `update_secret_properties` now has positional parameters `name` and
     (optional) `version`
 - Renamed `list_secrets` to `list_properties_of_secrets`
+- Renamed `restore_secret` to `restore_secret_backup`
 - `Secret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+
 
 ## 4.0.0b4 (2019-10-08)
 ### Breaking changes:

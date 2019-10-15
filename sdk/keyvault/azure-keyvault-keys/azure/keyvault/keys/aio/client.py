@@ -417,7 +417,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key(self, backup: bytes, **kwargs: "Any") -> Key:
+    async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> Key:
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -433,8 +433,8 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
-                :start-after: [START restore_key]
-                :end-before: [END restore_key]
+                :start-after: [START restore_key_backup]
+                :end-before: [END restore_key_backup]
                 :language: python
                 :caption: Restore a key backup
                 :dedent: 8

@@ -188,14 +188,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         key_client.delete_key(key_name)
 
-        # [START restore_key]
+        # [START restore_key_backup]
 
         # restore a key backup
-        restored_key = key_client.restore_key(key_backup)
+        restored_key = key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.properties.version)
 
-        # [END restore_key]
+        # [END restore_key_backup]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
