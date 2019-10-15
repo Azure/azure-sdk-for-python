@@ -630,8 +630,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     async def upload_range(  # type: ignore
         self,
         data,  # type: bytes
-        start_range,  # type: int
-        end_range,  # type: int
+        offset,  # type: int
+        length,  # type: int
         validate_content=False,  # type: Optional[bool]
         timeout=None,  # type: Optional[int]
         encoding="UTF-8",
@@ -642,16 +642,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param bytes data:
             The data to upload.
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
-        :param int end_range:
-            End of byte range to use for uploading a section of the file.
+        :param int length:
+            Number of bytes to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
         :param bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -671,8 +667,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
 
-        content_range = "bytes={0}-{1}".format(start_range, end_range)
-        content_length = end_range - start_range + 1
+        content_range = "bytes={0}-{1}".format(offset, length)
+        content_length = length - offset + 1
         try:
             return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
@@ -688,25 +684,21 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     @distributed_trace_async
     async def upload_range_from_url(self, source_url,  # type: str
-                                    range_start,  # type: int
-                                    range_end,  # type: int
-                                    source_range_start,  # type: int
+                                    offset,  # type: int
+                                    length,  # type: int
+                                    source_offset,  # type: int
                                     **kwargs  # type: Any
                                     ):
         # type: (str, int, int, int, **Any) -> Dict[str, Any]
         '''
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
-        :param int range_start:
+        :param int offset:
             Start of byte range to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int range_end:
-            End of byte range to use for updating a section of the file.
+        :param int length:
+            Number of bytes to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param str source_url:
             A URL of up to 2 KB in length that specifies an Azure file or blob.
             The value should be URL-encoded as it would appear in a request URI.
@@ -716,20 +708,18 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Examples:
             https://myaccount.file.core.windows.net/myshare/mydir/myfile
             https://otheraccount.file.core.windows.net/myshare/mydir/myfile?sastoken
-        :param int source_range_start:
+        :param int source_offset:
             Start of byte range to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         '''
 
         options = self._upload_range_from_url_options(
             source_url=source_url,
-            range_start=range_start,
-            range_end=range_end,
-            source_range_start=source_range_start,
+            offset=offset,
+            length=length,
+            source_offset=source_offset,
             **kwargs
         )
         try:
@@ -740,22 +730,18 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     @distributed_trace_async
     async def get_ranges(  # type: ignore
         self,
-        start_range=None,  # type: Optional[int]
-        end_range=None,  # type: Optional[int]
+        offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
         timeout=None,  # type: Optional[int]
         **kwargs
     ):
         # type: (...) -> List[dict[str, int]]
         """Returns the list of valid ranges of a file.
 
-        :param int start_range:
+        :param int offset:
             Specifies the start offset of bytes over which to get ranges.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int end_range:
-            Specifies the end offset of bytes over which to get ranges.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int length:
+            Number of bytes to use over which to get ranges.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
@@ -765,11 +751,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Unsupported method for encryption.")
 
         content_range = None
-        if start_range is not None:
-            if end_range is not None:
-                content_range = "bytes={0}-{1}".format(start_range, end_range)
+        if offset is not None:
+            if length is not None:
+                content_range = "bytes={0}-{1}".format(offset, length)
             else:
-                content_range = "bytes={0}-".format(start_range)
+                content_range = "bytes={0}-".format(offset)
         try:
             ranges = await self._client.file.get_range_list(
                 sharesnapshot=self.snapshot, timeout=timeout, range=content_range, **kwargs
@@ -781,8 +767,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     @distributed_trace_async
     async def clear_range(  # type: ignore
         self,
-        start_range,  # type: int
-        end_range,  # type: int
+        offset,  # type: int
+        length,  # type: int
         timeout=None,  # type: Optional[int]
         **kwargs
     ):
@@ -790,16 +776,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """Clears the specified range and releases the space used in storage for
         that range.
 
-        :param int start_range:
+        :param int offset:
             Start of byte range to use for clearing a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int end_range:
-            End of byte range to use for clearing a section of the file.
+        :param int length:
+            Number of bytes to use for clearing a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -808,11 +790,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
-        if start_range is None or start_range % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 file size")
-        if end_range is None or end_range % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 file size")
-        content_range = "bytes={0}-{1}".format(start_range, end_range)
+        if offset is None or offset % 512 != 0:
+            raise ValueError("offset must be an integer that aligns with 512 file size")
+        if length is None or length % 512 != 511:
+            raise ValueError("length must be an integer that aligns with 512 file size")
+        content_range = "bytes={0}-{1}".format(offset, length)
         try:
             return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,
