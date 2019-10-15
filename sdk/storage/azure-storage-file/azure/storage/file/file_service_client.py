@@ -365,7 +365,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        share.create_share(metadata, quota=quota, timeout=timeout, **kwargs)
+        share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
     @distributed_trace

@@ -247,7 +247,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        await share.create_share(metadata, quota, timeout, **kwargs)
+        await share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
     @distributed_trace_async
