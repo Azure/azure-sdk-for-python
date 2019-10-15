@@ -96,6 +96,10 @@ try:
     from ._models_py3 import SignalRServiceClientConnectionDisconnectedEventData
     from ._models_py3 import StorageBlobCreatedEventData
     from ._models_py3 import StorageBlobDeletedEventData
+    from ._models_py3 import StorageBlobRenamedEventData
+    from ._models_py3 import StorageDirectoryCreatedEventData
+    from ._models_py3 import StorageDirectoryDeletedEventData
+    from ._models_py3 import StorageDirectoryRenamedEventData
     from ._models_py3 import SubscriptionDeletedEventData
     from ._models_py3 import SubscriptionValidationEventData
     from ._models_py3 import SubscriptionValidationResponse
@@ -186,6 +190,10 @@ except (SyntaxError, ImportError):
     from ._models import SignalRServiceClientConnectionDisconnectedEventData
     from ._models import StorageBlobCreatedEventData
     from ._models import StorageBlobDeletedEventData
+    from ._models import StorageBlobRenamedEventData
+    from ._models import StorageDirectoryCreatedEventData
+    from ._models import StorageDirectoryDeletedEventData
+    from ._models import StorageDirectoryRenamedEventData
     from ._models import SubscriptionDeletedEventData
     from ._models import SubscriptionValidationEventData
     from ._models import SubscriptionValidationResponse
@@ -283,6 +291,10 @@ __all__ = [
     'SignalRServiceClientConnectionDisconnectedEventData',
     'StorageBlobCreatedEventData',
     'StorageBlobDeletedEventData',
+    'StorageBlobRenamedEventData',
+    'StorageDirectoryCreatedEventData',
+    'StorageDirectoryDeletedEventData',
+    'StorageDirectoryRenamedEventData',
     'SubscriptionDeletedEventData',
     'SubscriptionValidationEventData',
     'SubscriptionValidationResponse',
