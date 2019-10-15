@@ -12,12 +12,18 @@
 from enum import Enum
 
 
+class Scenario(str, Enum):
+
+    alerts = "Alerts"
+
+
 class Category(str, Enum):
 
     high_availability = "HighAvailability"
     security = "Security"
     performance = "Performance"
     cost = "Cost"
+    operational_excellence = "OperationalExcellence"
 
 
 class Impact(str, Enum):
