@@ -365,8 +365,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 8
                 :caption: Get the queue client.
         """
+        try:
+            queue_name = queue.name
+        except AttributeError:
+            queue_name = queue
         return QueueClient(
-            self.url, queue=queue, credential=self.credential, key_resolver_function=self.key_resolver_function,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            _pipeline=self._pipeline, _configuration=self._config, _location_mode=self._location_mode,
-            _hosts=self._hosts, loop=self._loop, **kwargs)
+            self.url, queue_name=queue_name, credential=self.credential,
+            key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, _pipeline=self._pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, loop=self._loop, **kwargs)

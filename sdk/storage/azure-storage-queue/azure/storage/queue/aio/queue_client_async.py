@@ -74,11 +74,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str queue_url: The full URI to the queue. This can also be a URL to the storage
-        account, in which case the queue must also be specified.
-    :param queue: The queue. If specified, this value will override
-        a queue value specified in the queue URL.
-    :type queue: str or ~azure.storage.queue.QueueProperties
+    :param str account_url:
+        The URL to the storage account. In order to create a client given the full URI to the queue,
+        use the from_queue_url classmethod.
+    :param queue_name: The name of the queue.
+    :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, and account
@@ -103,15 +103,17 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
     def __init__(
         self,
-        queue_url,  # type: str
-        queue=None,  # type: Optional[Union[QueueProperties, str]]
+        account_url,  # type: str
+        queue_name,  # type: str
         credential=None,  # type: Optional[Any]
         loop=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        super(QueueClient, self).__init__(queue_url, queue=queue, credential=credential, loop=loop, **kwargs)
+        super(QueueClient, self).__init__(
+            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
+        )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._loop = loop
 

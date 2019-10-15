@@ -4,13 +4,14 @@
 
 **Breaking changes**
 
+- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`. 
+To use a queue_url, the method `from_queue_url` must be used.
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
 
  **New features**
  
 - `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
-
 
 ## Version 12.0.0b4:
 
