@@ -655,6 +655,5 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a file in a directory.
         """
-        timeout = kwargs.pop('timeout', None)
         file_client = self.get_file_client(file_name)
         file_client.delete_file(**kwargs)
