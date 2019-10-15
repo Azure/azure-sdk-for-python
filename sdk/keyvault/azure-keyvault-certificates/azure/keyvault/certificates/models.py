@@ -81,7 +81,7 @@ class CertificateError(object):
     :param str code: The error code.
     :param str message: The error message.
     :param inner_error: The error object itself
-    :type inner_error: ~azure.keyvault.certificates._shared._generated.Error
+    :type inner_error: ~azure.keyvault.certificates.models.CertificateError
     """
 
     def __init__(self, code, message, inner_error):
@@ -93,6 +93,14 @@ class CertificateError(object):
     def __repr__(self):
         # type () -> str
         return "CertificateError({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
+
+    @classmethod
+    def _from_error_bundle(cls, error_bundle):
+        return cls(
+            code=error_bundle.code,
+            message=error_bundle.message,
+            inner_error=cls._from_error_bundle(error_bundle.inner_error)
+        )
 
     @property
     def code(self):
@@ -436,7 +444,8 @@ class CertificateOperation(object):
             cancellation_requested=certificate_operation_bundle.cancellation_requested,
             status=certificate_operation_bundle.status,
             status_details=certificate_operation_bundle.status_details,
-            error=certificate_operation_bundle.error,
+            error=(CertificateError._from_error_bundle(certificate_operation_bundle.error)  # pylint: disable=protected-access
+                   if certificate_operation_bundle.error else None),
             target=certificate_operation_bundle.target,
             request_id=certificate_operation_bundle.request_id,
         )
