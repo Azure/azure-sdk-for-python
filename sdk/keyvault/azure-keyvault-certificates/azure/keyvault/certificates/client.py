@@ -16,7 +16,7 @@ from .models import (
     CertificateProperties,
     CertificatePolicy,
     DeletedCertificate,
-    Issuer,
+    CertificateIssuer,
     IssuerProperties,
     CertificateContact,
     CertificateOperation,
@@ -93,7 +93,7 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop('tags', None)
+        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(enabled=enabled)
@@ -771,7 +771,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_issuer(self, name, **kwargs):
-        # type: (str, **Any) -> Issuer
+        # type: (str, **Any) -> CertificateIssuer
         """Gets the specified certificate issuer.
 
         Returns the specified certificate issuer resources in the key vault.
@@ -779,7 +779,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str name: The name of the issuer.
         :return: The specified certificate issuer.
-        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the issuer doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -795,7 +795,7 @@ class CertificateClient(KeyVaultClientBase):
         issuer_bundle = self._client.get_certificate_issuer(
             vault_base_url=self.vault_endpoint, issuer_name=name, error_map=_error_map, **kwargs
         )
-        return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
+        return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
     def create_issuer(
@@ -808,7 +808,7 @@ class CertificateClient(KeyVaultClientBase):
         admin_details=None,  # type: Optional[List[AdministratorDetails]]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> Issuer
+        # type: (...) -> CertificateIssuer
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified
@@ -822,8 +822,8 @@ class CertificateClient(KeyVaultClientBase):
         :param str organization_id: Id of the organization.
         :param admin_details: Details of the organization administrators of the certificate issuer.
         :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
-        :returns: The created Issuer
-        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :returns: The created CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -875,7 +875,7 @@ class CertificateClient(KeyVaultClientBase):
             attributes=issuer_attributes,
             **kwargs
         )
-        return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
+        return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
     def update_issuer(
@@ -888,7 +888,7 @@ class CertificateClient(KeyVaultClientBase):
         admin_details=None,  # type: Optional[List[AdministratorDetails]]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> Issuer
+        # type: (...) -> CertificateIssuer
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
@@ -903,7 +903,7 @@ class CertificateClient(KeyVaultClientBase):
         :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
         :param bool enabled: Determines whether the issuer is enabled.
         :return: The updated issuer
-        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -947,19 +947,19 @@ class CertificateClient(KeyVaultClientBase):
             attributes=issuer_attributes,
             **kwargs
         )
-        return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
+        return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
     def delete_issuer(self, name, **kwargs):
-        # type: (str, **Any) -> Issuer
+        # type: (str, **Any) -> CertificateIssuer
         """Deletes the specified certificate issuer.
 
         Permanently removes the specified certificate issuer from the vault.
         This operation requires the certificates/manageissuers/deleteissuers permission.
 
         :param str name: The name of the issuer.
-        :return: Issuer
-        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :return: CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -973,7 +973,7 @@ class CertificateClient(KeyVaultClientBase):
         issuer_bundle = self._client.delete_certificate_issuer(
             vault_base_url=self.vault_endpoint, issuer_name=name, **kwargs
         )
-        return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
+        return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
     def list_issuers(self, **kwargs):
@@ -985,7 +985,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: An iterator like instance of Issuers
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.Issuer]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateIssuer]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:

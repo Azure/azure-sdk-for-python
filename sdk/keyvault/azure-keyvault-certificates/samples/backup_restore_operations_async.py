@@ -48,7 +48,9 @@ async def run_sample():
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
         # An async poller is returned.
-        create_certificate_poller = client.begin_create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
+        create_certificate_poller = client.begin_create_certificate(
+            name=cert_name, policy=CertificatePolicy.get_default()
+        )
 
         # Awaiting the poller will return a certificate if creation is successful,
         # and will return the failed CertificateOperation if not.

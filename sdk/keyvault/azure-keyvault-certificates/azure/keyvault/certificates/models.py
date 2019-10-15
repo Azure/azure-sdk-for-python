@@ -4,8 +4,6 @@
 # ------------------------------------
 
 # pylint: disable=too-many-lines,too-many-public-methods
-from datetime import datetime
-
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
 from .enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType
@@ -625,10 +623,7 @@ class CertificatePolicy(object):
 
     @classmethod
     def get_default(cls):
-        return cls(
-            issuer_name="Self",
-            subject_name="CN=DefaultPolicy"
-        )
+        return cls(issuer_name="Self", subject_name="CN=DefaultPolicy")
 
     def __repr__(self):
         # type () -> str
@@ -1135,7 +1130,7 @@ class IssuerProperties(object):
         return self._vault_id.vault_endpoint
 
 
-class Issuer(object):
+class CertificateIssuer(object):
     """The issuer for a Key Vault certificate.
 
     :param properties: The issuer's properties
@@ -1166,12 +1161,12 @@ class Issuer(object):
 
     def __repr__(self):
         # type () -> str
-        return "<Issuer [{}]>".format(self.id)[:1024]
+        return "<CertificateIssuer [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_issuer_bundle(cls, issuer_bundle):
-        # type: (models.IssuerBundle) -> Issuer
-        """Construct a Issuer from an autorest-generated IssuerBundle"""
+        # type: (models.IssuerBundle) -> CertificateIssuer
+        """Construct a CertificateIssuer from an autorest-generated IssuerBundle"""
         admin_details = []
         admin_details_service = (
             issuer_bundle.organization_details.admin_details if issuer_bundle.organization_details else None

@@ -45,8 +45,12 @@ try:
     bank_cert_name = "BankListCertificate"
     storage_cert_name = "StorageListCertificate"
 
-    bank_certificate_poller = client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default())
-    storage_certificate_poller = client.begin_create_certificate(name=storage_cert_name, policy=CertificatePolicy.get_default())
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default()
+    )
+    storage_certificate_poller = client.begin_create_certificate(
+        name=storage_cert_name, policy=CertificatePolicy.get_default()
+    )
 
     # await the creation of the bank and storage certificate
     bank_certificate = bank_certificate_poller.result()
@@ -65,7 +69,9 @@ try:
     # certificate creates a new version of the certificate in the Key Vault with the new value.
 
     tags = {"a": "b"}
-    bank_certificate_poller = client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags)
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+    )
     bank_certificate = bank_certificate_poller.result()
     print(
         "KeyVaultCertificate with name '{0}' was created again with tags '{1}'".format(

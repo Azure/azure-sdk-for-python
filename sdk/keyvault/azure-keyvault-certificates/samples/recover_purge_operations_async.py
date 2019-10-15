@@ -46,8 +46,12 @@ async def run_sample():
         bank_cert_name = "BankRecoverCertificate"
         storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate = await client.begin_create_certificate(name=bank_cert_name, policy=CertificatePolicy.get_default())
-        storage_certificate = await client.begin_create_certificate(name=storage_cert_name, policy=CertificatePolicy.get_default())
+        bank_certificate = await client.begin_create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default()
+        )
+        storage_certificate = await client.begin_create_certificate(
+            name=storage_cert_name, policy=CertificatePolicy.get_default()
+        )
 
         print("KeyVaultCertificate with name '{0}' was created.".format(bank_certificate.name))
         print("KeyVaultCertificate with name '{0}' was created.".format(storage_certificate.name))

@@ -25,7 +25,7 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import (
     ActionType,
     IssuerAttributes,
 )
-from azure.keyvault.certificates.models import Issuer, IssuerProperties
+from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties
 
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -152,11 +152,13 @@ class CertificateClientTests(KeyVaultTestCase):
                     if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type.value:
                         if policy_lifetime_action.trigger.lifetime_percentage:
                             self.assertEqual(
-                                bundle_lifetime_action.lifetime_percentage, policy_lifetime_action.trigger.lifetime_percentage
+                                bundle_lifetime_action.lifetime_percentage,
+                                policy_lifetime_action.trigger.lifetime_percentage,
                             )
                         if policy_lifetime_action.trigger.days_before_expiry:
                             self.assertEqual(
-                                bundle_lifetime_action.days_before_expiry, policy_lifetime_action.trigger.days_before_expiry
+                                bundle_lifetime_action.days_before_expiry,
+                                policy_lifetime_action.trigger.days_before_expiry,
                             )
                         policy_lifetime_actions.remove(policy_lifetime_action)
                         break
@@ -218,12 +220,7 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_parameters=IssuerParameters(name="Self"),
             lifetime_actions=lifetime_actions,
             x509_certificate_properties=X509CertificateProperties(
-                subject="CN=DefaultPolicy",
-                validity_in_months=12,
-                key_usage=[
-                    "digitalSignature",
-                    "keyEncipherment"
-                ],
+                subject="CN=DefaultPolicy", validity_in_months=12, key_usage=["digitalSignature", "keyEncipherment"]
             ),
         )
 
@@ -631,7 +628,7 @@ class CertificateClientTests(KeyVaultTestCase):
             name=issuer_name, provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
-        expected = Issuer(
+        expected = CertificateIssuer(
             properties=properties,
             account_id="keyvaultuser",
             admin_details=admin_details,
@@ -675,7 +672,7 @@ class CertificateClientTests(KeyVaultTestCase):
             AdministratorDetails(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
-        expected = Issuer(
+        expected = CertificateIssuer(
             properties=properties,
             account_id="keyvaultuser",
             admin_details=admin_details,
