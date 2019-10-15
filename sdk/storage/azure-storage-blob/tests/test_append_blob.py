@@ -964,7 +964,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
         self._teardown(FILE_PATH)
-        
+
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_app_blob_from_stream_nonseekable_chnked_upload_known_size(self, resource_group, location,
@@ -1060,7 +1060,7 @@ class StorageAppendBlobTest(StorageTestCase):
                                                                         storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)

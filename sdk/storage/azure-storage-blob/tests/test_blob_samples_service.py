@@ -71,7 +71,7 @@ class TestBlobServiceSamples(StorageTestCase):
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Service stats tested in blob_service_stats.py")
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         connection_string = self.connection_string(storage_account, storage_account_key)
 

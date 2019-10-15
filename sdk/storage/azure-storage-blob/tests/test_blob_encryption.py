@@ -180,7 +180,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_invalid_value_kek_unwrap(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -238,7 +238,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -257,7 +257,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_blob_nonmatching_kid(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -303,7 +303,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
                                                            storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -328,7 +328,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
                                                                storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -352,7 +352,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
                                                         storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
                                 max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024)

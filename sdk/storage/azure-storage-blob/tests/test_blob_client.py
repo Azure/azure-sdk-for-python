@@ -450,7 +450,7 @@ class StorageClientTest(StorageTestCase):
     def test_client_request_id_echo(self, resource_group, location, storage_account, storage_account_key):
         # client request id is different for every request, so it will never match the recorded one
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         request_id_header_name = 'x-ms-client-request-id'

@@ -1170,7 +1170,7 @@ class StorageAppendBlobTestAsync(AsyncBlobTestCase):
                                                                                     storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024,
                                 transport=AiohttpTestTransport())

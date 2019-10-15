@@ -565,7 +565,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_list_blobs_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # test can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         await self._create_block_blob()
@@ -587,7 +587,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_no_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob_name = await self._create_block_blob()
@@ -674,7 +674,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         if not self.is_live:
             # bug in devtools...converts upper case header to lowercase
             # passes live.
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -1404,7 +1404,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_no_sas_public_blob(self, resource_group, location, storage_account, storage_account_key):
         # test is live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'a public blob can be read without a shared access signature'
@@ -1430,7 +1430,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_public_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # test is live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'public access blob'
@@ -1457,7 +1457,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_sas_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1484,7 +1484,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1517,7 +1517,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1550,7 +1550,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("")
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         token_credential = self.generate_oauth_token()
@@ -1579,7 +1579,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_shared_read_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         # Arrange
@@ -1607,7 +1607,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_shared_read_access_blob_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1644,7 +1644,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_shared_write_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1675,7 +1675,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_shared_delete_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1747,7 +1747,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_get_account_information_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1772,7 +1772,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_get_account_information_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1798,7 +1798,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1827,7 +1827,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1853,7 +1853,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1880,7 +1880,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1908,7 +1908,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1939,7 +1939,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_bytes_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1968,7 +1968,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_bytes_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1992,7 +1992,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_bytes_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2017,7 +2017,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_bytes_with_existing_blob_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2044,7 +2044,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_text_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2068,7 +2068,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     async def test_upload_to_url_file_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)

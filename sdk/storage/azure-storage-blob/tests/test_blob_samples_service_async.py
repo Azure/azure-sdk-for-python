@@ -74,7 +74,7 @@ class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
     async def testblob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Service stats tested in blob_service_stats_async.py")
         if not self.is_live:
-            return
+            pytest.skip("live only")
         connection_string = self.connection_string(storage_account, storage_account_key)
 
         # Instantiate a BlobServiceClient using a connection string

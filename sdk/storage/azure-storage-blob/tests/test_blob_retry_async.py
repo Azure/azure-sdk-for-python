@@ -74,7 +74,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
                                                               storage_account_key):
         pytest.skip("Aiohttp closes stream after request - cannot rewind.")
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -111,7 +111,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
     async def test_retry_put_block_with_non_seekable_stream_async(self, resource_group, location, storage_account,
                                                                   storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -149,7 +149,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
     async def test_retry_put_block_with_non_seekable_stream_fail_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,

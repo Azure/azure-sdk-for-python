@@ -79,7 +79,7 @@ class TestAuthSamples(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_active_directory(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
@@ -103,7 +103,7 @@ class TestAuthSamples(StorageTestCase):
     def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient

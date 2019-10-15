@@ -427,7 +427,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -448,7 +448,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -468,7 +468,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -492,7 +492,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -521,7 +521,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -604,7 +604,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -673,7 +673,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -704,7 +704,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -733,7 +733,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -759,7 +759,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_frm_stream_nonseek_chunk_upld_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -784,7 +784,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_stream_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -808,7 +808,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -839,7 +839,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -863,7 +863,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_stream_chunk_upload_with_cntandrops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -893,7 +893,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chnked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -922,7 +922,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         self._setup(storage_account.name, storage_account_key)
@@ -1008,7 +1008,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1043,7 +1043,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()

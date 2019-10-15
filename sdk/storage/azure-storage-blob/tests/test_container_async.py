@@ -1327,7 +1327,7 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
     async def test_shared_access_container(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)

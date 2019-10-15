@@ -14,6 +14,7 @@ from asyncblobtestcase import (
 )
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+import pytest
 
 SOURCE_FILE = 'SampleSource.txt'
 
@@ -139,7 +140,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
     async def test_container_access_policy_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         connection_string = self.connection_string(storage_account, storage_account_key)
 

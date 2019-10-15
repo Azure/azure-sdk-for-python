@@ -57,7 +57,7 @@ class StorageBlobRetryTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -93,7 +93,7 @@ class StorageBlobRetryTest(StorageTestCase):
     def test_retry_put_block_with_non_seekable_stream(self, resource_group, location, storage_account,
                                                       storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -130,7 +130,7 @@ class StorageBlobRetryTest(StorageTestCase):
     def test_retry_put_block_with_non_seekable_stream_fail(self, resource_group, location, storage_account,
                                                            storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,

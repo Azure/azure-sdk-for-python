@@ -583,7 +583,7 @@ class StorageCommonBlobTest(StorageTestCase):
         if not self.is_live:
             # bug in devtools...converts upper case header to lowercase
             # passes live.
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         blob_name = self._create_block_blob()
@@ -1305,7 +1305,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1330,7 +1330,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_access_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1364,7 +1364,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1395,7 +1395,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1450,7 +1450,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_read_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1476,7 +1476,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_read_access_blob_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1511,7 +1511,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_write_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         updated_data = b'updated blob data'
@@ -1540,7 +1540,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_shared_delete_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1607,7 +1607,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_account_information_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         container = self.bsc.get_container_client(self.container_name)
@@ -1630,7 +1630,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_account_information_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1654,7 +1654,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
@@ -1680,7 +1680,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         self._setup_remote(rmt.name, rmt_key)
@@ -1703,7 +1703,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         self._setup_remote(rmt.name, rmt_key)
@@ -1728,7 +1728,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         self._setup_remote(rmt.name, rmt_key)
@@ -1754,7 +1754,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         self._setup_remote(rmt.name, rmt_key)
@@ -1783,7 +1783,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1810,7 +1810,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1832,7 +1832,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1855,7 +1855,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_bytes_with_existing_blob_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1880,7 +1880,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_text_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         data = '12345678' * 1024 * 1024
@@ -1902,7 +1902,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_upload_to_url_file_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
         FILE_PATH = 'upload_to_url_file_with_credential.temp.dat'
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024

@@ -15,6 +15,7 @@ except ImportError:
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
+import pytest
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
@@ -81,7 +82,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_active_directory_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
@@ -106,7 +107,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
     async def test_auth_shared_access_signature_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient

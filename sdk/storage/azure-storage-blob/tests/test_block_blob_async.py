@@ -466,7 +466,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob = await self._create_blob()
@@ -490,7 +490,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -513,7 +513,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -539,7 +539,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -570,7 +570,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -668,7 +668,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -742,7 +742,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -775,7 +775,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -806,7 +806,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -834,7 +834,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -861,7 +861,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -887,7 +887,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -920,7 +920,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -946,7 +946,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -977,7 +977,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
     async def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         # Arrange
@@ -1008,7 +1008,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
     async def _test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1103,7 +1103,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         # parallel tests introduce random order of requests, can only run live
         await self._setup(storage_account.name, storage_account_key)
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -1141,7 +1141,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
     async def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)

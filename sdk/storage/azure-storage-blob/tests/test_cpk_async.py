@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 import asyncio
 from datetime import datetime, timedelta
 
@@ -143,7 +144,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
     async def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # parallel operation
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # Arrange
         bsc = BlobServiceClient(
             self._account_url(storage_account.name),
@@ -188,7 +189,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
     async def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
         # problem with the recording framework can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
@@ -352,7 +353,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
             transport=AiohttpTestTransport())
         await self._setup(bsc)
         if not self.is_live:
-            return
+            pytest.skip("live only")
         blob_client = await self._create_append_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
 
         # Act
@@ -574,7 +575,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
-            return
+            pytest.skip("live only")
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
