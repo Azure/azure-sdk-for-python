@@ -49,7 +49,7 @@ class StorageQueueClientTest(QueueTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self._account_url(storage_account.name), credential=storage_account_key, queue='foo')
+                self._account_url(storage_account.name), credential=storage_account_key, queue_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, url, storage_account.name, storage_account_key)
@@ -62,7 +62,7 @@ class StorageQueueClientTest(QueueTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string(storage_account, storage_account_key), queue="test")
+                self.connection_string(storage_account, storage_account_key), queue_name="test")
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
@@ -76,7 +76,7 @@ class StorageQueueClientTest(QueueTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._account_url(storage_account.name), credential=self.sas_token, queue='foo')
+                self._account_url(storage_account.name), credential=self.sas_token, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
@@ -90,7 +90,7 @@ class StorageQueueClientTest(QueueTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._account_url(storage_account.name), credential=self.token_credential, queue='foo')
+                self._account_url(storage_account.name), credential=self.token_credential, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
@@ -106,7 +106,7 @@ class StorageQueueClientTest(QueueTestCase):
             # Act
             with self.assertRaises(ValueError):
                 url = self._account_url(storage_account.name).replace('https', 'http')
-                service_type(url, credential=self.token_credential, queue='foo')
+                service_type(url, credential=self.token_credential, queue_name='foo')
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -117,7 +117,7 @@ class StorageQueueClientTest(QueueTestCase):
             # Act
             url = self._account_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=storage_account_key, queue='foo')
+                url, credential=storage_account_key, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
@@ -137,7 +137,7 @@ class StorageQueueClientTest(QueueTestCase):
             # Act
             url = self._account_url(storage_account.name).replace('https', 'http')
             service = service_type[0](
-                url, credential=storage_account_key, queue='foo')
+                url, credential=storage_account_key, queue_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
@@ -152,22 +152,10 @@ class StorageQueueClientTest(QueueTestCase):
         for service_type in QUEUE_SERVICES:
             # Act
             with self.assertRaises(ValueError) as e:
-                test_service = service_type('testaccount', credential='', queue='foo')
+                test_service = service_type('testaccount', credential='', queue_name='foo')
 
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account key to authenticate.")
-
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_create_service_missing_arguments(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-
-        for service_type in SERVICES:
-            # Act
-            with self.assertRaises(ValueError):
-                service = service_type(None)
-
-                # Assert
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -177,10 +165,10 @@ class StorageQueueClientTest(QueueTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self._account_url(storage_account.name), credential=storage_account_key, queue='foo')
+                self._account_url(storage_account.name), credential=storage_account_key, queue_name='foo')
             service = service_type[0](
                 self._account_url(storage_account.name), credential=storage_account_key,
-                queue='foo', connection_timeout=22)
+                queue_name='foo', connection_timeout=22)
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
@@ -196,7 +184,7 @@ class StorageQueueClientTest(QueueTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue='foo')
+            service = service_type[0].from_connection_string(conn_string, queue_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
@@ -210,7 +198,7 @@ class StorageQueueClientTest(QueueTestCase):
 
         for service_type in SERVICES:
             # Act
-            service = service_type.from_connection_string(conn_string, queue='foo')
+            service = service_type.from_connection_string(conn_string, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
@@ -227,7 +215,7 @@ class StorageQueueClientTest(QueueTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
@@ -250,7 +238,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Act
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue="foo")
+                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -261,7 +249,7 @@ class StorageQueueClientTest(QueueTestCase):
                 storage_account.name, storage_account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
@@ -279,7 +267,7 @@ class StorageQueueClientTest(QueueTestCase):
                 storage_account.name, storage_account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
@@ -298,7 +286,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, secondary_hostname="www-sec.mydomain.com", queue="foo")
+                conn_string, secondary_hostname="www-sec.mydomain.com", queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
@@ -320,7 +308,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Fails if primary excluded
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue="foo")
+                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -334,7 +322,7 @@ class StorageQueueClientTest(QueueTestCase):
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
@@ -440,7 +428,16 @@ class StorageQueueClientTest(QueueTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_queue_client_with_complete_queue_url(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        queue_url = self._account_url(storage_account.name) + "/foo"
+        service = QueueClient(queue_url, queue_name='bar', credential=storage_account_key)
 
+            # Assert
+        self.assertEqual(service.scheme, 'https')
+        self.assertEqual(service.queue_name, 'bar')
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

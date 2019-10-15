@@ -4,14 +4,22 @@
 
 **Breaking changes**
 
+- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`. 
+To use a queue_url, the method `from_queue_url` must be used.
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - `NoEncodePolicy` and `NoDecodePolicy` have been removed. Use `message_encode_policy=None` and `message_decode_policy=None`.
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+- `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
+to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
 
  **New features**
  
 - `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
-
 
 ## Version 12.0.0b4:
 

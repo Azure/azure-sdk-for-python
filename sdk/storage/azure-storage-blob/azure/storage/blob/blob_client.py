@@ -90,8 +90,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account. This can also be a URL to the storage account
-        or container, in which case the blob and/or container must also be specified.
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the blob,
+        use the `from_blob_url` classmethod.
     :param container_name: The container for the blob.
     :type container_name: str
     :param blob_name: The blob with which to interact. If specified, this value will override
