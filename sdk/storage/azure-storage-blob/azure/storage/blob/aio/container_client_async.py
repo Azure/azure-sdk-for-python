@@ -73,9 +73,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str container_url:
-        The full URI to the container. This can also be a URL to the storage
-        account, in which case the blob container must also be specified.
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the container,
+        use the from_container_url classmethod.
     :param container_name:
         The name of the container for the blob.
     :type container_name: str or ~azure.storage.blob.ContainerProperties
