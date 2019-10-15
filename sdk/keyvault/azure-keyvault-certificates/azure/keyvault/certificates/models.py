@@ -77,13 +77,13 @@ class AdministratorDetails(object):
         return self._phone
 
 
-class Error(object):
+class CertificateError(object):
     """The key vault server error.
 
     :param str code: The error code.
     :param str message: The error message.
     :param inner_error: The error object itself
-    :type inner_error: ~azure.keyvault.certificates.Error
+    :type inner_error: ~azure.keyvault.certificates._shared._generated.Error
     """
 
     def __init__(self, code, message, inner_error):
@@ -94,7 +94,7 @@ class Error(object):
 
     def __repr__(self):
         # type () -> str
-        return "Error({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
+        return "CertificateError({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
 
     @property
     def code(self):
@@ -116,7 +116,7 @@ class Error(object):
 
     @property
     def inner_error(self):
-        # type: () -> Error
+        # type: () -> models.Error
         """The error itself
 
         :return models.Error:
@@ -376,7 +376,7 @@ class CertificateOperation(object):
     :param str status: Status of the certificate operation.
     :param str status_details: The status details of the certificate operation
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.certificates.Error
+    :type error: ~azure.keyvault.certificates.CertificateError
     :param str target: Location which contains the result of the certificate operation.
     :param str request_id: Identifier for the certificate operation.
     """
