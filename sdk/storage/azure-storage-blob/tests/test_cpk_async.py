@@ -43,7 +43,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageCPKAsyncTest(AsyncBlobTestCase):
     async def _setup(self, bsc):
-        # prep some test data so that they can be used in upload tests
+        self.config = bsc._config
         self.byte_data = self.get_random_bytes(64 * 1024)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
@@ -107,7 +107,6 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
             max_page_size=1024,
             transport=AiohttpTestTransport())
         await self._setup(bsc)
-        self.config = bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         blob_client, _ = await self._create_block_blob(bsc)
         await blob_client.stage_block('1', b'AAA', cpk=TEST_ENCRYPTION_KEY)
