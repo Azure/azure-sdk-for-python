@@ -20,6 +20,11 @@ class SecretClient(AsyncKeyVaultClientBase):
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
 
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+
     Example:
         .. literalinclude:: ../tests/test_samples_secrets_async.py
             :start-after: [START create_secret_client]
@@ -50,35 +55,25 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a secret
                 :dedent: 8
         """
-        bundle = await self._client.get_secret(
-            self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs
-        )
+        bundle = await self._client.get_secret(self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs)
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(
-        self,
-        name: str,
-        value: str,
-        content_type: Optional[str] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        **kwargs: "**Any"
-    ) -> Secret:
+    async def set_secret(self, name: str, value: str, **kwargs: "Any") -> Secret:
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.models.Secret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -88,30 +83,21 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Set a secret's value
                 :dedent: 8
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
-        bundle = await self._client.set_secret(
-            self.vault_endpoint,
-            name,
-            value,
-            secret_attributes=attributes,
-            content_type=content_type,
-            **kwargs
-        )
+        bundle = await self._client.set_secret(self.vault_endpoint, name, value, secret_attributes=attributes, **kwargs)
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace_async
     async def update_secret_properties(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        content_type: Optional[str] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        **kwargs: "**Any"
+        self, name: str, version: "Optional[str]" = None, **kwargs: "Any"
     ) -> SecretProperties:
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
@@ -119,19 +105,17 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
-        :param dict(str, str) tags: (optional) Application specific metadata in the form of key-value pairs.
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -141,16 +125,19 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Updates a secret's attributes
                 :dedent: 8
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
         bundle = await self._client.update_secret(
             self.vault_endpoint,
             name,
             secret_version=version or "",
-            content_type=content_type,
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs
@@ -158,7 +145,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_secrets(self, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
+    def list_properties_of_secrets(self, **kwargs: "Any") -> AsyncIterable[SecretProperties]:
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.
 
@@ -226,9 +213,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Back up a secret
                 :dedent: 8
         """
-        backup_result = await self._client.backup_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
-        )
+        backup_result = await self._client.backup_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -250,9 +235,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Restore a backed up secret
                 :dedent: 8
         """
-        bundle = await self._client.restore_secret(
-            self.vault_endpoint, backup, error_map=_error_map, **kwargs
-        )
+        bundle = await self._client.restore_secret(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -273,9 +256,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        bundle = await self._client.delete_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
-        )
+        bundle = await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -297,9 +278,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
-        )
+        bundle = await self._client.get_deleted_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace

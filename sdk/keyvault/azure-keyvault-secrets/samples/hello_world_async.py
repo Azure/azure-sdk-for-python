@@ -21,11 +21,11 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
 #
-# 1. Create a new Secret (set_secret)
+# 1. Create a new secret (set_secret)
 #
 # 2. Get an existing secret (get_secret)
 #
-# 3. Update an existing secret (set_secret)
+# 3. Update an existing secret's properties (update_secret_properties)
 #
 # 4. Delete a secret (delete_secret)
 #
@@ -42,10 +42,10 @@ async def run_sample():
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the key vault, then a new version of the secret is created.
         print("\n.. Create Secret")
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
+        expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires_on)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
-        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires))
+        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
 
         # Let's get the bank secret using its name
         print("\n.. Get a Secret by name")
@@ -56,16 +56,16 @@ async def run_sample():
         # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
         # the value of the secret.
         print("\n.. Update a Secret by name")
-        expires = bank_secret.properties.expires + datetime.timedelta(days=365)
-        updated_secret_properties = await client.update_secret_properties(secret.name, expires=expires)
+        expires_on = bank_secret.properties.expires_on + datetime.timedelta(days=365)
+        updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
         print(
             "Secret with name '{0}' was updated on date '{1}'".format(
-                updated_secret_properties.name, updated_secret_properties.updated
+                updated_secret_properties.name, updated_secret_properties.updated_on
             )
         )
         print(
             "Secret with name '{0}' was updated to expire on '{1}'".format(
-                updated_secret_properties.name, updated_secret_properties.expires
+                updated_secret_properties.name, updated_secret_properties.expires_on
             )
         )
 
