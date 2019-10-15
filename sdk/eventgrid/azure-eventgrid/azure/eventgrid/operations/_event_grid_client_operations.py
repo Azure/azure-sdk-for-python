@@ -35,6 +35,8 @@ class EventGridClientOperationsMixin(object):
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
+        api_version = "2018-01-01"
+
         # Construct URL
         url = self.publish_events.metadata['url']
         path_format_arguments = {
@@ -44,7 +46,7 @@ class EventGridClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
