@@ -23,7 +23,7 @@ import sys
 import random
 import re
 import logging
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
 from azure_devtools.scenario_tests import RecordingProcessor
 try:
     from cStringIO import StringIO      # Python 2
@@ -65,6 +65,34 @@ class XMSRequestIDBody(RecordingProcessor):
             response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
 
         return response
+
+
+class GlobalStorageAccountPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalStorageAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        storage_account = StorageTestCase._STORAGE_ACCOUNT
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                storage_account.name,
+                "blobstoragename"
+            )
+        else:
+            storage_account = FakeResource(
+                id=storage_account.id,
+                name="blobstoragename"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': StorageTestCase._RESOURCE_GROUP,
+            'storage_account': storage_account,
+            'storage_account_key': StorageTestCase._STORAGE_KEY,
+        }
 
 
 class StorageTestCase(AzureMgmtTestCase):
