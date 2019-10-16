@@ -20,21 +20,17 @@ from ._message_encoding import (
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
+    TextXMLDecodePolicy
 )
 from .models import (
     QueueMessage,
     QueueProperties,
-    QueuePropertiesPaged,
     QueueSasPermissions,
     AccessPolicy,
-    Logging,
+    QueueAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy,
-    MessagesPaged,
 )
 
 __version__ = VERSION
@@ -50,7 +46,6 @@ __all__ = [
     'StorageErrorCode',
     'QueueMessage',
     'QueueProperties',
-    'QueuePropertiesPaged',
     'QueueSasPermissions',
     'AccessPolicy',
     'TextBase64EncodePolicy',
@@ -59,11 +54,8 @@ __all__ = [
     'BinaryBase64DecodePolicy',
     'TextXMLEncodePolicy',
     'TextXMLDecodePolicy',
-    'NoEncodePolicy',
-    'NoDecodePolicy',
-    'Logging',
+    'QueueAnalyticsLogging',
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
-    'MessagesPaged',
 ]

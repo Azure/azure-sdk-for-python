@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from ._shared.models import AccountSasPermissions, ResourceTypes
     from .models import (
         QueueProperties,
-        Logging,
+        QueueAnalyticsLogging,
         Metrics,
         CorsRule
     )
@@ -155,7 +155,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             expiry,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
-            protocol=None  # type: Optional[str]
+            **kwargs  # type: Any
         ):  # type: (...) -> str
         """Generates a shared access signature for the queue service.
 
@@ -187,12 +187,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        protocol = kwargs.pop('protocol', None)
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
 
@@ -208,8 +208,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         ) # type: ignore
 
     @distributed_trace
-    def get_service_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
+    def get_service_stats(self, **kwargs): # type: ignore
+        # type: (Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -228,11 +228,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
         access is available from the secondary location, if read-access geo-redundant
         replication is enabled for your storage account.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
         :rtype: ~azure.storage.queue.StorageServiceStats
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -240,12 +241,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_properties(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
+    def get_service_properties(self, **kwargs): # type: ignore
+        # type: (Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.StorageServiceProperties
 
@@ -258,6 +259,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Getting queue service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
@@ -265,23 +267,22 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties( # type: ignore
-            self, logging=None,  # type: Optional[Logging]
+            self, analytics_logging=None,  # type: Optional[QueueAnalyticsLogging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
-        If an element (e.g. Logging) is left as None, the
+        If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
-        :param logging:
+        :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.queue.Logging
+        :type analytics_logging: ~azure.storage.queue.QueueAnalyticsLogging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
@@ -295,7 +296,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(~azure.storage.queue.CorsRule)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -308,8 +309,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Setting queue service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
-            logging=logging,
+            logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors
@@ -323,8 +325,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            results_per_page=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ItemPaged[QueueProperties]
@@ -338,10 +338,10 @@ class QueueServiceClient(StorageAccountHostsMixin):
             begin with the specified prefix.
         :param bool include_metadata:
             Specifies that queue metadata be returned in the response.
-        :param int results_per_page:
+        :keyword int results_per_page:
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
-        :param int timeout:
+        :keyword int timeout:
             The server timeout, expressed in seconds. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
@@ -357,6 +357,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: List queues in the service.
         """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
             self._client.service.list_queues_segment,
@@ -373,7 +375,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> QueueClient
@@ -387,7 +388,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             A dict with name_value pairs to associate with the
             queue as metadata. Example: {'Category': 'test'}
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -400,6 +401,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create a queue in the service.
         """
+        timeout = kwargs.pop('timeout', None)
         queue = self.get_queue_client(name)
         kwargs.setdefault('merge_span', True)
         queue.create_queue(
@@ -409,7 +411,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_queue(
             self, queue,  # type: Union[QueueProperties, str]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -427,7 +428,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -440,6 +441,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a queue in the service.
         """
+        timeout = kwargs.pop('timeout', None)
         queue_client = self.get_queue_client(queue)
         kwargs.setdefault('merge_span', True)
         queue_client.delete_queue(timeout=timeout, **kwargs)
@@ -466,8 +468,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Get the queue client.
         """
+        try:
+            queue_name = queue.name
+        except AttributeError:
+            queue_name = queue
         return QueueClient(
-            self.url, queue=queue, credential=self.credential, key_resolver_function=self.key_resolver_function,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            _pipeline=self._pipeline, _configuration=self._config, _location_mode=self._location_mode,
-            _hosts=self._hosts, **kwargs)
+            self.url, queue_name=queue_name, credential=self.credential,
+            key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, _pipeline=self._pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

@@ -32,11 +32,11 @@ from azure.storage.blob._shared.encryption import (
 from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
+from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    BlobType
 )
 from encryption_test_helper import (
     KeyWrapper,

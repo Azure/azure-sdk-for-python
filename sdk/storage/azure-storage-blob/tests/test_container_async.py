@@ -17,12 +17,9 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, Reso
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+
+from azure.storage.blob import (
     PublicAccess,
-    LeaseClient,
     AccessPolicy,
     StorageErrorCode,
     BlobBlock,
@@ -37,6 +34,12 @@ from azure.storage.blob.aio import (
 from testcase import LogCaptured, GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
+)
+from azure.storage.blob.aio import (
+    BlobServiceClient,
+    ContainerClient,
+    BlobClient,
+    LeaseClient,
 )
 
 #------------------------------------------------------------------------------

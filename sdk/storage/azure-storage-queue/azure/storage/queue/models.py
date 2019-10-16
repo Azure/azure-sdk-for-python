@@ -18,7 +18,7 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 
 
-class Logging(GeneratedLogging):
+class QueueAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -176,9 +176,9 @@ class QueueMessage(DictMixin):
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
         it has been retrieved with the receive messages operation.
-    :ivar date insertion_time:
+    :ivar date inserted_on:
         A UTC date value representing the time the messages was inserted.
-    :ivar date expiration_time:
+    :ivar date expires_on:
         A UTC date value representing the time the message expires.
     :ivar int dequeue_count:
         Begins with a value of 1 the first time the message is received. This
@@ -191,30 +191,30 @@ class QueueMessage(DictMixin):
         delete a message from the queue after it has been retrieved with the receive
         messages operation. Only returned by receive messages operations. Set to
         None for peek messages.
-    :ivar date time_next_visible:
+    :ivar date next_visible_on:
         A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages.
     """
 
     def __init__(self, content=None):
         self.id = None
-        self.insertion_time = None
-        self.expiration_time = None
+        self.inserted_on = None
+        self.expires_on = None
         self.dequeue_count = None
         self.content = content
         self.pop_receipt = None
-        self.time_next_visible = None
+        self.next_visible_on = None
 
     @classmethod
     def _from_generated(cls, generated):
         message = cls(content=generated.message_text)
         message.id = generated.message_id
-        message.insertion_time = generated.insertion_time
-        message.expiration_time = generated.expiration_time
+        message.inserted_on = generated.insertion_time
+        message.expires_on = generated.expiration_time
         message.dequeue_count = generated.dequeue_count
         if hasattr(generated, 'pop_receipt'):
             message.pop_receipt = generated.pop_receipt
-            message.time_next_visible = generated.time_next_visible
+            message.next_visible_on = generated.time_next_visible
         return message
 
 

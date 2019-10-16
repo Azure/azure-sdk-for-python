@@ -16,11 +16,12 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
+from azure.storage.blob import ContentSettings
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    ContentSettings
+    BlobClient
 )
 
 if sys.version_info >= (3,):

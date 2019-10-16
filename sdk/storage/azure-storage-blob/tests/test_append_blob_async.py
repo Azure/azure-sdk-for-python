@@ -24,12 +24,11 @@ from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob import BlobSasPermissions
 from azure.storage.blob._shared.policies import StorageContentValidation
-
+from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    BlobType
 )
 from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (

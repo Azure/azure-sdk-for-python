@@ -18,22 +18,24 @@ from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+
+from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
     StandardBlobTier
 )
 
+from azure.storage.blob.aio import (
+    BlobServiceClient,
+    ContainerClient,
+    BlobClient,
+)
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 64 * 1024 + 5
 #------------------------------------------------------------------------------
-
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461

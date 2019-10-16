@@ -25,7 +25,8 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from ..blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .container_client_async import ContainerClient
 from .blob_client_async import BlobClient
-from .models import ContainerProperties, ContainerPropertiesPaged
+from ..models import ContainerProperties
+from .models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
     from .lease_async import LeaseClient
     from ..models import (
         BlobProperties,
-        Logging,
+        BlobAnalyticsLogging,
         Metrics,
         RetentionPolicy,
         StaticWebsite,
@@ -235,7 +236,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     @distributed_trace_async
     async def set_service_properties(
-            self, logging=None,  # type: Optional[Logging]
+            self, analytics_logging=None,  # type: Optional[BlobAnalyticsLogging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
@@ -248,12 +249,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """Sets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
-        If an element (e.g. Logging) is left as None, the
+        If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
-        :param logging:
+        :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.blob.Logging
+        :type analytics_logging: ~azure.storage.blob.BlobAnalyticsLogging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for blobs.
@@ -292,7 +293,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Setting service properties for the blob service.
         """
         props = StorageServiceProperties(
-            logging=logging,
+            logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors,
