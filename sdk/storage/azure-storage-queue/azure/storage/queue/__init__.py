@@ -20,9 +20,7 @@ from ._message_encoding import (
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
+    TextXMLDecodePolicy
 )
 from .models import (
     QueueMessage,
@@ -56,8 +54,6 @@ __all__ = [
     'BinaryBase64DecodePolicy',
     'TextXMLEncodePolicy',
     'TextXMLDecodePolicy',
-    'NoEncodePolicy',
-    'NoDecodePolicy',
     'QueueAnalyticsLogging',
     'Metrics',
     'CorsRule',
