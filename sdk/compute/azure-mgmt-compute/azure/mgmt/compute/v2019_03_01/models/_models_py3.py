@@ -6840,6 +6840,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
@@ -6867,19 +6872,21 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, identity=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.overprovision = overprovision
+        self.do_not_run_extensions_on_overprovisioned_vms = do_not_run_extensions_on_overprovisioned_vms
         self.single_placement_group = single_placement_group
         self.additional_capabilities = additional_capabilities
         self.scale_in_policy = scale_in_policy
