@@ -44,7 +44,7 @@ class FieldValue(Model):
     :type text: str
     :param bounding_box: Bounding box of the field value, if appropriate.
     :type bounding_box: list[float]
-    :param confidence: Required. Confidence score.
+    :param confidence: Confidence score.
     :type confidence: float
     :param elements: When includeTextDetails is set to true, a list of
      references to the text elements constituting this field.
@@ -55,7 +55,6 @@ class FieldValue(Model):
 
     _validation = {
         'type': {'required': True},
-        'confidence': {'required': True},
         'page': {'minimum': 1},
     }
 

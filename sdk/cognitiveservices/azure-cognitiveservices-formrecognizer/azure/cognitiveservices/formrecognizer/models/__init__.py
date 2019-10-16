@@ -36,12 +36,6 @@ try:
     from .model_py3 import Model
     from .error_information_py3 import ErrorInformation
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .copy_request_target_information_py3 import CopyRequestTargetInformation
-    from .copy_request_copy_config_target_model_metadata_py3 import CopyRequestCopyConfigTargetModelMetadata
-    from .copy_request_copy_config_py3 import CopyRequestCopyConfig
-    from .copy_request_py3 import CopyRequest
-    from .copy_result_py3 import CopyResult
-    from .copy_operation_result_py3 import CopyOperationResult
 except (SyntaxError, ImportError):
     from .text_word import TextWord
     from .text_line import TextLine
@@ -69,12 +63,6 @@ except (SyntaxError, ImportError):
     from .model import Model
     from .error_information import ErrorInformation
     from .error_response import ErrorResponse, ErrorResponseException
-    from .copy_request_target_information import CopyRequestTargetInformation
-    from .copy_request_copy_config_target_model_metadata import CopyRequestCopyConfigTargetModelMetadata
-    from .copy_request_copy_config import CopyRequestCopyConfig
-    from .copy_request import CopyRequest
-    from .copy_result import CopyResult
-    from .copy_operation_result import CopyOperationResult
 from .form_recognizer_client_enums import (
     OperationStatus,
     LengthUnit,
@@ -111,12 +99,6 @@ __all__ = [
     'Model',
     'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
-    'CopyRequestTargetInformation',
-    'CopyRequestCopyConfigTargetModelMetadata',
-    'CopyRequestCopyConfig',
-    'CopyRequest',
-    'CopyResult',
-    'CopyOperationResult',
     'OperationStatus',
     'LengthUnit',
     'Language',
