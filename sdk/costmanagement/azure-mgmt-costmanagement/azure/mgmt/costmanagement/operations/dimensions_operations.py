@@ -36,7 +36,7 @@ class DimensionsOperations(object):
 
         self.config = config
 
-    def list_by_subscription(
+    def list_by_scope(
             self, scope, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Lists the dimensions by the defined scope.
 
@@ -90,7 +90,7 @@ class DimensionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription.metadata['url']
+                url = self.list_by_scope.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -140,4 +140,4 @@ class DimensionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}
+    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}

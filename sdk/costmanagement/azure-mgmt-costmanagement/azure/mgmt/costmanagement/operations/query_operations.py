@@ -50,7 +50,7 @@ class QueryOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
