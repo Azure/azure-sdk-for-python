@@ -29,7 +29,6 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
-from ._polling import CloseHandles
 from .file_client import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
@@ -367,53 +366,61 @@ class DirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handles(
-            self, handle=None, # type: Union[str, HandleItem]
-            recursive=False,  # type: bool
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Any
-        """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
+    def close_handle(self, handle, **kwargs):
+        # type: (Union[str, HandleItem], Any) -> int
+        """Close an open file handle.
 
         :param handle:
-            Optionally, a specific handle to close. The default value is '*'
-            which will attempt to close all open handles.
+            A specific handle to close.
         :type handle: str or ~azure.storage.file.Handle
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            The total number of handles closed. This could be 0 if the supplied
+            handle was not found.
+        :rtype: int
+        """
+        timeout = kwargs.pop('timeout', None)
+        start_time = time.time()
+        try:
+            handle_id = handle.id # type: ignore
+        except AttributeError:
+            handle_id = handle
+        try_close = True
+        continuation_token = None
+        total_handles = 0
+        while try_close:
+            response = self._client.file.force_close_handles(
+                handle_id,
+                timeout=timeout,
+                marker=continuation_token,
+                sharesnapshot=self.snapshot,
+                cls=return_response_headers,
+                **kwargs
+            )
+            continuation_token = response.get('marker')
+            try_close = bool(continuation_token)
+            total_handles += response.get('number_of_handles_closed')
+            if timeout:
+                timeout = timeout - (time.time() - start_time)
+        return total_handles
+
+    @distributed_trace
+    def close_all_handles(self, recursive=False, **kwargs):
+        # type: (bool, Any) -> int
+        """Close any open file handles.
+
+        This operation will block until the service has closed all open handles.
+
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The total number of handles closed.
+        :rtype: int
         """
-        timeout = kwargs.pop('timeout', None)
-        try:
-            handle_id = handle.id # type: ignore
-        except AttributeError:
-            handle_id = handle or '*'
-        command = functools.partial(
-            self._client.directory.force_close_handles,
-            handle_id,
-            timeout=timeout,
-            sharesnapshot=self.snapshot,
-            recursive=recursive,
-            cls=return_response_headers,
-            **kwargs)
-        try:
-            start_close = command()
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-        polling_method = CloseHandles(self._config.copy_polling_interval)
-        return LROPoller(
-            command,
-            start_close,
-            None,
-            polling_method)
+        return self.close_handle(handle='*', recursive=recursive, **kwargs)
 
     @distributed_trace
     def get_directory_properties(self, **kwargs):
