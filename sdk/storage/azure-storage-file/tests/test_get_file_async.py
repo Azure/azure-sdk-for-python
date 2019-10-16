@@ -14,11 +14,10 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
-
+from azure.storage.file import FileProperties
 from azure.storage.file.aio import (
     FileClient,
     FileServiceClient,
-    FileProperties
 )
 from filetestcase import (
     FileTestCase,
