@@ -10,7 +10,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 19:05:07 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage40320ffd.blob.core.windows.net/container40320ffd?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container40320ffd?restype=container
   response:
     body: {string: ''}
     headers:
@@ -35,7 +35,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 19:05:10 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage40320ffd.blob.core.windows.net/container40320ffd/blob1
+    uri: https://blobstoragename.blob.core.windows.net/container40320ffd/blob1
   response:
     body: {string: ''}
     headers:
@@ -63,7 +63,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 19:05:10 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage40320ffd.blob.core.windows.net/container40320ffd/blob2
+    uri: https://blobstoragename.blob.core.windows.net/container40320ffd/blob2
   response:
     body: {string: ''}
     headers:
@@ -91,7 +91,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 19:05:10 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage40320ffd.blob.core.windows.net/container40320ffd/blob3
+    uri: https://blobstoragename.blob.core.windows.net/container40320ffd/blob3
   response:
     body: {string: ''}
     headers:
@@ -126,7 +126,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 19:05:10 GMT']
       x-ms-version: ['2019-02-02']
     method: POST
-    uri: https://pyacrstorage40320ffd.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body: {string: "--batchresponse_20727ef2-0c9b-4844-93b0-21127857f749\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:

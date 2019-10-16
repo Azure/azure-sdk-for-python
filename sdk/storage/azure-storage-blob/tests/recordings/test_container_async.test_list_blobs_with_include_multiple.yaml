@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec39a1803.blob.core.windows.net/containerc39a1803?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerc39a1803?restype=container
   response:
     body:
       string: ''
@@ -53,7 +53,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec39a1803.blob.core.windows.net/containerc39a1803/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containerc39a1803/blob1
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec39a1803.blob.core.windows.net/containerc39a1803/blob1?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/containerc39a1803/blob1?comp=snapshot
   response:
     body:
       string: ''
@@ -134,7 +134,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec39a1803.blob.core.windows.net/containerc39a1803/blob2
+    uri: https://blobstoragename.blob.core.windows.net/containerc39a1803/blob2
   response:
     body:
       string: ''
@@ -171,11 +171,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragec39a1803.blob.core.windows.net/containerc39a1803?include=snapshots,metadata&restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/containerc39a1803?include=snapshots,metadata&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragec39a1803.blob.core.windows.net/\" ContainerName=\"containerc39a1803\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-10T20:31:29.0096849Z</Snapshot><Properties><Creation-Time>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containerc39a1803\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-10T20:31:29.0096849Z</Snapshot><Properties><Creation-Time>Thu,
         10 Oct 2019 20:31:28 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 20:31:28
         GMT</Last-Modified><Etag>0x8D74DC0D4749DB8</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control

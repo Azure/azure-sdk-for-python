@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee0a1499.blob.core.windows.net/mynewcontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mynewcontainer?restype=container
   response:
     body:
       string: ''
@@ -53,7 +53,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragee0a1499.blob.core.windows.net/mynewcontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mynewcontainer?restype=container
   response:
     body:
       string: ''
@@ -103,7 +103,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragee0a1499.blob.core.windows.net/mynewcontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mynewcontainer?restype=container
   response:
     body:
       string: ''

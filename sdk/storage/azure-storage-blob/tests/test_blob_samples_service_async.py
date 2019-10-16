@@ -8,6 +8,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -17,8 +18,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_storage_account_information_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -33,8 +33,7 @@ class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
         # [END get_blob_service_account_info]
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def testblob_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -68,8 +67,7 @@ class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
         # [END get_blob_service_properties]
         assert properties is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def testblob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Service stats tested in blob_service_stats_async.py")
@@ -86,8 +84,7 @@ class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
         # [END get_blob_service_stats]
         assert stats is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def testcontainer_operations_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -133,8 +130,7 @@ class TestBlobServiceSamplesAsync(AsyncBlobTestCase):
                 print("Container already deleted.")
             # [END bsc_delete_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def testget_blob_and_container_clients_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)

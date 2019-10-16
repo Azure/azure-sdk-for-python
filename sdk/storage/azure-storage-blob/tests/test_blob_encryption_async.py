@@ -43,6 +43,7 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -108,8 +109,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
 
     # --Test cases for blob encryption ----------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_missing_attribute_kek_wrap_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -146,8 +146,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_value_kek_wrap_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -174,8 +173,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_missing_attribute_kek_unwrap_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -206,8 +204,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_value_kek_unwrap_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -228,8 +225,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_kek_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -246,8 +242,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_resolver_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -268,8 +263,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_kek_RSA_async(self, resource_group, location, storage_account, storage_account_key):
         # We can only generate random RSA keys, so this must be run live or
@@ -294,8 +288,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(data, self.bytes)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_nonmatching_kid_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -316,8 +309,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_invalid_stream_type_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -343,8 +335,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await blob.upload_blob(large_stream)
         self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_chnking_reqd_mult_of_block_size_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):
@@ -370,8 +361,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_chnking_reqd_non_mult_of_block_size_async(self, resource_group, location,
                                                                            storage_account, storage_account_key):
@@ -396,8 +386,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_chunking_required_range_specified_async(self, resource_group, location, storage_account,
                                                                     storage_account_key):
@@ -425,8 +414,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[:self.config.max_single_put_size + 53], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_blob_single_shot_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -447,8 +435,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_range_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -474,8 +461,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_empty_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -495,8 +481,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_serial_upload_chunking_async(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -517,8 +502,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_beginning_to_middle_async(self, resource_group, location, storage_account,
                                                             storage_account_key):
@@ -539,8 +523,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[:50], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_middle_to_end_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -563,8 +546,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[100:], blob_content)
         self.assertEqual(content[100:], blob_content2)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_middle_to_middle_async(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -585,8 +567,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[5:98], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_aligns_on_16_byte_block_async(self, resource_group, location, storage_account,
                                                                 storage_account_key):
@@ -607,8 +588,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[48:64], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_expnded_to_begin_bloc_align_async(self, resource_group, location,
                                                                           storage_account, storage_account_key):
@@ -629,8 +609,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[5:55], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_range_expanded_to_beginning_iv_async(self, resource_group, location, storage_account,
                                                                  storage_account_key):
@@ -651,8 +630,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content[22:42], blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_blob_strict_mode_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -685,8 +663,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
                 await blob.upload_blob('To encrypt', blob_type=service)
             self._teardown(file_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_strict_mode_no_policy_async(self, resource_group, location, storage_account,
                                                         storage_account_key):
@@ -705,8 +682,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(ValueError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_strict_mode_unencrypted_blob_async(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -724,8 +700,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_methods_fail_block_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -746,8 +721,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await blob.commit_block_list(['block1'])
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_methods_fail_append_async(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -773,8 +747,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await blob.upload_blob(b'To encrypt', blob_type=BlobType.AppendBlob)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_methods_fail_page_async(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -795,8 +768,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await blob.create_page_blob(512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_validate_encryption_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
@@ -826,8 +798,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
 
         self.assertEqual(self.bytes, content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_block_blob_from_star_async(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -849,8 +820,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         await self._create_blob_from_star(BlobType.BlockBlob, "blob4", b'To encrypt', 'To encrypt', bsc)
         self._teardown(file_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_page_blob_from_star_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -881,8 +851,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         blob_content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(content, blob_content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_to_star_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,

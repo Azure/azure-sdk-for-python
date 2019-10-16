@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef5ba18c8.blob.core.windows.net/containerf5ba18c8?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerf5ba18c8?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef5ba18c8.blob.core.windows.net/containerf5ba18c8?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/containerf5ba18c8?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -79,11 +79,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragef5ba18c8.blob.core.windows.net/?prefix=containerf5ba18c8&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=containerf5ba18c8&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef5ba18c8.blob.core.windows.net/\"><Prefix>containerf5ba18c8</Prefix><Containers><Container><Name>containerf5ba18c8</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>containerf5ba18c8</Prefix><Containers><Container><Name>containerf5ba18c8</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:14:32 GMT</Last-Modified><Etag>\"0x8D74DBE765B8F96\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><PublicAccess>blob</PublicAccess><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage25111974.blob.core.windows.net/container25111974?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container25111974?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage25111974.blob.core.windows.net/container25111974?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container25111974?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage25111974.blob.core.windows.net/container25111974?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container25111974?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers

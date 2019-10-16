@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage791e16c8.blob.core.windows.net/utcontainer791e16c8?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer791e16c8?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage791e16c8.blob.core.windows.net/utcontainer791e16c8/blob791e16c8
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer791e16c8/blob791e16c8
   response:
     body:
       string: ''
@@ -105,7 +105,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage791e16c8.blob.core.windows.net/utcontainer791e16c8/blob791e16c8?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer791e16c8/blob791e16c8?comp=snapshot
   response:
     body:
       string: ''
@@ -145,11 +145,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage791e16c8.blob.core.windows.net/utcontainer791e16c8?include=snapshots&restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer791e16c8?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage791e16c8.blob.core.windows.net/\" ContainerName=\"utcontainer791e16c8\"><Blobs><Blob><Name>blob791e16c8</Name><Snapshot>2019-10-11T18:08:59.5023347Z</Snapshot><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer791e16c8\"><Blobs><Blob><Name>blob791e16c8</Name><Snapshot>2019-10-11T18:08:59.5023347Z</Snapshot><Properties><Creation-Time>Fri,
         11 Oct 2019 18:08:59 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 18:08:59
         GMT</Last-Modified><Etag>0x8D74E7616ED9BB1</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -189,7 +189,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage791e16c8.blob.core.windows.net/utcontainer791e16c8/blob791e16c8?snapshot=2019-10-11T18:08:59.5023347Z
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer791e16c8/blob791e16c8?snapshot=2019-10-11T18:08:59.5023347Z
   response:
     body:
       string: ''

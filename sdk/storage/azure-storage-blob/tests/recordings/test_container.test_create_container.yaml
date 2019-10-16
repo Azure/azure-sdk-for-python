@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 10 Oct 2019 16:14:56 GMT
+      - Wed, 16 Oct 2019 20:30:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11d00ec6.blob.core.windows.net/container11d00ec6?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container11d00ec6?restype=container
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 10 Oct 2019 16:14:57 GMT
+      - Wed, 16 Oct 2019 20:30:14 GMT
       etag:
-      - '"0x8D74D9CFE8A8422"'
+      - '"0x8D75277A70B0CBC"'
       last-modified:
-      - Thu, 10 Oct 2019 16:14:57 GMT
+      - Wed, 16 Oct 2019 20:30:15 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

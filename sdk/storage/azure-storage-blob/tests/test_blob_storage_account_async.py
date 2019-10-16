@@ -23,6 +23,7 @@ from azure.storage.blob.models import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._generated.models import RehydratePriority
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -69,8 +70,7 @@ class BlobStorageAccountTestAsync(AsyncBlobTestCase):
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_standard_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -124,8 +124,7 @@ class BlobStorageAccountTestAsync(AsyncBlobTestCase):
 
             await blob.delete_blob()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_set_std_blob_tier_w_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -145,8 +144,7 @@ class BlobStorageAccountTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_rehydration_status(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())

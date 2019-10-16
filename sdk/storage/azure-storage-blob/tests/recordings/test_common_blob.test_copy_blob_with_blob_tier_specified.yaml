@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage8e6d16e4.blob.core.windows.net/utcontainer8e6d16e4?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer8e6d16e4?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage8e6d16e4.blob.core.windows.net/utcontainer8e6d16e4/blob8e6d16e4
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer8e6d16e4/blob8e6d16e4
   response:
     body:
       string: ''

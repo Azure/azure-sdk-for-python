@@ -10,7 +10,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 16:09:14 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container22000f2d?restype=container
   response:
     body: {string: ''}
     headers:
@@ -35,7 +35,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 16:09:16 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container22000f2d?restype=container&comp=acl
   response:
     body: {string: ''}
     headers:
@@ -56,7 +56,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 16:09:16 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstorage22000f2d.blob.core.windows.net/container22000f2d?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container22000f2d?restype=container&comp=acl
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-15T16:09:16.0000000Z</Start><Expiry>2019-10-15T17:09:16.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"}
     headers:

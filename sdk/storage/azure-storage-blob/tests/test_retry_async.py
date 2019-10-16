@@ -32,6 +32,7 @@ from azure.storage.blob.aio import (
 from testcase import (
     ResponseCallback,
     RetryCounter,
+    GlobalStorageAccountPreparer
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from asyncblobtestcase import (
@@ -53,8 +54,7 @@ class AiohttpTestTransport(AioHttpTransport):
 # --Test Class -----------------------------------------------------------------
 class StorageRetryTestAsync(AsyncBlobTestCase):
     # --Test Cases --------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_on_server_error_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -75,8 +75,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_on_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -98,8 +97,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_callback_and_retry_context_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -127,8 +125,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -159,8 +156,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             except:
                 pass
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_no_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -182,8 +178,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_linear_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -206,8 +201,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_exponential_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -232,8 +226,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             # Clean up
             await service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_exponential_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
@@ -268,8 +261,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_linear_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         context_stub = {}
@@ -296,8 +288,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -318,8 +309,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_with_deserialization_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -343,8 +333,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_GRS')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_secondary_async(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
@@ -440,8 +429,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         await container.get_container_properties(retry_hook=retry_callback)
         assert retry_callback.called
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_invalid_account_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

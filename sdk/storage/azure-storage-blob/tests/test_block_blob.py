@@ -21,9 +21,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -81,8 +79,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     #--Test cases for block blobs --------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -94,8 +91,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_unicode(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -106,8 +102,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -117,8 +112,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -137,8 +131,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -157,8 +150,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_md5(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -173,8 +165,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange
@@ -195,8 +186,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob_properties = blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -209,8 +199,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(len(block_list[1]), 0)
         self.assertEqual(len(block_list[0]), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_block_list_uncommitted_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -234,8 +223,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(block_list[1][2].id, '3')
         self.assertEqual(block_list[1][2].size, 3)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_block_list_committed_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -262,8 +250,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(block_list[0][2].id, '3')
         self.assertEqual(block_list[0][2].size, 3)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_small_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -285,8 +272,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_small_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -306,8 +292,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, update_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_large_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -331,8 +316,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.metadata, {'blobdata': 'data1'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_large_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -354,8 +338,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.metadata, {'blobdata': 'data2'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_single_put(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -371,8 +354,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -388,8 +370,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -405,8 +386,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -422,8 +402,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -443,8 +422,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -463,8 +441,7 @@ class StorageBlockBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -487,8 +464,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -516,8 +492,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -534,8 +509,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data[3:], b"".join(list(blob.download_blob())))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -548,8 +522,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data[3:8], b"".join(list(blob.download_blob())))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count_and_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -568,8 +541,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -582,8 +554,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._setup(storage_account.name, storage_account_key)
@@ -599,8 +570,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -625,8 +595,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -647,8 +616,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._setup(storage_account.name, storage_account_key)
@@ -668,8 +636,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.blob_tier, blob_tier)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -699,8 +666,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -728,8 +694,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -754,8 +719,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_frm_stream_nonseek_chunk_upld_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -779,8 +743,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_from_stream_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -803,8 +766,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -834,8 +796,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -858,8 +819,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_from_stream_chunk_upload_with_cntandrops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -888,8 +848,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chnked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -917,8 +876,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -947,8 +905,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.blob_tier, blob_tier)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -965,8 +922,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -980,8 +936,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1003,8 +958,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1025,8 +979,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -1038,8 +991,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoraged0db1359.blob.core.windows.net/containerd0db1359?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd0db1359?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoraged0db1359.blob.core.windows.net/containerd0db1359?comp=lease&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd0db1359?comp=lease&restype=container
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoraged0db1359.blob.core.windows.net/containerd0db1359?comp=lease&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd0db1359?comp=lease&restype=container
   response:
     body:
       string: ''
@@ -117,7 +117,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoraged0db1359.blob.core.windows.net/containerd0db1359?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd0db1359?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -152,7 +152,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoraged0db1359.blob.core.windows.net/containerd0db1359?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd0db1359?restype=container
   response:
     body:
       string: ''

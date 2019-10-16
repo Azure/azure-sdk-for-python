@@ -10,7 +10,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:17 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/containername?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
   response:
     body: {string: ''}
     headers:
@@ -32,7 +32,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:17 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/containername?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
         specified container already exists.\nRequestId:4c01b826-501e-0093-16ea-827b49000000\nTime:2019-10-14T23:56:24.5026396Z</Message></Error>"}
@@ -54,10 +54,10 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:24 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/?maxresults=1&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?maxresults=1&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragecfd20d00.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Mon,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Mon,
         14 Oct 2019 23:56:18 GMT</Last-Modified><Etag>\"0x8D751021B43D7CE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"}
     headers:
@@ -77,10 +77,10 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:24 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/?maxresults=1&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?maxresults=1&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragecfd20d00.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Mon,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Mon,
         14 Oct 2019 23:56:18 GMT</Last-Modified><Etag>\"0x8D751021B43D7CE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"}
     headers:
@@ -100,7 +100,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:27 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/containername?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
   response:
     body: {string: ''}
     headers:
@@ -127,7 +127,7 @@ interactions:
       x-ms-date: ['Mon, 14 Oct 2019 23:56:27 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstoragecfd20d00.blob.core.windows.net/containername?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
   response:
     body: {string: ''}
     headers:

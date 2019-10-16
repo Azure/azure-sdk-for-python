@@ -13,9 +13,7 @@ from azure.storage.blob import BlobServiceClient
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 SOURCE_FILE = 'SampleSource.txt'
 
@@ -40,8 +38,7 @@ class TestCommonBlobSamples(StorageTestCase):
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_blob_snapshots(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -76,8 +73,7 @@ class TestCommonBlobSamples(StorageTestCase):
         # Delete container
         blob_service_client.delete_container("containerformyblobs")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_soft_delete_and_undelete_blob(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -123,8 +119,7 @@ class TestCommonBlobSamples(StorageTestCase):
         # Delete container
         blob_service_client.delete_container("containerfordeletedblobs")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_acquire_lease_on_blob(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -156,8 +151,7 @@ class TestCommonBlobSamples(StorageTestCase):
         # Delete container
         blob_service_client.delete_container("leasemyblobscontainer")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_start_copy_blob_from_url_and_abort_copy(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 

@@ -28,6 +28,7 @@ if sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -50,9 +51,9 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):        
+class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
     # --Helpers-----------------------------------------------------------------
-    
+
     async def _setup(self, name, key):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -97,8 +98,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(actual_bytes, expected_data)
 
     # --Test cases for block blobs --------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_bytes_large_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -113,13 +113,12 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         for i in range(5):
             futures.append(blob.stage_block(
                 'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE)))
-        
+
         await asyncio.gather(*futures)
 
             # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_bytes_large_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -137,8 +136,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
                 validate_content=True)
             self.assertIsNone(resp)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_stream_large_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -159,8 +157,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
 
             # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_stream_large_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -182,8 +179,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_blob_from_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -207,8 +203,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -232,8 +227,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_blob_from_path_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -256,8 +250,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -289,8 +282,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -320,8 +312,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_creat_lrg_blob_frm_stream_chnkd_upload_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -345,8 +336,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_creat_lrgblob_frm_strm_w_prgrss_chnkduplod_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -378,8 +368,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_creat_lrgblob_frm_strm_chnkd_uplod_w_cnt_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -404,8 +393,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_creat_lrg_frm_stream_chnk_upload_w_cntnprops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -437,8 +425,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_large_from_stream_chunk_upld_with_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live

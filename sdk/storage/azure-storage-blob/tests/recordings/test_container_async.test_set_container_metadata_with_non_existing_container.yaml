@@ -13,7 +13,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageb8131f6c.blob.core.windows.net/containerb8131f6c?restype=container&comp=metadata
+    uri: https://blobstoragename.blob.core.windows.net/containerb8131f6c?restype=container&comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The

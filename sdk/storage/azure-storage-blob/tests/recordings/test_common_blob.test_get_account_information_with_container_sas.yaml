@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage56ea1a68.blob.core.windows.net/utcontainer56ea1a68?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer56ea1a68?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -53,7 +53,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage56ea1a68.blob.core.windows.net/utcontainer56ea1a68?restype=account&comp=properties&se=2019-10-11T19%3A08%3A36Z&sp=r&sv=2019-02-02&sr=c&sig=UeUsaCBBEx1nu433GWwrEQ4KQZuJC8Kno2zrr9TXHQM%3D
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer56ea1a68?restype=account&comp=properties&se=2019-10-11T19%3A08%3A36Z&sp=r&sv=2019-02-02&sr=c&sig=UeUsaCBBEx1nu433GWwrEQ4KQZuJC8Kno2zrr9TXHQM%3D
   response:
     body:
       string: ''

@@ -18,7 +18,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from testcase import ResponseCallback
+from testcase import ResponseCallback, GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -67,8 +67,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_put_block_with_seekable_stream_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
@@ -105,8 +104,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(content, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_put_block_with_non_seekable_stream_async(self, resource_group, location, storage_account,
                                                                   storage_account_key):
@@ -143,8 +141,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(content, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_retry_put_block_with_non_seekable_stream_fail_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):

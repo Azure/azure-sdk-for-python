@@ -6,7 +6,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 00:12:38 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage6dc41694.blob.core.windows.net/retry6dc41694?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/retry6dc41694?restype=container
   response:
     body: {string: ''}
     headers: {content-length: '0', date: 'Tue, 15 Oct 2019 00:12:38 GMT', etag: '"0x8D75104639EFA0F"',
@@ -25,10 +25,10 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 00:12:38 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstorage6dc41694.blob.core.windows.net/?prefix=retry&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage6dc41694.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry6dc41694</Name><Properties><Last-Modified>Tue,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry6dc41694</Name><Properties><Last-Modified>Tue,
         15 Oct 2019 00:12:38 GMT</Last-Modified><Etag>\"0x8D75104639EFA0F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"}
     headers: {content-type: application/xml, date: 'Tue, 15 Oct 2019 00:12:38 GMT',
@@ -47,10 +47,10 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 00:12:38 GMT']
       x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://pyacrstorage6dc41694.blob.core.windows.net/?prefix=retry&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage6dc41694.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry6dc41694</Name><Properties><Last-Modified>Tue,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry6dc41694</Name><Properties><Last-Modified>Tue,
         15 Oct 2019 00:12:38 GMT</Last-Modified><Etag>\"0x8D75104639EFA0F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"}
     headers: {content-type: application/xml, date: 'Tue, 15 Oct 2019 00:12:42 GMT',
@@ -68,7 +68,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 00:12:42 GMT']
       x-ms-version: ['2019-02-02']
     method: DELETE
-    uri: https://pyacrstorage6dc41694.blob.core.windows.net/retry6dc41694?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/retry6dc41694?restype=container
   response:
     body: {string: ''}
     headers: {content-length: '0', date: 'Tue, 15 Oct 2019 00:12:42 GMT', server: Windows-Azure-Blob/1.0

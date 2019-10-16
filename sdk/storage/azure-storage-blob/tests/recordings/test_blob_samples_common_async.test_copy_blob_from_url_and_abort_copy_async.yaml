@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync?restype=container
   response:
     body:
       string: ''
@@ -43,7 +43,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
   response:
     body:
       string: ''
@@ -77,7 +77,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
   response:
     body:
       string: ''
@@ -122,7 +122,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt?copyid=e8521112-9203-4d0c-8c8b-66815a019e30&comp=copy
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync/59466-0.txt?copyid=e8521112-9203-4d0c-8c8b-66815a019e30&comp=copy
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
   response:
     body:
       string: ''
@@ -196,7 +196,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainerasync?restype=container
   response:
     body:
       string: ''

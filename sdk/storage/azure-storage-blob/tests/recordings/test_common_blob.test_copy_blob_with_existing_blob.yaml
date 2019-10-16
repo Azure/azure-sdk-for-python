@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc531490?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490/blobc531490
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc531490/blobc531490
   response:
     body:
       string: ''
@@ -101,13 +101,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490/blobc531490
+      - https://blobstoragename.blob.core.windows.net/utcontainerc531490/blobc531490
       x-ms-date:
       - Fri, 11 Oct 2019 18:15:48 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490/blob1copy
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc531490/blob1copy
   response:
     body:
       string: ''
@@ -149,7 +149,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490/blob1copy
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc531490/blob1copy
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -181,7 +181,7 @@ interactions:
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://pyacrstoragec531490.blob.core.windows.net/utcontainerc531490/blobc531490
+      - https://blobstoragename.blob.core.windows.net/utcontainerc531490/blobc531490
       x-ms-copy-status:
       - success
       x-ms-creation-time:

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync/mypageblob
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync/mypageblob
   response:
     body:
       string: ''
@@ -101,7 +101,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync/mypageblob?comp=page
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync/mypageblob?comp=page
   response:
     body:
       string: ''
@@ -140,7 +140,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync/mypageblob
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync/mypageblob
   response:
     body:
       string: !!binary |
@@ -192,7 +192,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync/mypageblob?comp=pagelist
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync/mypageblob?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"
@@ -226,7 +226,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync/mypageblob
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync/mypageblob
   response:
     body:
       string: ''
@@ -257,7 +257,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3d2319d0.blob.core.windows.net/mypagecontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mypagecontainerasync?restype=container
   response:
     body:
       string: ''

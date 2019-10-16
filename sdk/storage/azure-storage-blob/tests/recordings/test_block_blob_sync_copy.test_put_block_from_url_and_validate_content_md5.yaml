@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e
   response:
     body:
       string: ''
@@ -101,7 +101,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-10-11T03%3A28%3A25Z&sp=r&sv=2019-02-02&sr=b&sig=HrChUY3mTPhcoTIwlZ2A8NREywghJAh3uzU1H3D7i70%3D
+      - https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-10-11T03%3A28%3A25Z&sp=r&sv=2019-02-02&sr=b&sig=HrChUY3mTPhcoTIwlZ2A8NREywghJAh3uzU1H3D7i70%3D
       x-ms-date:
       - Fri, 11 Oct 2019 02:28:25 GMT
       x-ms-source-content-md5:
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=MQ%3D%3D&comp=block
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
@@ -180,7 +180,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-10-11T03%3A28%3A25Z&sp=r&sv=2019-02-02&sr=b&sig=HrChUY3mTPhcoTIwlZ2A8NREywghJAh3uzU1H3D7i70%3D
+      - https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-10-11T03%3A28%3A25Z&sp=r&sv=2019-02-02&sr=b&sig=HrChUY3mTPhcoTIwlZ2A8NREywghJAh3uzU1H3D7i70%3D
       x-ms-date:
       - Fri, 11 Oct 2019 02:28:25 GMT
       x-ms-source-content-md5:
@@ -190,7 +190,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
@@ -229,7 +229,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage740d1e2e.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks

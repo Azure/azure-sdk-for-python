@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage92191723.blob.core.windows.net/containerformyblobsasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobsasync?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage92191723.blob.core.windows.net/containerformyblobsasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobsasync/my_blob
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage92191723.blob.core.windows.net/containerformyblobsasync/my_blob?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobsasync/my_blob?comp=snapshot
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage92191723.blob.core.windows.net/containerformyblobsasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobsasync/my_blob
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage92191723.blob.core.windows.net/containerformyblobsasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobsasync?restype=container
   response:
     body:
       string: ''

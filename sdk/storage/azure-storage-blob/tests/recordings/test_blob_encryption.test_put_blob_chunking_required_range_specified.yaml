@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa?restype=container
   response:
     body:
       string: ''
@@ -129,7 +129,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -241,7 +241,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRJeU9EZyUzRA%3D%3D&comp=block
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRJeU9EZyUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -353,7 +353,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpnMk56SSUzRA%3D%3D&comp=block
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpnMk56SSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -402,7 +402,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?comp=blocklist
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa?comp=blocklist
   response:
     body:
       string: ''
@@ -444,7 +444,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragec98e1bfa.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc98e1bfa/encryption_block_blobc98e1bfa
   response:
     body:
       string: !!binary |

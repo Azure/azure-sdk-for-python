@@ -9,6 +9,7 @@
 import os
 import asyncio
 from datetime import datetime, timedelta
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -39,8 +40,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_container_sample_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -76,8 +76,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
             await container_client.delete_container()
             # [END delete_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_acquire_lease_on_container_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -100,8 +99,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
         await container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_set_metadata_on_container_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -134,8 +132,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_container_access_policy_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -192,8 +189,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_list_blobs_in_container_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -226,8 +222,7 @@ class TestContainerSamplesAsync(AsyncBlobTestCase):
         # Delete container
         await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_blob_client_from_container_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)

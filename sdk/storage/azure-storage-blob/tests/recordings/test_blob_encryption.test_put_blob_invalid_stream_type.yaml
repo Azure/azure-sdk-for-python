@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage6682165f.blob.core.windows.net/utcontainer6682165f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer6682165f?restype=container
   response:
     body:
       string: ''

@@ -28,7 +28,7 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
 from testcase import (
-    LogCaptured
+    LogCaptured, GlobalStorageAccountPreparer
 )
 from asyncblobtestcase import (
     AsyncBlobTestCase,
@@ -78,8 +78,7 @@ class StorageLoggingTestAsync(AsyncBlobTestCase):
             except:
                 pass
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
@@ -96,8 +95,7 @@ class StorageLoggingTestAsync(AsyncBlobTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live
@@ -128,8 +126,7 @@ class StorageLoggingTestAsync(AsyncBlobTestCase):
             self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live

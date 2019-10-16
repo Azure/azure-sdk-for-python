@@ -15,9 +15,7 @@ from azure.storage.blob import (
     BlobBlock,
 )
 from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
-from testcase import (
-    StorageTestCase,
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 # ------------------------------------------------------------------------------
@@ -77,8 +75,7 @@ class StorageCPKTest(StorageTestCase):
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -122,8 +119,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # parallel operation
         if not self.is_live:
@@ -168,8 +164,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
         # problem with the recording framework can only run live
         if not self.is_live:
@@ -211,8 +206,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_single_chunk(self, resource_group, location, storage_account, storage_account_key):
         # Act
         # test chunking functionality by reducing the size of each chunk,
@@ -250,8 +244,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_from_url_and_commit_with_cpk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -317,8 +310,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -355,8 +347,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.content_as_bytes(), b'AAABBBCCC')
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -407,8 +398,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_append_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -446,8 +436,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -489,8 +478,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -544,8 +532,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             return
@@ -613,8 +600,7 @@ class StorageCPKTest(StorageTestCase):
     #     blob = blob_client.download_blob(512, 1023, cpk=TEST_ENCRYPTION_KEY)
     #     self.assertEquals(blob.content_as_bytes(), data[512:])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
@@ -660,8 +646,7 @@ class StorageCPKTest(StorageTestCase):
         self.assertFalse('Up' in md)
         self._teardown(bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,

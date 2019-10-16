@@ -10,15 +10,12 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 
 class TestBlobServiceSamples(StorageTestCase):
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_storage_account_information(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -32,8 +29,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_account_info]
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_blob_service_properties(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -66,8 +62,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_properties]
         assert properties is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Service stats tested in blob_service_stats.py")
         if not self.is_live:
@@ -84,8 +79,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_stats]
         assert stats is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_container_operations(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -124,8 +118,7 @@ class TestBlobServiceSamples(StorageTestCase):
                 print("Container already deleted.")
             # [END bsc_delete_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_and_container_clients(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 

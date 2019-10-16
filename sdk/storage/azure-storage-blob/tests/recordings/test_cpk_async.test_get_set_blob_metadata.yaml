@@ -6,7 +6,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 16:49:02 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1?restype=container
   response:
     body: {string: ''}
     headers: {content-length: '0', date: 'Tue, 15 Oct 2019 16:49:02 GMT', etag: '"0x8D7518F95E386A5"',
@@ -31,7 +31,7 @@ interactions:
       x-ms-encryption-key-sha256: [3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=]
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
   response:
     body: {string: ''}
     headers: {content-length: '0', content-md5: Yge131eW6WNBDTvEtqQhiw==, date: 'Tue,
@@ -51,7 +51,7 @@ interactions:
       x-ms-date: ['Tue, 15 Oct 2019 16:49:03 GMT']
       x-ms-version: ['2019-02-02']
     method: HEAD
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
   response:
     body: {string: ''}
     headers: {date: 'Tue, 15 Oct 2019 16:49:03 GMT', server: Windows-Azure-Blob/1.0
@@ -73,7 +73,7 @@ interactions:
       x-ms-encryption-key-sha256: [3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=]
       x-ms-version: ['2019-02-02']
     method: HEAD
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
   response:
     body: {string: ''}
     headers: {accept-ranges: bytes, content-length: '9', content-md5: Yge131eW6WNBDTvEtqQhiw==,
@@ -99,7 +99,7 @@ interactions:
       x-ms-meta-up: [upval]
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1?comp=metadata
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1?comp=metadata
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
         blob is encrypted with customer specified encryption, but it was not provided
@@ -126,7 +126,7 @@ interactions:
       x-ms-meta-up: [upval]
       x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1?comp=metadata
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1?comp=metadata
   response:
     body: {string: ''}
     headers: {content-length: '0', date: 'Tue, 15 Oct 2019 16:49:02 GMT', etag: '"0x8D7518F961E06DA"',
@@ -148,7 +148,7 @@ interactions:
       x-ms-encryption-key-sha256: [3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=]
       x-ms-version: ['2019-02-02']
     method: HEAD
-    uri: https://pyacrstorage606f10b1.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer606f10b1/cpk606f10b1
   response:
     body: {string: ''}
     headers: {accept-ranges: bytes, content-length: '9', content-md5: Yge131eW6WNBDTvEtqQhiw==,

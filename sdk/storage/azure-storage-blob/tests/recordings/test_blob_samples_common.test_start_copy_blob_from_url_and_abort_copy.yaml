@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer?restype=container
   response:
     body:
       string: ''
@@ -57,7 +57,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
   response:
     body:
       string: ''
@@ -97,7 +97,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
   response:
     body:
       string: ''
@@ -159,7 +159,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer/59466-0.txt?copyid=95dbe9c1-8ed6-487b-a0e3-4f3ac20332e2&comp=copy
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt?copyid=95dbe9c1-8ed6-487b-a0e3-4f3ac20332e2&comp=copy
   response:
     body:
       string: ''
@@ -191,7 +191,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
   response:
     body:
       string: ''
@@ -253,7 +253,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragee37e1c76.blob.core.windows.net/copyblobcontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer?restype=container
   response:
     body:
       string: ''

@@ -18,6 +18,7 @@ from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from testcase import (
     StorageTestCase,
     ResponseCallback,
+    GlobalStorageAccountPreparer
 )
 
 # test constants
@@ -53,8 +54,7 @@ class StorageBlobRetryTest(StorageTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             pytest.skip("live only")
@@ -88,8 +88,7 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().content_as_bytes()
         self.assertEqual(content, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_non_seekable_stream(self, resource_group, location, storage_account,
                                                       storage_account_key):
         if not self.is_live:
@@ -125,8 +124,7 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().content_as_bytes()
         self.assertEqual(content, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_non_seekable_stream_fail(self, resource_group, location, storage_account,
                                                            storage_account_key):
         if not self.is_live:

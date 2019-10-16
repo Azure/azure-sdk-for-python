@@ -22,7 +22,8 @@ from azure.storage.blob._shared.shared_access_signature import QueryStringConsta
 
 from testcase import (
     StorageTestCase,
-    LogCaptured
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 if sys.version_info >= (3,):
@@ -54,8 +55,7 @@ class StorageLoggingTest(StorageTestCase):
         sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -71,8 +71,7 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -101,8 +100,7 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:

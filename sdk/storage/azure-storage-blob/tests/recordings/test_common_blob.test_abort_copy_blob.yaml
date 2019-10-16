@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -57,7 +57,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
@@ -101,7 +101,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=2543fa95-427c-4c72-a3ea-e5eae3eedc11&comp=copy
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=2543fa95-427c-4c72-a3ea-e5eae3eedc11&comp=copy
   response:
     body:
       string: ''
@@ -133,7 +133,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
@@ -195,7 +195,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
@@ -234,7 +234,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage207e0f24.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''

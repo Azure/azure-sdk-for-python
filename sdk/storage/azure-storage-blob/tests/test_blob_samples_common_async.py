@@ -10,7 +10,7 @@ import os
 import asyncio
 from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -37,8 +37,7 @@ class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
         return super(TestCommonBlobSamplesAsync, self).tearDown()
 
     #--Begin Blob Samples-----------------------------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_snapshots_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -74,8 +73,7 @@ class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
         # Delete container
         await blob_service_client.delete_container("containerformyblobsasync")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_soft_delete_and_undelete_blob_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -122,8 +120,7 @@ class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
         # Delete container
         await blob_service_client.delete_container("containerfordeletedblobsasync")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_acquire_lease_on_blob_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -156,8 +153,7 @@ class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
         # Delete container
         await blob_service_client.delete_container("leasemyblobscontainerasync")
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_copy_blob_from_url_and_abort_copy_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)

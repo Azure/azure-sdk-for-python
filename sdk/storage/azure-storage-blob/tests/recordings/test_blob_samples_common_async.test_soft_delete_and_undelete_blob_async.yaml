@@ -15,7 +15,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync?restype=container
   response:
     body:
       string: ''
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync/my_blob
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync/my_blob
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync/my_blob?comp=undelete
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync/my_blob?comp=undelete
   response:
     body:
       string: ''
@@ -181,7 +181,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync/my_blob
   response:
     body:
       string: ''
@@ -221,7 +221,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage1a851d15.blob.core.windows.net/containerfordeletedblobsasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobsasync?restype=container
   response:
     body:
       string: ''

@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4381254.blob.core.windows.net/utcontainera4381254?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainera4381254?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4381254.blob.core.windows.net/utcontainera4381254/bloba4381254
+    uri: https://blobstoragename.blob.core.windows.net/utcontainera4381254/bloba4381254
   response:
     body:
       string: ''
@@ -103,7 +103,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragea4381254.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
+    uri: https://blobstoragename.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks

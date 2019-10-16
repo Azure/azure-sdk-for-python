@@ -20,6 +20,7 @@ from azure.storage.blob.aio import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -91,8 +92,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -138,8 +138,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # parallel operation
@@ -183,8 +182,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
         # problem with the recording framework can only run live
@@ -227,8 +225,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_block_blob_with_single_chunk(self, resource_group, location, storage_account, storage_account_key):
         # Act
@@ -267,8 +264,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -335,8 +331,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_append_block(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -377,8 +372,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), b'AAABBBCCC')
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -430,8 +424,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), self.byte_data[0: 4 * 1024])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_append_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -470,8 +463,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -514,8 +506,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -570,8 +561,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -613,8 +603,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(await blob.content_as_bytes(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -661,8 +650,7 @@ class StorageCPKAsyncTest(AsyncBlobTestCase):
         self.assertEqual(md['up'], 'upval')
         self.assertFalse('Up' in md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

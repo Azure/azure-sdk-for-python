@@ -11,7 +11,7 @@ try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
-
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -21,8 +21,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 class TestAuthSamplesAsync(AsyncBlobTestCase):
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_connection_string_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -48,8 +47,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
         account_info = await blob_service_client.get_account_information()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_shared_key_async(self, resource_group, location, storage_account, storage_account_key):
         # [START create_blob_service_client]
@@ -61,8 +59,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
         account_info = await blob_service_client.get_account_information()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_blob_url_async(self, resource_group, location, storage_account, storage_account_key):
         # [START create_blob_client]
@@ -77,8 +74,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
         blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_active_directory_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -101,8 +97,7 @@ class TestAuthSamplesAsync(AsyncBlobTestCase):
         account_info = await blob_service_client.get_service_properties()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_auth_shared_access_signature_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only

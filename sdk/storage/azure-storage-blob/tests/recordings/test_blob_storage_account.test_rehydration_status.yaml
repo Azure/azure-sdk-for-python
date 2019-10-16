@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -107,7 +107,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1?comp=tier
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1?comp=tier
   response:
     body:
       string: ''
@@ -143,7 +143,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1?comp=tier
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1?comp=tier
   response:
     body:
       string: ''
@@ -175,7 +175,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -233,11 +233,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458?restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef9461458.blob.core.windows.net/\" ContainerName=\"utcontainerf9461458\"><Blobs><Blob><Name>rehydration_test_blob_1</Name><Properties><Creation-Time>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerf9461458\"><Blobs><Blob><Name>rehydration_test_blob_1</Name><Properties><Creation-Time>Thu,
         10 Oct 2019 00:38:37 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 00:38:37
         GMT</Last-Modified><Etag>0x8D74D1A3059A01D</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -276,7 +276,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -318,7 +318,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2
   response:
     body:
       string: ''
@@ -364,7 +364,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2?comp=tier
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2?comp=tier
   response:
     body:
       string: ''
@@ -400,7 +400,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2?comp=tier
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2?comp=tier
   response:
     body:
       string: ''
@@ -432,7 +432,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458/rehydration_test_blob_2
   response:
     body:
       string: ''
@@ -490,11 +490,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragef9461458.blob.core.windows.net/utcontainerf9461458?restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9461458?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef9461458.blob.core.windows.net/\" ContainerName=\"utcontainerf9461458\"><Blobs><Blob><Name>rehydration_test_blob_2</Name><Properties><Creation-Time>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerf9461458\"><Blobs><Blob><Name>rehydration_test_blob_2</Name><Properties><Creation-Time>Thu,
         10 Oct 2019 00:38:37 GMT</Creation-Time><Last-Modified>Thu, 10 Oct 2019 00:38:37
         GMT</Last-Modified><Etag>0x8D74D1A308FB185</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control

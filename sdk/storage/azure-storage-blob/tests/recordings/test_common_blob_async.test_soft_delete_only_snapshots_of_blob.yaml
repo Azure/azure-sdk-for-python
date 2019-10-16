@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994/blob257b1994
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994/blob257b1994
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=snapshot
   response:
     body:
       string: ''
@@ -154,7 +154,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=snapshot
   response:
     body:
       string: ''
@@ -190,7 +190,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994/blob257b1994
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994/blob257b1994
   response:
     body:
       string: ''
@@ -223,11 +223,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994?include=snapshots,deleted&restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994?include=snapshots,deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage257b1994.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Snapshot>2019-10-11T18:56:15.9915249Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Snapshot>2019-10-11T18:56:15.9915249Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
         11 Oct 2019 18:56:15 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 18:56:15
         GMT</Last-Modified><Etag>0x8D74E7CB1A40FAC</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -272,11 +272,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994?include=snapshots&restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage257b1994.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Properties><Creation-Time>Fri,
         11 Oct 2019 18:56:15 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 18:56:15
         GMT</Last-Modified><Etag>0x8D74E7CB1A40FAC</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -309,7 +309,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=undelete
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994/blob257b1994?comp=undelete
   response:
     body:
       string: ''
@@ -341,11 +341,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/utcontainer257b1994?include=snapshots,deleted&restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer257b1994?include=snapshots,deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage257b1994.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Snapshot>2019-10-11T18:56:15.9915249Z</Snapshot><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer257b1994\"><Blobs><Blob><Name>blob257b1994</Name><Snapshot>2019-10-11T18:56:15.9915249Z</Snapshot><Properties><Creation-Time>Fri,
         11 Oct 2019 18:56:15 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 18:56:15
         GMT</Last-Modified><Etag>0x8D74E7CB1A40FAC</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -392,7 +392,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage257b1994.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''

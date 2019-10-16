@@ -28,6 +28,7 @@ from azure.storage.blob.aio import (
     SequenceNumberAction,
     StorageErrorCode)
 
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase
 )
@@ -132,8 +133,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
     #--Test cases for page blobs --------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -148,8 +148,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(await blob.get_blob_properties())
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -165,8 +164,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         md = await blob.get_blob_properties()
         self.assertDictEqual(md.metadata, metadata)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_page_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -183,9 +181,8 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         actual = await content.content_as_bytes()
         self.assertEqual(actual, data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncBlobTestCase.await_prepared_test   
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
     async def test_update_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
@@ -201,8 +198,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_8tb_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -221,8 +217,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(0, len(page_ranges))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_larger_than_8tb_blob_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -233,8 +228,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         with self.assertRaises(HttpResponseError):
             await blob.create_page_blob(EIGHT_TB + 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_8tb_blob_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -260,8 +254,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(page_ranges[0]['start'], start_offset)
         self.assertEqual(page_ranges[0]['end'], start_offset + length - 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_with_md5(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -273,8 +266,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         resp = await blob.upload_page(data, offset=0, length=512, validate_content=True)
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_clear_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -289,8 +281,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         await self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_page_if_sequence_number_lt_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -307,8 +298,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lt_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -324,8 +314,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lte_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -341,8 +330,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lte_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -358,8 +346,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_eq_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -375,8 +362,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_eq_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -392,8 +378,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -424,8 +409,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -463,8 +447,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 source_content_md5=StorageContentValidation.get_content_md5(
                                                                     b"POTATO"))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -504,8 +487,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 source_if_modified_since=source_properties.get(
                                                                     'last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -545,8 +527,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     'last_modified') - timedelta(
                                                                     hours=15))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -583,8 +564,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 source_if_match='0x111111111111111')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -621,8 +601,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 source_if_none_match=source_properties.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -662,8 +641,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 if_modified_since=blob_properties.get(
                                                                     'last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -703,8 +681,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     'last_modified') - timedelta(
                                                                     minutes=15))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -741,8 +718,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 if_match='0x111111111111111')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -778,8 +754,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 if_none_match=blob_properties.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_lt(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -816,8 +791,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 if_sequence_number_lt=start_sequence)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_lte(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -854,8 +828,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 if_sequence_number_lte=start_sequence - 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_eq(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -892,8 +865,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 0,
                                                                 if_sequence_number_eq=start_sequence + 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_unicode(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -908,8 +880,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_page_ranges_no_pages(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -924,8 +895,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsInstance(ranges, list)
         self.assertEqual(len(ranges), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_page_ranges_2_pages(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -947,8 +917,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_get_page_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -985,8 +954,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_update_page_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1004,8 +972,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
         raise Exception('Page range validation failed to throw on failure case')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_resize_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1023,8 +990,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.size, 512)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_set_sequence_number_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1042,8 +1008,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.page_blob_sequence_number, 6)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_page_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1076,8 +1041,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_page_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1108,8 +1072,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1130,8 +1093,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1152,8 +1114,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_progress_first(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1183,8 +1144,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1203,8 +1163,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:], bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1223,8 +1182,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1250,8 +1208,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1282,8 +1239,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1310,8 +1266,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_empty_pages(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1349,8 +1304,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1379,8 +1333,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1413,8 +1366,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1438,8 +1390,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1472,8 +1423,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1486,8 +1436,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_blob_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1504,8 +1453,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_incremental_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1740,8 +1688,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         finally:
             await container.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def _test_download_sparse_page_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

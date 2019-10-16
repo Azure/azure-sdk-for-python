@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage649e10fe.blob.core.windows.net/container649e10fe?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container649e10fe?restype=container
   response:
     body:
       string: ''
@@ -43,11 +43,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage649e10fe.blob.core.windows.net/?comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage649e10fe.blob.core.windows.net/\"><Containers><Container><Name>container649e10fe</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Containers><Container><Name>container649e10fe</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:13:43 GMT</Last-Modified><Etag>\"0x8D74DBE59470348\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3cc019cf.blob.core.windows.net/leasemyblobscontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/leasemyblobscontainerasync?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3cc019cf.blob.core.windows.net/leasemyblobscontainerasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/leasemyblobscontainerasync/my_blob
   response:
     body:
       string: ''
@@ -90,7 +90,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3cc019cf.blob.core.windows.net/leasemyblobscontainerasync/my_blob?comp=lease
+    uri: https://blobstoragename.blob.core.windows.net/leasemyblobscontainerasync/my_blob?comp=lease
   response:
     body:
       string: ''
@@ -125,7 +125,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3cc019cf.blob.core.windows.net/leasemyblobscontainerasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/leasemyblobscontainerasync/my_blob
   response:
     body:
       string: ''
@@ -156,7 +156,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3cc019cf.blob.core.windows.net/leasemyblobscontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/leasemyblobscontainerasync?restype=container
   response:
     body:
       string: ''

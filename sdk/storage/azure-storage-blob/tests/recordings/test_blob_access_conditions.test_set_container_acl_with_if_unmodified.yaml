@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedd531c3f.blob.core.windows.net/utcontainerdd531c3f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -103,7 +103,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
@@ -150,7 +150,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerdd531c3f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container
   response:
     body:
       string: ''
@@ -192,7 +192,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedd531c3f.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -228,7 +228,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragedd531c3f.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdd531c3f?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers

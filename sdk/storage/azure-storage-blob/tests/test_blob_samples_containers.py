@@ -11,9 +11,7 @@ from datetime import datetime, timedelta
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 import pytest
 
 SOURCE_FILE = 'SampleSource.txt'
@@ -38,8 +36,7 @@ class TestContainerSamples(StorageTestCase):
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_container_sample(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -74,8 +71,7 @@ class TestContainerSamples(StorageTestCase):
             container_client.delete_container()
             # [END delete_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_acquire_lease_on_container(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -97,8 +93,7 @@ class TestContainerSamples(StorageTestCase):
         container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_metadata_on_container(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -130,8 +125,7 @@ class TestContainerSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_container_access_policy(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -187,8 +181,7 @@ class TestContainerSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_list_blobs_in_container(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -220,8 +213,7 @@ class TestContainerSamples(StorageTestCase):
         # Delete container
         container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_client_from_container(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 

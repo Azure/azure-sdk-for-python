@@ -26,9 +26,7 @@ from azure.storage.blob import (
     ContainerSasPermissions,
     AccessPolicy,
 )
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 LARGE_APPEND_BLOB_SIZE = 64 * 1024
@@ -68,8 +66,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         return container, blob
 
     # --Test cases for blob service --------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -85,8 +82,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = container.get_container_properties().metadata
         self.assertDictEqual(metadata, md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -102,8 +98,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_acl_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -121,8 +116,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_acl_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -140,8 +134,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_acl_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -159,8 +152,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_container_acl_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -178,8 +170,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_container_acquire_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -193,8 +184,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_container_acquire_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -209,8 +199,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_container_acquire_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -224,8 +213,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_container_acquire_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -240,8 +228,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_container_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -256,8 +243,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             container.get_container_properties()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_container_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -271,8 +257,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_container_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -286,8 +271,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             container.get_container_properties()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_container_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -300,8 +284,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -317,8 +300,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -335,8 +317,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -352,8 +333,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -370,8 +350,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -386,8 +365,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -402,8 +380,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -417,8 +394,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -434,8 +410,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -451,8 +426,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -468,8 +442,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -485,8 +458,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -502,8 +474,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -518,8 +489,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -533,8 +503,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -548,8 +517,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -564,8 +532,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -585,8 +552,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -605,8 +571,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -626,8 +591,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -646,8 +610,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -667,8 +630,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -686,8 +648,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -706,8 +667,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
         self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -726,8 +686,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -745,8 +704,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -762,8 +720,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -781,8 +738,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -798,8 +754,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -817,8 +772,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -833,8 +787,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -851,8 +804,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -868,8 +820,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -885,8 +836,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -903,8 +853,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -920,8 +869,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -938,8 +886,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -954,8 +901,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -970,8 +916,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -985,8 +930,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1002,8 +946,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1021,8 +964,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(metadata, md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1040,8 +982,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1059,8 +1000,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(metadata, md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1078,8 +1018,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1096,8 +1035,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(metadata, md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1113,8 +1051,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1130,8 +1067,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(metadata, md)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1148,8 +1084,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1165,8 +1100,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1183,8 +1117,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1200,8 +1133,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1218,8 +1150,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1235,8 +1166,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1251,8 +1181,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1266,8 +1195,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_delete_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1283,8 +1211,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1301,8 +1228,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1319,8 +1245,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1337,8 +1262,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1355,8 +1279,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1372,8 +1295,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1388,8 +1310,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1404,8 +1325,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['snapshot'])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_snapshot_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1421,8 +1341,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1444,8 +1363,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1462,8 +1380,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1485,8 +1402,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1503,8 +1419,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1525,8 +1440,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1541,8 +1455,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1562,8 +1475,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1579,8 +1491,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1600,8 +1511,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob()
         self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1622,8 +1532,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1643,8 +1552,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob()
         self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1665,8 +1573,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1685,8 +1592,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob()
         self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1705,8 +1611,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1724,8 +1629,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob()
         self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1744,8 +1648,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1761,8 +1664,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1780,8 +1682,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1797,8 +1698,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1816,8 +1716,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1832,8 +1731,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1849,8 +1747,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1864,8 +1761,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1882,8 +1778,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1903,8 +1798,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1923,8 +1817,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1944,8 +1837,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1964,8 +1856,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -1984,8 +1875,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2002,8 +1892,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2021,8 +1910,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
         self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_iter_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2041,8 +1929,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2058,8 +1945,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2074,8 +1960,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2091,8 +1976,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2107,8 +1991,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2124,8 +2007,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2139,8 +2021,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         #self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2155,8 +2036,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_block_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2171,8 +2051,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2188,8 +2067,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(data, content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2204,8 +2082,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2221,8 +2098,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(data, content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2237,8 +2113,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2254,8 +2129,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(data, content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2270,8 +2144,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
@@ -2287,8 +2160,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = b"".join(list(blob.download_blob()))
         self.assertEqual(data, content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_from_bytes_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()

@@ -21,6 +21,7 @@ from azure.storage.blob.aio import (
 
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -76,8 +77,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         )
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_from_url_and_commit_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -113,8 +113,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, self.source_blob_data)
         self.assertEqual(len(content), 8 * 1024)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_put_block_from_url_and_vldte_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -152,8 +151,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(len(uncommitted), 1)
         self.assertEqual(len(committed), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_copy_blob_sync_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

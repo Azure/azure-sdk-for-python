@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/listcontainer0ea7c1cac?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/listcontainer0ea7c1cac?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/listcontainer1ea7c1cac?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/listcontainer1ea7c1cac?restype=container
   response:
     body:
       string: ''
@@ -73,7 +73,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/listcontainer2ea7c1cac?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/listcontainer2ea7c1cac?restype=container
   response:
     body:
       string: ''
@@ -105,7 +105,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/listcontainer3ea7c1cac?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/listcontainer3ea7c1cac?restype=container
   response:
     body:
       string: ''
@@ -139,11 +139,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/?prefix=listcontainer&maxresults=2&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=listcontainer&maxresults=2&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageea7c1cac.blob.core.windows.net/\"><Prefix>listcontainer</Prefix><MaxResults>2</MaxResults><Containers><Container><Name>listcontainer0ea7c1cac</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>listcontainer</Prefix><MaxResults>2</MaxResults><Containers><Container><Name>listcontainer0ea7c1cac</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:13:26 GMT</Last-Modified><Etag>\"0x8D74DBE4F02A4C7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainer1ea7c1cac</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:13:26 GMT</Last-Modified><Etag>\"0x8D74DBE4F09AAF7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/pyacrstorageea7c1cac/listcontainer2ea7c1cac</NextMarker></EnumerationResults>"
     headers:
@@ -175,11 +175,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorageea7c1cac.blob.core.windows.net/?prefix=listcontainer&marker=/pyacrstorageea7c1cac/listcontainer2ea7c1cac&maxresults=2&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=listcontainer&marker=/pyacrstorageea7c1cac/listcontainer2ea7c1cac&maxresults=2&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageea7c1cac.blob.core.windows.net/\"><Prefix>listcontainer</Prefix><Marker>/pyacrstorageea7c1cac/listcontainer2ea7c1cac</Marker><MaxResults>2</MaxResults><Containers><Container><Name>listcontainer2ea7c1cac</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>listcontainer</Prefix><Marker>/pyacrstorageea7c1cac/listcontainer2ea7c1cac</Marker><MaxResults>2</MaxResults><Containers><Container><Name>listcontainer2ea7c1cac</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:13:26 GMT</Last-Modified><Etag>\"0x8D74DBE4F112666\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainer3ea7c1cac</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 20:13:26 GMT</Last-Modified><Etag>\"0x8D74DBE4F187AB3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"

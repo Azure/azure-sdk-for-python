@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage741a1af1.blob.core.windows.net/utcontainer741a1af1?timeout=5&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer741a1af1?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage741a1af1.blob.core.windows.net/utcontainer741a1af1/blob741a1af1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer741a1af1/blob741a1af1
   response:
     body:
       string: ''
@@ -101,13 +101,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://pyacrstorage741a1af1.blob.core.windows.net/utcontainer741a1af1/blob741a1af1
+      - https://blobstoragename.blob.core.windows.net/utcontainer741a1af1/blob741a1af1
       x-ms-date:
       - Fri, 11 Oct 2019 18:15:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage741a1af1.blob.core.windows.net/utcontainer741a1af1/targetblob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer741a1af1/targetblob
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage741a1af1.blob.core.windows.net/utcontainer741a1af1/targetblob?copyid=a7936a7f-1143-49ce-9876-4bcf9eb5fa59&comp=copy
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer741a1af1/targetblob?copyid=a7936a7f-1143-49ce-9876-4bcf9eb5fa59&comp=copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>NoPendingCopyOperation</Code><Message>There

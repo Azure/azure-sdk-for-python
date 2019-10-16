@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage83bd119a.blob.core.windows.net/container83bd119a?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container83bd119a?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage83bd119a.blob.core.windows.net/container83bd119a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/container83bd119a/blob1
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: https://pyacrstorage83bd119a.blob.core.windows.net/container83bd119a/blob1?se=2019-10-10T17%3A17%3A18Z&sp=r&sv=2019-02-02&sr=c&sig=q07FegMtuO/%2Bf0HvG0fZh8rBrQIQoRGJ7BblOKEuPq4%3D
+    uri: https://blobstoragename.blob.core.windows.net/container83bd119a/blob1?se=2019-10-10T17%3A17%3A18Z&sp=r&sv=2019-02-02&sr=c&sig=q07FegMtuO/%2Bf0HvG0fZh8rBrQIQoRGJ7BblOKEuPq4%3D
   response:
     body:
       string: hello world

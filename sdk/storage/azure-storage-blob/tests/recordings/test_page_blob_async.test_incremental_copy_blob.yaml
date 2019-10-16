@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainersourcecc06132f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainersourcecc06132f?restype=container
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
   response:
     body:
       string: ''
@@ -163,7 +163,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
   response:
     body:
       string: ''
@@ -198,7 +198,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=snapshot
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=snapshot
   response:
     body:
       string: ''
@@ -228,13 +228,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
-      - https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      - https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-date:
       - Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob?comp=incrementalcopy
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob?comp=incrementalcopy
   response:
     body:
       string: ''
@@ -268,7 +268,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -284,7 +284,7 @@ interactions:
       x-ms-blob-type: PageBlob
       x-ms-copy-id: c32614dc-df09-4250-a441-3bc19bc39e33
       x-ms-copy-progress: 0/2048
-      x-ms-copy-source: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      x-ms-copy-source: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-copy-status: pending
       x-ms-creation-time: Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-incremental-copy: 'true'
@@ -313,7 +313,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -329,7 +329,7 @@ interactions:
       x-ms-blob-type: PageBlob
       x-ms-copy-id: c32614dc-df09-4250-a441-3bc19bc39e33
       x-ms-copy-progress: 0/2048
-      x-ms-copy-source: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      x-ms-copy-source: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-copy-status: pending
       x-ms-creation-time: Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-incremental-copy: 'true'
@@ -358,7 +358,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -374,7 +374,7 @@ interactions:
       x-ms-blob-type: PageBlob
       x-ms-copy-id: c32614dc-df09-4250-a441-3bc19bc39e33
       x-ms-copy-progress: 0/2048
-      x-ms-copy-source: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      x-ms-copy-source: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-copy-status: pending
       x-ms-creation-time: Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-incremental-copy: 'true'
@@ -403,7 +403,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -419,7 +419,7 @@ interactions:
       x-ms-blob-type: PageBlob
       x-ms-copy-id: c32614dc-df09-4250-a441-3bc19bc39e33
       x-ms-copy-progress: 0/2048
-      x-ms-copy-source: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      x-ms-copy-source: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-copy-status: pending
       x-ms-creation-time: Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-incremental-copy: 'true'
@@ -448,7 +448,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -466,7 +466,7 @@ interactions:
       x-ms-copy-destination-snapshot: '2019-10-11T16:18:00.8872155Z'
       x-ms-copy-id: c32614dc-df09-4250-a441-3bc19bc39e33
       x-ms-copy-progress: 2048/2048
-      x-ms-copy-source: https://pyacrstoragecc06132f.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
+      x-ms-copy-source: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?snapshot=2019-10-11T16:17:36.6338886Z&se=2019-10-11T17%3A17%3A36Z&sp=r&sv=2019-02-02&sr=bs&sig=9d99JU3rpGjz2dfaz6iSed4%2B7eNKPYuzbf830Ld2cA8%3D
       x-ms-copy-status: success
       x-ms-creation-time: Fri, 11 Oct 2019 16:17:36 GMT
       x-ms-incremental-copy: 'true'

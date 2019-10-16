@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage872211aa.blob.core.windows.net/container872211aa?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container
   response:
     body:
       string: ''
@@ -62,7 +62,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -109,7 +109,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-12T00:21:52.0000000Z</Start><Expiry>2019-10-12T01:21:52.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
@@ -160,7 +160,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container
   response:
     body:
       string: ''
@@ -211,7 +211,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage872211aa.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -258,7 +258,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-12T00:24:40.0000000Z</Start><Expiry>2019-10-12T01:24:40.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
@@ -309,7 +309,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container
   response:
     body:
       string: ''
@@ -360,7 +360,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -407,7 +407,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage872211aa.blob.core.windows.net/container872211aa?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/container872211aa?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-12T00:27:12.0000000Z</Start><Expiry>2019-10-12T01:27:12.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"

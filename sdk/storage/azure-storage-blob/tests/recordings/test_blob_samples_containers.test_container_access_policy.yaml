@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea8c81778.blob.core.windows.net/myaccesscontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myaccesscontainer?restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea8c81778.blob.core.windows.net/myaccesscontainer?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/myaccesscontainer?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -95,7 +95,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragea8c81778.blob.core.windows.net/myaccesscontainer?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/myaccesscontainer?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>test</Id><AccessPolicy><Start>2019-10-09T18:37:42.0000000Z</Start><Expiry>2019-10-09T19:38:42.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
@@ -135,7 +135,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragea8c81778.blob.core.windows.net/myaccesscontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myaccesscontainer?restype=container
   response:
     body:
       string: ''

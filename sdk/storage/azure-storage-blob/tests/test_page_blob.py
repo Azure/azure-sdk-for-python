@@ -25,9 +25,7 @@ from azure.storage.blob import (
     StorageErrorCode)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -113,8 +111,7 @@ class StoragePageBlobTest(StorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for page blobs --------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -146,8 +143,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -185,8 +181,7 @@ class StoragePageBlobTest(StorageTestCase):
                                                           source_content_md5=StorageContentValidation.get_content_md5(
                                                               b"POTATO"))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -226,8 +221,7 @@ class StoragePageBlobTest(StorageTestCase):
                                                           source_if_modified_since=source_properties.get(
                                                               'last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -266,8 +260,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        source_if_unmodified_since=source_properties.get('last_modified') - timedelta(
                                            hours=15))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -305,8 +298,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        source_offset=0,
                                        source_if_match='0x111111111111111')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -344,8 +336,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        source_offset=0,
                                        source_if_none_match=source_properties.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -384,8 +375,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        source_offset=0,
                                        if_modified_since=blob_properties.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -425,8 +415,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        if_unmodified_since=source_properties.get('last_modified') - timedelta(
                                            minutes=15))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -464,8 +453,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        0,
                                        if_match='0x111111111111111')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -503,8 +491,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        0,
                                        if_none_match=blob_properties.get('etag'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_lt(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -542,8 +529,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        0,
                                        if_sequence_number_lt=start_sequence)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_lte(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -581,8 +567,7 @@ class StoragePageBlobTest(StorageTestCase):
                                        0,
                                        if_sequence_number_lte=start_sequence - 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_eq(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -620,11 +605,10 @@ class StoragePageBlobTest(StorageTestCase):
                                        0,
                                        if_sequence_number_eq=start_sequence + 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
         # Act
@@ -635,14 +619,13 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(blob.get_blob_properties())
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         metadata = {'hello': 'world', 'number': '42'}
-        
+
         # Act
         resp = blob.create_page_blob(512, metadata=metadata)
 
@@ -650,15 +633,14 @@ class StoragePageBlobTest(StorageTestCase):
         md = blob.get_blob_properties()
         self.assertDictEqual(md.metadata, metadata)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_page_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
         lease = blob.acquire_lease()
 
-        # Act        
+        # Act
         data = self.get_random_bytes(512)
         blob.upload_page(data, offset=0, length=512, lease=lease)
 
@@ -666,11 +648,10 @@ class StoragePageBlobTest(StorageTestCase):
         content = blob.download_blob(lease=lease)
         self.assertEqual(b"".join(list(content)), data)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
@@ -683,11 +664,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_8tb_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
         # Act
@@ -702,22 +682,20 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(0, len(page_ranges))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_larger_than_8tb_blob_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
         # Act
         with self.assertRaises(HttpResponseError):
             blob.create_page_blob(EIGHT_TB + 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_8tb_blob_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         blob.create_page_blob(EIGHT_TB)
 
@@ -728,7 +706,7 @@ class StoragePageBlobTest(StorageTestCase):
         resp = blob.upload_page(data, offset=start_offset, length=length)
         props = blob.get_blob_properties()
         page_ranges, cleared = blob.get_page_ranges()
-        
+
         # Assert
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -739,11 +717,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(page_ranges[0]['start'], start_offset)
         self.assertEqual(page_ranges[0]['end'], start_offset + length - 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_with_md5(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
@@ -752,11 +729,10 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_clear_page(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
@@ -768,12 +744,11 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('blob_sequence_number'))
         self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_put_page_if_sequence_number_lt_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)       
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
 
         start_sequence = 10
@@ -785,12 +760,11 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lt_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
         start_sequence = 10
         blob.create_page_blob(512, sequence_number=start_sequence)
@@ -801,12 +775,11 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lte_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
         start_sequence = 10
         blob.create_page_blob(512, sequence_number=start_sequence)
@@ -817,12 +790,11 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lte_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
         start_sequence = 10
         blob.create_page_blob(512, sequence_number=start_sequence)
@@ -833,12 +805,11 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_eq_success(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
         start_sequence = 10
         blob.create_page_blob(512, sequence_number=start_sequence)
@@ -849,12 +820,11 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_eq_failure(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
-        blob = self._get_blob_reference(bsc) 
+        self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
         start_sequence = 10
         blob.create_page_blob(512, sequence_number=start_sequence)
@@ -863,11 +833,10 @@ class StoragePageBlobTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             blob.upload_page(data, offset=0, length=512, if_sequence_number_eq=start_sequence - 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_update_page_unicode(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
@@ -878,11 +847,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_no_pages(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
@@ -893,11 +861,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsInstance(ranges, list)
         self.assertEqual(len(ranges), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_2_pages(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
         resp1 = blob.upload_page(data, offset=0, length=512)
@@ -915,11 +882,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_get_page_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(1536)
         snapshot1 = blob.create_snapshot()
@@ -952,11 +918,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')   
+    @GlobalStorageAccountPreparer()
     def test_update_page_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
         resp1 = blob.upload_page(data, offset=0, length=512)
@@ -964,17 +929,16 @@ class StoragePageBlobTest(StorageTestCase):
         # Act
         with self.assertRaises(ValueError):
             blob.upload_page(data, offset=1024, length=513)
-        
+
         # TODO
         # self.assertEqual(str(e), 'end_range must be an integer that aligns with 512 page size')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_resize_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc, length=1024)
-        
+
         # Act
         resp = blob.resize_blob(512)
 
@@ -986,15 +950,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.size, 512)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_set_sequence_number_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._create_blob(bsc)
-        
+
         # Act
-        resp = blob.set_sequence_number(SequenceNumberAction.Update, 6)     
+        resp = blob.set_sequence_number(SequenceNumberAction.Update, 6)
 
         #Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -1004,11 +967,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.page_blob_sequence_number, 6)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
@@ -1037,11 +999,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
@@ -1068,15 +1029,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
@@ -1089,15 +1049,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(0)
 
@@ -1110,15 +1069,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_progress_first(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
@@ -1140,15 +1098,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         index = 1024
@@ -1159,11 +1116,10 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:], bsc)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         index = 512
@@ -1178,15 +1134,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)          
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'create_blob_from_path.temp.dat'
@@ -1204,15 +1159,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)          
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'create_blob_from_path_with_progress.temp.dat'
@@ -1235,15 +1189,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)          
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'st_create_blob_from_stream.temp.dat'
@@ -1262,15 +1215,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_empty_pages(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         # data is almost all empty (0s) except two ranges
         blob = self._get_blob_reference(bsc)
         data = bytearray(LARGE_BLOB_SIZE)
@@ -1299,15 +1251,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)        
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'create_blob_from_stream_non_seekable.temp.dat'
@@ -1328,8 +1279,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1361,15 +1311,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)         
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = 'create_blob_from_stream_trun.temp.dat'
@@ -1385,15 +1334,14 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)         
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         FILE_PATH = '_blob_from_stream_with_progress_trunca.temp.dat'
@@ -1418,11 +1366,10 @@ class StoragePageBlobTest(StorageTestCase):
         self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
 
@@ -1431,15 +1378,14 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
@@ -1448,15 +1394,14 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_incremental_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
-        self._setup(bsc)  
+        self._setup(bsc)
         source_blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
         resp1 = source_blob.upload_page(data, offset=0, length=512)
@@ -1488,8 +1433,7 @@ class StoragePageBlobTest(StorageTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_download_sparse_page_blob_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -1524,8 +1468,7 @@ class StoragePageBlobTest(StorageTestCase):
             except:
                 self.assertEqual(byte, 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_download_sparse_page_blob_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1672,7 +1615,7 @@ class StoragePageBlobTest(StorageTestCase):
                     container.create_container()
                 except ResourceExistsError:
                     pass
-  
+
             source_blob = pbs.get_blob_client(
                 container_name,
                 self.get_resource_name(TEST_BLOB_PREFIX))

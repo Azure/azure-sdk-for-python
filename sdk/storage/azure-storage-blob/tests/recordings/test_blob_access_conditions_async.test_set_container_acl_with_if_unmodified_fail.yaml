@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage30fe20b7.blob.core.windows.net/utcontainer30fe20b7?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer30fe20b7?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage30fe20b7.blob.core.windows.net/utcontainer30fe20b7?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer30fe20b7?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The

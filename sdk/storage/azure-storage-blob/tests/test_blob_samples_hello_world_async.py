@@ -10,7 +10,7 @@ import os
 import asyncio
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-
+from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
 )
@@ -43,8 +43,7 @@ class TestBlobSamplesAsync(AsyncBlobTestCase):
         return super(TestBlobSamplesAsync, self).tearDown()
 
     #--Begin Blob Samples-----------------------------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_create_container_sample_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -69,8 +68,7 @@ class TestBlobSamplesAsync(AsyncBlobTestCase):
             # Delete the container
             await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_block_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -110,8 +108,7 @@ class TestBlobSamplesAsync(AsyncBlobTestCase):
             # Delete the container
             await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_page_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -147,8 +144,7 @@ class TestBlobSamplesAsync(AsyncBlobTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_append_blob_sample_async(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)

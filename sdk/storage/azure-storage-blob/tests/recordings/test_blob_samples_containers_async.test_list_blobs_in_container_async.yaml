@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee4901c74.blob.core.windows.net/myblobscontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myblobscontainerasync?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragee4901c74.blob.core.windows.net/myblobscontainerasync/blobby
+    uri: https://blobstoragename.blob.core.windows.net/myblobscontainerasync/blobby
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragee4901c74.blob.core.windows.net/myblobscontainerasync/blobby
+    uri: https://blobstoragename.blob.core.windows.net/myblobscontainerasync/blobby
   response:
     body:
       string: ''
@@ -126,11 +126,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragee4901c74.blob.core.windows.net/myblobscontainerasync?restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/myblobscontainerasync?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragee4901c74.blob.core.windows.net/\" ContainerName=\"myblobscontainerasync\"><Blobs><Blob><Name>blobby</Name><Properties><Creation-Time>Wed,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"myblobscontainerasync\"><Blobs><Blob><Name>blobby</Name><Properties><Creation-Time>Wed,
         09 Oct 2019 18:41:24 GMT</Creation-Time><Last-Modified>Wed, 09 Oct 2019 18:41:24
         GMT</Last-Modified><Etag>0x8D74CE849AA70C0</Etag><Content-Length>55</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>/BCgjff6+jhxFmZGYJ4clQ==</Content-MD5><Cache-Control
@@ -163,7 +163,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragee4901c74.blob.core.windows.net/myblobscontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myblobscontainerasync?restype=container
   response:
     body:
       string: ''

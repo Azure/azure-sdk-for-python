@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageff3f1ccb.blob.core.windows.net/mycontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mycontainerasync?restype=container
   response:
     body:
       string: ''
@@ -43,11 +43,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorageff3f1ccb.blob.core.windows.net/?comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageff3f1ccb.blob.core.windows.net/\"><Containers><Container><Name>mycontainerasync</Name><Properties><Last-Modified>Wed,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Containers><Container><Name>mycontainerasync</Name><Properties><Last-Modified>Wed,
         09 Oct 2019 18:46:19 GMT</Last-Modified><Etag>\"0x8D74CE8F95E456A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
@@ -77,7 +77,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorageff3f1ccb.blob.core.windows.net/mycontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mycontainerasync?restype=container
   response:
     body:
       string: ''

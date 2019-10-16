@@ -15,7 +15,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage4eeb15cf.blob.core.windows.net/?restype=account&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/?restype=account&comp=properties
   response:
     body:
       string: ''

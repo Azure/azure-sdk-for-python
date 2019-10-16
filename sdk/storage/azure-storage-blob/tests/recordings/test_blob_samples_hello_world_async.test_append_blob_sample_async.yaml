@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync/myappendblob?comp=appendblock
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync/myappendblob?comp=appendblock
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
@@ -82,7 +82,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync/myappendblob
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync/myappendblob
   response:
     body:
       string: ''
@@ -119,7 +119,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync/myappendblob?comp=appendblock
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync/myappendblob?comp=appendblock
   response:
     body:
       string: ''
@@ -159,7 +159,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync/myappendblob
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync/myappendblob
   response:
     body:
       string: Lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -200,7 +200,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync/myappendblob
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync/myappendblob
   response:
     body:
       string: ''
@@ -231,7 +231,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage72c61aab.blob.core.windows.net/myappendcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myappendcontainerasync?restype=container
   response:
     body:
       string: ''

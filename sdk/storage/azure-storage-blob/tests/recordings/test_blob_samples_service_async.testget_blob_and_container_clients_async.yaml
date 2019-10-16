@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage37401d8e.blob.core.windows.net/containertestasync?restype=container&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/containertestasync?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
@@ -44,7 +44,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage37401d8e.blob.core.windows.net/containertestasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containertestasync?restype=container
   response:
     body:
       string: ''
@@ -80,7 +80,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage37401d8e.blob.core.windows.net/containertestasync/my_blob
+    uri: https://blobstoragename.blob.core.windows.net/containertestasync/my_blob
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage37401d8e.blob.core.windows.net/containertestasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containertestasync?restype=container
   response:
     body:
       string: ''

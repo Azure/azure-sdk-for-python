@@ -29,14 +29,14 @@ from testcase import (
     StorageTestCase,
     ResponseCallback,
     RetryCounter,
+    GlobalStorageAccountPreparer
 )
 
 
 # --Test Class -----------------------------------------------------------------
 class StorageRetryTest(StorageTestCase):
     # --Test Cases --------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_on_server_error(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -56,8 +56,7 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_on_timeout(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -78,8 +77,7 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_callback_and_retry_context(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -106,8 +104,7 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_on_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             return
@@ -134,8 +131,7 @@ class StorageRetryTest(StorageTestCase):
             # we must make the timeout normal again to let the delete operation succeed
             service.delete_container(container_name, connection_timeout=(11, 11))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_no_retry(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -156,8 +152,7 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_linear_retry(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -179,8 +174,7 @@ class StorageRetryTest(StorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_exponential_retry(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -204,8 +198,7 @@ class StorageRetryTest(StorageTestCase):
             # Clean up
             service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_exponential_retry_interval(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
@@ -240,8 +233,7 @@ class StorageRetryTest(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_linear_retry_interval(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         context_stub = {}
@@ -268,8 +260,7 @@ class StorageRetryTest(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_invalid_retry(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -289,8 +280,7 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_retry_with_deserialization(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('retry')
@@ -311,8 +301,7 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_GRS')
+    @GlobalStorageAccountPreparer()
     def test_retry_secondary(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
@@ -408,8 +397,7 @@ class StorageRetryTest(StorageTestCase):
         container.get_container_properties(retry_hook=retry_callback)
         assert retry_callback.called
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_invalid_account_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')

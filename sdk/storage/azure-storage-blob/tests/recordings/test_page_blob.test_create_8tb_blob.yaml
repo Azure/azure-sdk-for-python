@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragefd2b0de7.blob.core.windows.net/utcontainerfd2b0de7?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerfd2b0de7?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragefd2b0de7.blob.core.windows.net/utcontainersourcefd2b0de7?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainersourcefd2b0de7?restype=container
   response:
     body:
       string: ''
@@ -97,7 +97,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragefd2b0de7.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7
   response:
     body:
       string: ''
@@ -135,7 +135,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragefd2b0de7.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7
   response:
     body:
       string: ''
@@ -187,7 +187,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragefd2b0de7.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7?comp=pagelist
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerfd2b0de7/blobfd2b0de7?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList />"

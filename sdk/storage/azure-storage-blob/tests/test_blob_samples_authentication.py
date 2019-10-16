@@ -15,15 +15,12 @@ except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
 
 
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 
 class TestAuthSamples(StorageTestCase):
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_auth_connection_string(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -48,8 +45,7 @@ class TestAuthSamples(StorageTestCase):
         account_info = blob_service_client.get_account_information()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_auth_shared_key(self, resource_group, location, storage_account, storage_account_key):
         # [START create_blob_service_client]
         from azure.storage.blob import BlobServiceClient
@@ -60,8 +56,7 @@ class TestAuthSamples(StorageTestCase):
         account_info = blob_service_client.get_account_information()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_auth_blob_url(self, resource_group, location, storage_account, storage_account_key):
         # [START create_blob_client]
         from azure.storage.blob import BlobClient
@@ -75,8 +70,7 @@ class TestAuthSamples(StorageTestCase):
         blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_auth_active_directory(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             pytest.skip("live only")
@@ -98,8 +92,7 @@ class TestAuthSamples(StorageTestCase):
         account_info = blob_service_client.get_service_properties()
         assert account_info is not None
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:

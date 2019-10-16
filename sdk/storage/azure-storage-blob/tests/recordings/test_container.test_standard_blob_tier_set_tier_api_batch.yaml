@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a?restype=container
   response:
     body:
       string: ''
@@ -66,7 +66,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_caffde91-85d8-4568-a260-75f15a50ec7a\r\nContent-Type:
@@ -126,7 +126,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -176,7 +176,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob2
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -226,7 +226,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob3
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -268,7 +268,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -339,7 +339,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_fd5af12f-f5be-429b-b30b-3fc7f5c1c00d\r\nContent-Type:
@@ -382,7 +382,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -451,7 +451,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_2b831840-871a-4219-b535-0c1ad12c3146\r\nContent-Type:
@@ -505,7 +505,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -555,7 +555,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob2
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -605,7 +605,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob3
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -647,7 +647,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -718,7 +718,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_0645f686-785e-4e75-a917-bc662932b97d\r\nContent-Type:
@@ -761,7 +761,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -830,7 +830,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_3106bb84-5824-4d6a-b158-b4096cc847d3\r\nContent-Type:
@@ -884,7 +884,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -934,7 +934,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob2
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -984,7 +984,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob3
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -1026,7 +1026,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -1097,7 +1097,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_1d80b5cb-99de-4973-9049-4744d1550087\r\nContent-Type:
@@ -1140,7 +1140,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/containera687174a/blob1
+    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -1209,7 +1209,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstoragea687174a.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_b7533643-1f07-448d-84cc-08ed72135420\r\nContent-Type:

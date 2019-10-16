@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage57b81a3e.blob.core.windows.net/myblockcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myblockcontainerasync?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage57b81a3e.blob.core.windows.net/myblockcontainerasync/myblockblob
+    uri: https://blobstoragename.blob.core.windows.net/myblockcontainerasync/myblockblob
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage57b81a3e.blob.core.windows.net/myblockcontainerasync/myblockblob
+    uri: https://blobstoragename.blob.core.windows.net/myblockcontainerasync/myblockblob
   response:
     body:
       string: Lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -129,7 +129,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage57b81a3e.blob.core.windows.net/myblockcontainerasync/myblockblob
+    uri: https://blobstoragename.blob.core.windows.net/myblockcontainerasync/myblockblob
   response:
     body:
       string: ''
@@ -160,7 +160,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage57b81a3e.blob.core.windows.net/myblockcontainerasync?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/myblockcontainerasync?restype=container
   response:
     body:
       string: ''

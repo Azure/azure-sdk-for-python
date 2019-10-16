@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragebfbb17d1.blob.core.windows.net/mycontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mycontainer?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragebfbb17d1.blob.core.windows.net/mycontainer?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/mycontainer?restype=container
   response:
     body:
       string: ''

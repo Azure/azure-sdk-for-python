@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage7c2d16a0.blob.core.windows.net/utcontainer7c2d16a0?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer7c2d16a0?restype=container
   response:
     body:
       string: ''
@@ -121,7 +121,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage7c2d16a0.blob.core.windows.net/utcontainer7c2d16a0/srcblob7c2d16a0
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer7c2d16a0/srcblob7c2d16a0
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
-      - https://pyacrstorage7c2d16a0.blob.core.windows.net/utcontainer7c2d16a0/srcblob7c2d16a0?se=2019-10-10T21%3A30%3A05Z&sp=r&sv=2019-02-02&sr=b&sig=IxgHvJvJKleV3bvoxSn6aCpyV/DfjaGRUSbjT7jpTRk%3D
+      - https://blobstoragename.blob.core.windows.net/utcontainer7c2d16a0/srcblob7c2d16a0?se=2019-10-10T21%3A30%3A05Z&sp=r&sv=2019-02-02&sr=b&sig=IxgHvJvJKleV3bvoxSn6aCpyV/DfjaGRUSbjT7jpTRk%3D
       x-ms-date:
       - Thu, 10 Oct 2019 20:30:05 GMT
       x-ms-requires-sync:
@@ -160,7 +160,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage7c2d16a0.blob.core.windows.net/utcontainer7c2d16a0/destblob7c2d16a0
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer7c2d16a0/destblob7c2d16a0
   response:
     body:
       string: ''

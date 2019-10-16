@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utpremiumcontainerac331777?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob1
+    uri: https://blobstoragename.blob.core.windows.net/utpremiumcontainerac331777/blob1
   response:
     body:
       string: ''
@@ -86,7 +86,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob2
+    uri: https://blobstoragename.blob.core.windows.net/utpremiumcontainerac331777/blob2
   response:
     body:
       string: ''
@@ -125,7 +125,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob3
+    uri: https://blobstoragename.blob.core.windows.net/utpremiumcontainerac331777/blob3
   response:
     body:
       string: ''
@@ -158,7 +158,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorageac331777.blob.core.windows.net/utpremiumcontainerac331777/blob1
+    uri: https://blobstoragename.blob.core.windows.net/utpremiumcontainerac331777/blob1
   response:
     body:
       string: ''
@@ -215,7 +215,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://pyacrstorageac331777.blob.core.windows.net/?comp=batch
+    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidQueryParameterValue</Code><Message>Value

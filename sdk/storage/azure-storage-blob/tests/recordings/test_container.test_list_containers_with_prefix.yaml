@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoraged3041389.blob.core.windows.net/containerd3041389?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/containerd3041389?restype=container
   response:
     body:
       string: ''
@@ -53,11 +53,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoraged3041389.blob.core.windows.net/?prefix=containerd3041389&comp=list
+    uri: https://blobstoragename.blob.core.windows.net/?prefix=containerd3041389&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoraged3041389.blob.core.windows.net/\"><Prefix>containerd3041389</Prefix><Containers><Container><Name>containerd3041389</Name><Properties><Last-Modified>Thu,
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>containerd3041389</Prefix><Containers><Container><Name>containerd3041389</Name><Properties><Last-Modified>Thu,
         10 Oct 2019 16:16:26 GMT</Last-Modified><Etag>\"0x8D74D9D33435EF1\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:

@@ -9,9 +9,7 @@
 import os
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from testcase import (
-    StorageTestCase
-)
+from testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'BlockDestination.txt'
@@ -41,8 +39,7 @@ class TestBlobSamples(StorageTestCase):
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_container_sample(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -64,8 +61,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_block_blob_sample(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -102,8 +98,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_page_blob_sample(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
@@ -136,8 +131,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_append_blob_sample(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
 
