@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient,
-    Logging,
+    QueueAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy
@@ -42,7 +42,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)
 
-        self._assert_logging_equal(prop.logging, Logging())
+        self._assert_logging_equal(prop.logging, QueueAnalyticsLogging())
         self._assert_metrics_equal(prop.hour_metrics, Metrics())
         self._assert_metrics_equal(prop.minute_metrics, Metrics())
         self._assert_cors_equal(prop.cors, list())
@@ -124,7 +124,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
 
         # Act
         resp = await qsc.set_service_properties(
-            logging=Logging(),
+            logging=QueueAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list())
@@ -141,7 +141,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
     async def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
-        logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         await qsc.set_service_properties(logging=logging)

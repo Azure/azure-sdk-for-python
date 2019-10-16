@@ -9,7 +9,7 @@ from .queue_client_async import QueueClient
 from .queue_service_client_async import QueueServiceClient
 from .models import MessagesPaged, QueuePropertiesPaged
 from ..models import (
-    Logging, Metrics, RetentionPolicy, CorsRule, AccessPolicy,
+    QueueAnalyticsLogging, Metrics, RetentionPolicy, CorsRule, AccessPolicy,
     QueueMessage, QueueSasPermissions, QueueProperties)
 
 __version__ = VERSION
@@ -17,7 +17,7 @@ __version__ = VERSION
 __all__ = [
     'QueueClient',
     'QueueServiceClient',
-    'Logging',
+    'QueueAnalyticsLogging',
     'Metrics',
     'RetentionPolicy',
     'CorsRule',
