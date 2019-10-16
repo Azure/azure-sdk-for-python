@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 from typing import TYPE_CHECKING
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyProperties
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 from azure.core.polling import async_poller
 
@@ -17,6 +16,8 @@ from ._polling_async import DeleteKeyPollerAsync
 
 
 if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
+    from datetime import datetime
     from typing import AsyncIterable, Optional, List, Union
     from ..enums import KeyType
 
@@ -45,7 +46,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> Key:
+    async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
@@ -53,7 +54,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param key_type: The type of key to create
         :type key_type: str or ~azure.keyvault.keys.enums.KeyType
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -94,16 +95,16 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             **kwargs,
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def create_rsa_key(self, name: str, **kwargs: "Any") -> Key:
+    async def create_rsa_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
         :param str name: The name for the new key
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -128,13 +129,13 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace_async
-    async def create_ec_key(self, name: str, **kwargs: "Any") -> Key:
+    async def create_ec_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -190,13 +191,13 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await async_poller(command, "deleting", None, delete_key_poller)
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
+    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -213,7 +214,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             version = ""
 
         bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
     async def get_deleted_key(self, name: str, **kwargs: "Any") -> DeletedKey:
@@ -332,7 +333,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_key(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_key(self, name: str, **kwargs: "Any") -> Key:
+    async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -341,7 +342,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the deleted key
         :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -353,17 +354,17 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:
+    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -399,7 +400,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             error_map=_error_map,
             **kwargs,
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
     async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
@@ -428,7 +429,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> Key:
+    async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultKey:
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -437,7 +438,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -451,10 +452,10 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> Key:
+    async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
@@ -462,7 +463,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
         :returns: The imported key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -487,4 +488,4 @@ class KeyClient(AsyncKeyVaultClientBase):
             hsm=kwargs.pop("hardware_protected", None),
             **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)

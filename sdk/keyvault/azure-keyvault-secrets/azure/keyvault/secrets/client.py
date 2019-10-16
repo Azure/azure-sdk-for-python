@@ -8,7 +8,7 @@ from functools import partial
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .models import Secret, DeletedSecret, SecretProperties
+from .models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._polling import DeleteSecretPoller
 
 try:
@@ -48,12 +48,12 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_secret(self, name, version=None, **kwargs):
-        # type: (str, str, **Any) -> Secret
+        # type: (str, str, **Any) -> KeyVaultSecret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -73,17 +73,17 @@ class SecretClient(KeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
     def set_secret(self, name, value, **kwargs):
-        # type: (str, str, **Any) -> Secret
+        # type: (str, str, **Any) -> KeyVaultSecret
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -114,7 +114,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.set_secret(
             vault_base_url=self.vault_endpoint, secret_name=name, value=value, secret_attributes=attributes, **kwargs
         )
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
     def update_secret_properties(self, name, version=None, **kwargs):

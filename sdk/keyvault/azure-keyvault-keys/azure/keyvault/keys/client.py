@@ -8,7 +8,7 @@ from functools import partial
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .models import Key, KeyProperties, DeletedKey
+from .models import KeyVaultKey, KeyProperties, DeletedKey
 from ._polling import DeleteKeyPoller
 
 try:
@@ -49,7 +49,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
-        # type: (str, Union[str, azure.keyvault.keys.enums.KeyType], **Any) -> Key
+        # type: (str, Union[str, azure.keyvault.keys.enums.KeyType], **Any) -> KeyVaultKey
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
@@ -57,7 +57,7 @@ class KeyClient(KeyVaultClientBase):
         :param key_type: The type of key to create
         :type key_type: str or ~azure.keyvault.keys.enums.KeyType
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -97,17 +97,17 @@ class KeyClient(KeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def create_rsa_key(self, name, **kwargs):
-        # type: (str, **Any) -> Key
+        # type: (str, **Any) -> KeyVaultKey
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
         :param str name: The name for the new key
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -133,13 +133,13 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_ec_key(self, name, **kwargs):
-        # type: (str, **Any) -> Key
+        # type: (str, **Any) -> KeyVaultKey
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -197,13 +197,13 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> Key
+        # type: (str, Optional[str], **Any) -> KeyVaultKey
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -219,7 +219,7 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.get_key(
             self.vault_endpoint, name, key_version=version or "", error_map=_error_map, **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def get_deleted_key(self, name, **kwargs):
@@ -345,7 +345,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> Key
+        # type: (str, **Any) -> KeyVaultKey
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -354,7 +354,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the deleted key
         :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -366,18 +366,18 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> Key
+        # type: (str, Optional[str], **Any) -> KeyVaultKey
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -413,7 +413,7 @@ class KeyClient(KeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def backup_key(self, name, **kwargs):
@@ -444,7 +444,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_key_backup(self, backup, **kwargs):
-        # type: (bytes, **Any) -> Key
+        # type: (bytes, **Any) -> KeyVaultKey
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -453,7 +453,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -467,11 +467,11 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
     def import_key(self, name, key, **kwargs):
-        # type: (str, JsonWebKey, **Any) -> Key
+        # type: (str, JsonWebKey, **Any) -> KeyVaultKey
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
@@ -479,7 +479,7 @@ class KeyClient(KeyVaultClientBase):
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
         :returns: The imported key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -504,4 +504,4 @@ class KeyClient(KeyVaultClientBase):
             hsm=kwargs.pop("hardware_protected", None),
             **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)

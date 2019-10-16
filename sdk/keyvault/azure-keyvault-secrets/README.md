@@ -129,7 +129,7 @@ and update their values, and delete secrets, as shown in the
 [examples](#examples) below.
 
 ### Secret
-A Secret consists of a secret value and its associated metadata and management
+A secret consists of a secret value and its associated metadata and management
 information. For this library secret values are strings, but Azure Key Vault
 doesn't store them as such. For more information about secrets and how Key
 Vault stores and manages them, see the
@@ -146,7 +146,7 @@ This section contains code snippets covering common tasks:
 * [Async list Secrets](#async-list-secrets)
 
 ### Create a Secret
-`set_secret` creates a Secret in the vault. If a secret with the same name
+`set_secret` creates a secret in the vault. If a secret with the same name
 already exists, a new version of that secret is created.
 
 ```python

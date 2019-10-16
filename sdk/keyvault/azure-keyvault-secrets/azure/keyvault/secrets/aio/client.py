@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import async_poller
 
-from azure.keyvault.secrets.models import Secret, DeletedSecret, SecretProperties
+from azure.keyvault.secrets.models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
 from ._polling_async import DeleteSecretPollerAsync
@@ -40,12 +40,12 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Secret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: "Any") -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -59,16 +59,16 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_secret(self.vault_endpoint, name, version or "", error_map=_error_map, **kwargs)
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(self, name: str, value: str, **kwargs: "Any") -> Secret:
+    async def set_secret(self, name: str, value: str, **kwargs: "Any") -> KeyVaultSecret:
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.models.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -96,7 +96,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         bundle = await self._client.set_secret(self.vault_endpoint, name, value, secret_attributes=attributes, **kwargs)
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
     async def update_secret_properties(
