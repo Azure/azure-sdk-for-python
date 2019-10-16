@@ -612,7 +612,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, session_owner=False)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -662,4 +662,4 @@ class BlobServiceClient(StorageAccountHostsMixin):
             credential=self.credential, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, session_owner=False)
