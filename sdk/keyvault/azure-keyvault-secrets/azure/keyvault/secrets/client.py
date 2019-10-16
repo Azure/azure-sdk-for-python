@@ -8,8 +8,8 @@ from azure.core.polling import LROPoller
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
+from ._shared._delete_polling import DeleteResourcePoller
 from .models import KeyVaultSecret, DeletedSecret, SecretProperties
-from ._polling import DeleteSecretPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -272,8 +272,8 @@ class SecretClient(KeyVaultClientBase):
         # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :returns: An LROPoller for the delete secret operation. Waiting on the poller
-         gives you the DeletedSecret
+        :returns: An LROPoller for the delete secret operation. Deleting is not instant on the server side, so
+         we return a poller that polls until the secret is deleted server side and then returns the DeletedSecret.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.models.DeletedSecret]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -291,12 +291,8 @@ class SecretClient(KeyVaultClientBase):
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
-        if deleted_secret.recovery_id:
-            sd_disabled = False
-        else:
-            sd_disabled = True
         command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_polling = DeleteSecretPoller(sd_disabled=sd_disabled)
+        delete_secret_polling = DeleteResourcePoller()
         return LROPoller(command, deleted_secret, None, delete_secret_polling)
 
     @distributed_trace

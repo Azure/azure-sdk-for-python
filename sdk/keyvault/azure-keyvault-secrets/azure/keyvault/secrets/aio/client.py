@@ -13,7 +13,7 @@ from azure.core.polling import async_poller
 from azure.keyvault.secrets.models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from ._polling_async import DeleteSecretPollerAsync
+from .._shared._delete_polling_async import DeleteResourcePollerAsync
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -245,8 +245,8 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :returns: A coroutine for the deletion of the secret. Awaiting the coroutine returns
-         the deleted secret with information about its deletion.
+        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant on the service side,
+         we poll on the deletion of the secret. Awaiting this method returns the DeletedSecret.
         :rtype: ~azure.keyvault.keys.models.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -263,13 +263,9 @@ class SecretClient(AsyncKeyVaultClientBase):
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
-        if deleted_secret.recovery_id:
-            sd_disabled = False
-        else:
-            sd_disabled = True
         command = partial(self.get_deleted_secret, name=name, **kwargs)
 
-        delete_secret_poller = DeleteSecretPollerAsync(sd_disabled=sd_disabled)
+        delete_secret_poller = DeleteResourcePollerAsync()
         return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async

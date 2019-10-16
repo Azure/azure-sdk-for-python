@@ -8,19 +8,17 @@ import logging
 from typing import Any, Callable, Union
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError
-from ..models import DeletedKey
 
 
 logger = logging.getLogger(__name__)
 
 
-class DeleteKeyPollerAsync(AsyncPollingMethod):
-    def __init__(self, sd_disabled, interval=5):
+class DeleteResourcePollerAsync(AsyncPollingMethod):
+    def __init__(self, interval=5):
         self._command = None
-        self._deleted_key = None
+        self._deleted_resource = None
         self._polling_interval = interval
         self._status = "deleting"
-        self._sd_disabled = sd_disabled
 
     async def _update_status(self) -> None:
         # type: () -> None
@@ -32,7 +30,7 @@ class DeleteKeyPollerAsync(AsyncPollingMethod):
 
     def initialize(self, client: Any, initial_response: str, _: Callable) -> None:
         self._command = client
-        self._deleted_key = initial_response
+        self._deleted_resource = initial_response
 
     async def run(self) -> None:
         try:
@@ -44,12 +42,12 @@ class DeleteKeyPollerAsync(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        if self._sd_disabled:
+        if not self._deleted_resource.recovery_id:
             return True
         return self._status == "deleted"
 
-    def resource(self) -> DeletedKey:
-        return self._deleted_key
+    def resource(self) -> Any:
+        return self._deleted_resource
 
     def status(self) -> str:
         return self._status

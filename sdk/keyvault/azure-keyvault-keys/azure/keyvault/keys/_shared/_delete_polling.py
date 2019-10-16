@@ -11,11 +11,10 @@ from azure.core.exceptions import ResourceNotFoundError
 logger = logging.getLogger(__name__)
 
 
-class DeleteSecretPoller(PollingMethod):
-    def __init__(self, sd_disabled, interval=5):
+class DeleteResourcePoller(PollingMethod):
+    def __init__(self, interval=5):
         self._command = None
-        self._deleted_secret = None
-        self._sd_disabled = sd_disabled
+        self._deleted_resource = None
         self._polling_interval = interval
         self._status = "deleting"
 
@@ -30,7 +29,7 @@ class DeleteSecretPoller(PollingMethod):
     def initialize(self, client, initial_response, _):
         # type: (Any, Any, Callable) -> None
         self._command = client
-        self._deleted_secret = initial_response
+        self._deleted_resource = initial_response
 
     def run(self):
         # type: () -> None
@@ -44,13 +43,13 @@ class DeleteSecretPoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        if self._sd_disabled:
+        if not self._deleted_resource.recovery_id:
             return True
         return self._status == "deleted"
 
     def resource(self):
-        # type: () -> DeletedKey
-        return self._deleted_secret
+        # type: () -> Union[DeletedKey, DeletedSecret]
+        return self._deleted_resource
 
     def status(self):
         # type: () -> str

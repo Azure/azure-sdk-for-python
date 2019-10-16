@@ -11,7 +11,7 @@ from azure.keyvault.keys.models import DeletedKey, JsonWebKey, KeyVaultKey, KeyP
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 from azure.core.polling import async_poller
 
-from ._polling_async import DeleteKeyPollerAsync
+from .._shared._delete_polling_async import DeleteResourcePollerAsync
 from .._shared.exceptions import error_map as _error_map
 
 if TYPE_CHECKING:
@@ -164,8 +164,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: A coroutine for the deletion of the key. Awaiting the coroutine returns
-         the deleted key with information about its deletion.
+        :returns: A coroutine for the deletion of the key. Since deleting a key is not instant on the service side,
+         we poll on the deletion of the key. Awaiting this method returns the DeletedKey.
         :rtype: ~azure.keyvault.keys.models.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -182,13 +182,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         deleted_key = DeletedKey._from_deleted_key_bundle(
             await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
-        if deleted_key.recovery_id:
-            sd_disabled = False
-        else:
-            sd_disabled = True
         command = partial(self.get_deleted_key, name=name, **kwargs)
 
-        delete_key_poller = DeleteKeyPollerAsync(sd_disabled=sd_disabled)
+        delete_key_poller = DeleteResourcePollerAsync()
         return await async_poller(command, deleted_key, None, delete_key_poller)
 
     @distributed_trace_async

@@ -9,7 +9,7 @@ from azure.core.polling import LROPoller
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from .models import KeyVaultKey, KeyProperties, DeletedKey
-from ._polling import DeleteKeyPoller
+from ._shared._delete_polling import DeleteResourcePoller
 
 try:
     from typing import TYPE_CHECKING
@@ -170,8 +170,8 @@ class KeyClient(KeyVaultClientBase):
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: An LROPoller for the delete key operation. Waiting on the poller
-         gives you the DeletedKey
+        :returns: An LROPoller for the delete key operation. Deleting is not instant on the server side, so
+         we return a poller that polls until the key is deleted server side and then returns the DeletedKey.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.models.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -189,12 +189,8 @@ class KeyClient(KeyVaultClientBase):
         deleted_key = DeletedKey._from_deleted_key_bundle(
             self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
-        if deleted_key.recovery_id:
-            sd_disabled = False
-        else:
-            sd_disabled = True
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeleteKeyPoller(sd_disabled=sd_disabled)
+        delete_key_polling = DeleteResourcePoller()
         return LROPoller(command, deleted_key, None, delete_key_polling)
 
     @distributed_trace
