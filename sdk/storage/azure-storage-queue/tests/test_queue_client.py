@@ -35,6 +35,7 @@ class StorageQueueClientTest(QueueTestCase):
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type, account_name, account_key):
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, account_name)
         self.assertEqual(service.credential.account_name, account_name)
         self.assertEqual(service.credential.account_key, account_key)
         self.assertTrue('{}.{}.core.windows.net'.format(account_name, url_type) in service.url)
@@ -80,6 +81,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
@@ -94,6 +96,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
@@ -121,6 +124,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith(
@@ -202,6 +206,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
@@ -219,6 +224,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
@@ -253,6 +259,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -271,6 +278,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -290,6 +298,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -326,6 +335,7 @@ class StorageQueueClientTest(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
