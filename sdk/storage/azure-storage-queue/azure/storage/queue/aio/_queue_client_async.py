@@ -118,7 +118,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         self._loop = loop
 
     @distributed_trace_async
-    async def create_queue(self, **kwargs):  # type: ignore
+    async def create_queue(self, **kwargs):
         # type: (Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
@@ -157,7 +157,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(self, **kwargs):  # type: ignore
+    async def delete_queue(self, **kwargs):
         # type: (Optional[Any]) -> None
         """Deletes the specified queue and any messages it contains.
 
@@ -189,7 +189,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs):  # type: ignore
+    async def get_queue_properties(self, **kwargs):
         # type: (Optional[Any]) -> QueueProperties
         """Returns all user-defined metadata for the specified queue.
 
@@ -220,7 +220,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         return response  # type: ignore
 
     @distributed_trace_async
-    async def set_queue_metadata(self, metadata=None, **kwargs):  # type: ignore
+    async def set_queue_metadata(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[Any]) -> None
         """Sets user-defined metadata on the specified queue.
 
@@ -253,7 +253,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs):  # type: ignore
+    async def get_queue_access_policy(self, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
@@ -273,8 +273,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(self, signed_identifiers, **kwargs):  # type: ignore
-        # type: (Dict[str, AccessPolicy], Optional[int], Optional[Any]) -> None
+    async def set_queue_access_policy(self, signed_identifiers, **kwargs):
+        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -406,8 +406,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, **kwargs): # type: ignore
-        # type: (Optional[Any]) -> AsyncItemPaged[Message]
+    def receive_messages(self, **kwargs):
+        # type: (Optional[Any]) -> AsyncItemPaged[QueueMessage]
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -435,7 +435,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.Message]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.QueueMessage]
 
         .. admonition:: Example:
 
@@ -470,11 +470,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     async def update_message(
         self,
         message,
-        pop_receipt=None,  # type: ignore
+        pop_receipt=None,
         content=None,
         **kwargs
     ):
-        # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> QueueMessage
+        # type: (Any, int, Optional[str], Optional[Any], Any) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
 
@@ -569,7 +569,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def peek_messages(self, max_messages=None, **kwargs):  # type: ignore
+    async def peek_messages(self, max_messages=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
@@ -626,7 +626,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs):  # type: ignore
+    async def clear_messages(self, **kwargs):
         # type: (Optional[Any]) -> None
         """Deletes all messages from the specified queue.
 
@@ -649,7 +649,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_message(self, message, pop_receipt=None, **kwargs):  # type: ignore
+    async def delete_message(self, message, pop_receipt=None, **kwargs):
         # type: (Any, Optional[str], Any) -> None
         """Deletes the specified message.
 

@@ -117,7 +117,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_queue_url(cls, queue_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> None
+        # type: (str, Optional[Any], Any) -> QueueClient
         """A client to interact with a specific Queue.
 
         :param str queue_url: The full URI to the queue, including SAS token if used.
@@ -558,8 +558,8 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, **kwargs): # type: ignore
-        # type: (Optional[Any]) -> ItemPaged[Message]
+    def receive_messages(self, **kwargs):
+        # type: (Optional[Any]) -> ItemPaged[QueueMessage]
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -587,7 +587,7 @@ class QueueClient(StorageAccountHostsMixin):
             The server timeout, expressed in seconds.
         :return:
             Returns a message iterator of dict-like Message objects.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.Message]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
 
         .. admonition:: Example:
 
@@ -618,7 +618,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def update_message(self, message, pop_receipt=None, content=None, **kwargs): # type: ignore
+    def update_message(self, message, pop_receipt=None, content=None, **kwargs):
         # type: (Any, Optional[str], Optional[Any], Any) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -714,7 +714,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def peek_messages(self, max_messages=None, **kwargs): # type: ignore
+    def peek_messages(self, max_messages=None, **kwargs):
         # type: (Optional[int], Optional[Any]) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
