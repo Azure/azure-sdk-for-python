@@ -22,29 +22,31 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(k1.vault_endpoint, k2.vault_endpoint)
         self.assertEqual(k1.enabled, k2.enabled)
         self.assertEqual(k1.not_before, k2.not_before)
-        self.assertEqual(k1.expires, k2.expires)
-        self.assertEqual(k1.created, k2.created)
-        self.assertEqual(k1.updated, k2.updated)
+        self.assertEqual(k1.expires_on, k2.expires_on)
+        self.assertEqual(k1.created_on, k2.created_on)
+        self.assertEqual(k1.updated_on, k2.updated_on)
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    async def _create_rsa_key(self, client, key_name, hsm):
+    async def _create_rsa_key(self, client, key_name, hsm=False):
         # create key with optional arguments
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = await client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_operations=key_ops, tags=tags)
+        created_key = await client.create_rsa_key(
+            key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags
+        )
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         key_type = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_endpoint, key_name, key_type, key_ops)
         return created_key
 
-    async def _create_ec_key(self, client, key_name, hsm):
+    async def _create_ec_key(self, client, key_name, hsm=False):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = await client.create_ec_key(key_name, hsm=hsm, enabled=enabled, tags=tags)
+        created_key = await client.create_ec_key(key_name, hardware_protected=hsm, enabled=enabled, tags=tags)
         self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.properties.enabled)
         self.assertEqual(tags, created_key.properties.tags)
@@ -55,34 +57,36 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
         key_curve = "P-256"
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertEqual(key_curve, key.crv)
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(
-            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key = key_attributes.key_material
+        key = key_attributes.key
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created and key_attributes.properties.updated, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     async def _update_key_properties(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = await client.update_key_properties(key.name, expires=expires, tags=tags)
+        key_bundle = await client.update_key_properties(key.name, expires_on=expires, tags=tags)
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
-        self.assertNotEqual(key.properties.updated, key_bundle.properties.updated)
+        self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
         return key_bundle
 
     async def _validate_key_list(self, keys, expected):
@@ -138,13 +142,13 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # create ec key
         await self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
-        created_ec_key_curve = await client.create_ec_key(name="crud-P-256-ec-key", hsm=False, curve="P-256")
-        self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
+        created_ec_key_curve = await client.create_ec_key(name="crud-P-256-ec-key", curve="P-256")
+        self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
         await self._import_test_key(client, "import-test-key")
         # create rsa key
-        created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
+        created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key")
 
         # get the created key with version
         key = await client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
@@ -166,7 +170,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # delete the new key
         deleted_key = await client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key_material, deleted_key.key_material)
+        self.assertEqual(created_rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
@@ -199,7 +203,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key.name] = key
 
         # list keys
-        result = client.list_keys(max_page_size=max_keys)
+        result = client.list_properties_of_keys(max_page_size=max_keys)
         async for key in result:
             if key.name in expected.keys():
                 self._assert_key_attributes_equal(expected[key.name].properties, key)
@@ -289,7 +293,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # can add test case to see if we do get_deleted should return error
 
         # restore key
-        restored = await client.restore_key(key_backup)
+        restored = await client.restore_key_backup(key_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 

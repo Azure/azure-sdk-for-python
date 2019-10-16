@@ -25,11 +25,17 @@ except ImportError:
 
 import six
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
+from azure.core.pipeline.policies import (
+    RedirectPolicy,
+    ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy
+)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .models import LocationMode
@@ -46,6 +52,8 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
+from .._generated.models import StorageErrorException
+from .response_handlers import process_storage_error
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -147,11 +155,11 @@ class StorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        credential_policy = None
+        self._credential_policy = None
         if hasattr(credential, "get_token"):
-            credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            credential_policy = credential
+            self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -169,7 +177,7 @@ class StorageAccountHostsMixin(object):
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
-            credential_policy,
+            self._credential_policy,
             ContentDecodePolicy(),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
@@ -179,6 +187,39 @@ class StorageAccountHostsMixin(object):
             DistributedTracingPolicy(),
         ]
         return config, Pipeline(config.transport, policies=policies)
+
+    def _batch_send(
+        self, *reqs,  # type: HttpRequest
+        **kwargs
+    ):
+        """Given a series of request, do a Storage batch call.
+        """
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+            }
+        )
+
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[
+                StorageHeadersPolicy(),
+                self._credential_policy
+            ]
+        )
+
+        pipeline_response = self._pipeline.run(
+            request, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            return response.parts()
+        except StorageErrorException as error:
+            process_storage_error(error)
 
 
 def format_shared_key_credential(account, credential):

@@ -35,7 +35,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         Use the returned signature with the sas_token parameter of QueueService.
         :param str queue_name:
             Name of queue.
-        :param QueuePermissions permission:
+        :param QueueSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, add, update, process.

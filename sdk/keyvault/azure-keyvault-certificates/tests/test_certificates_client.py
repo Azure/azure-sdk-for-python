@@ -232,7 +232,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        certificate = client.create_certificate(name=cert_name).result()
+        certificate = client.begin_create_certificate(name=cert_name).result()
         self._validate_certificate_bundle(cert=certificate, cert_name=cert_name, cert_policy=cert_policy)
 
         self.assertEqual(client.get_certificate_operation(name=cert_name).status.lower(), "completed")
@@ -426,7 +426,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = client.create_certificate(
+        create_certificate_poller = client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 
@@ -516,11 +516,11 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        # get pending certiificate signing request
-        certificate = client.create_certificate(
+        # get pending certificate signing request
+        certificate = client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         ).wait()
-        pending_version_csr = client.get_pending_certificate_signing_request(name=cert_name)
+        pending_version_csr = client.get_certificate_operation(name=cert_name).csr
         try:
             self.assertEqual(client.get_certificate_operation(name=cert_name).csr, pending_version_csr)
         except Exception as ex:
@@ -554,7 +554,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = client.create_certificate(
+        create_certificate_poller = client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
         create_certificate_poller.wait()
@@ -591,7 +591,7 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        client.create_certificate(
+        client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         ).wait()
 

@@ -53,7 +53,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns a long running operation poller
-        certificate_operation_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        certificate_operation_poller = certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy)
 
         # Here we are waiting for the certificate creation operation to be completed
         certificate = certificate_operation_poller.result()
@@ -124,7 +124,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         for i in range(4):
-            certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
+            certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
 
         # [START list_certificates]
 
@@ -185,7 +185,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
 
@@ -232,7 +232,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
         certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
             functools.partial(certificate_client.get_deleted_certificate, cert_name), HttpResponseError

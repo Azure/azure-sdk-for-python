@@ -38,15 +38,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START set_secret]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
+        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires_on=expires_on)
 
         print(secret.id)
         print(secret.name)
         print(secret.properties.enabled)
-        print(secret.properties.expires)
+        print(secret.properties.expires_on)
 
         # [END set_secret]
 
@@ -75,7 +75,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         print(updated_secret_properties.version)
-        print(updated_secret_properties.updated)
+        print(updated_secret_properties.updated_on)
         print(updated_secret_properties.content_type)
         print(updated_secret_properties.tags)
 
@@ -107,7 +107,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_secrets]
 
         # gets a list of secrets in the vault
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_properties_of_secrets()
 
         async for secret in secrets:
             # the list doesn't include values or versions of the secrets
@@ -125,7 +125,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # the list doesn't include the versions' values
             print(secret.id)
             print(secret.enabled)
-            print(secret.updated)
+            print(secret.updated_on)
 
         # [END list_secret_versions]
         # [START list_deleted_secrets]
@@ -165,14 +165,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
         )
 
-        # [START restore_secret]
+        # [START restore_secret_backup]
 
         # restores a backed up secret
-        restored_secret = await secret_client.restore_secret(secret_backup)
+        restored_secret = await secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
 
-        # [END restore_secret]
+        # [END restore_secret_backup]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)

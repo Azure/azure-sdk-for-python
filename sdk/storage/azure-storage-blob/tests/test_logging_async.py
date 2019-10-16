@@ -21,8 +21,8 @@ from azure.storage.blob.aio import (
 )
 
 from azure.storage.blob import (
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
 )
 
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
@@ -88,10 +88,10 @@ class StorageLoggingTestAsync(StorageTestCase):
 
                 # generate a SAS so that it is accessible with a URL
                 sas_token = source_blob.generate_shared_access_signature(
-                    permission=BlobPermissions.READ,
+                    permission=BlobSasPermissions(read=True),
                     expiry=datetime.utcnow() + timedelta(hours=1),
                 )
-                sas_source = BlobClient(source_blob.url, credential=sas_token)
+                sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
                 self.source_blob_url = sas_source.url
             except:
                 pass
@@ -124,14 +124,14 @@ class StorageLoggingTestAsync(StorageTestCase):
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
         token = container.generate_shared_access_signature(
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         # parse out the signed signature
         token_components = parse_qs(token)
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
-        sas_service = ContainerClient(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         with LogCaptured(self) as log_captured:

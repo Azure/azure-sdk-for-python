@@ -39,11 +39,11 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
         try:
             # [START async_set_access_policy]
             # Create an access policy
-            from azure.storage.queue.aio import AccessPolicy, QueuePermissions
+            from azure.storage.queue.aio import AccessPolicy, QueueSasPermissions
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = QueuePermissions.READ
+            access_policy.permission = QueueSasPermissions(read=True)
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy
@@ -245,7 +245,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                     message,
                     visibility_timeout=0,
                     content=u"updated")
-            # [END update_message]
+            # [END async_update_message]
                 assert message.content == "updated"
                 break
 

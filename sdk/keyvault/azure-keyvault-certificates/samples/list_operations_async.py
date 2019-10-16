@@ -46,12 +46,8 @@ async def run_sample():
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
-
-        # await the creation of the bank and storage certificate
-        bank_certificate = await bank_certificate_poller
-        storage_certificate = await storage_certificate_poller
+        bank_certificate = await client.create_certificate(name=bank_cert_name)
+        storage_certificate = await client.create_certificate(name=storage_cert_name)
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))
@@ -71,7 +67,7 @@ async def run_sample():
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
-                bank_certificate.name, bank_certificate.tags
+                bank_certificate.name, bank_certificate.properties.tags
             )
         )
 

@@ -7,7 +7,7 @@ import pytest
 import asyncio
 
 from datetime import datetime, timedelta
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
@@ -16,7 +16,7 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
     StorageErrorCode,
-    BlobPermissions
+    BlobSasPermissions
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
@@ -69,10 +69,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # generate a SAS so that it is accessible with a URL
         sas_token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     def tearDown(self):
         if not self.is_playback():
@@ -95,14 +95,15 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # generate a SAS so that it is accessible with a URL
         sas_token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     async def _test_put_block_from_url_and_commit_async(self):
         # Arrange
         await self._setup()
+        split = 4 * 1024
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -112,12 +113,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
                 block_id=1,
                 source_url=self.source_blob_url,
                 source_offset=0,
-                source_length=4 * 1024 - 1),
+                source_length=split),
             dest_blob.stage_block_from_url(
                 block_id=2,
                 source_url=self.source_blob_url,
-                source_offset=4 * 1024,
-                source_length=8 * 1024)]
+                source_offset=split,
+                source_length=split)]
         await asyncio.gather(*futures)
 
         # Assert blocks
@@ -131,6 +132,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert destination blob has right content
         content = await (await dest_blob.download_blob()).content_as_bytes()
         self.assertEqual(content, self.source_blob_data)
+        self.assertEqual(len(content), 8 * 1024)
 
     @record
     def test_put_block_from_url_and_commit_async(self):

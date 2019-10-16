@@ -12,7 +12,7 @@ from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
 from .._shared.models import (
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode)
 from ..models import (
     Handle,
@@ -23,8 +23,8 @@ from ..models import (
     RetentionPolicy,
     CorsRule,
     AccessPolicy,
-    FilePermissions,
-    SharePermissions,
+    FileSasPermissions,
+    ShareSasPermissions,
     ContentSettings,
     NTFSAttributes)
 from .models import (
@@ -43,7 +43,7 @@ __all__ = [
     'NoRetry',
     'LocationMode',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageErrorCode',
     'Metrics',
     'RetentionPolicy',
@@ -51,8 +51,8 @@ __all__ = [
     'Handle',
     'HandlesPaged',
     'AccessPolicy',
-    'FilePermissions',
-    'SharePermissions',
+    'FileSasPermissions',
+    'ShareSasPermissions',
     'ShareProperties',
     'SharePropertiesPaged',
     'DirectoryProperties',

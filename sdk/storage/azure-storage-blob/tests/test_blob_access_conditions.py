@@ -1567,7 +1567,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
+        blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
         # Assert
 
@@ -1583,7 +1583,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
+            blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1599,7 +1599,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
+        blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
         # Assert
 
@@ -1615,7 +1615,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
+            blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1630,7 +1630,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        blob.upload_page(data, 0, 511, if_match=etag)
+        blob.upload_page(data, offset=0, length=512, if_match=etag)
 
         # Assert
 
@@ -1644,7 +1644,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_page(data, 0, 511, if_match='0x111111111111111')
+            blob.upload_page(data, offset=0, length=512, if_match='0x111111111111111')
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1658,7 +1658,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.upload_page(data, 0, 511, if_none_match='0x111111111111111')
+        blob.upload_page(data, offset=0, length=512, if_none_match='0x111111111111111')
 
         # Assert
 
@@ -1673,7 +1673,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            blob.upload_page(data, 0, 511, if_none_match=etag)
+            blob.upload_page(data, offset=0, length=512, if_none_match=etag)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1686,8 +1686,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         ranges = blob.get_page_ranges(if_modified_since=test_datetime)
@@ -1705,8 +1705,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1723,8 +1723,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         ranges = blob.get_page_ranges(if_unmodified_since=test_datetime)
@@ -1742,8 +1742,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1758,8 +1758,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
         etag = blob.get_blob_properties().etag
 
         # Act
@@ -1776,8 +1776,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1792,8 +1792,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
         ranges = blob.get_page_ranges(if_none_match='0x111111111111111')
@@ -1810,8 +1810,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
 
-        blob.upload_page(data, 0, 511)
-        blob.upload_page(data, 1024, 1535)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
         etag = blob.get_blob_properties().etag
 
         # Act

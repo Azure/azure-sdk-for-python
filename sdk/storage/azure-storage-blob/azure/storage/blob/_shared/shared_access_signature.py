@@ -103,7 +103,7 @@ class SharedAccessSignature(object):
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
             resource type.
-        :param AccountPermissions permission:
+        :param AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
