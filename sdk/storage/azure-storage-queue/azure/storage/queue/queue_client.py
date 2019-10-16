@@ -30,13 +30,12 @@ from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
-from ._shared_access_signature import QueueSharedAccessSignature
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from .models import QueueSasPermissions, QueueProperties
+    from .models import QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin):
@@ -185,77 +184,6 @@ class QueueClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs) # type: ignore
-
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):  # type: (...) -> str
-        """Generates a shared access signature for the queue.
-
-        Use the returned signature with the credential parameter of any Queue Service.
-
-        :param ~azure.storage.queue.QueueSasPermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless a policy_id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_queue_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
-            restricts the request to those IP addresses.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START queue_client_sas_token]
-                :end-before: [END queue_client_sas_token]
-                :language: python
-                :dedent: 12
-                :caption: Generate a sas token.
-        """
-        protocol = kwargs.pop('protocol', None)
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = QueueSharedAccessSignature(
-            self.credential.account_name, self.credential.account_key)
-        return sas.generate_queue(
-            self.queue_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-        )
 
     @distributed_trace
     def create_queue(self, **kwargs):

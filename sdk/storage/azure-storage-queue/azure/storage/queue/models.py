@@ -332,10 +332,9 @@ class QueuePropertiesPaged(PageIterator):
 
 
 class QueueSasPermissions(object):
-    """QueueSasPermissions class to be used with
-    :func:`~azure.storage.queue.queue_client.QueueClient.generate_shared_access_signature`
-    method and for the AccessPolicies used with
-    :func:`~azure.storage.queue.queue_client.QueueClient.set_queue_access_policy`.
+    """QueueSasPermissions class to be used with the
+    :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
+    :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
 
     :param bool read:
         Read metadata and properties, including message count. Peek at messages.

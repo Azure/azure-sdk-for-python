@@ -52,7 +52,12 @@ class TestMessageQueueSamples(QueueTestCase):
 
             # Use the access policy to generate a SAS token
             # [START queue_client_sas_token]
-            sas_token = queue_client.generate_shared_access_signature(
+            from azure.storage.queue import generate_queue_sas
+
+            sas_token = generate_queue_sas(
+                queue_client.account_name,
+                queue_client.queue_name,
+                queue_client.credential.account_key,
                 policy_id='my-access-policy-id'
             )
             # [END queue_client_sas_token]

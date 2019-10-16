@@ -28,6 +28,8 @@ from azure.storage.queue import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_queue_sas
 )
 from azure.storage.queue.aio import QueueServiceClient, QueueClient
 
@@ -583,7 +585,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
-        token = qsc.generate_shared_access_signature(
+        token = generate_account_sas(
+            qsc.account_name,
+            qsc.credential.account_key,
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -646,7 +650,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
@@ -678,7 +685,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -709,7 +719,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -749,7 +762,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -791,7 +807,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         await queue_client.enqueue_message(u'message1')
 
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             policy_id='testid'
         )
 
