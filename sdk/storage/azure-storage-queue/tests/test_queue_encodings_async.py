@@ -19,8 +19,6 @@ from azure.storage.queue import (
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
 )
 
 from azure.storage.queue.aio import (
