@@ -12,9 +12,14 @@ from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.blob import BlobType, BlobBlock
+from azure.storage.blob import (
+    BlobType,
+    BlobBlock,
+    CustomerProvidedEncryptionKey,
+    BlobSasPermissions
+)
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
+
 from testcase import (
     StorageTestCase,
     TestMode,

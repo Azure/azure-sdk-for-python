@@ -6,7 +6,7 @@
 # pylint: disable=no-self-use
 
 from ._shared.response_handlers import deserialize_metadata
-from .models import BlobProperties, ContainerProperties
+from ._models import BlobProperties, ContainerProperties
 
 
 def deserialize_blob_properties(response, obj, headers):

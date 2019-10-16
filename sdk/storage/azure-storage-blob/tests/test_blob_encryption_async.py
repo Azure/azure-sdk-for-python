@@ -29,7 +29,7 @@ from azure.storage.blob._shared.encryption import (
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
 )
-from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.storage.blob import BlobType

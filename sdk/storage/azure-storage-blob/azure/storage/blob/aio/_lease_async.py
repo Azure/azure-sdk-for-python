@@ -16,7 +16,7 @@ from .._generated.models import (
     StorageErrorException,
     ModifiedAccessConditions,
     LeaseAccessConditions)
-from ..lease import LeaseClient as LeaseClientBase
+from .._lease import LeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime

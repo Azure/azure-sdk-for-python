@@ -7,12 +7,12 @@
 import os
 
 from typing import Union, Iterable, AnyStr, IO, Any # pylint: disable=unused-import
-from .version import VERSION
-from .blob_client import BlobClient
-from .container_client import ContainerClient
-from .blob_service_client import BlobServiceClient
-from .lease import LeaseClient
-from .download import StorageStreamDownloader
+from ._version import VERSION
+from ._blob_client import BlobClient
+from ._container_client import ContainerClient
+from ._blob_service_client import BlobServiceClient
+from ._lease import LeaseClient
+from ._download import StorageStreamDownloader
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
     LocationMode,
@@ -24,7 +24,7 @@ from ._shared.models import(
 from ._generated.models import (
     RehydratePriority
 )
-from .models import (
+from ._models import (
     BlobType,
     BlockState,
     StandardBlobTier,

@@ -35,22 +35,22 @@ from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
-from .models import ( # pylint: disable=unused-import
+from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
     BlobPrefix)
-from .lease import LeaseClient, get_access_conditions
-from .blob_client import BlobClient
+from ._lease import LeaseClient, get_access_conditions
+from ._blob_client import BlobClient
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
-    from .models import ContainerSasPermissions, PublicAccess
+    from ._models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
-    from .models import ( # pylint: disable=unused-import
+    from ._models import ( # pylint: disable=unused-import
         AccessPolicy,
         ContentSettings,
         PremiumPageBlobTier)

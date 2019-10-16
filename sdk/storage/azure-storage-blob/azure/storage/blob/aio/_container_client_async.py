@@ -29,19 +29,19 @@ from .._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from .._deserialize import deserialize_container_properties
-from ..container_client import ContainerClient as ContainerClientBase
-from ..lease import get_access_conditions
-from ..models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
-from .models import BlobPropertiesPaged, BlobPrefix
-from .lease_async import LeaseClient
-from .blob_client_async import BlobClient
+from .._container_client import ContainerClient as ContainerClientBase
+from .._lease import get_access_conditions
+from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
+from ._models import BlobPropertiesPaged, BlobPrefix
+from ._lease_async import LeaseClient
+from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import ContainerSasPermissions, PublicAccess
+    from .._models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
-    from ..models import ( # pylint: disable=unused-import
+    from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         ContentSettings,
         StandardBlobTier,

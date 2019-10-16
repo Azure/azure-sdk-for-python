@@ -14,7 +14,7 @@ from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from .._deserialize import get_page_ranges_result
-from ..download import process_range_and_offset
+from .._download import process_range_and_offset
 
 
 async def process_content(data, start_offset, end_offset, encryption):

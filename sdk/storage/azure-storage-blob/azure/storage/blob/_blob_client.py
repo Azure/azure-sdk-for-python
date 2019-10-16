@@ -46,15 +46,15 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .models import BlobType, BlobBlock
-from .download import StorageStreamDownloader
-from .lease import LeaseClient, get_access_conditions
+from ._models import BlobType, BlobBlock
+from ._download import StorageStreamDownloader
+from ._lease import LeaseClient, get_access_conditions
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
-    from .models import (  # pylint: disable=unused-import
+    from ._models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobSasPermissions,

@@ -26,17 +26,17 @@ from ._shared.response_handlers import return_response_headers, process_storage_
     parse_to_internal_user_delegation_key
 from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
-from .container_client import ContainerClient
-from .blob_client import BlobClient
-from .models import ContainerProperties, ContainerPropertiesPaged
+from ._container_client import ContainerClient
+from ._blob_client import BlobClient
+from ._models import ContainerProperties, ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from ._shared.models import AccountSasPermissions, ResourceTypes
-    from .lease import LeaseClient
-    from .models import (
+    from ._lease import LeaseClient
+    from ._models import (
         BlobProperties,
         Logging,
         Metrics,

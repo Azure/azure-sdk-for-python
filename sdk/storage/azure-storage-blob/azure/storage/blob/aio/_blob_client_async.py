@@ -19,20 +19,20 @@ from .._deserialize import get_page_ranges_result
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import ModifiedAccessConditions, StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
-from ..blob_client import BlobClient as BlobClientBase
+from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ..models import BlobType, BlobBlock
-from ..lease import get_access_conditions
-from .lease_async import LeaseClient
-from .download_async import StorageStreamDownloader
+from .._models import BlobType, BlobBlock
+from .._lease import get_access_conditions
+from ._lease_async import LeaseClient
+from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import (  # pylint: disable=unused-import
+    from .._models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobSasPermissions,
