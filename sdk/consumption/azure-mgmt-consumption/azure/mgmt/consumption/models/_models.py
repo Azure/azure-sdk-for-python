@@ -1775,7 +1775,7 @@ class ModernUsageDetail(UsageDetail):
     :vartype exchange_rate: str
     :ivar exchange_rate_date: Exchange Rate Date.
     :vartype exchange_rate_date: datetime
-    :ivar invoice_id: InvoiceId.
+    :ivar invoice_id: Invoice Id.
     :vartype invoice_id: str
     :ivar previous_invoice_id: Previous Invoice Id.
     :vartype previous_invoice_id: str
