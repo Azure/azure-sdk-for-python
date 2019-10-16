@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class DeleteSecretPollerAsync(AsyncPollingMethod):
-    def __init__(self, interval=5):
+    def __init__(self, deleted_secret_if_no_sd, interval=5):
         self._command = None
-        self._deleted_secret = None
+        self._deleted_secret = deleted_secret_if_no_sd
         self._polling_interval = interval
         self._status = None
 
@@ -44,7 +44,9 @@ class DeleteSecretPollerAsync(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        return self._status == "deleted"
+        if self._deleted_secret:
+            return True
+        return False
 
     def resource(self) -> DeletedSecret:
         return self._deleted_secret

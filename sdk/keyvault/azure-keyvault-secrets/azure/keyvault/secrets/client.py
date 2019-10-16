@@ -288,9 +288,13 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        deleted_secret_bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        if not deleted_secret_bundle.recovery_id:
+            deleted_secret_if_no_sd = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
+        else:
+            deleted_secret_if_no_sd = None
         command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_polling = DeleteSecretPoller()
+        delete_secret_polling = DeleteSecretPoller(deleted_secret_if_no_sd=deleted_secret_if_no_sd)
         return LROPoller(command, "deleting", None, delete_secret_polling)
 
     @distributed_trace
