@@ -8,6 +8,7 @@
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 - Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
 `BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
+- `Logging` has been renamed to `BlobAnalyticsLogging`.
 - Client and model files have been renamed to be internal. Users should import from the top level modules: 
 `azure.storage.blob` and `azure.storage.blob.aio` only.
 

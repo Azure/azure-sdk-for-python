@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from ._shared.models import AccountSasPermissions, ResourceTypes
     from ._models import (
         QueueProperties,
-        Logging,
+        QueueAnalyticsLogging,
         Metrics,
         CorsRule
     )
@@ -267,7 +267,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties( # type: ignore
-            self, logging=None,  # type: Optional[Logging]
+            self, analytics_logging=None,  # type: Optional[QueueAnalyticsLogging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
@@ -277,12 +277,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
-        If an element (e.g. Logging) is left as None, the
+        If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
-        :param logging:
+        :param analytics_logging:
             Groups the Azure Analytics Logging settings.
-        :type logging: ~azure.storage.queue.Logging
+        :type analytics_logging: ~azure.storage.queue.QueueAnalyticsLogging
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for queues.
@@ -311,7 +311,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
-            logging=logging,
+            logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors
