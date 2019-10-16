@@ -20,6 +20,7 @@ import ast
 import os
 import textwrap
 import io
+from tox_helper_tasks import get_package_details
 
 logging.getLogger().setLevel(logging.INFO)
 
