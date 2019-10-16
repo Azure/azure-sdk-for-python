@@ -70,7 +70,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START get_certificate]
 
         # get the certificate
-        certificate = certificate_client.get_certificate_with_policy(name=cert_name)
+        certificate = certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -84,7 +84,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
         print(updated_certificate.properties.version)
-        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.updated_on)
         print(updated_certificate.properties.tags)
 
         # [END update_certificate]
@@ -133,9 +133,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificates:
             print(certificate.id)
-            print(certificate.created)
+            print(certificate.created_on)
             print(certificate.name)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.enabled)
 
         # [END list_certificates]
@@ -146,7 +146,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.version)
 
         # [END list_certificate_versions]
@@ -202,7 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START restore_certificate]
 
         # restore a certificate backup
-        restored_certificate = certificate_client.restore_certificate(backup=certificate_backup)
+        restored_certificate = certificate_client.restore_certificate_backup(backup=certificate_backup)
 
         print(restored_certificate.id)
         print(restored_certificate.name)
@@ -263,7 +263,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
 
         certificate_client = vault_client.certificates
 
@@ -271,8 +271,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = certificate_client.create_contacts(contacts=contact_list)
