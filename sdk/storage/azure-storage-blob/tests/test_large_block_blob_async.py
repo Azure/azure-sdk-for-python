@@ -15,11 +15,12 @@ import unittest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob import ContentSettings
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    ContentSettings
+    BlobClient
 )
 
 if os.sys.version_info >= (3,):

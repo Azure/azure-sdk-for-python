@@ -8,11 +8,11 @@ import pytest
 import asyncio
 
 from io import BytesIO, IOBase, UnsupportedOperation
+from azure.storage.blob._shared.policies_async import ExponentialRetry
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    ExponentialRetry
 )
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from testcase import (

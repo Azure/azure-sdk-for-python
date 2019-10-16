@@ -258,6 +258,8 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """

@@ -30,7 +30,7 @@ class TestFileServiceSamples(FileTestCase):
 
         # [START set_service_properties]
         # Create service properties
-        from azure.storage.file.aio import Metrics, CorsRule, RetentionPolicy
+        from azure.storage.file import Metrics, CorsRule, RetentionPolicy
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))

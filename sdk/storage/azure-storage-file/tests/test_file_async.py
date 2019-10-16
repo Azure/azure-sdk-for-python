@@ -16,17 +16,18 @@ import requests
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from azure.storage.file import NTFSAttributes
-
-from azure.storage.file.aio import (
-    FileClient,
-    FileServiceClient,
+from azure.storage.file import (
+    NTFSAttributes,
     ContentSettings,
     FileSasPermissions,
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode
+)
+from azure.storage.file.aio import (
+    FileClient,
+    FileServiceClient,
 )
 from filetestcase import (
     FileTestCase,
