@@ -124,24 +124,20 @@ new versions of existing certificates, update certificate metadata, and delete c
 can also manage certificate issuers, contacts, and management policies of certificates. This is
 illustrated in the [examples](#examples) below.
 
-### KeyVaultCertificate
-  A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective,
-  Key Vault APIs accept and return certificates as the KeyVaultCertificate type.
-
 ### Certificate Client:
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Create a KeyVaultCertificate](#create-a-keyvaultcertificate)
-* [Retrieve a KeyVaultCertificate](#retrieve-a-keyvaultcertificate)
-* [Update Properties of an existing KeyVaultCertificate](#update-properties-of-an-existing-keyvaultcertificate)
-* [Delete a KeyvaultCertificate](#delete-a-keyvaultcertificate)
-* [List Properites of KeyVaultCertificates](#list-properties-of-keyvaultcertificates)
-* [Asynchronously create a KeyVaultCertificate](#asynchronously-create-a-keyvaultcertificate)
-* [Asynchronously list properties of KeyVaultCertificates](#asynchronously-list-properties-of-keyvaultcertificates)
+* [Create a Certificate](#create-a-certificate)
+* [Retrieve a Certificate](#retrieve-a-certificate)
+* [Update Properties of an existing Certificate](#update-properties-of-an-existing-certificate)
+* [Delete a Certificate](#delete-a-certificate)
+* [List Properites of Certificates](#list-properties-of-certificates)
+* [Asynchronously create a Certificate](#asynchronously-create-a-certificate)
+* [Asynchronously list properties of Certificates](#asynchronously-list-properties-of-certificates)
 
-### Create a KeyVaultCertificate
-`begin_create_certificate` creates a KeyVaultCertificate to be stored in the Azure Key Vault. If a certificate with
+### Create a Certificate
+`begin_create_certificate` creates a certificate to be stored in the Azure Key Vault. If a certificate with
 the same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default
 policy will be used. The `begin_create_certificate` operation returns a long running operation poller.
@@ -151,7 +147,7 @@ create_certificate_poller = certificate_client.begin_create_certificate(name="ce
 print(create_certificate_poller.result())
 ```
 
-### Retrieve a KeyVaultCertificate
+### Retrieve a Certificate
 `get_certificate` retrieves a certificate previously stored in the Key Vault without
 having to specify version.
 ```python
@@ -171,7 +167,7 @@ print(certificate.name)
 print(certificate.properties.version)
 ```
 
-### Update properties of an existing KeyVaultCertificate]
+### Update properties of an existing Certificate]
 `update_certificate_properties` updates a certificate previously stored in the Key Vault.
 ```python
 # You can specify additional application-specific metadata in the form of tags.
@@ -186,7 +182,7 @@ print(updated_certificate.properties.tags)
 
 ```
 
-### Delete a KeyVaultCertificate
+### Delete a Certificate
 `delete_certificate` deletes a certificate previously stored in the Key Vault. When [soft-delete][soft_delete]
 is not enabled for the Key Vault, this operation permanently deletes the certificate.
 ```python
@@ -195,7 +191,7 @@ deleted_certificate = certificate_client.delete_certificate(name="cert-name")
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)
 ```
-### List properties of KeyVaultCertificates
+### List properties of Certificates
 This example lists the properties of all certificates in the specified Key Vault.
 ```python
 certificates = certificate_client.list_properites_of_certificates()
@@ -212,17 +208,18 @@ See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
 
-### Asynchronously create a KeyVaultCertificate
-`begin_create_certificate` creates a KeyVaultCertificate to be stored in the Azure Key Vault. If a certificate with the
+### Asynchronously create a Certificate
+`create_certificate` creates a certificate to be stored in the Azure Key Vault. If a certificate with the
 same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default policy
-will be used. The `begin_create_certificate` operation returns an async poller.
+will be used. Awaiting the call to `create_certificate` returns your created certificate if creation is successful,
+and a `CertificateOperation` if creation is not.
 ```python
 create_certificate_result = await certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 print(create_certificate_result)
 ```
 
-### Asynchronously list properties of KeyVaultCertificates
+### Asynchronously list properties of Certificates
 This example lists all the certificates in the client's vault:
 ```python
 certificates = certificate_client.list_certificates()

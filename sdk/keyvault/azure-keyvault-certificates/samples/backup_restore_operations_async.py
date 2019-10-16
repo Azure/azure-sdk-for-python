@@ -20,7 +20,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(certificates) resource for Azure Key Vault
 #
-# 1. Create a certificate (begin_create_certificate)
+# 1. Create a certificate (create_certificate)
 #
 # 2. Backup a certificate (backup_certificate)
 #
@@ -42,20 +42,17 @@ async def run_sample():
     client = CertificateClient(vault_endpoint=vault_endpoint, credential=credential)
     try:
 
-        print("\n.. Create KeyVaultCertificate")
+        print("\n.. Create Certificate")
         cert_name = "BackupRestoreCertificate"
 
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
-        # An async poller is returned.
-        create_certificate_poller = client.begin_create_certificate(
+        # Awaiting the call returns a KeyVaultCertificate if creation is successful, and a CertificateOperation if not.
+        certificate = await client.create_certificate(
             name=cert_name, policy=CertificatePolicy.get_default()
         )
 
-        # Awaiting the poller will return a certificate if creation is successful,
-        # and will return the failed CertificateOperation if not.
-        certificate = await create_certificate_poller
-        print("KeyVaultCertificate with name '{0}' created.".format(certificate.name))
+        print("Certificate with name '{0}' created.".format(certificate.name))
 
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
@@ -66,12 +63,12 @@ async def run_sample():
         # The storage account certificate is no longer in use, so you can delete it.
         print("\n.. Delete the certificate")
         await client.delete_certificate(name=cert_name)
-        print("Deleted KeyVaultCertificate with name '{0}'".format(cert_name))
+        print("Deleted Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the certificate using the backed up certificate bytes")
         certificate = await client.restore_certificate_backup(certificate_backup)
-        print("Restored KeyVaultCertificate with name '{0}'".format(certificate.name))
+        print("Restored Certificate with name '{0}'".format(certificate.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

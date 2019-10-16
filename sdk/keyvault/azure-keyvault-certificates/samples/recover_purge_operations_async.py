@@ -21,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a certificate (begin_create_certificate)
+# 1. Create a certificate (create_certificate)
 #
 # 2. Delete a certificate (delete_certificate)
 #
@@ -46,33 +46,33 @@ async def run_sample():
         bank_cert_name = "BankRecoverCertificate"
         storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate = await client.begin_create_certificate(
+        bank_certificate = await client.create_certificate(
             name=bank_cert_name, policy=CertificatePolicy.get_default()
         )
-        storage_certificate = await client.begin_create_certificate(
+        storage_certificate = await client.create_certificate(
             name=storage_cert_name, policy=CertificatePolicy.get_default()
         )
 
-        print("KeyVaultCertificate with name '{0}' was created.".format(bank_certificate.name))
-        print("KeyVaultCertificate with name '{0}' was created.".format(storage_certificate.name))
+        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete a KeyVaultCertificate")
+        print("\n.. Delete a Certificate")
         deleted_bank_certificate = await client.delete_certificate(name=bank_cert_name)
         # To ensure certificate is deleted on the server side.
         await asyncio.sleep(30)
 
         print(
-            "KeyVaultCertificate with name '{0}' was deleted on date {1}.".format(
+            "Certificate with name '{0}' was deleted on date {1}.".format(
                 deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
             )
         )
 
         # We accidentally deleted the bank account certificate. Let's recover it.
         # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n.. Recover Deleted KeyVaultCertificate")
+        print("\n.. Recover Deleted Certificate")
         recovered_bank_certificate = await client.recover_deleted_certificate(deleted_bank_certificate.name)
-        print("Recovered KeyVaultCertificate with name '{0}'.".format(recovered_bank_certificate.name))
+        print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
         # Let's delete storage account now.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.

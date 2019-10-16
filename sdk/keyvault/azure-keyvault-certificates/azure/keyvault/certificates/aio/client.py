@@ -49,7 +49,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
     @distributed_trace_async
-    async def begin_create_certificate(
+    async def create_certificate(
         self, name: str, policy: CertificatePolicy, **kwargs: "**Any"
     ) -> Union[KeyVaultCertificate, CertificateOperation]:
         """Creates a new certificate.
@@ -489,12 +489,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        include_pending = kwargs.pop("include_pending", None)
 
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_endpoint,
             maxresults=max_page_size,
-            include_pending=include_pending,
             cls=lambda objs: [DeletedCertificate._from_deleted_certificate_item(x) for x in objs],
             **kwargs
         )
@@ -525,12 +523,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
-        include_pending = kwargs.pop("include_pending", None)
 
         return self._client.get_certificates(
             vault_base_url=self._vault_endpoint,
             maxresults=max_page_size,
-            include_pending=include_pending,
             cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs
         )
@@ -719,7 +715,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Performs the merging of a certificate or certificate chain with a key pair currently
         available in the service. This operation requires the certificates/create permission.
         Make sure when creating the certificate to merge using begin_create_certificate that you set
-        it's issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
+        its issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
         by an issuer known to it.
 
         :param str name: The name of the certificate

@@ -22,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
-# 1. Create certificate (begin_create_certificate)
+# 1. Create certificate (create_certificate)
 #
 # 2. List certificates from the Key Vault (list_certificates)
 #
@@ -43,37 +43,37 @@ async def run_sample():
     try:
         # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n.. Create KeyVaultCertificate")
+        print("\n.. Create Certificate")
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate = await client.begin_create_certificate(
+        bank_certificate = await client.create_certificate(
             name=bank_cert_name, policy=CertificatePolicy.get_default()
         )
-        storage_certificate = await client.begin_create_certificate(
+        storage_certificate = await client.create_certificate(
             name=storage_cert_name, policy=CertificatePolicy.get_default()
         )
 
-        print("KeyVaultCertificate with name '{0}' was created.".format(bank_certificate.name))
-        print("KeyVaultCertificate with name '{0}' was created.".format(storage_certificate.name))
+        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
         # Let's list the certificates.
         print("\n.. List certificates from the Key Vault")
         certificates = client.list_certificates()
         async for certificate in certificates:
-            print("KeyVaultCertificate with name '{0}' was found.".format(certificate.name))
+            print("Certificate with name '{0}' was found.".format(certificate.name))
 
-        # You've decided to add tags to the certificate you created. Calling begin_create_certificate on an existing
+        # You've decided to add tags to the certificate you created. Calling create_certificate on an existing
         # certificate creates a new version of the certificate in the Key Vault with the new value.
 
         tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.begin_create_certificate(
+        updated_bank_certificate_poller = await client.create_certificate(
             name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
         )
         bank_certificate = await updated_bank_certificate_poller
         print(
-            "KeyVaultCertificate with name '{0}' was created again with tags '{1}'".format(
+            "Certificate with name '{0}' was created again with tags '{1}'".format(
                 bank_certificate.name, bank_certificate.properties.tags
             )
         )
@@ -97,7 +97,7 @@ async def run_sample():
         deleted_certificates = client.list_deleted_certificates()
         async for deleted_certificate in deleted_certificates:
             print(
-                "KeyVaultCertificate with name '{0}' has recovery id '{1}'".format(
+                "Certificate with name '{0}' has recovery id '{1}'".format(
                     deleted_certificate.name, deleted_certificate.recovery_id
                 )
             )

@@ -39,7 +39,7 @@ VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
-    print("\n.. Create KeyVaultCertificate")
+    print("\n.. Create Certificate")
     cert_name = "BackupRestoreCertificate"
 
     # Let's create a certificate for your key vault.
@@ -50,7 +50,7 @@ try:
     # The result call awaits the completion of the create certificate operation and returns the final result.
     # It will return a certificate if creation is successful, and will return the CertificateOperation if not.
     certificate = create_certificate_poller.result()
-    print("KeyVaultCertificate with name '{0}' created.".format(cert_name))
+    print("Certificate with name '{0}' created.".format(cert_name))
 
     # Backups are good to have, if in case certificates gets deleted accidentally.
     # For long term storage, it is ideal to write the backup to a file.
@@ -66,7 +66,7 @@ try:
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the certificate from the backup")
     certificate = client.restore_certificate_backup(certificate_backup)
-    print("Restored KeyVaultCertificate with name '{0}'".format(certificate.name))
+    print("Restored Certificate with name '{0}'".format(certificate.name))
 
 except HttpResponseError as e:
     print("\nrun_sample has caught an error. {0}".format(e.message))

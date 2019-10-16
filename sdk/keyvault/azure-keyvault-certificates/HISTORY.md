@@ -3,7 +3,7 @@
 ## 4.0.0b5
 ### Breaking changes
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
-- Renamed `create_certificate` to `begin_create_certificate`
+- Renamed the sync method `create_certificate` to `begin_create_certificate`
 - Renamed `restore_certificate` to `restore_certificate_backup`
 - Renamed `get_certificate` to `get_certificate_version`
 - Renamed `get_certificate_with_policy` to `get_certificate`
