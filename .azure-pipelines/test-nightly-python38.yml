@@ -25,13 +25,13 @@ jobs:
           wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
           tar -xf Python-3.8.0.tar.xz
           cd Python-3.8.0
-          ../configure --enable-optimizations --prefix=$HOME
+          ./configure --enable-optimizations --prefix=$HOME
           sudo make install
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 -m ensurepip
           pip install wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml" --toxenv="whl"
+          python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
 
