@@ -4655,6 +4655,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
@@ -4672,6 +4677,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
@@ -4684,6 +4690,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.overprovision = kwargs.get('overprovision', None)
+        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.identity = kwargs.get('identity', None)
 
