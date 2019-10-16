@@ -3,11 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -17,7 +15,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:55 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -35,11 +33,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -49,7 +45,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:55 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -67,11 +63,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -81,7 +75,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:55 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -99,11 +93,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -113,7 +105,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -133,11 +125,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -149,7 +139,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -170,11 +160,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:03:25 GMT
+      - Wed, 16 Oct 2019 06:50:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -187,7 +175,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Fri, 06 Sep 2019 22:03:23 GMT
+      date: Wed, 16 Oct 2019 06:50:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'

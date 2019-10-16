@@ -34,7 +34,7 @@ class TestMessageQueueSamples(QueueTestCase):
             queue_client.create_queue()
         except ResourceExistsError:
             pass
-        queue_client.enqueue_message(u"hello world")
+        queue_client.send_message(u"hello world")
 
         try:
             # [START set_access_policy]
@@ -101,7 +101,7 @@ class TestMessageQueueSamples(QueueTestCase):
 
     @ResourceGroupPreparer()              
     @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_enqueue_and_receive_messages(self, resource_group, location, storage_account, storage_account_key):
+    def test_send_and_receive_messages(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
@@ -111,13 +111,13 @@ class TestMessageQueueSamples(QueueTestCase):
         queue.create_queue()
 
         try:
-            # [START enqueue_messages]
-            queue.enqueue_message(u"message1")
-            queue.enqueue_message(u"message2", visibility_timeout=30)  # wait 30s before becoming visible
-            queue.enqueue_message(u"message3")
-            queue.enqueue_message(u"message4")
-            queue.enqueue_message(u"message5")
-            # [END enqueue_messages]
+            # [START send_messages]
+            queue.send_message(u"message1")
+            queue.send_message(u"message2", visibility_timeout=30)  # wait 30s before becoming visible
+            queue.send_message(u"message3")
+            queue.send_message(u"message4")
+            queue.send_message(u"message5")
+            # [END send_messages]
 
             # [START receive_messages]
             # Receive messages one-by-one
@@ -155,12 +155,12 @@ class TestMessageQueueSamples(QueueTestCase):
         queue.create_queue()
 
         try:
-            # Enqueue messages
-            queue.enqueue_message(u"message1")
-            queue.enqueue_message(u"message2")
-            queue.enqueue_message(u"message3")
-            queue.enqueue_message(u"message4")
-            queue.enqueue_message(u"message5")
+            # Send messages
+            queue.send_message(u"message1")
+            queue.send_message(u"message2")
+            queue.send_message(u"message3")
+            queue.send_message(u"message4")
+            queue.send_message(u"message5")
 
             # [START delete_message]
             # Get the message at the front of the queue
@@ -189,12 +189,12 @@ class TestMessageQueueSamples(QueueTestCase):
         queue.create_queue()
 
         try:
-            # Enqueue messages
-            queue.enqueue_message(u"message1")
-            queue.enqueue_message(u"message2")
-            queue.enqueue_message(u"message3")
-            queue.enqueue_message(u"message4")
-            queue.enqueue_message(u"message5")
+            # Send messages
+            queue.send_message(u"message1")
+            queue.send_message(u"message2")
+            queue.send_message(u"message3")
+            queue.send_message(u"message4")
+            queue.send_message(u"message5")
 
             # [START peek_message]
             # Peek at one message at the front of the queue
@@ -225,8 +225,8 @@ class TestMessageQueueSamples(QueueTestCase):
 
         try:
             # [START update_message]
-            # Enqueue a message
-            queue.enqueue_message(u"update me")
+            # Send a message
+            queue.send_message(u"update me")
 
             # Receive the message
             messages = queue.receive_messages()
