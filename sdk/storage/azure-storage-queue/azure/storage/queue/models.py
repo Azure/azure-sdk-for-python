@@ -18,7 +18,7 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 
 
-class Logging(GeneratedLogging):
+class QueueAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.

@@ -18,6 +18,7 @@ should be imported from azure.storage.queue.aio
   - `timeout` etc.
 - `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
 to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
+- `Logging` has been renamed to `QueueAnalyticsLogging`.
 - `enqueue_message` is now called `send_message`.
 
  **New features**
