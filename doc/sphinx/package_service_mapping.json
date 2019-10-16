@@ -20,6 +20,27 @@
     ],
     "service_name": "Cognitive Services Anomaly Detector"
   },
+  "azure-cognitiveservices-formrecognizer": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.formrecognizer"
+    ],
+    "service_name": "Cognitive Services Recognizer"
+  },
+  "azure-cognitiveservices-inkrecognizer": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.inkrecognizer"
+    ],
+    "service_name": "Cognitive Services Recognizer"
+  },
+  "azure-cognitiveservices-personalizer": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.personalizer"
+    ],
+    "service_name": "Cognitive Services Personalizer"
+  },
   "azure-cognitiveservices-knowledge-qnamaker": {
     "category": "Client",
     "namespaces": [
@@ -268,6 +289,24 @@
     ],
     "service_name": "Virtual Machines"
   },
+  "azure-mgmt-compute": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.compute.v2015_06_15",
+      "azure.mgmt.compute.v2016_03_30",
+      "azure.mgmt.compute.v2016_04_30_preview",
+      "azure.mgmt.compute.v2017_03_30",
+      "azure.mgmt.compute.v2017_09_01",
+      "azure.mgmt.compute.v2017_12_01",
+      "azure.mgmt.compute.v2018_04_01",
+      "azure.mgmt.compute.v2018_06_01",
+      "azure.mgmt.compute.v2018_09_30",
+      "azure.mgmt.compute.v2018_10_01",
+      "azure.mgmt.compute.v2019_03_01",
+      "azure.mgmt.compute.v2019_04_01"
+    ],
+    "service_name": "Virtual Machines"
+  },
   "azure-mgmt-consumption": {
     "category": "Management",
     "namespaces": [
@@ -386,7 +425,7 @@
       "azure.mgmt.eventhub.v2017_04_01",
       "azure.mgmt.eventhub.v2018_01_01_preview"
     ],
-    "service_name": "Event Hubs"
+    "service_name": "Event Hub"
   },
   "azure-mgmt-hanaonazure": {
     "category": "Management",
@@ -766,14 +805,19 @@
     "service_name": "Event Hub",
     "manually_generated": true
   },
+  "azure-eventhub-checkpointstoreblob-aio": {
+    "category": "Client",
+    "service_name": "Event Hub",
+    "manually_generated": true
+  },
   "azure-core": {
     "category": "Client",
-    "service_name": "Other",
+    "service_name": "Core",
     "manually_generated": true
   },
   "azure-core-tracing-opencensus": {
     "category": "Client",
-    "service_name": "Other",
+    "service_name": "Core",
     "manually_generated": true
   },
   "azure-identity": {
@@ -796,6 +840,11 @@
     "service_name": "Keyvault",
     "manually_generated": true
   },
+  "azure-keyvault-certificates": {
+    "category": "Client",
+    "service_name": "Keyvault",
+    "manually_generated": true
+  },
   "azure-storage-blob": {
     "category": "Client",
     "service_name": "Storage",
@@ -813,7 +862,12 @@
   },
   "azure-appconfiguration": {
     "category": "Client",
-    "service_name": "AppConfiguration",
+    "service_name": "App Configuration",
+    "manually_generated": true
+  },
+  "azure-mgmt-appconfiguration": {
+    "category": "Management",
+    "service_name": "App Configuration",
     "manually_generated": true
   },
   "azure-servicefabric": {

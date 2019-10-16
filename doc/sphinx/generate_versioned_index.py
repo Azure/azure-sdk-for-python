@@ -36,22 +36,30 @@ TOC_TEMPLATE = """
 
 """
 
+LANDING_START = """
+{service_name_title_indicator}
+{service_name}
+{service_name_title_indicator}
+
+"""
+
 LANDING_TEMPLATE = """
 {package_name_title_indicator}
 {package_name}
 {package_name_title_indicator}
 
-Published Versions
-==================
+**Published Versions**
 
 .. raw:: html
 
     <embed>
-        <ul id="{package_name}"></ul>
+        <ul id="v{package_name}"></ul>
         <script type="text/javascript">
-            populateIndexList('#{package_name}', '{package_name}')
+            populateIndexList('#v{package_name}', '{package_name}')
         </script>
     </embed>
+
+------------
 
 """
 
@@ -71,6 +79,9 @@ def check_package_against_omission(package_name):
         return False
 
     if "azure" == package_name:
+        return False
+
+    if "azure-mgmt" == package_name:
         return False
 
     return True
@@ -95,7 +106,7 @@ def get_repo_packages(base_dir):
 def write_landing_pages(categorized_menu_items):
     for service in categorized_menu_items:
         with open(os.path.join(docs_folder, LANDING_PAGE_LOCATION.format("-".join(service.split(' ')))), 'w') as f:
-            content = ""
+            content = LANDING_START.format(service_name = service, service_name_title_indicator = "".join(["="] * len(service)))
             for pkg in categorized_menu_items[service]:
                 content += LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["-"] * len(pkg)))
             f.write(content)
@@ -103,10 +114,8 @@ def write_landing_pages(categorized_menu_items):
 def write_toc_tree(categorized_menu_items):
     toc_tree_contents = ""
 
-    for service in categorized_menu_items:
-        formatted_locations = [LANDING_PAGE_LOCATION.format("-".join(service.split(' '))) for p in categorized_menu_items]
-        category_toc_contents = TOC_TEMPLATE.format(category = "Developer Documentation", members = "\n  ".join(formatted_locations))
-        toc_tree_contents += category_toc_contents
+    category_toc_contents = TOC_TEMPLATE.format(category = "Services", members = "\n  ".join([LANDING_PAGE_LOCATION.format("-".join(p.split(' '))) for p in sorted(categorized_menu_items)]))
+    toc_tree_contents += category_toc_contents
 
     with open(os.path.join(docs_folder, 'toc_tree.rst'), 'w') as f:
         f.write(toc_tree_contents)
@@ -163,7 +172,6 @@ if __name__ == "__main__":
 
     create_docs_folder()
 
-    
     # work up where stuff should exist in the ToC
     categorized_menu_items = get_categorized_menu_items(all_packages)
 

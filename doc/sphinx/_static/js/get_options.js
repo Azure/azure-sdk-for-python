@@ -99,7 +99,7 @@ function populateIndexList(selector, packageName)
     if(responseText){
       parser = new DOMParser();
       xmlDoc = parser.parseFromString(responseText,"text/xml");
-      
+
       nameElements = Array.from(xmlDoc.getElementsByTagName('Name'))
       options = []
 
@@ -108,7 +108,7 @@ function populateIndexList(selector, packageName)
       }
 
       for (var i in options){
-        $(selector).append('<li><a href="' + getPackageUrl('python', packageName, options[i]) + '">' + options[i] + '</a></li>')
+        $(selector).append('<li><a target="new" href="' + getPackageUrl('python', packageName, options[i]) + '">' + options[i] + '</a></li>')
       }
     }
     else {
