@@ -13,6 +13,7 @@ jobs:
       MaxParallel: 1
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
+      JobName: Test_Keys
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         RUN_IDENTIFIER: $(Build.BuildId)$(Agent.JobName)
@@ -27,6 +28,7 @@ jobs:
       MaxParallel: 1
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
+      JobName: Test_Secrets
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         RUN_IDENTIFIER: $(Build.BuildId)$(Agent.JobName)
@@ -41,6 +43,7 @@ jobs:
       MaxParallel: 1
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
+      JobName: Test_Certificates
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         RUN_IDENTIFIER: $(Build.BuildId)$(Agent.JobName)
