@@ -125,6 +125,10 @@ def generate_account_sas(
 
     Use the returned signature with the credential parameter of any Queue Service.
 
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str account_key:
+        The access key to generate the shared access signature.
     :param ~azure.storage.queue.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param ~azure.storage.queue.AccountSasPermissions permission:
@@ -179,10 +183,16 @@ def generate_queue_sas(
         ip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):  # type: (...) -> str
-    """Generates a shared access signature for the queue.
+    """Generates a shared access signature for a queue.
 
     Use the returned signature with the credential parameter of any Queue Service.
 
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str queue_name:
+        The name of the queue.
+    :param str account_key:
+        The access key to generate the shared access signature.
     :param ~azure.storage.queue.QueueSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -206,7 +216,8 @@ def generate_queue_sas(
     :type start: datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
-        stored access policy. To create a stored access policy, use :func:`~set_queue_access_policy`.
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address

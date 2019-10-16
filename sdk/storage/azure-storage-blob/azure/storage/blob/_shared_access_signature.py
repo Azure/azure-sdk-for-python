@@ -278,6 +278,10 @@ def generate_account_sas(
     Use the returned signature with the credential parameter of any BlobServiceClient,
     ContainerClient or BlobClient.
 
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str account_key:
+        The access key to generate the shared access signature.
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: str or ~azure.storage.blob.ResourceTypes
@@ -348,10 +352,23 @@ def generate_container_sas(
         **kwargs # type: Any
     ):
     # type: (...) -> Any
-    """Generates a shared access signature for the container.
+    """Generates a shared access signature for a container.
+
     Use the returned signature with the credential parameter of any BlobServiceClient,
     ContainerClient or BlobClient.
 
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str container_name:
+        The name of the container.
+    :param str account_key:
+        The access key to generate the shared access signature. Either `account_key` or
+        `user_delegation_key` must be specified.
+    :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
+        Instead of an account key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -377,18 +394,14 @@ def generate_container_sas(
     :type start: datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
-        stored access policy. To create a stored access policy, use :func:`~set_container_access_policy`.
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
-        A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling get_user_delegation_key.
-        When present, the SAS is signed with the user delegation key instead.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str account_name:
@@ -453,11 +466,27 @@ def generate_blob_sas(
         **kwargs # type: Any
     ):
     # type: (...) -> Any
-    """
-    Generates a shared access signature for a blob.
+    """Generates a shared access signature for a blob.
+
     Use the returned signature with the credential parameter of any BlobServiceClient,
     ContainerClient or BlobClient.
 
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str container_name:
+        The name of the container.
+    :param str blob_name:
+        The name of the blob.
+    :param str snapshot:
+        An optional blob snapshot ID.
+    :param str account_key:
+        The access key to generate the shared access signature. Either `account_key` or
+        `user_delegation_key` must be specified.
+    :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
+        Instead of an account key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -484,18 +513,13 @@ def generate_blob_sas(
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
-        :func:`~ContainerClient.set_container_access_policy()`.
+        :func:`~azure.storage.blob.ContainerClient.set_container_access_policy()`.
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of a shared key, the user could pass in a user delegation key.
-        A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling get_user_delegation_key.
-        When present, the SAS is signed with the user delegation key instead.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str account_name:
