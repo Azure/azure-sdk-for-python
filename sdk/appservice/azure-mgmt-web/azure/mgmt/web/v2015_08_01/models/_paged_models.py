@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AppServiceCertificateOrderPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AppServiceCertificateOrder <azure.mgmt.web.models.AppServiceCertificateOrder>` object
+    A paging container for iterating over a list of :class:`AppServiceCertificateOrder <azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class AppServiceCertificateOrderPaged(Paged):
         super(AppServiceCertificateOrderPaged, self).__init__(*args, **kwargs)
 class AppServiceCertificateResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AppServiceCertificateResource <azure.mgmt.web.models.AppServiceCertificateResource>` object
+    A paging container for iterating over a list of :class:`AppServiceCertificateResource <azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class AppServiceCertificateResourcePaged(Paged):
         super(AppServiceCertificateResourcePaged, self).__init__(*args, **kwargs)
 class CsmOperationDescriptionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.models.CsmOperationDescription>` object
+    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.v2015_08_01.models.CsmOperationDescription>` object
     """
 
     _attribute_map = {
