@@ -8,6 +8,7 @@
 To use a queue_url, the method `from_queue_url` must be used.
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `enqueue_message` is now called `send_message`.
 
  **New features**
  

@@ -467,7 +467,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def enqueue_message( # type: ignore
+    def send_message( # type: ignore
             self, content, # type: Any
             visibility_timeout=None, # type: Optional[int]
             time_to_live=None, # type: Optional[int]
@@ -514,11 +514,11 @@ class QueueClient(StorageAccountHostsMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START enqueue_messages]
-                :end-before: [END enqueue_messages]
+                :start-after: [START send_messages]
+                :end-before: [END send_messages]
                 :language: python
                 :dedent: 12
-                :caption: Enqueue messages.
+                :caption: Send messages.
         """
         self._config.message_encode_policy.configure(
             require_encryption=self.require_encryption,
