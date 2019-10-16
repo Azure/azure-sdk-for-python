@@ -263,7 +263,7 @@ class StorageFileTest(FileTestCase):
 
     def test_create_file_when_file_permission_is_too_long(self):
         file_client = self._get_file_client()
-        permission = str(self.get_random_bytes(8 * 1024 + 1))
+        permission = str(self.get_random_bytes(8 * 1024))
         with self.assertRaises(ValueError):
             file_client.create_file(1024, file_permission=permission)
 
@@ -664,7 +664,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        file_content = destination_file_client.download_file(offset=0, length=end+1).content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(end, file_ranges[0].get('end'))
@@ -1439,7 +1439,7 @@ class StorageFileTest(FileTestCase):
         token = file_client.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        sas_file = FileClient(
+        sas_file = FileClient.from_file_url(
             file_client.url,
             credential=token)
 

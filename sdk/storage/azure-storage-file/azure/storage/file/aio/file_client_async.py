@@ -668,7 +668,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = "bytes={0}-{1}".format(offset, end_range)
+        content_range = 'bytes={0}-{1}'.format(offset, end_range)
         try:
             return await self._client.file.upload_range(  # type: ignore
                 range=content_range,

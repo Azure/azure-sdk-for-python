@@ -208,7 +208,7 @@ class FileClient(StorageAccountHostsMixin):
         path_snapshot, _ = parse_query(parsed_url.query)
         snapshot = snapshot or path_snapshot
         share_name = unquote(path_share)
-        file_path = [unquote(p) for p in path_file.split('/')]
+        file_path = '/'.join([unquote(p) for p in path_file.split('/')])
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
