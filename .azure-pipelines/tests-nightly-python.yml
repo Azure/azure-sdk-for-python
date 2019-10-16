@@ -19,6 +19,7 @@ jobs:
           versionSpec: '3.7'
 
       - script: |
+          sudo apt-get update
           sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
           cd ~/
           git clone https://github.com/python/cpython.git
