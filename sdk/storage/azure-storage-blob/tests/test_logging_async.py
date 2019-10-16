@@ -100,7 +100,7 @@ class StorageLoggingTestAsync(AsyncBlobTestCase):
     async def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
         await self._setup(bsc)
@@ -131,7 +131,7 @@ class StorageLoggingTestAsync(AsyncBlobTestCase):
     async def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live
         if not self.is_live:
-            return
+            pytest.skip("live only")
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
         await self._setup(bsc)
         # Arrange

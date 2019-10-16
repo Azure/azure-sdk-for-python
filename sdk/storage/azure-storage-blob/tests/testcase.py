@@ -24,7 +24,7 @@ import random
 import re
 import logging
 from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
-from azure_devtools.scenario_tests import RecordingProcessor
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -108,7 +108,12 @@ class StorageTestCase(AzureMgmtTestCase):
         return 'https://{}.blob.core.windows.net'.format(name)
 
     def configure_logging(self):
-        self.enable_logging() if self.settings.ENABLE_LOGGING else self.disable_logging()
+        try:
+            enable_logging = self.get_settings_value("ENABLE_LOGGING")
+        except AzureTestError:
+            enable_logging = True  # That's the default value in fake settings
+
+        self.enable_logging() if enable_logging else self.disable_logging()
 
     def enable_logging(self):
         handler = logging.StreamHandler()
