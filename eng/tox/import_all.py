@@ -14,12 +14,13 @@ from tox_helper_tasks import get_package_details
 logging.getLogger().setLevel(logging.INFO)
 
 # keyvault has dependency issue when loading private module _BearerTokenCredentialPolicyBase from azure.core.pipeline.policies
-# azure.core.tracing.opencensus is skipped due to a known issue in loading azure.core.tracing.opencensus
+# azure.core.tracing.opencensus and azure.eventhub.checkpointstoreblob.aio are skipped due to a known issue in loading azure.core.tracing.opencensus
 excluded_packages = [
     "azure.core.tracing.opencensus", 
-    "azure.keyvault.certificates",
-    "azure.keyvault.keys",
-    "azure.keyvault.secrets",
+    "azure.eventhub.checkpointstoreblob.aio",
+    "azure.keyvault.certificates", # Github issue 7879
+    "azure.keyvault.keys", # Github issue 7879
+    "azure.keyvault.secrets", # Github issue 7879
     "azure",
     "azure-mgmt"]
 
