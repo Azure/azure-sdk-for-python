@@ -221,8 +221,7 @@ class ApplicationInsightsComponent(ComponentsResource):
      application being monitored that is being sampled for Application Insights
      telemetry.
     :type sampling_percentage: float
-    :param retention_in_days: Retention period by number of days. Default
-     value: 90 .
+    :param retention_in_days: Retention period in days. Default value: 90 .
     :type retention_in_days: int
     """
 
