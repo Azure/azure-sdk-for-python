@@ -15,11 +15,15 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.models import AccessPolicy, ShareSasPermissions
-from azure.storage.file.file_service_client import FileServiceClient
-from azure.storage.file.directory_client import DirectoryClient
-from azure.storage.file.file_client import FileClient
-from azure.storage.file.share_client import ShareClient
+from azure.storage.file import (
+    AccessPolicy,
+    ShareSasPermissions,
+    FileServiceClient,
+    DirectoryClient,
+    FileClient,
+    ShareClient
+)
+
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,

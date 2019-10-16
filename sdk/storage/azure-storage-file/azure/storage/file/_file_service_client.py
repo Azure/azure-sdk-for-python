@@ -6,31 +6,34 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse # type: ignore
 
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.response_handlers import process_storage_error
-from .._shared.policies_async import ExponentialRetry
-from .._generated.aio import AzureFileStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties
-from .._generated.version import VERSION
-from ..file_service_client import FileServiceClient as FileServiceClientBase
-from .share_client_async import ShareClient
-from .models import SharePropertiesPaged
+from ._shared.shared_access_signature import SharedAccessSignature
+from ._shared.models import Services
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import process_storage_error
+from ._generated import AzureFileStorage
+from ._generated.models import StorageErrorException, StorageServiceProperties
+from ._generated.version import VERSION
+from ._share_client import ShareClient
+from ._models import SharePropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .._shared.models import ResourceTypes, AccountSasPermissions
-    from ..models import Metrics, CorsRule, ShareProperties
+    from ._shared.models import ResourceTypes, AccountSasPermissions
+    from ._models import Metrics, CorsRule, ShareProperties
 
 
-class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
+class FileServiceClient(StorageAccountHostsMixin):
     """A client to interact with the File Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -64,12 +67,10 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
-    :keyword loop:
-        The event loop to run the asynchronous tasks.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_file_samples_authentication_async.py
+        .. literalinclude:: ../tests/test_file_samples_authentication.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
             :language: python
@@ -82,18 +83,133 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        loop = kwargs.pop('loop', None)
-        super(FileServiceClient, self).__init__(
-            account_url,
-            credential=credential,
-            loop=loop,
-            **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._loop = loop
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+        if hasattr(credential, 'get_token'):
+            raise ValueError("Token credentials not supported by the File service.")
 
-    @distributed_trace_async
-    async def get_service_properties(self, **kwargs):
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                'You need to provide either an account key or SAS token when creating a storage service.')
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(FileServiceClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            credential=None, # type: Optional[Any]
+            **kwargs  # type: Any
+        ):  # type: (...) -> FileServiceClient
+        """Create FileServiceClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credential with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string or an account
+            shared access key.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_file_samples_authentication.py
+                :start-after: [START create_file_service_client_from_conn_string]
+                :end-before: [END create_file_service_client_from_conn_string]
+                :language: python
+                :dedent: 8
+                :caption: Create the file service client with connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
+
+    def generate_shared_access_signature(
+            self, resource_types,  # type: Union[ResourceTypes, str]
+            permission,  # type: Union[AccountSasPermissions, str]
+            expiry,  # type: Optional[Union[datetime, str]]
+            start=None,  # type: Optional[Union[datetime, str]]
+            ip=None,  # type: Optional[str]
+            **kwargs  # type: Any
+        ):  # type: (...) -> str
+        """Generates a shared access signature for the file service.
+
+        Use the returned signature with the credential parameter of any FileServiceClient,
+        ShareClient, DirectoryClient, or FileClient.
+
+        :param ~azure.storage.file.ResourceTypes resource_types:
+            Specifies the resource types that are accessible with the account SAS.
+        :param ~azure.storage.file.AccountSasPermissions permission:
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
+            specified in an associated stored access policy.
+        :param expiry:
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
+            is assumed to be UTC.
+        :type expiry: datetime or str
+        :param start:
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
+            be UTC.
+        :type start: datetime or str
+        :param str ip:
+            Specifies an IP address or a range of IP addresses from which to accept requests.
+            If the IP address from which the request originates does not match the IP address
+            or address range specified on the SAS token, the request is not authenticated.
+            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+            restricts the request to those IP addresses.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_file_samples_authentication.py
+                :start-after: [START generate_sas_token]
+                :end-before: [END generate_sas_token]
+                :language: python
+                :dedent: 8
+                :caption: Generate a sas token.
+        """
+        protocol = kwargs.pop('protocol', None)
+        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
+            raise ValueError("No account SAS key available.")
+
+        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        return sas.generate_account(
+            services=Services(file=True),
+            resource_types=resource_types,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            ip=ip,
+            protocol=protocol
+        ) # type: ignore
+
+    @distributed_trace
+    def get_service_properties(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
         Azure Storage Analytics.
@@ -104,7 +220,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
                 :language: python
@@ -113,12 +229,12 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs)
+            return self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace_async
-    async def set_service_properties(
+    @distributed_trace
+    def set_service_properties(
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
@@ -148,7 +264,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
                 :language: python
@@ -162,7 +278,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             cors=cors
         )
         try:
-            await self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -171,8 +287,9 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
-            **kwargs  # type: Any
-        ):  # type: (...) -> AsyncItemPaged
+            **kwargs
+        ):
+        # type: (...) -> ItemPaged[ShareProperties]
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all shares have been returned.
@@ -187,11 +304,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.ShareProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.ShareProperties]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
                 :language: python
@@ -210,12 +327,12 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             include=include,
             timeout=timeout,
             **kwargs)
-        return AsyncItemPaged(
+        return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=SharePropertiesPaged)
 
-    @distributed_trace_async
-    async def create_share(
+    @distributed_trace
+    def create_share(
             self, share_name,  # type: str
             **kwargs
         ):
@@ -233,11 +350,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             Quota in bytes.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.aio.ShareClient
+        :rtype: ~azure.storage.file.ShareClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
                 :language: python
@@ -249,11 +366,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        await share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
+        share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
-    @distributed_trace_async
-    async def delete_share(
+    @distributed_trace
+    def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
             delete_snapshots=False, # type: Optional[bool]
             **kwargs
@@ -274,7 +391,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
                 :language: python
@@ -284,7 +401,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        await share.delete_share(
+        share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
     def get_share_client(self, share, snapshot=None):
@@ -299,11 +416,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :param str snapshot:
             An optional share snapshot on which to operate.
         :returns: A ShareClient.
-        :rtype: ~azure.storage.file.aio.ShareClient
+        :rtype: ~azure.storage.file.ShareClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../tests/test_file_samples_service.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]
                 :language: python
@@ -316,4 +433,4 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             share_name = share
         return ShareClient(
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
+            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)

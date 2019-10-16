@@ -13,10 +13,12 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.file_service_client import FileServiceClient
-from azure.storage.file.directory_client import DirectoryClient
-from azure.storage.file.file_client import FileClient
-from azure.storage.file.share_client import ShareClient
+from azure.storage.file import (
+    FileServiceClient,
+    DirectoryClient,
+    FileClient,
+    ShareClient
+)
 from filetestcase import (
     FileTestCase,
     record,

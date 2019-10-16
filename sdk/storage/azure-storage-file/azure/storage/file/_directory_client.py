@@ -30,11 +30,11 @@ from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
 from ._polling import CloseHandles
-from .file_client import FileClient
-from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
+from ._file_client import FileClient
+from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, DirectoryProperties, ContentSettings
+    from ._models import ShareProperties, DirectoryProperties, ContentSettings
     from ._generated.models import HandleItem
 
 

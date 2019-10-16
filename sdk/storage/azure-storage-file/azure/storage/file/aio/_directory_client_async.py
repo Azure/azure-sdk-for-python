@@ -25,13 +25,13 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
-from ..directory_client import DirectoryClient as DirectoryClientBase
+from .._directory_client import DirectoryClient as DirectoryClientBase
 from ._polling_async import CloseHandlesAsync
-from .file_client_async import FileClient
-from .models import DirectoryPropertiesPaged, HandlesPaged
+from ._file_client_async import FileClient
+from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
-    from ..models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
+    from .._models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
     from .._generated.models import HandleItem
 
 

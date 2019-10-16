@@ -26,14 +26,14 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
-from ..file_client import FileClient as FileClientBase
+from .._file_client import FileClient as FileClientBase
 from ._polling_async import CloseHandlesAsync
-from .models import HandlesPaged
-from .download_async import StorageStreamDownloader
+from ._models import HandlesPaged
+from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ..models import ShareProperties, ContentSettings, FileProperties, NTFSAttributes
+    from .._models import ShareProperties, ContentSettings, FileProperties, NTFSAttributes
     from .._generated.models import HandleItem
 
 
