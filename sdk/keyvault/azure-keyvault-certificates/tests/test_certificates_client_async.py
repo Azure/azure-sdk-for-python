@@ -215,7 +215,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        cert = await client.begin_create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
+        cert = await client.create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
 
         self._validate_certificate_bundle(
             cert=cert, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
@@ -433,7 +433,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = client.begin_create_certificate(
+        create_certificate_poller = client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 
@@ -526,7 +526,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # get pending certificate signing request
-        await client.begin_create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
         operation = await client.get_certificate_operation(name=cert_name)
@@ -565,7 +565,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        await client.begin_create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 
@@ -606,7 +606,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
         # the poller will stop immediately because the issuer is `Unknown`
-        await client.begin_create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 

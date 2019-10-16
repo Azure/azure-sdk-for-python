@@ -714,7 +714,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Performs the merging of a certificate or certificate chain with a key pair currently
         available in the service. This operation requires the certificates/create permission.
-        Make sure when creating the certificate to merge using begin_create_certificate that you set
+        Make sure when creating the certificate to merge using create_certificate that you set
         its issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
         by an issuer known to it.
 

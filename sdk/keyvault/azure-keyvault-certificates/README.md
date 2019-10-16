@@ -215,7 +215,7 @@ Before creating a certificate, a management policy for the certificate can be cr
 will be used. Awaiting the call to `create_certificate` returns your created certificate if creation is successful,
 and a `CertificateOperation` if creation is not.
 ```python
-create_certificate_result = await certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
+create_certificate_result = await certificate_client.create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 print(create_certificate_result)
 ```
 
