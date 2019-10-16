@@ -53,7 +53,7 @@ class StorageQueueEncodingTest(QueueTestCase):
             pass
 
         # Action.
-        queue.enqueue_message(message)
+        queue.send_message(message)
 
         # Asserts
         dequeued = next(queue.receive_messages())
@@ -95,7 +95,7 @@ class StorageQueueEncodingTest(QueueTestCase):
 
         # Asserts
         with self.assertRaises(HttpResponseError):
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -141,7 +141,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = b'xyz'
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
@@ -161,7 +161,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = u'xyz'
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
@@ -182,7 +182,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         except ResourceExistsError:
             pass
         message = u'xyz'
-        queue.enqueue_message(message)
+        queue.send_message(message)
 
         # Action.
         with self.assertRaises(DecodeError) as e:

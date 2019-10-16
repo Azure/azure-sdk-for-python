@@ -34,7 +34,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             await queue_client.create_queue()
         except ResourceExistsError:
             pass
-        await queue_client.enqueue_message(u"hello world")
+        await queue_client.send_message(u"hello world")
 
         try:
             # [START async_set_access_policy]
@@ -102,7 +102,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
-    async def test_enqueue_and_receive_messages(self, resource_group, location, storage_account, storage_account_key):
+    async def test_send_and_receive_messages(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -112,14 +112,14 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
         await queue.create_queue()
 
         try:
-            # [START async_enqueue_messages]
+            # [START async_send_messages]
             await asyncio.gather(
-                queue.enqueue_message(u"message1"),
-                queue.enqueue_message(u"message2", visibility_timeout=30),  # wait 30s before becoming visible
-                queue.enqueue_message(u"message3"),
-                queue.enqueue_message(u"message4"),
-                queue.enqueue_message(u"message5"))
-            # [END async_enqueue_messages]
+                queue.send_message(u"message1"),
+                queue.send_message(u"message2", visibility_timeout=30),  # wait 30s before becoming visible
+                queue.send_message(u"message3"),
+                queue.send_message(u"message4"),
+                queue.send_message(u"message5"))
+            # [END async_send_messages]
 
             # [START async_receive_messages]
             # Receive messages one-by-one
@@ -158,13 +158,13 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
         await queue.create_queue()
 
         try:
-            # Enqueue messages
+            # Send messages
             await asyncio.gather(
-                queue.enqueue_message(u"message1"),
-                queue.enqueue_message(u"message2"),
-                queue.enqueue_message(u"message3"),
-                queue.enqueue_message(u"message4"),
-                queue.enqueue_message(u"message5"))
+                queue.send_message(u"message1"),
+                queue.send_message(u"message2"),
+                queue.send_message(u"message3"),
+                queue.send_message(u"message4"),
+                queue.send_message(u"message5"))
 
             # [START async_delete_message]
             # Get the message at the front of the queue
@@ -195,13 +195,13 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
         await queue.create_queue()
 
         try:
-            # Enqueue messages
+            # Send messages
             await asyncio.gather(
-                queue.enqueue_message(u"message1"),
-                queue.enqueue_message(u"message2"),
-                queue.enqueue_message(u"message3"),
-                queue.enqueue_message(u"message4"),
-                queue.enqueue_message(u"message5"))
+                queue.send_message(u"message1"),
+                queue.send_message(u"message2"),
+                queue.send_message(u"message3"),
+                queue.send_message(u"message4"),
+                queue.send_message(u"message5"))
 
             # [START async_peek_message]
             # Peek at one message at the front of the queue
@@ -233,8 +233,8 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
 
         try:
             # [START async_update_message]
-            # Enqueue a message
-            await queue.enqueue_message(u"update me")
+            # Send a message
+            await queue.send_message(u"update me")
 
             # Receive the message
             messages = queue.receive_messages()
