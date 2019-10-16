@@ -168,7 +168,7 @@ class SecretProperties(object):
         return self._tags
 
 
-class Secret(object):
+class KeyVaultSecret(object):
     """All of a secret's properties, and its value."""
 
     def __init__(self, properties, value):
@@ -178,12 +178,12 @@ class Secret(object):
 
     def __repr__(self):
         # type: () -> str
-        return "<Secret [{}]>".format(self.id)[:1024]
+        return "<KeyVaultSecret [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
-        # type: (_models.SecretBundle) -> Secret
-        """Construct a Secret from an autorest-generated SecretBundle"""
+        # type: (_models.SecretBundle) -> KeyVaultSecret
+        """Construct a KeyVaultSecret from an autorest-generated SecretBundle"""
         return cls(
             properties=SecretProperties._from_secret_bundle(secret_bundle),  # pylint: disable=protected-access
             value=secret_bundle.value,

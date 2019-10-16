@@ -13,7 +13,8 @@ import argparse
 import os
 import logging
 import sys
-from prep_sphinx_env import get_package_details, should_build_docs
+from prep_sphinx_env import should_build_docs
+from tox_helper_tasks import get_package_details
 from pkg_resources import Requirement
 import ast
 import os

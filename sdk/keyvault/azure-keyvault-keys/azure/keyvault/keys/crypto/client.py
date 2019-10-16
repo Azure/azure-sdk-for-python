@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from ._internal import EllipticCurveKey, RsaKey
-from ..models import Key
+from ..models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
 
 try:
@@ -29,10 +29,10 @@ class CryptographyClient(KeyVaultClientBase):
     Performs cryptographic operations using Azure Key Vault keys.
 
     :param key:
-        Either a :class:`~azure.keyvault.keys.models.Key` instance as returned by
+        Either a :class:`~azure.keyvault.keys.models.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
         If a string, the value must be the full identifier of an Azure Key Vault key with a version.
-    :type key: str or :class:`~azure.keyvault.keys.models.Key`
+    :type key: str or :class:`~azure.keyvault.keys.models.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -70,9 +70,9 @@ class CryptographyClient(KeyVaultClientBase):
     """
 
     def __init__(self, key, credential, **kwargs):
-        # type: (Union[Key, str], TokenCredential, **Any) -> None
+        # type: (Union[KeyVaultKey, str], TokenCredential, **Any) -> None
 
-        if isinstance(key, Key):
+        if isinstance(key, KeyVaultKey):
             self._key = key
             self._key_id = parse_vault_id(key.id)
             self._allowed_ops = frozenset(self._key.key_operations)
@@ -107,12 +107,12 @@ class CryptographyClient(KeyVaultClientBase):
 
     @distributed_trace
     def _get_key(self, **kwargs):
-        # type: (**Any) -> Optional[Key]
+        # type: (**Any) -> Optional[KeyVaultKey]
         """
-        Get the client's :class:`~azure.keyvault.keys.models.Key`.
+        Get the client's :class:`~azure.keyvault.keys.models.KeyVaultKey`.
         Can be ``None``, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.Key` or ``None``
+        :rtype: :class:`~azure.keyvault.keys.models.KeyVaultKey` or ``None``
         """
 
         if not (self._key or self._keys_get_forbidden):
