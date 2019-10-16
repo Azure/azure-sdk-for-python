@@ -27,11 +27,11 @@ class QueryResult(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :param next_link:
+    :param next_link: The link (url) to the next page of results.
     :type next_link: str
     :param columns: Array of columns
     :type columns: list[~azure.mgmt.costmanagement.models.QueryColumn]
-    :param rows:
+    :param rows: Array of rows
     :type rows: list[list[object]]
     """
 

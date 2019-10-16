@@ -26,24 +26,24 @@ class Dimension(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :param description:
-    :type description: str
-    :param filter_enabled:
-    :type filter_enabled: bool
-    :param grouping_enabled:
-    :type grouping_enabled: bool
+    :ivar description: Dimension description.
+    :vartype description: str
+    :ivar filter_enabled: Filter enabled.
+    :vartype filter_enabled: bool
+    :ivar grouping_enabled: Grouping enabled.
+    :vartype grouping_enabled: bool
     :param data:
     :type data: list[str]
-    :param total:
-    :type total: int
-    :param category:
-    :type category: str
-    :param usage_start:
-    :type usage_start: datetime
-    :param usage_end:
-    :type usage_end: datetime
-    :param next_link:
-    :type next_link: str
+    :ivar total: Total number of data for the dimension.
+    :vartype total: int
+    :ivar category: Dimension category.
+    :vartype category: str
+    :ivar usage_start: Usage start.
+    :vartype usage_start: datetime
+    :ivar usage_end: Usage end.
+    :vartype usage_end: datetime
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -51,6 +51,14 @@ class Dimension(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'description': {'readonly': True},
+        'filter_enabled': {'readonly': True},
+        'grouping_enabled': {'readonly': True},
+        'total': {'readonly': True},
+        'category': {'readonly': True},
+        'usage_start': {'readonly': True},
+        'usage_end': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,14 +77,14 @@ class Dimension(Resource):
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, description: str=None, filter_enabled: bool=None, grouping_enabled: bool=None, data=None, total: int=None, category: str=None, usage_start=None, usage_end=None, next_link: str=None, **kwargs) -> None:
+    def __init__(self, *, data=None, **kwargs) -> None:
         super(Dimension, self).__init__(**kwargs)
-        self.description = description
-        self.filter_enabled = filter_enabled
-        self.grouping_enabled = grouping_enabled
+        self.description = None
+        self.filter_enabled = None
+        self.grouping_enabled = None
         self.data = data
-        self.total = total
-        self.category = category
-        self.usage_start = usage_start
-        self.usage_end = usage_end
-        self.next_link = next_link
+        self.total = None
+        self.category = None
+        self.usage_start = None
+        self.usage_end = None
+        self.next_link = None

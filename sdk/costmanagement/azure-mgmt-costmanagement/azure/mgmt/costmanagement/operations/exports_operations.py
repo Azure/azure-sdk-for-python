@@ -55,7 +55,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
@@ -130,7 +130,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
@@ -210,7 +210,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
@@ -297,7 +297,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
@@ -366,7 +366,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
@@ -436,7 +436,7 @@ class ExportsOperations(object):
          for Management Group scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
          for invoiceSection scope, and
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.

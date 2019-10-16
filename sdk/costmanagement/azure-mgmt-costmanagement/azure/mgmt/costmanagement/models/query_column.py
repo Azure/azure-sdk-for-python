@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class QueryColumn(Model):
     """QueryColumn.
 
-    :param name:
+    :param name: The name of column.
     :type name: str
-    :param type:
+    :param type: The type of column.
     :type type: str
     """
 
