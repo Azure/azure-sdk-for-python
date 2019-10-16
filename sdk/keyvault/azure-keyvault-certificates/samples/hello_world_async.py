@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
     try:
         # Let's create a certificate for holding bank account credentials valid for 1 year.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
@@ -53,7 +53,10 @@ async def run_sample():
         # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
         # our certificate creation method
         cert_policy = CertificatePolicy(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
             content_type=SecretContentType.PKCS12,
             issuer_name="Self",
             subject_name="CN=*.microsoft.com",
@@ -62,15 +65,14 @@ async def run_sample():
         )
         cert_name = "HelloWorldCertificate"
 
-        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
         # if creation is successful, and the CertificateOperation if not.
-        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
-        certificate = await create_certificate_poller
+        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate_with_policy(name=cert_name)
+        bank_certificate = await client.get_certificate(name=cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
@@ -79,7 +81,7 @@ async def run_sample():
         updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
         print(
             "Certificate with name '{0}' was updated on date '{1}'".format(
-                bank_certificate.name, updated_certificate.properties.updated
+                bank_certificate.name, updated_certificate.properties.updated_on
             )
         )
         print(

@@ -72,7 +72,7 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserProxy` instance representing the retrieved user.
-        :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -157,7 +157,7 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
-        :raise `CosmosHttpResponseError`: If the given permission couldn't be retrieved.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -189,7 +189,7 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
-        :raise `CosmosHttpResponseError`: If the given permission couldn't be created.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given permission couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -221,7 +221,7 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
-        :raise `CosmosHttpResponseError`: If the given permission could not be upserted.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given permission could not be upserted.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -254,7 +254,8 @@ class UserProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
-        :raise `CosmosHttpResponseError`: If the replace failed or the permission with given id does not exist.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the permission
+            with given id does not exist.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -285,8 +286,8 @@ class UserProxy(object):
             instance of the permission to be replaced.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `CosmosHttpResponseError`: The permission wasn't deleted successfully. If the permission does
-            not exist for the user, a `404` error is returned.
+        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The permission wasn't deleted successfully.
+        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None
         """
         request_options = build_options(kwargs)

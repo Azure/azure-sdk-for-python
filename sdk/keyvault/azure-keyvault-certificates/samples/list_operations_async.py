@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -14,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -36,9 +37,9 @@ async def run_sample():
     # Instantiate a certificate client that will be used to call the service. Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+    client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
     try:
         # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
@@ -46,12 +47,12 @@ async def run_sample():
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
-
-        # await the creation of the bank and storage certificate
-        bank_certificate = await bank_certificate_poller
-        storage_certificate = await storage_certificate_poller
+        bank_certificate = await client.create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default()
+        )
+        storage_certificate = await client.create_certificate(
+            name=storage_cert_name, policy=CertificatePolicy.get_default()
+        )
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))
@@ -67,11 +68,13 @@ async def run_sample():
 
         tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
+        updated_bank_certificate_poller = await client.create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+        )
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
-                bank_certificate.name, bank_certificate.tags
+                bank_certificate.name, bank_certificate.properties.tags
             )
         )
 

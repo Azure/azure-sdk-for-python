@@ -18,7 +18,7 @@ def print(*args):
 
 
 def test_create_key_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_key_client]
 
@@ -27,7 +27,7 @@ def test_create_key_client():
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
-    key_client = KeyClient(vault_url, credential)
+    key_client = KeyClient(vault_endpoint, credential)
 
     # [END create_key_client]
 
@@ -46,15 +46,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START create_key]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = key_client.create_key("key-name", "RSA-HSM", expires=expires)
+        key = key_client.create_key("key-name", "RSA-HSM", expires_on=expires_on)
 
         print(key.name)
         print(key.id)
-        print(key.key_material.kty)
-        print(key.properties.expires)
+        print(key.key_type)
+        print(key.properties.expires_on)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -64,12 +64,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create an rsa key with size specification
         # RSA key can be created with default size of '2048'
-        key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, key_operations=key_ops)
+        key = key_client.create_rsa_key("key-name", hardware_protected=True, size=key_size, key_operations=key_ops)
 
         print(key.id)
         print(key.name)
-        print(key.key_material.kty)
-        print(key.key_material.key_ops)
+        print(key.key_type)
+        print(key.key_operations)
 
         # [END create_rsa_key]
         # [START create_ec_key]
@@ -77,12 +77,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create an EC (Elliptic curve) key with curve specification
         # EC key can be created with default curve of 'P-256'
-        ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
+        ec_key = key_client.create_ec_key("key-name", curve=key_curve)
 
         print(ec_key.id)
         print(ec_key.properties.version)
-        print(ec_key.key_material.kty)
-        print(ec_key.key_material.crv)
+        print(ec_key.key_type)
+        print(ec_key.key.crv)
 
         # [END create_ec_key]
         # [START get_key]
@@ -97,22 +97,22 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.properties.version)
-        print(key.key_material.kty)
-        print(key.properties.vault_url)
+        print(key.key_type)
+        print(key.properties.vault_endpoint)
 
         # [END get_key]
         # [START update_key]
 
         # update attributes of an existing key
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = key_client.update_key_properties(key.name, expires=expires, tags=tags)
+        updated_key = key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
-        print(updated_key.properties.updated)
-        print(updated_key.properties.expires)
+        print(updated_key.properties.updated_on)
+        print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
-        print(key.key_material.kty)
+        print(key.key_type)
 
         # [END update_key]
         # [START delete_key]
@@ -136,14 +136,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key_client = vault_client.keys
 
         for i in range(4):
-            key_client.create_ec_key("key{}".format(i), hsm=False)
+            key_client.create_ec_key("key{}".format(i))
         for i in range(4):
-            key_client.create_rsa_key("key{}".format(i), hsm=False)
+            key_client.create_rsa_key("key{}".format(i))
 
         # [START list_keys]
 
         # get an iterator of keys
-        keys = key_client.list_keys()
+        keys = key_client.list_properties_of_keys()
 
         for key in keys:
             print(key.id)
@@ -194,14 +194,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         key_client.delete_key(key_name)
 
-        # [START restore_key]
+        # [START restore_key_backup]
 
         # restore a key backup
-        restored_key = key_client.restore_key(key_backup)
+        restored_key = key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.properties.version)
 
-        # [END restore_key]
+        # [END restore_key_backup]
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)

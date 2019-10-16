@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 
 class AuthorizationCodeCredential(object):
-    """
-    Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
+    """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
+
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
     about the authentication flow.
 
@@ -28,12 +28,19 @@ class AuthorizationCodeCredential(object):
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-            authorities for other clouds.
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
-    def __init__(self, client_id, tenant_id, authorization_code, redirect_uri, client_secret=None, **kwargs):
-        # type: (str, str, str, str, Optional[str], **Any) -> None
+    def __init__(
+        self,
+        client_id: str,
+        tenant_id: str,
+        authorization_code: str,
+        redirect_uri: str,
+        client_secret: "Optional[str]" = None,
+        **kwargs: "Any"
+    ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
         self._client_secret = client_secret
@@ -41,19 +48,20 @@ class AuthorizationCodeCredential(object):
         self._redirect_uri = redirect_uri
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        """
-        Request an access token for ``scopes``. The first time this method is called, the credential will redeem its
-        authorization code. On subsequent calls the credential will return a cached access token or redeem a refresh
-        token, if it acquired a refresh token upon redeeming the authorization code.
+        """Request an access token for ``scopes``.
+
+        The first time this method is called, the credential will redeem its authorization code. On subsequent calls
+        the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
+        redeeming the authorization code.
 
         :param str scopes: desired scopes for the access token
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
 
-        Keyword arguments:
-            - **executor**: (optional) a :class:`concurrent.futures.Executor` used to execute asynchronous calls
-            - **loop**: (optional) an event loop on which to schedule network I/O. If not provided, the currently
-                running loop will be used.
+        **Keyword arguments:**
+          - **executor** - (optional) a :class:`concurrent.futures.Executor` used to execute asynchronous calls
+          - **loop** - (optional) an event loop on which to schedule network I/O. If not provided, the currently running
+            loop will be used.
         """
 
         if self._authorization_code:

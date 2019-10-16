@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import time
-from azure.keyvault.certificates import CertificateClient
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -14,13 +14,13 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a certificate (create_certificate)
+# 1. Create a certificate (begin_create_certificate)
 #
 # 2. Delete a certificate (delete_certificate)
 #
@@ -34,9 +34,9 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create certificates holding storage and bank accounts credentials. If the certificate
     # already exists in the Key Vault, then a new version of the certificate is created.
@@ -45,8 +45,12 @@ try:
     bank_cert_name = "BankRecoverCertificate"
     storage_cert_name = "ServerRecoverCertificate"
 
-    bank_certificate_poller = client.create_certificate(name=bank_cert_name)
-    storage_certificate_poller = client.create_certificate(name=storage_cert_name)
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default()
+    )
+    storage_certificate_poller = client.begin_create_certificate(
+        name=storage_cert_name, policy=CertificatePolicy.get_default()
+    )
 
     bank_certificate = bank_certificate_poller.result()
     storage_certificate = storage_certificate_poller.result()

@@ -61,7 +61,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `SecretClient`
+    > The `"vaultUri"` property is the `vault_endpoint` used by `SecretClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
@@ -120,7 +120,7 @@ After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
     credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
+    secret_client = SecretClient(vault_endpoint=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -129,7 +129,7 @@ and update their values, and delete secrets, as shown in the
 [examples](#examples) below.
 
 ### Secret
-A Secret consists of a secret value and its associated metadata and management
+A secret consists of a secret value and its associated metadata and management
 information. For this library secret values are strings, but Azure Key Vault
 doesn't store them as such. For more information about secrets and how Key
 Vault stores and manages them, see the
@@ -146,7 +146,7 @@ This section contains code snippets covering common tasks:
 * [Async list Secrets](#async-list-secrets)
 
 ### Create a Secret
-`set_secret` creates a Secret in the vault. If a secret with the same name
+`set_secret` creates a secret in the vault. If a secret with the same name
 already exists, a new version of that secret is created.
 
 ```python
@@ -179,7 +179,7 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 
     updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret_properties.updated)
+    print(updated_secret_properties.updated_on)
     print(updated_secret_properties.content_type)
     print(updated_secret_properties.tags)
 ```
@@ -200,7 +200,7 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
@@ -221,7 +221,7 @@ This example creates a secret in the Key Vault with the specified optional argum
     from azure.keyvault.secrets.aio import SecretClient
 
     credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url=vault_url, credential=credential)
+    secret_client = SecretClient(vault_endpoint=vault_endpoint, credential=credential)
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
@@ -231,10 +231,11 @@ This example creates a secret in the Key Vault with the specified optional argum
 ```
 
 ### Async list secrets
-This example lists all the secrets in the specified Key Vault.
+This example lists properties of all the secrets in the specified Key Vault.
+Note that secret values are not included.
 
 ```python
-    secret_properties = secret_client.list_secrets()
+    secret_properties = secret_client.list_properties_of_secrets()
 
     async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
@@ -281,7 +282,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = SecretClient(vault_url=url, credential=credential, logging_enable=True)
+client = SecretClient(vault_endpoint=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

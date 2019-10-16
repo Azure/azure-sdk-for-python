@@ -4,6 +4,7 @@
 # -------------------------------------
 from collections import namedtuple
 from ._shared import parse_vault_id
+from ._shared._generated.v7_0.models import JsonWebKey as _JsonWebKey
 
 try:
     from typing import TYPE_CHECKING
@@ -15,8 +16,10 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
     from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
+    from .enums import KeyOperation
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
+
 
 class JsonWebKey(object):
     # pylint:disable=too-many-instance-attributes
@@ -43,25 +46,19 @@ class JsonWebKey(object):
     :param bytes y: Y component of an EC public key.
     """
 
+    FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
+
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        super(JsonWebKey, self).__init__(**kwargs)
-        self.kid = kwargs.get("kid", None)
-        self.kty = kwargs.get("kty", None)
-        self.key_ops = kwargs.get("key_ops", None)
-        self.n = kwargs.get("n", None)
-        self.e = kwargs.get("e", None)
-        self.d = kwargs.get("d", None)
-        self.dp = kwargs.get("dp", None)
-        self.dq = kwargs.get("dq", None)
-        self.qi = kwargs.get("qi", None)
-        self.p = kwargs.get("p", None)
-        self.q = kwargs.get("q", None)
-        self.k = kwargs.get("k", None)
-        self.t = kwargs.get("t", None)
-        self.crv = kwargs.get("crv", None)
-        self.x = kwargs.get("x", None)
-        self.y = kwargs.get("y", None)
+        for field in self.FIELDS:
+            setattr(self, field, kwargs.get(field))
+
+    def _to_generated_model(self):
+        # type: () -> _JsonWebKey
+        jwk = _JsonWebKey()
+        for field in self.FIELDS:
+            setattr(jwk, field, getattr(self, field))
+        return jwk
 
 
 class KeyProperties(object):
@@ -74,6 +71,10 @@ class KeyProperties(object):
         self._vault_id = parse_vault_id(vault_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
+
+    def __repr__(self):
+        # type () -> str
+        return "<KeyProperties [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
@@ -122,7 +123,7 @@ class KeyProperties(object):
         return self._attributes.not_before
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """
         When the key will expire, in UTC
@@ -132,7 +133,7 @@ class KeyProperties(object):
         return self._attributes.expires
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """
         When the key was created, in UTC
@@ -142,7 +143,7 @@ class KeyProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the key was last updated, in UTC
@@ -152,14 +153,14 @@ class KeyProperties(object):
         return self._attributes.updated
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """
         URL of the vault containing the key
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def recovery_level(self):
@@ -192,7 +193,7 @@ class KeyProperties(object):
         return self._managed
 
 
-class Key(object):
+class KeyVaultKey(object):
     """A key's attributes and cryptographic material"""
 
     def __init__(self, properties, key_material):
@@ -200,13 +201,17 @@ class Key(object):
         self._properties = properties
         self._key_material = key_material
 
+    def __repr__(self):
+        # type () -> str
+        return "<KeyVaultKey [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> Key
-        """Construct a Key from an autorest-generated KeyBundle"""
+        # type: (_models.KeyBundle) -> KeyVaultKey
+        """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
         return cls(
-            properties=KeyProperties._from_key_bundle(key_bundle),  #pylint: disable=protected-access
-            key_material=key_bundle.key
+            properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
+            key_material=key_bundle.key,
         )
 
     @property
@@ -228,13 +233,25 @@ class Key(object):
         return self._properties
 
     @property
-    def key_material(self):
+    def key(self):
         # type: () -> _models.JsonWebKey
         """The JSON web key"""
         return self._key_material
 
+    @property
+    def key_type(self):
+        # type: () -> str
+        """The key's type. See :class:`~azure.keyvault.keys.enums.KeyType` for possible values."""
+        return self._key_material.kty
 
-class DeletedKey(Key):
+    @property
+    def key_operations(self):
+        # type: () -> list[KeyOperation]
+        """Permitted operations. See :class:`~azure.keyvault.keys.enums.KeyOperation` for possible values."""
+        return self._key_material.key_ops
+
+
+class DeletedKey(KeyVaultKey):
     """A deleted key's id, attributes, and cryptographic material, as well as when it will be purged"""
 
     def __init__(
@@ -243,7 +260,7 @@ class DeletedKey(Key):
         key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None  # type: Optional[datetime]
+        scheduled_purge_date=None,  # type: Optional[datetime]
     ):
         # type: (...) -> None
         super(DeletedKey, self).__init__(properties, key_material)
@@ -251,16 +268,20 @@ class DeletedKey(Key):
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
 
+    def __repr__(self):
+        # type () -> str
+        return "<DeletedKey [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_deleted_key_bundle(cls, deleted_key_bundle):
         # type: (_models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         return cls(
-            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  #pylint: disable=protected-access
+            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  # pylint: disable=protected-access
             key_material=deleted_key_bundle.key,
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
-            scheduled_purge_date=deleted_key_bundle.scheduled_purge_date
+            scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
         )
 
     @classmethod
@@ -268,10 +289,10 @@ class DeletedKey(Key):
         # type: (_models.DeletedKeyItem) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
-            properties=KeyProperties._from_key_item(deleted_key_item),  #pylint: disable=protected-access
+            properties=KeyProperties._from_key_item(deleted_key_item),  # pylint: disable=protected-access
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
-            scheduled_purge_date=deleted_key_item.scheduled_purge_date
+            scheduled_purge_date=deleted_key_item.scheduled_purge_date,
         )
 
     @property

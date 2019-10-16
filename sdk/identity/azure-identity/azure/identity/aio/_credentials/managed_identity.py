@@ -15,12 +15,11 @@ from ..._constants import Endpoints, EnvironmentVariables
 
 if TYPE_CHECKING:
     from typing import Any, Optional
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
 
 
 class ManagedIdentityCredential(object):
-    """
-    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+    """Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id:
         (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
@@ -37,8 +36,7 @@ class ManagedIdentityCredential(object):
         pass
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -53,8 +51,7 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
 
     @staticmethod
     def _create_config(**kwargs: "Any") -> "Configuration":  # type: ignore
-        """
-        Build a default configuration for the credential's HTTP pipeline.
+        """Build a default configuration for the credential's HTTP pipeline.
 
         :rtype: :class:`azure.core.configuration`
         """
@@ -62,8 +59,7 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
 
 
 class ImdsCredential(_AsyncManagedIdentityBase):
-    """
-    Asynchronously authenticates with a managed identity via the IMDS endpoint.
+    """Asynchronously authenticates with a managed identity via the IMDS endpoint.
 
     :param config: optional configuration for the underlying HTTP pipeline
     :type config: :class:`azure.core.configuration`
@@ -74,8 +70,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         self._endpoint_available = None  # type: Optional[bool]
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -115,8 +110,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
 
 class MsiCredential(_AsyncManagedIdentityBase):
-    """
-    Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
     :param config: optional configuration for the underlying HTTP pipeline
     :type config: :class:`azure.core.configuration`
@@ -129,8 +123,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
             super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

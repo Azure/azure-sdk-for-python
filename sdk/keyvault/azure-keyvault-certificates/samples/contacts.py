@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, Contact
+from azure.keyvault.certificates import CertificateClient, CertificateContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -30,14 +30,14 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # First we create a list of Contacts that we would like to make the certificate contacts for this key vault.
     contact_list = [
-        Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-        Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+        CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+        CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
     ]
 
     # Creates and sets the certificate contacts for this key vault.

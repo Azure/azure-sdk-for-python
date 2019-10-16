@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 # 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-keys/
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -38,36 +38,34 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = KeyClient(vault_url=VAULT_URL, credential=credential)
+client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create keys with RSA and EC type. If the key
     # already exists in the Key Vault, then a new version of the key is created.
     print("\n.. Create Key")
-    rsa_key = client.create_rsa_key("rsaKeyName", hsm=False)
-    ec_key = client.create_ec_key("ecKeyName", hsm=False)
-    print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
-    print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
+    rsa_key = client.create_rsa_key("rsaKeyName")
+    ec_key = client.create_ec_key("ecKeyName")
+    print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
+    print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_type))
 
     # You need to check the type of all the keys in the vault.
     # Let's list the keys and print their key types.
     # List operations don 't return the keys with their type information.
     # So, for each returned key we call get_key to get the key with its type information.
     print("\n.. List keys from the Key Vault")
-    keys = client.list_keys()
+    keys = client.list_properties_of_keys()
     for key in keys:
         retrieved_key = client.get_key(key.name)
         print(
-            "Key with name '{0}' with type '{1}' was found.".format(
-                retrieved_key.name, retrieved_key.key_material.kty
-            )
+            "Key with name '{0}' with type '{1}' was found.".format(retrieved_key.name, retrieved_key.key_type)
         )
 
     # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure
     # it reflects the new key size. Calling create_rsa_key on an existing key creates a new version of the key in
     # the Key Vault with the new key size.
-    new_key = client.create_rsa_key(rsa_key.name, hsm=False, size=3072)
+    new_key = client.create_rsa_key(rsa_key.name, size=3072)
     print("New version was created for Key with name '{0}' with the updated size.".format(new_key.name))
 
     # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.

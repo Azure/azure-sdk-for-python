@@ -8,14 +8,19 @@ import time
 
 from msal import TokenCache
 
-from azure.core import Configuration, HttpRequest
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import RequestsTransport
-from azure.identity._constants import AZURE_CLI_CLIENT_ID
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
+    DistributedTracingPolicy
+)
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+from azure.identity._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
 
 try:
     ABC = abc.ABC
@@ -39,12 +44,22 @@ if TYPE_CHECKING:
 class AuthnClientBase(ABC):
     """Sans I/O authentication client methods"""
 
-    def __init__(self, auth_url, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, **Any) -> None
-        if not auth_url:
-            raise ValueError("auth_url should be the URL of an OAuth endpoint")
+    def __init__(self, endpoint=None, authority=None, tenant=None, **kwargs):  # pylint:disable=unused-argument
+        # type: (Optional[str], Optional[str], Optional[str], **Any) -> None
         super(AuthnClientBase, self).__init__()
-        self._auth_url = auth_url
+        if authority and endpoint:
+            raise ValueError(
+                "'authority' and 'endpoint' are mutually exclusive. 'authority' should be the authority of an AAD"
+                + " endpoint, whereas 'endpoint' should be the endpoint's full URL."
+            )
+
+        if endpoint:
+            self._auth_url = endpoint
+        else:
+            if not tenant:
+                raise ValueError("'tenant' is required")
+            authority = authority or KnownAuthorities.AZURE_PUBLIC_CLOUD
+            self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
     def get_cached_token(self, scopes):
@@ -121,8 +136,7 @@ class AuthnClientBase(ABC):
     @staticmethod
     def _parse_app_service_expires_on(expires_on):
         # type: (str) -> struct_time
-        """
-        Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
+        """Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
         Expects the time is given in UTC (i.e. has offset +00:00).
         """
         if not expires_on.endswith(" +00:00"):
@@ -150,8 +164,7 @@ class AuthnClientBase(ABC):
 
 
 class AuthnClient(AuthnClientBase):
-    """
-    Synchronous authentication client.
+    """Synchronous authentication client.
 
     :param str auth_url:
     :param config: Optional configuration for the HTTP pipeline.
@@ -165,7 +178,6 @@ class AuthnClient(AuthnClientBase):
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
-        auth_url,  # type: str
         config=None,  # type: Optional[Configuration]
         policies=None,  # type: Optional[Iterable[HTTPPolicy]]
         transport=None,  # type: Optional[HttpTransport]
@@ -182,7 +194,7 @@ class AuthnClient(AuthnClientBase):
         if not transport:
             transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
-        super(AuthnClient, self).__init__(auth_url, **kwargs)
+        super(AuthnClient, self).__init__(**kwargs)
 
     def request_token(
         self,

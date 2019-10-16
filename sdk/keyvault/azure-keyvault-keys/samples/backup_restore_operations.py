@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -25,22 +25,22 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (delete_key)
 #
-# 4. Restore a key (restore_key)
+# 4. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a key client that will be used to call the service.
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = KeyClient(vault_url=VAULT_URL, credential=credential)
+client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create a Key of type RSA.
     # if the key already exists in the Key Vault, then a new version of the key is created.
     print("\n.. Create Key")
     key = client.create_key("keyName", "RSA")
-    print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_material.kty))
+    print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
     # Backups are good to have, if in case keys gets deleted accidentally.
     # For long term storage, it is ideal to write the backup to a file.
@@ -54,7 +54,7 @@ try:
 
     # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the key using the backed up key bytes")
-    key = client.restore_key(key_backup)
+    key = client.restore_key_backup(key_backup)
     print("Restored Key with name '{0}'".format(key.name))
 
 except HttpResponseError as e:

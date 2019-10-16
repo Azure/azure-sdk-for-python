@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from ._internal import EllipticCurveKey, RsaKey
-from ..models import Key
+from ..models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
 
 try:
@@ -29,10 +29,10 @@ class CryptographyClient(KeyVaultClientBase):
     Performs cryptographic operations using Azure Key Vault keys.
 
     :param key:
-        Either a :class:`~azure.keyvault.keys.models.Key` instance as returned by
+        Either a :class:`~azure.keyvault.keys.models.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
         If a string, the value must be the full identifier of an Azure Key Vault key with a version.
-    :type key: str or :class:`~azure.keyvault.keys.models.Key`
+    :type key: str or :class:`~azure.keyvault.keys.models.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -64,18 +64,18 @@ class CryptographyClient(KeyVaultClientBase):
         from azure.keyvault.keys import KeyClient
 
         credential = DefaultAzureCredential()
-        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
+        key_client = KeyClient(vault_endpoint=<your vault url>, credential=credential)
         crypto_client = key_client.get_cryptography_client("mykey")
 
     """
 
     def __init__(self, key, credential, **kwargs):
-        # type: (Union[Key, str], TokenCredential, **Any) -> None
+        # type: (Union[KeyVaultKey, str], TokenCredential, **Any) -> None
 
-        if isinstance(key, Key):
+        if isinstance(key, KeyVaultKey):
             self._key = key
             self._key_id = parse_vault_id(key.id)
-            self._allowed_ops = frozenset(self._key.key_material.key_ops)
+            self._allowed_ops = frozenset(self._key.key_operations)
         elif isinstance(key, six.text_type):
             self._key = None
             self._key_id = parse_vault_id(key)
@@ -91,7 +91,9 @@ class CryptographyClient(KeyVaultClientBase):
 
         self._internal_key = None  # type: Optional[_Key]
 
-        super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
+        super(CryptographyClient, self).__init__(
+            vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs
+        )
 
     @property
     def key_id(self):
@@ -104,21 +106,21 @@ class CryptographyClient(KeyVaultClientBase):
         return "/".join(self._key_id)
 
     @distributed_trace
-    def get_key(self, **kwargs):
-        # type: (**Any) -> Optional[Key]
+    def _get_key(self, **kwargs):
+        # type: (**Any) -> Optional[KeyVaultKey]
         """
-        Get the client's :class:`~azure.keyvault.keys.models.Key`.
+        Get the client's :class:`~azure.keyvault.keys.models.KeyVaultKey`.
         Can be ``None``, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.Key` or ``None``
+        :rtype: :class:`~azure.keyvault.keys.models.KeyVaultKey` or ``None``
         """
 
         if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = self._client.get_key(
-                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
+                    self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, **kwargs
                 )
-                self._allowed_ops = frozenset(self._key.key_material.key_ops)
+                self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)
@@ -131,14 +133,14 @@ class CryptographyClient(KeyVaultClientBase):
         id and lacks keys/get permission."""
 
         if not self._internal_key:
-            key = self.get_key(**kwargs)
+            key = self._get_key(**kwargs)
             if not key:
                 return None
 
-            if key.key_material.kty.lower().startswith("ec"):
-                self._internal_key = EllipticCurveKey.from_jwk(key.key_material)
+            if key.key_type.lower().startswith("ec"):
+                self._internal_key = EllipticCurveKey.from_jwk(key.key)
             else:
-                self._internal_key = RsaKey.from_jwk(key.key_material)
+                self._internal_key = RsaKey.from_jwk(key.key)
 
         return self._internal_key
 
@@ -162,9 +164,11 @@ class CryptographyClient(KeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-            # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag =
-                client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            # the result holds the ciphertext and identifies the encryption key and algorithm used
+            result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            ciphertext = result.ciphertext
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -175,14 +179,14 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
             result = self._client.encrypt(
-                vault_base_url=self._key_id.vault_url,
+                vault_base_url=self._key_id.vault_endpoint,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,
                 value=plaintext,
                 **kwargs
             ).result
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
 
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
@@ -207,14 +211,8 @@ class CryptographyClient(KeyVaultClientBase):
             print(result.decrypted_bytes)
 
         """
-
-        authentication_data = kwargs.pop("authentication_data", None)
-        authentication_tag = kwargs.pop("authentication_tag", None)
-        if authentication_data and not authentication_tag:
-            raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
-
         result = self._client.decrypt(
-            vault_base_url=self._key_id.vault_url,
+            vault_base_url=self._key_id.vault_endpoint,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -240,8 +238,11 @@ class CryptographyClient(KeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-            # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-            key_id, wrap_algorithm, wrapped_bytes = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            # the result holds the encrypted key and identifies the encryption key and algorithm used
+            result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            encrypted_key = result.encrypted_key
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
@@ -252,7 +253,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
             result = self._client.wrap_key(
-                self._key_id.vault_url,
+                self._key_id.vault_endpoint,
                 self._key_id.name,
                 self._key_id.version,
                 algorithm=algorithm,
@@ -285,7 +286,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.unwrap_key(
-            vault_base_url=self._key_id.vault_url,
+            vault_base_url=self._key_id.vault_endpoint,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -315,12 +316,17 @@ class CryptographyClient(KeyVaultClientBase):
             digest = hashlib.sha256(b"plaintext").digest()
 
             # sign returns a tuple with the signature and the metadata required to verify it
-            key_id, algorithm, signature = client.sign(SignatureAlgorithm.rs256, digest)
+            result = client.sign(SignatureAlgorithm.rs256, digest)
+
+            # the result contains the signature and identifies the key and algorithm used
+            signature = result.signature
+            print(result.key_id)
+            print(result.algorithm)
 
         """
 
         result = self._client.sign(
-            vault_base_url=self._key_id.vault_url,
+            vault_base_url=self._key_id.vault_endpoint,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -351,8 +357,6 @@ class CryptographyClient(KeyVaultClientBase):
             assert verified.result is True
 
         """
-        #    def verify(self, vault_base_url, key_name, key_version, algorithm, digest, signature, cls=None, **kwargs):
-
         local_key = self._get_local_key(**kwargs)
         if local_key:
             if "verify" not in self._allowed_ops:
@@ -360,7 +364,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
             result = self._client.verify(
-                vault_base_url=self._key_id.vault_url,
+                vault_base_url=self._key_id.vault_endpoint,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,

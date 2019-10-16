@@ -26,10 +26,10 @@ from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.storage.queue.aio import QueueServiceClient, QueueClient
 from azure.storage.queue import (
-    QueuePermissions,
+    QueueSasPermissions,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
 )
 
 from asyncqueuetestcase import (
@@ -585,7 +585,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         await queue_client.enqueue_message(u'message1')
         token = qsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
@@ -647,7 +647,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.READ,
+            QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
@@ -679,7 +679,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.ADD,
+            QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -710,7 +710,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.UPDATE,
+            QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
         messages = []
@@ -750,7 +750,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
         await queue_client.enqueue_message(u'message1')
         token = queue_client.generate_shared_access_signature(
-            QueuePermissions.PROCESS,
+            QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -782,7 +782,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = QueuePermissions.READ
+        access_policy.permission = QueueSasPermissions(read=True)
 
         identifiers = {'testid': access_policy}
 
@@ -917,7 +917,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
 
         # Act
-        access_policy = AccessPolicy(permission=QueuePermissions.READ,
+        access_policy = AccessPolicy(permission=QueueSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=5))
         identifiers = {'testid': access_policy}

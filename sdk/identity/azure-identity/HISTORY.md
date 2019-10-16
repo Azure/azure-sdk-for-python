@@ -1,19 +1,41 @@
 # Release History
 
-## 1.0.0b4
+## 1.0.0b5
+### Breaking changes:
+- Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
+for transport but the library does not require it as a dependency because the
+async API is optional. To use async credentials, please install
+[`aiohttp`](https://pypi.org/project/aiohttp/) or see
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for information about customizing the transport.
+- Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
+
+
+## 1.0.0b4 (2019-10-07)
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Azure Active Directory's
 [authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
+- Multi-cloud support: client credentials accept the authority of an Azure Active
+Directory authentication endpoint as an `authority` keyword argument. Known
+authorities are defined in `azure.identity.KnownAuthorities`. The default
+authority is for Azure Public Cloud, `login.microsoftonline.com`
+(`KnownAuthorities.AZURE_PUBLIC_CLOUD`). An application running in Azure
+Government would use `KnownAuthorities.AZURE_GOVERNMENT` instead:
+>```
+>from azure.identity import DefaultAzureCredential, KnownAuthorities
+>credential = DefaultAzureCredential(authority=KnownAuthorities.AZURE_GOVERNMENT)
+>```
 
 ### Breaking changes:
 - Removed `client_secret` parameter from `InteractiveBrowserCredential`
 
 ### Fixes and improvements:
 - `UsernamePasswordCredential` correctly handles environment configuration with
-no tenant information (#7260)
-- user realm discovery requests are sent through credential pipelines (#7260)
+no tenant information ([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
+- user realm discovery requests are sent through credential pipelines
+([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
 
 
 ## 1.0.0b3 (2019-09-10)

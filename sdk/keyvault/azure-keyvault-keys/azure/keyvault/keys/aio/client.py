@@ -2,24 +2,34 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
-from typing import Any, AsyncIterable, Optional, Dict, List, Union
+from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyProperties
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
-from .._shared.exceptions import error_map
-from ..crypto.aio import CryptographyClient
+from .._shared.exceptions import error_map as _error_map
+
+
+if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
+    from datetime import datetime
+    from typing import AsyncIterable, Optional, List, Union
+    from ..enums import KeyType
 
 
 class KeyClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's keys.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
+
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -32,56 +42,29 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def get_cryptography_client(self, key: Union[Key, str], **kwargs: Any) -> CryptographyClient:
-        """
-        Get a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` capable of performing cryptographic operations
-        with a key.
-
-        :param key:
-            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
-            :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string. If a string, the value must be the full
-            identifier of an Azure Key Vault key with a version.
-        :type key: str or :class:`~azure.keyvault.keys.Key`
-        :rtype: :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient`
-        """
-
-        # the initializer requires a credential but won't actually use it in this case because we pass in this
-        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
-        credential = object()
-        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
-
     @distributed_trace_async
-    async def create_key(
-        self,
-        name: str,
-        key_type: str,
-        size: Optional[int] = None,
-        curve: Optional[str] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
-    ) -> Key:
+    async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
         :type key_type: str or ~azure.keyvault.keys.enums.KeyType
-        :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
-        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - **size** (int): RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys.
+              To create an RSA key, consider using :func:`create_rsa_key` instead.
+            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+              Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256 elliptic curve.
+              To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -91,52 +74,45 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create a key
                 :dedent: 8
         """
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
         bundle = await self._client.create_key(
-            self.vault_url,
-            name,
-            key_type,
-            size,
+            vault_base_url=self.vault_endpoint,
+            key_name=name,
+            kty=key_type,
+            key_size=kwargs.pop("size", None),
             key_attributes=attributes,
-            key_ops=key_operations,
-            tags=tags,
-            curve=curve,
+            key_ops=kwargs.pop("key_operations", None),
             **kwargs,
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def create_rsa_key(
-        self,
-        name: str,
-        hsm: bool,
-        size: Optional[int] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
-    ) -> Key:
+    async def create_rsa_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
 
-        :param str name: The name for the new key. Key Vault will generate the key's version.
-        :param bool hsm: Whether to create a hardware key (HSM) or software key
-        :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
+        :param str name: The name for the new key
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -146,49 +122,29 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create RSA key
                 :dedent: 8
         """
-        key_type = "RSA-HSM" if hsm else "RSA"
-
-        return await self.create_key(
-            name,
-            key_type=key_type,
-            size=size,
-            key_operations=key_operations,
-            enabled=enabled,
-            expires=expires,
-            not_before=not_before,
-            tags=tags,
-            **kwargs,
-        )
+        hsm = kwargs.pop("hardware_protected", False)
+        return await self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace_async
-    async def create_ec_key(
-        self,
-        name: str,
-        hsm: bool,
-        curve: Optional[str] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        expires: Optional[datetime] = None,
-        not_before: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
-    ) -> Key:
+    async def create_ec_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
-        :param bool hsm: Whether to create as a hardware key (HSM) or software key.
-        :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
-        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+              Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
+              Defaults to ``False``.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -198,22 +154,11 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create an elliptic curve key
                 :dedent: 8
         """
-        key_type = "EC-HSM" if hsm else "EC"
-
-        return await self.create_key(
-            name,
-            key_type=key_type,
-            curve=curve,
-            key_operations=key_operations,
-            enabled=enabled,
-            expires=expires,
-            not_before=not_before,
-            tags=tags,
-            **kwargs,
-        )
+        hsm = kwargs.pop("hardware_protected", False)
+        return await self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace_async
-    async def delete_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
+    async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
@@ -231,17 +176,17 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
+        bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Key:
+    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -257,11 +202,11 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(self.vault_url, name, version, error_map=error_map, **kwargs)
-        return Key._from_key_bundle(bundle)
+        bundle = await self._client.get_key(self.vault_endpoint, name, version, error_map=_error_map, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_deleted_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
+    async def get_deleted_key(self, name: str, **kwargs: "Any") -> DeletedKey:
         """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
         permission.
 
@@ -280,11 +225,11 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
+        bundle = await self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs: "**Any") -> AsyncIterable[DeletedKey]:
+    def list_deleted_keys(self, **kwargs: "Any") -> "AsyncIterable[DeletedKey]":
         """List all deleted keys, including the public part of each. This is only possible in a vault with soft-delete
         enabled. Requires the keys/list permission.
 
@@ -301,14 +246,14 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_keys(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs,
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
+    def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
@@ -324,14 +269,14 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
-            self.vault_url,
+            self.vault_endpoint,
             maxresults=max_results,
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
-    def list_key_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
+    def list_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
@@ -348,7 +293,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_key_versions(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             maxresults=max_results,
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
@@ -356,7 +301,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_key(self, name: str, **kwargs: "**Any") -> None:
+    async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
         does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
 
@@ -374,10 +319,10 @@ class KeyClient(AsyncKeyVaultClientBase):
                 await key_client.purge_deleted_key("key-name")
 
         """
-        await self._client.purge_deleted_key(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_key(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_key(self, name: str, **kwargs: "**Any") -> Key:
+    async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -386,7 +331,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the deleted key
         :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -397,37 +342,28 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_key(self.vault_url, name, **kwargs)
-        return Key._from_key_bundle(bundle)
+        bundle = await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key_properties(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        key_operations: Optional[List[str]] = None,
-        enabled: Optional[bool] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
-    ) -> Key:
+    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update
-        :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
-        :param bool enabled: (optional) Whether the key is enabled for use
-        :param datetime.datetime expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
+        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Keyword arguments
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -437,25 +373,26 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Update a key's attributes
                 :dedent: 8
         """
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
-
         bundle = await self._client.update_key(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             key_version=version or "",
-            key_ops=key_operations,
-            tags=tags,
+            key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
-            error_map=error_map,
+            error_map=_error_map,
             **kwargs,
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def backup_key(self, name: str, **kwargs: "**Any") -> bytes:
+    async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
         """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
         copying a key from one vault to another. Requires the key/backup permission.
 
@@ -477,11 +414,11 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
+        backup_result = await self._client.backup_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key(self, backup: bytes, **kwargs: "**Any") -> Key:
+    async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultKey:
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -490,55 +427,54 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
-                :start-after: [START restore_key]
-                :end-before: [END restore_key]
+                :start-after: [START restore_key_backup]
+                :end-before: [END restore_key_backup]
                 :language: python
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = await self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
-        return Key._from_key_bundle(bundle)
+        bundle = await self._client.restore_key(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def import_key(
-        self,
-        name: str,
-        key: JsonWebKey,
-        hsm: Optional[bool] = None,
-        enabled: Optional[bool] = None,
-        not_before: Optional[datetime] = None,
-        expires: Optional[datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
-    ) -> Key:
+    async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.models.JsonWebKey
-        :param bool hsm: (optional) Whether to import as a hardware key (HSM) or software key
-        :param bool enabled: (optional) Whether the key is enabled for use
-        :param expires: (optional) Expiry date of the key in UTC
-        :param datetime.datetime not_before: (optional) Not before date of the key in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The imported key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :rtype: ~azure.keyvault.keys.models.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
+        Keyword arguments
+            - **enabled** (bool): Whether the key is enabled for use.
+            - **hardware_protected** (bool): Whether the key should be backed by a hardware security module
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.import_key(
-            self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
+            self.vault_endpoint,
+            name,
+            key=key._to_generated_model(),
+            key_attributes=attributes,
+            hsm=kwargs.pop("hardware_protected", None),
+            **kwargs
         )
-        return Key._from_key_bundle(bundle)
+        return KeyVaultKey._from_key_bundle(bundle)

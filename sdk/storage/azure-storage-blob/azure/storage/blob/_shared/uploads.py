@@ -49,7 +49,7 @@ def upload_data_chunks(
         uploader_class=None,
         total_size=None,
         chunk_size=None,
-        max_connections=None,
+        max_concurrency=None,
         stream=None,
         validate_content=None,
         encryption_options=None,
@@ -63,7 +63,7 @@ def upload_data_chunks(
         kwargs['encryptor'] = encryptor
         kwargs['padder'] = padder
 
-    parallel = max_connections > 1
+    parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
         # Access conditions do not work with parallelism
         kwargs['modified_access_conditions'] = None
@@ -77,11 +77,11 @@ def upload_data_chunks(
         validate_content=validate_content,
         **kwargs)
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_connections)
+        executor = futures.ThreadPoolExecutor(max_concurrency)
         upload_tasks = uploader.get_chunk_streams()
         running_futures = [
             executor.submit(with_current_context(uploader.process_chunk), u)
-            for u in islice(upload_tasks, 0, max_connections)
+            for u in islice(upload_tasks, 0, max_concurrency)
         ]
         range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
@@ -96,10 +96,10 @@ def upload_substream_blocks(
         uploader_class=None,
         total_size=None,
         chunk_size=None,
-        max_connections=None,
+        max_concurrency=None,
         stream=None,
         **kwargs):
-    parallel = max_connections > 1
+    parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
         # Access conditions do not work with parallelism
         kwargs['modified_access_conditions'] = None
@@ -112,11 +112,11 @@ def upload_substream_blocks(
         **kwargs)
 
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_connections)
+        executor = futures.ThreadPoolExecutor(max_concurrency)
         upload_tasks = uploader.get_substream_blocks()
         running_futures = [
             executor.submit(with_current_context(uploader.process_substream_block), u)
-            for u in islice(upload_tasks, 0, max_connections)
+            for u in islice(upload_tasks, 0, max_concurrency)
         ]
         range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
@@ -420,7 +420,7 @@ class SubStream(IOBase):
                 # or read in just enough data for the current block/sub stream
                 current_max_buffer_size = min(self._max_buffer_size, self._length - self._position)
 
-                # lock is only defined if max_connections > 1 (parallel uploads)
+                # lock is only defined if max_concurrency > 1 (parallel uploads)
                 if self._lock:
                     with self._lock:
                         # reposition the underlying stream to match the start of the data to read

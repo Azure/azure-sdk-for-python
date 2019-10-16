@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from ._shared import parse_vault_id
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -27,6 +28,10 @@ class SecretProperties(object):
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
+
+    def __repr__(self):
+        # type () -> str
+        return "<SecretProperties [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
@@ -92,7 +97,7 @@ class SecretProperties(object):
         return self._attributes.not_before
 
     @property
-    def expires(self):
+    def expires_on(self):
         # type: () -> datetime
         """
         When the secret expires, in UTC
@@ -102,7 +107,7 @@ class SecretProperties(object):
         return self._attributes.expires
 
     @property
-    def created(self):
+    def created_on(self):
         # type: () -> datetime
         """
         When the secret was created, in UTC
@@ -112,7 +117,7 @@ class SecretProperties(object):
         return self._attributes.created
 
     @property
-    def updated(self):
+    def updated_on(self):
         # type: () -> datetime
         """
         When the secret was last updated, in UTC
@@ -132,14 +137,14 @@ class SecretProperties(object):
         return self._attributes.recovery_level
 
     @property
-    def vault_url(self):
+    def vault_endpoint(self):
         # type: () -> str
         """
         URL of the vault containing the secret
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        return self._vault_id.vault_endpoint
 
     @property
     def name(self):
@@ -163,7 +168,7 @@ class SecretProperties(object):
         return self._tags
 
 
-class Secret(object):
+class KeyVaultSecret(object):
     """All of a secret's properties, and its value."""
 
     def __init__(self, properties, value):
@@ -171,13 +176,17 @@ class Secret(object):
         self._properties = properties
         self._value = value
 
+    def __repr__(self):
+        # type: () -> str
+        return "<KeyVaultSecret [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_secret_bundle(cls, secret_bundle):
-        # type: (_models.SecretBundle) -> Secret
-        """Construct a Secret from an autorest-generated SecretBundle"""
+        # type: (_models.SecretBundle) -> KeyVaultSecret
+        """Construct a KeyVaultSecret from an autorest-generated SecretBundle"""
         return cls(
-            properties=SecretProperties._from_secret_bundle(secret_bundle),  #pylint: disable=protected-access
-            value=secret_bundle.value
+            properties=SecretProperties._from_secret_bundle(secret_bundle),  # pylint: disable=protected-access
+            value=secret_bundle.value,
         )
 
     @property
@@ -218,10 +227,10 @@ class DeletedSecret(object):
 
     def __init__(
         self,
-        properties, # type: SecretProperties
+        properties,  # type: SecretProperties
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None  # type: Optional[datetime]
+        scheduled_purge_date=None,  # type: Optional[datetime]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -229,12 +238,16 @@ class DeletedSecret(object):
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
 
+    def __repr__(self):
+        # type: () -> str
+        return "<DeletedSecret [{}]>".format(self.id)[:1024]
+
     @classmethod
     def _from_deleted_secret_bundle(cls, deleted_secret_bundle):
         # type: (_models.DeletedSecretBundle) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
-            properties=SecretProperties._from_secret_bundle(deleted_secret_bundle), #pylint: disable=protected-access
+            properties=SecretProperties._from_secret_bundle(deleted_secret_bundle),  # pylint: disable=protected-access
             deleted_date=deleted_secret_bundle.deleted_date,
             recovery_id=deleted_secret_bundle.recovery_id,
             scheduled_purge_date=deleted_secret_bundle.scheduled_purge_date,
@@ -245,7 +258,7 @@ class DeletedSecret(object):
         # type: (_models.DeletedSecretItem) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
-            properties=SecretProperties._from_secret_item(deleted_secret_item), #pylint: disable=protected-access
+            properties=SecretProperties._from_secret_item(deleted_secret_item),  # pylint: disable=protected-access
             deleted_date=deleted_secret_item.deleted_date,
             recovery_id=deleted_secret_item.recovery_id,
             scheduled_purge_date=deleted_secret_item.scheduled_purge_date,

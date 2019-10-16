@@ -16,7 +16,7 @@ def print(*args):
 
 
 def test_create_key_client():
-    vault_url = "vault_url"
+    vault_endpoint = "vault_endpoint"
     # pylint:disable=unused-variable
     # [START create_key_client]
 
@@ -25,7 +25,7 @@ def test_create_key_client():
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
-    key_client = KeyClient(vault_url, credential)
+    key_client = KeyClient(vault_endpoint, credential)
 
     # [END create_key_client]
 
@@ -46,38 +46,38 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = await key_client.create_key("key-name", "RSA", size=key_size, key_operations=key_ops, expires=expires)
+        key = await key_client.create_key("key-name", "RSA", size=key_size, key_operations=key_ops, expires_on=expires_on)
 
         print(key.id)
         print(key.name)
-        print(key.key_material.kty)
+        print(key.key_type)
         print(key.properties.enabled)
-        print(key.properties.expires)
+        print(key.properties.expires_on)
 
         # [END create_key]
         # [START create_rsa_key]
 
         # create an rsa key in a hardware security module
-        key = await key_client.create_rsa_key("key-name", hsm=True, size=2048)
+        key = await key_client.create_rsa_key("key-name", hardware_protected=True, size=2048)
 
         print(key.id)
         print(key.name)
-        print(key.key_material.kty)
+        print(key.key_type)
 
         # [END create_rsa_key]
         # [START create_ec_key]
 
         # create an elliptic curve (ec) key
         key_curve = "P-256"
-        ec_key = await key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
+        ec_key = await key_client.create_ec_key("key-name", curve=key_curve)
 
         print(ec_key.id)
         print(ec_key.name)
-        print(ec_key.key_material.kty)
-        print(ec_key.key_material.crv)
+        print(ec_key.key_type)
+        print(ec_key.key.crv)
 
         # [END create_ec_key]
         # [START get_key]
@@ -92,22 +92,22 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.properties.version)
-        print(key.key_material.kty)
-        print(key.properties.vault_url)
+        print(key.key_type)
+        print(key.properties.vault_endpoint)
 
         # [END get_key]
         # [START update_key]
 
         # update attributes of an existing key
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = await key_client.update_key_properties(key.name, expires=expires, tags=tags)
+        updated_key = await key_client.update_key_properties(key.name, expires_on=expires_on, tags=tags)
 
         print(updated_key.properties.version)
-        print(updated_key.properties.updated)
-        print(updated_key.properties.expires)
+        print(updated_key.properties.updated_on)
+        print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
-        print(updated_key.key_material.kty)
+        print(updated_key.key_type)
 
         # [END update_key]
         # [START delete_key]
@@ -132,20 +132,20 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
 
         for i in range(4):
-            await key_client.create_ec_key("key{}".format(i), hsm=False)
+            await key_client.create_ec_key("key{}".format(i))
         for i in range(4):
-            await key_client.create_rsa_key("key{}".format(i), hsm=False)
+            await key_client.create_rsa_key("key{}".format(i))
 
         # [START list_keys]
 
         # list keys
-        keys = key_client.list_keys()
+        keys = key_client.list_properties_of_keys()
 
         async for key in keys:
             print(key.id)
-            print(key.created)
+            print(key.created_on)
             print(key.name)
-            print(key.updated)
+            print(key.updated_on)
             print(key.enabled)
 
         # [END list_keys]
@@ -156,9 +156,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for key in key_versions:
             print(key.id)
-            print(key.updated)
+            print(key.updated_on)
             print(key.properties.version)
-            print(key.expires)
+            print(key.expires_on)
 
         # [END list_key_versions]
         # [START list_deleted_keys]
@@ -194,15 +194,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         await key_client.delete_key(key_name)
 
-        # [START restore_key]
+        # [START restore_key_backup]
 
         # restores a backup
-        restored_key = await key_client.restore_key(key_backup)
+        restored_key = await key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.name)
         print(restored_key.properties.version)
 
-        # [END restore_key]
+        # [END restore_key_backup]
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)

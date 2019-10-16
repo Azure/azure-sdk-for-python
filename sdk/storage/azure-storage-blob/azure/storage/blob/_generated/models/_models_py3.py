@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 
 
 class AccessPolicy(Model):
@@ -904,8 +904,6 @@ class ListBlobsFlatSegmentResponse(Model):
     :type marker: str
     :param max_results:
     :type max_results: int
-    :param delimiter:
-    :type delimiter: str
     :param segment: Required.
     :type segment: ~azure.storage.blob.models.BlobFlatListSegment
     :param next_marker:
@@ -924,7 +922,6 @@ class ListBlobsFlatSegmentResponse(Model):
         'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
         'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
         'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'delimiter': {'key': 'Delimiter', 'type': 'str', 'xml': {'name': 'Delimiter'}},
         'segment': {'key': 'Segment', 'type': 'BlobFlatListSegment', 'xml': {'name': 'Segment'}},
         'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
     }
@@ -932,14 +929,13 @@ class ListBlobsFlatSegmentResponse(Model):
         'name': 'EnumerationResults'
     }
 
-    def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, delimiter: str=None, next_marker: str=None, **kwargs) -> None:
+    def __init__(self, *, service_endpoint: str, container_name: str, segment, prefix: str=None, marker: str=None, max_results: int=None, next_marker: str=None, **kwargs) -> None:
         super(ListBlobsFlatSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
         self.prefix = prefix
         self.marker = marker
         self.max_results = max_results
-        self.delimiter = delimiter
         self.segment = segment
         self.next_marker = next_marker
 

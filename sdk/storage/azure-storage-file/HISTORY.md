@@ -1,5 +1,21 @@
 # Change Log azure-storage-file
 
+## Version 12.0.0b5:
+
+**Breaking changes**
+
+- `close_handles` renamed to `begin_close_handles`
+
+## Version 12.0.0b4:
+
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to
+  `AccountSasPermissions`, `ShareSasPermissions` and `FileSasPermissions` respectively.
+  - enum-like list parameters have been removed from all three of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
 
 ## Version 12.0.0b3:
 

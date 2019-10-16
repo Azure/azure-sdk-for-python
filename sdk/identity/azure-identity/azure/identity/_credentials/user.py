@@ -10,7 +10,6 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._authn_client import AuthnClient
-from .._constants import Endpoints
 from .._internal import PublicClientCredential, wrap_exceptions
 
 try:
@@ -26,11 +25,11 @@ if TYPE_CHECKING:
 
 
 class DeviceCodeCredential(PublicClientCredential):
-    """
-    Authenticates users through the device code flow. When ``get_token`` is called, this credential acquires a
-    verification URL and code from Azure Active Directory. A user must browse to the URL, enter the code, and
-    authenticate with Azure Active Directory. If the user authenticates successfully, the credential receives
-    an access token.
+    """Authenticates users through the device code flow.
+
+    When ``get_token`` is called, this credential acquires a verification URL and code from Azure Active Directory. A
+    user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    authenticates successfully, the credential receives an access token.
 
     This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
 
@@ -47,10 +46,13 @@ class DeviceCodeCredential(PublicClientCredential):
         If not provided, the credential will print instructions to stdout.
 
     Keyword arguments
-        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
+        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-        - *timeout (int)* - seconds to wait for the user to authenticate. Defaults to the validity period of the device
-          code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
+          device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
 
     """
 
@@ -63,9 +65,9 @@ class DeviceCodeCredential(PublicClientCredential):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
-        authentication flow.
+        """Request an access token for `scopes`.
+
+        This credential won't cache the token. Each call begins a new authentication flow.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -106,12 +108,16 @@ class DeviceCodeCredential(PublicClientCredential):
 
 
 class SharedTokenCacheCredential(object):
-    """
-    Authenticates using tokens in the local cache shared between Microsoft applications.
+    """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
+
+    Keyword arguments
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
     """
 
     def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
@@ -138,9 +144,9 @@ class SharedTokenCacheCredential(object):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
-        """
-        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
-        using a cached refresh token.
+        """Get an access token for `scopes` from the shared cache.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -166,13 +172,14 @@ class SharedTokenCacheCredential(object):
     @staticmethod
     def _get_auth_client(cache):
         # type: (msal_extensions.FileTokenCache) -> AuthnClientBase
-        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
+        return AuthnClient(tenant="common", cache=cache)
 
 
 class UsernamePasswordCredential(PublicClientCredential):
-    """
-    Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
-    authentication, because it's less secure than other authentication flows.
+    """Authenticates a user with a username and password.
+
+    In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other
+    authentication flows.
 
     Authentication with this credential is not interactive, so it is **not compatible with any form of
     multi-factor authentication or consent prompting**. The application must already have the user's consent.
@@ -186,7 +193,10 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str password: the user's password
 
     Keyword arguments
-        - *tenant (str)* - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+          authorities for other clouds.
+        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
 
     """
@@ -200,8 +210,7 @@ class UsernamePasswordCredential(PublicClientCredential):
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

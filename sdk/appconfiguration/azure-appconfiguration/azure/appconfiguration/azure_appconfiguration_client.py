@@ -6,8 +6,7 @@
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
@@ -38,6 +37,9 @@ class AzureAppConfigurationClient:
         :param str base_url: base url of the service
         :param credential: An object which can provide secrets for the app configuration service
         :type credential: azure.AppConfigConnectionStringCredential
+        :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
+        :keyword HttpTransport transport: If omitted, the standard pipeline is used.
+        :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
 

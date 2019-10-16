@@ -13,7 +13,7 @@ from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode)
 from .models import (
     ShareProperties,
@@ -27,11 +27,13 @@ from .models import (
     RetentionPolicy,
     CorsRule,
     AccessPolicy,
-    FilePermissions,
-    SharePermissions,
+    FileSasPermissions,
+    ShareSasPermissions,
     ContentSettings,
     NTFSAttributes)
-
+from ._generated.models import (
+    HandleItem
+)
 
 __version__ = VERSION
 
@@ -46,14 +48,14 @@ __all__ = [
     'NoRetry',
     'LocationMode',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageErrorCode',
     'Metrics',
     'RetentionPolicy',
     'CorsRule',
     'AccessPolicy',
-    'FilePermissions',
-    'SharePermissions',
+    'FileSasPermissions',
+    'ShareSasPermissions',
     'ShareProperties',
     'SharePropertiesPaged',
     'DirectoryProperties',
@@ -62,5 +64,6 @@ __all__ = [
     'ContentSettings',
     'Handle',
     'HandlesPaged',
-    'NTFSAttributes'
+    'NTFSAttributes',
+    'HandleItem'
 ]

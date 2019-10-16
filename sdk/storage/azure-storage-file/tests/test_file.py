@@ -19,10 +19,10 @@ from azure.storage.file import (
     FileClient,
     FileServiceClient,
     ContentSettings,
-    FilePermissions,
+    FileSasPermissions,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode,
     NTFSAttributes)
 from filetestcase import (
@@ -620,7 +620,7 @@ class StorageFileTest(FileTestCase):
         # generate SAS for the source file
         sas_token_for_source_file = \
             source_file_client.generate_shared_access_signature(
-                                                          FilePermissions.READ,
+                                                          FileSasPermissions(read=True),
                                                           expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
@@ -652,7 +652,7 @@ class StorageFileTest(FileTestCase):
         # generate SAS for the source file
         sas_token_for_source_file = \
             source_file_client.generate_shared_access_signature(
-                                                          FilePermissions.READ,
+                                                          FileSasPermissions(read=True),
                                                           expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
@@ -858,7 +858,7 @@ class StorageFileTest(FileTestCase):
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = source_file.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_file.url + '?' + sas_token
@@ -886,7 +886,7 @@ class StorageFileTest(FileTestCase):
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = source_file.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_file.url + '?' + sas_token
@@ -1020,7 +1020,7 @@ class StorageFileTest(FileTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        response = file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
+        response = file_client.upload_file(data, max_concurrency=2, raw_response_hook=callback)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1045,7 +1045,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        response = file_client.upload_file(data[index:], max_connections=2)
+        response = file_client.upload_file(data[index:], max_concurrency=2)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1071,7 +1071,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        response = file_client.upload_file(data[index:], length=count, max_connections=2)
+        response = file_client.upload_file(data[index:], length=count, max_concurrency=2)
         assert isinstance(response, dict)
         assert 'last_modified' in response
         assert 'etag' in response
@@ -1098,7 +1098,7 @@ class StorageFileTest(FileTestCase):
 
         # Act
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1132,7 +1132,7 @@ class StorageFileTest(FileTestCase):
                 progress.append((current, total))
 
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            response = file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1164,7 +1164,7 @@ class StorageFileTest(FileTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
@@ -1193,7 +1193,7 @@ class StorageFileTest(FileTestCase):
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageFileTest.NonSeekableFile(stream)
-            file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
+            file_client.upload_file(non_seekable_file, length=file_size, max_concurrency=1)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1225,7 +1225,7 @@ class StorageFileTest(FileTestCase):
 
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1254,7 +1254,7 @@ class StorageFileTest(FileTestCase):
         # Act
         file_size = len(data) - 512
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, length=file_size, max_connections=2)
+            file_client.upload_file(stream, length=file_size, max_concurrency=2)
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -1286,7 +1286,7 @@ class StorageFileTest(FileTestCase):
 
         file_size = len(data) - 5
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, length=file_size, max_connections=2, raw_response_hook=callback)
+            file_client.upload_file(stream, length=file_size, max_concurrency=2, raw_response_hook=callback)
 
 
         # Assert
@@ -1389,7 +1389,7 @@ class StorageFileTest(FileTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        file_client.upload_file(data, validate_content=True, max_connections=2)
+        file_client.upload_file(data, validate_content=True, max_concurrency=2)
 
         # Assert
 
@@ -1403,7 +1403,7 @@ class StorageFileTest(FileTestCase):
         # Arrange
         file_client = self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1431,7 +1431,7 @@ class StorageFileTest(FileTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = FilePermissions.READ
+        access_policy.permission = FileSasPermissions(read=True)
         identifiers = {'testid': access_policy}
         share_client.set_share_access_policy(identifiers)
 
@@ -1457,7 +1457,7 @@ class StorageFileTest(FileTestCase):
         file_client = self._create_file()
         token = self.fsc.generate_shared_access_signature(
             ResourceTypes.OBJECT,
-            AccountPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1483,7 +1483,7 @@ class StorageFileTest(FileTestCase):
         # Arrange
         file_client = self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1508,7 +1508,7 @@ class StorageFileTest(FileTestCase):
         # Arrange
         file_client = self._create_file()
         token = file_client.generate_shared_access_signature(
-            permission=FilePermissions.READ,
+            permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
             content_disposition='inline',
@@ -1543,7 +1543,7 @@ class StorageFileTest(FileTestCase):
         updated_data = b'updated file data'
         file_client_admin = self._create_file()
         token = file_client_admin.generate_shared_access_signature(
-            permission=FilePermissions.WRITE,
+            permission=FileSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         file_client = FileClient(
@@ -1570,7 +1570,7 @@ class StorageFileTest(FileTestCase):
         # Arrange
         file_client_admin = self._create_file()
         token = file_client_admin.generate_shared_access_signature(
-            permission=FilePermissions.DELETE,
+            permission=FileSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         file_client = FileClient(
