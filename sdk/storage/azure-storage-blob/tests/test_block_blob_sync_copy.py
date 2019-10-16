@@ -12,7 +12,8 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     StorageErrorCode,
-    BlobSasPermissions
+    BlobSasPermissions,
+    generate_blob_sas
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
@@ -54,7 +55,12 @@ class StorageBlockBlobTest(StorageTestCase):
             blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

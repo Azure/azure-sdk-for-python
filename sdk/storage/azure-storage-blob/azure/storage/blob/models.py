@@ -848,8 +848,8 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class ContainerSasPermissions(object):
-    """ContainerSasPermissions class to be used with
-    :func:`~azure.storage.blob.ContainerClient.generate_shared_access_signature` API and
+    """ContainerSasPermissions class to be used with the
+    :func:`~azure.storage.blob.generate_container_sas` function and
     for the AccessPolicies used with
     :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
 
@@ -894,8 +894,8 @@ class ContainerSasPermissions(object):
 
 
 class BlobSasPermissions(object):
-    """BlobSasPermissions class to be used with
-    :func:`~azure.storage.blob.blob_client.BlobClient.generate_shared_access_signature` API.
+    """BlobSasPermissions class to be used with the
+    :func:`~azure.storage.blob.generate_blob_sas` function.
 
     :param bool read:
         Read the content, properties, metadata and block list. Use the blob as
