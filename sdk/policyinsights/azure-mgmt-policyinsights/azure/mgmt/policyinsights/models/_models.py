@@ -21,6 +21,99 @@ class CloudError(Model):
     }
 
 
+class ComplianceDetail(Model):
+    """The compliance state rollup.
+
+    :param compliance_state: The compliance state.
+    :type compliance_state: str
+    :param count: Summarized count value for this compliance state.
+    :type count: int
+    """
+
+    _attribute_map = {
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ComplianceDetail, self).__init__(**kwargs)
+        self.compliance_state = kwargs.get('compliance_state', None)
+        self.count = kwargs.get('count', None)
+
+
+class ErrorDefinition(Model):
+    """Error definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Service specific error code which serves as the substatus for
+     the HTTP error code.
+    :vartype code: str
+    :ivar message: Description of the error.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: Internal error details.
+    :vartype details: list[~azure.mgmt.policyinsights.models.ErrorDefinition]
+    :ivar additional_info: Additional scenario specific error details.
+    :vartype additional_info:
+     list[~azure.mgmt.policyinsights.models.TypedErrorInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[TypedErrorInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorDefinition, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(Model):
+    """Error response.
+
+    :param error: The error details.
+    :type error: ~azure.mgmt.policyinsights.models.ErrorDefinition
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
 class ExpressionEvaluationDetails(Model):
     """Evaluation details of policy language expressions.
 
@@ -162,11 +255,14 @@ class PolicyAssignmentSummary(Model):
     :param policy_set_definition_id: Policy set definition ID, if the policy
      assignment is for a policy set.
     :type policy_set_definition_id: str
-    :param results: Non-compliance summary for the policy assignment.
+    :param results: Compliance summary for the policy assignment.
     :type results: ~azure.mgmt.policyinsights.models.SummaryResults
     :param policy_definitions: Policy definitions summary.
     :type policy_definitions:
      list[~azure.mgmt.policyinsights.models.PolicyDefinitionSummary]
+    :param policy_groups: Policy definition group summary.
+    :type policy_groups:
+     list[~azure.mgmt.policyinsights.models.PolicyGroupSummary]
     """
 
     _attribute_map = {
@@ -174,6 +270,7 @@ class PolicyAssignmentSummary(Model):
         'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
         'results': {'key': 'results', 'type': 'SummaryResults'},
         'policy_definitions': {'key': 'policyDefinitions', 'type': '[PolicyDefinitionSummary]'},
+        'policy_groups': {'key': 'policyGroups', 'type': '[PolicyGroupSummary]'},
     }
 
     def __init__(self, **kwargs):
@@ -182,6 +279,7 @@ class PolicyAssignmentSummary(Model):
         self.policy_set_definition_id = kwargs.get('policy_set_definition_id', None)
         self.results = kwargs.get('results', None)
         self.policy_definitions = kwargs.get('policy_definitions', None)
+        self.policy_groups = kwargs.get('policy_groups', None)
 
 
 class PolicyDefinitionSummary(Model):
@@ -191,15 +289,18 @@ class PolicyDefinitionSummary(Model):
     :type policy_definition_id: str
     :param policy_definition_reference_id: Policy definition reference ID.
     :type policy_definition_reference_id: str
+    :param policy_definition_group_names: Policy definition group names.
+    :type policy_definition_group_names: list[str]
     :param effect: Policy effect, i.e. policy definition action.
     :type effect: str
-    :param results: Non-compliance summary for the policy definition.
+    :param results: Compliance summary for the policy definition.
     :type results: ~azure.mgmt.policyinsights.models.SummaryResults
     """
 
     _attribute_map = {
         'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'policy_definition_group_names': {'key': 'policyDefinitionGroupNames', 'type': '[str]'},
         'effect': {'key': 'effect', 'type': 'str'},
         'results': {'key': 'results', 'type': 'SummaryResults'},
     }
@@ -208,8 +309,59 @@ class PolicyDefinitionSummary(Model):
         super(PolicyDefinitionSummary, self).__init__(**kwargs)
         self.policy_definition_id = kwargs.get('policy_definition_id', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.policy_definition_group_names = kwargs.get('policy_definition_group_names', None)
         self.effect = kwargs.get('effect', None)
         self.results = kwargs.get('results', None)
+
+
+class PolicyDetails(Model):
+    """The policy details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar policy_definition_id: The ID of the policy definition.
+    :vartype policy_definition_id: str
+    :ivar policy_assignment_id: The ID of the policy assignment.
+    :vartype policy_assignment_id: str
+    :ivar policy_assignment_display_name: The display name of the policy
+     assignment.
+    :vartype policy_assignment_display_name: str
+    :ivar policy_assignment_scope: The scope of the policy assignment.
+    :vartype policy_assignment_scope: str
+    :ivar policy_set_definition_id: The ID of the policy set definition.
+    :vartype policy_set_definition_id: str
+    :ivar policy_definition_reference_id: The policy definition reference ID
+     within the policy set definition.
+    :vartype policy_definition_reference_id: str
+    """
+
+    _validation = {
+        'policy_definition_id': {'readonly': True},
+        'policy_assignment_id': {'readonly': True},
+        'policy_assignment_display_name': {'readonly': True},
+        'policy_assignment_scope': {'readonly': True},
+        'policy_set_definition_id': {'readonly': True},
+        'policy_definition_reference_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_assignment_display_name': {'key': 'policyAssignmentDisplayName', 'type': 'str'},
+        'policy_assignment_scope': {'key': 'policyAssignmentScope', 'type': 'str'},
+        'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyDetails, self).__init__(**kwargs)
+        self.policy_definition_id = None
+        self.policy_assignment_id = None
+        self.policy_assignment_display_name = None
+        self.policy_assignment_scope = None
+        self.policy_set_definition_id = None
+        self.policy_definition_reference_id = None
 
 
 class PolicyEvaluationDetails(Model):
@@ -234,19 +386,19 @@ class PolicyEvaluationDetails(Model):
         self.if_not_exists_details = kwargs.get('if_not_exists_details', None)
 
 
-class PolicyState(Model):
-    """Policy state record.
+class PolicyEvent(Model):
+    """Policy event record.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param odataid: OData entity ID; always set to null since policy state
+    :param odataid: OData entity ID; always set to null since policy event
      records do not have an entity ID.
     :type odataid: str
     :param odatacontext: OData context string; used by OData clients to
      resolve type information based on metadata.
     :type odatacontext: str
-    :param timestamp: Timestamp for the policy state record.
+    :param timestamp: Timestamp for the policy event record.
     :type timestamp: datetime
     :param resource_id: Resource ID.
     :type resource_id: str
@@ -307,11 +459,211 @@ class PolicyState(Model):
      definition inside the policy set, if the policy assignment is for a policy
      set.
     :type policy_definition_reference_id: str
+    :param tenant_id: Tenant ID for the policy event record.
+    :type tenant_id: str
+    :param principal_oid: Principal object ID for the user who initiated the
+     resource operation that triggered the policy event.
+    :type principal_oid: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'odataid': {'key': '@odata\\.id', 'type': 'str'},
+        'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'effective_parameters': {'key': 'effectiveParameters', 'type': 'str'},
+        'is_compliant': {'key': 'isCompliant', 'type': 'bool'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
+        'resource_tags': {'key': 'resourceTags', 'type': 'str'},
+        'policy_assignment_name': {'key': 'policyAssignmentName', 'type': 'str'},
+        'policy_assignment_owner': {'key': 'policyAssignmentOwner', 'type': 'str'},
+        'policy_assignment_parameters': {'key': 'policyAssignmentParameters', 'type': 'str'},
+        'policy_assignment_scope': {'key': 'policyAssignmentScope', 'type': 'str'},
+        'policy_definition_name': {'key': 'policyDefinitionName', 'type': 'str'},
+        'policy_definition_action': {'key': 'policyDefinitionAction', 'type': 'str'},
+        'policy_definition_category': {'key': 'policyDefinitionCategory', 'type': 'str'},
+        'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
+        'policy_set_definition_name': {'key': 'policySetDefinitionName', 'type': 'str'},
+        'policy_set_definition_owner': {'key': 'policySetDefinitionOwner', 'type': 'str'},
+        'policy_set_definition_category': {'key': 'policySetDefinitionCategory', 'type': 'str'},
+        'policy_set_definition_parameters': {'key': 'policySetDefinitionParameters', 'type': 'str'},
+        'management_group_ids': {'key': 'managementGroupIds', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'principal_oid': {'key': 'principalOid', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyEvent, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.odataid = kwargs.get('odataid', None)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.effective_parameters = kwargs.get('effective_parameters', None)
+        self.is_compliant = kwargs.get('is_compliant', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_location = kwargs.get('resource_location', None)
+        self.resource_group = kwargs.get('resource_group', None)
+        self.resource_tags = kwargs.get('resource_tags', None)
+        self.policy_assignment_name = kwargs.get('policy_assignment_name', None)
+        self.policy_assignment_owner = kwargs.get('policy_assignment_owner', None)
+        self.policy_assignment_parameters = kwargs.get('policy_assignment_parameters', None)
+        self.policy_assignment_scope = kwargs.get('policy_assignment_scope', None)
+        self.policy_definition_name = kwargs.get('policy_definition_name', None)
+        self.policy_definition_action = kwargs.get('policy_definition_action', None)
+        self.policy_definition_category = kwargs.get('policy_definition_category', None)
+        self.policy_set_definition_id = kwargs.get('policy_set_definition_id', None)
+        self.policy_set_definition_name = kwargs.get('policy_set_definition_name', None)
+        self.policy_set_definition_owner = kwargs.get('policy_set_definition_owner', None)
+        self.policy_set_definition_category = kwargs.get('policy_set_definition_category', None)
+        self.policy_set_definition_parameters = kwargs.get('policy_set_definition_parameters', None)
+        self.management_group_ids = kwargs.get('management_group_ids', None)
+        self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_oid = kwargs.get('principal_oid', None)
+
+
+class PolicyEventsQueryResults(Model):
+    """Query results.
+
+    :param odatacontext: OData context string; used by OData clients to
+     resolve type information based on metadata.
+    :type odatacontext: str
+    :param odatacount: OData entity count; represents the number of policy
+     event records returned.
+    :type odatacount: int
+    :param value: Query results.
+    :type value: list[~azure.mgmt.policyinsights.models.PolicyEvent]
+    """
+
+    _validation = {
+        'odatacount': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
+        'odatacount': {'key': '@odata\\.count', 'type': 'int'},
+        'value': {'key': 'value', 'type': '[PolicyEvent]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyEventsQueryResults, self).__init__(**kwargs)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.odatacount = kwargs.get('odatacount', None)
+        self.value = kwargs.get('value', None)
+
+
+class PolicyGroupSummary(Model):
+    """Policy definition group summary.
+
+    :param policy_group_name: Policy group name.
+    :type policy_group_name: str
+    :param results: Compliance summary for the policy definition group.
+    :type results: ~azure.mgmt.policyinsights.models.SummaryResults
+    """
+
+    _attribute_map = {
+        'policy_group_name': {'key': 'policyGroupName', 'type': 'str'},
+        'results': {'key': 'results', 'type': 'SummaryResults'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyGroupSummary, self).__init__(**kwargs)
+        self.policy_group_name = kwargs.get('policy_group_name', None)
+        self.results = kwargs.get('results', None)
+
+
+class PolicyState(Model):
+    """Policy state record.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param odataid: OData entity ID; always set to null since policy state
+     records do not have an entity ID.
+    :type odataid: str
+    :param odatacontext: OData context string; used by OData clients to
+     resolve type information based on metadata.
+    :type odatacontext: str
+    :param timestamp: Timestamp for the policy state record.
+    :type timestamp: datetime
+    :param resource_id: Resource ID.
+    :type resource_id: str
+    :param policy_assignment_id: Policy assignment ID.
+    :type policy_assignment_id: str
+    :param policy_definition_id: Policy definition ID.
+    :type policy_definition_id: str
+    :param effective_parameters: Effective parameters for the policy
+     assignment.
+    :type effective_parameters: str
+    :param is_compliant: Flag which states whether the resource is compliant
+     against the policy assignment it was evaluated against. This property is
+     deprecated; please use ComplianceState instead.
+    :type is_compliant: bool
+    :param subscription_id: Subscription ID.
+    :type subscription_id: str
+    :param resource_type: Resource type.
+    :type resource_type: str
+    :param resource_location: Resource location.
+    :type resource_location: str
+    :param resource_group: Resource group name.
+    :type resource_group: str
+    :param resource_tags: List of resource tags.
+    :type resource_tags: str
+    :param policy_assignment_name: Policy assignment name.
+    :type policy_assignment_name: str
+    :param policy_assignment_owner: Policy assignment owner.
+    :type policy_assignment_owner: str
+    :param policy_assignment_parameters: Policy assignment parameters.
+    :type policy_assignment_parameters: str
+    :param policy_assignment_scope: Policy assignment scope.
+    :type policy_assignment_scope: str
+    :param policy_definition_name: Policy definition name.
+    :type policy_definition_name: str
+    :param policy_definition_action: Policy definition action, i.e. effect.
+    :type policy_definition_action: str
+    :param policy_definition_category: Policy definition category.
+    :type policy_definition_category: str
+    :param policy_set_definition_id: Policy set definition ID, if the policy
+     assignment is for a policy set.
+    :type policy_set_definition_id: str
+    :param policy_set_definition_name: Policy set definition name, if the
+     policy assignment is for a policy set.
+    :type policy_set_definition_name: str
+    :param policy_set_definition_owner: Policy set definition owner, if the
+     policy assignment is for a policy set.
+    :type policy_set_definition_owner: str
+    :param policy_set_definition_category: Policy set definition category, if
+     the policy assignment is for a policy set.
+    :type policy_set_definition_category: str
+    :param policy_set_definition_parameters: Policy set definition parameters,
+     if the policy assignment is for a policy set.
+    :type policy_set_definition_parameters: str
+    :param management_group_ids: Comma separated list of management group IDs,
+     which represent the hierarchy of the management groups the resource is
+     under.
+    :type management_group_ids: str
+    :param policy_definition_reference_id: Reference ID for the policy
+     definition inside the policy set, if the policy assignment is for a policy
+     set.
+    :type policy_definition_reference_id: str
     :param compliance_state: Compliance state of the resource.
     :type compliance_state: str
     :param policy_evaluation_details: Policy evaluation details.
     :type policy_evaluation_details:
      ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
+    :param policy_definition_group_names: Policy definition group names.
+    :type policy_definition_group_names: list[str]
     """
 
     _attribute_map = {
@@ -345,6 +697,7 @@ class PolicyState(Model):
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
         'compliance_state': {'key': 'complianceState', 'type': 'str'},
         'policy_evaluation_details': {'key': 'policyEvaluationDetails', 'type': 'PolicyEvaluationDetails'},
+        'policy_definition_group_names': {'key': 'policyDefinitionGroupNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -379,6 +732,7 @@ class PolicyState(Model):
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
         self.compliance_state = kwargs.get('compliance_state', None)
         self.policy_evaluation_details = kwargs.get('policy_evaluation_details', None)
+        self.policy_definition_group_names = kwargs.get('policy_definition_group_names', None)
 
 
 class PolicyStatesQueryResults(Model):
@@ -409,6 +763,55 @@ class PolicyStatesQueryResults(Model):
         self.odatacontext = kwargs.get('odatacontext', None)
         self.odatacount = kwargs.get('odatacount', None)
         self.value = kwargs.get('value', None)
+
+
+class PolicyTrackedResource(Model):
+    """Policy tracked resource record.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar tracked_resource_id: The ID of the policy tracked resource.
+    :vartype tracked_resource_id: str
+    :ivar policy_details: The details of the policy that require the tracked
+     resource.
+    :vartype policy_details: ~azure.mgmt.policyinsights.models.PolicyDetails
+    :ivar created_by: The details of the policy triggered deployment that
+     created the tracked resource.
+    :vartype created_by:
+     ~azure.mgmt.policyinsights.models.TrackedResourceModificationDetails
+    :ivar last_modified_by: The details of the policy triggered deployment
+     that modified the tracked resource.
+    :vartype last_modified_by:
+     ~azure.mgmt.policyinsights.models.TrackedResourceModificationDetails
+    :ivar last_update_utc: Timestamp of the last update to the tracked
+     resource.
+    :vartype last_update_utc: datetime
+    """
+
+    _validation = {
+        'tracked_resource_id': {'readonly': True},
+        'policy_details': {'readonly': True},
+        'created_by': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_update_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tracked_resource_id': {'key': 'trackedResourceId', 'type': 'str'},
+        'policy_details': {'key': 'policyDetails', 'type': 'PolicyDetails'},
+        'created_by': {'key': 'createdBy', 'type': 'TrackedResourceModificationDetails'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'TrackedResourceModificationDetails'},
+        'last_update_utc': {'key': 'lastUpdateUtc', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyTrackedResource, self).__init__(**kwargs)
+        self.tracked_resource_id = None
+        self.policy_details = None
+        self.created_by = None
+        self.last_modified_by = None
+        self.last_update_utc = None
 
 
 class QueryFailure(Model):
@@ -473,6 +876,8 @@ class QueryOptions(Model):
 
     :param top: Maximum number of records to return.
     :type top: int
+    :param filter: OData filter expression.
+    :type filter: str
     :param order_by: Ordering expression using OData notation. One or more
      comma-separated column names with an optional "desc" (the default) or
      "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
@@ -488,8 +893,6 @@ class QueryOptions(Model):
     :param to: ISO 8601 formatted timestamp specifying the end time of the
      interval to query. When not specified, the service uses request time.
     :type to: datetime
-    :param filter: OData filter expression.
-    :type filter: str
     :param apply: OData apply expression for aggregations.
     :type apply: str
     :param expand: The $expand query parameter. For example, to expand
@@ -499,11 +902,11 @@ class QueryOptions(Model):
 
     _attribute_map = {
         'top': {'key': '', 'type': 'int'},
+        'filter': {'key': '', 'type': 'str'},
         'order_by': {'key': '', 'type': 'str'},
         'select': {'key': '', 'type': 'str'},
         'from_property': {'key': '', 'type': 'iso-8601'},
         'to': {'key': '', 'type': 'iso-8601'},
-        'filter': {'key': '', 'type': 'str'},
         'apply': {'key': '', 'type': 'str'},
         'expand': {'key': '', 'type': 'str'},
     }
@@ -511,13 +914,184 @@ class QueryOptions(Model):
     def __init__(self, **kwargs):
         super(QueryOptions, self).__init__(**kwargs)
         self.top = kwargs.get('top', None)
+        self.filter = kwargs.get('filter', None)
         self.order_by = kwargs.get('order_by', None)
         self.select = kwargs.get('select', None)
         self.from_property = kwargs.get('from_property', None)
         self.to = kwargs.get('to', None)
-        self.filter = kwargs.get('filter', None)
         self.apply = kwargs.get('apply', None)
         self.expand = kwargs.get('expand', None)
+
+
+class Remediation(Model):
+    """The remediation definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param policy_assignment_id: The resource ID of the policy assignment that
+     should be remediated.
+    :type policy_assignment_id: str
+    :param policy_definition_reference_id: The policy definition reference ID
+     of the individual definition that should be remediated. Required when the
+     policy assignment being remediated assigns a policy set definition.
+    :type policy_definition_reference_id: str
+    :ivar provisioning_state: The status of the remediation.
+    :vartype provisioning_state: str
+    :ivar created_on: The time at which the remediation was created.
+    :vartype created_on: datetime
+    :ivar last_updated_on: The time at which the remediation was last updated.
+    :vartype last_updated_on: datetime
+    :param filters: The filters that will be applied to determine which
+     resources to remediate.
+    :type filters: ~azure.mgmt.policyinsights.models.RemediationFilters
+    :param deployment_status: The deployment status summary for all
+     deployments created by the remediation.
+    :type deployment_status:
+     ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
+    :ivar id: The ID of the remediation.
+    :vartype id: str
+    :ivar type: The type of the remediation.
+    :vartype type: str
+    :ivar name: The name of the remediation.
+    :vartype name: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
+        'filters': {'key': 'properties.filters', 'type': 'RemediationFilters'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'RemediationDeploymentSummary'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Remediation, self).__init__(**kwargs)
+        self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
+        self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.provisioning_state = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.filters = kwargs.get('filters', None)
+        self.deployment_status = kwargs.get('deployment_status', None)
+        self.id = None
+        self.type = None
+        self.name = None
+
+
+class RemediationDeployment(Model):
+    """Details of a single deployment created by the remediation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar remediated_resource_id: Resource ID of the resource that is being
+     remediated by the deployment.
+    :vartype remediated_resource_id: str
+    :ivar deployment_id: Resource ID of the template deployment that will
+     remediate the resource.
+    :vartype deployment_id: str
+    :ivar status: Status of the remediation deployment.
+    :vartype status: str
+    :ivar resource_location: Location of the resource that is being
+     remediated.
+    :vartype resource_location: str
+    :ivar error: Error encountered while remediated the resource.
+    :vartype error: ~azure.mgmt.policyinsights.models.ErrorDefinition
+    :ivar created_on: The time at which the remediation was created.
+    :vartype created_on: datetime
+    :ivar last_updated_on: The time at which the remediation deployment was
+     last updated.
+    :vartype last_updated_on: datetime
+    """
+
+    _validation = {
+        'remediated_resource_id': {'readonly': True},
+        'deployment_id': {'readonly': True},
+        'status': {'readonly': True},
+        'resource_location': {'readonly': True},
+        'error': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'remediated_resource_id': {'key': 'remediatedResourceId', 'type': 'str'},
+        'deployment_id': {'key': 'deploymentId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'lastUpdatedOn', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RemediationDeployment, self).__init__(**kwargs)
+        self.remediated_resource_id = None
+        self.deployment_id = None
+        self.status = None
+        self.resource_location = None
+        self.error = None
+        self.created_on = None
+        self.last_updated_on = None
+
+
+class RemediationDeploymentSummary(Model):
+    """The deployment status summary for all deployments created by the
+    remediation.
+
+    :param total_deployments: The number of deployments required by the
+     remediation.
+    :type total_deployments: int
+    :param successful_deployments: The number of deployments required by the
+     remediation that have succeeded.
+    :type successful_deployments: int
+    :param failed_deployments: The number of deployments required by the
+     remediation that have failed.
+    :type failed_deployments: int
+    """
+
+    _attribute_map = {
+        'total_deployments': {'key': 'totalDeployments', 'type': 'int'},
+        'successful_deployments': {'key': 'successfulDeployments', 'type': 'int'},
+        'failed_deployments': {'key': 'failedDeployments', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RemediationDeploymentSummary, self).__init__(**kwargs)
+        self.total_deployments = kwargs.get('total_deployments', None)
+        self.successful_deployments = kwargs.get('successful_deployments', None)
+        self.failed_deployments = kwargs.get('failed_deployments', None)
+
+
+class RemediationFilters(Model):
+    """The filters that will be applied to determine which resources to remediate.
+
+    :param locations: The resource locations that will be remediated.
+    :type locations: list[str]
+    """
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RemediationFilters, self).__init__(**kwargs)
+        self.locations = kwargs.get('locations', None)
 
 
 class SummarizeResults(Model):
@@ -559,7 +1133,7 @@ class Summary(Model):
     :param odatacontext: OData context string; used by OData clients to
      resolve type information based on metadata.
     :type odatacontext: str
-    :param results: Non-compliance summary for all policy assignments.
+    :param results: Compliance summary for all policy assignments.
     :type results: ~azure.mgmt.policyinsights.models.SummaryResults
     :param policy_assignments: Policy assignments summary.
     :type policy_assignments:
@@ -582,27 +1156,47 @@ class Summary(Model):
 
 
 class SummaryResults(Model):
-    """Non-compliance summary on a particular summary level.
+    """Compliance summary on a particular summary level.
 
     :param query_results_uri: HTTP POST URI for queryResults action on
-     Microsoft.PolicyInsights to retrieve raw results for the non-compliance
-     summary.
+     Microsoft.PolicyInsights to retrieve raw results for the compliance
+     summary. This property will not be available by default in future API
+     versions, but could be queried explicitly.
     :type query_results_uri: str
     :param non_compliant_resources: Number of non-compliant resources.
     :type non_compliant_resources: int
     :param non_compliant_policies: Number of non-compliant policies.
     :type non_compliant_policies: int
+    :param non_compliant_policy_groups: Number of non-compliant groups.
+    :type non_compliant_policy_groups: int
+    :param resource_details: The resources summary at this level.
+    :type resource_details:
+     list[~azure.mgmt.policyinsights.models.ComplianceDetail]
+    :param policy_details: The policy artifact summary at this level. For
+     query scope level, it represents policy assignment summary. For policy
+     assignment level, it represents policy definitions summary.
+    :type policy_details:
+     list[~azure.mgmt.policyinsights.models.ComplianceDetail]
+    :param policy_group_details: The policy definition group summary at this
+     level.
+    :type policy_group_details:
+     list[~azure.mgmt.policyinsights.models.ComplianceDetail]
     """
 
     _validation = {
         'non_compliant_resources': {'minimum': 0},
         'non_compliant_policies': {'minimum': 0},
+        'non_compliant_policy_groups': {'minimum': 0},
     }
 
     _attribute_map = {
         'query_results_uri': {'key': 'queryResultsUri', 'type': 'str'},
         'non_compliant_resources': {'key': 'nonCompliantResources', 'type': 'int'},
         'non_compliant_policies': {'key': 'nonCompliantPolicies', 'type': 'int'},
+        'non_compliant_policy_groups': {'key': 'nonCompliantPolicyGroups', 'type': 'int'},
+        'resource_details': {'key': 'resourceDetails', 'type': '[ComplianceDetail]'},
+        'policy_details': {'key': 'policyDetails', 'type': '[ComplianceDetail]'},
+        'policy_group_details': {'key': 'policyGroupDetails', 'type': '[ComplianceDetail]'},
     }
 
     def __init__(self, **kwargs):
@@ -610,3 +1204,72 @@ class SummaryResults(Model):
         self.query_results_uri = kwargs.get('query_results_uri', None)
         self.non_compliant_resources = kwargs.get('non_compliant_resources', None)
         self.non_compliant_policies = kwargs.get('non_compliant_policies', None)
+        self.non_compliant_policy_groups = kwargs.get('non_compliant_policy_groups', None)
+        self.resource_details = kwargs.get('resource_details', None)
+        self.policy_details = kwargs.get('policy_details', None)
+        self.policy_group_details = kwargs.get('policy_group_details', None)
+
+
+class TrackedResourceModificationDetails(Model):
+    """The details of the policy triggered deployment that created or modified the
+    tracked resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar policy_details: The details of the policy that created or modified
+     the tracked resource.
+    :vartype policy_details: ~azure.mgmt.policyinsights.models.PolicyDetails
+    :ivar deployment_id: The ID of the deployment that created or modified the
+     tracked resource.
+    :vartype deployment_id: str
+    :ivar deployment_time: Timestamp of the deployment that created or
+     modified the tracked resource.
+    :vartype deployment_time: datetime
+    """
+
+    _validation = {
+        'policy_details': {'readonly': True},
+        'deployment_id': {'readonly': True},
+        'deployment_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_details': {'key': 'policyDetails', 'type': 'PolicyDetails'},
+        'deployment_id': {'key': 'deploymentId', 'type': 'str'},
+        'deployment_time': {'key': 'deploymentTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TrackedResourceModificationDetails, self).__init__(**kwargs)
+        self.policy_details = None
+        self.deployment_id = None
+        self.deployment_time = None
+
+
+class TypedErrorInfo(Model):
+    """Scenario specific error details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of included error details.
+    :vartype type: str
+    :ivar info: The scenario specific error details.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TypedErrorInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
