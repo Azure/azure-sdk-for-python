@@ -179,10 +179,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        deleted_key_bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        if not deleted_key_bundle.recovery_id:
+            deleted_key_if_no_sd = DeletedKey._from_deleted_key_bundle(deleted_key_bundle)
+        else:
+            deleted_key_if_no_sd = None
         command = partial(self.get_deleted_key, name=name, **kwargs)
 
-        delete_key_poller = DeleteKeyPollerAsync()
+        delete_key_poller = DeleteKeyPollerAsync(deleted_key_if_no_sd=deleted_key_if_no_sd)
         return await async_poller(command, "deleting", None, delete_key_poller)
 
     @distributed_trace_async

@@ -185,10 +185,14 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        
-        self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+
+        deleted_key_bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        if not deleted_key_bundle.recovery_id:
+            deleted_key_if_no_sd = DeletedKey._from_deleted_key_bundle(deleted_key_bundle)
+        else:
+            deleted_key_if_no_sd = None
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeleteKeyPoller()
+        delete_key_polling = DeleteKeyPoller(deleted_key_if_no_sd=deleted_key_if_no_sd)
         return LROPoller(command, "deleting", None, delete_key_polling)
 
     @distributed_trace

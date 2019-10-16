@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class DeleteKeyPollerAsync(AsyncPollingMethod):
-    def __init__(self, interval=5):
+    def __init__(self, deleted_key_if_no_sd, interval=5):
         self._command = None
-        self._deleted_key = None
+        self._deleted_key = deleted_key_if_no_sd
         self._polling_interval = interval
         self._status = None
 
@@ -44,7 +44,9 @@ class DeleteKeyPollerAsync(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        return self._status == "deleted"
+        if self._deleted_key:
+            return True
+        return False
 
     def resource(self) -> DeletedKey:
         return self._deleted_key
