@@ -69,7 +69,7 @@ class ScopeMapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -118,7 +118,7 @@ class ScopeMapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -175,8 +175,8 @@ class ScopeMapsOperations(object):
         :param scope_map_name: The name of the scope map.
         :type scope_map_name: str
         :param actions: The list of scoped permissions for registry artifacts.
-         E.g. repositories/repository-name/pull,
-         repositories/repository-name/delete
+         E.g. repositories/repository-name/content/read,
+         repositories/repository-name/metadata/write
         :type actions: list[str]
         :param description: The user friendly description of the scope map.
         :type description: str
@@ -231,7 +231,7 @@ class ScopeMapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -317,7 +317,7 @@ class ScopeMapsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
+            'scopeMapName': self._serialize.url("scope_map_name", scope_map_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
