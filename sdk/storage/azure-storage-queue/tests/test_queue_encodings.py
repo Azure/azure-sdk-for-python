@@ -17,9 +17,8 @@ from azure.storage.queue import (
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy)
+    TextXMLDecodePolicy)
+from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
 
 from queuetestcase import (
     QueueTestCase
@@ -54,7 +53,7 @@ class StorageQueueEncodingTest(QueueTestCase):
             pass
 
         # Action.
-        queue.enqueue_message(message)
+        queue.send_message(message)
 
         # Asserts
         dequeued = next(queue.receive_messages())
@@ -71,6 +70,8 @@ class StorageQueueEncodingTest(QueueTestCase):
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
+        assert isinstance(queue._config.message_encode_policy, TextXMLEncodePolicy)
+        assert isinstance(queue._config.message_decode_policy, TextXMLDecodePolicy)
         self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()          
@@ -94,7 +95,7 @@ class StorageQueueEncodingTest(QueueTestCase):
 
         # Asserts
         with self.assertRaises(HttpResponseError):
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -140,7 +141,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = b'xyz'
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
@@ -160,7 +161,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = u'xyz'
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
@@ -181,7 +182,7 @@ class StorageQueueEncodingTest(QueueTestCase):
         except ResourceExistsError:
             pass
         message = u'xyz'
-        queue.enqueue_message(message)
+        queue.send_message(message)
 
         # Action.
         with self.assertRaises(DecodeError) as e:
@@ -189,6 +190,19 @@ class StorageQueueEncodingTest(QueueTestCase):
 
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
+        
+    def test_message_no_encoding(self):
+        # Arrange
+        queue = QueueClient(
+            account_url="https://account.queue.core.windows.net",
+            queue_name="queue",
+            credential="account_key",
+            message_encode_policy=None,
+            message_decode_policy=None)
+        
+        # Asserts
+        assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
+        assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
 
 
 # ------------------------------------------------------------------------------

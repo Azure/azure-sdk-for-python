@@ -325,7 +325,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def enqueue_message(  # type: ignore
+    async def send_message(  # type: ignore
         self,
         content,  # type: Any
         **kwargs  # type: Optional[Any]
@@ -370,11 +370,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../tests/test_queue_samples_message_async.py
-                :start-after: [START async_enqueue_messages]
-                :end-before: [END async_enqueue_messages]
+                :start-after: [START async_send_messages]
+                :end-before: [END async_send_messages]
                 :language: python
                 :dedent: 12
-                :caption: Enqueue messages.
+                :caption: Send messages.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
