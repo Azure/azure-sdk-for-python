@@ -108,7 +108,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param file_name:
             The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -126,7 +126,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
+        :rtype: ~azure.storage.file.aio.DirectoryClient
 
         .. admonition:: Example:
 
@@ -427,7 +427,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
+        :rtype: ~azure.storage.file.aio.DirectoryClient
 
         .. admonition:: Example:
 
@@ -507,7 +507,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: FileClient
-        :rtype: ~azure.storage.file.aio.file_client_async.FileClient
+        :rtype: ~azure.storage.file.aio.FileClient
 
         .. admonition:: Example:
 

@@ -231,7 +231,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
 
         .. admonition:: Example:
 
@@ -533,7 +533,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
 
         .. admonition:: Example:
 

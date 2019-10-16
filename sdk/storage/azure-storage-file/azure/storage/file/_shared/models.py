@@ -330,11 +330,11 @@ class Services(object):
     """Specifies the services accessible with the account SAS.
 
     :param bool blob:
-        Access for the `~azure.storage.blob.blob_service_client.BlobServiceClient`
+        Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
-        Access for the `~azure.storage.queue.queue_service_client.QueueServiceClient`
+        Access for the `~azure.storage.queue.QueueServiceClient`
     :param bool file:
-        Access for the `~azure.storage.file.file_service_client.FileServiceClient`
+        Access for the `~azure.storage.file.FileServiceClient`
     """
 
     def __init__(self, blob=False, queue=False, file=False):

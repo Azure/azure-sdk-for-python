@@ -472,7 +472,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The container that the blob is in.
         :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
-        :rtype: ~azure.core.blob.aio.ContainerClient
+        :rtype: ~azure.storage.blob.aio.ContainerClient
 
         .. admonition:: Example:
 

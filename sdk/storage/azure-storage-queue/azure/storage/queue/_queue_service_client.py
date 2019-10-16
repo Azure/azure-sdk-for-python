@@ -346,7 +346,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.core.queue.models.QueueProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueProperties]
 
         .. admonition:: Example:
 
@@ -456,8 +456,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
-        :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.core.queue.queue_client.QueueClient
+        :returns: A :class:`~azure.storage.queue.QueueClient` object.
+        :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:
 

@@ -745,7 +745,7 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)
