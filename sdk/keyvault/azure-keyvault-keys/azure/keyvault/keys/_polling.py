@@ -12,25 +12,25 @@ logger = logging.getLogger(__name__)
 
 
 class DeleteKeyPoller(PollingMethod):
-    def __init__(self, deleted_key_if_no_sd, interval=5):
+    def __init__(self, sd_disabled, interval=5):
         self._command = None
-        self._deleted_key = deleted_key_if_no_sd
+        self._deleted_key = None
         self._polling_interval = interval
-        self._status = None
+        self._status = "deleting"
+        self._sd_disabled = sd_disabled
 
     def _update_status(self):
         # type: () -> None
         try:
-            self._deleted_key = self._command()
+            self._command()
             self._status = "deleted"
         except ResourceNotFoundError:
-            self._deleted_key = None
             self._status = "deleting"
 
     def initialize(self, client, initial_response, _):
         # type: (Any, Any, Callable) -> None
         self._command = client
-        self._status = "deleting"
+        self._deleted_key = initial_response
 
     def run(self):
         # type: () -> None
@@ -44,9 +44,9 @@ class DeleteKeyPoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        if self._deleted_key:
+        if self._sd_disabled:
             return True
-        return False
+        return self._status == "deleted"
 
     def resource(self):
         # type: () -> DeletedKey

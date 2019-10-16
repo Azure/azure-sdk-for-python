@@ -260,17 +260,17 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        deleted_secret_bundle = await self._client.delete_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
+            await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
-        if not deleted_secret_bundle.recovery_id:
-            deleted_secret_if_no_sd = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
+        if deleted_secret.recovery_id:
+            sd_disabled = False
         else:
-            deleted_secret_if_no_sd = None
+            sd_disabled = True
         command = partial(self.get_deleted_secret, name=name, **kwargs)
 
-        delete_secret_poller = DeleteSecretPollerAsync(deleted_secret_if_no_sd=deleted_secret_if_no_sd)
-        return await async_poller(command, "deleting", None, delete_secret_poller)
+        delete_secret_poller = DeleteSecretPollerAsync(sd_disabled=sd_disabled)
+        return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:

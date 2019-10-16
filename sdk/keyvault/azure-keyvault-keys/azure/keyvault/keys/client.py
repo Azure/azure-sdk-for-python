@@ -186,14 +186,16 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
 
-        deleted_key_bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        if not deleted_key_bundle.recovery_id:
-            deleted_key_if_no_sd = DeletedKey._from_deleted_key_bundle(deleted_key_bundle)
+        deleted_key = DeletedKey._from_deleted_key_bundle(
+            self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        if deleted_key.recovery_id:
+            sd_disabled = False
         else:
-            deleted_key_if_no_sd = None
+            sd_disabled = True
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeleteKeyPoller(deleted_key_if_no_sd=deleted_key_if_no_sd)
-        return LROPoller(command, "deleting", None, delete_key_polling)
+        delete_key_polling = DeleteKeyPoller(sd_disabled=sd_disabled)
+        return LROPoller(command, deleted_key, None, delete_key_polling)
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
