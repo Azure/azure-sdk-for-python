@@ -37,11 +37,12 @@ TOC_TEMPLATE = """
 """
 
 LANDING_TEMPLATE = """
+{package_name_title_indicator}
 {package_name}
 {package_name_title_indicator}
 
 Published Versions
-------------------
+==================
 
 .. raw:: html
 
@@ -91,19 +92,20 @@ def get_repo_packages(base_dir):
 
     return sorted(packages)
 
-def write_landing_pages(package_names):
-    for pkg in package_names:
-        with open(os.path.join(docs_folder, 'ref/{}.rst'.format(pkg)), 'w') as f:
-            content = LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["="] * len(pkg)))
+def write_landing_pages(categorized_menu_items):
+    for service in categorized_menu_items:
+        with open(os.path.join(docs_folder, LANDING_PAGE_LOCATION.format("-".join(service.split(' ')))), 'w') as f:
+            content = ""
+            for pkg in categorized_menu_items[service]:
+                content += LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["-"] * len(pkg)))
             f.write(content)
 
 def write_toc_tree(categorized_menu_items):
     toc_tree_contents = ""
 
-    for key in categorized_menu_items:
-        formatted_locations = [LANDING_PAGE_LOCATION.format(p) for p in categorized_menu_items[key]]
-        category_toc_contents = TOC_TEMPLATE.format(category = key, members = "\n  ".join(formatted_locations))
-
+    for service in categorized_menu_items:
+        formatted_locations = [LANDING_PAGE_LOCATION.format("-".join(service.split(' '))) for p in categorized_menu_items]
+        category_toc_contents = TOC_TEMPLATE.format(category = "Developer Documentation", members = "\n  ".join(formatted_locations))
         toc_tree_contents += category_toc_contents
 
     with open(os.path.join(docs_folder, 'toc_tree.rst'), 'w') as f:
@@ -111,13 +113,15 @@ def write_toc_tree(categorized_menu_items):
 
 
 def get_categorized_menu_items(package_names):
-    categorized_menu_items = {"Client": [], "Management": [], "Other": []}
+    categorized_menu_items = {"Other": []}
 
     for pkg in package_names:
         # add to the categorized menu items
         if pkg in service_mapping:
             pkg_meta = service_mapping[pkg]
-            categorized_menu_items[pkg_meta["category"]].append(pkg)
+            if pkg_meta["service_name"] not in categorized_menu_items.keys():
+                categorized_menu_items[pkg_meta["service_name"]] = []
+            categorized_menu_items[pkg_meta["service_name"]].append(pkg)
         else:
             categorized_menu_items["Other"].append(pkg)
 
@@ -159,12 +163,13 @@ if __name__ == "__main__":
 
     create_docs_folder()
 
-    # write all the landing pages that will reach out to the appropriate location
-    write_landing_pages(all_packages)
-
+    
     # work up where stuff should exist in the ToC
     categorized_menu_items = get_categorized_menu_items(all_packages)
 
+    # write all the landing pages that will reach out to the appropriate location
+    write_landing_pages(categorized_menu_items)
+    
     # write the ToC
     write_toc_tree(categorized_menu_items)
 
