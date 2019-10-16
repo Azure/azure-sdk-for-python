@@ -6,6 +6,7 @@
 
 import os
 
+from ..models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
 from .blob_client_async import BlobClient
 from .container_client_async import ContainerClient
@@ -130,4 +131,6 @@ __all__ = [
     'ContainerClient',
     'BlobClient',
     'LeaseClient',
+    'ExponentialRetry',
+    'LinearRetry'
 ]
