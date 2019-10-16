@@ -1167,8 +1167,6 @@ class SummaryResults(Model):
     :type non_compliant_resources: int
     :param non_compliant_policies: Number of non-compliant policies.
     :type non_compliant_policies: int
-    :param non_compliant_policy_groups: Number of non-compliant groups.
-    :type non_compliant_policy_groups: int
     :param resource_details: The resources summary at this level.
     :type resource_details:
      list[~azure.mgmt.policyinsights.models.ComplianceDetail]
@@ -1186,25 +1184,22 @@ class SummaryResults(Model):
     _validation = {
         'non_compliant_resources': {'minimum': 0},
         'non_compliant_policies': {'minimum': 0},
-        'non_compliant_policy_groups': {'minimum': 0},
     }
 
     _attribute_map = {
         'query_results_uri': {'key': 'queryResultsUri', 'type': 'str'},
         'non_compliant_resources': {'key': 'nonCompliantResources', 'type': 'int'},
         'non_compliant_policies': {'key': 'nonCompliantPolicies', 'type': 'int'},
-        'non_compliant_policy_groups': {'key': 'nonCompliantPolicyGroups', 'type': 'int'},
         'resource_details': {'key': 'resourceDetails', 'type': '[ComplianceDetail]'},
         'policy_details': {'key': 'policyDetails', 'type': '[ComplianceDetail]'},
         'policy_group_details': {'key': 'policyGroupDetails', 'type': '[ComplianceDetail]'},
     }
 
-    def __init__(self, *, query_results_uri: str=None, non_compliant_resources: int=None, non_compliant_policies: int=None, non_compliant_policy_groups: int=None, resource_details=None, policy_details=None, policy_group_details=None, **kwargs) -> None:
+    def __init__(self, *, query_results_uri: str=None, non_compliant_resources: int=None, non_compliant_policies: int=None, resource_details=None, policy_details=None, policy_group_details=None, **kwargs) -> None:
         super(SummaryResults, self).__init__(**kwargs)
         self.query_results_uri = query_results_uri
         self.non_compliant_resources = non_compliant_resources
         self.non_compliant_policies = non_compliant_policies
-        self.non_compliant_policy_groups = non_compliant_policy_groups
         self.resource_details = resource_details
         self.policy_details = policy_details
         self.policy_group_details = policy_group_details

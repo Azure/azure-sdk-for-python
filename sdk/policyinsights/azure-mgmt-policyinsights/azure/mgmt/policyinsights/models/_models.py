@@ -1167,8 +1167,6 @@ class SummaryResults(Model):
     :type non_compliant_resources: int
     :param non_compliant_policies: Number of non-compliant policies.
     :type non_compliant_policies: int
-    :param non_compliant_policy_groups: Number of non-compliant groups.
-    :type non_compliant_policy_groups: int
     :param resource_details: The resources summary at this level.
     :type resource_details:
      list[~azure.mgmt.policyinsights.models.ComplianceDetail]
@@ -1186,14 +1184,12 @@ class SummaryResults(Model):
     _validation = {
         'non_compliant_resources': {'minimum': 0},
         'non_compliant_policies': {'minimum': 0},
-        'non_compliant_policy_groups': {'minimum': 0},
     }
 
     _attribute_map = {
         'query_results_uri': {'key': 'queryResultsUri', 'type': 'str'},
         'non_compliant_resources': {'key': 'nonCompliantResources', 'type': 'int'},
         'non_compliant_policies': {'key': 'nonCompliantPolicies', 'type': 'int'},
-        'non_compliant_policy_groups': {'key': 'nonCompliantPolicyGroups', 'type': 'int'},
         'resource_details': {'key': 'resourceDetails', 'type': '[ComplianceDetail]'},
         'policy_details': {'key': 'policyDetails', 'type': '[ComplianceDetail]'},
         'policy_group_details': {'key': 'policyGroupDetails', 'type': '[ComplianceDetail]'},
@@ -1204,7 +1200,6 @@ class SummaryResults(Model):
         self.query_results_uri = kwargs.get('query_results_uri', None)
         self.non_compliant_resources = kwargs.get('non_compliant_resources', None)
         self.non_compliant_policies = kwargs.get('non_compliant_policies', None)
-        self.non_compliant_policy_groups = kwargs.get('non_compliant_policy_groups', None)
         self.resource_details = kwargs.get('resource_details', None)
         self.policy_details = kwargs.get('policy_details', None)
         self.policy_group_details = kwargs.get('policy_group_details', None)
