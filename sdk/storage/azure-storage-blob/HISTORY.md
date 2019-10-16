@@ -6,8 +6,8 @@
 
 - `set_container_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
-- Now only the async clients `BlobServiceClient`, `ContainerClient`, `BlobClient`, and `LeaseClient` can be imported 
-from the subnamespace `azure.storage.blob.aio`.
+- Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
+`BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
 
 **New features**
 

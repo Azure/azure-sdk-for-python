@@ -8,8 +8,8 @@
 To use a queue_url, the method `from_queue_url` must be used.
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
-- Now only the async clients `QueueServiceClient` and `QueueClient`can be imported 
-from the subnamespace `azure.storage.queue.aio`.
+- Removed types that were accidentally exposed from two modules. Only `QueueServiceClient` and `QueueClient`
+should be imported from azure.storage.queue.aio
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
