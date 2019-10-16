@@ -64,6 +64,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
 
     .. admonition:: Example:
 
@@ -77,11 +79,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
         super(FileServiceClient, self).__init__(
             account_url,
             credential=credential,
@@ -91,12 +93,12 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         self._loop = loop
 
     @distributed_trace_async
-    async def get_service_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
         Azure Storage Analytics.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
 
@@ -109,6 +111,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 8
                 :caption: Get file service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
@@ -119,7 +122,6 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -140,7 +142,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.file.CorsRule`)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -153,6 +155,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 8
                 :caption: Sets file service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
@@ -168,7 +171,6 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
         ):  # type: (...) -> AsyncItemPaged
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
@@ -182,7 +184,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
             Specifies that share snapshot be returned in the response.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.ShareProperties]
@@ -196,6 +198,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 12
                 :caption: List shares in the file service.
         """
+        timeout = kwargs.pop('timeout', None)
         include = []
         if include_metadata:
             include.append('metadata')
@@ -214,9 +217,6 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
     @distributed_trace_async
     async def create_share(
             self, share_name,  # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            quota=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ShareClient
@@ -225,13 +225,13 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :param metadata:
+        :keyword metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
         :type metadata: dict(str, str)
-        :param int quota:
+        :keyword int quota:
             Quota in bytes.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.aio.ShareClient
 
@@ -244,16 +244,18 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 8
                 :caption: Create a share in the file service.
         """
+        metadata = kwargs.pop('metadata', None)
+        quota = kwargs.pop('quota', None)
+        timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        await share.create_share(metadata, quota, timeout, **kwargs)
+        await share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
     @distributed_trace_async
     async def delete_share(
             self, share_name,  # type: Union[ShareProperties, str]
             delete_snapshots=False, # type: Optional[bool]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -266,7 +268,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         :type share_name: str or ~azure.storage.file.ShareProperties
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -279,6 +281,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :dedent: 12
                 :caption: Delete a share in the file service.
         """
+        timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
         await share.delete_share(

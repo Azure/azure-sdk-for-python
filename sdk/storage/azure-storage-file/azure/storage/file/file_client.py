@@ -272,12 +272,7 @@ class FileClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
-            protocol=None,  # type: Optional[str]
-            cache_control=None,  # type: Optional[str]
-            content_disposition=None,  # type: Optional[str]
-            content_encoding=None,  # type: Optional[str]
-            content_language=None,  # type: Optional[str]
-            content_type=None  # type: Optional[str]
+            **kwargs # type: Any
         ):
         # type: (...) -> str
         """Generates a shared access signature for the file.
@@ -316,26 +311,35 @@ class FileClient(StorageAccountHostsMixin):
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
+        :keyword str protocol:
             Specifies the protocol permitted for a request made. The default value is https.
-        :param str cache_control:
+        :keyword str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
-        :param str content_disposition:
+        :keyword str content_disposition:
             Response header value for Content-Disposition when resource is accessed
             using this shared access signature.
-        :param str content_encoding:
+        :keyword str content_encoding:
             Response header value for Content-Encoding when resource is accessed
             using this shared access signature.
-        :param str content_language:
+        :keyword str content_language:
             Response header value for Content-Language when resource is accessed
             using this shared access signature.
-        :param str content_type:
+        :keyword str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :keyword str protocol:
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        protocol = kwargs.pop('protocol', None)
+        cache_control = kwargs.pop('cache_control', None)
+        content_disposition = kwargs.pop('content_disposition', None)
+        content_encoding = kwargs.pop('content_encoding', None)
+        content_language = kwargs.pop('content_language', None)
+        content_type = kwargs.pop('content_type', None)
+
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
         sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
@@ -362,14 +366,11 @@ class FileClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_file(  # type: ignore
             self, size,  # type: int
-            content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None,  # type: Optional[Dict[str, str]]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
             file_permission=None,   # type: Optional[str]
             permission_key=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -379,13 +380,6 @@ class FileClient(StorageAccountHostsMixin):
 
         :param int size: Specifies the maximum size for the file,
             up to 1 TB.
-        :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
-        :param metadata:
-            Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -409,6 +403,13 @@ class FileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword ~azure.storage.file.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :keyword metadata:
+            Name-value pairs associated with the file as metadata.
+        :type metadata: dict(str, str)
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -421,6 +422,9 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Create a file.
         """
+        content_settings = kwargs.pop('content_settings', None)
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
@@ -458,17 +462,11 @@ class FileClient(StorageAccountHostsMixin):
     def upload_file(
             self, data,  # type: Any
             length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None,  # type: Optional[ContentSettings]
-            validate_content=False,  # type: bool
-            max_concurrency=1,  # type: Optional[int]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
             file_permission=None,  # type: Optional[str]
             permission_key=None,  # type: Optional[str]
-            encoding="UTF-8",  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
         ):
         # type: (...) -> Dict[str, Any]
@@ -478,24 +476,6 @@ class FileClient(StorageAccountHostsMixin):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :param metadata:
-            Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
-        :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
-        :param bool validate_content:
-            If true, calculates an MD5 hash for each range of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file.
-        :param int max_concurrency:
-            Maximum number of parallel connections to use.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
-        :param str encoding:
-            Defaults to UTF-8.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -519,6 +499,24 @@ class FileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword metadata:
+            Name-value pairs associated with the file as metadata.
+        :type metadata: dict(str, str)
+        :keyword ~azure.storage.file.ContentSettings content_settings:
+            ContentSettings object used to set file properties.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash for each range of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https as https (the default) will
+            already validate. Note that this MD5 hash is not stored with the
+            file.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword str encoding:
+            Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -531,6 +529,12 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Upload a file.
         """
+        metadata = kwargs.pop('metadata', None)
+        content_settings = kwargs.pop('content_settings', None)
+        max_concurrency = kwargs.pop('max_concurrency', 1)
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
+        encoding = kwargs.pop('encoding', 'UTF-8')
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
 
@@ -569,8 +573,6 @@ class FileClient(StorageAccountHostsMixin):
     @distributed_trace
     def start_copy_from_url(
             self, source_url, # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
         # type: (...) -> Any
@@ -582,10 +584,10 @@ class FileClient(StorageAccountHostsMixin):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
 
@@ -598,6 +600,8 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Copy a file from a URL
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
@@ -612,8 +616,8 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def abort_copy(self, copy_id, timeout=None, **kwargs):
-        # type: (Union[str, FileProperties], Optional[int], Any) -> Dict[str, Any]
+    def abort_copy(self, copy_id, **kwargs):
+        # type: (Union[str, FileProperties], Any) -> Dict[str, Any]
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -623,8 +627,11 @@ class FileClient(StorageAccountHostsMixin):
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
         :type copy_id: str or ~azure.storage.file.FileProperties
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             copy_id = copy_id.copy.id
         except AttributeError:
@@ -641,8 +648,6 @@ class FileClient(StorageAccountHostsMixin):
     def download_file(
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
-            validate_content=False,  # type: bool
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Iterable[bytes]
@@ -654,7 +659,7 @@ class FileClient(StorageAccountHostsMixin):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
@@ -663,7 +668,7 @@ class FileClient(StorageAccountHostsMixin):
             file. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
 
@@ -676,6 +681,8 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Download a file.
         """
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
@@ -698,12 +705,12 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
-    def delete_file(self, timeout=None, **kwargs):
-        # type: (Optional[int], Optional[Any]) -> None
+    def delete_file(self, **kwargs):
+        # type: (Any) -> None
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -716,21 +723,23 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a file.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             self._client.file.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_file_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> FileProperties
+    def get_file_properties(self, **kwargs):
+        # type: (Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.FileProperties
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             file_props = self._client.file.get_properties(
                 sharesnapshot=self.snapshot,
@@ -752,7 +761,6 @@ class FileClient(StorageAccountHostsMixin):
                          file_last_write_time="preserve",  # type: Union[str, datetime]
                          file_permission=None,  # type: Optional[str]
                          permission_key=None,  # type: Optional[str]
-                         timeout=None,  # type: Optional[int]
                          **kwargs  # Any
                          ):  # type: ignore
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
@@ -760,7 +768,7 @@ class FileClient(StorageAccountHostsMixin):
 
         :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
@@ -787,6 +795,7 @@ class FileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         file_content_length = kwargs.pop('size', None)
         file_http_headers = FileHTTPHeaders(
             file_cache_control=content_settings.cache_control,
@@ -813,8 +822,8 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_file_metadata(self, metadata=None, timeout=None, **kwargs): # type: ignore
-        #type: (Optional[Dict[str, Any]], Optional[int], Optional[Any]) -> Dict[str, Any]
+    def set_file_metadata(self, metadata=None, **kwargs): # type: ignore
+        #type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
 
@@ -825,11 +834,12 @@ class FileClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
@@ -847,9 +857,6 @@ class FileClient(StorageAccountHostsMixin):
             self, data,  # type: bytes
             start_range,  # type: int
             end_range,  # type: int
-            validate_content=False, # type: Optional[bool]
-            timeout=None,  # type: Optional[int]
-            encoding='UTF-8',
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -867,20 +874,23 @@ class FileClient(StorageAccountHostsMixin):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        validate_content = kwargs.pop('validate_content', False)
+        timeout = kwargs.pop('timeout', None)
+        encoding = kwargs.pop('encoding', 'UTF-8')
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -961,10 +971,9 @@ class FileClient(StorageAccountHostsMixin):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         '''
-
         options = self._upload_range_from_url_options(
             source_url=source_url,
             range_start=range_start,
@@ -981,7 +990,6 @@ class FileClient(StorageAccountHostsMixin):
     def get_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> List[dict[str, int]]
@@ -995,11 +1003,12 @@ class FileClient(StorageAccountHostsMixin):
             Specifies the end offset of bytes over which to get ranges.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
@@ -1023,7 +1032,6 @@ class FileClient(StorageAccountHostsMixin):
     def clear_range( # type: ignore
             self, start_range,  # type: int
             end_range,  # type: int
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1040,11 +1048,12 @@ class FileClient(StorageAccountHostsMixin):
             The range can be up to 4 MB in size.
             The start_range and end_range params are inclusive.
             Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
@@ -1065,17 +1074,18 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def resize_file(self, size, timeout=None, **kwargs): # type: ignore
-        # type: (int, Optional[int], Optional[Any]) -> Dict[str, Any]
+    def resize_file(self, size, **kwargs): # type: ignore
+        # type: (int, Any) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
         :param int size:
             Size to resize file to (in bytes)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return self._client.file.set_http_headers( # type: ignore
                 file_content_length=size,
@@ -1090,15 +1100,16 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, timeout=None, **kwargs):
+    def list_handles(self, **kwargs):
         # type: (int, Any) -> ItemPaged[Handle]
         """Lists handles for file.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.file.list_handles,
@@ -1112,7 +1123,6 @@ class FileClient(StorageAccountHostsMixin):
     @distributed_trace
     def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
-            timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
         # type: (...) -> Any
@@ -1125,11 +1135,12 @@ class FileClient(StorageAccountHostsMixin):
             Optionally, a specific handle to close. The default value is '*'
             which will attempt to close all open handles.
         :type handle: str or ~azure.storage.file.Handle
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A long-running poller to get operation status.
         :rtype: ~azure.core.polling.LROPoller
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             handle_id = handle.id # type: ignore
         except AttributeError:

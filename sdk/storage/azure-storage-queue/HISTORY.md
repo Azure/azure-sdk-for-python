@@ -10,6 +10,12 @@ To use a queue_url, the method `from_queue_url` must be used.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - Now only the async clients `QueueServiceClient` and `QueueClient`can be imported 
 from the subnamespace `azure.storage.queue.aio`.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
 - `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
 to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
 

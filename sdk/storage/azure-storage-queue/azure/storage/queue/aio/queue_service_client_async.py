@@ -95,11 +95,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
-            loop=None, # type: Any
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
         super(QueueServiceClient, self).__init__( # type: ignore
             account_url,
             credential=credential,
@@ -109,8 +109,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         self._loop = loop
 
     @distributed_trace_async
-    async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
+    async def get_service_stats(self, **kwargs): # type: ignore
+        # type: (Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -129,11 +129,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         access is available from the secondary location, if read-access geo-redundant
         replication is enabled for your storage account.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -141,12 +142,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, timeout=None, **kwargs): # type: ignore
-        # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs): # type: ignore
+        # type: (Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
@@ -159,6 +160,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 8
                 :caption: Getting queue service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
@@ -170,7 +172,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -196,7 +197,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(~azure.storage.queue.CorsRule)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -209,6 +210,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 8
                 :caption: Setting queue service properties.
         """
+        timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             logging=logging,
             hour_metrics=hour_metrics,
@@ -224,8 +226,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            results_per_page=None,  # type: Optional[int]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):  # type: (...) -> AsyncItemPaged
         """Returns a generator to list the queues under the specified account.
@@ -238,10 +238,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             begin with the specified prefix.
         :param bool include_metadata:
             Specifies that queue metadata be returned in the response.
-        :param int results_per_page:
+        :keyword int results_per_page:
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
-        :param int timeout:
+        :keyword int timeout:
             The server timeout, expressed in seconds. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
@@ -257,6 +257,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 12
                 :caption: List queues in the service.
         """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
             self._client.service.list_queues_segment,
@@ -273,7 +275,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     async def create_queue( # type: ignore
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> QueueClient
@@ -287,7 +288,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             A dict with name_value pairs to associate with the
             queue as metadata. Example: {'Category': 'test'}
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.aio.QueueClient
 
@@ -300,6 +301,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 8
                 :caption: Create a queue in the service.
         """
+        timeout = kwargs.pop('timeout', None)
         queue = self.get_queue_client(name)
         kwargs.setdefault('merge_span', True)
         await queue.create_queue(
@@ -309,7 +311,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     @distributed_trace_async
     async def delete_queue( # type: ignore
             self, queue,  # type: Union[QueueProperties, str]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -327,7 +328,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             The queue to delete. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -340,6 +341,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :dedent: 12
                 :caption: Delete a queue in the service.
         """
+        timeout = kwargs.pop('timeout', None)
         queue_client = self.get_queue_client(queue)
         kwargs.setdefault('merge_span', True)
         await queue_client.delete_queue(timeout=timeout, **kwargs)
