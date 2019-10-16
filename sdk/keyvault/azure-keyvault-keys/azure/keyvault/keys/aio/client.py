@@ -11,9 +11,8 @@ from azure.keyvault.keys.models import DeletedKey, JsonWebKey, KeyVaultKey, KeyP
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 from azure.core.polling import async_poller
 
-from .._shared.exceptions import error_map as _error_map
 from ._polling_async import DeleteKeyPollerAsync
-
+from .._shared.exceptions import error_map as _error_map
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports

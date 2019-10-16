@@ -5,7 +5,7 @@
 
 import asyncio
 import logging
-from typing import Any, Callable, Union
+from typing import Any, Callable
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError
 from ..models import DeletedSecret

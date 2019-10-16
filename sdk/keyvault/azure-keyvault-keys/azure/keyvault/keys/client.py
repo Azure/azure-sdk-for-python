@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
-from functools import partial
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map

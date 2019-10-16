@@ -260,7 +260,9 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        deleted_secret_bundle = await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        deleted_secret_bundle = await self._client.delete_secret(
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
+        )
         if not deleted_secret_bundle.recovery_id:
             deleted_secret_if_no_sd = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
         else:
