@@ -193,7 +193,7 @@ class KeyProperties(object):
         return self._managed
 
 
-class Key(object):
+class KeyVaultKey(object):
     """A key's attributes and cryptographic material"""
 
     def __init__(self, properties, key_material):
@@ -203,12 +203,12 @@ class Key(object):
 
     def __repr__(self):
         # type () -> str
-        return "<Key [{}]>".format(self.id)[:1024]
+        return "<KeyVaultKey [{}]>".format(self.id)[:1024]
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> Key
-        """Construct a Key from an autorest-generated KeyBundle"""
+        # type: (_models.KeyBundle) -> KeyVaultKey
+        """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
         return cls(
             properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
             key_material=key_bundle.key,
@@ -251,7 +251,7 @@ class Key(object):
         return self._key_material.key_ops
 
 
-class DeletedKey(Key):
+class DeletedKey(KeyVaultKey):
     """A deleted key's id, attributes, and cryptographic material, as well as when it will be purged"""
 
     def __init__(
