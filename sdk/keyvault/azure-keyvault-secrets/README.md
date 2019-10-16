@@ -185,11 +185,11 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 ```
 
 ### Delete a Secret
-`delete_secret` deletes a secret. If [soft-delete][soft_delete] is not enabled
+`begin_delete_secret` returns an LRO poller that polls on the deletion of the secret. If [soft-delete][soft_delete] is not enabled
 for the vault, this permanently deletes the secret.
 
 ```python
-    deleted_secret = secret_client.delete_secret("secret-name")
+    deleted_secret = secret_client.begin_delete_secret("secret-name").result()
 
     print(deleted_secret.name)
     print(deleted_secret.properties.deleted_date)

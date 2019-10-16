@@ -79,13 +79,10 @@ async def run_sample():
             print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.version))
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
+        print("\n.. Deleting secrets...")
         await client.delete_secret(bank_secret.name)
         await client.delete_secret(storage_secret.name)
-
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting secrets...")
-        await asyncio.sleep(20)
-
+        
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted secrets from the Key Vault")
         deleted_secrets = client.list_deleted_secrets()

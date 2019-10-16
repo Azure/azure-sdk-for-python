@@ -157,10 +157,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # delete them
         for secret_name in expected.keys():
             await client.delete_secret(secret_name)
-        for secret_name in expected.keys():
-            await self._poll_until_no_exception(
-                client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
-            )
 
         # validate list deleted secrets with attributes
         async for deleted_secret in client.list_deleted_secrets():
@@ -242,9 +238,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # delete all secrets
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
@@ -277,9 +270,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # delete all secrets
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():

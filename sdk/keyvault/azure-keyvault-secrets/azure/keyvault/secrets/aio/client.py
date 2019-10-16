@@ -4,13 +4,16 @@
 # ------------------------------------
 from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
 
 from azure.keyvault.secrets.models import Secret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
+from ._polling_async import DeleteSecretPollerAsync
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -242,8 +245,9 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        :returns: A coroutine for the deletion of the secret. Awaiting the coroutine returns
+         the deleted secret with information about its deletion.
+        :rtype: ~azure.keyvault.keys.models.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -256,8 +260,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        bundle = await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedSecret._from_deleted_secret_bundle(bundle)
+        await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        command = partial(self.get_deleted_secret, name=name, **kwargs)
+
+        delete_secret_poller = DeleteSecretPollerAsync()
+        return await async_poller(command, "deleting", None, delete_secret_poller)
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:

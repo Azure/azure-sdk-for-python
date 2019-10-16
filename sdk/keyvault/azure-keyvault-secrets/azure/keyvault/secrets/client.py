@@ -3,10 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from functools import partial
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from .models import Secret, DeletedSecret, SecretProperties
+from ._polling import DeleteSecretPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -265,12 +268,13 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def delete_secret(self, name, **kwargs):
+    def begin_delete_secret(self, name, **kwargs):
         # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        :returns: An LROPoller for the delete secret operation. Waiting on the poller
+         gives you the DeletedSecret
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.models.DeletedSecret]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -284,8 +288,10 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedSecret._from_deleted_secret_bundle(bundle)
+        self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        command = partial(self.get_deleted_secret, name=name, **kwargs)
+        delete_secret_polling = DeleteSecretPoller()
+        return LROPoller(command, "deleting", None, delete_secret_polling)
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):

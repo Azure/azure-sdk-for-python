@@ -51,6 +51,7 @@ async def run_sample():
         print("Backup created for secret with name '{0}'.".format(secret.name))
 
         # The storage account secret is no longer in use, so you delete it.
+        print("\n.. Deleting secret...")
         await client.delete_secret(secret.name)
         print("Deleted Secret with name '{0}'".format(secret.name))
 

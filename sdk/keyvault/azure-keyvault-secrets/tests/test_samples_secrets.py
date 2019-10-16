@@ -82,7 +82,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_secret]
 
         # delete a secret
-        deleted_secret = secret_client.delete_secret("secret-name")
+        deleted_secret = secret_client.begin_delete_secret("secret-name").result()
 
         print(deleted_secret.name)
 
@@ -156,7 +156,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
 
         # [END backup_secret]
-        deleted_secret = secret_client.delete_secret("secret-name")
+        deleted_secret = secret_client.begin_delete_secret("secret-name").result()
         # [START restore_secret_backup]
 
         # restores a backed up secret
@@ -171,11 +171,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        secret_client.delete_secret(created_secret.name)
-
-        self._poll_until_no_exception(
-            functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
-        )
+        secret_client.begin_delete_secret(created_secret.name).wait()
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)

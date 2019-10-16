@@ -23,7 +23,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Backup a secret (backup_secret)
 #
-# 3. Delete a secret (delete_secret)
+# 3. Delete a secret (begin_delete_secret)
 #
 # 4. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
@@ -49,7 +49,8 @@ try:
     print("Backup created for secret with name '{0}'.".format(secret.name))
 
     # The storage account secret is no longer in use, so you delete it.
-    client.delete_secret(secret.name)
+    print("\n.. Deleting secret...")
+    client.begin_delete_secret(secret.name).wait()
     print("Deleted Secret with name '{0}'".format(secret.name))
 
     # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
