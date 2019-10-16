@@ -18,13 +18,10 @@ import uuid
 class AttestationClientOperationsMixin(object):
 
     def prepare_to_set_policy(
-            self, tenanturi, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
+            self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Accepts a new policy document and returns a JWT which expresses  used
         in preparation to set attestation policy.
 
-        :param tenanturi: The tenant name, for example
-         https://mytenant.tenant.azure.net.
-        :type tenanturi: str
         :param authorization: Authorization header containing AAD bearer
          token.
         :type authorization: str
@@ -46,10 +43,6 @@ class AttestationClientOperationsMixin(object):
         """
         # Construct URL
         url = self.prepare_to_set_policy.metadata['url']
-        path_format_arguments = {
-            'tenanturi': self._serialize.url("tenanturi", tenanturi, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -82,11 +75,9 @@ class AttestationClientOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize('AttestationPolicy', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -96,12 +87,9 @@ class AttestationClientOperationsMixin(object):
     prepare_to_set_policy.metadata = {'url': '/operations/update'}
 
     def get_policy(
-            self, tenanturi, authorization, tee, custom_headers=None, raw=False, **operation_config):
+            self, authorization, tee, custom_headers=None, raw=False, **operation_config):
         """Retrieves the current policy for a given kind of TEE.
 
-        :param tenanturi: The tenant name, for example
-         https://mytenant.tenant.azure.net.
-        :type tenanturi: str
         :param authorization: Authorization header containing AAD bearer
          token.
         :type authorization: str
@@ -120,10 +108,6 @@ class AttestationClientOperationsMixin(object):
         """
         # Construct URL
         url = self.get_policy.metadata['url']
-        path_format_arguments = {
-            'tenanturi': self._serialize.url("tenanturi", tenanturi, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -155,8 +139,6 @@ class AttestationClientOperationsMixin(object):
             deserialized = self._deserialize('AttestationPolicy', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -166,12 +148,9 @@ class AttestationClientOperationsMixin(object):
     get_policy.metadata = {'url': '/operations/policy/current'}
 
     def set_policy(
-            self, tenanturi, authorization, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
+            self, authorization, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
         """Sets the policy for a given kind of TEE.
 
-        :param tenanturi: The tenant name, for example
-         https://mytenant.tenant.azure.net.
-        :type tenanturi: str
         :param authorization: Authorization header containing AAD bearer
          token.
         :type authorization: str
@@ -186,16 +165,13 @@ class AttestationClientOperationsMixin(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: CloudError or ClientRawResponse if raw=true
+        :rtype: ~azure.attestation.models.CloudError or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.set_policy.metadata['url']
-        path_format_arguments = {
-            'tenanturi': self._serialize.url("tenanturi", tenanturi, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -229,8 +205,6 @@ class AttestationClientOperationsMixin(object):
         deserialized = None
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -240,13 +214,10 @@ class AttestationClientOperationsMixin(object):
     set_policy.metadata = {'url': '/operations/policy/current'}
 
     def delete_policy(
-            self, tenanturi, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
+            self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Deletes the attestation policy for the specified tenant and reverts to
         the default policy.
 
-        :param tenanturi: The tenant name, for example
-         https://mytenant.tenant.azure.net.
-        :type tenanturi: str
         :param authorization: Authorization header containing AAD bearer
          token.
         :type authorization: str
@@ -267,10 +238,6 @@ class AttestationClientOperationsMixin(object):
         """
         # Construct URL
         url = self.delete_policy.metadata['url']
-        path_format_arguments = {
-            'tenanturi': self._serialize.url("tenanturi", tenanturi, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -303,11 +270,9 @@ class AttestationClientOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize('AttestationPolicy', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
