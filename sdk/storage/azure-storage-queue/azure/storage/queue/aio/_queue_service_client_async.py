@@ -9,36 +9,38 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING)
 try:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse # pylint: disable=unused-import
 except ImportError:
     from urlparse import urlparse # type: ignore
 
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.shared_access_signature import SharedAccessSignature
-from ._shared.models import LocationMode, Services
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.response_handlers import process_storage_error
-from ._generated import AzureQueueStorage
-from ._generated.models import StorageServiceProperties, StorageErrorException
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .models import QueuePropertiesPaged
-from .queue_client import QueueClient
+from .._shared.policies_async import ExponentialRetry
+from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
+from .._shared.models import LocationMode
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.response_handlers import process_storage_error
+from .._generated.aio import AzureQueueStorage
+from .._generated.models import StorageServiceProperties, StorageErrorException
+
+from ._models import QueuePropertiesPaged
+from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._shared.models import AccountSasPermissions, ResourceTypes
-    from .models import (
+    from .._models import (
         QueueProperties,
         Logging,
         Metrics,
-        CorsRule
+        CorsRule,
     )
 
 
-class QueueServiceClient(StorageAccountHostsMixin):
+class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -75,16 +77,16 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
-            :start-after: [START create_queue_service_client]
-            :end-before: [END create_queue_service_client]
+        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+            :start-after: [START async_create_queue_service_client]
+            :end-before: [END async_create_queue_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
-            :start-after: [START create_queue_service_client_token]
-            :end-before: [END create_queue_service_client_token]
+        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+            :start-after: [START async_create_queue_service_client_token]
+            :end-before: [END async_create_queue_service_client_token]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with Azure Identity credentials.
@@ -96,119 +98,18 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
+        super(QueueServiceClient, self).__init__( # type: ignore
+            account_url,
+            credential=credential,
+            loop=loop,
+            **kwargs)
+        self._client = AzureQueueStorage(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
+        self._loop = loop
 
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> QueueServiceClient
-        """Create QueueServiceClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_queue_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the QueueServiceClient with a connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
-
-    def generate_shared_access_signature(
-            self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountSasPermissions, str]
-            expiry,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            ip=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):  # type: (...) -> str
-        """Generates a shared access signature for the queue service.
-
-        Use the returned signature with the credential parameter of any Queue Service.
-
-        :param ~azure.storage.queue.ResourceTypes resource_types:
-            Specifies the resource types that are accessible with the account SAS.
-        :param ~azure.storage.queue.AccountSasPermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: ~datetime.datetime or str
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        protocol = kwargs.pop('protocol', None)
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-
-        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_account(
-            services=Services(queue=True),
-            resource_types=resource_types,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            ip=ip,
-            protocol=protocol
-        ) # type: ignore
-
-    @distributed_trace
-    def get_service_stats(self, **kwargs): # type: ignore
+    @distributed_trace_async
+    async def get_service_stats(self, **kwargs): # type: ignore
         # type: (Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
@@ -231,42 +132,42 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: ~azure.storage.queue.StorageServiceStats
+        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceStats
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_statistics( # type: ignore
+            return await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def get_service_properties(self, **kwargs): # type: ignore
+    @distributed_trace_async
+    async def get_service_properties(self, **kwargs): # type: ignore
         # type: (Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.StorageServiceProperties
+        :rtype: ~azure.storage.queue._generated.models._models.StorageServiceProperties
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START get_queue_service_properties]
-                :end-before: [END get_queue_service_properties]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_get_queue_service_properties]
+                :end-before: [END async_get_queue_service_properties]
                 :language: python
                 :dedent: 8
                 :caption: Getting queue service properties.
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            return await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def set_service_properties( # type: ignore
+    @distributed_trace_async
+    async def set_service_properties( # type: ignore
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
@@ -302,9 +203,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START set_queue_service_properties]
-                :end-before: [END set_queue_service_properties]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_set_queue_service_properties]
+                :end-before: [END async_set_queue_service_properties]
                 :language: python
                 :dedent: 8
                 :caption: Setting queue service properties.
@@ -317,7 +218,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
+            return await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -326,8 +227,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             **kwargs
-        ):
-        # type: (...) -> ItemPaged[QueueProperties]
+        ):  # type: (...) -> AsyncItemPaged
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -346,13 +246,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.core.queue.models.QueueProperties]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.core.queue.models.QueueProperties]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_list_queues]
-                :end-before: [END qsc_list_queues]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_list_queues]
+                :end-before: [END async_qsc_list_queues]
                 :language: python
                 :dedent: 12
                 :caption: List queues in the service.
@@ -366,13 +266,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return ItemPaged(
+        return AsyncItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=QueuePropertiesPaged
         )
 
-    @distributed_trace
-    def create_queue(
+    @distributed_trace_async
+    async def create_queue( # type: ignore
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
@@ -390,13 +290,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_create_queue]
-                :end-before: [END qsc_create_queue]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_create_queue]
+                :end-before: [END async_qsc_create_queue]
                 :language: python
                 :dedent: 8
                 :caption: Create a queue in the service.
@@ -404,12 +304,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         queue = self.get_queue_client(name)
         kwargs.setdefault('merge_span', True)
-        queue.create_queue(
+        await queue.create_queue(
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
-    @distributed_trace
-    def delete_queue(
+    @distributed_trace_async
+    async def delete_queue( # type: ignore
             self, queue,  # type: Union[QueueProperties, str]
             **kwargs
         ):
@@ -434,9 +334,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START qsc_delete_queue]
-                :end-before: [END qsc_delete_queue]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_qsc_delete_queue]
+                :end-before: [END async_qsc_delete_queue]
                 :language: python
                 :dedent: 12
                 :caption: Delete a queue in the service.
@@ -444,7 +344,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         queue_client = self.get_queue_client(queue)
         kwargs.setdefault('merge_span', True)
-        queue_client.delete_queue(timeout=timeout, **kwargs)
+        await queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):
         # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
@@ -457,13 +357,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             or an instance of QueueProperties.
         :type queue: str or ~azure.storage.queue.QueueProperties
         :returns: A :class:`~azure.core.queue.queue_client.QueueClient` object.
-        :rtype: ~azure.core.queue.queue_client.QueueClient
+        :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
-                :start-after: [START get_queue_client]
-                :end-before: [END get_queue_client]
+            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+                :start-after: [START async_get_queue_client]
+                :end-before: [END async_get_queue_client]
                 :language: python
                 :dedent: 8
                 :caption: Get the queue client.
@@ -476,4 +376,4 @@ class QueueServiceClient(StorageAccountHostsMixin):
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key, _pipeline=self._pipeline, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            _location_mode=self._location_mode, _hosts=self._hosts, loop=self._loop, **kwargs)
