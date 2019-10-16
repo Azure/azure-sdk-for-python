@@ -23,14 +23,14 @@ from azure.core.exceptions import (
     ClientAuthenticationError)
 
 from azure.core.pipeline.transport import AioHttpTransport
-
-from azure.storage.queue.aio import QueueServiceClient, QueueClient
 from azure.storage.queue import (
     QueueSasPermissions,
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
 )
+from azure.storage.queue.aio import QueueServiceClient, QueueClient
+
 
 from asyncqueuetestcase import (
     AsyncQueueTestCase
@@ -301,8 +301,8 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Asserts
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
@@ -321,8 +321,8 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Assert
         self.assertGreaterEqual(
-            messages[0].expiration_time,
-            messages[0].insertion_time + timedelta(seconds=1024 * 1024 * 1024 - 3600))
+            messages[0].expires_on,
+            messages[0].inserted_on + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -337,7 +337,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         messages = await queue_client.peek_messages()
 
         # Assert
-        self.assertEqual(messages[0].expiration_time.year, date.max.year)
+        self.assertEqual(messages[0].expires_on.year, date.max.year)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -364,9 +364,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
 
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -394,9 +394,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertNotEqual('', message.pop_receipt)
             self.assertEqual(1, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertNotEqual('', message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -420,9 +420,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertNotEqual('', message.content)
         self.assertIsNone(message.pop_receipt)
         self.assertEqual(0, message.dequeue_count)
-        self.assertNotEqual('', message.insertion_time)
-        self.assertNotEqual('', message.expiration_time)
-        self.assertIsNone(message.time_next_visible)
+        self.assertNotEqual('', message.inserted_on)
+        self.assertNotEqual('', message.expires_on)
+        self.assertIsNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -446,9 +446,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertIsNone(message.pop_receipt)
             self.assertEqual(0, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertIsNone(message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertIsNone(message.next_visible_on)
 
     @ResourceGroupPreparer()    
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -514,8 +514,8 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -525,9 +525,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertEqual(u'message1', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -556,8 +556,8 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -567,9 +567,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertEqual(u'new text', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -992,9 +992,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertEqual(u'message1㚈', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -1021,9 +1021,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertEqual(u'啊齄丂狛狜', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(2, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
 
 # ------------------------------------------------------------------------------

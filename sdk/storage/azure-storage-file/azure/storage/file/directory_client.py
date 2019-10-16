@@ -249,18 +249,14 @@ class DirectoryClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace
-    def create_directory( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> Dict[str, Any]
+    def create_directory(self, **kwargs):  # type: ignore
+        # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -274,6 +270,8 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Creates a directory.
         """
+        timeout = kwargs.pop('timeout', None)
+        metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
@@ -286,12 +284,12 @@ class DirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def delete_directory(self, timeout=None, **kwargs):
+    def delete_directory(self, **kwargs):
         # type: (Optional[int], **Any) -> None
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -304,20 +302,21 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Deletes a directory.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             self._client.directory.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[int], **Any) -> ItemPaged
+    def list_directories_and_files(self, name_starts_with=None, **kwargs):
+        # type: (Optional[str], **Any) -> ItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.DirectoryProperties]
@@ -331,6 +330,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: List directories and files.
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.directory.list_files_and_directories_segment,
@@ -342,18 +342,19 @@ class DirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, timeout=None, **kwargs):
-        # type: (bool, Optional[int], Any) -> ItemPaged
+    def list_handles(self, recursive=False, **kwargs):
+        # type: (bool, Any) -> ItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.directory.list_handles,
@@ -369,7 +370,6 @@ class DirectoryClient(StorageAccountHostsMixin):
     def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             recursive=False,  # type: bool
-            timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
         # type: (...) -> Any
@@ -385,11 +385,12 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A long-running poller to get operation status.
         :rtype: ~azure.core.polling.LROPoller
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             handle_id = handle.id # type: ignore
         except AttributeError:
@@ -415,16 +416,17 @@ class DirectoryClient(StorageAccountHostsMixin):
             polling_method)
 
     @distributed_trace
-    def get_directory_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> DirectoryProperties
+    def get_directory_properties(self, **kwargs):
+        # type: (Any) -> DirectoryProperties
         """Returns all user-defined metadata and system properties for the
         specified directory. The data returned does not include the directory's
         list of files.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.DirectoryProperties
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             response = self._client.directory.get_properties(
                 timeout=timeout,
@@ -435,8 +437,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         return response # type: ignore
 
     @distributed_trace
-    def set_directory_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
-        # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
+    def set_directory_metadata(self, metadata, **kwargs): # type: ignore
+        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
         Each call to this operation replaces all existing metadata
@@ -446,11 +448,12 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
@@ -468,13 +471,10 @@ class DirectoryClient(StorageAccountHostsMixin):
                          file_last_write_time="preserve",  # type: Union[str, datetime]
                          file_permission=None,   # type: Optional[str]
                          permission_key=None,   # type: Optional[str]
-                         timeout=None,  # type: Optional[int]
                          **kwargs):  # type: ignore
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.
 
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
@@ -497,9 +497,12 @@ class DirectoryClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
             return self._client.directory.set_properties(  # type: ignore
@@ -517,8 +520,6 @@ class DirectoryClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_subdirectory(
             self, directory_name,  # type: str
-            metadata=None,  # type: Optional[Dict[str, Any]]
-            timeout=None,  # type: Optional[int]
             **kwargs):
         # type: (...) -> DirectoryClient
         """Creates a new subdirectory and returns a client to interact
@@ -526,10 +527,10 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str directory_name:
             The name of the subdirectory.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the subdirectory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
@@ -543,6 +544,8 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Create a subdirectory.
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
         return subdir # type: ignore
@@ -550,7 +553,6 @@ class DirectoryClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_subdirectory(
             self, directory_name,  # type: str
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -558,7 +560,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str directory_name:
             The name of the subdirectory.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -571,6 +573,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a subdirectory.
         """
+        timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         subdir.delete_directory(timeout=timeout, **kwargs)
 
@@ -579,12 +582,6 @@ class DirectoryClient(StorageAccountHostsMixin):
             self, file_name,  # type: str
             data, # type: Any
             length=None, # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None, # type: Optional[ContentSettings]
-            validate_content=False,  # type: bool
-            max_concurrency=1,  # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',  # type: str
             **kwargs # type: Any
         ):
         # type: (...) -> FileClient
@@ -597,23 +594,23 @@ class DirectoryClient(StorageAccountHostsMixin):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             Maximum number of parallel connections to use.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :returns: FileClient
         :rtype: ~azure.storage.file.FileClient
@@ -631,19 +628,12 @@ class DirectoryClient(StorageAccountHostsMixin):
         file_client.upload_file(
             data,
             length=length,
-            metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            max_concurrency=max_concurrency,
-            timeout=timeout,
-            encoding=encoding,
             **kwargs)
         return file_client # type: ignore
 
     @distributed_trace
     def delete_file(
             self, file_name,  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -652,7 +642,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str file_name:
             The name of the file to delete.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -666,4 +656,4 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Delete a file in a directory.
         """
         file_client = self.get_file_client(file_name)
-        file_client.delete_file(timeout, **kwargs)
+        file_client.delete_file(**kwargs)

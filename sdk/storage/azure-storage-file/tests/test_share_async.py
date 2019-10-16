@@ -17,13 +17,16 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.aio import (
+from azure.storage.file import (
     AccessPolicy,
     ShareSasPermissions,
+)
+from azure.storage.file.aio import (
     FileServiceClient,
     DirectoryClient,
     FileClient,
-    ShareClient)
+    ShareClient
+)
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
@@ -231,7 +234,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -410,7 +413,7 @@ class StorageShareTest(FileTestCase):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
-        await share.create_share(metadata)
+        await share.create_share(metadata=metadata)
 
         # Act
         shares = []
@@ -489,7 +492,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -507,7 +510,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
         snapshot = await client.create_snapshot()
         snapshot_client = self.fsc.get_share_client(client.share_name, snapshot=snapshot)
 

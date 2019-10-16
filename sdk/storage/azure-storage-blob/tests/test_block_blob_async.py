@@ -14,14 +14,17 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
     StandardBlobTier
+)
+
+from azure.storage.blob.aio import (
+    BlobServiceClient,
+    ContainerClient,
+    BlobClient,
 )
 from testcase import (
     StorageTestCase,

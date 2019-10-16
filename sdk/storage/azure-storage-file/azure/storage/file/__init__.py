@@ -17,11 +17,8 @@ from ._shared.models import(
     StorageErrorCode)
 from .models import (
     ShareProperties,
-    SharePropertiesPaged,
     DirectoryProperties,
-    DirectoryPropertiesPaged,
     Handle,
-    HandlesPaged,
     FileProperties,
     Metrics,
     RetentionPolicy,
@@ -56,13 +53,10 @@ __all__ = [
     'FileSasPermissions',
     'ShareSasPermissions',
     'ShareProperties',
-    'SharePropertiesPaged',
     'DirectoryProperties',
-    'DirectoryPropertiesPaged',
     'FileProperties',
     'ContentSettings',
     'Handle',
-    'HandlesPaged',
     'NTFSAttributes',
     'HandleItem'
 ]
