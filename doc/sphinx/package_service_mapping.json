@@ -811,6 +811,11 @@
     "service_name": "Storage",
     "manually_generated": true
   },
+  "azure-appconfiguration": {
+    "category": "Client",
+    "service_name": "AppConfiguration",
+    "manually_generated": true
+  },
   "azure-servicefabric": {
     "category": "Client",
     "namespaces": [

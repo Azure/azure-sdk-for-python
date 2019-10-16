@@ -46,9 +46,9 @@ Published Versions
 .. raw:: html
 
     <embed>
-        <ul id="versions"></ul>
+        <ul id="{package_name}"></ul>
         <script type="text/javascript">
-            populateIndexList('#versions', '{package_name}')
+            populateIndexList('#{package_name}', '{package_name}')
         </script>
     </embed>
 
