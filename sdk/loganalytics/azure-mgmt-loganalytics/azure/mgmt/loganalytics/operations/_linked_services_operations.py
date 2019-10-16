@@ -40,18 +40,21 @@ class LinkedServicesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, workspace_name, linked_service_name, resource_id, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, linked_service_name, resource_id, tags=None, custom_headers=None, raw=False, **operation_config):
         """Create or update a linked service.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that will
-         contain the linkedServices resource
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param linked_service_name: Name of the linkedServices resource
         :type linked_service_name: str
-        :param resource_id: The resource id of the resource that will be
+        :param resource_id: The resource ID of the resource that will be
          linked to the workspace.
         :type resource_id: str
         :param tags: Resource tags
@@ -71,10 +74,10 @@ class LinkedServicesOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -119,14 +122,17 @@ class LinkedServicesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def delete(
-            self, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a linked service instance.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that
-         contains the linkedServices resource
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param linked_service_name: Name of the linked service.
         :type linked_service_name: str
@@ -142,10 +148,10 @@ class LinkedServicesOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -177,14 +183,17 @@ class LinkedServicesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def get(
-            self, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, linked_service_name, custom_headers=None, raw=False, **operation_config):
         """Gets a linked service instance.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that
-         contains the linkedServices resource
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param linked_service_name: Name of the linked service.
         :type linked_service_name: str
@@ -201,10 +210,10 @@ class LinkedServicesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -243,14 +252,17 @@ class LinkedServicesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedServices/{linkedServiceName}'}
 
     def list_by_workspace(
-            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
         """Gets the linked services instances in a workspace.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that
-         contains the linked services.
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -267,9 +279,9 @@ class LinkedServicesOperations(object):
                 # Construct URL
                 url = self.list_by_workspace.metadata['url']
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

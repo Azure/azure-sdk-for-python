@@ -12,11 +12,15 @@
 from ._linked_services_operations import LinkedServicesOperations
 from ._data_sources_operations import DataSourcesOperations
 from ._workspaces_operations import WorkspacesOperations
+from ._tables_operations import TablesOperations
 from ._operations import Operations
+from ._operational_insights_management_client_operations import OperationalInsightsManagementClientOperationsMixin
 
 __all__ = [
     'LinkedServicesOperations',
     'DataSourcesOperations',
     'WorkspacesOperations',
+    'TablesOperations',
     'Operations',
+    'OperationalInsightsManagementClientOperationsMixin',
 ]

@@ -40,14 +40,17 @@ class DataSourcesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, workspace_name, data_source_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, data_source_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create or update a data source.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that will
-         contain the datasource
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_name: The name of the datasource resource.
         :type data_source_name: str
@@ -67,10 +70,10 @@ class DataSourcesOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -115,14 +118,17 @@ class DataSourcesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
 
     def delete(
-            self, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a data source instance.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that
-         contains the datasource.
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_name: Name of the datasource.
         :type data_source_name: str
@@ -138,10 +144,10 @@ class DataSourcesOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -173,14 +179,17 @@ class DataSourcesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
 
     def get(
-            self, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, data_source_name, custom_headers=None, raw=False, **operation_config):
         """Gets a datasource instance.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of the Log Analytics Workspace that
-         contains the datasource.
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_name: Name of the datasource
         :type data_source_name: str
@@ -197,10 +206,10 @@ class DataSourcesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -239,14 +248,18 @@ class DataSourcesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}'}
 
     def list_by_workspace(
-            self, resource_group_name, workspace_name, filter, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, resource_group_name, workspace_name, filter, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Gets the first page of data source instances in a workspace with the
         link to the next page.
 
+        :param subscription_id: Gets subscription credentials which uniquely
+         identify Microsoft Azure subscription. The subscription ID forms part
+         of the URI for every service call.
+        :type subscription_id: str
         :param resource_group_name: The name of the resource group to get. The
          name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The workspace that contains the data sources.
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -268,18 +281,18 @@ class DataSourcesOperations(object):
                 # Construct URL
                 url = self.list_by_workspace.metadata['url']
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if skiptoken is not None:
                     query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

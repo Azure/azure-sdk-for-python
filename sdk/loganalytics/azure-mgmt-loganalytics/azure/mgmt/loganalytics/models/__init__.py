@@ -22,6 +22,7 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import SharedKeys
     from ._models_py3 import Sku
+    from ._models_py3 import Table
     from ._models_py3 import UsageMetric
     from ._models_py3 import Workspace
 except (SyntaxError, ImportError):
@@ -37,12 +38,14 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import SharedKeys
     from ._models import Sku
+    from ._models import Table
     from ._models import UsageMetric
     from ._models import Workspace
 from ._paged_models import DataSourcePaged
 from ._paged_models import LinkedServicePaged
 from ._paged_models import ManagementGroupPaged
 from ._paged_models import OperationPaged
+from ._paged_models import TablePaged
 from ._paged_models import UsageMetricPaged
 from ._paged_models import WorkspacePaged
 from ._operational_insights_management_client_enums import (
@@ -64,6 +67,7 @@ __all__ = [
     'Resource',
     'SharedKeys',
     'Sku',
+    'Table',
     'UsageMetric',
     'Workspace',
     'LinkedServicePaged',
@@ -71,6 +75,7 @@ __all__ = [
     'UsageMetricPaged',
     'ManagementGroupPaged',
     'WorkspacePaged',
+    'TablePaged',
     'OperationPaged',
     'DataSourceKind',
     'SkuNameEnum',

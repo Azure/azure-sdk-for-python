@@ -13,14 +13,16 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import OperationalInsightsManagementClientConfiguration
+from .operations import OperationalInsightsManagementClientOperationsMixin
 from .operations import LinkedServicesOperations
 from .operations import DataSourcesOperations
 from .operations import WorkspacesOperations
+from .operations import TablesOperations
 from .operations import Operations
 from . import models
 
 
-class OperationalInsightsManagementClient(SDKClient):
+class OperationalInsightsManagementClient(OperationalInsightsManagementClientOperationsMixin, SDKClient):
     """Operational Insights Client
 
     :ivar config: Configuration for client.
@@ -32,23 +34,21 @@ class OperationalInsightsManagementClient(SDKClient):
     :vartype data_sources: azure.mgmt.loganalytics.operations.DataSourcesOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar tables: Tables operations
+    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.loganalytics.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = OperationalInsightsManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = OperationalInsightsManagementClientConfiguration(credentials, base_url)
         super(OperationalInsightsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -61,6 +61,8 @@ class OperationalInsightsManagementClient(SDKClient):
         self.data_sources = DataSourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tables = TablesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

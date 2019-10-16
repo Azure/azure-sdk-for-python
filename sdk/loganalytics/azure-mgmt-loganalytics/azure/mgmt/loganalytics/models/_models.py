@@ -174,7 +174,7 @@ class LinkedService(ProxyResource):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param resource_id: Required. The resource id of the resource that will be
+    :param resource_id: Required. The resource ID of the resource that will be
      linked to the workspace.
     :type resource_id: str
     """
@@ -318,7 +318,7 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
@@ -396,6 +396,41 @@ class Sku(Model):
         self.name = kwargs.get('name', None)
 
 
+class Table(Model):
+    """Workspace data table definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Table ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :param retention_in_days: The table data retention in days, between 30 and
+     730. Setting this property to null will default to the workspace
+     retention.
+    :type retention_in_days: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Table, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+
+
 class UsageMetric(Model):
     """A metric describing the usage of a resource.
 
@@ -439,7 +474,7 @@ class Workspace(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
