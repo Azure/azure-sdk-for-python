@@ -27,14 +27,12 @@ from ._message_encoding import (
 from .models import (
     QueueMessage,
     QueueProperties,
-    QueuePropertiesPaged,
     QueueSasPermissions,
     AccessPolicy,
     QueueAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy,
-    MessagesPaged,
 )
 
 __version__ = VERSION
@@ -50,7 +48,6 @@ __all__ = [
     'StorageErrorCode',
     'QueueMessage',
     'QueueProperties',
-    'QueuePropertiesPaged',
     'QueueSasPermissions',
     'AccessPolicy',
     'TextBase64EncodePolicy',
@@ -65,5 +62,4 @@ __all__ = [
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
-    'MessagesPaged',
 ]

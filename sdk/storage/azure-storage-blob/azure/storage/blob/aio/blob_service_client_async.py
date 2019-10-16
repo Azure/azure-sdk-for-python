@@ -25,7 +25,8 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from ..blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .container_client_async import ContainerClient
 from .blob_client_async import BlobClient
-from .models import ContainerProperties, ContainerPropertiesPaged
+from ..models import ContainerProperties
+from .models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime

@@ -17,13 +17,16 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.aio import (
+from azure.storage.file import (
     AccessPolicy,
     ShareSasPermissions,
+)
+from azure.storage.file.aio import (
     FileServiceClient,
     DirectoryClient,
     FileClient,
-    ShareClient)
+    ShareClient
+)
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
