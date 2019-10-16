@@ -885,7 +885,6 @@ class FileClient(StorageAccountHostsMixin):
 
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
-        content_length = length - offset + 1
         try:
             return self._client.file.upload_range( # type: ignore
                 range=content_range,
@@ -907,12 +906,12 @@ class FileClient(StorageAccountHostsMixin):
                                        ):
         # type: (...) -> Dict[str, Any]
 
-        if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 page size")
-        if length is None or length % 512 != 0:
-            raise ValueError("length must be an integer that aligns with 512 page size")
-        if source_offset is None or offset % 512 != 0:
-            raise ValueError("source_offset must be an integer that aligns with 512 page size")
+        if offset is None:
+            raise ValueError("offset must be provided.")
+        if length is None:
+            raise ValueError("length must be provided.")
+        if source_offset is None:
+            raise ValueError("source_offset must be provided.")
 
         # Format range
         end_range = offset + length - 1
@@ -999,8 +998,8 @@ class FileClient(StorageAccountHostsMixin):
         content_range = None
         if offset is not None:
             if length is not None:
-                length = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, length)
+                end_range = offset + length - 1  # Reformat to an inclusive range index
+                content_range = 'bytes={0}-{1}'.format(offset, end_range)
             else:
                 content_range = 'bytes={0}-'.format(offset)
         try:

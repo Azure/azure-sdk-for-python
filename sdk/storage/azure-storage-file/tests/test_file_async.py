@@ -703,7 +703,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, 0, 511)
+        await file_client.upload_range(data, offset=0, length=512)
 
         # Assert
         content = await file_client.download_file()
@@ -722,7 +722,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, 0, 511, validate_content=True)
+        await file_client.upload_range(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -748,7 +748,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         with self.assertRaises(HttpResponseError):
             # when the source file has less bytes than 2050, throw exception
-            await destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+            await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
     @record
     def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes_async(self):
@@ -760,7 +760,7 @@ class StorageFileAsyncTest(FileTestCase):
         source_file_name = 'testfile'
         source_file_client = await self._create_file(file_name=source_file_name)
         data = b'abcdefghijklmnop' * 32
-        await source_file_client.upload_range(data, 0, 511)
+        await source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
         destination_file_client = await self._create_empty_file(file_name=destination_file_name)
@@ -773,7 +773,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
-        await destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+        await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
@@ -797,7 +797,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         source_file_client = await self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
         data = b'abcdefghijklmnop' * 65536
-        await source_file_client.upload_range(data, 0, end)
+        await source_file_client.upload_range(data, offset=0, length=end+1)
 
         destination_file_name = 'filetoupdate1'
         destination_file_client = await self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
@@ -811,7 +811,7 @@ class StorageFileAsyncTest(FileTestCase):
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
         # Act
-        await destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+        await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=end+1, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
@@ -833,7 +833,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_client = await self._create_file()
 
         # Act
-        resp = await file_client.clear_range(0, 511)
+        resp = await file_client.clear_range(offset=0, length=512)
 
         # Assert
         content = await file_client.download_file()
@@ -854,7 +854,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, 0, 511)
+        await file_client.upload_range(data, offset=0, length=512)
 
         encoded = data.encode('utf-8')
 
@@ -908,8 +908,8 @@ class StorageFileAsyncTest(FileTestCase):
         await file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
-        resp1 = await file_client.upload_range(data, 0, 511)
-        resp2 = await file_client.upload_range(data, 1024, 1535)
+        resp1 = await file_client.upload_range(data, offset=0, length=512)
+        resp2 = await file_client.upload_range(data, offset=1024, length=512)
 
         # Act
         ranges = await file_client.get_ranges()
@@ -974,8 +974,8 @@ class StorageFileAsyncTest(FileTestCase):
             transport=AiohttpTestTransport())
         await file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
-        resp1 = await file_client.upload_range(data, 0, 511)
-        resp2 = await file_client.upload_range(data, 1024, 1535)
+        resp1 = await file_client.upload_range(data, offset=0, length=512)
+        resp2 = await file_client.upload_range(data, offset=1024, length=512)
         
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
