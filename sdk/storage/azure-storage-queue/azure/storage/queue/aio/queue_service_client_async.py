@@ -17,26 +17,27 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.storage.queue._shared.policies_async import ExponentialRetry
-from azure.storage.queue.queue_service_client import QueueServiceClient as QueueServiceClientBase
-from azure.storage.queue._shared.models import LocationMode
-from azure.storage.queue._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.storage.queue._shared.response_handlers import process_storage_error
-from azure.storage.queue._generated.aio import AzureQueueStorage
-from azure.storage.queue._generated.models import StorageServiceProperties, StorageErrorException
+from .._shared.policies_async import ExponentialRetry
+from ..queue_service_client import QueueServiceClient as QueueServiceClientBase
+from .._shared.models import LocationMode
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.response_handlers import process_storage_error
+from .._generated.aio import AzureQueueStorage
+from .._generated.models import StorageServiceProperties, StorageErrorException
 
-from azure.storage.queue.aio.models import QueuePropertiesPaged
+from .models import QueuePropertiesPaged
 from .queue_client_async import QueueClient
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from azure.storage.queue._shared.models import AccountSasPermissions, ResourceTypes
-    from azure.storage.queue.aio.models import (
-        QueueProperties
+    from ..models import (
+        QueueProperties,
+        Logging,
+        Metrics,
+        CorsRule,
     )
-    from azure.storage.queue.models import Logging, Metrics, CorsRule
 
 
 class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):

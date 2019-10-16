@@ -12,10 +12,9 @@ from datetime import timedelta
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file.aio import (
-    FileServiceClient,
-    StorageErrorCode,
-)
+from azure.storage.file import StorageErrorCode
+from azure.storage.file.aio import FileServiceClient
+
 from filetestcase import (
     FileTestCase,
     record,
