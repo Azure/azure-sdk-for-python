@@ -18,7 +18,8 @@ should be imported from azure.storage.queue.aio
   - `timeout` etc.
 - `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
 to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
-
+- Client and model files have been renamed to be internal. Users should import from the top level modules: 
+`azure.storage.queue` and `azure.storage.queue.aio` only.
 
  **New features**
  
