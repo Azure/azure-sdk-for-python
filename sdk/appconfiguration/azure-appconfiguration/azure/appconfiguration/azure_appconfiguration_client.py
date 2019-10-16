@@ -210,7 +210,7 @@ class AzureAppConfigurationClient:
             )
             return ConfigurationSetting._from_key_value(key_value)
         except ResourceNotModifiedError:
-            return  None
+            return None
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
