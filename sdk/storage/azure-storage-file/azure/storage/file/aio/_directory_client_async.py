@@ -31,6 +31,7 @@ from ._file_client_async import FileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from .._models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
     from .._generated.models import HandleItem
 
@@ -144,7 +145,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
-    async def create_directory(self, **kwargs): # type: ignore
+    async def create_directory(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
@@ -330,7 +331,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         return response # type: ignore
 
     @distributed_trace_async
-    async def set_directory_metadata(self, metadata, **kwargs): # type: ignore
+    async def set_directory_metadata(self, metadata, **kwargs):
         # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
@@ -364,7 +365,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
-                               **kwargs):  # type: ignore
+                               **kwargs  # type: Any
+                               ):
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.
 

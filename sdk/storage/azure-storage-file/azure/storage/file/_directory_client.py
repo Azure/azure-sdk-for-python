@@ -34,6 +34,7 @@ from ._file_client import FileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from ._models import ShareProperties, DirectoryProperties, ContentSettings
     from ._generated.models import HandleItem
 
@@ -178,10 +179,10 @@ class DirectoryClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            share_name=None, # type: str
-            directory_path=None, # type: Optional[str]
-            credential=None, # type: Optional[Any]
-            **kwargs # type: Any
+            share_name,  # type: str
+            directory_path,  # type: str
+            credential=None,  # type: Optional[Any]
+            **kwargs  # type: Any
         ):
         # type: (...) -> DirectoryClient
         """Create DirectoryClient from a Connection String.
@@ -249,7 +250,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace
-    def create_directory(self, **kwargs):  # type: ignore
+    def create_directory(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
@@ -285,7 +286,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_directory(self, **kwargs):
-        # type: (Optional[int], **Any) -> None
+        # type: (**Any) -> None
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
@@ -437,7 +438,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         return response # type: ignore
 
     @distributed_trace
-    def set_directory_metadata(self, metadata, **kwargs): # type: ignore
+    def set_directory_metadata(self, metadata, **kwargs):
         # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
@@ -471,7 +472,8 @@ class DirectoryClient(StorageAccountHostsMixin):
                          file_last_write_time="preserve",  # type: Union[str, datetime]
                          file_permission=None,   # type: Optional[str]
                          permission_key=None,   # type: Optional[str]
-                         **kwargs):  # type: ignore
+                         **kwargs  # type: Any
+                         ):
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.
 

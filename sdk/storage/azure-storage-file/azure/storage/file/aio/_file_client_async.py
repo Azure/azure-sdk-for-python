@@ -400,7 +400,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     @distributed_trace_async
     async def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], Any) -> Dict[str, Any]
+        # type: (Union[str, FileProperties], Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -542,9 +542,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
-                               **kwargs  # Any
-                               ):  # type: ignore
-        # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
+                               **kwargs  # type: Any
+                               ):
+        # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.ContentSettings content_settings:
@@ -692,11 +692,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_range_from_url(self, source_url,  # type: str
-                                    range_start,  # type: int
-                                    range_end,  # type: int
-                                    source_range_start,  # type: int
-                                    **kwargs  # type: Any
+    async def upload_range_from_url(self, source_url,
+                                    range_start,
+                                    range_end,
+                                    source_range_start,
+                                    **kwargs
                                     ):
         # type: (str, int, int, int, **Any) -> Dict[str, Any]
         '''
@@ -749,7 +749,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         end_range=None,  # type: Optional[int]
         **kwargs
     ):
-        # type: (...) -> List[dict[str, int]]
+        # type: (...) -> List[Dict[str, int]]
         """Returns the list of valid ranges of a file.
 
         :param int start_range:
@@ -831,7 +831,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def resize_file(self, size, **kwargs):  # type: ignore
+    async def resize_file(self, size, **kwargs):
         # type: (int, Any) -> Dict[str, Any]
         """Resizes a file to the specified size.
 

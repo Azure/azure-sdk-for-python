@@ -34,6 +34,7 @@ from .response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.transport import HttpRequest
     from azure.core import Configuration
 _LOGGER = logging.getLogger(__name__)
 
