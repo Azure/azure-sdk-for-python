@@ -14,6 +14,8 @@ detail the new keyword arguments):
 - `CryptographyClient` operations return class instances instead of tuples. The
 new classes have the same attributes as the tuples.
 - Renamed `list_keys` to `list_properties_of_keys`
+- Renamed sync method `delete_key` to `begin_delete_key`
+- The sync method `begin_delete_key` and async `delete_key` now return pollers that return a `DeletedKey`
 - Renamed `Key` to `KeyVaultKey`
 - `KeyVaultKey` properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
