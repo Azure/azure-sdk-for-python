@@ -177,10 +177,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             "Missing required deleted key attributes.",
         )
 
-        await self._poll_until_no_exception(
-            client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
-        )
-
         # get the deleted key when soft deleted enabled
         deleted_key = await client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -254,10 +250,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         for key_name in expected.keys():
             await client.delete_key(key_name)
 
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
-        )
-
         # validate list deleted keys with attributes
         async for deleted_key in client.list_deleted_keys():
             self.assertIsNotNone(deleted_key.deleted_date)
@@ -313,9 +305,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # delete them
         for key_name in keys.keys():
             await client.delete_key(key_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
-        )
 
         # recover them
         for key_name in keys.keys():
@@ -350,9 +339,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # delete them
         for key_name in keys.keys():
             await client.delete_key(key_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
-        )
 
         # purge them
         for key_name in keys.keys():

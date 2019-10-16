@@ -112,7 +112,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_key]
 
         # delete a key
-        deleted_key = key_client.delete_key("key-name")
+        deleted_key = key_client.begin_delete_key("key-name").result()
 
         print(deleted_key.name)
 
@@ -186,7 +186,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        key_client.delete_key(key_name)
+        key_client.begin_delete_key(key_name).wait()
 
         # [START restore_key_backup]
 
@@ -202,10 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        key_client.delete_key(created_key.name)
-        self._poll_until_no_exception(
-            functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-        )
+        key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)

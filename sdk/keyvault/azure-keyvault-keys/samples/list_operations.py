@@ -77,8 +77,7 @@ try:
     # Both the rsa key and ec key are not needed anymore. Let's delete those keys.
     print("\n.. Delete the created keys...")
     for key_name in (ec_key.name, rsa_key.name):
-        client.delete_key(key_name)
-    time.sleep(10)
+        client.delete_key(key_name).wait()
 
     # You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted keys from the Key Vault (requires soft-delete)")

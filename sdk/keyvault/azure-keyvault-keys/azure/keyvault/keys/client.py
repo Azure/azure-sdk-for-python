@@ -3,10 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from functools import partial
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from .models import Key, KeyProperties, DeletedKey
+from ._polling import DeleteKeyPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -162,13 +165,14 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace
-    def delete_key(self, name, **kwargs):
+    def begin_delete_key(self, name, **kwargs):
         # type: (str, **Any) -> DeletedKey
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: The deleted key
-        :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :returns: An LROPoller for the delete key operation. Waiting on the poller
+         gives you the DeletedKey
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.models.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -181,8 +185,11 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedKey._from_deleted_key_bundle(bundle)
+        
+        self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        command = partial(self.get_deleted_key, name=name, **kwargs)
+        delete_key_polling = DeleteKeyPoller()
+        return LROPoller(command, "deleting", None, delete_key_polling)
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):

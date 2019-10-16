@@ -4,13 +4,16 @@
 # ------------------------------------
 from datetime import datetime
 from typing import TYPE_CHECKING
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyProperties
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
+from azure.core.polling import async_poller
 
 from .._shared.exceptions import error_map as _error_map
+from ._polling_async import DeleteKeyPollerAsync
 
 
 if TYPE_CHECKING:
@@ -161,7 +164,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: The deleted key
+        :returns: A coroutine for the deletion of the key. Awaiting the coroutine returns
+         the deleted key with information about its deletion.
         :rtype: ~azure.keyvault.keys.models.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -175,8 +179,11 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedKey._from_deleted_key_bundle(bundle)
+        await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        command = partial(self.get_deleted_key, name=name, **kwargs)
+
+        delete_key_poller = DeleteKeyPollerAsync()
+        return await async_poller(command, "deleting", None, delete_key_poller)
 
     @distributed_trace_async
     async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> Key:

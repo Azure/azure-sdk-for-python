@@ -205,9 +205,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         created_key = await key_client.create_key("key-name", "RSA")
 
         await key_client.delete_key(created_key.name)
-        await self._poll_until_no_exception(
-            key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-        )
+        # await self._poll_until_no_exception(
+        #     key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+        # )
 
         # [START get_deleted_key]
 
