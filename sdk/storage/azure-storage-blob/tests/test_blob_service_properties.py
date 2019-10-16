@@ -122,7 +122,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Act
         resp = self.bsc.set_service_properties(
-            logging=BlobAnalyticsLogging(),
+            analytics_logging=BlobAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list(),
@@ -313,7 +313,7 @@ class ServicePropertiesTest(StorageTestCase):
         logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.bsc.set_service_properties(logging=logging)
+        self.bsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = self.bsc.get_service_properties()

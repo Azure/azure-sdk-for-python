@@ -113,7 +113,7 @@ class QueueServicePropertiesTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         # Act
         resp = qsc.set_service_properties(
-            logging=QueueAnalyticsLogging(),
+            analytics_logging=QueueAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list())
@@ -133,7 +133,7 @@ class QueueServicePropertiesTest(QueueTestCase):
         logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        qsc.set_service_properties(logging=logging)
+        qsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = qsc.get_service_properties()

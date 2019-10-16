@@ -125,7 +125,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
 
         # Act
         resp = await qsc.set_service_properties(
-            logging=QueueAnalyticsLogging(),
+            analytics_logging=QueueAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list())
@@ -145,7 +145,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        await qsc.set_service_properties(logging=logging)
+        await qsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = await qsc.get_service_properties()

@@ -138,7 +138,7 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
         # Act
         resp = await self.bsc.set_service_properties(
-            logging=BlobAnalyticsLogging(),
+            analytics_logging=BlobAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list(),
@@ -365,7 +365,7 @@ class ServicePropertiesTestAsync(StorageTestCase):
         logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        await self.bsc.set_service_properties(logging=logging)
+        await self.bsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = await self.bsc.get_service_properties()
