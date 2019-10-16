@@ -199,15 +199,18 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value = self._impl.get_key_value(
-            key=key,
-            label=label,
-            if_match=prep_if_match(etag, match_condition),
-            if_none_match=prep_if_none_match(etag, match_condition),
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = self._impl.get_key_value(
+                key=key,
+                label=label,
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except ResourceNotModifiedError:
+            return  None
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
