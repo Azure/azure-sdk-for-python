@@ -6,6 +6,7 @@ import asyncio
 import itertools
 import hashlib
 import os
+import pytest
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -418,6 +419,7 @@ class CertificateClientTests(KeyVaultTestCase):
             actual[k] = await client.get_certificate_version(name=k, version="")
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
+    @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
@@ -429,7 +431,7 @@ class CertificateClientTests(KeyVaultTestCase):
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
             secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
+            issuer_parameters=IssuerParameters(name="Unknown"),
             x509_certificate_properties=X509CertificateProperties(
                 subject="CN=*.microsoft.com",
                 subject_alternative_names=SubjectAlternativeNames(dns_names=["sdk.azure-int.net"]),
@@ -438,7 +440,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # create certificate
-        create_certificate_poller = client.create_certificate(
+        await client.create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
 
@@ -453,7 +455,14 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_policy=cert_policy,
         )
 
-        self.assertEqual((await create_certificate_poller).status.lower(), "cancelled")
+        cancelled = False
+        for _ in range(10):
+            if (await client.get_certificate_operation(name=cert_name)).status.lower() == "cancelled":
+                cancelled = True
+                break
+            await asyncio.sleep(10)
+        self.assertTrue(cancelled)
+
 
         retrieved_operation = await client.get_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(retrieved_operation, "cancellation_requested"))
