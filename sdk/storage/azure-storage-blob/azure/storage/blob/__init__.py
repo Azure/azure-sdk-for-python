@@ -56,6 +56,7 @@ __version__ = VERSION
 __all__ = [
     'BlobServiceClient',
     'ContainerClient',
+    'BlobClient',
     'BlobType',
     'LeaseClient',
     'StorageErrorCode',
