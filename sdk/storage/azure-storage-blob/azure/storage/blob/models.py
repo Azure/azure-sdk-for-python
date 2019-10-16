@@ -114,7 +114,7 @@ class PublicAccess(str, Enum):
     """
 
 
-class Logging(GeneratedLogging):
+class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
     :param str version:
