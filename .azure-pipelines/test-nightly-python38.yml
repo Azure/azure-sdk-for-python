@@ -1,0 +1,42 @@
+trigger:
+  - master
+
+jobs:
+
+  - job: Validate_Nightly_Using_Python38
+    variables:
+      skipComponentGovernanceDetection: true
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.7 For Build Tools'
+        inputs:
+          versionSpec: '3.7'
+
+      - script: |
+          sudo apt-get update
+          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+          cd ~/
+          wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
+          tar -xf Python-3.8.0.tar.xz
+          cd Python-3.8.0
+          ../configure --enable-optimizations --prefix=$HOME
+          sudo make install
+          cd $(Build.SourcesDirectory)
+          PATH=/home/vsts/bin:$PATH
+          python3 -m ensurepip
+          pip install wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
+          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml" --toxenv="whl"
+        displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: '**/junit/test-results.xml'
+          testRunTitle: '$(OSName) Python $(PythonVersion)'
