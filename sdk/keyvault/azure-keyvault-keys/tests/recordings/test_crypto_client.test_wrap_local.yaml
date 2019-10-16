@@ -2,149 +2,421 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/create?api-version=7.0
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/create?api-version=7.0
   response:
-    body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
-        a Bearer or PoP token."}}'}
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['87']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:42:17 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      strict-transport-security: [max-age=31536000;includeSubDomains]
-      www-authenticate: ['Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
-          resource="https://vault.azure.net"']
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.879]
-      x-powered-by: [ASP.NET]
-    status: {code: 401, message: Unauthorized}
+      cache-control:
+      - no-cache
+      content-length:
+      - '87'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
 - request:
     body: '{"kty": "RSA", "key_size": 4096}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['32']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/create?api-version=7.0
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"32dAz6OJ9MEW-8IYaX70FFNuD9Q6-TNL94H6QsA1FmULCnG2Fb0Eq3zQsvrWjQAayEsWKAE9BFJT_2YZkR5JashvQ8PAKOUStsq4EwmDBT5ZaY1g6hDiHL1G3uPu_knzisjmi_E4jxIdTsx7NFh9cPkSP4N-8azU26PgylwJ8ybqJHWwOGpPS5QuCZ3zxibofTStEfjxepMU36rI8km5gvN9WrZqcdEemvDJhAZV245vby1VBOgkcip3Tsx2JTPJj1sxFh0Jd-9_uPhlhxiNJEBlVss3z3w8KUrH0wwpA2bIAjM8-4N6OfwwZjN2rc0ubQ9TR2dRU6MMtIgy69dihBOI8O8g_73gXxFnKueWdoX5mGBGwAcTX735yH0VqG7dxZWZZXZUfrWLAQ8YzIx2x7PqH_64UbUTIhgIgrHS_ZLRIoNXPQWIrrkFSd0TlcFxBrvWN1iQ_bfYhkiDx0OFaitMyk8JBKWJisqLolTz7m2cenlUbuBs40Y0pYERf4aJVhWrJRmfRCsk-S_zNOntRve8GUG0MS6z5VKMWkvwqHr8felqXabFF4PQmen94bdjoPOLdAkZwOoi16ar6jTCQ5UoMDPf0zxFxoHTY9vAbuzB9EyHHwxvEvahlsUTjMA7heKkGTONy0Fwm0bXX9ZWkVGKjIdywgc2lDN3EDbecnc","e":"AQAB"},"attributes":{"enabled":true,"created":1570214539,"updated":1570214539,"recoveryLevel":"Purgeable"}}'}
+    body:
+      string: '{"key":{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yIMJSRJYAMY5vP4F6RkCJDlaRYkFNyZ4sRWiuRKTmb3krAkiwRHWvraeyyk5eXCgTAhiEDDu-f9O536OXfeNKQU1L0fRrNtwwrPRgnZ8_mwjLNsP90qicV3iDt2L01zzKU1JK1oPmcze5aI8EX2ks3wI6J3pqoL3O-kyZaq8MXjnDGQUSC_PyBjRzGalUWXkYCXrCnqG-Pz6HOhgqa9HFCF2tAaIpe3MVUUAfbPlCFQens9NLdti3Wv08rCZMxzk479dd2fR8h38GEZCV7siLwqY0UvivD9LRyB9eQqd1o9KipdV6CPnudfHDJpMi_GlnJd3ekU9cK9OsN_0xytTHqzaAjRR-Mvs68feI02gXmdDyD4MqWRMuca7JyXsvwxUyAu9t7YfGsWmyZasPIiC2wwk-Z2npfhqx8A4IBZ_NXr_5dNJ4yFPXMMWJsyp8Qb98-MtEuWtgNABXO6f4yuTJ5coKA6z6ZMa4yZUdDzSGcP4C_iyok5p_eC6gdgfuC9HBv9rwkArf_bDE_5zHu9nhAc1P7f92W0pci7w5uQD7YKmAob8eWjnPJDgDxNzDaet642oB0lDuS9y_hCiYaH4X9jcp-3Z4bqyjd0rqPlMxbLYLSxe7TuArfVppCH91DnDX4diyIc3voLh22zhfCxWGOh8IVSxjkGL9KqPvDNicnk","e":"AQAB"},"attributes":{"enabled":true,"created":1566426710,"updated":1566426710,"recoveryLevel":"Purgeable"}}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['997']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:42:19 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      strict-transport-security: [max-age=31536000;includeSubDomains]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.879]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '987'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
 - request:
-    body: '{"alg": "RSA-OAEP", "value": "xFdutyW3VZAj8EO70-jR7lsEZdDu_bAxmRhWXfBiAVRJq3Fo38SMb99i8O3XG8WQ87RkBkwl7Lx8f7bqHSM5e8gP4e8sqsphpWUipqWEBl2GndFGT3m3jOUICpLlfcQl1WmxxQgY5NXtgtYYU3Rpjy1YJ6jIzHS6pn_0wiF0Ra1nRPapZOTBDBRZ30FssJ0Ky0kPh5USbJUp8YrZTWikkWiwCdIDvz54LUHbTHdmi_lex7n-1V9JEhSZEk6QOjbLR6TL1SXcRErUj6NYdQJ3Ov7Y__bubtl6j7OlVrWfgYBIKBGODf2Bi4e6dPFb4HAiivE7L-1XrVGIGWvKhnyIIde3CrNIRNZL97Ts3Txz5UC2BTUdyh9x4WbH_ICktBoxpvIICxo2uAaa2IaJzWYOLWUzBkrhEZgr8t_1Y_2TnyTx1CIKl1eP-uqIfbE25lsCMrNMnxbFsDolYkRJrygD5DQhmDrwstwrvxm7MsXZcf3ZKh8sFUeqnTA54pnfEaY0BYGseIV7S2p6wqu226WZKnDHiZNbqMnc3F43hdYfJOaRJOKmLsxxTI5li4v-d54YODRuIvGDz80ypUpKltsJ-kjZFXlwwV6yLaolNlsopfxsDlbhGEOnMhUAn8W1BC5P5MfS2CGyJilq5pxbDLEtIizRCRVjwYYU15B6mZQxu-g"}'
+    body: '{"alg": "RSA-OAEP", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['715']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '299'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f/unwrapkey?api-version=7.0
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/wrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"QTTT40Roy921XKodm3SS1RnMvmhYyEYMBDNFqOcFeGFaqHAw7OegPGLpNN03VI8JYmru2L4ORzheHNQMnyf5kXnVr81j7mCmJoS8ytHF4VPRAE9rLq0wAu98cuEo6x0I0okBA00l9vKSHcdCy4nHStzSgsev7KvIGmb-pZUj_KscXc3VX_bc6ybZNhdvbqpRSUtvJQRZBYzacWihuXoNHAjcKxRMgRiknA03x2RmptzBq9d7dLOhCG6SisV-DsSRqEzL5k4V0IV9ZgNysRanz3IzgZRy_RHe02P9rtoqG-Oi3B4TQXfhSK8jHdy37P1CQaaJq0M7m_obaMovMqdTv1Yxk1bIhd3_WdLvn2ORBvJBypEYvNtvWKMuRs2i5O3fqIPjcyWkWCsgjKUuXBU9bPSb0Bd9ecsHsHGx1WK5TRwWkk-TBB4wYVRqoCPjNe9Lr6LFSm4V-2yNmSnJkuSP0pnootO81idmVYE1SAXNzptiWeu7NTquTo7sh1UYc42Yq7l4kK4VHrUC6bIke7GsmRewNn1sX7GKcf0OXwz4kwYoFEdCEssc7LPQkRVFQxc07Zfi-YaWTvGz4zfZ6d7DL5k2DG4eJSVZfhYf2uAC5mAISRhk-KxsBIEBgo4OxlSE9yd0J7kfKJ3IbjZ34EUu3WR0z_SFHGw7DTUYnmKoVbw"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['384']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:42:19 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      strict-transport-security: [max-age=31536000;includeSubDomains]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.879]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '790'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
 - request:
-    body: '{"alg": "RSA-OAEP-256", "value": "FvRYv0yj5Vzxhm98rvTM_9WYml6vGrLPISgeOgaRyXN5cq7m5QqLLfHzRXpkZtoWso69W2HjN2e4RyuFC-Rt1vrOKSzV8DQtG0_rxrEu3HId3vLcxxOVZ04QGk_8s20TkCdqzlSxosnsUc7YQGaIbgErEXtYRzL1Ck3eySAQLNffOo_fLZmitklRXjCxWxG0l2VpZG2vN1ptP60OgdxeXSbqxNOqK9xUoWlEf9r9_-0mqVxIRemu5GNp8j_7fRYl6GqsX-36mVWaLoYow7UZ3jT7np-Ph6mZ4BsTvbCmydWcZ4wRRTj9ZcjX6qZ-dhqGFaxCyLQwC-ifDZdvq18CgN7gZKVQlyuCWqbbBV-NqZ0ISwA5UCNZWi9eyLdNSWpRX3suHapogXKwxfXS9kz-C8JdoF8CcPlLXBuGtwCeFX7HcLPnAQaDkteiipOkyi2oLTJgruZNnYPSq3SJ7zzdu1vt4EWjoZaJMhkq9GjbUmrCt_OzklmCs6cvkB81Ir8E8JMsaRRNx6LAUb-7aZvTuoUxfTDc8woQ55yrHIrfqI7GWtdeutQoFcycyx8VH3iMWTDHgOog4q3e4TpL0_x5d0jbp2enG4qjDmqj9_QhfYJ-XOjLTQVKAvZ0DVqief-L3Z27H1oGVnhz1SrkaGvn1_z_3xhsO1XkKVxl2VRmlNo"}'
+    body: '{"alg": "RSA-OAEP", "value": "QTTT40Roy921XKodm3SS1RnMvmhYyEYMBDNFqOcFeGFaqHAw7OegPGLpNN03VI8JYmru2L4ORzheHNQMnyf5kXnVr81j7mCmJoS8ytHF4VPRAE9rLq0wAu98cuEo6x0I0okBA00l9vKSHcdCy4nHStzSgsev7KvIGmb-pZUj_KscXc3VX_bc6ybZNhdvbqpRSUtvJQRZBYzacWihuXoNHAjcKxRMgRiknA03x2RmptzBq9d7dLOhCG6SisV-DsSRqEzL5k4V0IV9ZgNysRanz3IzgZRy_RHe02P9rtoqG-Oi3B4TQXfhSK8jHdy37P1CQaaJq0M7m_obaMovMqdTv1Yxk1bIhd3_WdLvn2ORBvJBypEYvNtvWKMuRs2i5O3fqIPjcyWkWCsgjKUuXBU9bPSb0Bd9ecsHsHGx1WK5TRwWkk-TBB4wYVRqoCPjNe9Lr6LFSm4V-2yNmSnJkuSP0pnootO81idmVYE1SAXNzptiWeu7NTquTo7sh1UYc42Yq7l4kK4VHrUC6bIke7GsmRewNn1sX7GKcf0OXwz4kwYoFEdCEssc7LPQkRVFQxc07Zfi-YaWTvGz4zfZ6d7DL5k2DG4eJSVZfhYf2uAC5mAISRhk-KxsBIEBgo4OxlSE9yd0J7kfKJ3IbjZ34EUu3WR0z_SFHGw7DTUYnmKoVbw"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['719']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '715'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f/unwrapkey?api-version=7.0
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/unwrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['384']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:42:19 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      strict-transport-security: [max-age=31536000;includeSubDomains]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.879]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
 - request:
-    body: '{"alg": "RSA1_5", "value": "nMPOppwFjQw-G2-qMI-NEKUvFpn-AxXizSOMlj02DIUyvm894vbCFV3BovwAlVnXyGyGZ8lnCDRKBw8buo47UNaKAxkQs1DB3lTE4RF1EtW8I4OqWXYkCCgXsbqVcx_VmfgIq-9nejAG-Fjl-kcMtEKdx5QJMcniKO-cTXKPmiZFM9vtWYgDo2kvscYsmOsNgjqyYwSSrHm54Yuvyc9BXt8ZXRpX0i2LxXzZrUUwLwvWXt6owcszsdiykP_haXAYWv9WVTMLHFc-kf6lRwcuLXwieXVzxTJL__Cab_8VMvUPQiNG4y05pXf2rfQ-WgWTp-bjS52unbbPjLSpFBhy8GuFnullelcoUTiyuO0xJFjucCYsUOvFsUO3sBqTFGzjGE3h2lGJcXbTq4g7eyI4JEP5ieaKSIke3qTuF4AlVIKGwTrvvBTt2M3bS5qfeeppUSFe2UUXCYt9LKaVWfxQJElhChVbIGa1N5NezfBQ0gxqFdgHo6QjGf2H74K09v0C5ZHU2N_QwbX4Co-_C9LF5yoQav8aA6xiEVEW4nipq-Nv14miaqC3bn31gJFH0tSMa5pEjQsfXPgPfSSaBoC4yIywqn9tsoTIx5imwTUasPGB_rh_7Dky4ns6oT0qY5M_S-VAk9oSAXUXwy-QIVy4fC99Qk_7VItJEjxiTDFlk-o"}'
+    body: '{"alg": "RSA-OAEP-256", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['713']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '303'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f/unwrapkey?api-version=7.0
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/wrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vault458ad70cc7f86c0e10.vault.azure.net/keys/wrap-local/02c67622217945fc89ad4193ed19501f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"Pgxj9EYniTVCY-zfnhNXFmz5yMlTh6rDxJ5Zoq3MSvwRKEYUtxfc_kl-QFG5zSjftLiiIsXJL8fxRjgq3nM0aamCXfbExMkozoGdRk6guPpTrca9vr7chXJYew9J6kwTaVQ52ZVjUEEqiQUIlO_Pcnjdzw7uoVLMDvK2qjpYN7RBn7C7nOlxuU3qDcOyMUc4pBkYooep0T6uFLgREpY8-OTkOFA_rLYa8sIiEzqf27cd-fLcv8WIHiqv2EZbusF2Wmt5vNoG6JXdibRGlmu5-FCX-PHJc9CbthIeCyu0Ym16hNzqFPAaH7Akr_oHV2Do7mMEFOeCQrLuFk6C5RkZ0FiSYZnjZii0W2f-eluBEb6hyj4DRkgOJArPVPb4LSWFIg1yCc-TUapNQR2oJLP7fhOc3lSbQv4hM_mBDq3Nryn8L10fb59GXuUA6wY1BLP5SZKD17dcU4_cjp8GmxuYrLqYtLtytlWT76JwgO2ZU5LKurlAC6cQA8zjI12ixDJt6NqQzM4nRMEMP5rwaNlrIuyER2_L6PmX6b_g9oWMMrNMBICZz6dTwDX4-GEQxJABssXd1oJN_TY1KAwnOUect9gNy9iOvW38ArYxHjmgwoEQ-t9vhaQtKP_uXZFFhfBakdhEg1aFtJSarQxhV3seDR-GjaCCP6yE08PmAZMJHZY"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['384']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 04 Oct 2019 18:42:19 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      strict-transport-security: [max-age=31536000;includeSubDomains]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.879]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '790'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP-256", "value": "Pgxj9EYniTVCY-zfnhNXFmz5yMlTh6rDxJ5Zoq3MSvwRKEYUtxfc_kl-QFG5zSjftLiiIsXJL8fxRjgq3nM0aamCXfbExMkozoGdRk6guPpTrca9vr7chXJYew9J6kwTaVQ52ZVjUEEqiQUIlO_Pcnjdzw7uoVLMDvK2qjpYN7RBn7C7nOlxuU3qDcOyMUc4pBkYooep0T6uFLgREpY8-OTkOFA_rLYa8sIiEzqf27cd-fLcv8WIHiqv2EZbusF2Wmt5vNoG6JXdibRGlmu5-FCX-PHJc9CbthIeCyu0Ym16hNzqFPAaH7Akr_oHV2Do7mMEFOeCQrLuFk6C5RkZ0FiSYZnjZii0W2f-eluBEb6hyj4DRkgOJArPVPb4LSWFIg1yCc-TUapNQR2oJLP7fhOc3lSbQv4hM_mBDq3Nryn8L10fb59GXuUA6wY1BLP5SZKD17dcU4_cjp8GmxuYrLqYtLtytlWT76JwgO2ZU5LKurlAC6cQA8zjI12ixDJt6NqQzM4nRMEMP5rwaNlrIuyER2_L6PmX6b_g9oWMMrNMBICZz6dTwDX4-GEQxJABssXd1oJN_TY1KAwnOUect9gNy9iOvW38ArYxHjmgwoEQ-t9vhaQtKP_uXZFFhfBakdhEg1aFtJSarQxhV3seDR-GjaCCP6yE08PmAZMJHZY"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '719'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/unwrapkey?api-version=7.0
+  response:
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA1_5", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '297'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/wrapkey?api-version=7.0
+  response:
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"dAuQrN7XDcBC4yZUbx--y1aT__M_yTRriokSt7WzPNYPy3bWkUtPd68vt3NWZ7KQT10UZBls5K7kHDZU07bfg_YIY4Zs2SDHDmNZfnhX6j1wp3Frcm9R9LwNFHqfujw3rOBGfZARjcpN2RFyBYFJ8Jm8nDTrEEWEQR1q_siZDDOIfIN61XCZuytP_UsnRWDtDoPCsZwHvLTCt-ZGhopbaKeefpGIDkNqNZGwFZuJEMRMa3-FxLnzwChT4Qk1QU61MnN12_PnwpO7zDzfERI6XAPVimDEYEKxheDbO-2yXbDRTf5BnDbleZWxcAPMS7Q0VYbNgjUJUSUlkda5AGL_k5D1728dae2O00ZJNOPoyMdP-EZDPpuQWZXQjDsuf5MVTfJ8NdgoI9jhNzw8-vjUCQdXJ8_lqjDq3UTq7IyjeAOSqVORSy5zZRITgay_oD5Ufk-UUppxH9Xs_gQgaguyXKXp5SqPUH4weU6Ht3m0B-TAsv4lRD-wSMgCWmB_v-2iI5D7AWwb07YpNvhytvMnxBrTarKoCemI-w1-9Oyg58Gf0f4Xw6V4Oo3eBmu_8NM1jCQzs_CUHodFGDIfnH4yG5HrySfRGpzWEfYqpoCqqLCuFDoedyi8roRu1DUvWbn1nGtwRHWM3N8Ul9VcH5KtRpA3hF6Wh1EYNq1vkDgdYRM"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '790'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA1_5", "value": "dAuQrN7XDcBC4yZUbx--y1aT__M_yTRriokSt7WzPNYPy3bWkUtPd68vt3NWZ7KQT10UZBls5K7kHDZU07bfg_YIY4Zs2SDHDmNZfnhX6j1wp3Frcm9R9LwNFHqfujw3rOBGfZARjcpN2RFyBYFJ8Jm8nDTrEEWEQR1q_siZDDOIfIN61XCZuytP_UsnRWDtDoPCsZwHvLTCt-ZGhopbaKeefpGIDkNqNZGwFZuJEMRMa3-FxLnzwChT4Qk1QU61MnN12_PnwpO7zDzfERI6XAPVimDEYEKxheDbO-2yXbDRTf5BnDbleZWxcAPMS7Q0VYbNgjUJUSUlkda5AGL_k5D1728dae2O00ZJNOPoyMdP-EZDPpuQWZXQjDsuf5MVTfJ8NdgoI9jhNzw8-vjUCQdXJ8_lqjDq3UTq7IyjeAOSqVORSy5zZRITgay_oD5Ufk-UUppxH9Xs_gQgaguyXKXp5SqPUH4weU6Ht3m0B-TAsv4lRD-wSMgCWmB_v-2iI5D7AWwb07YpNvhytvMnxBrTarKoCemI-w1-9Oyg58Gf0f4Xw6V4Oo3eBmu_8NM1jCQzs_CUHodFGDIfnH4yG5HrySfRGpzWEfYqpoCqqLCuFDoedyi8roRu1DUvWbn1nGtwRHWM3N8Ul9VcH5KtRpA3hF6Wh1EYNq1vkDgdYRM"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '713'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b2 Python/3.5.4 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f/unwrapkey?api-version=7.0
+  response:
+    body:
+      string: '{"kid":"https://vaultf86c0e10.vault.azure.net/keys/wrap-local/33bb009a315e4aab924dc23cb6ab628f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Aug 2019 22:31:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.153;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.876
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
 version: 1
