@@ -14,11 +14,10 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
-
+from azure.storage.file import FileProperties
 from azure.storage.file.aio import (
     FileClient,
     FileServiceClient,
-    FileProperties
 )
 from filetestcase import (
     FileTestCase,
@@ -99,7 +98,7 @@ class StorageGetFileTest(FileTestCase):
             byte_file = self.directory_name + '/' + self.byte_file
             file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=byte_file,
                 credential=self.get_shared_key_credential()
             )
@@ -130,7 +129,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -158,7 +157,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -184,7 +183,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -214,7 +213,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -241,7 +240,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -276,7 +275,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -313,7 +312,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -353,7 +352,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -384,7 +383,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -414,7 +413,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -453,7 +452,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -494,7 +493,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -541,14 +540,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = await share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -583,14 +582,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = await share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -633,14 +632,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = await share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -682,7 +681,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.upload_file(file_data)
@@ -694,7 +693,7 @@ class StorageGetFileTest(FileTestCase):
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -738,7 +737,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -770,7 +769,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -801,7 +800,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -833,7 +832,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -874,7 +873,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -901,7 +900,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -935,7 +934,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -968,7 +967,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1003,7 +1002,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1033,7 +1032,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1071,7 +1070,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1109,7 +1108,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1148,7 +1147,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1175,7 +1174,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1211,7 +1210,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1243,7 +1242,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1272,14 +1271,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = await share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1315,14 +1314,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = await share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1349,7 +1348,7 @@ class StorageGetFileTest(FileTestCase):
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1391,7 +1390,7 @@ class StorageGetFileTest(FileTestCase):
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE + self.MAX_CHUNK_GET_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1431,7 +1430,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1457,7 +1456,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1490,7 +1489,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1516,7 +1515,7 @@ class StorageGetFileTest(FileTestCase):
         await self._setup()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,

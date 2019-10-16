@@ -17,16 +17,21 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob._shared.policies import StorageContentValidation
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+
+from azure.storage.blob import (
     BlobProperties,
     BlobSasPermissions,
     BlobType,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    StorageErrorCode)
+    StorageErrorCode
+)
+
+from azure.storage.blob.aio import (
+    BlobServiceClient,
+    ContainerClient,
+    BlobClient,
+)
 
 from testcase import (
     StorageTestCase,

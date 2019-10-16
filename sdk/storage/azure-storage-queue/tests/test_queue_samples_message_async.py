@@ -39,7 +39,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
         try:
             # [START async_set_access_policy]
             # Create an access policy
-            from azure.storage.queue.aio import AccessPolicy, QueueSasPermissions
+            from azure.storage.queue import AccessPolicy, QueueSasPermissions
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
@@ -59,7 +59,7 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # Authenticate with the sas token
             # [START async_create_queue_client]
             from azure.storage.queue.aio import QueueClient
-            q = QueueClient(
+            q = QueueClient.from_queue_url(
                 queue_url=queue_client.url,
                 credential=sas_token
             )

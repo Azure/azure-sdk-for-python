@@ -12,14 +12,15 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
-
-from azure.storage.queue.aio import (
-    QueueServiceClient,
-    QueueClient,
+from azure.storage.queue import (
     Logging,
     Metrics,
     CorsRule,
     RetentionPolicy
+)
+from azure.storage.queue.aio import (
+    QueueServiceClient,
+    QueueClient,
 )
 
 from asyncqueuetestcase import (

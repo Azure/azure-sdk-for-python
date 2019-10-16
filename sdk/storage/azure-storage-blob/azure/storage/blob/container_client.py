@@ -82,7 +82,8 @@ class ContainerClient(StorageAccountHostsMixin):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The full URI to the storage account.
+        The URI to the storage account. In order to create a client given the full URI to the container,
+        use the from_container_url classmethod.
     :param container_name:
         The container for the blob.
     :type container_name: str

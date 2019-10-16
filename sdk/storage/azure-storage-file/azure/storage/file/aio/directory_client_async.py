@@ -59,12 +59,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str directory_url:
-        The full URI to the directory. This can also be a URL to the storage account
-        or share, in which case the directory and/or share must also be specified.
-    :param share: The share for the directory. If specified, this value will override
-        a share value specified in the directory URL.
-    :type share: str or ~azure.storage.file.ShareProperties
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the
+        directory, use the from_directory_url classmethod.
+    :param share_name:
+        The name of the share for the directory.
+    :type share_name: str
     :param str directory_path:
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
@@ -74,21 +74,23 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
     def __init__( # type: ignore
-            self, directory_url,  # type: str
-            share=None, # type: Optional[Union[str, ShareProperties]]
-            directory_path=None, # type: Optional[str]
+            self, account_url,  # type: str
+            share_name, # type: str
+            directory_path, # type: str
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Any]
-            loop=None,  # type: Any
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
         super(DirectoryClient, self).__init__(
-            directory_url,
-            share=share,
+            account_url,
+            share_name=share_name,
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
@@ -111,9 +113,9 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
         return FileClient(
-            self.url, file_path=file_name, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -137,23 +139,19 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
         return DirectoryClient(
-            self.url, directory_path=directory_path, snapshot=self.snapshot, credential=self.credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
-    async def create_directory( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> Dict[str, Any]
+    async def create_directory(self, **kwargs): # type: ignore
+        # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -167,6 +165,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Creates a directory.
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
@@ -179,12 +179,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_directory(self, timeout=None, **kwargs):
-        # type: (Optional[int], **Any) -> None
+    async def delete_directory(self, **kwargs):
+        # type: (**Any) -> None
         """Marks the directory for deletion. The directory is
         later deleted during garbage collection.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -197,20 +197,21 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Deletes a directory.
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.directory.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files(self, name_starts_with=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[int], **Any) -> AsyncItemPaged
+    def list_directories_and_files(self, name_starts_with=None, **kwargs):
+        # type: (Optional[str], Any) -> AsyncItemPaged
         """Lists all the directories and files under the directory.
 
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.DirectoryProperties]
@@ -224,6 +225,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: List directories and files.
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.directory.list_files_and_directories_segment,
@@ -235,18 +237,19 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, timeout=None, **kwargs):
-        # type: (bool, Optional[int], Any) -> AsyncItemPaged
+    def list_handles(self, recursive=False, **kwargs):
+        # type: (bool, Any) -> AsyncItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
+        timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.directory.list_handles,
@@ -262,14 +265,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     async def close_handles(
             self, handle=None, # type: Union[str, HandleItem]
             recursive=False,  # type: bool
-            timeout=None, # type: Optional[int]
             **kwargs # type: Any
         ):
-        # type: (...) -> Any
+        # type: (...) -> int
         """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
 
         :param handle:
             Optionally, a specific handle to close. The default value is '*'
@@ -278,11 +277,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The number of file handles that were closed.
+        :rtype: int
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             handle_id = handle.id # type: ignore
         except AttributeError:
@@ -301,24 +301,25 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             process_storage_error(error)
 
         polling_method = CloseHandlesAsync(self._config.copy_polling_interval)
-        return async_poller(
+        return await async_poller(
             command,
             start_close,
             None,
             polling_method)
 
     @distributed_trace_async
-    async def get_directory_properties(self, timeout=None, **kwargs):
-        # type: (Optional[int], Any) -> DirectoryProperties
+    async def get_directory_properties(self, **kwargs):
+        # type: (Any) -> DirectoryProperties
         """Returns all user-defined metadata and system properties for the
         specified directory. The data returned does not include the directory's
         list of files.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryProperties
         :rtype: ~azure.storage.file.DirectoryProperties
         """
+        timeout = kwargs.pop('timeout', None)
         try:
             response = await self._client.directory.get_properties(
                 timeout=timeout,
@@ -329,8 +330,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         return response # type: ignore
 
     @distributed_trace_async
-    async def set_directory_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
-        # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
+    async def set_directory_metadata(self, metadata, **kwargs): # type: ignore
+        # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the directory.
 
         Each call to this operation replaces all existing metadata
@@ -340,11 +341,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param metadata:
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
@@ -362,12 +364,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                                file_last_write_time="preserve",  # type: Union[str, datetime]
                                file_permission=None,  # type: Optional[str]
                                permission_key=None,  # type: Optional[str]
-                               timeout=None,  # type: Optional[int]
                                **kwargs):  # type: ignore
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.
 
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
@@ -394,6 +395,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        timeout = kwargs.pop('timeout', None)
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
             return await self._client.directory.set_properties(  # type: ignore
@@ -411,8 +413,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     @distributed_trace_async
     async def create_subdirectory(
             self, directory_name,  # type: str
-            metadata=None, #type: Optional[Dict[str, Any]]
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> DirectoryClient
@@ -421,10 +421,10 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         :param str directory_name:
             The name of the subdirectory.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the subdirectory as metadata.
         :type metadata: dict(str, str)
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
@@ -438,6 +438,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Create a subdirectory.
         """
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.create_directory(metadata=metadata, timeout=timeout, **kwargs)
         return subdir # type: ignore
@@ -445,7 +447,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     @distributed_trace_async
     async def delete_subdirectory(
             self, directory_name,  # type: str
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -453,7 +454,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         :param str directory_name:
             The name of the subdirectory.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -466,6 +467,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :dedent: 12
                 :caption: Delete a subdirectory.
         """
+        timeout = kwargs.pop('timeout', None)
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.delete_directory(timeout=timeout, **kwargs)
 
@@ -474,12 +476,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             self, file_name,  # type: str
             data, # type: Any
             length=None, # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None, # type: Optional[ContentSettings]
-            validate_content=False,  # type: bool
-            max_concurrency=1,  # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',  # type: str
             **kwargs # type: Any
         ):
         # type: (...) -> FileClient
@@ -492,23 +488,23 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :param bool validate_content:
+        :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
             the wire if using http instead of https as https (the default) will
             already validate. Note that this MD5 hash is not stored with the
             file.
-        :param int max_concurrency:
+        :keyword int max_concurrency:
             Maximum number of parallel connections to use.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :returns: FileClient
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
@@ -526,19 +522,12 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         await file_client.upload_file(
             data,
             length=length,
-            metadata=metadata,
-            content_settings=content_settings,
-            validate_content=validate_content,
-            max_concurrency=max_concurrency,
-            timeout=timeout,
-            encoding=encoding,
             **kwargs)
         return file_client # type: ignore
 
     @distributed_trace_async
     async def delete_file(
             self, file_name,  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs  # type: Optional[Any]
         ):
         # type: (...) -> None
@@ -547,7 +536,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         :param str file_name:
             The name of the file to delete.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
 
@@ -561,4 +550,4 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :caption: Delete a file in a directory.
         """
         file_client = self.get_file_client(file_name)
-        await file_client.delete_file(timeout, **kwargs)
+        await file_client.delete_file(**kwargs)

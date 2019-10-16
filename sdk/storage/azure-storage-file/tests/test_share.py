@@ -114,7 +114,7 @@ class StorageShareTest(FileTestCase):
         share_props = share.get_share_properties()
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -156,7 +156,7 @@ class StorageShareTest(FileTestCase):
 
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -198,7 +198,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -342,7 +342,7 @@ class StorageShareTest(FileTestCase):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
-        share.create_share(metadata)
+        share.create_share(metadata=metadata)
 
         # Act
 
@@ -406,7 +406,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -421,7 +421,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = client.create_share(metadata)
+        created = client.create_share(metadata=metadata)
         snapshot = client.create_snapshot()
         snapshot_client = self.fsc.get_share_client(client.share_name, snapshot=snapshot)
 
@@ -731,7 +731,7 @@ class StorageShareTest(FileTestCase):
         )
         sas_client = FileClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
         )

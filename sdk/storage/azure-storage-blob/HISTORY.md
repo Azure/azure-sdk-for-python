@@ -5,7 +5,7 @@
 **Breaking changes**
 
 - `set_container_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 - `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
 - The public attributes of `StorageStreamDownloader` have been limited:
   - `name` (str): The name of the blob.
@@ -19,6 +19,8 @@
   - `overwrite`
   - `max_concurrency`
   - `encoding`
+- Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
+`BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
 
 **New features**
 

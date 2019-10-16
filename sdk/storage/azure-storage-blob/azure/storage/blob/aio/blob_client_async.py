@@ -64,7 +64,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     :ivar str location_mode:
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
-    :param str account_url: The full URI to the account.
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the blob,
+        use the `from_blob_url` classmethod.
     :param container_name: The container for the blob.
     :type container_name: str
     :param blob_name: The mame of the blob with which to interact.

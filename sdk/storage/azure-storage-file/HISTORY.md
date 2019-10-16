@@ -4,9 +4,24 @@
 
 **Breaking changes**
 
+- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`. 
+To use a share_url, the method `from_share_url` must be used.
+- `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
+To use a directory_url, the method `from_directory_url` must be used.
+- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and 
+`file_path`. To use a file_url, the method `from_file_url` must be used.
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, 
+`DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+
 
 **New features**
 

@@ -15,12 +15,15 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob import (
+    StorageErrorCode,
+    BlobProperties
+)
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    StorageErrorCode,
-    BlobProperties
 )
 from testcase import (
     StorageTestCase,
