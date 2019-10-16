@@ -20,9 +20,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run mypy against target folder. "
-    )
+    parser = argparse.ArgumentParser(description="Run mypy against target folder. ")
 
     parser.add_argument(
         "-t",
@@ -37,20 +35,14 @@ if __name__ == "__main__":
 
     try:
         check_call(
-            [
-                sys.executable,
-                "-m",
-                "mypy",
-                os.path.join(args.target_package, "azure"),
-            ]
+            [sys.executable, "-m", "mypy", os.path.join(args.target_package, "azure")]
         )
     except CalledProcessError as e:
-        logging.error(
-            "{} exited with mypy error {}".format(package_name, e.returncode)
-        )
-        
+        logging.error("{} exited with mypy error {}".format(package_name, e.returncode))
+
         # return failure if package has opted in mark mypy failure as hard error
         if package_name in MYPY_HARD_FAILURE_OPTED:
-            logging.error("Package {} has opted to fail CI when mypy fails".format(package_name))
+            logging.error(
+                "Package {} has opted to fail CI when mypy fails".format(package_name)
+            )
             exit(1)
-        
