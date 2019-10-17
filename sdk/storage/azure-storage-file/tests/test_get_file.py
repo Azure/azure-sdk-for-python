@@ -654,7 +654,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(offset=0, length=0).download_to_stream(stream)
+            props = file_client.download_file(offset=0, length=1).download_to_stream(stream)
 
         # Assert
         self.assertIsInstance(props, FileProperties)
@@ -711,7 +711,7 @@ class StorageGetFileTest(FileTestCase):
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
             props = file_client.download_file(
-                offset=start_range, length=end_range, raw_response_hook=callback).download_to_stream(
+                offset=start_range, length=end_range-start_range+1, raw_response_hook=callback).download_to_stream(
                     stream, max_concurrency=2)
 
         # Assert
@@ -789,16 +789,17 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(file_data)
 
         # Act
+        start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
             props = file_client.download_file(
-                offset=1, length=end_range).download_to_stream(stream, max_concurrency=2)
+                offset=start, length=end_range-start+1).download_to_stream(stream, max_concurrency=2)
 
         # Assert
         self.assertIsInstance(props, FileProperties)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(file_data[1:file_size], actual)
+            self.assertEqual(file_data[start:file_size], actual)
 
     @record
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self):
@@ -817,16 +818,17 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(file_data)
 
         # Act
+        start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
             props = file_client.download_file(
-                offset=1, length=end_range).download_to_stream(stream, max_concurrency=1)
+                offset=start, length=end_range-start+1).download_to_stream(stream, max_concurrency=1)
 
         # Assert
         self.assertIsInstance(props, FileProperties)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(file_data[1:file_size], actual)
+            self.assertEqual(file_data[start:file_size], actual)
 
     def test_get_file_to_text(self):
         # parallel tests introduce random order of requests, can only run live

@@ -568,10 +568,11 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511)
+        file_client.upload_range(data, offset=0, length=512)
 
         # Assert
         content = file_client.download_file().content_as_bytes()
+        self.assertEqual(len(data), 512)
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -582,7 +583,7 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511, validate_content=True)
+        file_client.upload_range(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -604,7 +605,7 @@ class StorageFileTest(FileTestCase):
         # Act
         with self.assertRaises(HttpResponseError):
             # when the source file has less bytes than 2050, throw exception
-            destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+            destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
     @record
     def test_update_range_from_file_url(self):
@@ -612,7 +613,7 @@ class StorageFileTest(FileTestCase):
         source_file_name = 'testfile'
         source_file_client = self._create_file(file_name=source_file_name)
         data = b'abcdefghijklmnop' * 32
-        source_file_client.upload_range(data, 0, 511)
+        source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
@@ -625,12 +626,12 @@ class StorageFileTest(FileTestCase):
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=511).content_as_bytes()
+        file_content = destination_file_client.download_file(offset=0, length=512).content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(511, file_ranges[0].get('end'))
@@ -644,7 +645,7 @@ class StorageFileTest(FileTestCase):
 
         source_file_client = self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
         data = b'abcdefghijklmnop' * 65536
-        source_file_client.upload_range(data, 0, end)
+        source_file_client.upload_range(data, offset=0, length=end+1)
 
         destination_file_name = 'filetoupdate1'
         destination_file_client = self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
@@ -658,12 +659,12 @@ class StorageFileTest(FileTestCase):
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=end+1, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        file_content = destination_file_client.download_file(offset=0, length=end+1).content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(end, file_ranges[0].get('end'))
@@ -677,7 +678,7 @@ class StorageFileTest(FileTestCase):
         file_client = self._create_file()
 
         # Act
-        resp = file_client.clear_range(0, 511)
+        resp = file_client.clear_range(offset=0, length=512)
 
         # Assert
         content = file_client.download_file().content_as_bytes()
@@ -691,7 +692,7 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511)
+        file_client.upload_range(data, offset=0, length=512)
 
         encoded = data.encode('utf-8')
 
@@ -732,8 +733,8 @@ class StorageFileTest(FileTestCase):
         file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
-        resp1 = file_client.upload_range(data, 0, 511)
-        resp2 = file_client.upload_range(data, 1024, 1535)
+        resp1 = file_client.upload_range(data, offset=0, length=512)
+        resp2 = file_client.upload_range(data, offset=1024, length=512)
 
         # Act
         ranges = file_client.get_ranges()
@@ -786,8 +787,8 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
-        resp1 = file_client.upload_range(data, 0, 511)
-        resp2 = file_client.upload_range(data, 1024, 1535)
+        resp1 = file_client.upload_range(data, offset=0, length=512)
+        resp2 = file_client.upload_range(data, offset=1024, length=512)
         
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
@@ -1438,7 +1439,7 @@ class StorageFileTest(FileTestCase):
         token = file_client.generate_shared_access_signature(policy_id='testid')
 
         # Act
-        sas_file = FileClient(
+        sas_file = FileClient.from_file_url(
             file_client.url,
             credential=token)
 
