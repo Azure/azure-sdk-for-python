@@ -1819,7 +1819,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=storage_account_key)
+            credential=rmt_key)
 
         with self.assertRaises(ValueError):
             download_blob_from_url(source_blob.url, FILE_PATH)
@@ -1846,13 +1846,13 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=storage_account_key)
+            credential=rmt_key)
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = await self._create_remote_block_blob(blob_data=data2)
         download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
-            credential=storage_account_key)
+            credential=rmt_key)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
