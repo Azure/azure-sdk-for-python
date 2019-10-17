@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AzureReservationAPIConfiguration
-from ._azure_reservation_api import AzureReservationAPI
-__all__ = ['AzureReservationAPI', 'AzureReservationAPIConfiguration']
+from ._configuration import MicrosoftCapacityConfiguration
+from ._microsoft_capacity import MicrosoftCapacity
+__all__ = ['MicrosoftCapacity', 'MicrosoftCapacityConfiguration']
 
 from .version import VERSION
 
