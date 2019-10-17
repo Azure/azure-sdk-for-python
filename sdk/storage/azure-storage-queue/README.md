@@ -73,12 +73,12 @@ The Storage Queues SDK provides two different clients to interact with the Queue
     can also be retrieved using the `get_queue_client` function.
 2. **QueueClient** - this client represents interaction with a specific
     queue, although that queue need not exist yet. It provides operations to create, delete, or
-    configure queues and includes operations to enqueue, receive, peak, delete, and update messages in the queue.
+    configure queues and includes operations to send, receive, peak, delete, and update messages in the queue.
 
 #### Messages
 
 Once you've initialized a Client, you can use the following operations to work with the messages in the queue:
-* **Enqueue** - Adds a message to the queue and optionally sets a visibility timeout for the message.
+* **Send** - Adds a message to the queue and optionally sets a visibility timeout for the message.
 * **Receive** - Retrieves a message from the queue and makes it invisible to other consumers.
 * **Peek** - Retrieves a message from the front of the queue, without changing the message visibility.
 * **Update** - Updates the visibility timeout of a message and/or the message contents.
@@ -92,7 +92,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Client creation with a connection string](#client-creation-with-a-connection-string)
 * [Create a queue](#create-a-queue)
-* [Enqueue messages](#enqueue-messages)
+* [Send messages](#send-messages)
 * [Receive messages](#receive-messages)
 
 
@@ -121,24 +121,24 @@ from azure.storage.queue.aio import QueueClient
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
 await queue.create_queue()
 ```
-### Enqueue messages
-Enqueue a message in your queue.
+### Send messages
+Send a message in your queue.
 
 ```python
 from azure.storage.queue import QueueClient
 
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
-queue.enqueue_message("I'm using queues!")
-queue.enqueue_message("This is my second message")
+queue.send_message("I'm using queues!")
+queue.send_message("This is my second message")
 ```
-Enqueue messages with an async client
+Send messages with an async client
 ```python
 from azure.storage.queue.aio import QueueClient
 
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
 await asyncio.gather(
-    queue.enqueue_message("I'm using queues!"),
-    queue.enqueue_message("This is my second message"))
+    queue.send_message("I'm using queues!"),
+    queue.send_message("This is my second message"))
 ```
 
 ### Receive messages
@@ -196,7 +196,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
 * [`test_queue_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_hello_world_async.py)) - Examples found in this article:
     * Client creation
     * Create a queue
-    * Enqueue messages
+    * Send messages
     * Receive messages
 
 * [`test_queue_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_authentication_async.py)) - Examples for authenticating and creating the client:
@@ -214,7 +214,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
 * [`test_queue_samples_message.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_message.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_message_async.py)) - Examples for working with queues and messages:
     * Set an access policy
     * Get and set queue metadata
-    * Enqueue and receive messages
+    * Send and receive messages
     * Delete specified messages and clear all messages
     * Peek and update messages
     
