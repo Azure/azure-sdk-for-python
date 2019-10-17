@@ -139,7 +139,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
-        :raises: :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
 
@@ -201,7 +201,8 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceNotModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
         Example
 
@@ -217,7 +218,7 @@ class AzureAppConfigurationClient:
             404: ResourceNotFoundError
         }
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
             error_map[304] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
@@ -241,7 +242,6 @@ class AzureAppConfigurationClient:
                 ClientAuthenticationError,
                 ResourceNotFoundError,
                 ResourceModifiedError,
-                ResourceNotFoundError,
                 ResourceExistsError
         ):
             raise
@@ -259,7 +259,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceExistsError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
 
         Example
 
@@ -320,7 +320,9 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
 
@@ -398,7 +400,9 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
 
@@ -463,7 +467,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
-        :raises: :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
 
@@ -519,7 +523,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
 
@@ -561,7 +565,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
 
