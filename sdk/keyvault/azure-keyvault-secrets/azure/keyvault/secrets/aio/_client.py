@@ -13,7 +13,7 @@ from azure.core.polling import async_poller
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from .._shared._delete_polling_async import DeleteResourcePollerAsync
+from .._shared._polling_async import DeleteResourcePollerAsync, RecoverDeletedResourcePollerAsync
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -247,8 +247,8 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant
          on the service side, we poll on the deletion of the secret. Awaiting this method returns
-         the DeletedSecret.
-        :rtype: ~azure.keyvault.keys.models.DeletedSecret
+         the deleted secret.
+        :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -261,12 +261,13 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
+        polling_interval = kwargs.pop("_polling_interval", 2)
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
         command = partial(self.get_deleted_secret, name=name, **kwargs)
 
-        delete_secret_poller = DeleteResourcePollerAsync()
+        delete_secret_poller = DeleteResourcePollerAsync(interval=polling_interval)
         return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async
@@ -342,7 +343,9 @@ class SecretClient(AsyncKeyVaultClientBase):
         Requires the secrets/recover permission.
 
         :param str name: Name of the secret
-        :returns: The recovered secret
+        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant
+         on the service side, we poll on the recovery of the secret. Awaiting this method returns
+         the recovered secret.
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -354,5 +357,11 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
-        return SecretProperties._from_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_secret = SecretProperties._from_secret_bundle(
+            await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_secret, name=name, **kwargs)
+
+        recover_secret_poller = RecoverDeletedResourcePollerAsync(interval=polling_interval)
+        return await async_poller(command, recovered_secret, None, recover_secret_poller)

@@ -50,7 +50,6 @@ async def run_sample():
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete a Secret")
         secret = await client.delete_secret(bank_secret.name)
-        await asyncio.sleep(20)
         print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
         # We accidentally deleted the bank account secret. Let's recover it.

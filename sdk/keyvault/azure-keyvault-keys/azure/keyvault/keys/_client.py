@@ -8,7 +8,7 @@ from azure.core.polling import LROPoller
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._delete_polling import DeleteResourcePoller
+from ._shared._polling import DeleteResourcePoller, RecoverDeletedResourcePoller
 from ._models import KeyVaultKey, KeyProperties, DeletedKey
 
 try:
@@ -171,11 +171,13 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key to delete.
         :returns: An LROPoller for the delete key operation. Deleting is not instant on the server side, so
-         we return a poller that polls until the key is deleted server side and then returns the DeletedKey.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.models.DeletedKey]
+         we return a poller that polls until the key is deleted server side and then returns the deleted key.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Keyword
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -185,12 +187,12 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-
+        polling_interval = kwargs.pop("_polling_interval", 2)
         deleted_key = DeletedKey._from_deleted_key_bundle(
             self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeleteResourcePoller()
+        delete_key_polling = DeleteResourcePoller(interval=polling_interval)
         return LROPoller(command, deleted_key, None, delete_key_polling)
 
     @distributed_trace
@@ -342,7 +344,7 @@ class KeyClient(KeyVaultClientBase):
         self._client.purge_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
 
     @distributed_trace
-    def recover_deleted_key(self, name, **kwargs):
+    def begin_recover_deleted_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
@@ -351,8 +353,9 @@ class KeyClient(KeyVaultClientBase):
         Requires the keys/recover permission.
 
         :param str name: The name of the deleted key
-        :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :returns: An LROPoller for the recover key operation. Recovering is not instant on the server side, so
+         we return a poller that polls until the key is recovered server side and then returns the recovered key.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -363,8 +366,13 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
-        return KeyVaultKey._from_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_key = KeyVaultKey._from_key_bundle(
+            self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
+        )
+        command = partial(self.get_key, name=name, **kwargs)
+        recover_key_poller = RecoverDeletedResourcePoller(interval=polling_interval)
+        return LROPoller(command, recovered_key, None, recover_key_poller)
 
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):

@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Delete a secret (begin_delete_secret)
 #
-# 3. Recover a deleted secret (recover_deleted_secret)
+# 3. Recover a deleted secret (begin_recover_deleted_secret)
 #
 # 4. Purge a deleted secret (purge_deleted_secret)
 # ----------------------------------------------------------------------------------------------------------
@@ -50,13 +50,12 @@ try:
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Secret")
     secret = client.begin_delete_secret(bank_secret.name).result()
-    time.sleep(20)
     print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
     # We accidentally deleted the bank account secret. Let's recover it.
     # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Secret")
-    recovered_secret = client.recover_deleted_secret(bank_secret.name)
+    recovered_secret = client.begin_recover_deleted_secret(bank_secret.name).result()
     print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
     # Let's delete storage account now.
