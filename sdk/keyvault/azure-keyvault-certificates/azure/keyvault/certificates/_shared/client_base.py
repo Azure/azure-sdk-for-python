@@ -4,7 +4,6 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.pipeline.transport import RequestsTransport

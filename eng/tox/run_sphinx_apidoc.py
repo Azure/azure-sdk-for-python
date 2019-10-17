@@ -12,7 +12,8 @@ from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
-from prep_sphinx_env import get_package_details, should_build_docs
+from prep_sphinx_env import should_build_docs
+from tox_helper_tasks import get_package_details
 import sys
 
 logging.getLogger().setLevel(logging.INFO)

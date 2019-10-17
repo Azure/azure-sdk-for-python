@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .client import CryptographyClient
+from ._client import CryptographyClient
 from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from .. import EncryptResult, SignResult, WrapKeyResult
 
