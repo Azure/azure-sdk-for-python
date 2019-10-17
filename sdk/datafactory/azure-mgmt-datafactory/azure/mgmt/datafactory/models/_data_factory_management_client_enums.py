@@ -347,6 +347,14 @@ class DynamicsAuthenticationType(str, Enum):
 
     office365 = "Office365"
     ifd = "Ifd"
+    aad_service_principal = "AADServicePrincipal"
+
+
+class OrcCompressionCodec(str, Enum):
+
+    none = "none"
+    zlib = "zlib"
+    snappy = "snappy"
 
 
 class OrcCompressionCodec(str, Enum):
