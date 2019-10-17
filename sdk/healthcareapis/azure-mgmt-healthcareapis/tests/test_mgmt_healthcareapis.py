@@ -24,7 +24,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 
-        SERVICE_NAME = "myapimgmtsvcxx"
+        SERVICE_NAME = "myapimrndxyz"
         BODY = {
           "location": "westus2",
           "kind": "fhir-R4",
