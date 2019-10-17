@@ -15,7 +15,6 @@ from msrest import Serializer, Deserializer
 from ._configuration import MicrosoftCapacityConfiguration
 from .operations import MicrosoftCapacityOperationsMixin
 from .operations import QuotaOperations
-from .operations import QuotaRequestOperations
 from .operations import QuotasOperations
 from .operations import QuotaRequestsOperations
 from .operations import AutoQuotaIncreaseOperations
@@ -33,8 +32,6 @@ class MicrosoftCapacity(MicrosoftCapacityOperationsMixin, SDKClient):
 
     :ivar quota: Quota operations
     :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
-    :ivar quota_request: QuotaRequest operations
-    :vartype quota_request: azure.mgmt.reservations.operations.QuotaRequestOperations
     :ivar quotas: Quotas operations
     :vartype quotas: azure.mgmt.reservations.operations.QuotasOperations
     :ivar quota_requests: QuotaRequests operations
@@ -71,8 +68,6 @@ class MicrosoftCapacity(MicrosoftCapacityOperationsMixin, SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.quota = QuotaOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.quota_request = QuotaRequestOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.quotas = QuotasOperations(
             self._client, self.config, self._serialize, self._deserialize)

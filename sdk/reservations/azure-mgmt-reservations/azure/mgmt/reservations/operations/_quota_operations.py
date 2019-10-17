@@ -38,7 +38,7 @@ class QuotaOperations(object):
 
         self.config = config
 
-    def list_status(
+    def get_status(
             self, subscription_id, provider_id, location, custom_headers=None, raw=False, **operation_config):
         """Gets the current quota limit and usages for the resource provider for
         the specified location for the specific resource in the parameter.
@@ -65,7 +65,7 @@ class QuotaOperations(object):
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
         # Construct URL
-        url = self.list_status.metadata['url']
+        url = self.get_status.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
@@ -109,4 +109,4 @@ class QuotaOperations(object):
             return client_raw_response
 
         return deserialized
-    list_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+    get_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/providers/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
