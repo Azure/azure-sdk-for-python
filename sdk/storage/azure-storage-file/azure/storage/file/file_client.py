@@ -1130,34 +1130,26 @@ class FileClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
-            The total number of handles closed. This could be 0 if the supplied
-            handle was not found.
+            The number of handles closed (this may be 0 if the specified handle was not found).
         :rtype: int
         """
-        timeout = kwargs.pop('timeout', None)
-        start_time = time.time()
         try:
             handle_id = handle.id # type: ignore
         except AttributeError:
             handle_id = handle
-        try_close = True
-        continuation_token = None
-        total_handles = 0
-        while try_close:
+        if handle_id == '*':
+            raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
+        try:
             response = self._client.file.force_close_handles(
                 handle_id,
-                timeout=timeout,
-                marker=continuation_token,
+                marker=None,
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs
             )
-            continuation_token = response.get('marker')
-            try_close = bool(continuation_token)
-            total_handles += response.get('number_of_handles_closed')
-            if timeout:
-                timeout = timeout - (time.time() - start_time)
-        return total_handles
+            return response.get('number_of_handles_closed', 0)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     @distributed_trace
     def close_all_handles(self, **kwargs):
@@ -1171,4 +1163,27 @@ class FileClient(StorageAccountHostsMixin):
         :returns: The total number of handles closed.
         :rtype: int
         """
-        return self.close_handle(handle='*', **kwargs)
+        timeout = kwargs.pop('timeout', None)
+        start_time = time.time()
+
+        try_close = True
+        continuation_token = None
+        total_handles = 0
+        while try_close:
+            try:
+                response = self._client.file.force_close_handles(
+                    handle_id='*',
+                    timeout=timeout,
+                    marker=continuation_token,
+                    sharesnapshot=self.snapshot,
+                    cls=return_response_headers,
+                    **kwargs
+                )
+            except StorageErrorException as error:
+                process_storage_error(error)
+            continuation_token = response.get('marker')
+            try_close = bool(continuation_token)
+            total_handles += response.get('number_of_handles_closed')
+            if timeout:
+                timeout = max(0, timeout - (time.time() - start_time))
+        return total_handles

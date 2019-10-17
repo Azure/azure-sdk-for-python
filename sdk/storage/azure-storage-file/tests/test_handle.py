@@ -186,6 +186,9 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
         # Act
+        with self.assertRaises(ValueError):
+            root.close_handle('*')
+
         num_closed = root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
