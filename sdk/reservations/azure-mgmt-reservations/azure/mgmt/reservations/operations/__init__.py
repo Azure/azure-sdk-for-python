@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._quota_operations import QuotaOperations
 from ._quotas_operations import QuotasOperations
 from ._quota_requests_operations import QuotaRequestsOperations
 from ._auto_quota_increase_operations import AutoQuotaIncreaseOperations
@@ -19,7 +18,6 @@ from ._operation_operations import OperationOperations
 from ._microsoft_capacity_operations import MicrosoftCapacityOperationsMixin
 
 __all__ = [
-    'QuotaOperations',
     'QuotasOperations',
     'QuotaRequestsOperations',
     'AutoQuotaIncreaseOperations',
