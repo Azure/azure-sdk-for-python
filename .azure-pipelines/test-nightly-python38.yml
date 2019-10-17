@@ -31,6 +31,8 @@ jobs:
           pip3 install tox
           pip3 install tox-monorepo 
           pip3 install setuptools
+          which tox
+          which setuptools
           python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
