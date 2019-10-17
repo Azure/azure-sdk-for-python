@@ -18,12 +18,14 @@ from .. import models
 class PolicyStatesOperations(object):
     """PolicyStatesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar management_groups_namespace: The namespace for Microsoft Management RP; only "Microsoft.Management" is allowed. Constant value: "Microsoft.Management".
-    :ivar api_version: Client Api Version. Constant value: "2018-07-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-10-01".
     :ivar policy_states_summary_resource: The virtual resource under PolicyStates resource type for summarize action. In a given time range, 'latest' represents the latest policy state(s) and is the only allowed value. Constant value: "latest".
     :ivar authorization_namespace: The namespace for Microsoft Authorization resource provider; only "Microsoft.Authorization" is allowed. Constant value: "Microsoft.Authorization".
     """
@@ -36,7 +38,7 @@ class PolicyStatesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.management_groups_namespace = "Microsoft.Management"
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-10-01"
         self.policy_states_summary_resource = "latest"
         self.authorization_namespace = "Microsoft.Authorization"
 
@@ -134,7 +136,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -216,7 +217,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -318,7 +318,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -399,7 +398,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -504,7 +502,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -588,7 +585,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -695,7 +691,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -776,7 +771,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -882,7 +876,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -968,7 +961,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -1074,7 +1066,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -1159,7 +1150,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -1265,7 +1255,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -1350,7 +1339,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -1459,7 +1447,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyStatesQueryResults', response)
 
@@ -1548,7 +1535,6 @@ class PolicyStatesOperations(object):
             raise models.QueryFailureException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SummarizeResults', response)
 
@@ -1558,61 +1544,3 @@ class PolicyStatesOperations(object):
 
         return deserialized
     summarize_for_resource_group_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize'}
-
-    def get_metadata(
-            self, scope, custom_headers=None, raw=False, **operation_config):
-        """Gets OData metadata XML document.
-
-        :param scope: A valid scope, i.e. management group, subscription,
-         resource group, or resource ID. Scope used has no effect on metadata
-         returned.
-        :type scope: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
-        """
-        # Construct URL
-        url = self.get_metadata.metadata['url']
-        path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_metadata.metadata = {'url': '/{scope}/providers/Microsoft.PolicyInsights/policyStates/$metadata'}

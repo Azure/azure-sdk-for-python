@@ -10,99 +10,105 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .policy_details_py3 import PolicyDetails
-    from .tracked_resource_modification_details_py3 import TrackedResourceModificationDetails
-    from .policy_tracked_resource_py3 import PolicyTrackedResource
-    from .query_failure_error_py3 import QueryFailureError
-    from .query_failure_py3 import QueryFailure, QueryFailureException
-    from .remediation_filters_py3 import RemediationFilters
-    from .remediation_deployment_summary_py3 import RemediationDeploymentSummary
-    from .remediation_py3 import Remediation
-    from .typed_error_info_py3 import TypedErrorInfo
-    from .error_definition_py3 import ErrorDefinition
-    from .remediation_deployment_py3 import RemediationDeployment
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .policy_event_py3 import PolicyEvent
-    from .policy_events_query_results_py3 import PolicyEventsQueryResults
-    from .expression_evaluation_details_py3 import ExpressionEvaluationDetails
-    from .if_not_exists_evaluation_details_py3 import IfNotExistsEvaluationDetails
-    from .policy_evaluation_details_py3 import PolicyEvaluationDetails
-    from .policy_state_py3 import PolicyState
-    from .policy_states_query_results_py3 import PolicyStatesQueryResults
-    from .summary_results_py3 import SummaryResults
-    from .policy_definition_summary_py3 import PolicyDefinitionSummary
-    from .policy_assignment_summary_py3 import PolicyAssignmentSummary
-    from .summary_py3 import Summary
-    from .summarize_results_py3 import SummarizeResults
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operations_list_results_py3 import OperationsListResults
-    from .query_options_py3 import QueryOptions
+    from ._models_py3 import ComplianceDetail
+    from ._models_py3 import ErrorDefinition
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ExpressionEvaluationDetails
+    from ._models_py3 import IfNotExistsEvaluationDetails
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationsListResults
+    from ._models_py3 import PolicyAssignmentSummary
+    from ._models_py3 import PolicyDefinitionSummary
+    from ._models_py3 import PolicyDetails
+    from ._models_py3 import PolicyEvaluationDetails
+    from ._models_py3 import PolicyEvent
+    from ._models_py3 import PolicyEventsQueryResults
+    from ._models_py3 import PolicyGroupSummary
+    from ._models_py3 import PolicyState
+    from ._models_py3 import PolicyStatesQueryResults
+    from ._models_py3 import PolicyTrackedResource
+    from ._models_py3 import QueryFailure, QueryFailureException
+    from ._models_py3 import QueryFailureError
+    from ._models_py3 import QueryOptions
+    from ._models_py3 import Remediation
+    from ._models_py3 import RemediationDeployment
+    from ._models_py3 import RemediationDeploymentSummary
+    from ._models_py3 import RemediationFilters
+    from ._models_py3 import SummarizeResults
+    from ._models_py3 import Summary
+    from ._models_py3 import SummaryResults
+    from ._models_py3 import TrackedResourceModificationDetails
+    from ._models_py3 import TypedErrorInfo
 except (SyntaxError, ImportError):
-    from .policy_details import PolicyDetails
-    from .tracked_resource_modification_details import TrackedResourceModificationDetails
-    from .policy_tracked_resource import PolicyTrackedResource
-    from .query_failure_error import QueryFailureError
-    from .query_failure import QueryFailure, QueryFailureException
-    from .remediation_filters import RemediationFilters
-    from .remediation_deployment_summary import RemediationDeploymentSummary
-    from .remediation import Remediation
-    from .typed_error_info import TypedErrorInfo
-    from .error_definition import ErrorDefinition
-    from .remediation_deployment import RemediationDeployment
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .policy_event import PolicyEvent
-    from .policy_events_query_results import PolicyEventsQueryResults
-    from .expression_evaluation_details import ExpressionEvaluationDetails
-    from .if_not_exists_evaluation_details import IfNotExistsEvaluationDetails
-    from .policy_evaluation_details import PolicyEvaluationDetails
-    from .policy_state import PolicyState
-    from .policy_states_query_results import PolicyStatesQueryResults
-    from .summary_results import SummaryResults
-    from .policy_definition_summary import PolicyDefinitionSummary
-    from .policy_assignment_summary import PolicyAssignmentSummary
-    from .summary import Summary
-    from .summarize_results import SummarizeResults
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operations_list_results import OperationsListResults
-    from .query_options import QueryOptions
-from .policy_tracked_resource_paged import PolicyTrackedResourcePaged
-from .remediation_deployment_paged import RemediationDeploymentPaged
-from .remediation_paged import RemediationPaged
-from .policy_insights_client_enums import (
+    from ._models import ComplianceDetail
+    from ._models import ErrorDefinition
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ExpressionEvaluationDetails
+    from ._models import IfNotExistsEvaluationDetails
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationsListResults
+    from ._models import PolicyAssignmentSummary
+    from ._models import PolicyDefinitionSummary
+    from ._models import PolicyDetails
+    from ._models import PolicyEvaluationDetails
+    from ._models import PolicyEvent
+    from ._models import PolicyEventsQueryResults
+    from ._models import PolicyGroupSummary
+    from ._models import PolicyState
+    from ._models import PolicyStatesQueryResults
+    from ._models import PolicyTrackedResource
+    from ._models import QueryFailure, QueryFailureException
+    from ._models import QueryFailureError
+    from ._models import QueryOptions
+    from ._models import Remediation
+    from ._models import RemediationDeployment
+    from ._models import RemediationDeploymentSummary
+    from ._models import RemediationFilters
+    from ._models import SummarizeResults
+    from ._models import Summary
+    from ._models import SummaryResults
+    from ._models import TrackedResourceModificationDetails
+    from ._models import TypedErrorInfo
+from ._paged_models import PolicyTrackedResourcePaged
+from ._paged_models import RemediationDeploymentPaged
+from ._paged_models import RemediationPaged
+from ._policy_insights_client_enums import (
     PolicyStatesResource,
 )
 
 __all__ = [
-    'PolicyDetails',
-    'TrackedResourceModificationDetails',
-    'PolicyTrackedResource',
-    'QueryFailureError',
-    'QueryFailure', 'QueryFailureException',
-    'RemediationFilters',
-    'RemediationDeploymentSummary',
-    'Remediation',
-    'TypedErrorInfo',
+    'ComplianceDetail',
     'ErrorDefinition',
-    'RemediationDeployment',
     'ErrorResponse', 'ErrorResponseException',
-    'PolicyEvent',
-    'PolicyEventsQueryResults',
     'ExpressionEvaluationDetails',
     'IfNotExistsEvaluationDetails',
+    'Operation',
+    'OperationDisplay',
+    'OperationsListResults',
+    'PolicyAssignmentSummary',
+    'PolicyDefinitionSummary',
+    'PolicyDetails',
     'PolicyEvaluationDetails',
+    'PolicyEvent',
+    'PolicyEventsQueryResults',
+    'PolicyGroupSummary',
     'PolicyState',
     'PolicyStatesQueryResults',
-    'SummaryResults',
-    'PolicyDefinitionSummary',
-    'PolicyAssignmentSummary',
-    'Summary',
-    'SummarizeResults',
-    'OperationDisplay',
-    'Operation',
-    'OperationsListResults',
+    'PolicyTrackedResource',
+    'QueryFailure', 'QueryFailureException',
+    'QueryFailureError',
     'QueryOptions',
+    'Remediation',
+    'RemediationDeployment',
+    'RemediationDeploymentSummary',
+    'RemediationFilters',
+    'SummarizeResults',
+    'Summary',
+    'SummaryResults',
+    'TrackedResourceModificationDetails',
+    'TypedErrorInfo',
     'PolicyTrackedResourcePaged',
     'RemediationDeploymentPaged',
     'RemediationPaged',

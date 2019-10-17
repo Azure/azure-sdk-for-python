@@ -11,41 +11,14 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.policy_tracked_resources_operations import PolicyTrackedResourcesOperations
-from .operations.remediations_operations import RemediationsOperations
-from .operations.policy_events_operations import PolicyEventsOperations
-from .operations.policy_states_operations import PolicyStatesOperations
-from .operations.operations import Operations
+
+from ._configuration import PolicyInsightsClientConfiguration
+from .operations import PolicyTrackedResourcesOperations
+from .operations import RemediationsOperations
+from .operations import PolicyEventsOperations
+from .operations import PolicyStatesOperations
+from .operations import Operations
 from . import models
-
-
-class PolicyInsightsClientConfiguration(AzureConfiguration):
-    """Configuration for PolicyInsightsClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(PolicyInsightsClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-policyinsights/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
 
 
 class PolicyInsightsClient(SDKClient):

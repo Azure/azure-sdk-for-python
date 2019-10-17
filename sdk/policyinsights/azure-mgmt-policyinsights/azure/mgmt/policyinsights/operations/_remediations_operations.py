@@ -18,6 +18,8 @@ from .. import models
 class RemediationsOperations(object):
     """RemediationsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -63,8 +65,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             top = query_options.top
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_deployments_at_management_group.metadata['url']
@@ -97,6 +98,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -105,12 +111,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_deployments_at_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupId}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments'}
@@ -165,7 +169,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -202,8 +205,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_management_group.metadata['url']
@@ -237,6 +239,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -245,12 +252,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupId}/providers/Microsoft.PolicyInsights/remediations'}
@@ -311,7 +316,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
         if response.status_code == 201:
@@ -374,7 +378,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -435,7 +438,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -471,8 +473,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             top = query_options.top
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_deployments_at_subscription.metadata['url']
@@ -504,6 +505,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -512,12 +518,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_deployments_at_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments'}
@@ -571,7 +575,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -608,8 +611,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_subscription.metadata['url']
@@ -642,6 +644,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -650,12 +657,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/remediations'}
@@ -715,7 +720,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
         if response.status_code == 201:
@@ -777,7 +781,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -837,7 +840,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -875,8 +877,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             top = query_options.top
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_deployments_at_resource_group.metadata['url']
@@ -909,6 +910,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -917,12 +923,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_deployments_at_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments'}
@@ -979,7 +983,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -1018,8 +1021,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource_group.metadata['url']
@@ -1053,6 +1055,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1061,12 +1068,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/remediations'}
@@ -1129,7 +1134,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
         if response.status_code == 201:
@@ -1194,7 +1198,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -1257,7 +1260,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -1293,8 +1295,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             top = query_options.top
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_deployments_at_resource.metadata['url']
@@ -1326,6 +1327,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1334,12 +1340,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationDeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_deployments_at_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments'}
@@ -1393,7 +1397,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -1430,8 +1433,7 @@ class RemediationsOperations(object):
         if query_options is not None:
             filter = query_options.filter
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource.metadata['url']
@@ -1464,6 +1466,11 @@ class RemediationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1472,12 +1479,10 @@ class RemediationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RemediationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/remediations'}
@@ -1537,7 +1542,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
         if response.status_code == 201:
@@ -1599,7 +1603,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
@@ -1659,7 +1662,6 @@ class RemediationsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Remediation', response)
 
