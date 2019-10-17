@@ -13,11 +13,6 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
       - script: |
           sudo apt-get update
           sudo add-apt-repository ppa:deadsnakes/ppa
@@ -26,7 +21,7 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 -m ensurepip
-          pip install wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
+          pip3 install wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
           python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-identity" --junitxml="junit/test-results.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
