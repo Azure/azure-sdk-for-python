@@ -245,8 +245,9 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant on the service side,
-         we poll on the deletion of the secret. Awaiting this method returns the DeletedSecret.
+        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant
+         on the service side, we poll on the deletion of the secret. Awaiting this method returns
+         the DeletedSecret.
         :rtype: ~azure.keyvault.keys.models.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
