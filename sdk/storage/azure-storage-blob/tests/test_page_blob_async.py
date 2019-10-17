@@ -1499,7 +1499,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live
@@ -1564,7 +1564,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
@@ -1623,7 +1623,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await container.delete_container()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())

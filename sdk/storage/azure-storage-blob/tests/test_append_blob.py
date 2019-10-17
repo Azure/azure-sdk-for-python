@@ -338,7 +338,6 @@ class StorageAppendBlobTest(StorageTestCase):
                                            hours=15))
 
     @GlobalStorageAccountPreparer()
-    # @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_append_block_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)

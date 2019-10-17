@@ -1060,7 +1060,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     #     loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -1079,7 +1079,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
@@ -1752,7 +1752,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
@@ -1777,7 +1777,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
@@ -1803,7 +1803,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
@@ -1830,7 +1830,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:

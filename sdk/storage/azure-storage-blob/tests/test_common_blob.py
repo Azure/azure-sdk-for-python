@@ -948,7 +948,7 @@ class StorageCommonBlobTest(StorageTestCase):
     #     self.assertIsNotNone(props.copy.id)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account.name, storage_account_key)
         self._setup_remote(rmt.name, rmt_key)
@@ -964,7 +964,7 @@ class StorageCommonBlobTest(StorageTestCase):
             target_blob.start_copy_from_url(source_blob.url)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1601,7 +1601,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")
@@ -1623,7 +1623,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")
@@ -1647,7 +1647,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")
@@ -1672,7 +1672,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @StorageAccountPreparer(name_prefix='pyrmtstorage', parameter_name='rmt')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")

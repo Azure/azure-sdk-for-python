@@ -64,7 +64,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
 
     # --Test cases per service ---------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -76,7 +76,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
         self._assert_stats_default(stats)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

@@ -121,18 +121,22 @@ class AzureMgmtPreparer(AbstractPreparer):
     def __init__(self, name_prefix, random_name_length,
                  disable_recording=True,
                  playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None,
+                 random_name_enabled=False):
         super(AzureMgmtPreparer, self).__init__(name_prefix, random_name_length,
                                                 disable_recording=disable_recording)
         self.client = None
         self.resource = playback_fake_resource
         self.client_kwargs = client_kwargs or {}
+        self.random_name_enabled = random_name_enabled
 
     @property
     def is_live(self):
         return self.test_class_instance.is_live
 
     def create_random_name(self):
+        if self.random_name_enabled:
+            return super(AzureMgmtPreparer, self).create_random_name()
         return self.test_class_instance.get_preparer_resource_name(self.name_prefix)
 
     @property

@@ -46,7 +46,7 @@ class ServiceStatsTest(StorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self._account_url(storage_account.name)
@@ -58,7 +58,7 @@ class ServiceStatsTest(StorageTestCase):
         self._assert_stats_default(stats)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self._account_url(storage_account.name)
