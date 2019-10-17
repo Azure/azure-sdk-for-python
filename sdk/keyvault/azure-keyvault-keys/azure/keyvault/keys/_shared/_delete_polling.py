@@ -43,12 +43,10 @@ class DeleteResourcePoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        if not self._deleted_resource.recovery_id:
-            return True
-        return self._status == "deleted"
+        return not self._deleted_resource.recovery_id or self._status == "deleted"
 
     def resource(self):
-        # type: () -> Union[DeletedKey, DeletedSecret]
+        # type: () -> Any
         return self._deleted_resource
 
     def status(self):
