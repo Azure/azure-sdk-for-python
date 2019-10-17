@@ -1,18 +1,16 @@
 {% extends "!layout.html" %}
 
-{% block sidebartitle %}
-    {{ super() }}
-    <a href="https://azure.github.io/azure-sdk-for-python">Project Homepage</a>
-    
-{% endblock %}
-
 {% block menu %}
+    {% if include_index_link %}
+    <a href="https://azure.github.io/azure-sdk-for-python">Return to Index</a>
     <p class="caption" id="versionSelectorHeader" style="display: none;">
         Package version
     <br />
     <select value="myValue" id="versionSelector" style="display: none;"></select>
-    </p>
     <br />
+    <br />
+    </p>
+    {% endif %}
     {{ super() }}
 {% endblock %}
 

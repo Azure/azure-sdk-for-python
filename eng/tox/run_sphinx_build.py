@@ -43,6 +43,8 @@ def sphinx_build(target_dir, output_dir):
                 "sphinx-build",
                 "-b",
                 "html",
+                "-A",
+                "include_index_link=True",
                 "-c",
                 sphinx_conf_dir,
                 target_dir,
