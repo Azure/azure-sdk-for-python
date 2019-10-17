@@ -1725,8 +1725,9 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
     @AsyncBlobTestCase.await_prepared_test
-    async def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
+    async def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")
         # Arrange

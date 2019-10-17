@@ -307,7 +307,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = urandom(bsc._config.max_single_put_size + 1)
+        content = urandom(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -328,7 +328,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(bsc._config.max_single_put_size * 2)
+        content = self.get_random_bytes(self.config.max_single_put_size * 2)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
