@@ -22,8 +22,6 @@ from .models import (
     CertificateOperation,
 )
 from ._polling import CreateCertificatePoller
-from ._shared import KeyVaultClientBase
-from ._shared.exceptions import error_map as _error_map
 
 try:
     from typing import TYPE_CHECKING
