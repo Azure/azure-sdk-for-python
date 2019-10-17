@@ -13,6 +13,11 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.7 For Build Tools'
+        inputs:
+          versionSpec: '3.7'
+
       - script: |
           sudo apt-get update
           sudo add-apt-repository ppa:deadsnakes/ppa
@@ -20,6 +25,7 @@ jobs:
           sudo apt install python3.8
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
+          python3 -m ensurepip
           pip install packaging tox tox-monorepo
           python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
