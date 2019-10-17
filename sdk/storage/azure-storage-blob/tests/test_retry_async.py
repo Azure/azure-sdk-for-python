@@ -134,9 +134,10 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         retry = LinearRetry(backoff=1)
 
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        socket_timeout = 0.000000000001
+        import aiohttp
+        socket_timeout = aiohttp.ClientTimeout(sock_connect=11, sock_read=0.000000000001)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, connection_timeout=socket_timeout, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport(connection_timeout=socket_timeout))
 
         assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
@@ -146,7 +147,10 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
                 await service.create_container(container_name)
             # Assert
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.exception), 'Expected socket timeout but got different exception.')
+            self.assertTrue(
+                'Timeout on reading data from socket' in str(error.exception),
+                'Expected socket timeout but got different exception.'
+            )
 
         finally:
             # we must make the timeout normal again to let the delete operation succeed
