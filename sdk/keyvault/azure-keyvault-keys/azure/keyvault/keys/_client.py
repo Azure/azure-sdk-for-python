@@ -364,7 +364,7 @@ class KeyClient(KeyVaultClientBase):
         permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update
+        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
