@@ -148,3 +148,8 @@ class OwnershipManager(object):
                 to_steal_partition["owner_id"] = self.owner_id
                 to_claim.append(to_steal_partition)
         return to_claim
+
+    async def get_checkpoints(self):
+        checkpoints = await self.partition_manager.list_checkpoints(
+            self.namespace, self.eventhub_name, self.consumer_group_name)
+        return {x["partition_id"]: x for x in checkpoints}

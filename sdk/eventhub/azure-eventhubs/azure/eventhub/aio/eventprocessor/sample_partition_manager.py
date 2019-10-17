@@ -145,5 +145,20 @@ class SamplePartitionManager(PartitionManager):
         finally:
             cursor.close()
 
+    async def list_checkpoints(self, namespace, eventhub_name, consumer_group_name):
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute("select "
+                           + ",".join(self.checkpoint_fields)
+                           + " from "
+                           + self.checkpoint_table
+                           + " where namespace=? and eventhub_name=? and consumer_group_name=?",
+                           (namespace, eventhub_name, consumer_group_name)
+                           )
+            return [dict(zip(self.checkpoint_fields, row)) for row in cursor.fetchall()]
+
+        finally:
+            cursor.close()
+
     async def close(self):
         self.conn.close()

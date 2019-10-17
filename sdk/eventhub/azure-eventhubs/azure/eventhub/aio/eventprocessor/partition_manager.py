@@ -79,6 +79,16 @@ class PartitionManager(ABC):
         :raise: `OwnershipLostError`
         """
 
+    @abstractmethod
+    async def list_checkpoints(self, namespace, eventhub_name, consumer_group_name):
+        """List the updated checkpoints from the store
+
+        :param namespace:
+        :param eventhub_name:
+        :param consumer_group_name:
+        :return:
+        """
+
 
 class OwnershipLostError(Exception):
     """Raises when update_checkpoint detects the ownership to a partition has been lost
