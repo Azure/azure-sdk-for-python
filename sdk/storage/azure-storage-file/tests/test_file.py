@@ -263,7 +263,7 @@ class StorageFileTest(FileTestCase):
 
     def test_create_file_when_file_permission_is_too_long(self):
         file_client = self._get_file_client()
-        permission = str(self.get_random_bytes(8 * 1024))
+        permission = str(self.get_random_bytes(8 * 1024 + 1))
         with self.assertRaises(ValueError):
             file_client.create_file(1024, file_permission=permission)
 
