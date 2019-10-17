@@ -25,7 +25,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Mapping, Optional, Type
+    from typing import Any, Optional, Type
 
 
 class ManagedIdentityCredential(object):
@@ -35,10 +35,10 @@ class ManagedIdentityCredential(object):
         - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, **kwargs):
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return MsiCredential(*args, **kwargs)
-        return ImdsCredential(*args, **kwargs)
+            return MsiCredential(**kwargs)
+        return ImdsCredential(**kwargs)
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
@@ -75,11 +75,9 @@ class _ManagedIdentityBase(object):
 
     @staticmethod
     def _create_config(**kwargs):
-        # type: (Mapping[str, Any]) -> Configuration
-        """Build a default configuration for the credential's HTTP pipeline.
+        # type: (**Any) -> Configuration
+        """Build a default configuration for the credential's HTTP pipeline."""
 
-        :rtype: :class:`azure.core.configuration`
-        """
         timeout = kwargs.pop("connection_timeout", 2)
         config = Configuration(connection_timeout=timeout, **kwargs)
 
@@ -165,14 +163,11 @@ class MsiCredential(_ManagedIdentityBase):
       - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Mapping[str, Any]) -> None
-        endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        self._endpoint_available = endpoint is not None
-        if self._endpoint_available:
-            super(MsiCredential, self).__init__(  # type: ignore
-                endpoint=endpoint, client_cls=AuthnClient, config=config, **kwargs
-            )
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        if self._endpoint:
+            super(MsiCredential, self).__init__(endpoint=self._endpoint, client_cls=AuthnClient, **kwargs)
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
@@ -183,7 +178,7 @@ class MsiCredential(_ManagedIdentityBase):
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
 
-        if not self._endpoint_available:
+        if not self._endpoint:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:

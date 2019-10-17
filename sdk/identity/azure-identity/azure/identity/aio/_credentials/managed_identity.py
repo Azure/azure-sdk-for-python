@@ -46,15 +46,12 @@ class ManagedIdentityCredential(object):
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase):
-    def __init__(self, endpoint: str, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
-        super().__init__(endpoint=endpoint, config=config, client_cls=AsyncAuthnClient, **kwargs)
+    def __init__(self, endpoint: str, **kwargs: "Any") -> None:
+        super().__init__(endpoint=endpoint, client_cls=AsyncAuthnClient, **kwargs)
 
     @staticmethod
-    def _create_config(**kwargs: "Any") -> "Configuration":  # type: ignore
-        """Build a default configuration for the credential's HTTP pipeline.
-
-        :rtype: :class:`azure.core.configuration`
-        """
+    def _create_config(**kwargs: "Any") -> "Configuration":
+        """Build a default configuration for the credential's HTTP pipeline."""
         return _ManagedIdentityBase._create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
@@ -65,8 +62,8 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __init__(self, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
-        super().__init__(endpoint=Endpoints.IMDS, config=config, **kwargs)
+    def __init__(self, **kwargs: "Any") -> None:
+        super().__init__(endpoint=Endpoints.IMDS, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
@@ -110,17 +107,12 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
 
 class MsiCredential(_AsyncManagedIdentityBase):
-    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment."""
 
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
-    """
-
-    def __init__(self, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
-        endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        self._endpoint_available = endpoint is not None
-        if self._endpoint_available:
-            super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
+    def __init__(self, **kwargs: "Any") -> None:
+        self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        if self._endpoint:
+            super().__init__(endpoint=self._endpoint, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
@@ -129,7 +121,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
-        if not self._endpoint_available:
+        if not self._endpoint:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
