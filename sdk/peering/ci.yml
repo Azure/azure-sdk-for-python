@@ -21,7 +21,8 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
+    - sdk/peering/
+    - sdk/core/
 
 pr:
   branches:
@@ -33,13 +34,14 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
-
+    - sdk/peering/
+    - sdk/core/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: datafactory
+    ServiceDirectory: peering
     Artifacts:
-    - name: azure_mgmt_datafactory
-      safeName: azuremgmtdatafactory
+    - name: azure_mgmt_peering
+      safeName: azuremgmtpeering
+      
