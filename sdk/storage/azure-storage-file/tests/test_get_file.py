@@ -295,7 +295,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            for data in file_client.download_file():
+            for data in file_client.download_file().chunks():
                 stream.write(data)
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -787,7 +787,7 @@ class StorageGetFileTest(FileTestCase):
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
             length = end_range - start + 1
-            bytes_read = file_client.download_file(offset=1, length=length, max_concurrency=2).readinto(stream)
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=2).readinto(stream)
 
         # Assert
         self.assertIsInstance(bytes_read, int)
@@ -816,7 +816,7 @@ class StorageGetFileTest(FileTestCase):
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
             length = end_range - start + 1
-            bytes_read = file_client.download_file(offset=1, length=length, max_concurrency=1).readinto(stream)
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=1).readinto(stream)
 
         # Assert
         self.assertIsInstance(bytes_read, int)
