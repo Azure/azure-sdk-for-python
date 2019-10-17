@@ -485,7 +485,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             cls=deserialize_file_stream,
             **kwargs
         )
-        await downloader._setup()
+        await downloader._setup()  # pylint: disable=protected-access
         return downloader
 
     @distributed_trace_async
