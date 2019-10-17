@@ -4,7 +4,7 @@
 # ------------------------------------
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import Keyfrom azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
 
 from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from .._internal import EllipticCurveKey, RsaKey
@@ -47,11 +47,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         credential = DefaultAzureCredential()
 
-        # create a CryptographyClient using a Key instance
+        # create a CryptographyClient using a KeyVaultKey instance
         key = await key_client.get_key("mykey")
         crypto_client = CryptographyClient(key, credential)
 
-        # or a Key's id, which must include a version
+        # or a key's id, which must include a version
         key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
         crypto_client = CryptographyClient(key_id, credential)
 
@@ -81,7 +81,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             # will be replaced with actual permissions before any local operations are attempted, if we can get the key
             self._allowed_ops = frozenset()
         else:
-            raise ValueError("'key' must be a Key instance or a key ID string including a version")
+            raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")

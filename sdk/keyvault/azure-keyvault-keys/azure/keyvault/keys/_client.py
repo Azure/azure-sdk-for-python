@@ -6,7 +6,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .crypto import CryptographyClient
 from ._models import KeyVaultKey, KeyProperties, DeletedKey
 
 try:
@@ -47,7 +46,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
-        # type: (str, Union[str, azure.keyvault.keys.enums.KeyType], **Any) -> KeyVaultKey
+        # type: (str, Union[str, azure.keyvault.keys.KeyType], **Any) -> KeyVaultKey
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
 
@@ -68,10 +67,10 @@ class KeyClient(KeyVaultClientBase):
         Keyword arguments
             - **size** (int): RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys.
               To create an RSA key, consider using :func:`create_rsa_key` instead.
-            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
               Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256 elliptic curve.
               To create an elliptic curve key, consider using :func:`create_ec_key` instead.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
@@ -125,7 +124,7 @@ class KeyClient(KeyVaultClientBase):
             - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
             - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
               Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
             - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
@@ -161,11 +160,11 @@ class KeyClient(KeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - **curve** (:class:`~azure.keyvault.keys.enums.KeyCurveName` or str):
+            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
               Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
             - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
               Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
             - **enabled** (bool): Whether the key is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
@@ -398,7 +397,7 @@ class KeyClient(KeyVaultClientBase):
 
         Keyword arguments
             - **enabled** (bool): Whether the key is enabled for use.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.enums.KeyOperation`]): Allowed key operations
+            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
             - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
             - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.

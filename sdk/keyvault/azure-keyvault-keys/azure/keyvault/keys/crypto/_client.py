@@ -48,11 +48,11 @@ class CryptographyClient(KeyVaultClientBase):
 
         credential = DefaultAzureCredential()
 
-        # create a CryptographyClient using a Key instance
+        # create a CryptographyClient using a KeyVaultKey instance
         key = key_client.get_key("mykey")
         crypto_client = CryptographyClient(key, credential)
 
-        # or a Key's id, which must include a version
+        # or a key's id, which must include a version
         key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
         crypto_client = CryptographyClient(key_id, credential)
 
@@ -84,7 +84,7 @@ class CryptographyClient(KeyVaultClientBase):
             # will be replaced with actual permissions before any local operations are attempted, if we can get the key
             self._allowed_ops = frozenset()
         else:
-            raise ValueError("'key' must be a Key instance or a key ID string including a version")
+            raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")
