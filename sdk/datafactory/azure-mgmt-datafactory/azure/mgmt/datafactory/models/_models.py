@@ -21369,6 +21369,10 @@ class OrcDataset(Dataset):
     :type type: str
     :param location: Required. The location of the ORC data storage.
     :type location: ~azure.mgmt.datafactory.models.DatasetLocation
+    :param orc_compression_codec: Possible values include: 'none', 'zlib',
+     'snappy'
+    :type orc_compression_codec: str or
+     ~azure.mgmt.datafactory.models.OrcCompressionCodec
     """
 
     _validation = {
@@ -21388,11 +21392,13 @@ class OrcDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
+        'orc_compression_codec': {'key': 'typeProperties.orcCompressionCodec', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(OrcDataset, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
+        self.orc_compression_codec = kwargs.get('orc_compression_codec', None)
         self.type = 'Orc'
 
 
