@@ -94,6 +94,44 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(liv
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
+async def test_github_issue_7079_async(live_servicebus_config, standard_queue):
+    sb_client = ServiceBusClient.from_connection_string(
+        live_servicebus_config['conn_str'], debug=False)
+    queue = sb_client.get_queue(standard_queue)
+
+    async with queue.get_sender() as sender:
+        for i in range(5):
+            await sender.send(Message(f"Message {i}"))
+    messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+    batch = await messages.fetch_next()
+    count = len(batch)
+    await messages.reconnect()
+    async for message in messages:
+       _logger.debug(message)
+       count += 1
+    assert count == 5
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_github_issue_6178_async(live_servicebus_config, standard_queue):
+    sb_client = ServiceBusClient.from_connection_string(
+        live_servicebus_config['conn_str'], debug=False)
+    queue = sb_client.get_queue(standard_queue)
+
+    for i in range(3):
+        await queue.send(Message(f"Message {i}"))
+
+    messages = queue.get_receiver(idle_timeout=60)
+    async for message in messages:
+        _logger.debug(message)
+        _logger.debug(message.sequence_number)
+        _logger.debug(message.enqueued_time)
+        _logger.debug(message.expired)
+        await message.complete()
+        await asyncio.sleep(40)
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
 async def test_async_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(live_servicebus_config, standard_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
