@@ -1818,54 +1818,71 @@ class ModernUsageDetail(UsageDetail):
     :type kind: str
     :ivar billing_account_id: Billing Account identifier.
     :vartype billing_account_id: str
-    :ivar billing_account_name: Billing Account Name.
+    :ivar billing_account_name: Name of the Billing Account.
     :vartype billing_account_name: str
-    :ivar billing_period_start_date: The billing period start date.
+    :ivar billing_period_start_date: Billing Period Start Date as in the
+     invoice.
     :vartype billing_period_start_date: datetime
-    :ivar billing_period_end_date: The billing period end date.
+    :ivar billing_period_end_date: Billing Period End Date as in the invoice.
     :vartype billing_period_end_date: datetime
-    :ivar billing_profile_id: Billing Profile identifier.
+    :ivar billing_profile_id: Identifier for the billing profile that groups
+     costs acrosss invoices in the a singular billing currency across across
+     the customers who have onboarded the Microsoft customer agreement and the
+     customers in CSP who have made entitlement purchases like SaaS,
+     Marketplace, RI, etc.
     :vartype billing_profile_id: str
-    :ivar billing_profile_name: Billing Profile Name.
+    :ivar billing_profile_name: Name of the billing profile that groups costs
+     acrosss invoices in the a singular billing currency across across the
+     customers who have onboarded the Microsoft customer agreement and the
+     customers in CSP who have made entitlement purchases like SaaS,
+     Marketplace, RI, etc.
     :vartype billing_profile_name: str
-    :ivar subscription_guid: Subscription guid.
+    :ivar subscription_guid: Unique Microsoft generated identifier for the
+     Azure Subscription.
     :vartype subscription_guid: str
-    :ivar subscription_name: Subscription name.
+    :ivar subscription_name: Name of the Azure Subscription.
     :vartype subscription_name: str
     :ivar date_property: Date for the usage record.
     :vartype date_property: datetime
-    :ivar product: Product name for the consumed service or purchase. Not
-     available for Marketplace.
+    :ivar product: Name of the product that has accrued charges by consumption
+     or purchase as listed in the invoice. Not available for Marketplace.
     :vartype product: str
     :ivar meter_id: The meter id (GUID). Not available for marketplace. For
      reserved instance this represents the primary meter for which the
      reservation was purchased. For the actual VM Size for which the
      reservation is purchased see productOrderName.
     :vartype meter_id: str
-    :ivar meter_name: Meter Name.
+    :ivar meter_name: Identifies the name of the meter against which
+     consumption is measured.
     :vartype meter_name: str
-    :ivar meter_region: Meter Region.
+    :ivar meter_region: Identifies the location of the datacenter for certain
+     services that are priced based on datacenter location.
     :vartype meter_region: str
-    :ivar meter_category: Meter Category.
+    :ivar meter_category: Identifies the top-level service for the usage.
     :vartype meter_category: str
-    :ivar meter_sub_category: Meter SubCategory.
+    :ivar meter_sub_category: Defines the type or sub-category of Azure
+     service that can affect the rate.
     :vartype meter_sub_category: str
-    :ivar service_family: Service Family.
+    :ivar service_family: List the service family for the product purchased or
+     charged (Example: Storage ; Compute).
     :vartype service_family: str
-    :ivar quantity: The usage quantity.
+    :ivar quantity: Measure the quantity purchased or consumed.The amount of
+     the meter used during the billing period.
     :vartype quantity: decimal.Decimal
-    :ivar unit_of_measure: Unit Of Measure.
+    :ivar unit_of_measure: Identifies the Unit that the service is charged in.
+     For example, GB, hours, 10,000 s.
     :vartype unit_of_measure: str
     :ivar instance_name: Instance Name.
     :vartype instance_name: str
-    :ivar cost_in_usd: The amount of cost before tax.
+    :ivar cost_in_usd: Estimated extendedCost or blended cost before tax in
+     USD.
     :vartype cost_in_usd: decimal.Decimal
     :ivar unit_price: Unit Price is the price applicable to you. (your EA or
      other contract price).
     :vartype unit_price: decimal.Decimal
-    :ivar billing_currency_code: Billing Currency.
+    :ivar billing_currency_code: The currency defining the billed cost.
     :vartype billing_currency_code: str
-    :ivar resource_location: Resource Location.
+    :ivar resource_location: Name of the resource location.
     :vartype resource_location: str
     :ivar consumed_service: Consumed service name. Name of the azure resource
      provider that emits the usage or was purchased. This value is not provided
@@ -1880,14 +1897,19 @@ class ModernUsageDetail(UsageDetail):
      get usage line item specific details such as the actual VM Size
      (ServiceType) or the ratio in which the reservation discount is applied.
     :vartype additional_info: str
-    :ivar invoice_section_id: Invoice Section Id.
+    :ivar invoice_section_id: Identifier of the project that is being charged
+     in the invoice. Not applicable for Microsoft Customer Agreements onboarded
+     by partners.
     :vartype invoice_section_id: str
-    :ivar invoice_section_name: Invoice Section Name.
+    :ivar invoice_section_name: Name of the project that is being charged in
+     the invoice. Not applicable for Microsoft Customer Agreements onboarded by
+     partners.
     :vartype invoice_section_name: str
     :ivar cost_center: The cost center of this department if it is a
      department and a cost center is provided.
     :vartype cost_center: str
-    :ivar resource_group: Resource Group Name.
+    :ivar resource_group: Name of the Azure resource group used for cohesive
+     lifecycle management of resources.
     :vartype resource_group: str
     :ivar reservation_id: ARM resource id of the reservation. Only applies to
      records relevant to reservations.
@@ -1896,20 +1918,27 @@ class ModernUsageDetail(UsageDetail):
      Last known name for a particular day is populated in the daily data. Only
      applies to records relevant to reservations.
     :vartype reservation_name: str
-    :ivar product_order_id: Product Order Id. For reservations this is the
-     Reservation Order ID.
+    :ivar product_order_id: The identifier for the asset or Azure plan name
+     that the subscription belongs to. For example: Azure Plan. For
+     reservations this is the Reservation Order ID.
     :vartype product_order_id: str
     :ivar product_order_name: Product Order Name. For reservations this is the
      SKU that was purchased.
     :vartype product_order_name: str
-    :ivar is_azure_credit_eligible: Is Azure Credit Eligible.
+    :ivar is_azure_credit_eligible: Determines if the cost is eligible to be
+     paid for using Azure credits.
     :vartype is_azure_credit_eligible: bool
-    :ivar term: Term (in months). 1 month for monthly recurring purchase. 12
-     months for a 1 year reservation. 36 months for a 3 year reservation.
+    :ivar term: Term (in months). Displays the term for the validity of the
+     offer. For example. In case of reserved instances it displays 12 months
+     for yearly term of reserved instance. For one time purchases or recurring
+     purchases, the terms displays 1 month )(SaaS, Marketplace Support) (1
+     month); This is not applicable for Azure consumption.
     :vartype term: str
-    :ivar publisher_name: Publisher Name.
+    :ivar publisher_name: Name of the publisher of the service includung
+     Microsoft or Third Party publishers.
     :vartype publisher_name: str
-    :ivar publisher_type: Publisher Type.
+    :ivar publisher_type: Type of publisher that identifies if the publisher
+     is first party, third party reseller or third party agency.
     :vartype publisher_type: str
     :ivar charge_type: Indicates a charge represents credits, usage, a
      Marketplace purchase, a reservation fee, or a refund.
@@ -1918,39 +1947,50 @@ class ModernUsageDetail(UsageDetail):
      for purchases which only happen once, Monthly for fees which recur every
      month, and UsageBased for charges based on how much a service is used.
     :vartype frequency: str
-    :ivar cost_in_billing_currency: The amount of cost before tax in billing
-     currency.
+    :ivar cost_in_billing_currency: ExtendedCost or blended cost before tax in
+     billed currency.
     :vartype cost_in_billing_currency: decimal.Decimal
-    :ivar cost_in_pricing_currency: The amount of cost before tax in pricing
-     currency.
+    :ivar cost_in_pricing_currency: ExtendedCost or blended cost before tax in
+     pricing currency to correlate with prices.
     :vartype cost_in_pricing_currency: decimal.Decimal
-    :ivar exchange_rate: Exchange Rate.
+    :ivar exchange_rate: Exchange rate used in conversion from pricing
+     currency to billing curency.
     :vartype exchange_rate: str
-    :ivar exchange_rate_date: Exchange Rate Date.
+    :ivar exchange_rate_date: Date on which exchange rate used in conversion
+     from pricing currency to billing curency.
     :vartype exchange_rate_date: datetime
-    :ivar invoice_id: Invoice Id.
+    :ivar invoice_id: Invoice ID as on the invoice where the specific
+     transaction appears.
     :vartype invoice_id: str
-    :ivar previous_invoice_id: Previous Invoice Id.
+    :ivar previous_invoice_id: Reference to an original invoice there is a
+     refund (negative cost). This is populated only when there is a refund.
     :vartype previous_invoice_id: str
     :ivar pricing_currency_code: Pricing Billing Currency.
     :vartype pricing_currency_code: str
-    :ivar product_identifier: Product Identifier.
+    :ivar product_identifier: Identifer for the product that has accrued
+     charges by consumption or purchase . This is the concatenated key of
+     productId and SKuId in partner center.
     :vartype product_identifier: str
     :ivar resource_location_normalized: Resource Location Normalized.
     :vartype resource_location_normalized: str
-    :ivar service_period_start_date: Service Period Start Date.
+    :ivar service_period_start_date: Start date for the rating period when the
+     service usage was rated for charges. The prices for Azure services are
+     determined for the rating period.
     :vartype service_period_start_date: datetime
-    :ivar service_period_end_date: Service Period End Date.
+    :ivar service_period_end_date: End date for the period when the service
+     usage was rated for charges. The prices for Azure services are determined
+     based on the rating period.
     :vartype service_period_end_date: datetime
-    :ivar customer_tenant_id: Customer Tenant Id.
+    :ivar customer_tenant_id: Identifier of the customer's AAD tenant.
     :vartype customer_tenant_id: str
-    :ivar customer_name: Customer Name.
+    :ivar customer_name: Name of the customer's AAD tenant.
     :vartype customer_name: str
-    :ivar partner_tenant_id: Partner Tenant Id.
+    :ivar partner_tenant_id: Identifier for the partner's AAD tenant.
     :vartype partner_tenant_id: str
-    :ivar partner_name: Partner Name.
+    :ivar partner_name: Name of the partner' AAD tenant.
     :vartype partner_name: str
-    :ivar reseller_mpn_id: Reseller Mpn Id.
+    :ivar reseller_mpn_id: MPNId for the reseller associated with the
+     subscription.
     :vartype reseller_mpn_id: str
     :ivar reseller_name: Reseller Name.
     :vartype reseller_name: str
@@ -1960,16 +2000,18 @@ class ModernUsageDetail(UsageDetail):
     :vartype market_price: decimal.Decimal
     :ivar exchange_rate_pricing_to_billing: Exchange Rate from pricing
      currency to billing currency.
-    :vartype exchange_rate_pricing_to_billing: str
+    :vartype exchange_rate_pricing_to_billing: decimal.Decimal
     :ivar payg_cost_in_billing_currency: The amount of PayG cost before tax in
      billing currency.
     :vartype payg_cost_in_billing_currency: decimal.Decimal
     :ivar payg_cost_in_usd: The amount of PayG cost before tax in US Dollar
      currency.
     :vartype payg_cost_in_usd: decimal.Decimal
-    :ivar partner_earned_credit_rate: Partner earned credit rate.
-    :vartype partner_earned_credit_rate: str
-    :ivar partner_earned_credit_applied: Partner earned credit applied.
+    :ivar partner_earned_credit_rate: Rate of discount applied if there is a
+     partner earned credit (PEC) based on partner admin link access.
+    :vartype partner_earned_credit_rate: decimal.Decimal
+    :ivar partner_earned_credit_applied: Flag to indicate if partner earned
+     credit has been applied or not.
     :vartype partner_earned_credit_applied: str
     """
 
@@ -2112,10 +2154,10 @@ class ModernUsageDetail(UsageDetail):
         'reseller_name': {'key': 'properties.resellerName', 'type': 'str'},
         'publisher_id': {'key': 'properties.publisherId', 'type': 'str'},
         'market_price': {'key': 'properties.marketPrice', 'type': 'decimal'},
-        'exchange_rate_pricing_to_billing': {'key': 'properties.exchangeRatePricingToBilling', 'type': 'str'},
+        'exchange_rate_pricing_to_billing': {'key': 'properties.exchangeRatePricingToBilling', 'type': 'decimal'},
         'payg_cost_in_billing_currency': {'key': 'properties.paygCostInBillingCurrency', 'type': 'decimal'},
         'payg_cost_in_usd': {'key': 'properties.paygCostInUSD', 'type': 'decimal'},
-        'partner_earned_credit_rate': {'key': 'properties.partnerEarnedCreditRate', 'type': 'str'},
+        'partner_earned_credit_rate': {'key': 'properties.partnerEarnedCreditRate', 'type': 'decimal'},
         'partner_earned_credit_applied': {'key': 'properties.partnerEarnedCreditApplied', 'type': 'str'},
     }
 
