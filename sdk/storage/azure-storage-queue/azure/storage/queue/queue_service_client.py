@@ -15,7 +15,7 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.models import LocationMode, Services
+from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage

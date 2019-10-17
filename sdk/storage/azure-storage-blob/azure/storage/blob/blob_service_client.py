@@ -18,7 +18,7 @@ except ImportError:
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared.models import LocationMode, UserDelegationKey
+from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
@@ -27,15 +27,17 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from .container_client import ContainerClient
 from .blob_client import BlobClient
-from .models import ContainerProperties, ContainerPropertiesPaged
+from .models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
+    from ._shared.models import UserDelegationKey
     from .lease import LeaseClient
     from .models import (
         BlobProperties,
+        ContainerProperties,
         BlobAnalyticsLogging,
         Metrics,
         RetentionPolicy,
