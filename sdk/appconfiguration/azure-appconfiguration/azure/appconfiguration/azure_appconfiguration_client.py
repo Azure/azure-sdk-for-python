@@ -148,12 +148,15 @@ class AzureAppConfigurationClient:
             for item in filtered_listed:
                 pass  # do something
         """
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
         return self._impl.get_key_values(
             label=encoded_labels,
             key=encoded_keys,
-            select=kwargs.get("fields"),
+            select=select,
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
@@ -411,12 +414,15 @@ class AzureAppConfigurationClient:
             for item in filtered_revisions:
                 pass  # do something
         """
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
         return self._impl.get_revisions(
             label=encoded_labels,
             key=encoded_keys,
-            select=kwargs.get("fields"),
+            select=select,
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
