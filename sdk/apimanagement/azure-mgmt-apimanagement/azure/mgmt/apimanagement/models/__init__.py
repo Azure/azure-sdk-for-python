@@ -10,352 +10,352 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_field_contract_py3 import ErrorFieldContract
-    from .error_response_body_py3 import ErrorResponseBody
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .region_contract_py3 import RegionContract
-    from .resource_py3 import Resource
-    from .api_export_result_value_py3 import ApiExportResultValue
-    from .api_export_result_py3 import ApiExportResult
-    from .product_entity_base_parameters_py3 import ProductEntityBaseParameters
-    from .product_tag_resource_contract_properties_py3 import ProductTagResourceContractProperties
-    from .operation_tag_resource_contract_properties_py3 import OperationTagResourceContractProperties
-    from .subscription_key_parameter_names_contract_py3 import SubscriptionKeyParameterNamesContract
-    from .open_id_authentication_settings_contract_py3 import OpenIdAuthenticationSettingsContract
-    from .oauth2_authentication_settings_contract_py3 import OAuth2AuthenticationSettingsContract
-    from .authentication_settings_contract_py3 import AuthenticationSettingsContract
-    from .api_version_set_contract_details_py3 import ApiVersionSetContractDetails
-    from .api_create_or_update_properties_wsdl_selector_py3 import ApiCreateOrUpdatePropertiesWsdlSelector
-    from .api_contract_properties_py3 import ApiContractProperties
-    from .api_entity_base_contract_py3 import ApiEntityBaseContract
-    from .api_tag_resource_contract_properties_py3 import ApiTagResourceContractProperties
-    from .tag_tag_resource_contract_properties_py3 import TagTagResourceContractProperties
-    from .tag_resource_contract_py3 import TagResourceContract
-    from .tag_contract_py3 import TagContract
-    from .tag_description_contract_py3 import TagDescriptionContract
-    from .tag_description_create_parameters_py3 import TagDescriptionCreateParameters
-    from .issue_attachment_contract_py3 import IssueAttachmentContract
-    from .issue_comment_contract_py3 import IssueCommentContract
-    from .issue_contract_base_properties_py3 import IssueContractBaseProperties
-    from .issue_update_contract_py3 import IssueUpdateContract
-    from .issue_contract_py3 import IssueContract
-    from .body_diagnostic_settings_py3 import BodyDiagnosticSettings
-    from .http_message_diagnostic_py3 import HttpMessageDiagnostic
-    from .pipeline_diagnostic_settings_py3 import PipelineDiagnosticSettings
-    from .sampling_settings_py3 import SamplingSettings
-    from .diagnostic_contract_py3 import DiagnosticContract
-    from .schema_contract_py3 import SchemaContract
-    from .schema_create_or_update_contract_py3 import SchemaCreateOrUpdateContract
-    from .policy_contract_py3 import PolicyContract
-    from .policy_collection_py3 import PolicyCollection
-    from .product_contract_py3 import ProductContract
-    from .parameter_contract_py3 import ParameterContract
-    from .representation_contract_py3 import RepresentationContract
-    from .response_contract_py3 import ResponseContract
-    from .request_contract_py3 import RequestContract
-    from .operation_entity_base_contract_py3 import OperationEntityBaseContract
-    from .operation_update_contract_py3 import OperationUpdateContract
-    from .operation_contract_py3 import OperationContract
-    from .api_release_contract_py3 import ApiReleaseContract
-    from .api_revision_contract_py3 import ApiRevisionContract
-    from .api_update_contract_py3 import ApiUpdateContract
-    from .api_contract_py3 import ApiContract
-    from .api_create_or_update_parameter_py3 import ApiCreateOrUpdateParameter
-    from .api_version_set_entity_base_py3 import ApiVersionSetEntityBase
-    from .api_version_set_update_parameters_py3 import ApiVersionSetUpdateParameters
-    from .api_version_set_contract_py3 import ApiVersionSetContract
-    from .token_body_parameter_contract_py3 import TokenBodyParameterContract
-    from .authorization_server_contract_base_properties_py3 import AuthorizationServerContractBaseProperties
-    from .authorization_server_update_contract_py3 import AuthorizationServerUpdateContract
-    from .authorization_server_contract_py3 import AuthorizationServerContract
-    from .backend_reconnect_contract_py3 import BackendReconnectContract
-    from .backend_tls_properties_py3 import BackendTlsProperties
-    from .backend_proxy_contract_py3 import BackendProxyContract
-    from .backend_authorization_header_credentials_py3 import BackendAuthorizationHeaderCredentials
-    from .backend_credentials_contract_py3 import BackendCredentialsContract
-    from .x509_certificate_name_py3 import X509CertificateName
-    from .backend_service_fabric_cluster_properties_py3 import BackendServiceFabricClusterProperties
-    from .backend_properties_py3 import BackendProperties
-    from .backend_base_parameters_py3 import BackendBaseParameters
-    from .backend_update_parameters_py3 import BackendUpdateParameters
-    from .backend_contract_py3 import BackendContract
-    from .cache_update_parameters_py3 import CacheUpdateParameters
-    from .cache_contract_py3 import CacheContract
-    from .certificate_contract_py3 import CertificateContract
-    from .certificate_create_or_update_parameters_py3 import CertificateCreateOrUpdateParameters
-    from .resource_sku_py3 import ResourceSku
-    from .resource_sku_capacity_py3 import ResourceSkuCapacity
-    from .resource_sku_result_py3 import ResourceSkuResult
-    from .certificate_information_py3 import CertificateInformation
-    from .certificate_configuration_py3 import CertificateConfiguration
-    from .hostname_configuration_py3 import HostnameConfiguration
-    from .virtual_network_configuration_py3 import VirtualNetworkConfiguration
-    from .api_management_service_sku_properties_py3 import ApiManagementServiceSkuProperties
-    from .additional_location_py3 import AdditionalLocation
-    from .api_management_service_backup_restore_parameters_py3 import ApiManagementServiceBackupRestoreParameters
-    from .api_management_service_base_properties_py3 import ApiManagementServiceBaseProperties
-    from .api_management_service_identity_py3 import ApiManagementServiceIdentity
-    from .api_management_service_resource_py3 import ApiManagementServiceResource
-    from .apim_resource_py3 import ApimResource
-    from .api_management_service_update_parameters_py3 import ApiManagementServiceUpdateParameters
-    from .api_management_service_get_sso_token_result_py3 import ApiManagementServiceGetSsoTokenResult
-    from .api_management_service_check_name_availability_parameters_py3 import ApiManagementServiceCheckNameAvailabilityParameters
-    from .api_management_service_name_availability_result_py3 import ApiManagementServiceNameAvailabilityResult
-    from .api_management_service_apply_network_configuration_parameters_py3 import ApiManagementServiceApplyNetworkConfigurationParameters
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .email_template_parameters_contract_properties_py3 import EmailTemplateParametersContractProperties
-    from .email_template_update_parameters_py3 import EmailTemplateUpdateParameters
-    from .email_template_contract_py3 import EmailTemplateContract
-    from .user_identity_contract_py3 import UserIdentityContract
-    from .user_entity_base_parameters_py3 import UserEntityBaseParameters
-    from .group_contract_properties_py3 import GroupContractProperties
-    from .user_contract_py3 import UserContract
-    from .group_update_parameters_py3 import GroupUpdateParameters
-    from .group_contract_py3 import GroupContract
-    from .group_create_parameters_py3 import GroupCreateParameters
-    from .identity_provider_base_parameters_py3 import IdentityProviderBaseParameters
-    from .identity_provider_update_parameters_py3 import IdentityProviderUpdateParameters
-    from .identity_provider_contract_py3 import IdentityProviderContract
-    from .logger_update_contract_py3 import LoggerUpdateContract
-    from .logger_contract_py3 import LoggerContract
-    from .connectivity_status_contract_py3 import ConnectivityStatusContract
-    from .network_status_contract_py3 import NetworkStatusContract
-    from .network_status_contract_by_location_py3 import NetworkStatusContractByLocation
-    from .recipient_email_contract_py3 import RecipientEmailContract
-    from .recipient_email_collection_py3 import RecipientEmailCollection
-    from .recipient_user_contract_py3 import RecipientUserContract
-    from .recipient_user_collection_py3 import RecipientUserCollection
-    from .recipients_contract_properties_py3 import RecipientsContractProperties
-    from .notification_contract_py3 import NotificationContract
-    from .openid_connect_provider_update_contract_py3 import OpenidConnectProviderUpdateContract
-    from .openid_connect_provider_contract_py3 import OpenidConnectProviderContract
-    from .policy_snippet_contract_py3 import PolicySnippetContract
-    from .policy_snippets_collection_py3 import PolicySnippetsCollection
-    from .registration_delegation_settings_properties_py3 import RegistrationDelegationSettingsProperties
-    from .subscriptions_delegation_settings_properties_py3 import SubscriptionsDelegationSettingsProperties
-    from .portal_delegation_settings_py3 import PortalDelegationSettings
-    from .terms_of_service_properties_py3 import TermsOfServiceProperties
-    from .portal_signup_settings_py3 import PortalSignupSettings
-    from .portal_signin_settings_py3 import PortalSigninSettings
-    from .subscription_contract_py3 import SubscriptionContract
-    from .product_update_parameters_py3 import ProductUpdateParameters
-    from .property_entity_base_parameters_py3 import PropertyEntityBaseParameters
-    from .property_update_parameters_py3 import PropertyUpdateParameters
-    from .property_contract_py3 import PropertyContract
-    from .quota_counter_value_contract_properties_py3 import QuotaCounterValueContractProperties
-    from .quota_counter_contract_py3 import QuotaCounterContract
-    from .quota_counter_collection_py3 import QuotaCounterCollection
-    from .request_report_record_contract_py3 import RequestReportRecordContract
-    from .report_record_contract_py3 import ReportRecordContract
-    from .subscription_update_parameters_py3 import SubscriptionUpdateParameters
-    from .subscription_create_parameters_py3 import SubscriptionCreateParameters
-    from .tag_create_update_parameters_py3 import TagCreateUpdateParameters
-    from .tenant_configuration_sync_state_contract_py3 import TenantConfigurationSyncStateContract
-    from .operation_result_log_item_contract_py3 import OperationResultLogItemContract
-    from .operation_result_contract_py3 import OperationResultContract
-    from .deploy_configuration_parameters_py3 import DeployConfigurationParameters
-    from .save_configuration_parameter_py3 import SaveConfigurationParameter
-    from .access_information_contract_py3 import AccessInformationContract
-    from .access_information_update_parameters_py3 import AccessInformationUpdateParameters
-    from .user_token_result_py3 import UserTokenResult
-    from .user_token_parameters_py3 import UserTokenParameters
-    from .generate_sso_url_result_py3 import GenerateSsoUrlResult
-    from .user_update_parameters_py3 import UserUpdateParameters
-    from .user_create_parameters_py3 import UserCreateParameters
-    from .api_revision_info_contract_py3 import ApiRevisionInfoContract
-    from .quota_counter_value_contract_py3 import QuotaCounterValueContract
+    from ._models_py3 import AccessInformationContract
+    from ._models_py3 import AccessInformationUpdateParameters
+    from ._models_py3 import AdditionalLocation
+    from ._models_py3 import ApiContract
+    from ._models_py3 import ApiContractProperties
+    from ._models_py3 import ApiCreateOrUpdateParameter
+    from ._models_py3 import ApiCreateOrUpdatePropertiesWsdlSelector
+    from ._models_py3 import ApiEntityBaseContract
+    from ._models_py3 import ApiExportResult
+    from ._models_py3 import ApiExportResultValue
+    from ._models_py3 import ApiManagementServiceApplyNetworkConfigurationParameters
+    from ._models_py3 import ApiManagementServiceBackupRestoreParameters
+    from ._models_py3 import ApiManagementServiceBaseProperties
+    from ._models_py3 import ApiManagementServiceCheckNameAvailabilityParameters
+    from ._models_py3 import ApiManagementServiceGetSsoTokenResult
+    from ._models_py3 import ApiManagementServiceIdentity
+    from ._models_py3 import ApiManagementServiceNameAvailabilityResult
+    from ._models_py3 import ApiManagementServiceResource
+    from ._models_py3 import ApiManagementServiceSkuProperties
+    from ._models_py3 import ApiManagementServiceUpdateParameters
+    from ._models_py3 import ApimResource
+    from ._models_py3 import ApiReleaseContract
+    from ._models_py3 import ApiRevisionContract
+    from ._models_py3 import ApiRevisionInfoContract
+    from ._models_py3 import ApiTagResourceContractProperties
+    from ._models_py3 import ApiUpdateContract
+    from ._models_py3 import ApiVersionSetContract
+    from ._models_py3 import ApiVersionSetContractDetails
+    from ._models_py3 import ApiVersionSetEntityBase
+    from ._models_py3 import ApiVersionSetUpdateParameters
+    from ._models_py3 import AuthenticationSettingsContract
+    from ._models_py3 import AuthorizationServerContract
+    from ._models_py3 import AuthorizationServerContractBaseProperties
+    from ._models_py3 import AuthorizationServerUpdateContract
+    from ._models_py3 import BackendAuthorizationHeaderCredentials
+    from ._models_py3 import BackendBaseParameters
+    from ._models_py3 import BackendContract
+    from ._models_py3 import BackendCredentialsContract
+    from ._models_py3 import BackendProperties
+    from ._models_py3 import BackendProxyContract
+    from ._models_py3 import BackendReconnectContract
+    from ._models_py3 import BackendServiceFabricClusterProperties
+    from ._models_py3 import BackendTlsProperties
+    from ._models_py3 import BackendUpdateParameters
+    from ._models_py3 import BodyDiagnosticSettings
+    from ._models_py3 import CacheContract
+    from ._models_py3 import CacheUpdateParameters
+    from ._models_py3 import CertificateConfiguration
+    from ._models_py3 import CertificateContract
+    from ._models_py3 import CertificateCreateOrUpdateParameters
+    from ._models_py3 import CertificateInformation
+    from ._models_py3 import ConnectivityStatusContract
+    from ._models_py3 import DeployConfigurationParameters
+    from ._models_py3 import DiagnosticContract
+    from ._models_py3 import EmailTemplateContract
+    from ._models_py3 import EmailTemplateParametersContractProperties
+    from ._models_py3 import EmailTemplateUpdateParameters
+    from ._models_py3 import ErrorFieldContract
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
+    from ._models_py3 import GenerateSsoUrlResult
+    from ._models_py3 import GroupContract
+    from ._models_py3 import GroupContractProperties
+    from ._models_py3 import GroupCreateParameters
+    from ._models_py3 import GroupUpdateParameters
+    from ._models_py3 import HostnameConfiguration
+    from ._models_py3 import HttpMessageDiagnostic
+    from ._models_py3 import IdentityProviderBaseParameters
+    from ._models_py3 import IdentityProviderContract
+    from ._models_py3 import IdentityProviderUpdateParameters
+    from ._models_py3 import IssueAttachmentContract
+    from ._models_py3 import IssueCommentContract
+    from ._models_py3 import IssueContract
+    from ._models_py3 import IssueContractBaseProperties
+    from ._models_py3 import IssueUpdateContract
+    from ._models_py3 import LoggerContract
+    from ._models_py3 import LoggerUpdateContract
+    from ._models_py3 import NetworkStatusContract
+    from ._models_py3 import NetworkStatusContractByLocation
+    from ._models_py3 import NotificationContract
+    from ._models_py3 import OAuth2AuthenticationSettingsContract
+    from ._models_py3 import OpenIdAuthenticationSettingsContract
+    from ._models_py3 import OpenidConnectProviderContract
+    from ._models_py3 import OpenidConnectProviderUpdateContract
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationContract
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationEntityBaseContract
+    from ._models_py3 import OperationResultContract
+    from ._models_py3 import OperationResultLogItemContract
+    from ._models_py3 import OperationTagResourceContractProperties
+    from ._models_py3 import OperationUpdateContract
+    from ._models_py3 import ParameterContract
+    from ._models_py3 import PipelineDiagnosticSettings
+    from ._models_py3 import PolicyCollection
+    from ._models_py3 import PolicyContract
+    from ._models_py3 import PolicySnippetContract
+    from ._models_py3 import PolicySnippetsCollection
+    from ._models_py3 import PortalDelegationSettings
+    from ._models_py3 import PortalSigninSettings
+    from ._models_py3 import PortalSignupSettings
+    from ._models_py3 import ProductContract
+    from ._models_py3 import ProductEntityBaseParameters
+    from ._models_py3 import ProductTagResourceContractProperties
+    from ._models_py3 import ProductUpdateParameters
+    from ._models_py3 import PropertyContract
+    from ._models_py3 import PropertyEntityBaseParameters
+    from ._models_py3 import PropertyUpdateParameters
+    from ._models_py3 import QuotaCounterCollection
+    from ._models_py3 import QuotaCounterContract
+    from ._models_py3 import QuotaCounterValueContract
+    from ._models_py3 import QuotaCounterValueContractProperties
+    from ._models_py3 import RecipientEmailCollection
+    from ._models_py3 import RecipientEmailContract
+    from ._models_py3 import RecipientsContractProperties
+    from ._models_py3 import RecipientUserCollection
+    from ._models_py3 import RecipientUserContract
+    from ._models_py3 import RegionContract
+    from ._models_py3 import RegistrationDelegationSettingsProperties
+    from ._models_py3 import ReportRecordContract
+    from ._models_py3 import RepresentationContract
+    from ._models_py3 import RequestContract
+    from ._models_py3 import RequestReportRecordContract
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceSku
+    from ._models_py3 import ResourceSkuCapacity
+    from ._models_py3 import ResourceSkuResult
+    from ._models_py3 import ResponseContract
+    from ._models_py3 import SamplingSettings
+    from ._models_py3 import SaveConfigurationParameter
+    from ._models_py3 import SchemaContract
+    from ._models_py3 import SchemaCreateOrUpdateContract
+    from ._models_py3 import SubscriptionContract
+    from ._models_py3 import SubscriptionCreateParameters
+    from ._models_py3 import SubscriptionKeyParameterNamesContract
+    from ._models_py3 import SubscriptionsDelegationSettingsProperties
+    from ._models_py3 import SubscriptionUpdateParameters
+    from ._models_py3 import TagContract
+    from ._models_py3 import TagCreateUpdateParameters
+    from ._models_py3 import TagDescriptionContract
+    from ._models_py3 import TagDescriptionCreateParameters
+    from ._models_py3 import TagResourceContract
+    from ._models_py3 import TagTagResourceContractProperties
+    from ._models_py3 import TenantConfigurationSyncStateContract
+    from ._models_py3 import TermsOfServiceProperties
+    from ._models_py3 import TokenBodyParameterContract
+    from ._models_py3 import UserContract
+    from ._models_py3 import UserCreateParameters
+    from ._models_py3 import UserEntityBaseParameters
+    from ._models_py3 import UserIdentityContract
+    from ._models_py3 import UserTokenParameters
+    from ._models_py3 import UserTokenResult
+    from ._models_py3 import UserUpdateParameters
+    from ._models_py3 import VirtualNetworkConfiguration
+    from ._models_py3 import X509CertificateName
 except (SyntaxError, ImportError):
-    from .error_field_contract import ErrorFieldContract
-    from .error_response_body import ErrorResponseBody
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .region_contract import RegionContract
-    from .resource import Resource
-    from .api_export_result_value import ApiExportResultValue
-    from .api_export_result import ApiExportResult
-    from .product_entity_base_parameters import ProductEntityBaseParameters
-    from .product_tag_resource_contract_properties import ProductTagResourceContractProperties
-    from .operation_tag_resource_contract_properties import OperationTagResourceContractProperties
-    from .subscription_key_parameter_names_contract import SubscriptionKeyParameterNamesContract
-    from .open_id_authentication_settings_contract import OpenIdAuthenticationSettingsContract
-    from .oauth2_authentication_settings_contract import OAuth2AuthenticationSettingsContract
-    from .authentication_settings_contract import AuthenticationSettingsContract
-    from .api_version_set_contract_details import ApiVersionSetContractDetails
-    from .api_create_or_update_properties_wsdl_selector import ApiCreateOrUpdatePropertiesWsdlSelector
-    from .api_contract_properties import ApiContractProperties
-    from .api_entity_base_contract import ApiEntityBaseContract
-    from .api_tag_resource_contract_properties import ApiTagResourceContractProperties
-    from .tag_tag_resource_contract_properties import TagTagResourceContractProperties
-    from .tag_resource_contract import TagResourceContract
-    from .tag_contract import TagContract
-    from .tag_description_contract import TagDescriptionContract
-    from .tag_description_create_parameters import TagDescriptionCreateParameters
-    from .issue_attachment_contract import IssueAttachmentContract
-    from .issue_comment_contract import IssueCommentContract
-    from .issue_contract_base_properties import IssueContractBaseProperties
-    from .issue_update_contract import IssueUpdateContract
-    from .issue_contract import IssueContract
-    from .body_diagnostic_settings import BodyDiagnosticSettings
-    from .http_message_diagnostic import HttpMessageDiagnostic
-    from .pipeline_diagnostic_settings import PipelineDiagnosticSettings
-    from .sampling_settings import SamplingSettings
-    from .diagnostic_contract import DiagnosticContract
-    from .schema_contract import SchemaContract
-    from .schema_create_or_update_contract import SchemaCreateOrUpdateContract
-    from .policy_contract import PolicyContract
-    from .policy_collection import PolicyCollection
-    from .product_contract import ProductContract
-    from .parameter_contract import ParameterContract
-    from .representation_contract import RepresentationContract
-    from .response_contract import ResponseContract
-    from .request_contract import RequestContract
-    from .operation_entity_base_contract import OperationEntityBaseContract
-    from .operation_update_contract import OperationUpdateContract
-    from .operation_contract import OperationContract
-    from .api_release_contract import ApiReleaseContract
-    from .api_revision_contract import ApiRevisionContract
-    from .api_update_contract import ApiUpdateContract
-    from .api_contract import ApiContract
-    from .api_create_or_update_parameter import ApiCreateOrUpdateParameter
-    from .api_version_set_entity_base import ApiVersionSetEntityBase
-    from .api_version_set_update_parameters import ApiVersionSetUpdateParameters
-    from .api_version_set_contract import ApiVersionSetContract
-    from .token_body_parameter_contract import TokenBodyParameterContract
-    from .authorization_server_contract_base_properties import AuthorizationServerContractBaseProperties
-    from .authorization_server_update_contract import AuthorizationServerUpdateContract
-    from .authorization_server_contract import AuthorizationServerContract
-    from .backend_reconnect_contract import BackendReconnectContract
-    from .backend_tls_properties import BackendTlsProperties
-    from .backend_proxy_contract import BackendProxyContract
-    from .backend_authorization_header_credentials import BackendAuthorizationHeaderCredentials
-    from .backend_credentials_contract import BackendCredentialsContract
-    from .x509_certificate_name import X509CertificateName
-    from .backend_service_fabric_cluster_properties import BackendServiceFabricClusterProperties
-    from .backend_properties import BackendProperties
-    from .backend_base_parameters import BackendBaseParameters
-    from .backend_update_parameters import BackendUpdateParameters
-    from .backend_contract import BackendContract
-    from .cache_update_parameters import CacheUpdateParameters
-    from .cache_contract import CacheContract
-    from .certificate_contract import CertificateContract
-    from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
-    from .resource_sku import ResourceSku
-    from .resource_sku_capacity import ResourceSkuCapacity
-    from .resource_sku_result import ResourceSkuResult
-    from .certificate_information import CertificateInformation
-    from .certificate_configuration import CertificateConfiguration
-    from .hostname_configuration import HostnameConfiguration
-    from .virtual_network_configuration import VirtualNetworkConfiguration
-    from .api_management_service_sku_properties import ApiManagementServiceSkuProperties
-    from .additional_location import AdditionalLocation
-    from .api_management_service_backup_restore_parameters import ApiManagementServiceBackupRestoreParameters
-    from .api_management_service_base_properties import ApiManagementServiceBaseProperties
-    from .api_management_service_identity import ApiManagementServiceIdentity
-    from .api_management_service_resource import ApiManagementServiceResource
-    from .apim_resource import ApimResource
-    from .api_management_service_update_parameters import ApiManagementServiceUpdateParameters
-    from .api_management_service_get_sso_token_result import ApiManagementServiceGetSsoTokenResult
-    from .api_management_service_check_name_availability_parameters import ApiManagementServiceCheckNameAvailabilityParameters
-    from .api_management_service_name_availability_result import ApiManagementServiceNameAvailabilityResult
-    from .api_management_service_apply_network_configuration_parameters import ApiManagementServiceApplyNetworkConfigurationParameters
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .email_template_parameters_contract_properties import EmailTemplateParametersContractProperties
-    from .email_template_update_parameters import EmailTemplateUpdateParameters
-    from .email_template_contract import EmailTemplateContract
-    from .user_identity_contract import UserIdentityContract
-    from .user_entity_base_parameters import UserEntityBaseParameters
-    from .group_contract_properties import GroupContractProperties
-    from .user_contract import UserContract
-    from .group_update_parameters import GroupUpdateParameters
-    from .group_contract import GroupContract
-    from .group_create_parameters import GroupCreateParameters
-    from .identity_provider_base_parameters import IdentityProviderBaseParameters
-    from .identity_provider_update_parameters import IdentityProviderUpdateParameters
-    from .identity_provider_contract import IdentityProviderContract
-    from .logger_update_contract import LoggerUpdateContract
-    from .logger_contract import LoggerContract
-    from .connectivity_status_contract import ConnectivityStatusContract
-    from .network_status_contract import NetworkStatusContract
-    from .network_status_contract_by_location import NetworkStatusContractByLocation
-    from .recipient_email_contract import RecipientEmailContract
-    from .recipient_email_collection import RecipientEmailCollection
-    from .recipient_user_contract import RecipientUserContract
-    from .recipient_user_collection import RecipientUserCollection
-    from .recipients_contract_properties import RecipientsContractProperties
-    from .notification_contract import NotificationContract
-    from .openid_connect_provider_update_contract import OpenidConnectProviderUpdateContract
-    from .openid_connect_provider_contract import OpenidConnectProviderContract
-    from .policy_snippet_contract import PolicySnippetContract
-    from .policy_snippets_collection import PolicySnippetsCollection
-    from .registration_delegation_settings_properties import RegistrationDelegationSettingsProperties
-    from .subscriptions_delegation_settings_properties import SubscriptionsDelegationSettingsProperties
-    from .portal_delegation_settings import PortalDelegationSettings
-    from .terms_of_service_properties import TermsOfServiceProperties
-    from .portal_signup_settings import PortalSignupSettings
-    from .portal_signin_settings import PortalSigninSettings
-    from .subscription_contract import SubscriptionContract
-    from .product_update_parameters import ProductUpdateParameters
-    from .property_entity_base_parameters import PropertyEntityBaseParameters
-    from .property_update_parameters import PropertyUpdateParameters
-    from .property_contract import PropertyContract
-    from .quota_counter_value_contract_properties import QuotaCounterValueContractProperties
-    from .quota_counter_contract import QuotaCounterContract
-    from .quota_counter_collection import QuotaCounterCollection
-    from .request_report_record_contract import RequestReportRecordContract
-    from .report_record_contract import ReportRecordContract
-    from .subscription_update_parameters import SubscriptionUpdateParameters
-    from .subscription_create_parameters import SubscriptionCreateParameters
-    from .tag_create_update_parameters import TagCreateUpdateParameters
-    from .tenant_configuration_sync_state_contract import TenantConfigurationSyncStateContract
-    from .operation_result_log_item_contract import OperationResultLogItemContract
-    from .operation_result_contract import OperationResultContract
-    from .deploy_configuration_parameters import DeployConfigurationParameters
-    from .save_configuration_parameter import SaveConfigurationParameter
-    from .access_information_contract import AccessInformationContract
-    from .access_information_update_parameters import AccessInformationUpdateParameters
-    from .user_token_result import UserTokenResult
-    from .user_token_parameters import UserTokenParameters
-    from .generate_sso_url_result import GenerateSsoUrlResult
-    from .user_update_parameters import UserUpdateParameters
-    from .user_create_parameters import UserCreateParameters
-    from .api_revision_info_contract import ApiRevisionInfoContract
-    from .quota_counter_value_contract import QuotaCounterValueContract
-from .api_contract_paged import ApiContractPaged
-from .tag_resource_contract_paged import TagResourceContractPaged
-from .api_revision_contract_paged import ApiRevisionContractPaged
-from .api_release_contract_paged import ApiReleaseContractPaged
-from .operation_contract_paged import OperationContractPaged
-from .tag_contract_paged import TagContractPaged
-from .product_contract_paged import ProductContractPaged
-from .schema_contract_paged import SchemaContractPaged
-from .diagnostic_contract_paged import DiagnosticContractPaged
-from .issue_contract_paged import IssueContractPaged
-from .issue_comment_contract_paged import IssueCommentContractPaged
-from .issue_attachment_contract_paged import IssueAttachmentContractPaged
-from .tag_description_contract_paged import TagDescriptionContractPaged
-from .api_version_set_contract_paged import ApiVersionSetContractPaged
-from .authorization_server_contract_paged import AuthorizationServerContractPaged
-from .backend_contract_paged import BackendContractPaged
-from .cache_contract_paged import CacheContractPaged
-from .certificate_contract_paged import CertificateContractPaged
-from .operation_paged import OperationPaged
-from .resource_sku_result_paged import ResourceSkuResultPaged
-from .api_management_service_resource_paged import ApiManagementServiceResourcePaged
-from .email_template_contract_paged import EmailTemplateContractPaged
-from .group_contract_paged import GroupContractPaged
-from .user_contract_paged import UserContractPaged
-from .identity_provider_contract_paged import IdentityProviderContractPaged
-from .logger_contract_paged import LoggerContractPaged
-from .notification_contract_paged import NotificationContractPaged
-from .openid_connect_provider_contract_paged import OpenidConnectProviderContractPaged
-from .subscription_contract_paged import SubscriptionContractPaged
-from .property_contract_paged import PropertyContractPaged
-from .region_contract_paged import RegionContractPaged
-from .report_record_contract_paged import ReportRecordContractPaged
-from .request_report_record_contract_paged import RequestReportRecordContractPaged
-from .user_identity_contract_paged import UserIdentityContractPaged
-from .api_management_client_enums import (
+    from ._models import AccessInformationContract
+    from ._models import AccessInformationUpdateParameters
+    from ._models import AdditionalLocation
+    from ._models import ApiContract
+    from ._models import ApiContractProperties
+    from ._models import ApiCreateOrUpdateParameter
+    from ._models import ApiCreateOrUpdatePropertiesWsdlSelector
+    from ._models import ApiEntityBaseContract
+    from ._models import ApiExportResult
+    from ._models import ApiExportResultValue
+    from ._models import ApiManagementServiceApplyNetworkConfigurationParameters
+    from ._models import ApiManagementServiceBackupRestoreParameters
+    from ._models import ApiManagementServiceBaseProperties
+    from ._models import ApiManagementServiceCheckNameAvailabilityParameters
+    from ._models import ApiManagementServiceGetSsoTokenResult
+    from ._models import ApiManagementServiceIdentity
+    from ._models import ApiManagementServiceNameAvailabilityResult
+    from ._models import ApiManagementServiceResource
+    from ._models import ApiManagementServiceSkuProperties
+    from ._models import ApiManagementServiceUpdateParameters
+    from ._models import ApimResource
+    from ._models import ApiReleaseContract
+    from ._models import ApiRevisionContract
+    from ._models import ApiRevisionInfoContract
+    from ._models import ApiTagResourceContractProperties
+    from ._models import ApiUpdateContract
+    from ._models import ApiVersionSetContract
+    from ._models import ApiVersionSetContractDetails
+    from ._models import ApiVersionSetEntityBase
+    from ._models import ApiVersionSetUpdateParameters
+    from ._models import AuthenticationSettingsContract
+    from ._models import AuthorizationServerContract
+    from ._models import AuthorizationServerContractBaseProperties
+    from ._models import AuthorizationServerUpdateContract
+    from ._models import BackendAuthorizationHeaderCredentials
+    from ._models import BackendBaseParameters
+    from ._models import BackendContract
+    from ._models import BackendCredentialsContract
+    from ._models import BackendProperties
+    from ._models import BackendProxyContract
+    from ._models import BackendReconnectContract
+    from ._models import BackendServiceFabricClusterProperties
+    from ._models import BackendTlsProperties
+    from ._models import BackendUpdateParameters
+    from ._models import BodyDiagnosticSettings
+    from ._models import CacheContract
+    from ._models import CacheUpdateParameters
+    from ._models import CertificateConfiguration
+    from ._models import CertificateContract
+    from ._models import CertificateCreateOrUpdateParameters
+    from ._models import CertificateInformation
+    from ._models import ConnectivityStatusContract
+    from ._models import DeployConfigurationParameters
+    from ._models import DiagnosticContract
+    from ._models import EmailTemplateContract
+    from ._models import EmailTemplateParametersContractProperties
+    from ._models import EmailTemplateUpdateParameters
+    from ._models import ErrorFieldContract
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
+    from ._models import GenerateSsoUrlResult
+    from ._models import GroupContract
+    from ._models import GroupContractProperties
+    from ._models import GroupCreateParameters
+    from ._models import GroupUpdateParameters
+    from ._models import HostnameConfiguration
+    from ._models import HttpMessageDiagnostic
+    from ._models import IdentityProviderBaseParameters
+    from ._models import IdentityProviderContract
+    from ._models import IdentityProviderUpdateParameters
+    from ._models import IssueAttachmentContract
+    from ._models import IssueCommentContract
+    from ._models import IssueContract
+    from ._models import IssueContractBaseProperties
+    from ._models import IssueUpdateContract
+    from ._models import LoggerContract
+    from ._models import LoggerUpdateContract
+    from ._models import NetworkStatusContract
+    from ._models import NetworkStatusContractByLocation
+    from ._models import NotificationContract
+    from ._models import OAuth2AuthenticationSettingsContract
+    from ._models import OpenIdAuthenticationSettingsContract
+    from ._models import OpenidConnectProviderContract
+    from ._models import OpenidConnectProviderUpdateContract
+    from ._models import Operation
+    from ._models import OperationContract
+    from ._models import OperationDisplay
+    from ._models import OperationEntityBaseContract
+    from ._models import OperationResultContract
+    from ._models import OperationResultLogItemContract
+    from ._models import OperationTagResourceContractProperties
+    from ._models import OperationUpdateContract
+    from ._models import ParameterContract
+    from ._models import PipelineDiagnosticSettings
+    from ._models import PolicyCollection
+    from ._models import PolicyContract
+    from ._models import PolicySnippetContract
+    from ._models import PolicySnippetsCollection
+    from ._models import PortalDelegationSettings
+    from ._models import PortalSigninSettings
+    from ._models import PortalSignupSettings
+    from ._models import ProductContract
+    from ._models import ProductEntityBaseParameters
+    from ._models import ProductTagResourceContractProperties
+    from ._models import ProductUpdateParameters
+    from ._models import PropertyContract
+    from ._models import PropertyEntityBaseParameters
+    from ._models import PropertyUpdateParameters
+    from ._models import QuotaCounterCollection
+    from ._models import QuotaCounterContract
+    from ._models import QuotaCounterValueContract
+    from ._models import QuotaCounterValueContractProperties
+    from ._models import RecipientEmailCollection
+    from ._models import RecipientEmailContract
+    from ._models import RecipientsContractProperties
+    from ._models import RecipientUserCollection
+    from ._models import RecipientUserContract
+    from ._models import RegionContract
+    from ._models import RegistrationDelegationSettingsProperties
+    from ._models import ReportRecordContract
+    from ._models import RepresentationContract
+    from ._models import RequestContract
+    from ._models import RequestReportRecordContract
+    from ._models import Resource
+    from ._models import ResourceSku
+    from ._models import ResourceSkuCapacity
+    from ._models import ResourceSkuResult
+    from ._models import ResponseContract
+    from ._models import SamplingSettings
+    from ._models import SaveConfigurationParameter
+    from ._models import SchemaContract
+    from ._models import SchemaCreateOrUpdateContract
+    from ._models import SubscriptionContract
+    from ._models import SubscriptionCreateParameters
+    from ._models import SubscriptionKeyParameterNamesContract
+    from ._models import SubscriptionsDelegationSettingsProperties
+    from ._models import SubscriptionUpdateParameters
+    from ._models import TagContract
+    from ._models import TagCreateUpdateParameters
+    from ._models import TagDescriptionContract
+    from ._models import TagDescriptionCreateParameters
+    from ._models import TagResourceContract
+    from ._models import TagTagResourceContractProperties
+    from ._models import TenantConfigurationSyncStateContract
+    from ._models import TermsOfServiceProperties
+    from ._models import TokenBodyParameterContract
+    from ._models import UserContract
+    from ._models import UserCreateParameters
+    from ._models import UserEntityBaseParameters
+    from ._models import UserIdentityContract
+    from ._models import UserTokenParameters
+    from ._models import UserTokenResult
+    from ._models import UserUpdateParameters
+    from ._models import VirtualNetworkConfiguration
+    from ._models import X509CertificateName
+from ._paged_models import ApiContractPaged
+from ._paged_models import ApiManagementServiceResourcePaged
+from ._paged_models import ApiReleaseContractPaged
+from ._paged_models import ApiRevisionContractPaged
+from ._paged_models import ApiVersionSetContractPaged
+from ._paged_models import AuthorizationServerContractPaged
+from ._paged_models import BackendContractPaged
+from ._paged_models import CacheContractPaged
+from ._paged_models import CertificateContractPaged
+from ._paged_models import DiagnosticContractPaged
+from ._paged_models import EmailTemplateContractPaged
+from ._paged_models import GroupContractPaged
+from ._paged_models import IdentityProviderContractPaged
+from ._paged_models import IssueAttachmentContractPaged
+from ._paged_models import IssueCommentContractPaged
+from ._paged_models import IssueContractPaged
+from ._paged_models import LoggerContractPaged
+from ._paged_models import NotificationContractPaged
+from ._paged_models import OpenidConnectProviderContractPaged
+from ._paged_models import OperationContractPaged
+from ._paged_models import OperationPaged
+from ._paged_models import ProductContractPaged
+from ._paged_models import PropertyContractPaged
+from ._paged_models import RegionContractPaged
+from ._paged_models import ReportRecordContractPaged
+from ._paged_models import RequestReportRecordContractPaged
+from ._paged_models import ResourceSkuResultPaged
+from ._paged_models import SchemaContractPaged
+from ._paged_models import SubscriptionContractPaged
+from ._paged_models import TagContractPaged
+from ._paged_models import TagDescriptionContractPaged
+from ._paged_models import TagResourceContractPaged
+from ._paged_models import UserContractPaged
+from ._paged_models import UserIdentityContractPaged
+from ._api_management_client_enums import (
     ExportResultFormat,
     ProductState,
     BearerTokenSendingMethods,
@@ -395,161 +395,161 @@ from .api_management_client_enums import (
 )
 
 __all__ = [
-    'ErrorFieldContract',
-    'ErrorResponseBody',
-    'ErrorResponse', 'ErrorResponseException',
-    'RegionContract',
-    'Resource',
-    'ApiExportResultValue',
-    'ApiExportResult',
-    'ProductEntityBaseParameters',
-    'ProductTagResourceContractProperties',
-    'OperationTagResourceContractProperties',
-    'SubscriptionKeyParameterNamesContract',
-    'OpenIdAuthenticationSettingsContract',
-    'OAuth2AuthenticationSettingsContract',
-    'AuthenticationSettingsContract',
-    'ApiVersionSetContractDetails',
-    'ApiCreateOrUpdatePropertiesWsdlSelector',
+    'AccessInformationContract',
+    'AccessInformationUpdateParameters',
+    'AdditionalLocation',
+    'ApiContract',
     'ApiContractProperties',
+    'ApiCreateOrUpdateParameter',
+    'ApiCreateOrUpdatePropertiesWsdlSelector',
     'ApiEntityBaseContract',
-    'ApiTagResourceContractProperties',
-    'TagTagResourceContractProperties',
-    'TagResourceContract',
-    'TagContract',
-    'TagDescriptionContract',
-    'TagDescriptionCreateParameters',
-    'IssueAttachmentContract',
-    'IssueCommentContract',
-    'IssueContractBaseProperties',
-    'IssueUpdateContract',
-    'IssueContract',
-    'BodyDiagnosticSettings',
-    'HttpMessageDiagnostic',
-    'PipelineDiagnosticSettings',
-    'SamplingSettings',
-    'DiagnosticContract',
-    'SchemaContract',
-    'SchemaCreateOrUpdateContract',
-    'PolicyContract',
-    'PolicyCollection',
-    'ProductContract',
-    'ParameterContract',
-    'RepresentationContract',
-    'ResponseContract',
-    'RequestContract',
-    'OperationEntityBaseContract',
-    'OperationUpdateContract',
-    'OperationContract',
+    'ApiExportResult',
+    'ApiExportResultValue',
+    'ApiManagementServiceApplyNetworkConfigurationParameters',
+    'ApiManagementServiceBackupRestoreParameters',
+    'ApiManagementServiceBaseProperties',
+    'ApiManagementServiceCheckNameAvailabilityParameters',
+    'ApiManagementServiceGetSsoTokenResult',
+    'ApiManagementServiceIdentity',
+    'ApiManagementServiceNameAvailabilityResult',
+    'ApiManagementServiceResource',
+    'ApiManagementServiceSkuProperties',
+    'ApiManagementServiceUpdateParameters',
+    'ApimResource',
     'ApiReleaseContract',
     'ApiRevisionContract',
+    'ApiRevisionInfoContract',
+    'ApiTagResourceContractProperties',
     'ApiUpdateContract',
-    'ApiContract',
-    'ApiCreateOrUpdateParameter',
+    'ApiVersionSetContract',
+    'ApiVersionSetContractDetails',
     'ApiVersionSetEntityBase',
     'ApiVersionSetUpdateParameters',
-    'ApiVersionSetContract',
-    'TokenBodyParameterContract',
+    'AuthenticationSettingsContract',
+    'AuthorizationServerContract',
     'AuthorizationServerContractBaseProperties',
     'AuthorizationServerUpdateContract',
-    'AuthorizationServerContract',
-    'BackendReconnectContract',
-    'BackendTlsProperties',
-    'BackendProxyContract',
     'BackendAuthorizationHeaderCredentials',
-    'BackendCredentialsContract',
-    'X509CertificateName',
-    'BackendServiceFabricClusterProperties',
-    'BackendProperties',
     'BackendBaseParameters',
-    'BackendUpdateParameters',
     'BackendContract',
-    'CacheUpdateParameters',
+    'BackendCredentialsContract',
+    'BackendProperties',
+    'BackendProxyContract',
+    'BackendReconnectContract',
+    'BackendServiceFabricClusterProperties',
+    'BackendTlsProperties',
+    'BackendUpdateParameters',
+    'BodyDiagnosticSettings',
     'CacheContract',
+    'CacheUpdateParameters',
+    'CertificateConfiguration',
     'CertificateContract',
     'CertificateCreateOrUpdateParameters',
+    'CertificateInformation',
+    'ConnectivityStatusContract',
+    'DeployConfigurationParameters',
+    'DiagnosticContract',
+    'EmailTemplateContract',
+    'EmailTemplateParametersContractProperties',
+    'EmailTemplateUpdateParameters',
+    'ErrorFieldContract',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
+    'GenerateSsoUrlResult',
+    'GroupContract',
+    'GroupContractProperties',
+    'GroupCreateParameters',
+    'GroupUpdateParameters',
+    'HostnameConfiguration',
+    'HttpMessageDiagnostic',
+    'IdentityProviderBaseParameters',
+    'IdentityProviderContract',
+    'IdentityProviderUpdateParameters',
+    'IssueAttachmentContract',
+    'IssueCommentContract',
+    'IssueContract',
+    'IssueContractBaseProperties',
+    'IssueUpdateContract',
+    'LoggerContract',
+    'LoggerUpdateContract',
+    'NetworkStatusContract',
+    'NetworkStatusContractByLocation',
+    'NotificationContract',
+    'OAuth2AuthenticationSettingsContract',
+    'OpenIdAuthenticationSettingsContract',
+    'OpenidConnectProviderContract',
+    'OpenidConnectProviderUpdateContract',
+    'Operation',
+    'OperationContract',
+    'OperationDisplay',
+    'OperationEntityBaseContract',
+    'OperationResultContract',
+    'OperationResultLogItemContract',
+    'OperationTagResourceContractProperties',
+    'OperationUpdateContract',
+    'ParameterContract',
+    'PipelineDiagnosticSettings',
+    'PolicyCollection',
+    'PolicyContract',
+    'PolicySnippetContract',
+    'PolicySnippetsCollection',
+    'PortalDelegationSettings',
+    'PortalSigninSettings',
+    'PortalSignupSettings',
+    'ProductContract',
+    'ProductEntityBaseParameters',
+    'ProductTagResourceContractProperties',
+    'ProductUpdateParameters',
+    'PropertyContract',
+    'PropertyEntityBaseParameters',
+    'PropertyUpdateParameters',
+    'QuotaCounterCollection',
+    'QuotaCounterContract',
+    'QuotaCounterValueContract',
+    'QuotaCounterValueContractProperties',
+    'RecipientEmailCollection',
+    'RecipientEmailContract',
+    'RecipientsContractProperties',
+    'RecipientUserCollection',
+    'RecipientUserContract',
+    'RegionContract',
+    'RegistrationDelegationSettingsProperties',
+    'ReportRecordContract',
+    'RepresentationContract',
+    'RequestContract',
+    'RequestReportRecordContract',
+    'Resource',
     'ResourceSku',
     'ResourceSkuCapacity',
     'ResourceSkuResult',
-    'CertificateInformation',
-    'CertificateConfiguration',
-    'HostnameConfiguration',
-    'VirtualNetworkConfiguration',
-    'ApiManagementServiceSkuProperties',
-    'AdditionalLocation',
-    'ApiManagementServiceBackupRestoreParameters',
-    'ApiManagementServiceBaseProperties',
-    'ApiManagementServiceIdentity',
-    'ApiManagementServiceResource',
-    'ApimResource',
-    'ApiManagementServiceUpdateParameters',
-    'ApiManagementServiceGetSsoTokenResult',
-    'ApiManagementServiceCheckNameAvailabilityParameters',
-    'ApiManagementServiceNameAvailabilityResult',
-    'ApiManagementServiceApplyNetworkConfigurationParameters',
-    'OperationDisplay',
-    'Operation',
-    'EmailTemplateParametersContractProperties',
-    'EmailTemplateUpdateParameters',
-    'EmailTemplateContract',
-    'UserIdentityContract',
-    'UserEntityBaseParameters',
-    'GroupContractProperties',
-    'UserContract',
-    'GroupUpdateParameters',
-    'GroupContract',
-    'GroupCreateParameters',
-    'IdentityProviderBaseParameters',
-    'IdentityProviderUpdateParameters',
-    'IdentityProviderContract',
-    'LoggerUpdateContract',
-    'LoggerContract',
-    'ConnectivityStatusContract',
-    'NetworkStatusContract',
-    'NetworkStatusContractByLocation',
-    'RecipientEmailContract',
-    'RecipientEmailCollection',
-    'RecipientUserContract',
-    'RecipientUserCollection',
-    'RecipientsContractProperties',
-    'NotificationContract',
-    'OpenidConnectProviderUpdateContract',
-    'OpenidConnectProviderContract',
-    'PolicySnippetContract',
-    'PolicySnippetsCollection',
-    'RegistrationDelegationSettingsProperties',
-    'SubscriptionsDelegationSettingsProperties',
-    'PortalDelegationSettings',
-    'TermsOfServiceProperties',
-    'PortalSignupSettings',
-    'PortalSigninSettings',
-    'SubscriptionContract',
-    'ProductUpdateParameters',
-    'PropertyEntityBaseParameters',
-    'PropertyUpdateParameters',
-    'PropertyContract',
-    'QuotaCounterValueContractProperties',
-    'QuotaCounterContract',
-    'QuotaCounterCollection',
-    'RequestReportRecordContract',
-    'ReportRecordContract',
-    'SubscriptionUpdateParameters',
-    'SubscriptionCreateParameters',
-    'TagCreateUpdateParameters',
-    'TenantConfigurationSyncStateContract',
-    'OperationResultLogItemContract',
-    'OperationResultContract',
-    'DeployConfigurationParameters',
+    'ResponseContract',
+    'SamplingSettings',
     'SaveConfigurationParameter',
-    'AccessInformationContract',
-    'AccessInformationUpdateParameters',
-    'UserTokenResult',
-    'UserTokenParameters',
-    'GenerateSsoUrlResult',
-    'UserUpdateParameters',
+    'SchemaContract',
+    'SchemaCreateOrUpdateContract',
+    'SubscriptionContract',
+    'SubscriptionCreateParameters',
+    'SubscriptionKeyParameterNamesContract',
+    'SubscriptionsDelegationSettingsProperties',
+    'SubscriptionUpdateParameters',
+    'TagContract',
+    'TagCreateUpdateParameters',
+    'TagDescriptionContract',
+    'TagDescriptionCreateParameters',
+    'TagResourceContract',
+    'TagTagResourceContractProperties',
+    'TenantConfigurationSyncStateContract',
+    'TermsOfServiceProperties',
+    'TokenBodyParameterContract',
+    'UserContract',
     'UserCreateParameters',
-    'ApiRevisionInfoContract',
-    'QuotaCounterValueContract',
+    'UserEntityBaseParameters',
+    'UserIdentityContract',
+    'UserTokenParameters',
+    'UserTokenResult',
+    'UserUpdateParameters',
+    'VirtualNetworkConfiguration',
+    'X509CertificateName',
     'ApiContractPaged',
     'TagResourceContractPaged',
     'ApiRevisionContractPaged',
