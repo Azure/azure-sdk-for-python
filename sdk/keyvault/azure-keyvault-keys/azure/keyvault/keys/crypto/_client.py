@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
 from ._internal import EllipticCurveKey, RsaKey
-from ..models import KeyVaultKey
+from .._models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
 
 try:
@@ -29,10 +29,10 @@ class CryptographyClient(KeyVaultClientBase):
     Performs cryptographic operations using Azure Key Vault keys.
 
     :param key:
-        Either a :class:`~azure.keyvault.keys.models.KeyVaultKey` instance as returned by
+        Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
         If a string, the value must be the full identifier of an Azure Key Vault key with a version.
-    :type key: str or :class:`~azure.keyvault.keys.models.KeyVaultKey`
+    :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -48,11 +48,11 @@ class CryptographyClient(KeyVaultClientBase):
 
         credential = DefaultAzureCredential()
 
-        # create a CryptographyClient using a Key instance
+        # create a CryptographyClient using a KeyVaultKey instance
         key = key_client.get_key("mykey")
         crypto_client = CryptographyClient(key, credential)
 
-        # or a Key's id, which must include a version
+        # or a key's id, which must include a version
         key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
         crypto_client = CryptographyClient(key_id, credential)
 
@@ -84,7 +84,7 @@ class CryptographyClient(KeyVaultClientBase):
             # will be replaced with actual permissions before any local operations are attempted, if we can get the key
             self._allowed_ops = frozenset()
         else:
-            raise ValueError("'key' must be a Key instance or a key ID string including a version")
+            raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")
@@ -109,10 +109,10 @@ class CryptographyClient(KeyVaultClientBase):
     def _get_key(self, **kwargs):
         # type: (**Any) -> Optional[KeyVaultKey]
         """
-        Get the client's :class:`~azure.keyvault.keys.models.KeyVaultKey`.
+        Get the client's :class:`~azure.keyvault.keys.KeyVaultKey`.
         Can be ``None``, if the client lacks keys/get permission.
 
-        :rtype: :class:`~azure.keyvault.keys.models.KeyVaultKey` or ``None``
+        :rtype: :class:`~azure.keyvault.keys.KeyVaultKey` or ``None``
         """
 
         if not (self._key or self._keys_get_forbidden):
