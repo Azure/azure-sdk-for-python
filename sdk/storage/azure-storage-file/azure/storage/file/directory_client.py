@@ -390,6 +390,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             response = self._client.directory.force_close_handles(
                 handle_id,
                 marker=None,
+                recursive=None,
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs
@@ -425,6 +426,7 @@ class DirectoryClient(StorageAccountHostsMixin):
                     handle_id='*',
                     timeout=timeout,
                     marker=continuation_token,
+                    recursive=recursive,
                     sharesnapshot=self.snapshot,
                     cls=return_response_headers,
                     **kwargs
