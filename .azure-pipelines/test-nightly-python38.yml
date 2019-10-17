@@ -19,6 +19,7 @@ jobs:
           versionSpec: '3.7'
 
       - script: |
+          cd ~/
           sudo apt-get update
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt-get update
@@ -26,23 +27,10 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 --version
+          ls
           echo $PATH
-          cd /home/vsts
-          ls
-          cd bin
-          echo 'home/vsts/bin'
-          ls
-          cd /home/vsts/hostedcache
-          echo '/home/vsts/hostedcache'
-          ls
-          echo 'usr/lib/bin'
-          cd /usr/lib/bin
-          ls
-          echo 'usr/local/bin'
-          cd /usr/local/bin
-          ls
-          echo 'opt/bin'
-          cd /opt/bin
+          echo 'opt'
+          cd /opt
           ls
           cd $(Build.SourcesDirectory)
           python3 -m ensurepip
