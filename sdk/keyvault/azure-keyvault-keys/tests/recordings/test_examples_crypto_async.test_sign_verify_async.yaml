@@ -2,68 +2,130 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vaultffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/create?api-version=7.0
+    uri: https://vault458ad70cc7ffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/create?api-version=7.0
   response:
-    body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
-        a Bearer or PoP token."}}'}
-    headers: {cache-control: no-cache, content-length: '87', content-type: application/json;
-        charset=utf-8, date: 'Wed, 16 Oct 2019 16:07:08 GMT', expires: '-1', pragma: no-cache,
-      server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
-      www-authenticate: 'Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
-        resource="https://vault.azure.net"', x-aspnet-version: 4.0.30319, x-content-type-options: nosniff,
-      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;,
-      x-ms-keyvault-region: westus, x-ms-keyvault-service-version: 1.1.0.879, x-powered-by: ASP.NET}
-    status: {code: 401, message: Unauthorized}
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control: no-cache
+      content-length: '87'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 20:42:33 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vaultffd4146b.vault.azure.net,
-        /keys/crypto-test-wrapping-keyffd4146b/create, api-version=7.0, '']
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc7ffd4146b.vault.azure.net
+        - /keys/crypto-test-wrapping-keyffd4146b/create
+        - api-version=7.0
+        - ''
 - request:
     body: '{"kty": "RSA"}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['14']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vaultffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/create?api-version=7.0
+    uri: https://vault458ad70cc7ffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/9ed94fe1f9954283a8e3f6ffb9a871c9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mpHze1MujNBAnz-5jUkPmxPGdBuB2c-C-SVy4WZAn7VGIfPOMY_bV_HBMGoClXNh3-RhcEFKRfVuR7_-mqxyGACfpBvTpV2TLGrcPkKQag9d7IroztNQts0am2lLCZbjN7cGaJukFv71oKzRlOMOO313oGAT16E8zH0KwG3UGZu89YRe3n72NcHpBbGM20-Dqxj7VvR3275yPf45UUFynOvm1BYSAn3e9QR3oqQd6RaTRec4k8ZFQ7otJxNPaEICy20cmjQ5tBil9ZNO9D93rM4KPP0r4U3hoiRBNlodB5kmS267FD_1_d7DbBfkAdTu3WgzMJKBC-vn12m99v6sTw","e":"AQAB"},"attributes":{"enabled":true,"created":1571242029,"updated":1571242029,"recoveryLevel":"Purgeable"}}'}
-    headers: {cache-control: no-cache, content-length: '668', content-type: application/json;
-        charset=utf-8, date: 'Wed, 16 Oct 2019 16:07:09 GMT', expires: '-1', pragma: no-cache,
-      server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
-      x-aspnet-version: 4.0.30319, x-content-type-options: nosniff, x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;,
-      x-ms-keyvault-region: westus, x-ms-keyvault-service-version: 1.1.0.879, x-powered-by: ASP.NET}
-    status: {code: 200, message: OK}
+    body:
+      string: '{"key":{"kid":"https://vault458ad70cc7ffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/8dd98670ce62445aa4c40f5d78c29b9b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"s6GpfRjMrQk7l6kuAYSmVax_JdxM3wetAqDwJmSFwnTznXdmFcZKJ8hGy-1qApxsor6Q1KFqNRTCuHTOiTXQJxrxCLUD7kz_EhaRECU4qINi4hOTNL72dqtZJ4HfOsWxuv_Nz2ZbK_6jfQrZSdYIJwGPphGs4VJkzO3CJuCTZSqBTip8j1LiWLMW7WmntwjsIZQrXLUKMkx4ql68Bb6nuLdAsIs_HV3YoYUoos8mLUFrtio9PiuJ8S79uoa_G_-ebh5nVuMUjCKFEU6uy6Qm_fxCe4TMX2TkzKYIsLNGY6vY4V3rdZFAtsvZLzqetAUFqS-_Vf-r-my7Uug1_MENcQ","e":"AQAB"},"attributes":{"enabled":true,"created":1571258553,"updated":1571258553,"recoveryLevel":"Purgeable"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '678'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 20:42:33 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vaultffd4146b.vault.azure.net,
-        /keys/crypto-test-wrapping-keyffd4146b/create, api-version=7.0, '']
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc7ffd4146b.vault.azure.net
+        - /keys/crypto-test-wrapping-keyffd4146b/create
+        - api-version=7.0
+        - ''
 - request:
     body: '{"alg": "RS256", "value": "ltYuKr0-Qt5fUDMPuO_ExVmYNSeAd7IemqCzPB3wehw"}'
     headers:
-      Accept: [application/json]
-      Content-Length: ['72']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      Accept:
+      - application/json
+      Content-Length:
+      - '72'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vaultffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/9ed94fe1f9954283a8e3f6ffb9a871c9/sign?api-version=7.0
+    uri: https://vault458ad70cc7ffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/8dd98670ce62445aa4c40f5d78c29b9b/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/9ed94fe1f9954283a8e3f6ffb9a871c9","value":"LQLWwr35OBSlGXWP0dI5lCCt-24fiB6W_iGwnY_TKm2stB2oe5R5drd_sJ-pjUXJD1wU3Wil2-5tlLd8mQAIDONu6Z0r3Ng6dXrE3R_tCrRlfzJLOX4FsS-D8vncvV3UpTnieikmoxGJX62gpyYW3GcILP2DGzTO7FKLJ95tpyHz5DZYaacd1aeYvSFVaQvqn4GHDKFzfFHfXt7Emr1BzcsxQs78584F5ePK8a-JVFQtm_N9hqpWV5wFB5C088jOf-yT8tjZUo-3Prv0WiqFOnthqVI_ipsogR0GKB06lS94UG8XCOJv48bALSocN_IjR5JLwUHAf9gmkVUS3MX6Sg"}'}
-    headers: {cache-control: no-cache, content-length: '471', content-type: application/json;
-        charset=utf-8, date: 'Wed, 16 Oct 2019 16:07:08 GMT', expires: '-1', pragma: no-cache,
-      server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
-      x-aspnet-version: 4.0.30319, x-content-type-options: nosniff, x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;,
-      x-ms-keyvault-region: westus, x-ms-keyvault-service-version: 1.1.0.879, x-powered-by: ASP.NET}
-    status: {code: 200, message: OK}
+    body:
+      string: '{"kid":"https://vault458ad70cc7ffd4146b.vault.azure.net/keys/crypto-test-wrapping-keyffd4146b/8dd98670ce62445aa4c40f5d78c29b9b","value":"Gp4cj3EKArBzctcliV8sMHEajhoBFRqPSouFdcisYwzYT8Jh2pBew2KhYylghlXgRLcG1LSHb-grt4ZxiaUJonFeuTUhWO8SE4uejg0VDTHZ-i0ODF5s9IL3V7rRb_at-ASJ8BM4xKksulCu3juBlYV7VtrfJy4yS5wc1QmwMEkHHGGmqtFogzzY8wIeQExEFP7tzJ34EoFH0-0kGUJ0irC4XtbJTg-xYy7yWJPFR1mbNgTJVQ67FvTSfqeamye7hHu3Us8FCw0_ZoJJDBn1obHkBE7UDikXDkQKHTM6IooEqoBFZzZj6MBuKZlY0lW30Q4TrbnWETrFFwMGWwfoAw"}'
+    headers:
+      cache-control: no-cache
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 20:42:33 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vaultffd4146b.vault.azure.net,
-        /keys/crypto-test-wrapping-keyffd4146b/9ed94fe1f9954283a8e3f6ffb9a871c9/sign,
-        api-version=7.0, '']
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc7ffd4146b.vault.azure.net
+        - /keys/crypto-test-wrapping-keyffd4146b/8dd98670ce62445aa4c40f5d78c29b9b/sign
+        - api-version=7.0
+        - ''
 version: 1
