@@ -1826,13 +1826,13 @@ class ModernUsageDetail(UsageDetail):
     :ivar billing_period_end_date: Billing Period End Date as in the invoice.
     :vartype billing_period_end_date: datetime
     :ivar billing_profile_id: Identifier for the billing profile that groups
-     costs acrosss invoices in the a singular billing currency across across
-     the customers who have onboarded the Microsoft customer agreement and the
+     costs across invoices in the a singular billing currency across across the
+     customers who have onboarded the Microsoft customer agreement and the
      customers in CSP who have made entitlement purchases like SaaS,
      Marketplace, RI, etc.
     :vartype billing_profile_id: str
     :ivar billing_profile_name: Name of the billing profile that groups costs
-     acrosss invoices in the a singular billing currency across across the
+     across invoices in the a singular billing currency across across the
      customers who have onboarded the Microsoft customer agreement and the
      customers in CSP who have made entitlement purchases like SaaS,
      Marketplace, RI, etc.
@@ -1934,7 +1934,7 @@ class ModernUsageDetail(UsageDetail):
      purchases, the terms displays 1 month )(SaaS, Marketplace Support) (1
      month); This is not applicable for Azure consumption.
     :vartype term: str
-    :ivar publisher_name: Name of the publisher of the service includung
+    :ivar publisher_name: Name of the publisher of the service including
      Microsoft or Third Party publishers.
     :vartype publisher_name: str
     :ivar publisher_type: Type of publisher that identifies if the publisher
@@ -1954,10 +1954,10 @@ class ModernUsageDetail(UsageDetail):
      pricing currency to correlate with prices.
     :vartype cost_in_pricing_currency: decimal.Decimal
     :ivar exchange_rate: Exchange rate used in conversion from pricing
-     currency to billing curency.
+     currency to billing currency.
     :vartype exchange_rate: str
     :ivar exchange_rate_date: Date on which exchange rate used in conversion
-     from pricing currency to billing curency.
+     from pricing currency to billing currency.
     :vartype exchange_rate_date: datetime
     :ivar invoice_id: Invoice ID as on the invoice where the specific
      transaction appears.
