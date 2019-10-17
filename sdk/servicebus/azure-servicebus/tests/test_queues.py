@@ -65,7 +65,7 @@ def print_message(message):
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_github_issue_7079(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
@@ -87,7 +87,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 5
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='servicebustest')
+    @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
@@ -812,7 +812,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(MessageLockExpired):
                     messages[2].complete()
     
-#TODO: KIBRANTN: THIS TEST IS FAILING
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
