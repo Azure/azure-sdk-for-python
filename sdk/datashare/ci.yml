@@ -21,7 +21,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
+    - sdk/datashare/
 
 pr:
   branches:
@@ -33,13 +33,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
+    - sdk/datashare/
 
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: datafactory
+    ServiceDirectory: datashare
     Artifacts:
-    - name: azure_mgmt_datafactory
-      safeName: azuremgmtdatafactory
+    - name: azure_mgmt_datashare
+      safeName: azuremgmtdatashare

@@ -21,7 +21,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
+    - sdk/attestation/
 
 pr:
   branches:
@@ -33,13 +33,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/datafactory/
+    - sdk/attestation/
 
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: datafactory
+    ServiceDirectory: attestation
     Artifacts:
-    - name: azure_mgmt_datafactory
-      safeName: azuremgmtdatafactory
+    - name: azure_mgmt_attestation
+      safeName: azuremgmtattestation
