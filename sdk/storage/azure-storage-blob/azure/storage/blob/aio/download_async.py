@@ -99,7 +99,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
 
     async def process_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = await self._download_chunk(chunk_start, chunk_end)
+        chunk_data = await self._download_chunk(chunk_start, chunk_end-1)
         length = chunk_end - chunk_start
         if length > 0:
             await self._write_to_stream(chunk_data, chunk_start)
@@ -142,12 +142,12 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
         download_range, offset = process_range_and_offset(
             chunk_start, chunk_end, chunk_end, self.encryption_options)
 
-        if self._do_optimize(download_range[0], download_range[1] - 1):
+        if self._do_optimize(download_range[0], download_range[1]):
             chunk_data = b"\x00" * self.chunk_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
-                download_range[1] - 1,
+                download_range[1],
                 check_content_md5=self.validate_content)
             try:
                 _, response = await self.client.download(
