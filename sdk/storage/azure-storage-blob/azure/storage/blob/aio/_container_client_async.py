@@ -103,7 +103,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     """
     def __init__(
             self, account_url,  # type: str
-            container_name=None,  # type: str
+            container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
@@ -280,7 +280,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         return lease
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs): # type: ignore
+    async def get_account_information(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
@@ -920,7 +920,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
         self,
-        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
+        premium_page_blob_tier: Union[str, PremiumPageBlobTier],
         *blobs: Union[str, BlobProperties],
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:

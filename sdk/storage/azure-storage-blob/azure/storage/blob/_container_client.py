@@ -53,6 +53,7 @@ if TYPE_CHECKING:
     from ._models import ( # pylint: disable=unused-import
         AccessPolicy,
         ContentSettings,
+        StandardBlobTier,
         PremiumPageBlobTier)
 
 
@@ -489,7 +490,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return lease
 
     @distributed_trace
-    def get_account_information(self, **kwargs): # type: ignore
+    def get_account_information(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 

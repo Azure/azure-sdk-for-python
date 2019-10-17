@@ -235,7 +235,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                                 key_expiry_time,  # type: datetime
                                 **kwargs  # type: Any
                                 ):
-        # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
+        # type: (...) -> UserDelegationKey
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -261,8 +261,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace
-    def get_account_information(self, **kwargs): # type: ignore
-        # type: (Optional[int]) -> Dict[str, str]
+    def get_account_information(self, **kwargs):
+        # type: (Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -286,7 +286,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs): # type: ignore
+    def get_service_stats(self, **kwargs):
         # type: (**Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 

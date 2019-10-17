@@ -6,7 +6,7 @@
 
 import os
 
-from typing import Union, Iterable, AnyStr, IO, Any # pylint: disable=unused-import
+from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
 from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
@@ -100,7 +100,7 @@ def upload_blob_to_url(
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
         **kwargs):
-    # type: (...) -> dict[str, Any]
+    # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.

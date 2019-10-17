@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from .._shared.models import AccountSasPermissions, ResourceTypes
+    from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import LeaseClient
     from .._models import (
         BlobProperties,
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
         CorsRule,
-        PublicAccess
+        PublicAccess,
     )
 
 
@@ -117,7 +117,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                                       key_expiry_time,  # type: datetime
                                       **kwargs  # type: Any
                                       ):
-        # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
+        # type: (...) -> UserDelegationKey
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -143,8 +143,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs): # type: ignore
-        # type: (Optional[int]) -> Dict[str, str]
+    async def get_account_information(self, **kwargs):
+        # type: (Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -168,7 +168,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs): # type: ignore
+    async def get_service_stats(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
