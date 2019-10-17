@@ -16,7 +16,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtHealthcareApisTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.healthcareapis.HealthcareApisMgmtClient
+            azure.mgmt.healthcareapis.HealthcareApisManagementClient
         )
     
     def test_healthcareapis(self):
