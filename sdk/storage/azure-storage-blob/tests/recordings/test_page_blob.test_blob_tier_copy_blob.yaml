@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utcontainer3bf30fd2?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainer3bf30fd2?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utcontainersource3bf30fd2?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainersource3bf30fd2?restype=container
   response:
     body:
       string: ''
@@ -93,7 +93,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2?restype=container
   response:
     body:
       string: ''
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
   response:
     body:
       string: ''
@@ -175,13 +175,13 @@ interactions:
       x-ms-access-tier:
       - P30
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-date:
       - Fri, 11 Oct 2019 02:30:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob1copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob1copy
   response:
     body:
       string: ''
@@ -221,7 +221,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob1copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob1copy
   response:
     body:
       string: ''
@@ -253,7 +253,7 @@ interactions:
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-copy-status:
       - success
       x-ms-creation-time:
@@ -291,7 +291,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
   response:
     body:
       string: ''
@@ -329,13 +329,13 @@ interactions:
       x-ms-access-tier:
       - P60
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-date:
       - Fri, 11 Oct 2019 02:30:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob2copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob2copy
   response:
     body:
       string: ''
@@ -375,7 +375,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob2copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob2copy
   response:
     body:
       string: ''
@@ -407,7 +407,7 @@ interactions:
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-copy-status:
       - success
       x-ms-creation-time:
@@ -437,13 +437,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-date:
       - Fri, 11 Oct 2019 02:30:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3copy
   response:
     body:
       string: ''
@@ -483,7 +483,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3copy
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3copy
   response:
     body:
       string: ''
@@ -517,7 +517,7 @@ interactions:
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
+      - https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2/blob3bf30fd2
       x-ms-copy-status:
       - success
       x-ms-creation-time:
@@ -551,7 +551,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3bf30fd2.blob.core.windows.net/utpremiumcontainer3bf30fd2?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bf30fd2?restype=container
   response:
     body:
       string: ''

@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utcontainer3bb30fc9?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainer3bb30fc9?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utcontainersource3bb30fc9?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainersource3bb30fc9?restype=container
   response:
     body:
       string: ''
@@ -93,7 +93,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9?restype=container
   response:
     body:
       string: ''
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -175,7 +175,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -237,7 +237,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -285,7 +285,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9?comp=page
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9?comp=page
   response:
     body:
       string: ''
@@ -327,7 +327,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -389,7 +389,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -437,7 +437,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9?comp=page
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9?comp=page
   response:
     body:
       string: ''
@@ -479,7 +479,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9/blob3bb30fc9
   response:
     body:
       string: ''
@@ -535,7 +535,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage3bb30fc9.blob.core.windows.net/utpremiumcontainer3bb30fc9?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainer3bb30fc9?restype=container
   response:
     body:
       string: ''

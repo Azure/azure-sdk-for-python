@@ -15,7 +15,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoraged12a1367-secondary.blob.core.windows.net/?restype=service&comp=stats
+    uri: https://pyacrstoragestorname-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"

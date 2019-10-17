@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utcontainera4df1246?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainera4df1246?restype=container
   response:
     body:
       string: ''
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utcontainera4df1246
         - restype=container
         - ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utcontainersourcea4df1246?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainersourcea4df1246?restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utcontainersourcea4df1246
         - restype=container
         - ''
@@ -73,7 +73,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
   response:
     body:
       string: ''
@@ -91,7 +91,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246
         - restype=container
         - ''
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -132,7 +132,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -146,7 +146,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -173,7 +173,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -195,7 +195,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -214,7 +214,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -238,7 +238,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
   response:
     body:
       string: ''
@@ -259,7 +259,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - comp=page
         - ''
@@ -273,7 +273,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -300,7 +300,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -322,7 +322,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -341,7 +341,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -365,7 +365,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246?comp=page
   response:
     body:
       string: ''
@@ -386,7 +386,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - comp=page
         - ''
@@ -400,7 +400,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246/bloba4df1246
   response:
     body:
       string: ''
@@ -427,7 +427,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246/bloba4df1246
         - ''
         - ''
@@ -441,7 +441,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragea4df1246.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainera4df1246?restype=container
   response:
     body:
       string: ''
@@ -457,7 +457,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragea4df1246.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainera4df1246
         - restype=container
         - ''

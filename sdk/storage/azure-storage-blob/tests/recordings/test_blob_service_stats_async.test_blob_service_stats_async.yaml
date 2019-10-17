@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragedb211861-secondary.blob.core.windows.net/?restype=service&comp=stats
+    uri: https://pyacrstoragestorname-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
@@ -28,7 +28,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedb211861-secondary.blob.core.windows.net
+        - pyacrstoragestorname-secondary.blob.core.windows.net
         - /
         - restype=service&comp=stats
         - ''

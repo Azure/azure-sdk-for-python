@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utcontainerdeba138e?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainerdeba138e?restype=container
   response:
     body:
       string: ''
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utcontainerdeba138e
         - restype=container
         - ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utcontainersourcedeba138e?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utcontainersourcedeba138e?restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utcontainersourcedeba138e
         - restype=container
         - ''
@@ -73,7 +73,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container
   response:
     body:
       string: ''
@@ -91,7 +91,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e
         - restype=container
         - ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
   response:
     body:
       string: ''
@@ -130,7 +130,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e/blobdeba138e
         - ''
         - ''
@@ -144,7 +144,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
   response:
     body:
       string: ''
@@ -172,7 +172,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e/blobdeba138e
         - ''
         - ''
@@ -188,11 +188,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container&comp=list
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragedeba138e.blob.core.windows.net/\" ContainerName=\"utpremiumcontainerdeba138e\"><Blobs><Blob><Name>blobdeba138e</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://pyacrstoragestorname.blob.core.windows.net/\" ContainerName=\"utpremiumcontainerdeba138e\"><Blobs><Blob><Name>blobdeba138e</Name><Properties><Creation-Time>Fri,
         11 Oct 2019 16:16:34 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 16:16:34
         GMT</Last-Modified><Etag>0x8D74E6662E94C70</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding/><Content-Language/><Content-MD5/><Cache-Control/><Content-Disposition/><x-ms-blob-sequence-number>0</x-ms-blob-sequence-number><BlobType>PageBlob</BlobType><AccessTier>P10</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker/></EnumerationResults>"
     headers:
@@ -208,7 +208,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e
         - restype=container&comp=list
         - ''
@@ -224,7 +224,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e?comp=tier
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e?comp=tier
   response:
     body:
       string: ''
@@ -240,7 +240,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e/blobdeba138e
         - comp=tier
         - ''
@@ -254,7 +254,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e/blobdeba138e
   response:
     body:
       string: ''
@@ -281,7 +281,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e/blobdeba138e
         - ''
         - ''
@@ -297,11 +297,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container&comp=list
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragedeba138e.blob.core.windows.net/\" ContainerName=\"utpremiumcontainerdeba138e\"><Blobs><Blob><Name>blobdeba138e</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://pyacrstoragestorname.blob.core.windows.net/\" ContainerName=\"utpremiumcontainerdeba138e\"><Blobs><Blob><Name>blobdeba138e</Name><Properties><Creation-Time>Fri,
         11 Oct 2019 16:16:34 GMT</Creation-Time><Last-Modified>Fri, 11 Oct 2019 16:16:34
         GMT</Last-Modified><Etag>0x8D74E6662E94C70</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding/><Content-Language/><Content-MD5/><Cache-Control/><Content-Disposition/><x-ms-blob-sequence-number>0</x-ms-blob-sequence-number><BlobType>PageBlob</BlobType><AccessTier>P50</AccessTier><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker/></EnumerationResults>"
     headers:
@@ -317,7 +317,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e
         - restype=container&comp=list
         - ''
@@ -331,7 +331,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstoragedeba138e.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container
+    uri: https://pyacrstoragestorname.blob.core.windows.net/utpremiumcontainerdeba138e?restype=container
   response:
     body:
       string: ''
@@ -347,7 +347,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedeba138e.blob.core.windows.net
+        - pyacrstoragestorname.blob.core.windows.net
         - /utpremiumcontainerdeba138e
         - restype=container
         - ''
