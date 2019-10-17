@@ -20,8 +20,8 @@ class AuthorizationCodeCredential(object):
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
     about the authentication flow.
 
-    :param str client_id: the application's client ID
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.
+    :param str client_id: the application's client ID
     :param str authorization_code: the authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
     :param str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
@@ -34,8 +34,8 @@ class AuthorizationCodeCredential(object):
 
     def __init__(
         self,
-        client_id: str,
         tenant_id: str,
+        client_id: str,
         authorization_code: str,
         redirect_uri: str,
         client_secret: "Optional[str]" = None,
@@ -44,7 +44,7 @@ class AuthorizationCodeCredential(object):
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
         self._client_secret = client_secret
-        self._client = kwargs.pop("client", None) or AadClient(client_id, tenant_id, **kwargs)
+        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

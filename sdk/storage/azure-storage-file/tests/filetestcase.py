@@ -409,9 +409,9 @@ class FileTestCase(unittest.TestCase):
             from azure.identity import ClientSecretCredential
 
             return ClientSecretCredential(
+                self.settings.ACTIVE_DIRECTORY_TENANT_ID,
                 self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-                self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-                self.settings.ACTIVE_DIRECTORY_TENANT_ID
+                self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
             )
         except ImportError:
             return FakeTokenCredential('initial token')
