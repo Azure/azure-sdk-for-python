@@ -27,6 +27,7 @@ the following APIs:
   - upload_range_from_url
   - clear_range
   - get_ranges
+- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
 
 **New features**
 

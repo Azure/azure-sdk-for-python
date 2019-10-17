@@ -927,7 +927,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
-            total_handles += response.get('number_of_handles_closed')
+            total_handles += response.get('number_of_handles_closed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
         return total_handles
