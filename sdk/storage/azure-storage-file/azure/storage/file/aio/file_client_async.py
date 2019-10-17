@@ -469,13 +469,14 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
+        range_end = None
         if length is not None:
-            length = offset + length - 1  # Service actually uses an end-range inclusive index
+            range_end = offset + length - 1  # Service actually uses an end-range inclusive index
         downloader = StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
             offset=offset,
-            length=length,
+            length=range_end,
             validate_content=validate_content,
             encryption_options=None,
             cls=deserialize_file_stream,
@@ -797,9 +798,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             raise ValueError("Unsupported method for encryption.")
 
         if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 file size")
-        if length is None or length % 512 != 511:
-            raise ValueError("length must be an integer that aligns with 512 file size")
+            raise ValueError("offset must be an integer that aligns with 512 bytes file size")
+        if length is None or length % 512 != 0:
+            raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = "bytes={0}-{1}".format(offset, end_range)
         try:

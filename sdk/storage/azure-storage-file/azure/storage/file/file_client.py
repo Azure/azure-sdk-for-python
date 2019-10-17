@@ -687,13 +687,14 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
+        range_end = None
         if length is not None:
-            length = offset + length - 1  # Service actually uses an end-range inclusive index
+            range_end = offset + length - 1  # Service actually uses an end-range inclusive index
         return StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
             offset=offset,
-            length=length,
+            length=range_end,
             validate_content=validate_content,
             encryption_options=None,
             extra_properties={
@@ -926,7 +927,7 @@ class FileClient(StorageAccountHostsMixin):
         # Format range
         end_range = offset + length - 1
         destination_range = 'bytes={0}-{1}'.format(offset, end_range)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)  # should subtract 1 here?
+        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
 
         options = {
             'copy_source': source_url,
@@ -1047,9 +1048,9 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Unsupported method for encryption.")
 
         if offset is None or offset % 512 != 0:
-            raise ValueError("offset must be an integer that aligns with 512 file size")
-        if length is None or length % 512 != 511:
-            raise ValueError("length must be an integer that aligns with 512 file size")
+            raise ValueError("offset must be an integer that aligns with 512 bytes file size")
+        if length is None or length % 512 != 0:
+            raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
         try:
