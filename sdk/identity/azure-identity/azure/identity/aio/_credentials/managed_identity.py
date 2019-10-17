@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 class ManagedIdentityCredential(object):
     """Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
-    :param str client_id:
-        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    Keyword arguments:
+        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __new__(cls, *args, **kwargs):
@@ -32,7 +32,7 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id: "Optional[str]" = None, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: "Any") -> None:
         pass
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
@@ -61,8 +61,8 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
 class ImdsCredential(_AsyncManagedIdentityBase):
     """Asynchronously authenticates with a managed identity via the IMDS endpoint.
 
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
+    Keyword arguments:
+        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __init__(self, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
