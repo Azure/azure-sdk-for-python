@@ -7,7 +7,7 @@
 - `set_container_access_policy` has required parameter `signed_identifiers`.
 - `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 - `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
-- The public attributes of `StorageStreamDownloader` have been limited:
+- The public attributes of `StorageStreamDownloader` have been limited to:
   - `name` (str): The name of the blob.
   - `container` (str): The container the blob is being downloaded from.
   - `properties` (`BlobProperties`): The properties of the blob.
