@@ -86,6 +86,7 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.storage',
+        'samples',
         'tests',
         'tests.blob',
         'tests.common'
