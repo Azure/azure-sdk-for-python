@@ -189,7 +189,7 @@ class StorageHandleTest(FileTestCase):
         num_closed = root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        self.assertEqual(1, num_closed.result())
+        self.assertEqual(1, num_closed)
 
     @record
     def test_close_all_handle(self):
@@ -206,10 +206,9 @@ class StorageHandleTest(FileTestCase):
 
         # Act
         num_closed = root.close_all_handles()
-        total_num_handle_closed = num_closed.result()
 
         # Assert at least 1 handle has been closed
-        self.assertTrue(total_num_handle_closed > 1)
+        self.assertTrue(num_closed > 1)
 
 
 # ------------------------------------------------------------------------------

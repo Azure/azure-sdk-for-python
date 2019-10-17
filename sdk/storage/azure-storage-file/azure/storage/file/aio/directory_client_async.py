@@ -107,7 +107,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param file_name:
             The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.file_client.FileClient
+        :rtype: ~azure.storage.file.FileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -125,7 +125,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
+        :rtype: ~azure.storage.file.aio.DirectoryClient
 
         .. admonition:: Example:
 
@@ -285,7 +285,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         continuation_token = None
         total_handles = 0
         while try_close:
-            response = await self._client.file.force_close_handles(
+            response = await self._client.directory.force_close_handles(
                 handle_id,
                 timeout=timeout,
                 marker=continuation_token,
