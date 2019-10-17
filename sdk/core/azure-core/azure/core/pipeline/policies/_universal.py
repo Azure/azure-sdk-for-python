@@ -364,7 +364,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             logger.info("Response status: %r", http_response.status_code)
             logger.info("Response headers:")
             for res_header, value in http_response.headers.items():
-                if res_header not in lower_case_allowed_header_namers:
+                if res_header.lower() not in lower_case_allowed_header_namers:
                     value = HttpLoggingPolicy.REDACTED_PLACEHOLDER
                 logger.info("    %r: %r", res_header, value)
         except Exception as err:  # pylint: disable=broad-except
