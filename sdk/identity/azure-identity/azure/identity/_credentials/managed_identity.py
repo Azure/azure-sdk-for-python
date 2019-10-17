@@ -29,9 +29,12 @@ if TYPE_CHECKING:
 
 
 class ManagedIdentityCredential(object):
-    """Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+    """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
-    Keyword arguments:
+    See the Azure Active Directory documentation for more information about managed identities:
+    https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
+
+    Keyword arguments
         - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 

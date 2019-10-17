@@ -40,12 +40,12 @@ class DeviceCodeCredential(PublicClientCredential):
     :param str client_id: the application's ID
 
     Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
-        - **tenant_id (str)**: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+        - **tenant_id** (str): an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
           authenticate work or school accounts. **Required for single-tenant applications.**
-        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
+        - **timeout** (int): seconds to wait for the user to authenticate. Defaults to the validity period of the
           device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
         - **prompt_callback** (Callable[str, str, datetime.datetime]): A callback enabling control of how authentication
           instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
@@ -118,9 +118,9 @@ class SharedTokenCacheCredential(object):
         may contain tokens for multiple identities.
 
     Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
+        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
     """
 
     def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
@@ -170,6 +170,10 @@ class SharedTokenCacheCredential(object):
     @staticmethod
     def supported():
         # type: () -> bool
+        """Whether the shared token cache is supported on the current platform.
+
+        :rtype: bool
+        """
         return sys.platform.startswith("win")
 
     @staticmethod
@@ -185,7 +189,8 @@ class UsernamePasswordCredential(PublicClientCredential):
     authentication flows.
 
     Authentication with this credential is not interactive, so it is **not compatible with any form of
-    multi-factor authentication or consent prompting**. The application must already have the user's consent.
+    multi-factor authentication or consent prompting**. The application must already have consent from the user or
+    a directory admin.
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
     See this document for more information about account types:
@@ -196,12 +201,11 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str password: the user's password
 
     Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
-        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+        - **tenant_id** (str) - tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-
     """
 
     def __init__(self, client_id, username, password, **kwargs):

@@ -25,9 +25,9 @@ class AuthorizationCodeCredential(object):
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
+        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
         - **client_secret** (str): One of the application's client secrets. Required only for web apps and web APIs.
     """
 
