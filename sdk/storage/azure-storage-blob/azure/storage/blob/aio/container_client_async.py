@@ -14,7 +14,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -1001,7 +1001,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-        _pipeline = Pipeline(
+        _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )

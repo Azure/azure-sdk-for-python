@@ -141,5 +141,8 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     async def close(self):
         pass
 
+    async def __aenter__(self, *args): # pylint: disable=arguments-differ
+        pass
+
     async def __aexit__(self, *args): # pylint: disable=arguments-differ
         pass
