@@ -60,8 +60,10 @@ class QuotasOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CurrentQuotaLimitBase or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or
+        :return: QuotaRequestOneResourceProperties or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.reservations.models.QuotaRequestOneResourceProperties or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
@@ -100,7 +102,7 @@ class QuotasOperations(object):
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CurrentQuotaLimitBase', response)
+            deserialized = self._deserialize('QuotaRequestOneResourceProperties', response)
             header_dict = {
                 'ETag': 'str',
             }
