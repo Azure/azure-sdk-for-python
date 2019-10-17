@@ -6,6 +6,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   AdditionalTestArgs: ''
   TestMarkArgument: ''
+  JobName: Test
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -25,7 +26,7 @@ parameters:
       PythonVersion: 'pypy3'
 
 jobs:
-  - job: 'Test'
+  - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
