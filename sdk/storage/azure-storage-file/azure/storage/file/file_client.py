@@ -34,12 +34,11 @@ from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
-from ._shared_access_signature import FileSharedAccessSignature
 from .download import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .models import ShareProperties, FileSasPermissions, ContentSettings, FileProperties
+    from .models import ShareProperties, ContentSettings, FileProperties
     from ._generated.models import HandleItem
 
 
