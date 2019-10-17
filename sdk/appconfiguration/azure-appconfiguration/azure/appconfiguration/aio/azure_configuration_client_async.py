@@ -11,6 +11,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
+    HttpResponseError,
+    ClientAuthenticationError,
     ResourceExistsError,
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -162,13 +164,23 @@ class AzureAppConfigurationClient:
             select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
-        return self._impl.get_key_values(
-            label=encoded_labels,
-            key=encoded_keys,
-            select=select,
-            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
-            **kwargs
-        )
+        error_map = {
+            401: ClientAuthenticationError
+        }
+
+        try:
+            return self._impl.get_key_values(
+                label=encoded_labels,
+                key=encoded_keys,
+                select=select,
+                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                error_map=error_map,
+                **kwargs
+            )
+        except ClientAuthenticationError:
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace_async
     async def get_configuration_setting(
@@ -201,6 +213,7 @@ class AzureAppConfigurationClient:
             )
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
         if match_condition == MatchConditions.IfNotModified:
@@ -224,6 +237,16 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_key_value(key_value)
         except ResourceNotModifiedError:
             return None
+        except (
+                ClientAuthenticationError,
+                ResourceNotFoundError,
+                ResourceModifiedError,
+                ResourceNotFoundError,
+                ResourceExistsError
+        ):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -261,17 +284,24 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             412: ResourceExistsError
         }
-        key_value_added = await self._impl.put_key_value(
-            entity=key_value,
-            key=key_value.key,
-            label=key_value.label,
-            if_none_match="*",
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_added)
+
+        try:
+            key_value_added = await self._impl.put_key_value(
+                entity=key_value,
+                key=key_value.key,
+                label=key_value.label,
+                if_none_match="*",
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_added)
+        except (ClientAuthenticationError, ResourceExistsError):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace_async
     async def set_configuration_setting(
@@ -315,6 +345,7 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             409: ResourceReadOnlyError
         }
         if match_condition == MatchConditions.IfNotModified:
@@ -326,16 +357,28 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value_set = await self._impl.put_key_value(
-            entity=key_value,
-            key=key_value.key,
-            label=key_value.label,
-            if_match=prep_if_match(configuration_setting.etag, match_condition),
-            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_set)
+        try:
+            key_value_set = await self._impl.put_key_value(
+                entity=key_value,
+                key=key_value.key,
+                label=key_value.label,
+                if_match=prep_if_match(configuration_setting.etag, match_condition),
+                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_set)
+        except (
+                ClientAuthenticationError,
+                ResourceReadOnlyError,
+                ResourceModifiedError,
+                ResourceNotModifiedError,
+                ResourceNotFoundError,
+                ResourceExistsError
+        ):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace_async
     async def delete_configuration_setting(
@@ -368,6 +411,7 @@ class AzureAppConfigurationClient:
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             409: ResourceReadOnlyError
         }
         if match_condition == MatchConditions.IfNotModified:
@@ -379,14 +423,26 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value_deleted = await self._impl.delete_key_value(
-            key=key,
-            label=label,
-            if_match=prep_if_match(etag, match_condition),
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_deleted)
+        try:
+            key_value_deleted = await self._impl.delete_key_value(
+                key=key,
+                label=label,
+                if_match=prep_if_match(etag, match_condition),
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_deleted)
+        except (
+                ClientAuthenticationError,
+                ResourceReadOnlyError,
+                ResourceModifiedError,
+                ResourceNotModifiedError,
+                ResourceNotFoundError,
+                ResourceExistsError
+        ):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def list_revisions(
@@ -433,13 +489,23 @@ class AzureAppConfigurationClient:
             select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
-        return self._impl.get_revisions(
-            label=encoded_labels,
-            key=encoded_keys,
-            select=select,
-            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
-            **kwargs
-        )
+        error_map = {
+            401: ClientAuthenticationError
+        }
+
+        try:
+            return self._impl.get_revisions(
+                label=encoded_labels,
+                key=encoded_keys,
+                select=select,
+                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                error_map=error_map,
+                **kwargs
+            )
+        except ClientAuthenticationError:
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     async def set_read_only(
@@ -466,16 +532,22 @@ class AzureAppConfigurationClient:
             read_only_config_setting = await async_client.set_read_only(config_setting)
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
 
-        key_value = await self._impl.put_lock(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = await self._impl.put_lock(
+                key=configuration_setting.key,
+                label=configuration_setting.label,
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except (ClientAuthenticationError, ResourceNotFoundError):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     async def clear_read_only(
@@ -502,13 +574,19 @@ class AzureAppConfigurationClient:
             read_only_config_setting = await async_client.clear_read_only(config_setting)
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
 
-        key_value = await self._impl.delete_lock(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = await self._impl.delete_lock(
+                key=configuration_setting.key,
+                label=configuration_setting.label,
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except (ClientAuthenticationError, ResourceNotFoundError):
+            raise
+        except HttpResponseError as error:
+            raise HttpResponseError(message=error.message, response=error.response)
