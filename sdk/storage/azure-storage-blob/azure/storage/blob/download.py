@@ -119,7 +119,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def process_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = self._download_chunk(chunk_start, chunk_end)
+        chunk_data = self._download_chunk(chunk_start, chunk_end - 1)
         length = chunk_end - chunk_start
         if length > 0:
             self._write_to_stream(chunk_data, chunk_start)
@@ -127,7 +127,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def yield_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        return self._download_chunk(chunk_start, chunk_end)
+        return self._download_chunk(chunk_start, chunk_end - 1)
 
     def _update_progress(self, length):
         if self.progress_lock:
@@ -176,12 +176,12 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
         # Do optimize and create empty chunk locally if condition is met.
-        if self._do_optimize(download_range[0], download_range[1] - 1):
+        if self._do_optimize(download_range[0], download_range[1]):
             chunk_data = b"\x00" * self.chunk_size
         else:
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
-                download_range[1] - 1,
+                download_range[1],
                 check_content_md5=self.validate_content
             )
 

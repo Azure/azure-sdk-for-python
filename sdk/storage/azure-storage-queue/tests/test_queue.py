@@ -227,7 +227,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         props = queue_client.get_queue_properties()
 
         # Asserts
@@ -267,10 +267,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        message = queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        message = queue_client.send_message(u'message4')
 
         # Asserts
         self.assertIsNotNone(message)
@@ -288,7 +288,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         # There should be no upper bound on a queue message's time to live
-        queue_client.enqueue_message(u'message1', time_to_live=1024*1024*1024)
+        queue_client.send_message(u'message1', time_to_live=1024*1024*1024)
 
         # Act
         messages = queue_client.peek_messages()
@@ -305,7 +305,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1', time_to_live=-1)
+        queue_client.send_message(u'message1', time_to_live=-1)
 
         # Act
         messages = queue_client.peek_messages()
@@ -320,10 +320,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         message = next(queue_client.receive_messages())
 
         # Asserts
@@ -345,10 +345,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         pager = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
         result = list(pager)
 
@@ -373,10 +373,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         result = queue_client.peek_messages()
 
         # Asserts
@@ -399,10 +399,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         result = queue_client.peek_messages(max_messages=4)
 
         # Asserts
@@ -425,10 +425,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         queue_client.clear_messages()
         result = queue_client.peek_messages()
 
@@ -443,10 +443,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         message = next(queue_client.receive_messages())
         queue_client.delete_message(message)
 
@@ -464,7 +464,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         messages = queue_client.receive_messages()
         list_result1 = next(messages)
         message = queue_client.update_message(
@@ -499,7 +499,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
 
         messages = queue_client.receive_messages()
         list_result1 = next(messages)
@@ -540,7 +540,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         token = qsc.generate_shared_access_signature(
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
@@ -598,7 +598,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -606,7 +606,7 @@ class StorageQueueTest(QueueTestCase):
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -637,11 +637,11 @@ class StorageQueueTest(QueueTestCase):
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
-        result = service.enqueue_message(u'addedmessage')
+        result = service.send_message(u'addedmessage')
 
         # Assert
         result = next(queue_client.receive_messages())
@@ -658,7 +658,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -667,7 +667,7 @@ class StorageQueueTest(QueueTestCase):
         result = next(messages)
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -693,14 +693,14 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -731,14 +731,14 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         resp = queue_client.set_queue_access_policy(identifiers)
 
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
 
         token = queue_client.generate_shared_access_signature(
             policy_id='testid'
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -924,7 +924,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1㚈')
+        queue_client.send_message(u'message1㚈')
         message = next(queue_client.receive_messages())
 
         # Asserts
@@ -945,7 +945,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         messages = queue_client.receive_messages()
 
         list_result1 = next(messages)

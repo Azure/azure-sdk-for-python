@@ -45,8 +45,8 @@ class StorageGetBlobTest(StorageTestCase):
         self.bsc = BlobServiceClient(
             url,
             credential=credential,
-            max_single_get_size=32 * 1024,
-            max_chunk_get_size=4 * 1024)
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 

@@ -37,9 +37,9 @@ class TestQueueHelloWorldSamples(QueueTestCase):
         # [END create_queue]
 
         try:
-            # Enqueue messages
-            queue.enqueue_message(u"I'm using queues!")
-            queue.enqueue_message(u"This is my second message")
+            # Send messages
+            queue.send_message(u"I'm using queues!")
+            queue.send_message(u"This is my second message")
 
             # Receive the messages
             response = queue.receive_messages(messages_per_page=2)
