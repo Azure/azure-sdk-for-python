@@ -226,7 +226,7 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_list_containers_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
-        prefix = 'listcontainer'
+        prefix = 'listcontainersync'
         container_names = []
         for i in range(0, 4):
             container_names.append(self._create_container(bsc, prefix + str(i)).container_name)

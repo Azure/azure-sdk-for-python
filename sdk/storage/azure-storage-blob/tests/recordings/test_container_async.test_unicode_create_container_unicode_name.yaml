@@ -2,34 +2,20 @@ interactions:
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:14:19 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:53:37 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:c8fafceb-401e-0075-33a7-7fb7cd000000\nTime:2019-10-10T20:14:20.0116067Z</Message></Error>"
-    headers:
-      content-length: '243'
-      content-type: application/xml
-      date: Thu, 10 Oct 2019 20:14:19 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidResourceName
-      x-ms-version: '2019-02-02'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:4a7c99d4-801e-0014-6c24-8532cb000000\nTime:2019-10-17T19:53:37.6035020Z</Message></Error>"}
+    headers: {content-length: '243', content-type: application/xml, date: 'Thu, 17
+        Oct 2019 19:53:37 GMT', server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0,
+      x-ms-error-code: InvalidResourceName, x-ms-version: '2019-02-02'}
+    status: {code: 400, message: The specifed resource name contains invalid characters.}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage3d9519cf.blob.core.windows.net
-        - /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C, restype=container, '']
 version: 1

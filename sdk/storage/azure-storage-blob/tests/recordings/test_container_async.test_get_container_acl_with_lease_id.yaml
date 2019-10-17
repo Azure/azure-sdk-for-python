@@ -2,110 +2,63 @@ interactions:
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:37 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:36 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera824174e?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainera824174e?restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:12:38 GMT
-      etag: '"0x8D74DBE327B1325"'
-      last-modified: Thu, 10 Oct 2019 20:12:38 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:52:37 GMT', etag: '"0x8D7533B8F67AD50"',
+      last-modified: 'Thu, 17 Oct 2019 19:52:37 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragea824174e.blob.core.windows.net
-        - /containera824174e
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainera824174e, restype=container, '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:38 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '-1'
-      x-ms-proposed-lease-id:
-      - a14caa80-8a03-42f1-bad2-917a2f8f0a45
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:37 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['-1']
+      x-ms-proposed-lease-id: [bcca6f3e-beae-4d48-890e-73e39f1a2e65]
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera824174e?comp=lease&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainera824174e?comp=lease&restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:12:38 GMT
-      etag: '"0x8D74DBE327B1325"'
-      last-modified: Thu, 10 Oct 2019 20:12:38 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id: a14caa80-8a03-42f1-bad2-917a2f8f0a45
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:52:37 GMT', etag: '"0x8D7533B8F67AD50"',
+      last-modified: 'Thu, 17 Oct 2019 19:52:37 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-lease-id: bcca6f3e-beae-4d48-890e-73e39f1a2e65,
+      x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragea824174e.blob.core.windows.net
-        - /containera824174e
-        - comp=lease&restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainera824174e, comp=lease&restype=container, '']
 - request:
     body: null
     headers:
-      Accept:
-      - application/xml
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:38 GMT
-      x-ms-lease-id:
-      - a14caa80-8a03-42f1-bad2-917a2f8f0a45
-      x-ms-version:
-      - '2019-02-02'
+      Accept: [application/xml]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:37 GMT']
+      x-ms-lease-id: [bcca6f3e-beae-4d48-890e-73e39f1a2e65]
+      x-ms-version: ['2019-02-02']
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containera824174e?restype=container&comp=acl
+    uri: https://blobstoragename.blob.core.windows.net/acontainera824174e?restype=container&comp=acl
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
-        />"
-    headers:
-      content-type: application/xml
-      date: Thu, 10 Oct 2019 20:12:38 GMT
-      etag: '"0x8D74DBE327B1325"'
-      last-modified: Thu, 10 Oct 2019 20:12:38 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-ms-version: '2019-02-02'
-    status:
-      code: 200
-      message: OK
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
+        />"}
+    headers: {content-type: application/xml, date: 'Thu, 17 Oct 2019 19:52:37 GMT',
+      etag: '"0x8D7533B8F67AD50"', last-modified: 'Thu, 17 Oct 2019 19:52:37 GMT',
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0, transfer-encoding: chunked,
+      x-ms-version: '2019-02-02'}
+    status: {code: 200, message: OK}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragea824174e.blob.core.windows.net
-        - /containera824174e
-        - restype=container&comp=acl
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainera824174e, restype=container&comp=acl, '']
 version: 1

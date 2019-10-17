@@ -2,69 +2,72 @@ interactions:
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:13:41 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:53:30 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container649e10fe?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainer649e10fe?restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:13:43 GMT
-      etag: '"0x8D74DBE59470348"'
-      last-modified: Thu, 10 Oct 2019 20:13:43 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:53:30 GMT', etag: '"0x8D7533BAF581F0B"',
+      last-modified: 'Thu, 17 Oct 2019 19:53:30 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage649e10fe.blob.core.windows.net
-        - /container649e10fe
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainer649e10fe, restype=container, '']
 - request:
     body: null
     headers:
-      Accept:
-      - application/xml
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:13:43 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: [application/xml]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:53:30 GMT']
+      x-ms-version: ['2019-02-02']
     method: GET
     uri: https://blobstoragename.blob.core.windows.net/?comp=list
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Containers><Container><Name>container649e10fe</Name><Properties><Last-Modified>Thu,
-        10 Oct 2019 20:13:43 GMT</Last-Modified><Etag>\"0x8D74DBE59470348\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
-        /></EnumerationResults>"
-    headers:
-      content-type: application/xml
-      date: Thu, 10 Oct 2019 20:13:43 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-ms-version: '2019-02-02'
-    status:
-      code: 200
-      message: OK
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Containers><Container><Name>acontainer13e20eda</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:26 GMT</Last-Modified><Etag>\"0x8D7533BAD19B3AA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer1bc21d2f</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:34 GMT</Last-Modified><Etag>\"0x8D7533B8E2B398B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><PublicAccess>container</PublicAccess><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer23b6195f</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:37 GMT</Last-Modified><Etag>\"0x8D7533B8FB88E79\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer24301513</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:27 GMT</Last-Modified><Etag>\"0x8D7533BAD8280AA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer50ac1615</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:29 GMT</Last-Modified><Etag>\"0x8D7533BAEE4C41F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer50b315f3</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:33 GMT</Last-Modified><Etag>\"0x8D7533B8D6CC1CE\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer5a021a54</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:26 GMT</Last-Modified><Etag>\"0x8D7533BACF7027D\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer5c401a6b</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:38 GMT</Last-Modified><Etag>\"0x8D7533B900B0361\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>broken</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer62c1161f</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:38 GMT</Last-Modified><Etag>\"0x8D7533B906120FB\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>broken</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer649e10fe</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:30 GMT</Last-Modified><Etag>\"0x8D7533BAF581F0B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer65d81652</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:27 GMT</Last-Modified><Etag>\"0x8D7533BADC0B2E2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer74751143</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:34 GMT</Last-Modified><Etag>\"0x8D7533B8DB63805\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer7ae616b9</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:11 GMT</Last-Modified><Etag>\"0x8D7533BA3D68E14\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer8656119e</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:36 GMT</Last-Modified><Etag>\"0x8D7533B8F43ABAE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer8de71b0b</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:34 GMT</Last-Modified><Etag>\"0x8D7533B8DF41CFA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><PublicAccess>blob</PublicAccess><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer917e16fe</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:34 GMT</Last-Modified><Etag>\"0x8D7533B8DD0FFBA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer926a1b52</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:29 GMT</Last-Modified><Etag>\"0x8D7533BAEA5D6DE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainer92f18f4</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:38 GMT</Last-Modified><Etag>\"0x8D7533B90393D69\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainera6981733</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:45 GMT</Last-Modified><Etag>\"0x8D7533B94555FDC\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainera824174e</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:37 GMT</Last-Modified><Etag>\"0x8D7533B8F67AD50\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontaineraa4e127a</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:35 GMT</Last-Modified><Etag>\"0x8D7533B8E480994\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerc1a51bb8</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:44 GMT</Last-Modified><Etag>\"0x8D7533B94243D9A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerc2c617d8</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:28 GMT</Last-Modified><Etag>\"0x8D7533BAE0180A3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerc39a1803</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:28 GMT</Last-Modified><Etag>\"0x8D7533BAE323CFE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerd0941360</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:35 GMT</Last-Modified><Etag>\"0x8D7533B8E8462BB\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerd1081354</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:11 GMT</Last-Modified><Etag>\"0x8D7533BA3AD04F0\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainerdbe2187a</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:29 GMT</Last-Modified><Etag>\"0x8D7533BAE6C3122\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainere4eb13af</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:37 GMT</Last-Modified><Etag>\"0x8D7533B8F91C576\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainere50b1c8c</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:33 GMT</Last-Modified><Etag>\"0x8D7533B8D954B97\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainere52713a5</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:27 GMT</Last-Modified><Etag>\"0x8D7533BAD4E145C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontainere69c13e2</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:53:30 GMT</Last-Modified><Etag>\"0x8D7533BAF251C5C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>acontaineredc14bb</Name><Properties><Last-Modified>Thu,
+        17 Oct 2019 19:52:37 GMT</Last-Modified><Etag>\"0x8D7533B8FE524E0\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
+        /></EnumerationResults>"}
+    headers: {content-type: application/xml, date: 'Thu, 17 Oct 2019 19:53:30 GMT',
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0, transfer-encoding: chunked,
+      x-ms-version: '2019-02-02'}
+    status: {code: 200, message: OK}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage649e10fe.blob.core.windows.net
-        - /
-        - comp=list
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /, comp=list, '']
 version: 1

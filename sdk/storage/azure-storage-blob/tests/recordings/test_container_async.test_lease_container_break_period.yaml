@@ -2,144 +2,82 @@ interactions:
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:42 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:38 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container62c1161f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainer62c1161f?restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:12:42 GMT
-      etag: '"0x8D74DBE35566835"'
-      last-modified: Thu, 10 Oct 2019 20:12:43 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:52:38 GMT', etag: '"0x8D7533B906120FB"',
+      last-modified: 'Thu, 17 Oct 2019 19:52:38 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage62c1161f.blob.core.windows.net
-        - /container62c1161f
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainer62c1161f, restype=container, '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:43 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '15'
-      x-ms-proposed-lease-id:
-      - 780bcfe3-707b-46be-8c47-48214783b8f3
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:38 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['15']
+      x-ms-proposed-lease-id: [449fe022-a017-4ce7-8022-edb23055d9fb]
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container62c1161f?comp=lease&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainer62c1161f?comp=lease&restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:12:42 GMT
-      etag: '"0x8D74DBE35566835"'
-      last-modified: Thu, 10 Oct 2019 20:12:43 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id: 780bcfe3-707b-46be-8c47-48214783b8f3
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:52:38 GMT', etag: '"0x8D7533B906120FB"',
+      last-modified: 'Thu, 17 Oct 2019 19:52:38 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-lease-id: 449fe022-a017-4ce7-8022-edb23055d9fb,
+      x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage62c1161f.blob.core.windows.net
-        - /container62c1161f
-        - comp=lease&restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainer62c1161f, comp=lease&restype=container, '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:43 GMT
-      x-ms-lease-action:
-      - break
-      x-ms-lease-break-period:
-      - '5'
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:38 GMT']
+      x-ms-lease-action: [break]
+      x-ms-lease-break-period: ['5']
+      x-ms-version: ['2019-02-02']
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container62c1161f?comp=lease&restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainer62c1161f?comp=lease&restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 20:12:42 GMT
-      etag: '"0x8D74DBE35566835"'
-      last-modified: Thu, 10 Oct 2019 20:12:43 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-time: '5'
-      x-ms-version: '2019-02-02'
-    status:
-      code: 202
-      message: Accepted
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Thu, 17 Oct 2019 19:52:38 GMT', etag: '"0x8D7533B906120FB"',
+      last-modified: 'Thu, 17 Oct 2019 19:52:38 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-lease-time: '5', x-ms-version: '2019-02-02'}
+    status: {code: 202, message: Accepted}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage62c1161f.blob.core.windows.net
-        - /container62c1161f
-        - comp=lease&restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainer62c1161f, comp=lease&restype=container, '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 20:12:49 GMT
-      x-ms-lease-id:
-      - 780bcfe3-707b-46be-8c47-48214783b8f3
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b4 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Thu, 17 Oct 2019 19:52:44 GMT']
+      x-ms-lease-id: [449fe022-a017-4ce7-8022-edb23055d9fb]
+      x-ms-version: ['2019-02-02']
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/container62c1161f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/acontainer62c1161f?restype=container
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
-        lease ID was specified, but the lease for the container has expired.\nRequestId:a8c9cfe0-201e-00d1-0da7-7f1594000000\nTime:2019-10-10T20:12:49.1487124Z</Message></Error>"
-    headers:
-      content-length: '248'
-      content-type: application/xml
-      date: Thu, 10 Oct 2019 20:12:48 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: LeaseLost
-      x-ms-version: '2019-02-02'
-    status:
-      code: 412
-      message: A lease ID was specified, but the lease for the container has expired.
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
+        lease ID was specified, but the lease for the container has expired.\nRequestId:f8d41d04-a01e-002a-4824-8584ea000000\nTime:2019-10-17T19:52:44.7928390Z</Message></Error>"}
+    headers: {content-length: '248', content-type: application/xml, date: 'Thu, 17
+        Oct 2019 19:52:44 GMT', server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0,
+      x-ms-error-code: LeaseLost, x-ms-version: '2019-02-02'}
+    status: {code: 412, message: 'A lease ID was specified, but the lease for the
+        container has expired.'}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage62c1161f.blob.core.windows.net
-        - /container62c1161f
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstorage3wfv5caujmik.blob.core.windows.net,
+        /acontainer62c1161f, restype=container, '']
 version: 1

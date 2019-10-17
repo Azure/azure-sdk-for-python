@@ -43,7 +43,7 @@ from azure.storage.blob.aio import (
 )
 
 #------------------------------------------------------------------------------
-TEST_CONTAINER_PREFIX = 'container'
+TEST_CONTAINER_PREFIX = 'acontainer'
 #------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -274,7 +274,7 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_list_containers_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
-        prefix = 'listcontainer'
+        prefix = 'listcontainerasync'
         container_names = []
         for i in range(0, 4):
             cr = await self._create_container(bsc, prefix + str(i))
