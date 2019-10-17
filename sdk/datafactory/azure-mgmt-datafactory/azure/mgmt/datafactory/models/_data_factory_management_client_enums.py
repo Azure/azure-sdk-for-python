@@ -350,6 +350,13 @@ class DynamicsAuthenticationType(str, Enum):
     aad_service_principal = "AADServicePrincipal"
 
 
+class OrcCompressionCodec(str, Enum):
+
+    none = "none"
+    zlib = "zlib"
+    snappy = "snappy"
+
+
 class AvroCompressionCodec(str, Enum):
 
     none = "none"
