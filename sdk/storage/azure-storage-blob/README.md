@@ -37,7 +37,7 @@ az group create --name my-resource-group --location westus2
 Create your storage account:
 
 ```bash
-az storage account create -n my-storage-account-name -g my-resource-group
+az storage account create -n mystorageaccountname -g my-resource-group
 ```
 
 
