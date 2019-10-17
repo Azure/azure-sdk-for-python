@@ -745,16 +745,17 @@ class StorageGetFileTest(FileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        start = 4
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range, max_concurrency=2)
+            props = await file_client.download_file(offset=start, length=end_range-start+1, max_concurrency=2)
             read_bytes = await props.readinto(stream)
 
         # Assert
         self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(self.byte_data[1:end_range + 1], actual)
+            self.assertEqual(self.byte_data[start:end_range + 1], actual)
 
     @record
     def test_ranged_get_file_to_path_async(self):
@@ -779,7 +780,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=0, length=0)
+            props = await file_client.download_file(offset=0, length=1)
             read_bytes = await props.readinto(stream)
 
         # Assert
@@ -852,7 +853,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(
                 offset=start_range,
-                length=end_range,
+                length=end_range - start_range + 1,
                 max_concurrency=2,
                 raw_response_hook=callback)
             read_bytes = await props.readinto(stream)
@@ -980,16 +981,17 @@ class StorageGetFileTest(FileTestCase):
         await file_client.upload_file(file_data)
 
         # Act
+        start = 4
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range, max_concurrency=1)
+            props = await file_client.download_file(offset=start, length=end_range-start+1, max_concurrency=1)
             read_bytes = await props.readinto(stream)
 
         # Assert
         self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(file_data[1:file_size], actual)
+            self.assertEqual(file_data[start:file_size], actual)
 
     @record
     def test_ranged_get_file_to_path_invalid_range_non_parallel_async(self):
