@@ -6,7 +6,7 @@ import logging
 import time
 
 from azure.core.polling import PollingMethod
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,9 @@ class DeleteResourcePoller(PollingMethod):
             self._status = "deleted"
         except ResourceNotFoundError:
             self._status = "deleting"
+        except HttpResponseError as e:
+            if e.status_code != 403:
+                raise
 
     def initialize(self, client, initial_response, _):
         # type: (Any, Any, Callable) -> None

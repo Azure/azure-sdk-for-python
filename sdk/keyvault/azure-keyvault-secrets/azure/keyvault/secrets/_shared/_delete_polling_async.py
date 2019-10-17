@@ -8,10 +8,10 @@ import logging
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, Generic, TypeVar, Union
+    from typing import Any, Callable, Union
 
 from azure.core.polling import AsyncPollingMethod
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +28,9 @@ class DeleteResourcePollerAsync(AsyncPollingMethod):
             self._status = "deleted"
         except ResourceNotFoundError:
             self._status = "deleting"
+        except HttpResponseError as e:
+            if e.status_code != 403:
+                raise
 
     def initialize(self, client: "Any", initial_response: str, _: "Callable") -> None:
         self._command = client
