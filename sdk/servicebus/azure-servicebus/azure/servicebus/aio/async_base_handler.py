@@ -131,7 +131,8 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
         a retryable error - attempt to reconnect.
         This method will be called automatically for most retryable errors.
         """
-        await self._handler.close()
+        await self._handler.close_async()
+        self.running = False
         self._build_handler()
         await self.open()
 
