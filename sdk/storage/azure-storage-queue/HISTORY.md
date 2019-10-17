@@ -20,7 +20,7 @@ should be imported from azure.storage.queue.aio
 to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
 - `Logging` has been renamed to `QueueAnalyticsLogging`.
 - `enqueue_message` is now called `send_message`.
-- Client and model files have been renamed to be internal. Users should import from the top level modules: 
+- Client and model files have been made internal. Users should import from the top level modules: 
 `azure.storage.queue` and `azure.storage.queue.aio` only.
 
  **New features**

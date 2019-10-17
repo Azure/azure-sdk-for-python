@@ -21,7 +21,7 @@ To use a directory_url, the method `from_directory_url` must be used.
   - `max_concurrency`
   - `validate_content`
   - `timeout` etc.
-- Client and model files have been renamed to be internal. Users should import from the top level modules: 
+- Client and model files have been made internal. Users should import from the top level modules: 
 `azure.storage.file` and `azure.storage.file.aio` only.
 
 
