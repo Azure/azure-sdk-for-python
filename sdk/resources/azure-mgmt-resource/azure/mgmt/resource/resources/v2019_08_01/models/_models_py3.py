@@ -163,8 +163,6 @@ class Deployment(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: The location to store the deployment data.
-    :type location: str
     :param properties: Required. The deployment properties.
     :type properties:
      ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
@@ -175,13 +173,11 @@ class Deployment(Model):
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, *, properties, location: str=None, **kwargs) -> None:
+    def __init__(self, *, properties, **kwargs) -> None:
         super(Deployment, self).__init__(**kwargs)
-        self.location = location
         self.properties = properties
 
 
@@ -650,6 +646,34 @@ class DeploymentWhatIfSettings(Model):
     def __init__(self, *, result_format=None, **kwargs) -> None:
         super(DeploymentWhatIfSettings, self).__init__(**kwargs)
         self.result_format = result_format
+
+
+class DeploymentWithLocation(Model):
+    """Deployment operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+    }
+
+    def __init__(self, *, location: str, properties, **kwargs) -> None:
+        super(DeploymentWithLocation, self).__init__(**kwargs)
+        self.location = location
+        self.properties = properties
 
 
 class ErrorAdditionalInfo(Model):
@@ -1624,6 +1648,33 @@ class TemplateLink(Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = uri
         self.content_version = content_version
+
+
+class UnscopedDeployment(Model):
+    """Deployment operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+    }
+
+    def __init__(self, *, properties, location: str=None, **kwargs) -> None:
+        super(UnscopedDeployment, self).__init__(**kwargs)
+        self.location = location
+        self.properties = properties
 
 
 class WhatIfChange(Model):

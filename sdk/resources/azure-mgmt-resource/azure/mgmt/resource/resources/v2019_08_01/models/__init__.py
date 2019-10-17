@@ -27,6 +27,7 @@ try:
     from ._models_py3 import DeploymentWhatIf
     from ._models_py3 import DeploymentWhatIfProperties
     from ._models_py3 import DeploymentWhatIfSettings
+    from ._models_py3 import DeploymentWithLocation
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
@@ -59,6 +60,7 @@ try:
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
+    from ._models_py3 import UnscopedDeployment
     from ._models_py3 import WhatIfChange
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
@@ -80,6 +82,7 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentWhatIf
     from ._models import DeploymentWhatIfProperties
     from ._models import DeploymentWhatIfSettings
+    from ._models import DeploymentWithLocation
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
@@ -112,6 +115,7 @@ except (SyntaxError, ImportError):
     from ._models import TargetResource
     from ._models import TemplateHashResult
     from ._models import TemplateLink
+    from ._models import UnscopedDeployment
     from ._models import WhatIfChange
     from ._models import WhatIfOperationResult
     from ._models import WhatIfPropertyChange
@@ -149,6 +153,7 @@ __all__ = [
     'DeploymentWhatIf',
     'DeploymentWhatIfProperties',
     'DeploymentWhatIfSettings',
+    'DeploymentWithLocation',
     'ErrorAdditionalInfo',
     'ErrorResponse',
     'ExportTemplateRequest',
@@ -181,6 +186,7 @@ __all__ = [
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
+    'UnscopedDeployment',
     'WhatIfChange',
     'WhatIfOperationResult',
     'WhatIfPropertyChange',
