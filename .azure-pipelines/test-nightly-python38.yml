@@ -22,6 +22,9 @@ jobs:
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/bin:$PATH
           python3.8 --version
+          python --version
+          cp /usr/bin/python3.8 /usr/bin/python
+          python --version
           sudo apt-get install python-pip
           pip show -v
           pip install packaging tox tox-monorepo
