@@ -36,8 +36,8 @@ class InteractiveBrowserCredential(PublicClientCredential):
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
           authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
           authorities for other clouds.
-        - **tenant (str)**: a tenant ID or a domain associated with a tenant. Defaults to the 'organizations' tenant,
-          which can authenticate work or school accounts.
+        - **tenant_id (str)**: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+          authenticate work or school accounts.
         - **client_id** (str): Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
         - **timeout (int)**: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).

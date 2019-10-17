@@ -45,7 +45,7 @@ def test_confidential_client_credential(live_identity_settings):
         client_id=live_identity_settings["client_id"],
         client_credential=live_identity_settings["client_secret"],
         authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
-        tenant=live_identity_settings["tenant_id"],
+        tenant_id=live_identity_settings["tenant_id"],
     )
     token = credential.get_token(ARM_SCOPE)
     assert token
