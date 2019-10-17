@@ -10,7 +10,6 @@ from io import BytesIO
 from typing import Optional, Union, IO, List, Dict, Any, Iterable, TYPE_CHECKING  # pylint: disable=unused-import
 
 import six
-from azure.core.polling import async_poller
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace

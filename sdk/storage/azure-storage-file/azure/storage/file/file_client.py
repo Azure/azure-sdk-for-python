@@ -19,7 +19,6 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 

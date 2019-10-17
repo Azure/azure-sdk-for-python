@@ -5,11 +5,11 @@
 # --------------------------------------------------------------------------
 
 import functools
+import time
 from typing import ( # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
 
-from azure.core.polling import async_poller
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
