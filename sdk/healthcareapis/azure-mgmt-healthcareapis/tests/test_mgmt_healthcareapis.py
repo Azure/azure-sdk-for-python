@@ -61,7 +61,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             }
           }
         }
-        output = mgmt_client.services.create_or_update(RESOURCE_GROUP, SERVICE_NAME, BODY)
+        output = self.mgmt_client.services.create_or_update(RESOURCE_GROUP, SERVICE_NAME, BODY)
 
 
 #------------------------------------------------------------------------------
