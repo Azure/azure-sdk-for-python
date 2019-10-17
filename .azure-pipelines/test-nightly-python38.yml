@@ -20,13 +20,9 @@ jobs:
 
       - script: |
           sudo apt-get update
-          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-          cd ~/
-          wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
-          tar -xf Python-3.8.0.tar.xz
-          cd Python-3.8.0
-          ./configure --enable-optimizations --prefix=$HOME
-          sudo make install
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt-get update
+          sudo apt install python3.8
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 -m ensurepip
