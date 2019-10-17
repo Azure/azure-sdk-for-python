@@ -920,7 +920,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
         self,
-        premium_page_blob_tier: Union[str, PremiumPageBlobTier],
+        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
         *blobs: Union[str, BlobProperties],
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
