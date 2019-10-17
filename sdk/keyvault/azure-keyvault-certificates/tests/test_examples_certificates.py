@@ -4,6 +4,8 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
+import hashlib
+import os
 
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
@@ -30,7 +32,11 @@ def test_create_certificate_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
 
@@ -103,7 +109,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -164,7 +170,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -210,7 +216,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END restore_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -260,7 +266,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_contacts(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, CertificateContact
@@ -306,7 +312,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_contacts]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_issuers(self, vault_client, **kwargs):
         from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy
