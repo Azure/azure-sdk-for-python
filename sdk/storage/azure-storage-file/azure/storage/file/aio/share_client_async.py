@@ -10,9 +10,9 @@ from typing import ( # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from azure.core.pipeline import AsyncPipeline
 from .._shared.policies_async import ExponentialRetry
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     return_response_headers,
@@ -102,9 +102,14 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :returns: A Directory Client.
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
@@ -117,10 +122,15 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :returns: A File Client.
         :rtype: ~azure.storage.file.aio.file_client_async.FileClient
         """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return FileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop)
+            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async
     async def create_share(self, **kwargs):  # type: ignore

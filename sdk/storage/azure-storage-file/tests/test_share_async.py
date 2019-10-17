@@ -11,6 +11,7 @@ import asyncio
 import pytest
 import requests
 from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import (
     HttpResponseError,
@@ -917,6 +918,17 @@ class StorageShareTest(FileTestCase):
     def test_create_permission_for_share_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_permission_for_share())
+
+    async def test_transport_closed_only_once_async(self):
+        transport = AsyncioRequestsTransport()
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
+        share = self._get_share_reference()
+        async with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+            assert transport.session is not None
+            async with fsc.get_share_client(share.share_name) as fc:
+                assert transport.session is not None
+            assert transport.session is not None  # Right now it's None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

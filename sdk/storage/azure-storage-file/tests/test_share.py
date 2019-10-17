@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 
 import pytest
 import requests
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -761,6 +762,18 @@ class StorageShareTest(FileTestCase):
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
         self.assertEquals(permission_key, permission_key2)
+
+    @record
+    def test_transport_closed_only_once(self):
+        transport = RequestsTransport()
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
+        share = self._get_share_reference()
+        with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+            assert transport.session is not None
+            with fsc.get_share_client(share.share_name) as fc:
+                assert transport.session is not None
+            assert transport.session is not None  # Right now it's None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

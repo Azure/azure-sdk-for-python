@@ -16,6 +16,7 @@ from datetime import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1025,6 +1026,18 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
+        transport = AsyncioRequestsTransport()
+        prefix = TEST_QUEUE_PREFIX
+        queue_name = self.get_resource_name(prefix)
+        async with QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport) as qsc:
+            assert transport.session is not None
+            async with qsc.get_queue_client(queue_name) as qc:
+                assert transport.session is not None
+            assert transport.session is not None  # Right now it's None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

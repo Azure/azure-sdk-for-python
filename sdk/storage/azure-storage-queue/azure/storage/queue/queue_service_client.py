@@ -14,10 +14,11 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties, StorageErrorException
@@ -472,8 +473,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
             queue_name = queue.name
         except AttributeError:
             queue_name = queue
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, _pipeline=self._pipeline, _configuration=self._config,
+            key_encryption_key=self.key_encryption_key, _pipeline=_pipeline, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
