@@ -187,7 +187,6 @@ __all__ = [
     'CorsRule',
     'ContainerProperties',
     'BlobProperties',
-    'BlobPrefix',
     'LeaseProperties',
     'ContentSettings',
     'CopyProperties',
