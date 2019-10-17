@@ -14,9 +14,9 @@ jobs:
 
     steps:
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
+        displayName: 'Use Python 2.7 For Build Tools'
         inputs:
-          versionSpec: '3.7'
+          versionSpec: '2.7'
 
       - script: |
           sudo apt-get update
@@ -26,7 +26,15 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 --version
-          /home/vsts/bin/python3 --version
+          echo $PATH
+          cd /home/vsts
+          ls
+          cd /home/vsts/lib
+          ls
+          echo 'user/lib/bin'
+          cd /user/lib/bin
+          ls
+          cd $(Build.SourcesDirectory)
           python3 -m ensurepip
           pip install packaging tox tox-monorepo
           python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
