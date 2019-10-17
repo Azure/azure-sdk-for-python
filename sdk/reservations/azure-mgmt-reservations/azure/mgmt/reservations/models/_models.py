@@ -1135,13 +1135,13 @@ class QuotaRequestOneResourceProperties(Model):
     :param name1: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
     :type name1: ~azure.mgmt.reservations.models.QuotaPropertiesName
-    :ivar resource_type: The Resource Type Name.
-    :vartype resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
+    :param resource_type: The Resource Type Name.
+    :type resource_type: object
+    :param quota_period: The quota period over which the usage values are
      summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
-    :vartype quota_period: str
+    :type quota_period: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
@@ -1155,8 +1155,6 @@ class QuotaRequestOneResourceProperties(Model):
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
         'current_value': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'quota_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1187,8 +1185,8 @@ class QuotaRequestOneResourceProperties(Model):
         self.current_value = None
         self.unit = kwargs.get('unit', None)
         self.name1 = kwargs.get('name1', None)
-        self.resource_type = None
-        self.quota_period = None
+        self.resource_type = kwargs.get('resource_type', None)
+        self.quota_period = kwargs.get('quota_period', None)
         self.properties = kwargs.get('properties', None)
 
 
@@ -1228,13 +1226,13 @@ class QuotaRequestOneResourceSubmitResponse(Model):
     :param name2: Name of the resource provide by the resource Provider.
      Please use this name property for quotaRequests.
     :type name2: ~azure.mgmt.reservations.models.QuotaPropertiesName
-    :ivar resource_type: The Resource Type Name.
-    :vartype resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
+    :param resource_type: The Resource Type Name.
+    :type resource_type: object
+    :param quota_period: The quota period over which the usage values are
      summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
      one second). This parameter is optional because, for some resources like
      compute, the period doesn’t matter.
-    :vartype quota_period: str
+    :type quota_period: str
     :param properties: Additional properties for the specific resource
      provider.
     :type properties: object
@@ -1251,8 +1249,6 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
         'current_value': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'quota_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1289,8 +1285,8 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.current_value = None
         self.unit = kwargs.get('unit', None)
         self.name2 = kwargs.get('name2', None)
-        self.resource_type = None
-        self.quota_period = None
+        self.resource_type = kwargs.get('resource_type', None)
+        self.quota_period = kwargs.get('quota_period', None)
         self.properties = kwargs.get('properties', None)
 
 
