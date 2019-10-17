@@ -112,7 +112,7 @@ class AttestationProviderListResult(Model):
 class AttestationServiceCreationParams(Model):
     """Client supplied parameters passed to attestation service.
 
-    :param attestation_policy: Name of attestation policy.
+    :param attestation_policy: Name of attestationpolicy.
     :type attestation_policy: str
     :param policy_signing_certificates: JSON Web Key Set defining a set of
      X.509 Certificates that will represent the parent certificate for the
@@ -232,17 +232,17 @@ class JSONWebKey(Model):
      established by [JWA] or be a value that contains a Collision-
      Resistant Name.
     :type alg: str
-    :param crv:
+    :param crv: The "crv" (curve) parameter identifies the curve type
     :type crv: str
-    :param d:
+    :param d: some d value in JWK
     :type d: str
-    :param dp:
+    :param dp: some dp value in JWK
     :type dp: str
-    :param dq:
+    :param dq: some dq value in JWK
     :type dq: str
-    :param e:
+    :param e: some e value in JWK
     :type e: str
-    :param k:
+    :param k: some k value in JWK
     :type k: str
     :param kid: Required. The "kid" (key ID) parameter is used to match a
      specific key.  This
@@ -262,13 +262,13 @@ class JSONWebKey(Model):
      established by [JWA] or be a value that contains a Collision-
      Resistant Name.  The "kty" value is a case-sensitive string.
     :type kty: str
-    :param n:
+    :param n: some n value in JWK
     :type n: str
-    :param p:
+    :param p: some p value in JWK
     :type p: str
-    :param q:
+    :param q: some q value in JWK
     :type q: str
-    :param qi:
+    :param qi: some qi value in JWK
     :type qi: str
     :param use: Required. Use ("public key use") identifies the intended use
      of
@@ -276,7 +276,7 @@ class JSONWebKey(Model):
      a public key is used for encrypting data or verifying the signature
      on data. Values are commonly "sig" (signature) or "enc" (encryption).
     :type use: str
-    :param x:
+    :param x: X coordinate shown in base64url-encoded values
     :type x: str
     :param x5c: The "x5c" (X.509 certificate chain) parameter contains a chain
      of one
@@ -287,7 +287,7 @@ class JSONWebKey(Model):
      The PKIX certificate containing the key value MUST be the first
      certificate.
     :type x5c: list[str]
-    :param y:
+    :param y: Y coordinate shown in base64url-encoded values
     :type y: str
     """
 
