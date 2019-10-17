@@ -14,9 +14,9 @@ jobs:
 
     steps:
       - task: UsePythonVersion@0
-        displayName: 'Use Python 2.7 For Build Tools'
+        displayName: 'Use Python 3.7 For Build Tools'
         inputs:
-          versionSpec: '2.7'
+          versionSpec: '3.7'
 
       - script: |
           sudo apt-get update
@@ -29,10 +29,20 @@ jobs:
           echo $PATH
           cd /home/vsts
           ls
-          cd /home/vsts/lib
+          cd bin
+          echo 'home/vsts/bin'
           ls
-          echo 'user/lib/bin'
-          cd /user/lib/bin
+          cd /home/vsts/hostedcache
+          echo '/home/vsts/hostedcache'
+          ls
+          echo 'usr/lib/bin'
+          cd /usr/lib/bin
+          ls
+          echo 'usr/local/bin'
+          cd /usr/local/bin
+          ls
+          echo 'opt/bin'
+          cd /opt/bin
           ls
           cd $(Build.SourcesDirectory)
           python3 -m ensurepip
