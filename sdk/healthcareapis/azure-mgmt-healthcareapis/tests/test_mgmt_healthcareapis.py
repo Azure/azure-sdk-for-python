@@ -11,6 +11,8 @@ import unittest
 import azure.mgmt.healthcareapis
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
+AZURE_LOCATION = 'eastus'
+
 class MgmtHealthcareApisTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -19,8 +21,10 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             azure.mgmt.healthcareapis.HealthcareApisManagementClient
         )
     
-    def test_healthcareapis(self):
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_healthcareapis(self, resource_group):
 
+        SERVICE_NAME = "myapimgmtsvcxx"
         BODY = {
           "location": "westus2",
           "kind": "fhir-R4",
@@ -61,7 +65,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             }
           }
         }
-        output = self.mgmt_client.services.create_or_update(RESOURCE_GROUP, SERVICE_NAME, BODY)
+        output = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
 
 
 #------------------------------------------------------------------------------
