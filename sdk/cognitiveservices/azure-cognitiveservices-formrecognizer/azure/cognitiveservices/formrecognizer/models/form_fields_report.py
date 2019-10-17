@@ -12,23 +12,28 @@
 from msrest.serialization import Model
 
 
-class KeysResult(Model):
-    """Keys extracted by the custom model.
+class FormFieldsReport(Model):
+    """Report for a custom model training field.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param clusters: Required. Object mapping clusterIds to a list of keys.
-    :type clusters: dict[str, list[str]]
+    :param field_name: Required. Training field name.
+    :type field_name: str
+    :param accuracy: Required. Estimated extraction accuracy for this field.
+    :type accuracy: float
     """
 
     _validation = {
-        'clusters': {'required': True},
+        'field_name': {'required': True},
+        'accuracy': {'required': True},
     }
 
     _attribute_map = {
-        'clusters': {'key': 'clusters', 'type': '{[str]}'},
+        'field_name': {'key': 'fieldName', 'type': 'str'},
+        'accuracy': {'key': 'accuracy', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
-        super(KeysResult, self).__init__(**kwargs)
-        self.clusters = kwargs.get('clusters', None)
+        super(FormFieldsReport, self).__init__(**kwargs)
+        self.field_name = kwargs.get('field_name', None)
+        self.accuracy = kwargs.get('accuracy', None)

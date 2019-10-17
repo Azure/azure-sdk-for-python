@@ -13,21 +13,20 @@ from msrest.serialization import Model
 
 
 class TrainSourceFilter(Model):
-    """Filters to be applied when traversing a data source.
+    """Filter to apply to the documents in the source path for training.
 
-    :param prefix: A case-sensitive prefix string to filter content
-     under the source location. For e.g., when using a Azure Blob
-     Uri use the prefix to restrict subfolders for content.
+    :param prefix: A case-sensitive prefix string to filter documents in the
+     source path for training. For example, when using a Azure storage blob
+     Uri, use the prefix to restrict sub folders for training.
     :type prefix: str
     :param include_sub_folders: A flag to indicate if sub folders within the
-     set of
-     prefix folders will also need to be included when searching
-     for content to be preprocessed.
+     set of prefix folders will also need to be included when searching for
+     content to be preprocessed. Default value: False .
     :type include_sub_folders: bool
     """
 
     _validation = {
-        'prefix': {'max_length': 128, 'min_length': 0},
+        'prefix': {'max_length': 1024, 'min_length': 0},
     }
 
     _attribute_map = {
@@ -38,4 +37,4 @@ class TrainSourceFilter(Model):
     def __init__(self, **kwargs):
         super(TrainSourceFilter, self).__init__(**kwargs)
         self.prefix = kwargs.get('prefix', None)
-        self.include_sub_folders = kwargs.get('include_sub_folders', None)
+        self.include_sub_folders = kwargs.get('include_sub_folders', False)

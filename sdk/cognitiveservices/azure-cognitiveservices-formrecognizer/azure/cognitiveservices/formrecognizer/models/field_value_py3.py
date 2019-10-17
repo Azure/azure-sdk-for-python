@@ -13,39 +13,81 @@ from msrest.serialization import Model
 
 
 class FieldValue(Model):
-    """Base class representing a recognized field value.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StringValue, NumberValue
+    """Recognized field value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: OCR text content of the recognized field.
+    :param type: Required. Type of field value. Possible values include:
+     'string', 'date', 'time', 'phoneNumber', 'number', 'integer', 'array',
+     'object'
+    :type type: str or
+     ~azure.cognitiveservices.formrecognizer.models.FieldValueType
+    :param value_string: String value.
+    :type value_string: str
+    :param value_date: Date value.
+    :type value_date: datetime
+    :param value_time: Time value.
+    :type value_time: datetime
+    :param value_phone_number: Phone number value.
+    :type value_phone_number: str
+    :param value_number: Floating point value.
+    :type value_number: float
+    :param value_integer: Integer value.
+    :type value_integer: int
+    :param value_array: Array of field values.
+    :type value_array:
+     list[~azure.cognitiveservices.formrecognizer.models.FieldValue]
+    :param value_object: Dictionary of named field values.
+    :type value_object: dict[str,
+     ~azure.cognitiveservices.formrecognizer.models.FieldValue]
+    :param text: Text content of the extracted field.
     :type text: str
-    :param elements: List of references to OCR words comprising the recognized
-     field value.
-    :type elements:
-     list[~azure.cognitiveservices.formrecognizer.models.ElementReference]
-    :param value_type: Required. Constant filled by server.
-    :type value_type: str
+    :param bounding_box: Bounding box of the field value, if appropriate.
+    :type bounding_box: list[float]
+    :param confidence: Confidence score.
+    :type confidence: float
+    :param elements: When includeTextDetails is set to true, a list of
+     references to the text elements constituting this field.
+    :type elements: list[str]
+    :param page: The 1-based page number in the input document.
+    :type page: int
     """
 
     _validation = {
-        'value_type': {'required': True},
+        'type': {'required': True},
+        'page': {'minimum': 1},
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'FieldValueType'},
+        'value_string': {'key': 'valueString', 'type': 'str'},
+        'value_date': {'key': 'valueDate', 'type': 'iso-8601'},
+        'value_time': {'key': 'valueTime', 'type': 'iso-8601'},
+        'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
+        'value_number': {'key': 'valueNumber', 'type': 'float'},
+        'value_integer': {'key': 'valueInteger', 'type': 'int'},
+        'value_array': {'key': 'valueArray', 'type': '[FieldValue]'},
+        'value_object': {'key': 'valueObject', 'type': '{FieldValue}'},
         'text': {'key': 'text', 'type': 'str'},
-        'elements': {'key': 'elements', 'type': '[ElementReference]'},
-        'value_type': {'key': 'valueType', 'type': 'str'},
+        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+        'elements': {'key': 'elements', 'type': '[str]'},
+        'page': {'key': 'page', 'type': 'int'},
     }
 
-    _subtype_map = {
-        'value_type': {'stringValue': 'StringValue', 'numberValue': 'NumberValue'}
-    }
-
-    def __init__(self, *, text: str=None, elements=None, **kwargs) -> None:
+    def __init__(self, *, type, value_string: str=None, value_date=None, value_time=None, value_phone_number: str=None, value_number: float=None, value_integer: int=None, value_array=None, value_object=None, text: str=None, bounding_box=None, confidence: float=None, elements=None, page: int=None, **kwargs) -> None:
         super(FieldValue, self).__init__(**kwargs)
+        self.type = type
+        self.value_string = value_string
+        self.value_date = value_date
+        self.value_time = value_time
+        self.value_phone_number = value_phone_number
+        self.value_number = value_number
+        self.value_integer = value_integer
+        self.value_array = value_array
+        self.value_object = value_object
         self.text = text
+        self.bounding_box = bounding_box
+        self.confidence = confidence
         self.elements = elements
-        self.value_type = None
+        self.page = page

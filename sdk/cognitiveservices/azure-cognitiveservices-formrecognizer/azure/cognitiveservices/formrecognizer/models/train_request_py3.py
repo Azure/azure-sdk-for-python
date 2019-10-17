@@ -13,16 +13,19 @@ from msrest.serialization import Model
 
 
 class TrainRequest(Model):
-    """Contract to initiate a train request.
+    """Request parameter to train a new custom model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. Get or set source path.
+    :param source: Required. Source path containing the training documents.
     :type source: str
-    :param source_filter: Get or set filter to further search the
-     source path for content.
+    :param source_filter: Filter to apply to the documents in the source path
+     for training.
     :type source_filter:
      ~azure.cognitiveservices.formrecognizer.models.TrainSourceFilter
+    :param use_label_file: Use label file for training a model. Default value:
+     False .
+    :type use_label_file: bool
     """
 
     _validation = {
@@ -32,9 +35,11 @@ class TrainRequest(Model):
     _attribute_map = {
         'source': {'key': 'source', 'type': 'str'},
         'source_filter': {'key': 'sourceFilter', 'type': 'TrainSourceFilter'},
+        'use_label_file': {'key': 'useLabelFile', 'type': 'bool'},
     }
 
-    def __init__(self, *, source: str, source_filter=None, **kwargs) -> None:
+    def __init__(self, *, source: str, source_filter=None, use_label_file: bool=False, **kwargs) -> None:
         super(TrainRequest, self).__init__(**kwargs)
         self.source = source
         self.source_filter = source_filter
+        self.use_label_file = use_label_file

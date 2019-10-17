@@ -12,23 +12,21 @@
 from msrest.serialization import Model
 
 
-class KeysResult(Model):
-    """Keys extracted by the custom model.
+class SourcePath(Model):
+    """Uri or local path to source data.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param clusters: Required. Object mapping clusterIds to a list of keys.
-    :type clusters: dict[str, list[str]]
+    :param source: File source path.
+    :type source: str
     """
 
     _validation = {
-        'clusters': {'required': True},
+        'source': {'max_length': 2048, 'min_length': 0},
     }
 
     _attribute_map = {
-        'clusters': {'key': 'clusters', 'type': '{[str]}'},
+        'source': {'key': 'source', 'type': 'str'},
     }
 
-    def __init__(self, *, clusters, **kwargs) -> None:
-        super(KeysResult, self).__init__(**kwargs)
-        self.clusters = clusters
+    def __init__(self, *, source: str=None, **kwargs) -> None:
+        super(SourcePath, self).__init__(**kwargs)
+        self.source = source

@@ -13,28 +13,39 @@ from msrest.serialization import Model
 
 
 class TrainResult(Model):
-    """Response of the Train API call.
+    """Custom model training result.
 
-    :param model_id: Identifier of the model.
-    :type model_id: str
-    :param training_documents: List of documents used to train the model and
-     the
-     train operation error reported by each.
+    All required parameters must be populated in order to send to Azure.
+
+    :param training_documents: Required. List of the documents used to train
+     the model and any errors reported in each document.
     :type training_documents:
-     list[~azure.cognitiveservices.formrecognizer.models.FormDocumentReport]
+     list[~azure.cognitiveservices.formrecognizer.models.TrainingDocumentInfo]
+    :param fields: List of fields used to train the model and the train
+     operation error reported by each.
+    :type fields:
+     list[~azure.cognitiveservices.formrecognizer.models.FormFieldsReport]
+    :param average_model_accuracy: Average accuracy.
+    :type average_model_accuracy: float
     :param errors: Errors returned during the training operation.
     :type errors:
      list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
     """
 
+    _validation = {
+        'training_documents': {'required': True},
+    }
+
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'training_documents': {'key': 'trainingDocuments', 'type': '[FormDocumentReport]'},
+        'training_documents': {'key': 'trainingDocuments', 'type': '[TrainingDocumentInfo]'},
+        'fields': {'key': 'fields', 'type': '[FormFieldsReport]'},
+        'average_model_accuracy': {'key': 'averageModelAccuracy', 'type': 'float'},
         'errors': {'key': 'errors', 'type': '[FormOperationError]'},
     }
 
-    def __init__(self, *, model_id: str=None, training_documents=None, errors=None, **kwargs) -> None:
+    def __init__(self, *, training_documents, fields=None, average_model_accuracy: float=None, errors=None, **kwargs) -> None:
         super(TrainResult, self).__init__(**kwargs)
-        self.model_id = model_id
         self.training_documents = training_documents
+        self.fields = fields
+        self.average_model_accuracy = average_model_accuracy
         self.errors = errors

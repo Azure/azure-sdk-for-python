@@ -15,14 +15,20 @@ from msrest.serialization import Model
 class FormOperationError(Model):
     """Error reported during an operation.
 
-    :param error_message: Message reported during the train operation.
-    :type error_message: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param message: Required. Error message.
+    :type message: str
     """
 
+    _validation = {
+        'message': {'required': True},
+    }
+
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(FormOperationError, self).__init__(**kwargs)
-        self.error_message = kwargs.get('error_message', None)
+        self.message = kwargs.get('message', None)

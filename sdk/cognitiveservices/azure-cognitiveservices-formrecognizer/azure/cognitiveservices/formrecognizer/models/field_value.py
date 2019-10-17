@@ -13,39 +13,81 @@ from msrest.serialization import Model
 
 
 class FieldValue(Model):
-    """Base class representing a recognized field value.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StringValue, NumberValue
+    """Recognized field value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: OCR text content of the recognized field.
+    :param type: Required. Type of field value. Possible values include:
+     'string', 'date', 'time', 'phoneNumber', 'number', 'integer', 'array',
+     'object'
+    :type type: str or
+     ~azure.cognitiveservices.formrecognizer.models.FieldValueType
+    :param value_string: String value.
+    :type value_string: str
+    :param value_date: Date value.
+    :type value_date: datetime
+    :param value_time: Time value.
+    :type value_time: datetime
+    :param value_phone_number: Phone number value.
+    :type value_phone_number: str
+    :param value_number: Floating point value.
+    :type value_number: float
+    :param value_integer: Integer value.
+    :type value_integer: int
+    :param value_array: Array of field values.
+    :type value_array:
+     list[~azure.cognitiveservices.formrecognizer.models.FieldValue]
+    :param value_object: Dictionary of named field values.
+    :type value_object: dict[str,
+     ~azure.cognitiveservices.formrecognizer.models.FieldValue]
+    :param text: Text content of the extracted field.
     :type text: str
-    :param elements: List of references to OCR words comprising the recognized
-     field value.
-    :type elements:
-     list[~azure.cognitiveservices.formrecognizer.models.ElementReference]
-    :param value_type: Required. Constant filled by server.
-    :type value_type: str
+    :param bounding_box: Bounding box of the field value, if appropriate.
+    :type bounding_box: list[float]
+    :param confidence: Confidence score.
+    :type confidence: float
+    :param elements: When includeTextDetails is set to true, a list of
+     references to the text elements constituting this field.
+    :type elements: list[str]
+    :param page: The 1-based page number in the input document.
+    :type page: int
     """
 
     _validation = {
-        'value_type': {'required': True},
+        'type': {'required': True},
+        'page': {'minimum': 1},
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'FieldValueType'},
+        'value_string': {'key': 'valueString', 'type': 'str'},
+        'value_date': {'key': 'valueDate', 'type': 'iso-8601'},
+        'value_time': {'key': 'valueTime', 'type': 'iso-8601'},
+        'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
+        'value_number': {'key': 'valueNumber', 'type': 'float'},
+        'value_integer': {'key': 'valueInteger', 'type': 'int'},
+        'value_array': {'key': 'valueArray', 'type': '[FieldValue]'},
+        'value_object': {'key': 'valueObject', 'type': '{FieldValue}'},
         'text': {'key': 'text', 'type': 'str'},
-        'elements': {'key': 'elements', 'type': '[ElementReference]'},
-        'value_type': {'key': 'valueType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'value_type': {'stringValue': 'StringValue', 'numberValue': 'NumberValue'}
+        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+        'elements': {'key': 'elements', 'type': '[str]'},
+        'page': {'key': 'page', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(FieldValue, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.value_string = kwargs.get('value_string', None)
+        self.value_date = kwargs.get('value_date', None)
+        self.value_time = kwargs.get('value_time', None)
+        self.value_phone_number = kwargs.get('value_phone_number', None)
+        self.value_number = kwargs.get('value_number', None)
+        self.value_integer = kwargs.get('value_integer', None)
+        self.value_array = kwargs.get('value_array', None)
+        self.value_object = kwargs.get('value_object', None)
         self.text = kwargs.get('text', None)
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.confidence = kwargs.get('confidence', None)
         self.elements = kwargs.get('elements', None)
-        self.value_type = None
+        self.page = kwargs.get('page', None)

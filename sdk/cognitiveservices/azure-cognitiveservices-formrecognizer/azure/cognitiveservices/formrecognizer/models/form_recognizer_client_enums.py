@@ -12,21 +12,47 @@
 from enum import Enum
 
 
-class TextOperationStatusCodes(str, Enum):
+class OperationStatus(str, Enum):
 
-    not_started = "Not Started"
-    running = "Running"
-    failed = "Failed"
-    succeeded = "Succeeded"
+    not_started = "notStarted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
 
 
-class TextRecognitionResultDimensionUnit(str, Enum):
+class LengthUnit(str, Enum):
 
     pixel = "pixel"
     inch = "inch"
 
 
-class TextRecognitionResultConfidenceClass(str, Enum):
+class Language(str, Enum):
 
-    high = "High"
-    low = "Low"
+    en = "en"
+    es = "es"
+
+
+class FieldValueType(str, Enum):
+
+    string = "string"
+    date_enum = "date"
+    time = "time"
+    phone_number = "phoneNumber"
+    number = "number"
+    integer = "integer"
+    array = "array"
+    object_enum = "object"
+
+
+class TrainStatus(str, Enum):
+
+    succeeded = "succeeded"
+    partially_succeeded = "partiallySucceeded"
+    failed = "failed"
+
+
+class ModelStatus(str, Enum):
+
+    creating = "creating"
+    ready = "ready"
+    invalid = "invalid"

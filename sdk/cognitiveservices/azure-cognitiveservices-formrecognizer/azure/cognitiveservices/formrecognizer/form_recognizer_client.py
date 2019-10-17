@@ -36,7 +36,7 @@ class FormRecognizerClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/formrecognizer/v1.0-preview'
+        base_url = '{endpoint}/formrecognizer/v2.0-preview'
 
         super(FormRecognizerClientConfiguration, self).__init__(base_url)
 
@@ -47,7 +47,7 @@ class FormRecognizerClientConfiguration(Configuration):
 
 
 class FormRecognizerClient(SDKClient):
-    """FormRecognizerClient
+    """Extracts information from forms and images into structured data.
 
     :ivar config: Configuration for client.
     :vartype config: FormRecognizerClientConfiguration
@@ -67,52 +67,45 @@ class FormRecognizerClient(SDKClient):
         super(FormRecognizerClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0-preview'
+        self.api_version = '2.0-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
 
-    def train_custom_model(
-            self, source, source_filter=None, custom_headers=None, raw=False, **operation_config):
-        """Train Model.
+    def train_custom_model_async(
+            self, train_request, custom_headers=None, raw=False, **operation_config):
+        """Train Custom Model.
 
-        Create and train a custom model. The train request must include a
-        source parameter that is either an externally accessible Azure Storage
-        blob container Uri (preferably a Shared Access Signature Uri) or valid
-        path to a data folder in a locally mounted drive. When local paths are
+        Create and train a custom model. The request must include a source
+        parameter that is either an externally accessible Azure storage blob
+        container Uri (preferably a Shared Access Signature Uri) or valid path
+        to a data folder in a locally mounted drive. When local paths are
         specified, they must follow the Linux/Unix path format and be an
-        absolute path rooted to the input mount configuration
-        setting value e.g., if '{Mounts:Input}' configuration setting value is
-        '/input' then a valid source path would be '/input/contosodataset'. All
-        data to be trained is expected to be directly under the source folder.
-        Subfolders are not supported. Models are trained using documents that
-        are of the following content type - 'application/pdf', 'image/jpeg' and
-        'image/png'."
-        Other type of content is ignored.
+        absolute path rooted to the input mount configuration setting value
+        e.g., if '{Mounts:Input}' configuration setting value is '/input' then
+        a valid source path would be '/input/contosodataset'. All data to be
+        trained is expected to be under the source folder or sub folders under
+        it. Models are trained using documents that are of the following
+        content type - 'application/pdf', 'image/jpeg', 'image/png',
+        'image/tiff'. Other type of content is ignored.
 
-        :param source: Get or set source path.
-        :type source: str
-        :param source_filter: Get or set filter to further search the
-         source path for content.
-        :type source_filter:
-         ~azure.cognitiveservices.formrecognizer.models.TrainSourceFilter
+        :param train_request: Training request parameters.
+        :type train_request:
+         ~azure.cognitiveservices.formrecognizer.models.TrainRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TrainResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.formrecognizer.models.TrainResult or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
-        train_request = models.TrainRequest(source=source, source_filter=source_filter)
-
         # Construct URL
-        url = self.train_custom_model.metadata['url']
+        url = self.train_custom_model_async.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -121,7 +114,6 @@ class FormRecognizerClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -133,90 +125,33 @@ class FormRecognizerClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('TrainResult', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Location': 'str',
+            })
             return client_raw_response
-
-        return deserialized
-    train_custom_model.metadata = {'url': '/custom/train'}
-
-    def get_extracted_keys(
-            self, id, custom_headers=None, raw=False, **operation_config):
-        """Get Keys.
-
-        Retrieve the keys that were
-        extracted during the training of the specified model.
-
-        :param id: Model identifier.
-        :type id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeysResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.formrecognizer.models.KeysResult or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_extracted_keys.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'id': self._serialize.url("id", id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeysResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_extracted_keys.metadata = {'url': '/custom/models/{id}/keys'}
+    train_custom_model_async.metadata = {'url': '/custom/models'}
 
     def get_custom_models(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get Models.
+            self, op="full", custom_headers=None, raw=False, **operation_config):
+        """List Custom Models.
 
-        Get information about all trained custom models.
+        Get information about all custom models.
 
+        :param op: Specify whether to return summary or full list of models.
+         Possible values include: 'full', 'summary'
+        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ModelsResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.formrecognizer.models.ModelsResult or
+        :return: ModelsModel or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.formrecognizer.models.ModelsModel or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
@@ -224,12 +159,14 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.get_custom_models.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if op is not None:
+            query_parameters['op'] = self._serialize.query("op", op, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -247,7 +184,7 @@ class FormRecognizerClient(SDKClient):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ModelsResult', response)
+            deserialized = self._deserialize('ModelsModel', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -257,20 +194,23 @@ class FormRecognizerClient(SDKClient):
     get_custom_models.metadata = {'url': '/custom/models'}
 
     def get_custom_model(
-            self, id, custom_headers=None, raw=False, **operation_config):
-        """Get Model.
+            self, model_id, include_keys=False, custom_headers=None, raw=False, **operation_config):
+        """Get Custom Model.
 
-        Get information about a model.
+        Get detailed information about a custom model.
 
-        :param id: Model identifier.
-        :type id: str
+        :param model_id: Model identifier.
+        :type model_id: str
+        :param include_keys: Include list of extracted keys in model
+         information.
+        :type include_keys: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ModelResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.formrecognizer.models.ModelResult or
+        :return: Model or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.formrecognizer.models.Model or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
@@ -278,13 +218,15 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.get_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'id': self._serialize.url("id", id, 'str')
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if include_keys is not None:
+            query_parameters['includeKeys'] = self._serialize.query("include_keys", include_keys, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -302,23 +244,24 @@ class FormRecognizerClient(SDKClient):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ModelResult', response)
+            deserialized = self._deserialize('Model', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_custom_model.metadata = {'url': '/custom/models/{id}'}
+    get_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
     def delete_custom_model(
-            self, id, custom_headers=None, raw=False, **operation_config):
-        """Delete Model.
+            self, model_id, custom_headers=None, raw=False, **operation_config):
+        """Delete Custom Model.
 
-        Delete model artifacts.
+        Mark model for deletion. Model artifacts will be permanently removed
+        within a predetermined period.
 
-        :param id: The identifier of the model to delete.
-        :type id: str
+        :param model_id: Model identifier.
+        :type model_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -332,8 +275,8 @@ class FormRecognizerClient(SDKClient):
         # Construct URL
         url = self.delete_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'id': self._serialize.url("id", id, 'str')
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -349,91 +292,31 @@ class FormRecognizerClient(SDKClient):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_custom_model.metadata = {'url': '/custom/models/{id}'}
+    delete_custom_model.metadata = {'url': '/custom/models/{modelId}'}
 
     def analyze_with_custom_model(
-            self, id, form_stream, keys=None, custom_headers=None, raw=False, **operation_config):
+            self, model_id, include_text_details=False, file_stream=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Form.
 
-        Extract key-value pairs from a given document. The input document must
-        be of one of the supported content types - 'application/pdf',
-        'image/jpeg' or 'image/png'. A success response is returned in JSON.
+        Extract key-value pairs, tables, and semantic values from a given
+        document. The input document must be of one of the supported content
+        types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+        Alternatively, use 'application/json' type to specify the location (Uri
+        or local path) of the document to be analyzed.
 
-        :param id: Model Identifier to analyze the document with.
-        :type id: str
-        :param form_stream: A pdf document or image (jpg,png) file to analyze.
-        :type form_stream: Generator
-        :param keys: An optional list of known keys to extract the values for.
-        :type keys: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AnalyzeResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.formrecognizer.models.AnalyzeResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.analyze_with_custom_model.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'id': self._serialize.url("id", id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if keys is not None:
-            query_parameters['keys'] = self._serialize.query("keys", keys, '[str]', div=',')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'multipart/form-data'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct form data
-        form_data_content = {
-            'form_stream': form_stream,
-        }
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AnalyzeResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    analyze_with_custom_model.metadata = {'url': '/custom/models/{id}/analyze'}
-
-    def batch_read_receipt(
-            self, url, custom_headers=None, raw=False, **operation_config):
-        """Batch Read Receipt operation. The response contains a field called
-        'Operation-Location', which contains the URL that you must use for your
-        'Get Read Receipt Result' operation.
-
-        :param url: Publicly reachable URL of an image.
-        :type url: str
+        :param model_id: Model identifier.
+        :type model_id: str
+        :param include_text_details: Include text lines and element references
+         in the result.
+        :type include_text_details: bool
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -442,19 +325,20 @@ class FormRecognizerClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
-        image_url = models.ImageUrl(url=url)
-
         # Construct URL
-        url = self.batch_read_receipt.metadata['url']
+        url = self.analyze_with_custom_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if include_text_details is not None:
+            query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -463,14 +347,17 @@ class FormRecognizerClient(SDKClient):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(image_url, 'ImageUrl')
+        if file_stream is not None:
+            body_content = self._serialize.body(file_stream, 'object')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -478,35 +365,36 @@ class FormRecognizerClient(SDKClient):
                 'Operation-Location': 'str',
             })
             return client_raw_response
-    batch_read_receipt.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
+    analyze_with_custom_model.metadata = {'url': '/custom/models/{modelId}/analyze'}
 
-    def get_read_receipt_result(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
-        """This interface is used for getting the analysis results of a 'Batch
-        Read Receipt' operation. The URL to this interface should be retrieved
-        from the 'Operation-Location' field returned from the 'Batch Read
-        Receipt' operation.
+    def get_analyze_form_result(
+            self, model_id, result_id, custom_headers=None, raw=False, **operation_config):
+        """Get Analyze Form Result.
 
-        :param operation_id: Id of read operation returned in the response of
-         a 'Batch Read Receipt' operation.
-        :type operation_id: str
+        Obtain current status and the result of the analyze form operation.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :param result_id: Analyze operation result identifier.
+        :type result_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ReadReceiptResult or ClientRawResponse if raw=true
+        :return: AnalyzeOperationResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.formrecognizer.models.ReadReceiptResult or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.formrecognizer.models.AnalyzeOperationResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_read_receipt_result.metadata['url']
+        url = self.get_analyze_form_result.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+            'resultId': self._serialize.url("result_id", result_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -524,48 +412,46 @@ class FormRecognizerClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ReadReceiptResult', response)
+            deserialized = self._deserialize('AnalyzeOperationResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_read_receipt_result.metadata = {'url': '/prebuilt/receipt/operations/{operationId}'}
+    get_analyze_form_result.metadata = {'url': '/custom/models/{modelId}/analyzeResults/{resultId}'}
 
-    def batch_read_receipt_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Read Receipt operation. When you use the 'Batch Read Receipt'
-        interface, the response contains a field called 'Operation-Location'.
-        The 'Operation-Location' field contains the URL that you must use for
-        your 'Get Read Receipt Result' operation.
+    def analyze_receipt_async(
+            self, file_stream=None, custom_headers=None, raw=False, **operation_config):
+        """Analyze Receipt.
 
-        :param image: An image stream.
-        :type image: Generator
+        Extract field text and semantic values from a given receipt document.
+        The input document must be of one of the supported content types -
+        'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+        Alternatively, use 'application/json' type to specify the location (Uri
+        or local path) of the document to be analyzed.
+
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.batch_read_receipt_in_stream.metadata['url']
+        url = self.analyze_receipt_async.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -574,19 +460,22 @@ class FormRecognizerClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/octet-stream'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._client.stream_upload(image, callback)
+        if file_stream is not None:
+            body_content = self._serialize.body(file_stream, 'object')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -594,4 +483,61 @@ class FormRecognizerClient(SDKClient):
                 'Operation-Location': 'str',
             })
             return client_raw_response
-    batch_read_receipt_in_stream.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
+    analyze_receipt_async.metadata = {'url': '/prebuilt/receipt/analyze'}
+
+    def get_analyze_receipt_result(
+            self, result_id, custom_headers=None, raw=False, **operation_config):
+        """Get Analyze Receipt Result.
+
+        Track the progress and obtain the result of the analyze receipt
+        operation.
+
+        :param result_id: Analyze operation result identifier.
+        :type result_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AnalyzeOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.formrecognizer.models.AnalyzeOperationResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_analyze_receipt_result.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'resultId': self._serialize.url("result_id", result_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AnalyzeOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_analyze_receipt_result.metadata = {'url': '/prebuilt/receipt/analyzeResults/{resultId}'}
