@@ -417,7 +417,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :rtype: bytes
         """
         warnings.warn(
-            "content_as_bytes is deprecated, use read_all instead",
+            "content_as_bytes is deprecated, use readall instead",
             DeprecationWarning
         )
         self._max_concurrency = max_concurrency
