@@ -1484,7 +1484,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = self.get_random_bytes(2048)
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(random_name_enabled=True)
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -1543,7 +1543,7 @@ class StoragePageBlobTest(StorageTestCase):
             container.delete_container()
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(random_name_enabled=True)
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -1597,7 +1597,7 @@ class StoragePageBlobTest(StorageTestCase):
         finally:
             container.delete_container()
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(random_name_enabled=True)
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)

@@ -63,7 +63,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(random_name_enabled=True)
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
@@ -75,7 +75,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(random_name_enabled=True)
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
