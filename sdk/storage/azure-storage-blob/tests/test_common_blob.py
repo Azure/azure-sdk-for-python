@@ -1577,11 +1577,13 @@ class StorageCommonBlobTest(StorageTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
+    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
+    def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         if not self.is_live:
             pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
+        self._setup_remote(rmt.name, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
