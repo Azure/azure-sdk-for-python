@@ -20,6 +20,7 @@ from azure.core.exceptions import (
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._generated.models import KeyValue
 from ._generated import AzureAppConfiguration
+from ._generated.models import ErrorException
 from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._models import ConfigurationSetting
 from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
@@ -168,9 +169,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-        except ClientAuthenticationError:
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -228,14 +227,7 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_key_value(key_value)
         except ResourceNotModifiedError:
             return None
-        except (
-                ClientAuthenticationError,
-                ResourceNotFoundError,
-                ResourceModifiedError,
-                ResourceExistsError
-        ):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -286,9 +278,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_key_value(key_value_added)
-        except (ClientAuthenticationError, ResourceExistsError):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -357,16 +347,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_key_value(key_value_set)
-        except (
-                ClientAuthenticationError,
-                ResourceReadOnlyError,
-                ResourceModifiedError,
-                ResourceNotModifiedError,
-                ResourceNotFoundError,
-                ResourceExistsError
-        ):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -422,16 +403,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_key_value(key_value_deleted)
-        except (
-                ClientAuthenticationError,
-                ResourceReadOnlyError,
-                ResourceModifiedError,
-                ResourceNotModifiedError,
-                ResourceNotFoundError,
-                ResourceExistsError
-        ):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -491,9 +463,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-        except ClientAuthenticationError:
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -533,9 +503,7 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
             return ConfigurationSetting._from_key_value(key_value)
-        except (ClientAuthenticationError, ResourceNotFoundError):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
@@ -575,7 +543,5 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
             return ConfigurationSetting._from_key_value(key_value)
-        except (ClientAuthenticationError, ResourceNotFoundError):
-            raise
-        except HttpResponseError as error:
+        except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
