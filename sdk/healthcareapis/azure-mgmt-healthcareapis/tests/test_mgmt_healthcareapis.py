@@ -65,7 +65,8 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             }
           }
         }
-        output = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
+        azure_operation_poller = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
+        result_create = azure_operation_poller.result()
 
 
 #------------------------------------------------------------------------------
