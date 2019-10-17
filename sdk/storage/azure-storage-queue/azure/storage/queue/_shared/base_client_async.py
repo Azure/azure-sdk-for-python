@@ -17,7 +17,7 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy)
-
+from azure.core.pipeline.transport import AsyncHttpTransport
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
@@ -122,3 +122,24 @@ class AsyncStorageAccountHostsMixin(object):
             return response.parts()  # Return an AsyncIterator
         except StorageErrorException as error:
             process_storage_error(error)
+
+
+class AsyncTransportWrapper(AsyncHttpTransport):
+
+    def __init__(self, async_transport):
+        self._transport = async_transport
+
+    async def send(self, request, **kwargs):
+        return await self._transport.send(request, **kwargs)
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass
+
+    async def __aenter__(self, *args): # pylint: disable=arguments-differ
+        pass
+
+    async def __aexit__(self, *args): # pylint: disable=arguments-differ
+        pass
