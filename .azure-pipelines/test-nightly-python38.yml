@@ -10,7 +10,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
     steps:
       - script: |
@@ -21,7 +21,7 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           python3 -m ensurepip
-          pip3 install wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
+          pip packaging tox tox-monorepo
           python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
