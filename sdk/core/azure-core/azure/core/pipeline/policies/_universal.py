@@ -305,11 +305,17 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         self.allowed_query_params = set()
         self.allowed_header_namers = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
 
-    def _redact(self, key, value):
+    def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
             param.lower() for param in self.allowed_query_params
         ]
         return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+    def _redact_header(self, key, value):
+        lower_case_allowed_header_namers = [
+            header.lower() for header in self.allowed_header_namers
+        ]
+        return value if key.lower() in lower_case_allowed_header_namers else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -326,14 +332,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         if not logger.isEnabledFor(logging.INFO):
             return
 
-        lower_case_allowed_header_namers = [
-            header.lower() for header in self.allowed_header_namers
-        ]
-
         try:
             parsed_url = list(urllib.parse.urlparse(http_request.url))
             parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-            filtered_qp = [(key, self._redact(key, value)) for key, value in parsed_qp]
+            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
             # 4 is query
             parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
             redacted_url = urllib.parse.urlunparse(parsed_url)
@@ -342,8 +344,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             logger.info("Request method: %r", http_request.method)
             logger.info("Request headers:")
             for header, value in http_request.headers.items():
-                if header.lower() not in lower_case_allowed_header_namers:
-                    value = HttpLoggingPolicy.REDACTED_PLACEHOLDER
+                value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
@@ -356,16 +357,11 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         if not logger.isEnabledFor(logging.INFO):
             return
 
-        lower_case_allowed_header_namers = [
-            header.lower() for header in self.allowed_header_namers
-        ]
-
         try:
             logger.info("Response status: %r", http_response.status_code)
             logger.info("Response headers:")
             for res_header, value in http_response.headers.items():
-                if res_header.lower() not in lower_case_allowed_header_namers:
-                    value = HttpLoggingPolicy.REDACTED_PLACEHOLDER
+                value = self._redact_header(res_header, value)
                 logger.info("    %r: %r", res_header, value)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log response: %s", repr(err))
