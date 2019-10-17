@@ -251,7 +251,7 @@ For example, if you try to get a key that doesn't exist in the vault,
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 
-secret_client.delete_secret("my-secret")
+secret_client.begin_delete_secret("my-secret").wait()
 
 try:
     secret_client.get_secret("my-secret")

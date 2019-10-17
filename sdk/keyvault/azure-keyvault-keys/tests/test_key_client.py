@@ -162,7 +162,11 @@ class KeyClientTests(KeyVaultTestCase):
         self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        deleted_key = client.begin_delete_key(created_rsa_key.name).result()
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        deleted_key = client.begin_delete_key(created_rsa_key.name, _polling_interval=polling_interval).result()
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.key_type, deleted_key.key_type)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
@@ -194,7 +198,11 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        client.begin_delete_key(created_bundle.name).wait()
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        client.begin_delete_key(created_bundle.name, _polling_interval=polling_interval).wait()
 
         # restore key
         restored = client.restore_key_backup(key_backup)
@@ -266,8 +274,12 @@ class KeyClientTests(KeyVaultTestCase):
             expected[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in expected.keys():
-            client.begin_delete_key(key_name).wait()
+            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
         # validate list deleted keys with attributes
         for deleted_key in client.list_deleted_keys():
@@ -295,8 +307,12 @@ class KeyClientTests(KeyVaultTestCase):
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in keys.keys():
-            client.begin_delete_key(key_name).wait()
+            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
         # validate the deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
@@ -304,7 +320,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # recover the keys
         for key_name in keys.keys():
-            recovered_key = client.recover_deleted_key(key_name)
+            recovered_key = client.begin_recover_deleted_key(key_name, _polling_interval=polling_interval).result()
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
@@ -320,8 +336,12 @@ class KeyClientTests(KeyVaultTestCase):
             client.create_key(name, "RSA")
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in key_names:
-            client.begin_delete_key(key_name).wait()
+            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
         # validate all our deleted keys are returned by list_deleted_keys
         deleted = [k.name for k in client.list_deleted_keys()]

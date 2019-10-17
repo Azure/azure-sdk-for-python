@@ -24,9 +24,9 @@ from azure.core.exceptions import HttpResponseError
 # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 # 1. Create a key (create_key)
 #
-# 2. Delete a key (delete_key)
+# 2. Delete a key (begin_delete_key)
 #
-# 3. Recover a deleted key (recover_deleted_key)
+# 3. Recover a deleted key (begin_recover_deleted_key)
 #
 # 4. Purge a deleted key (purge_deleted_key)
 # ----------------------------------------------------------------------------------------------------------
@@ -47,15 +47,15 @@ try:
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):
-        deleted_key = client.delete_key(key_name).result()
+        deleted_key = client.begin_delete_key(key_name).result()
         print("Deleted key '{0}'".format(deleted_key.name))
 
     print("\n.. Recover a deleted key")
-    recovered_key = client.recover_deleted_key(rsa_key.name)
+    recovered_key = client.begin_recover_deleted_key(rsa_key.name).result()
     print("Recovered key '{0}'".format(recovered_key.name))
 
     # deleting the recovered key so it doesn't outlast this script
-    client.delete_key(recovered_key.name).wait()
+    client.begin_delete_key(recovered_key.name).wait()
 
     print("\n.. Purge keys")
     for key_name in (ec_key.name, rsa_key.name):

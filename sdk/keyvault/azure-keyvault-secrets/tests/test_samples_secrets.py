@@ -188,7 +188,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_secret]
 
         # recover deleted secret to the latest version
-        recovered_secret = secret_client.recover_deleted_secret("secret-name")
+        recovered_secret = secret_client.begin_recover_deleted_secret("secret-name").result()
         print(recovered_secret.id)
         print(recovered_secret.name)
 

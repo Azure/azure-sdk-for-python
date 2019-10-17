@@ -278,7 +278,7 @@ raises `ResourceNotFoundError`:
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 
-key_client.delete_key("my-key")
+key_client.begin_delete_key("my-key").wait()
 
 try:
     key_client.get_key("my-key")

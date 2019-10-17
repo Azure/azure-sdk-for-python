@@ -225,7 +225,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
-        recovered_key = key_client.recover_deleted_key("key-name")
+        recovered_key = key_client.begin_recover_deleted_key("key-name").result()
         print(recovered_key.id)
         print(recovered_key.name)
 

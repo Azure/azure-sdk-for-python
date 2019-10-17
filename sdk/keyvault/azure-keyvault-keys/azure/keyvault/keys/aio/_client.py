@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import async_poller
 
-from .._shared._delete_polling_async import DeleteResourcePollerAsync
+from .._shared._polling_async import DeleteResourcePollerAsync, RecoverDeletedResourcePollerAsync
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
 from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
@@ -165,8 +165,8 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the key to delete.
         :returns: A coroutine for the deletion of the key. Since deleting a key is not instant on the service side,
-         we poll on the deletion of the key. Awaiting this method returns the DeletedKey.
-        :rtype: ~azure.keyvault.keys.models.DeletedKey
+         we poll on the deletion of the key. Awaiting this method returns the deleted key.
+        :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -179,12 +179,13 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
+        polling_interval = kwargs.pop("_polling_interval", 2)
         deleted_key = DeletedKey._from_deleted_key_bundle(
             await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
         command = partial(self.get_deleted_key, name=name, **kwargs)
 
-        delete_key_poller = DeleteResourcePollerAsync()
+        delete_key_poller = DeleteResourcePollerAsync(interval=polling_interval)
         return await async_poller(command, deleted_key, None, delete_key_poller)
 
     @distributed_trace_async
@@ -338,7 +339,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         Requires the keys/recover permission.
 
         :param str name: The name of the deleted key
-        :returns: The recovered key
+        :returns: A coroutine for the recovery of the key. Since recovering a key is not instant on the service side,
+         we poll on the recovering of the key. Awaiting this method returns the recovered key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -350,8 +352,14 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
-        return KeyVaultKey._from_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_key = KeyVaultKey._from_key_bundle(
+            await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_key, name=name, **kwargs)
+
+        recover_key_poller = RecoverDeletedResourcePollerAsync(interval=polling_interval)
+        return await async_poller(command, recovered_key, None, recover_key_poller)
 
     @distributed_trace_async
     async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
