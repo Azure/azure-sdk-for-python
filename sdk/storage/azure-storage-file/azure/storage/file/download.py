@@ -109,7 +109,7 @@ class _ChunkDownloader(object):
 
     def process_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = self._download_chunk(chunk_start, chunk_end-1)
+        chunk_data = self._download_chunk(chunk_start, chunk_end - 1)
         length = chunk_end - chunk_start
         if length > 0:
             self._write_to_stream(chunk_data, chunk_start)
@@ -117,7 +117,7 @@ class _ChunkDownloader(object):
 
     def yield_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        return self._download_chunk(chunk_start, chunk_end)
+        return self._download_chunk(chunk_start, chunk_end - 1)
 
     # should be provided by the subclass
     def _update_progress(self, length):
