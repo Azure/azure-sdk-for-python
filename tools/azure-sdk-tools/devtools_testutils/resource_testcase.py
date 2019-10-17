@@ -32,7 +32,8 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
-        self.resource_moniker = self.name_prefix + "rgname"
+        if random_name_enabled:
+            self.resource_moniker = self.name_prefix + "rgname"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
