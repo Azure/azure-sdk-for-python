@@ -943,6 +943,192 @@ class LegacyChargeSummary(ChargeSummary):
         self.kind = 'legacy'
 
 
+class ReservationRecommendation(Model):
+    """A reservation recommendation resource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LegacyReservationRecommendation,
+    ModernReservationRecommendation
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'legacy': 'LegacyReservationRecommendation', 'modern': 'ModernReservationRecommendation'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationRecommendation, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = None
+        self.location = None
+        self.sku = None
+        self.kind = None
+
+
+class LegacyReservationRecommendation(ReservationRecommendation):
+    """Legacy reservation recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar look_back_period: The number of days of usage to look back for
+     recommendation.
+    :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: int
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity
+     Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID)
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without
+     reserved instances.
+    :vartype cost_with_no_reserved_instances: decimal.Decimal
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: decimal.Decimal
+    :ivar total_cost_with_reserved_instances: The total amount of cost with
+     reserved instances.
+    :vartype total_cost_with_reserved_instances: decimal.Decimal
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: decimal.Decimal
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: datetime
+    :ivar scope: Shared or single recommendation.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+        'look_back_period': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
+        'normalized_size': {'readonly': True},
+        'recommended_quantity_normalized': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'term': {'readonly': True},
+        'cost_with_no_reserved_instances': {'readonly': True},
+        'recommended_quantity': {'readonly': True},
+        'total_cost_with_reserved_instances': {'readonly': True},
+        'net_savings': {'readonly': True},
+        'first_usage_date': {'readonly': True},
+        'scope': {'readonly': True},
+        'sku_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
+        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
+        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'decimal'},
+        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
+        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'decimal'},
+        'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
+        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LegacyReservationRecommendation, self).__init__(**kwargs)
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope = None
+        self.sku_properties = None
+        self.kind = 'legacy'
+
+
 class UsageDetail(Resource):
     """An usage detail resource.
 
@@ -1798,6 +1984,131 @@ class ModernChargeSummary(ChargeSummary):
         self.kind = 'modern'
 
 
+class ModernReservationRecommendation(ReservationRecommendation):
+    """Modern reservation recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar look_back_period: The number of days of usage to look back for
+     recommendation.
+    :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: int
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity
+     Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID)
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without
+     reserved instances.
+    :vartype cost_with_no_reserved_instances:
+     ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: decimal.Decimal
+    :ivar total_cost_with_reserved_instances: The total amount of cost with
+     reserved instances.
+    :vartype total_cost_with_reserved_instances:
+     ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: datetime
+    :ivar scope: Shared or single recommendation.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+        'look_back_period': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
+        'normalized_size': {'readonly': True},
+        'recommended_quantity_normalized': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'term': {'readonly': True},
+        'cost_with_no_reserved_instances': {'readonly': True},
+        'recommended_quantity': {'readonly': True},
+        'total_cost_with_reserved_instances': {'readonly': True},
+        'net_savings': {'readonly': True},
+        'first_usage_date': {'readonly': True},
+        'scope': {'readonly': True},
+        'sku_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
+        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
+        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'Amount'},
+        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
+        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'Amount'},
+        'net_savings': {'key': 'properties.netSavings', 'type': 'Amount'},
+        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ModernReservationRecommendation, self).__init__(**kwargs)
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope = None
+        self.sku_properties = None
+        self.kind = 'modern'
+
+
 class ModernUsageDetail(UsageDetail):
     """Modern usage detail.
 
@@ -2552,128 +2863,6 @@ class ReservationDetail(Resource):
         self.instance_id = None
         self.total_reserved_quantity = None
         self.kind = None
-
-
-class ReservationRecommendation(Model):
-    """Reservation recommendation resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: Resource location
-    :vartype location: str
-    :ivar sku: Resource sku
-    :vartype sku: str
-    :ivar look_back_period: The number of days of usage to look back for
-     recommendation.
-    :vartype look_back_period: str
-    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
-    :ivar instance_flexibility_group: The instance Flexibility Group.
-    :vartype instance_flexibility_group: str
-    :ivar normalized_size: The normalized Size.
-    :vartype normalized_size: str
-    :ivar recommended_quantity_normalized: The recommended Quantity
-     Normalized.
-    :vartype recommended_quantity_normalized: float
-    :ivar meter_id: The meter id (GUID)
-    :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
-    :vartype term: str
-    :ivar cost_with_no_reserved_instances: The total amount of cost without
-     reserved instances.
-    :vartype cost_with_no_reserved_instances: decimal.Decimal
-    :ivar recommended_quantity: Recommended quality for reserved instances.
-    :vartype recommended_quantity: decimal.Decimal
-    :ivar total_cost_with_reserved_instances: The total amount of cost with
-     reserved instances.
-    :vartype total_cost_with_reserved_instances: decimal.Decimal
-    :ivar net_savings: Total estimated savings with reserved instances.
-    :vartype net_savings: decimal.Decimal
-    :ivar first_usage_date: The usage date for looking back.
-    :vartype first_usage_date: datetime
-    :ivar scope: Shared or single recommendation.
-    :vartype scope: str
-    :ivar sku_properties: List of sku properties
-    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'readonly': True},
-        'sku_properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
-        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'decimal'},
-        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
-        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'decimal'},
-        'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
-        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ReservationRecommendation, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
-        self.location = None
-        self.sku = None
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
-        self.scope = None
-        self.sku_properties = None
 
 
 class ReservationSummary(Resource):
