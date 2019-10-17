@@ -38,7 +38,7 @@ class ReservationRecommendationsOperations(object):
 
         self.config = config
 
-    def list(
+    def list_by_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """List of recommendations for purchasing reserved instances.
 
@@ -67,7 +67,7 @@ class ReservationRecommendationsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_scope.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -114,4 +114,4 @@ class ReservationRecommendationsOperations(object):
         deserialized = models.ReservationRecommendationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationRecommendations'}
+    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationRecommendations'}
