@@ -81,3 +81,6 @@ class DeploymentResourceStatus(str, Enum):
     running = "Running"
     failed = "Failed"
     processing = "Processing"
+    allocating = "Allocating"
+    upgrading = "Upgrading"
+    compiling = "Compiling"

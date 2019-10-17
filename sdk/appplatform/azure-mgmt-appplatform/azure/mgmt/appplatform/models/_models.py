@@ -555,7 +555,8 @@ class DeploymentResourceProperties(Model):
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.models.DeploymentResourceProvisioningState
     :ivar status: Status of the Deployment. Possible values include:
-     'Unknown', 'Stopped', 'Running', 'Failed', 'Processing'
+     'Unknown', 'Stopped', 'Running', 'Failed', 'Processing', 'Allocating',
+     'Upgrading', 'Compiling'
     :vartype status: str or
      ~azure.mgmt.appplatform.models.DeploymentResourceStatus
     :ivar active: Indicates whether the Deployment is active
