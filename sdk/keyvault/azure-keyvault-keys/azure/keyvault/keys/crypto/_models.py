@@ -11,12 +11,17 @@ if TYPE_CHECKING:
 class DecryptResult:
     """The result of a decrypt operation.
 
-    :param bytes decrypted_bytes: The decrypted bytes
+    :param str key_id: The encryption key's Key Vault identifier
+    :param algorithm: The encryption algorithm used
+    :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
+    :param bytes plaintext: The decrypted bytes
     """
 
-    def __init__(self, decrypted_bytes):
-        # type: (bytes) -> None
-        self.decrypted_bytes = decrypted_bytes
+    def __init__(self, key_id, algorithm, plaintext):
+        # type: (str, str, EncryptionAlgorithm, bytes) -> None
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.plaintext = plaintext
 
 
 class EncryptResult:
@@ -54,24 +59,33 @@ class SignResult:
 class VerifyResult:
     """The result of a verify operation.
 
-    :param bool result: Whether the signature is valid
+    :param str key_id: The encryption key's Key Vault identifier
+    :param bool is_valid: Whether the signature is valid
+    :param algorithm: The encryption algorithm used
+    :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
     """
 
-    def __init__(self, result):
-        self.result = result
+    def __init__(self, key_id, is_valid, algorithm):
+        self.key_id = key_id
+        self.is_valid = is_valid
+        self.algorithm = algorithm
 
-
-class UnwrapKeyResult:
+class UnwrapResult:
     """The result of an unwrap key operation.
 
-    :param bytes unwrapped_bytes: The unwrapped key's bytes
+    :param str key_id: The signing key's Key Vault identifier
+    :param algorithm: The signature algorithm used
+    :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
+    :param bytes key: The unwrapped key's bytes
     """
 
-    def __init__(self, unwrapped_bytes):
-        self.unwrapped_bytes = unwrapped_bytes
+    def __init__(self, key_id, algorithm, key):
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.key = key
 
 
-class WrapKeyResult:
+class WrapResult:
     """The result of a wrap key operation.
 
     :param str key_id: The wrapping key's Key Vault identifier

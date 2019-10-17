@@ -42,7 +42,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         result = await client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-        print(result.decrypted_bytes)
+        print(result.plaintext)
 
         # [END decrypt]
 
@@ -107,6 +107,6 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
-        assert verified.result is True
+        assert verified.is_valid is True
 
         # [END verify]

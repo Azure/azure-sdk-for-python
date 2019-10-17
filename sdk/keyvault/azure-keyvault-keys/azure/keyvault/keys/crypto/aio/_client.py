@@ -6,7 +6,7 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
 
-from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, WrapResult, UnwrapResult
 from .._internal import EllipticCurveKey, RsaKey
 from ..._models import KeyVaultKey
 
@@ -195,7 +195,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
             result = await client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-            print(result.decrypted_bytes)
+            print(result.plaintext)
 
         """
         result = await self._client.decrypt(
@@ -206,17 +206,17 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             value=ciphertext,
             **kwargs
         )
-        return DecryptResult(decrypted_bytes=result.result)
+        return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=result.result)
 
     @distributed_trace_async
-    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapKeyResult:
+    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapResult:
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
         :param bytes key: key to wrap
-        :rtype: :class:`~azure.keyvault.keys.crypto.WrapKeyResult`
+        :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
 
         Example:
 
@@ -246,17 +246,17 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 value=key,
                 **kwargs
             ).result
-        return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
+        return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
     @distributed_trace_async
-    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapKeyResult:
+    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.enums.KeyWrapAlgorithm`
         :param bytes encrypted_key: the wrapped key
-        :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapKeyResult`
+        :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
 
         Example:
 
@@ -265,7 +265,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
             result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
-            unwrapped_bytes = result.unwrapped_bytes
+            key = result.key
 
         """
 
@@ -277,7 +277,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             value=encrypted_key,
             **kwargs
         )
-        return UnwrapKeyResult(unwrapped_bytes=result.result)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=result.result)
 
     @distributed_trace_async
     async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "**Any") -> SignResult:
@@ -357,4 +357,4 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 signature=signature,
                 **kwargs
             ).value
-        return VerifyResult(result=result)
+        return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=result)
