@@ -10,6 +10,7 @@ import webbrowser
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
+from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, PublicClientCredential, wrap_exceptions
 
 try:
@@ -31,22 +32,23 @@ class InteractiveBrowserCredential(PublicClientCredential):
     Azure Active Directory documentation describes the authorization code flow in more detail:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
-    :param str client_id: the application's client ID
-
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
           authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
           authorities for other clouds.
         - **tenant (str)**: a tenant ID or a domain associated with a tenant. Defaults to the 'organizations' tenant,
           which can authenticate work or school accounts.
+        - **client_id** (str): Client ID of the Azure Active Directory application users will sign in to. If
+          unspecified, the Azure CLI's ID will be used.
         - **timeout (int)**: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
 
     """
 
-    def __init__(self, client_id, **kwargs):
-        # type: (str, **Any) -> None
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
+        client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
