@@ -80,9 +80,6 @@ class SecretClient(KeyVaultClientBase):
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
