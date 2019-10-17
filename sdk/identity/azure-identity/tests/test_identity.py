@@ -48,7 +48,9 @@ def test_client_secret_credential_cache():
     mock_send = Mock(return_value=mock_response(json_payload=token_payload))
     scope = "scope"
 
-    credential = ClientSecretCredential("client_id", "secret", tenant_id="some-guid", transport=Mock(send=mock_send))
+    credential = ClientSecretCredential(
+        tenant_id="some-guid", client_id="client_id", client_secret="secret", transport=Mock(send=mock_send)
+    )
 
     # get_token initially returns the expired token because the credential
     # doesn't check whether tokens it receives from the service have expired
@@ -86,9 +88,7 @@ def test_client_secret_credential():
         ],
     )
 
-    token = ClientSecretCredential(
-        client_id=client_id, client_secret=secret, tenant_id=tenant_id, transport=transport
-    ).get_token("scope")
+    token = ClientSecretCredential(tenant_id, client_id, secret, transport=transport).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token

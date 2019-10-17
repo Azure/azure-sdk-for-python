@@ -196,11 +196,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
     def _generate_oauth_token(self):
         from azure.identity.aio import ClientSecretCredential
 
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
-        )
+        return ClientSecretCredential(self.settings.ACTIVE_DIRECTORY_TENANT_ID,
+                                      self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+                                      self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET)
 
     @record
     def test_blob_exists(self):

@@ -61,11 +61,8 @@ class TestQueueAuthSamplesAsync(AsyncQueueTestCase):
         # [START async_create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
-        )
+        token_credential = ClientSecretCredential(self.active_directory_tenant_id, self.active_directory_application_id,
+                                                  self.active_directory_application_secret)
 
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue.aio import QueueServiceClient
