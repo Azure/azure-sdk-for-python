@@ -18,7 +18,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     ClientAuthenticationError)
-
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
@@ -2281,6 +2281,16 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_file_with_credential())
 
+    async def test_transport_closed_only_once(self):
+        transport = AsyncioRequestsTransport()
+        url = self._get_account_url()
+        credential = self._get_shared_key_credential()
+        blob_name = self._get_blob_reference()
+        async with BlobServiceClient(url, credential=credential, transport=transport) as bsc:
+            assert transport.session is not None
+            async with bsc.get_blob_client(self.container_name, blob_name) as bc:
+                assert transport.session is not None
+            assert transport.session is not None  # Right now it's None
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

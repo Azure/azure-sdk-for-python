@@ -14,9 +14,10 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse
 
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
@@ -1000,10 +1001,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-
+        _pipeline = Pipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, session_owner=False, loop=self._loop)
+            key_resolver_function=self.key_resolver_function, loop=self._loop)

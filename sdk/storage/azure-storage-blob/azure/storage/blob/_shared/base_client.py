@@ -28,7 +28,7 @@ import six
 from azure.core import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
 
@@ -215,6 +215,23 @@ class StorageAccountHostsMixin(object):
             return response.parts()
         except StorageErrorException as error:
             process_storage_error(error)
+
+class TransportWrapper(HttpTransport):
+
+    def __init__(self, transport):
+        self._transport = transport
+
+    def send(self, request, **kwargs):
+        return self._transport.send(request, **kwargs)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __exit__(self, *args): # pylint: disable=arguments-differ
+        pass
 
 
 def format_shared_key_credential(account, credential):
