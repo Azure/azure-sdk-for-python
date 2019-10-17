@@ -24,12 +24,12 @@ class AuthorizationCodeCredential(object):
     :param str client_id: the application's client ID
     :param str authorization_code: the authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
-    :param str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
           authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
           authorities for other clouds.
+        - **client_secret** (str): One of the application's client secrets. Required only for web apps and web APIs.
     """
 
     def __init__(
@@ -38,12 +38,11 @@ class AuthorizationCodeCredential(object):
         client_id: str,
         authorization_code: str,
         redirect_uri: str,
-        client_secret: "Optional[str]" = None,
         **kwargs: "Any"
     ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
-        self._client_secret = client_secret
+        self._client_secret = kwargs.pop("client_secret", None)
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
