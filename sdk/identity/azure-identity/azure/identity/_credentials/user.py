@@ -37,13 +37,6 @@ class DeviceCodeCredential(PublicClientCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
 
     :param str client_id: the application's ID
-    :param prompt_callback:
-        (optional) A callback enabling control of how authentication instructions are presented.
-        Must accept arguments (``verification_uri``, ``user_code``, ``expires_in``):
-            - ``verification_uri`` (str) the URL the user must visit
-            - ``user_code`` (str) the code the user must enter there
-            - ``expires_in`` (int) the number of seconds the code will be valid
-        If not provided, the credential will print instructions to stdout.
 
     Keyword arguments
         - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
@@ -53,13 +46,18 @@ class DeviceCodeCredential(PublicClientCredential):
           authenticate work or school accounts.
         - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
           device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
-
+        - **prompt_callback** (Callable[str, str, str]): A callback enabling control of how authentication instructions
+          are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_in``):
+            - ``verification_uri`` (str) the URL the user must visit
+            - ``user_code`` (str) the code the user must enter there
+            - ``expires_in`` (int) the number of seconds the code will be valid
+          If not provided, the credential will print instructions to stdout.
     """
 
-    def __init__(self, client_id, prompt_callback=None, **kwargs):
-        # type: (str, Optional[Callable[[str, str, str], None]], Any) -> None
+    def __init__(self, client_id, **kwargs):
+        # type: (str, **Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = prompt_callback
+        self._prompt_callback = kwargs.pop("prompt_callback", None)
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
