@@ -75,4 +75,4 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
-    return _SeparateConnectionManager(**kwargs)
+    return _SharedConnectionManager(**kwargs)

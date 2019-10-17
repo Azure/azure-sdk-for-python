@@ -8,7 +8,6 @@ import random
 import math
 from typing import List
 from collections import Counter, defaultdict
-from azure.eventhub.aio import EventHubClient
 from .partition_manager import PartitionManager
 
 
@@ -23,11 +22,12 @@ class OwnershipManager(object):
 
     """
     def __init__(
-            self, eventhub_client: EventHubClient, consumer_group_name: str, owner_id: str,
+            self, eventhub_client, consumer_group_name: str, owner_id: str,
             partition_manager: PartitionManager, ownership_timeout: float
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
+        self.namespace = eventhub_client._address.hostname
         self.eventhub_name = eventhub_client.eh_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
@@ -45,9 +45,12 @@ class OwnershipManager(object):
         """
         if not self.cached_parition_ids:
             await self._retrieve_partition_ids()
-        to_claim = await self._balance_ownership(self.cached_parition_ids)
-        claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
-        return claimed_list
+        if self.partition_manager:
+            to_claim = await self._balance_ownership(self.cached_parition_ids)
+            claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
+            return claimed_list
+        else:
+            return self.cached_parition_ids
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
@@ -83,7 +86,7 @@ class OwnershipManager(object):
         :return: List[Dict[str, Any]], A list of ownership.
         """
         ownership_list = await self.partition_manager.list_ownership(
-            self.eventhub_name, self.consumer_group_name
+            self.namespace, self.eventhub_name, self.consumer_group_name
         )
         now = time.time()
         ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
@@ -114,7 +117,8 @@ class OwnershipManager(object):
             if claimable_partition_ids:  # claim an inactive partition if there is
                 random_partition_id = random.choice(claimable_partition_ids)
                 random_chosen_to_claim = ownership_dict.get(random_partition_id,
-                                                            {"partition_id": random_partition_id,
+                                                            {"namespace": self.namespace,
+                                                             "partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_name,
                                                              "consumer_group_name": self.consumer_group_name,
                                                              "version": 0,

@@ -14,7 +14,7 @@ class PartitionManager(ABC):
     """
 
     @abstractmethod
-    async def list_ownership(self, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    async def list_ownership(self, namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         """
         Retrieves a complete ownership list from the chosen storage service.
 
@@ -55,7 +55,7 @@ class PartitionManager(ABC):
         """
 
     @abstractmethod
-    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
+    async def update_checkpoint(self, namespace, eventhub_name, consumer_group_name, partition_id,
                                 offset, sequence_number) -> None:
         """
         Updates the checkpoint using the given information for the associated partition and

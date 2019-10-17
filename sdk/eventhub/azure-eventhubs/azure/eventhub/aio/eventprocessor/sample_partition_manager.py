@@ -7,7 +7,7 @@ import time
 import uuid
 import sqlite3
 import logging
-from azure.eventhub.aio.eventprocessor import PartitionManager, OwnershipLostError
+from .partition_manager import PartitionManager, OwnershipLostError
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +26,22 @@ class SamplePartitionManager(PartitionManager):
 
 
     """
-    primary_keys_dict = {"eventhub_name": "text", "consumer_group_name": "text", "partition_id": "text"}
-    other_fields_dict = {"owner_id": "text", "owner_level": "integer", "sequence_number": "integer", "offset": "text",
-                         "last_modified_time": "real", "etag": "text"}
-    checkpoint_fields = ["sequence_number", "offset"]
-    fields_dict = {**primary_keys_dict, **other_fields_dict}
+    primary_keys_dict = {"namespace": "text", "eventhub_name": "text",
+                         "consumer_group_name": "text", "partition_id": "text"}
     primary_keys = list(primary_keys_dict.keys())
-    other_fields = list(other_fields_dict.keys())
-    fields = primary_keys + other_fields
 
-    def __init__(self, db_filename: str = ":memory:", ownership_table: str = "ownership"):
+    ownership_data_fields_dict = {"owner_id": "text", "last_modified_time": "real", "etag": "text"}
+    ownership_fields_dict = {**primary_keys_dict, **ownership_data_fields_dict}
+    ownership_data_fields = list(ownership_data_fields_dict.keys())
+    ownership_fields = primary_keys + ownership_data_fields
+
+    checkpoint_data_fields_dict = {"sequence_number": "integer", "offset": "text"}
+    checkpoint_data_fields = list(checkpoint_data_fields_dict.keys())
+    checkpoint_fields_dict = {**primary_keys_dict, **checkpoint_data_fields_dict}
+    checkpoint_fields = primary_keys + checkpoint_data_fields
+
+    def __init__(self, db_filename: str = ":memory:",
+                 ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
         """
 
         :param db_filename: name of file that saves the sql data.
@@ -44,28 +50,37 @@ class SamplePartitionManager(PartitionManager):
         """
         super(SamplePartitionManager, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
+        self.checkpoint_table = _check_table_name(checkpoint_table)
         conn = sqlite3.connect(db_filename)
         c = conn.cursor()
         try:
-            sql = "create table if not exists " + _check_table_name(ownership_table)\
-                  + "("\
-                  + ",".join([x[0]+" "+x[1] for x in self.fields_dict.items()])\
-                  + ", constraint pk_ownership PRIMARY KEY ("\
-                  + ",".join(self.primary_keys)\
-                  + "))"
-            c.execute(sql)
+            ownership_sql = "create table if not exists " + self.ownership_table\
+                              + "("\
+                              + ",".join([x[0]+" "+x[1] for x in self.ownership_fields_dict.items()])\
+                              + ", constraint pk_ownership PRIMARY KEY ("\
+                              + ",".join(self.primary_keys)\
+                              + "))"
+            c.execute(ownership_sql)
+
+            checkpoint_sql = "create table if not exists " + self.checkpoint_table \
+                             + "(" \
+                             + ",".join([x[0] + " " + x[1] for x in self.checkpoint_fields_dict.items()]) \
+                             + ", constraint pk_ownership PRIMARY KEY (" \
+                             + ",".join(self.primary_keys) \
+                             + "))"
+            c.execute(checkpoint_sql)
         finally:
             c.close()
         self.conn = conn
 
-    async def list_ownership(self, eventhub_name, consumer_group_name):
+    async def list_ownership(self, namespace, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()
         try:
-            cursor.execute("select " + ",".join(self.fields) +
-                                " from "+_check_table_name(self.ownership_table)+" where eventhub_name=? "
-                                "and consumer_group_name=?",
-                                (eventhub_name, consumer_group_name))
-            return [dict(zip(self.fields, row)) for row in cursor.fetchall()]
+            cursor.execute("select " + ",".join(self.ownership_fields) +
+                           " from "+_check_table_name(self.ownership_table) +
+                           " where namespace=? and eventhub_name=? and consumer_group_name=?",
+                           (namespace, eventhub_name, consumer_group_name))
+            return [dict(zip(self.ownership_fields, row)) for row in cursor.fetchall()]
         finally:
             cursor.close()
 
@@ -82,11 +97,10 @@ class SamplePartitionManager(PartitionManager):
                     p["last_modified_time"] = time.time()
                     p["etag"] = str(uuid.uuid4())
                     try:
-                        fields_without_checkpoint = list(filter(lambda x: x not in self.checkpoint_fields, self.fields))
                         sql = "insert into " + _check_table_name(self.ownership_table) + " (" \
-                              + ",".join(fields_without_checkpoint) \
-                              + ") values (?,?,?,?,?,?,?)"
-                        cursor.execute(sql, tuple(p.get(field) for field in fields_without_checkpoint))
+                              + ",".join(self.ownership_fields) \
+                              + ") values ("+",".join(["?"] * len(self.ownership_fields)) + ")"
+                        cursor.execute(sql, tuple(p.get(field) for field in self.ownership_fields))
                     except sqlite3.OperationalError as op_err:
                         logger.info("EventProcessor %r failed to claim partition %r "
                                     "because it was claimed by another EventProcessor at the same time. "
@@ -98,15 +112,12 @@ class SamplePartitionManager(PartitionManager):
                     if p.get("etag") == cursor_fetch[0][0]:
                         p["last_modified_time"] = time.time()
                         p["etag"] = str(uuid.uuid4())
-                        other_fields_without_checkpoint = list(
-                            filter(lambda x: x not in self.checkpoint_fields, self.other_fields)
-                        )
                         sql = "update " + _check_table_name(self.ownership_table) + " set "\
-                                       + ','.join([field+"=?" for field in other_fields_without_checkpoint])\
+                                       + ','.join([field+"=?" for field in self.ownership_data_fields])\
                                        + " where "\
                                        + " and ".join([field+"=?" for field in self.primary_keys])
 
-                        cursor.execute(sql, tuple(p.get(field) for field in other_fields_without_checkpoint)
+                        cursor.execute(sql, tuple(p.get(field) for field in self.ownership_data_fields)
                                        + tuple(p.get(field) for field in self.primary_keys))
                         result.append(p)
                     else:
@@ -118,25 +129,19 @@ class SamplePartitionManager(PartitionManager):
         finally:
             cursor.close()
 
-    async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
-            offset, sequence_number):
+    async def update_checkpoint(
+            self, namespace, eventhub_name, consumer_group_name, partition_id, offset, sequence_number):
         cursor = self.conn.cursor()
+        localvars = locals()
         try:
-            cursor.execute("select owner_id from " + _check_table_name(self.ownership_table)
-                           + " where eventhub_name=? and consumer_group_name=? and partition_id=?",
-                           (eventhub_name, consumer_group_name, partition_id))
-            cursor_fetch = cursor.fetchall()
-            if cursor_fetch and owner_id == cursor_fetch[0][0]:
-                cursor.execute("update " + _check_table_name(self.ownership_table)
-                               + " set offset=?, sequence_number=? "
-                                 "where eventhub_name=? and consumer_group_name=? and partition_id=?",
-                               (offset, sequence_number, eventhub_name, consumer_group_name, partition_id))
-                self.conn.commit()
-            else:
-                logger.info("EventProcessor couldn't checkpoint to partition %r because it no longer has the ownership",
-                            partition_id)
-                raise OwnershipLostError()
-
+            cursor.execute("insert or replace into " + self.checkpoint_table + "("
+                           + ",".join([field for field in self.checkpoint_fields])
+                           + ") values ("
+                           + ",".join(["?"] * len(self.checkpoint_fields))
+                           + ")",
+                           tuple(localvars[field] for field in self.checkpoint_fields)
+                           )
+            self.conn.commit()
         finally:
             cursor.close()
 
