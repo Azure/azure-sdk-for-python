@@ -659,6 +659,8 @@ class FileClient(StorageAccountHostsMixin):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -681,27 +683,21 @@ class FileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Download a file.
         """
-        validate_content = kwargs.pop('validate_content', False)
-        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
-
+        end_range = None if length is None else length + offset - 1
         return StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
-            offset=offset,
-            length=length,
-            validate_content=validate_content,
+            start_range=offset,
+            end_range=end_range,
             encryption_options=None,
-            extra_properties={
-                'share': self.share_name,
-                'name': self.file_name,
-                'path': '/'.join(self.file_path),
-            },
+            name=self.file_name,
+            path='/'.join(self.file_path),
+            share=self.share_name,
             cls=deserialize_file_stream,
-            timeout=timeout,
             **kwargs)
 
     @distributed_trace

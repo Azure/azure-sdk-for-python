@@ -127,7 +127,7 @@ class StorageDirectoryTest(FileTestCase):
         new_file = directory.upload_file(file_name, file_data)
 
         # Assert
-        file_content = new_file.download_file().content_as_bytes()
+        file_content = new_file.download_file().readall()
         self.assertEqual(file_content, file_data)
 
     @record
@@ -324,11 +324,11 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
         # Make sure set empty smb_properties doesn't change smb_properties
-        self.assertEquals(directory_properties_on_creation.creation_time,
+        self.assertEqual(directory_properties_on_creation.creation_time,
                           directory_properties.creation_time)
-        self.assertEquals(directory_properties_on_creation.last_write_time,
+        self.assertEqual(directory_properties_on_creation.last_write_time,
                           directory_properties.last_write_time)
-        self.assertEquals(directory_properties_on_creation.permission_key,
+        self.assertEqual(directory_properties_on_creation.permission_key,
                           directory_properties.permission_key)
 
     @record
@@ -353,8 +353,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
         self.assertIsNotNone(directory_properties)
-        self.assertEquals(directory_properties.creation_time, new_creation_time)
-        self.assertEquals(directory_properties.last_write_time, new_last_write_time)
+        self.assertEqual(directory_properties.creation_time, new_creation_time)
+        self.assertEqual(directory_properties.last_write_time, new_last_write_time)
 
     @record
     def test_list_subdirectories_and_files(self):
