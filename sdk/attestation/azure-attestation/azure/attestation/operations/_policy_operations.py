@@ -9,15 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+
 from .. import models
-import uuid
 
 
-class AttestationClientOperationsMixin(object):
+class PolicyOperations(object):
+    """PolicyOperations operations.
 
-    def prepare_to_set_policy(
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "2018-09-01-preview".
+    """
+
+    models = models
+
+    def __init__(self, client, config, serializer, deserializer):
+
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+        self.api_version = "2018-09-01-preview"
+
+        self.config = config
+
+    def prepare_to_set(
             self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Accepts a new policy document and returns a JWT which expresses  used
         in preparation to set attestation policy.
@@ -42,12 +64,12 @@ class AttestationClientOperationsMixin(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.prepare_to_set_policy.metadata['url']
+        url = self.prepare_to_set.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'TeeKind')
+        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -75,18 +97,20 @@ class AttestationClientOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AttestationPolicy', response)
+            deserialized = self._deserialize('str', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    prepare_to_set_policy.metadata = {'url': '/operations/update'}
+    prepare_to_set.metadata = {'url': '/operations/update'}
 
-    def get_policy(
+    def get(
             self, authorization, tee, custom_headers=None, raw=False, **operation_config):
         """Retrieves the current policy for a given kind of TEE.
 
@@ -107,12 +131,12 @@ class AttestationClientOperationsMixin(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_policy.metadata['url']
+        url = self.get.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'TeeKind')
+        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -139,15 +163,17 @@ class AttestationClientOperationsMixin(object):
             deserialized = self._deserialize('AttestationPolicy', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_policy.metadata = {'url': '/operations/policy/current'}
+    get.metadata = {'url': '/operations/policy/current'}
 
-    def set_policy(
+    def set(
             self, authorization, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
         """Sets the policy for a given kind of TEE.
 
@@ -165,18 +191,17 @@ class AttestationClientOperationsMixin(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CloudError or ClientRawResponse if raw=true
-        :rtype: ~azure.attestation.models.CloudError or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.set_policy.metadata['url']
+        url = self.set.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'TeeKind')
+        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -205,15 +230,17 @@ class AttestationClientOperationsMixin(object):
         deserialized = None
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    set_policy.metadata = {'url': '/operations/policy/current'}
+    set.metadata = {'url': '/operations/policy/current'}
 
-    def delete_policy(
+    def delete(
             self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Deletes the attestation policy for the specified tenant and reverts to
         the default policy.
@@ -237,12 +264,12 @@ class AttestationClientOperationsMixin(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.delete_policy.metadata['url']
+        url = self.delete.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['tee'] = self._serialize.query("tee", tee, 'TeeKind')
+        query_parameters['tee'] = self._serialize.query("tee", tee, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -270,13 +297,15 @@ class AttestationClientOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AttestationPolicy', response)
+            deserialized = self._deserialize('str', response)
         if response.status_code == 400:
             deserialized = self._deserialize('CloudError', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    delete_policy.metadata = {'url': '/operations/policy/current'}
+    delete.metadata = {'url': '/operations/policy/current'}

@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AttestationPolicy(Model):
@@ -42,6 +43,18 @@ class CloudError(Model):
     def __init__(self, **kwargs):
         super(CloudError, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
 class CloudErrorBody(Model):

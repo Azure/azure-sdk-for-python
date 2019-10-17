@@ -13,15 +13,18 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AttestationClientConfiguration
-from .operations import AttestationClientOperationsMixin
+from .operations import PolicyOperations
 from . import models
 
 
-class AttestationClient(AttestationClientOperationsMixin, SDKClient):
+class AttestationClient(SDKClient):
     """Describes the interface for the per-tenant enclave service.
 
     :ivar config: Configuration for client.
     :vartype config: AttestationClientConfiguration
+
+    :ivar policy: Policy operations
+    :vartype policy: azure.attestation.operations.PolicyOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -40,3 +43,5 @@ class AttestationClient(AttestationClientOperationsMixin, SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.policy = PolicyOperations(
+            self._client, self.config, self._serialize, self._deserialize)

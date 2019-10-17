@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._attestation_client_operations import AttestationClientOperationsMixin
+from ._policy_operations import PolicyOperations
 
 __all__ = [
-    'AttestationClientOperationsMixin',
+    'PolicyOperations',
 ]
