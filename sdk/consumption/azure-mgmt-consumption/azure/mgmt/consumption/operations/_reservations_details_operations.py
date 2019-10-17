@@ -185,7 +185,7 @@ class ReservationsDetailsOperations(object):
         return deserialized
     list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationDetails'}
 
-    def list_by_scope(
+    def list(
             self, scope, start_date=None, end_date=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations details for the defined scope and provided date
         range.
@@ -219,7 +219,7 @@ class ReservationsDetailsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_scope.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -270,4 +270,4 @@ class ReservationsDetailsOperations(object):
         deserialized = models.ReservationDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationDetails'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationDetails'}

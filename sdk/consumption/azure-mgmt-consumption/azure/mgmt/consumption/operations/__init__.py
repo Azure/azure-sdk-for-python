@@ -23,9 +23,9 @@ from ._price_sheet_operations import PriceSheetOperations
 from ._forecasts_operations import ForecastsOperations
 from ._operations import Operations
 from ._aggregated_cost_operations import AggregatedCostOperations
-from ._events_by_billing_profile_operations import EventsByBillingProfileOperations
-from ._lots_by_billing_profile_operations import LotsByBillingProfileOperations
-from ._credit_summary_by_billing_profile_operations import CreditSummaryByBillingProfileOperations
+from ._events_operations import EventsOperations
+from ._lots_operations import LotsOperations
+from ._credits_operations import CreditsOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -42,7 +42,7 @@ __all__ = [
     'ForecastsOperations',
     'Operations',
     'AggregatedCostOperations',
-    'EventsByBillingProfileOperations',
-    'LotsByBillingProfileOperations',
-    'CreditSummaryByBillingProfileOperations',
+    'EventsOperations',
+    'LotsOperations',
+    'CreditsOperations',
 ]

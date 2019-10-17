@@ -2203,9 +2203,8 @@ class ModernUsageDetail(UsageDetail):
     :vartype service_info1: str
     :ivar service_info2: Service Info 2.
     :vartype service_info2: str
-    :ivar additional_info: Additional details of this usage item. By default
-     this is not populated, unless it's specified in $expand. Use this field to
-     get usage line item specific details such as the actual VM Size
+    :ivar additional_info: Additional details of this usage item. Use this
+     field to get usage line item specific details such as the actual VM Size
      (ServiceType) or the ratio in which the reservation discount is applied.
     :vartype additional_info: str
     :ivar invoice_section_id: Identifier of the project that is being charged
@@ -2242,8 +2241,8 @@ class ModernUsageDetail(UsageDetail):
     :ivar term: Term (in months). Displays the term for the validity of the
      offer. For example. In case of reserved instances it displays 12 months
      for yearly term of reserved instance. For one time purchases or recurring
-     purchases, the terms displays 1 month )(SaaS, Marketplace Support) (1
-     month); This is not applicable for Azure consumption.
+     purchases, the terms displays 1 month; This is not applicable for Azure
+     consumption.
     :vartype term: str
     :ivar publisher_name: Name of the publisher of the service including
      Microsoft or Third Party publishers.

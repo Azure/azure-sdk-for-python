@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EventsByBillingProfileOperations(object):
-    """EventsByBillingProfileOperations operations.
+class EventsOperations(object):
+    """EventsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 

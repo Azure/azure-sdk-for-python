@@ -27,9 +27,9 @@ from .operations import PriceSheetOperations
 from .operations import ForecastsOperations
 from .operations import Operations
 from .operations import AggregatedCostOperations
-from .operations import EventsByBillingProfileOperations
-from .operations import LotsByBillingProfileOperations
-from .operations import CreditSummaryByBillingProfileOperations
+from .operations import EventsOperations
+from .operations import LotsOperations
+from .operations import CreditsOperations
 from . import models
 
 
@@ -67,12 +67,12 @@ class ConsumptionManagementClient(SDKClient):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
-    :ivar events_by_billing_profile: EventsByBillingProfile operations
-    :vartype events_by_billing_profile: azure.mgmt.consumption.operations.EventsByBillingProfileOperations
-    :ivar lots_by_billing_profile: LotsByBillingProfile operations
-    :vartype lots_by_billing_profile: azure.mgmt.consumption.operations.LotsByBillingProfileOperations
-    :ivar credit_summary_by_billing_profile: CreditSummaryByBillingProfile operations
-    :vartype credit_summary_by_billing_profile: azure.mgmt.consumption.operations.CreditSummaryByBillingProfileOperations
+    :ivar events: Events operations
+    :vartype events: azure.mgmt.consumption.operations.EventsOperations
+    :ivar lots: Lots operations
+    :vartype lots: azure.mgmt.consumption.operations.LotsOperations
+    :ivar credits: Credits operations
+    :vartype credits: azure.mgmt.consumption.operations.CreditsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -121,9 +121,9 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.events_by_billing_profile = EventsByBillingProfileOperations(
+        self.events = EventsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.lots_by_billing_profile = LotsByBillingProfileOperations(
+        self.lots = LotsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.credit_summary_by_billing_profile = CreditSummaryByBillingProfileOperations(
+        self.credits = CreditsOperations(
             self._client, self.config, self._serialize, self._deserialize)

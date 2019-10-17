@@ -193,7 +193,7 @@ class ReservationsSummariesOperations(object):
         return deserialized
     list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'}
 
-    def list_by_scope(
+    def list(
             self, scope, grain, start_date=None, end_date=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations summaries for the defined scope daily or monthly
         grain.
@@ -229,7 +229,7 @@ class ReservationsSummariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_scope.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -281,4 +281,4 @@ class ReservationsSummariesOperations(object):
         deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationSummaries'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationSummaries'}

@@ -38,7 +38,7 @@ class ChargesOperations(object):
 
         self.config = config
 
-    def list_by_scope(
+    def list(
             self, scope, start_date=None, end_date=None, filter=None, apply=None, custom_headers=None, raw=False, **operation_config):
         """Lists the charges based for the defined scope.
 
@@ -89,7 +89,7 @@ class ChargesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_scope.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
@@ -133,4 +133,4 @@ class ChargesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/charges'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/charges'}

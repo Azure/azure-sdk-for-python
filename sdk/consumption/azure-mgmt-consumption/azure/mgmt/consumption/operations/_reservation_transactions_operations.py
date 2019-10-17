@@ -38,7 +38,7 @@ class ReservationTransactionsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_id(
+    def list(
             self, billing_account_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """List of transactions for reserved instances on billing account scope.
 
@@ -62,7 +62,7 @@ class ReservationTransactionsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_account_id.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
                 }
@@ -109,4 +109,4 @@ class ReservationTransactionsOperations(object):
         deserialized = models.ReservationTransactionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationTransactions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationTransactions'}
