@@ -8,7 +8,7 @@
 
 import unittest
 
-import azure.mgmt.healtcareapis
+import azure.mgmt.healthcareapis
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtHealthcareApisTest(AzureMgmtTestCase):
