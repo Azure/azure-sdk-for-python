@@ -723,6 +723,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         options = {
             'timeout': kwargs.pop('timeout', None),
+            'raise_on_any_failure': kwargs.pop('raise_on_any_failure', True),
             'delete_snapshots': delete_snapshots or None,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions}

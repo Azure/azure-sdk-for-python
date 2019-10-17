@@ -98,6 +98,8 @@ class AsyncStorageAccountHostsMixin(object):
     ):
         """Given a series of request, do a Storage batch call.
         """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
@@ -121,6 +123,11 @@ class AsyncStorageAccountHostsMixin(object):
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            return response.parts()  # Return an AsyncIterator
+            parts = response.parts() # Return an AsyncIterator
+            if raise_on_any_failure:
+                failures = [p for p in parts if p.status_code not in [202]]
+                if failures:
+                    raise HttpResponseError(message="There is a partial failure in the batch operation.")
+            return parts
         except StorageErrorException as error:
             process_storage_error(error)

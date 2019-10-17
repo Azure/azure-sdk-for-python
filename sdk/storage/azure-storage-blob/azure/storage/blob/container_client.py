@@ -1097,6 +1097,9 @@ class ContainerClient(StorageAccountHostsMixin):
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An iterator of responses, one for each blob in order
@@ -1185,6 +1188,9 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
         :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
@@ -1239,6 +1245,9 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
         :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
