@@ -4,6 +4,8 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -31,7 +33,11 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
@@ -124,7 +130,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_key]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -170,7 +176,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_keys]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -197,7 +203,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END restore_key_backup]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys

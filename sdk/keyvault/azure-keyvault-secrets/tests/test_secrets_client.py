@@ -5,6 +5,8 @@
 import functools
 from dateutil import parser as date_parse
 import time
+import hashlib
+import os
 
 from devtools_testutils import ResourceGroupPreparer
 from secrets_preparer import VaultClientPreparer
@@ -13,6 +15,10 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
 class SecretClientTests(KeyVaultTestCase):
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "keyvault" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
@@ -47,7 +53,7 @@ class SecretClientTests(KeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
@@ -118,7 +124,7 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = client.begin_delete_secret(updated.name).result()
         self.assertIsNotNone(deleted)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_secret_list(self, vault_client, **kwargs):
 
@@ -141,7 +147,7 @@ class SecretClientTests(KeyVaultTestCase):
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets))
         self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_list_versions(self, vault_client, **kwargs):
 
@@ -171,7 +177,7 @@ class SecretClientTests(KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_list_deleted_secrets(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -197,7 +203,7 @@ class SecretClientTests(KeyVaultTestCase):
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -219,7 +225,7 @@ class SecretClientTests(KeyVaultTestCase):
         restored = client.restore_secret_backup(secret_backup)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -252,7 +258,7 @@ class SecretClientTests(KeyVaultTestCase):
             )
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
