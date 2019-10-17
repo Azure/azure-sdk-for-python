@@ -60,6 +60,15 @@ class UsageDetailsOperations(object):
          '/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'. For
          e.g. to specify billing period at department scope use
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'.
+         Also, Modern Commerce Account scopes are
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         billingAccount scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param expand: May be used to expand the properties/additionalInfo or
          properties/meterDetails within a list of usage details. By default,

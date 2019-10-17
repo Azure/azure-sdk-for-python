@@ -27,12 +27,14 @@ try:
     from ._models_py3 import Filters
     from ._models_py3 import Forecast
     from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
+    from ._models_py3 import LegacyChargeSummary
     from ._models_py3 import LegacyUsageDetail
     from ._models_py3 import LotSummary
     from ._models_py3 import ManagementGroupAggregatedCostResult
     from ._models_py3 import Marketplace
     from ._models_py3 import MeterDetails
     from ._models_py3 import MeterDetailsResponse
+    from ._models_py3 import ModernChargeSummary
     from ._models_py3 import ModernUsageDetail
     from ._models_py3 import Notification
     from ._models_py3 import Operation
@@ -68,12 +70,14 @@ except (SyntaxError, ImportError):
     from ._models import Filters
     from ._models import Forecast
     from ._models import ForecastPropertiesConfidenceLevelsItem
+    from ._models import LegacyChargeSummary
     from ._models import LegacyUsageDetail
     from ._models import LotSummary
     from ._models import ManagementGroupAggregatedCostResult
     from ._models import Marketplace
     from ._models import MeterDetails
     from ._models import MeterDetailsResponse
+    from ._models import ModernChargeSummary
     from ._models import ModernUsageDetail
     from ._models import Notification
     from ._models import Operation
@@ -134,12 +138,14 @@ __all__ = [
     'Filters',
     'Forecast',
     'ForecastPropertiesConfidenceLevelsItem',
+    'LegacyChargeSummary',
     'LegacyUsageDetail',
     'LotSummary',
     'ManagementGroupAggregatedCostResult',
     'Marketplace',
     'MeterDetails',
     'MeterDetailsResponse',
+    'ModernChargeSummary',
     'ModernUsageDetail',
     'Notification',
     'Operation',
