@@ -796,8 +796,8 @@ class ApplicationInsightsComponentFeature(Model):
     :vartype meter_id: str
     :ivar meter_rate_frequency: The meter rate for the feature's meter.
     :vartype meter_rate_frequency: str
-    :ivar resouce_id: Reserved, not used now.
-    :vartype resouce_id: str
+    :ivar resource_id: Reserved, not used now.
+    :vartype resource_id: str
     :ivar is_hidden: Reserved, not used now.
     :vartype is_hidden: bool
     :ivar capabilities: A list of Application Insights component feature
@@ -816,7 +816,7 @@ class ApplicationInsightsComponentFeature(Model):
         'feature_name': {'readonly': True},
         'meter_id': {'readonly': True},
         'meter_rate_frequency': {'readonly': True},
-        'resouce_id': {'readonly': True},
+        'resource_id': {'readonly': True},
         'is_hidden': {'readonly': True},
         'capabilities': {'readonly': True},
         'title': {'readonly': True},
@@ -828,7 +828,7 @@ class ApplicationInsightsComponentFeature(Model):
         'feature_name': {'key': 'FeatureName', 'type': 'str'},
         'meter_id': {'key': 'MeterId', 'type': 'str'},
         'meter_rate_frequency': {'key': 'MeterRateFrequency', 'type': 'str'},
-        'resouce_id': {'key': 'ResouceId', 'type': 'str'},
+        'resource_id': {'key': 'ResourceId', 'type': 'str'},
         'is_hidden': {'key': 'IsHidden', 'type': 'bool'},
         'capabilities': {'key': 'Capabilities', 'type': '[ApplicationInsightsComponentFeatureCapability]'},
         'title': {'key': 'Title', 'type': 'str'},
@@ -841,7 +841,7 @@ class ApplicationInsightsComponentFeature(Model):
         self.feature_name = None
         self.meter_id = None
         self.meter_rate_frequency = None
-        self.resouce_id = None
+        self.resource_id = None
         self.is_hidden = None
         self.capabilities = None
         self.title = None
