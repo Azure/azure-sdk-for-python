@@ -33,6 +33,7 @@ class OwnershipManager(object):
         self.owner_id = owner_id
         self.partition_manager = partition_manager
         self.ownership_timeout = ownership_timeout
+        self._initializing = True
 
     async def claim_ownership(self):
         """Claims ownership for this EventProcessor
@@ -49,8 +50,6 @@ class OwnershipManager(object):
             to_claim = await self._balance_ownership(self.cached_parition_ids)
             claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
             return claimed_list
-        else:
-            return self.cached_parition_ids
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
@@ -70,10 +69,9 @@ class OwnershipManager(object):
         math.ceil(number of partitions / number of active owners).
         This should be equal or 1 greater than the average count
         5. Adjust the number of partitions owned by this EventProcessor (owner)
-            a. if this EventProcessor owns more than largest allowed count, abandon one partition
-            b. if this EventProcessor owns less than average count, add one from the inactive or unclaimed partitions,
+            a. if this EventProcessor owns less than average count, add one from the inactive or unclaimed partitions,
             or steal one from another owner that has the largest number of ownership among all owners (EventProcessors)
-            c. Otherwise, no change to the ownership
+            b. Otherwise, no change to the ownership
 
         The balancing algorithm adjust one partition at a time to gradually build the balanced ownership.
         Ownership must be renewed to keep it active. So the returned result includes both existing ownership and
@@ -91,9 +89,25 @@ class OwnershipManager(object):
         now = time.time()
         ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
         not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
-        timed_out_partition_ids = [ownership["partition_id"] for ownership in ownership_list
-                                   if ownership["last_modified_time"] + self.ownership_timeout < now]
+        timed_out_partitions = [x for x in ownership_list
+                                if x["last_modified_time"] + self.ownership_timeout < now]
+        if self._initializing:  # greedily claim all partitions when an EventProcessor is started.
+            to_claim = timed_out_partitions
+            for pid in not_owned_partition_ids:
+                to_claim.append(
+                    {"namespace": self.namespace,
+                     "partition_id": pid,
+                     "eventhub_name": self.eventhub_name,
+                     "consumer_group_name": self.consumer_group_name,
+                     "version": 0,
+                     }
+                )
+            self._initializing = False
+            return to_claim
+
+        timed_out_partition_ids = [ownership["partition_id"] for ownership in timed_out_partitions]
         claimable_partition_ids = not_owned_partition_ids + timed_out_partition_ids
+
         active_ownership = [ownership for ownership in ownership_list
                             if ownership["last_modified_time"] + self.ownership_timeout >= now]
         active_ownership_by_owner = defaultdict(list)
