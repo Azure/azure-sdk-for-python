@@ -12,6 +12,20 @@
 from enum import Enum
 
 
+class ItemScope(str, Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class ItemType(str, Enum):
+
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
 class ApplicationType(str, Enum):
 
     web = "web"
@@ -46,36 +60,10 @@ class WebTestKind(str, Enum):
     multistep = "multistep"
 
 
-class ItemScope(str, Enum):
-
-    shared = "shared"
-    user = "user"
-
-
-class ItemType(str, Enum):
-
-    query = "query"
-    function = "function"
-    folder = "folder"
-    recent = "recent"
-
-
 class SharedTypeKind(str, Enum):
 
     user = "user"
     shared = "shared"
-
-
-class FavoriteSourceType(str, Enum):
-
-    retention = "retention"
-    notebook = "notebook"
-    sessions = "sessions"
-    events = "events"
-    userflows = "userflows"
-    funnel = "funnel"
-    impact = "impact"
-    segmentation = "segmentation"
 
 
 class ItemScopePath(str, Enum):
@@ -91,6 +79,18 @@ class ItemTypeParameter(str, Enum):
     function = "function"
     folder = "folder"
     recent = "recent"
+
+
+class FavoriteSourceType(str, Enum):
+
+    retention = "retention"
+    notebook = "notebook"
+    sessions = "sessions"
+    events = "events"
+    userflows = "userflows"
+    funnel = "funnel"
+    impact = "impact"
+    segmentation = "segmentation"
 
 
 class CategoryType(str, Enum):

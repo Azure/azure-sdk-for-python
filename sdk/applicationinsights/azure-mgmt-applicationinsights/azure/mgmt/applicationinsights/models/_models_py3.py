@@ -221,6 +221,15 @@ class ApplicationInsightsComponent(ComponentsResource):
      application being monitored that is being sampled for Application Insights
      telemetry.
     :type sampling_percentage: float
+    :ivar connection_string: Application Insights component connection string.
+    :vartype connection_string: str
+    :param retention_in_days: Retention period in days. Default value: 90 .
+    :type retention_in_days: int
+    :param disable_ip_masking: Disable IP masking.
+    :type disable_ip_masking: bool
+    :param immediate_purge_data_on30_days: Purge data immediately after 30
+     days.
+    :type immediate_purge_data_on30_days: bool
     """
 
     _validation = {
@@ -237,6 +246,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'tenant_id': {'readonly': True},
         'hockey_app_token': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'connection_string': {'readonly': True},
     }
 
     _attribute_map = {
@@ -258,9 +268,13 @@ class ApplicationInsightsComponent(ComponentsResource):
         'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
+        'connection_string': {'key': 'properties.ConnectionString', 'type': 'str'},
+        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
+        'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
+        'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, retention_in_days: int=90, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, **kwargs) -> None:
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -275,6 +289,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.hockey_app_token = None
         self.provisioning_state = None
         self.sampling_percentage = sampling_percentage
+        self.connection_string = None
+        self.retention_in_days = retention_in_days
+        self.disable_ip_masking = disable_ip_masking
+        self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):
