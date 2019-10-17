@@ -94,6 +94,31 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
         }
 
+class GlobalResourceGroupPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalResourceGroupPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        rg = StorageTestCase._RESOURCE_GROUP
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                rg.name,
+                "rgname"
+            )
+        else:
+            rg = FakeResource(
+                name="rgname",
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': rg,
+        }
+
 
 class StorageTestCase(AzureMgmtTestCase):
 

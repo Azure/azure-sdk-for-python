@@ -11,6 +11,7 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from testcase import GlobalResourceGroupPreparer
 
 from asyncblobtestcase import (
     AsyncBlobTestCase,
@@ -63,7 +64,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
@@ -75,7 +76,7 @@ class ServiceStatsTestAsync(AsyncBlobTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):

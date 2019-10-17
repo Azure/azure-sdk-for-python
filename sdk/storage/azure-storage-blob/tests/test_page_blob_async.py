@@ -33,7 +33,7 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from testcase import GlobalStorageAccountPreparer
+from testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase
 )
@@ -1498,7 +1498,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
@@ -1563,7 +1563,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await container.delete_container()
         self._teardown(FILE_PATH)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
@@ -1622,7 +1622,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         finally:
             await container.delete_container()
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncBlobTestCase.await_prepared_test
     async def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
