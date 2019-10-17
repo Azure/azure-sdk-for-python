@@ -127,7 +127,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
     def setUp(self):
         super(ReplayableTest, self).setUp()
 
-        if os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
+        if self.is_live and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
             return
 
         # set up cassette
