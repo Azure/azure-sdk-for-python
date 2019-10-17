@@ -36,7 +36,7 @@ class QueryOperations(object):
 
         self.config = config
 
-    def usage_by_scope(
+    def usage(
             self, scope, parameters, custom_headers=None, raw=False, **operation_config):
         """Query the usage data for scope defined.
 
@@ -75,7 +75,7 @@ class QueryOperations(object):
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.usage_by_scope.metadata['url']
+        url = self.usage.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
@@ -116,4 +116,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
+    usage.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
