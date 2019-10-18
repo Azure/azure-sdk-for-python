@@ -28,7 +28,7 @@ import logging
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy
+from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from .pipeline.transport import RequestsTransport
 
 try:
@@ -109,7 +109,8 @@ class PipelineClient(PipelineClientBase):
                 config.retry_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
-                DistributedTracingPolicy(),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs)
             ]
 
         if not transport:
