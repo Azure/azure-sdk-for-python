@@ -17,6 +17,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     ClientAuthenticationError)
+from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import (
     upload_blob_to_url,
     download_blob_from_url,
@@ -1833,6 +1834,21 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.delete, True)
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrdx')
+    
+    def test_transport_closed_only_once(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        transport = RequestsTransport()
+        url = self._get_account_url()
+        credential = self._get_shared_key_credential()
+        blob_name = self._get_blob_reference()
+        with BlobServiceClient(url, credential=credential, transport=transport) as bsc:
+            bsc.get_service_properties()
+            assert transport.session is not None
+            with bsc.get_blob_client(self.container_name, blob_name) as bc:
+                assert transport.session is not None
+            bsc.get_service_properties()
+            assert transport.session is not None
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
