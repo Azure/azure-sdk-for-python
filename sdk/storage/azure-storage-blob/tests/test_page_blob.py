@@ -11,6 +11,7 @@ import pytest
 import os
 import unittest
 from datetime import datetime, timedelta
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 
 from azure.storage.blob import (
@@ -531,7 +532,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    offset=0,
                                    length=SOURCE_BLOB_SIZE,
                                    source_offset=0,
-                                   source_if_match=source_properties.get('etag'))
+                                   source_etag=source_properties.get('etag'),
+                                   source_match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -547,7 +549,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
                                        length=SOURCE_BLOB_SIZE,
                                        source_offset=0,
-                                       source_if_match='0x111111111111111')
+                                       source_etag='0x111111111111111',
+                                       source_match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_upload_pages_from_url_with_source_if_none_match(self):
@@ -567,7 +570,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    offset=0,
                                    length=SOURCE_BLOB_SIZE,
                                    source_offset=0,
-                                   source_if_none_match='0x111111111111111')
+                                   source_etag='0x111111111111111',
+                                   source_match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -583,7 +587,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
                                        length=SOURCE_BLOB_SIZE,
                                        source_offset=0,
-                                       source_if_none_match=source_properties.get('etag'))
+                                       source_etag=source_properties.get('etag'),
+                                       source_match_condition=MatchConditions.IfModified)
 
     @record
     def test_upload_pages_from_url_with_if_modified(self):
@@ -673,12 +678,10 @@ class StoragePageBlobTest(StorageTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
 
         # Act: make update page from url calls
-        resp = destination_blob_client \
-            .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
-                                   if_match=destination_blob_properties.get('etag'))
+        resp = destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            etag=destination_blob_properties.get('etag'),
+            match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -690,11 +693,10 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
-            destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
-                                       if_match='0x111111111111111')
+            destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_upload_pages_from_url_with_if_none_match(self):
@@ -713,7 +715,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    0,
                                    SOURCE_BLOB_SIZE,
                                    0,
-                                   if_none_match='0x111111111111111')
+                                   etag='0x111111111111111',
+                                   match_condition=MatchConditions.IfModified)
 
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -730,7 +733,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
                                        SOURCE_BLOB_SIZE,
                                        0,
-                                       if_none_match=blob_properties.get('etag'))
+                                       etag=blob_properties.get('etag'),
+                                       match_condition=MatchConditions.IfModified)
 
     @record
     def test_upload_pages_from_url_with_sequence_number_lt(self):
@@ -1378,6 +1382,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_on_create(self):
+        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1430,6 +1435,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_set_tier_api(self):
+        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1481,6 +1487,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_copy_blob(self):
+        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
