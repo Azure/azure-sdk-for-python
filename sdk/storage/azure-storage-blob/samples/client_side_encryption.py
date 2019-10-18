@@ -12,13 +12,16 @@ FILE: client_side_encryption.py
 DESCRIPTION:
     This example contains sample code for the KeyWrapper and KeyResolver classes
     needed to use Storage client side encryption, as well as code that illustrates
-    key usage patterns for client side encryption features.
+    key usage patterns for client side encryption features. This sample expects that
+    the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set. It SHOULD NOT
+    be hardcoded in any code derived from this sample.
 
 USAGE: python client_side_encryption.py
 """
 
+import os
+import sys
 import uuid
-from os import urandom
 
 from azure.common import AzureException
 from cryptography.hazmat.backends import default_backend
@@ -39,7 +42,7 @@ from azure.storage.blob import BlobServiceClient, BlobType, download_blob_from_u
 # Sample implementations of the encryption-related interfaces.
 class KeyWrapper:
     def __init__(self, kid):
-        self.kek = urandom(32)
+        self.kek = os.urandom(32)
         self.backend = default_backend()
         self.kid = 'local:' + kid
 
@@ -159,7 +162,7 @@ class BlobEncryptionSamples():
 
             kek = KeyWrapper('key1')
             self.container_client.key_encryption_key = kek
-            data = urandom(13 * self.account._config.max_single_put_size + 1)
+            data = os.urandom(13 * self.account._config.max_single_put_size + 1)
 
             self.container_client.upload_blob(block_blob_name, data)
 
@@ -264,8 +267,11 @@ class BlobEncryptionSamples():
         finally:
             self.container_client.delete_container()
 
-# TODO: Fill in your connection string
-CONNECTION_STRING = ''
+try:
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 account = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 samples = BlobEncryptionSamples(account)
 samples.run_all_samples()

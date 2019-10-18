@@ -12,7 +12,9 @@ FILE: walk_blob_hierarchy_async.py
 DESCRIPTION:
     This example walks the containers and blobs within a storage account,
     displaying them in a hierarchical structure and, when present, showing
-    the number of snapshots that are available per blob.
+    the number of snapshots that are available per blob. This sample expects
+    that the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
+    It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python walk_blob_hierarchy_async.py
 
@@ -35,12 +37,17 @@ C: container4
 """
 
 import asyncio
+import os
+import sys
 
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob.aio.models import BlobPrefix
 
-# TODO: Fill in your connection string
-CONNECTION_STRING = ''
+try:
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 
 async def walk_container(client, container):
     container_client = client.get_container_client(container.name)
@@ -79,6 +86,7 @@ async def main():
                 await walk_container(service_client, container)
     except Exception as error:
         print(error)
+        sys.exit(1)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
