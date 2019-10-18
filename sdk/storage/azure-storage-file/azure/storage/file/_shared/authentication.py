@@ -96,7 +96,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         return string_to_sign
 
     def _get_canonicalized_resource_query(self, request):
-        sorted_queries = list(request.http_request.query.items())
+        sorted_queries = [(name, value) for name, value in request.http_request.query.items()]
         sorted_queries.sort()
 
         string_to_sign = ''
