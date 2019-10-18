@@ -220,7 +220,7 @@ class KeyVaultKey(object):
     """
 
     def __init__(self, key_id, jwk=None, **kwargs):
-        # type: (str, Optional[JsonWebKey], **Any) -> None
+        # type: (str, Optional[dict], **Any) -> None
         self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey.FIELDS):
