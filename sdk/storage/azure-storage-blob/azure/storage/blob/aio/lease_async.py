@@ -15,7 +15,7 @@ from .._shared.response_handlers import return_response_headers, process_storage
 from .._generated.models import (
     StorageErrorException,
     LeaseAccessConditions)
-from .._deserialize import get_modify_conditions
+from .._serialize import get_modify_conditions
 from ..lease import LeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:

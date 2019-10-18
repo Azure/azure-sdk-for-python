@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from azure.core import MatchConditions
-
 from ._shared.response_handlers import deserialize_metadata
-from ._generated.models import ModifiedAccessConditions, SourceModifiedAccessConditions
 from .models import BlobProperties, ContainerProperties
 
 
@@ -50,47 +47,3 @@ def get_page_ranges_result(ranges):
     if ranges.clear_range:
         clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
     return page_range, clear_range  # type: ignore
-
-
-def get_modify_conditions(kwargs):
-    # type: (Dict[str, Any]) -> ModifiedAccessConditions
-    if_match = None
-    if_none_match = None
-    match_condition = kwargs.pop('match_condition', None)
-    if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop('etag', None)
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = '*'
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop('etag', None)
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = '*'
-
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None)
-    )
-
-
-def get_source_conditions(kwargs):
-    # type: (Dict[str, Any]) -> SourceModifiedAccessConditions
-    if_match = None
-    if_none_match = None
-    match_condition = kwargs.pop('source_match_condition', None)
-    if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop('source_etag', None)
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = '*'
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop('source_etag', None)
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = '*'
-
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
-    )

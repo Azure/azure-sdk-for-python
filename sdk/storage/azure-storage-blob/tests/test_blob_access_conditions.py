@@ -367,6 +367,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
 
+        with self.assertRaises(ValueError):
+            blob.upload_blob(data, length=len(data), etag=etag)
+        with self.assertRaises(ValueError):
+            blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfNotModified)
+
     @record
     def test_put_blob_with_if_match_fail(self):
         # Arrange
@@ -398,6 +403,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
+        with self.assertRaises(ValueError):
+            blob.upload_blob(data, length=len(data), etag='0x111111111111111')
+        with self.assertRaises(ValueError):
+            blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfModified)
 
     @record
     def test_put_blob_with_if_none_match_fail(self):

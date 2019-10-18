@@ -15,7 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import StorageErrorException, LeaseAccessConditions
-from ._deserialize import get_modify_conditions
+from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime

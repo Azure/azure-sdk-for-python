@@ -15,7 +15,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, get_modify_conditions
+from .._deserialize import get_page_ranges_result
+from .._serialize import get_modify_conditions
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties

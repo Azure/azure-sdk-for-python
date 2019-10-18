@@ -27,7 +27,8 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import (
     StorageErrorException,
     SignedIdentifier)
-from .._deserialize import deserialize_container_properties, get_modify_conditions
+from .._deserialize import deserialize_container_properties
+from .._serialize import get_modify_conditions
 from ..container_client import ContainerClient as ContainerClientBase
 from ..lease import get_access_conditions
 from ..models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import

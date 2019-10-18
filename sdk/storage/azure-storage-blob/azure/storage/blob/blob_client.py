@@ -37,13 +37,8 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-
-from ._deserialize import (
-    get_page_ranges_result,
-    get_modify_conditions,
-    get_source_conditions,
-    deserialize_blob_properties,
-    deserialize_blob_stream)
+from ._serialize import get_modify_conditions, get_source_conditions
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
