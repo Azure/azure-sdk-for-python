@@ -538,6 +538,9 @@ class QueryDTO(Model):
     :param context: Context object with previous QnA's information.
     :type context:
      ~azure.cognitiveservices.knowledge.qnamaker.models.QueryDTOContext
+    :param ranker_type: Optional field. Set to 'QuestionOnly' for using a
+     question only Ranker.
+    :type ranker_type: str
     :param strict_filters: Find only answers that contain these metadata.
     :type strict_filters:
      list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
@@ -551,10 +554,11 @@ class QueryDTO(Model):
         'is_test': {'key': 'isTest', 'type': 'bool'},
         'score_threshold': {'key': 'scoreThreshold', 'type': 'float'},
         'context': {'key': 'context', 'type': 'QueryDTOContext'},
+        'ranker_type': {'key': 'rankerType', 'type': 'str'},
         'strict_filters': {'key': 'strictFilters', 'type': '[MetadataDTO]'},
     }
 
-    def __init__(self, *, qna_id: str=None, question: str=None, top: int=None, user_id: str=None, is_test: bool=None, score_threshold: float=None, context=None, strict_filters=None, **kwargs) -> None:
+    def __init__(self, *, qna_id: str=None, question: str=None, top: int=None, user_id: str=None, is_test: bool=None, score_threshold: float=None, context=None, ranker_type: str=None, strict_filters=None, **kwargs) -> None:
         super(QueryDTO, self).__init__(**kwargs)
         self.qna_id = qna_id
         self.question = question
@@ -563,6 +567,7 @@ class QueryDTO(Model):
         self.is_test = is_test
         self.score_threshold = score_threshold
         self.context = context
+        self.ranker_type = ranker_type
         self.strict_filters = strict_filters
 
 
