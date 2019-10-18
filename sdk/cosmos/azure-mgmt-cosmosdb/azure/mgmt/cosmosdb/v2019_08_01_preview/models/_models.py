@@ -619,7 +619,7 @@ class DatabaseAccountConnectionString(Model):
 
 
 class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
-    """Parameters to create or update Cosmos DB database accounts.
+    """Parameters to create and update Cosmos DB database accounts.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
