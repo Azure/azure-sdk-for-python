@@ -158,7 +158,7 @@ def build_operation_meta(versioned_modules):
         ].__doc__
         operations = list(
             re.finditer(
-                r":ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n",
+                r":ivar (?P<attr>[a-z_0-9]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n",
                 client_doc,
             )
         )
