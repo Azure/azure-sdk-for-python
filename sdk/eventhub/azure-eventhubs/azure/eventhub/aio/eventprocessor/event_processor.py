@@ -166,7 +166,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         if to_cancel_list:
                             self._cancel_tasks_for_partitions(to_cancel_list)
                             log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_list)
-                        await asyncio.sleep(self._polling_interval)
                     except Exception as err:  # pylint:disable=broad-except
                         log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",

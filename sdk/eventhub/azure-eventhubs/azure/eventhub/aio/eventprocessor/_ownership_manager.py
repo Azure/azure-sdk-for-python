@@ -93,13 +93,15 @@ class OwnershipManager(object):
                                 if x["last_modified_time"] + self.ownership_timeout < now]
         if self._initializing:  # greedily claim all partitions when an EventProcessor is started.
             to_claim = timed_out_partitions
+            for p in to_claim:
+                p["owner_id"] = self.owner_id
             for pid in not_owned_partition_ids:
                 to_claim.append(
                     {"namespace": self.namespace,
                      "partition_id": pid,
                      "eventhub_name": self.eventhub_name,
                      "consumer_group_name": self.consumer_group_name,
-                     "version": 0,
+                     "owner_id": self.owner_id
                      }
                 )
             self._initializing = False
@@ -135,7 +137,6 @@ class OwnershipManager(object):
                                                              "partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_name,
                                                              "consumer_group_name": self.consumer_group_name,
-                                                             "version": 0,
                                                              })
                 random_chosen_to_claim["owner_id"] = self.owner_id
                 to_claim.append(random_chosen_to_claim)
