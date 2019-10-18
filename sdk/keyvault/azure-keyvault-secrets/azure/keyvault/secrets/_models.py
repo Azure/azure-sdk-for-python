@@ -215,7 +215,7 @@ class KeyVaultSecret(object):
     def value(self):
         # type: () -> str
         """
-        The secret value
+        The secret's value
 
         :rtype: str
         """
@@ -223,7 +223,8 @@ class KeyVaultSecret(object):
 
 
 class DeletedSecret(object):
-    """A deleted secret's properties, as well as when it will be purged, if soft-delete is enabled for its vault."""
+    """A deleted secret's properties, as well as information about its deletion and recovery,
+    if soft-delete is enabled"""
 
     def __init__(
         self,
@@ -300,7 +301,7 @@ class DeletedSecret(object):
     def recovery_id(self):
         # type: () -> str
         """
-        An identifier used to recover the deleted secret
+        An identifier used to recover the deleted secret. Will only exist if soft-delete is enabled.
 
         :rtype: str
         """
@@ -310,7 +311,7 @@ class DeletedSecret(object):
     def scheduled_purge_date(self):
         # type: () -> datetime
         """
-        When the secret is scheduled to be purged, in UTC
+        When the secret is scheduled to be purged, in UTC. Will only exist if soft-delete is enabled.
 
         :rtype: datetime.datetime
         """

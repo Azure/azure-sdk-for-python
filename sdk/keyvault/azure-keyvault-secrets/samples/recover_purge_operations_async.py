@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault
-# has to be soft-delete enabled to perform the following operations. See for more information about soft delete:
+# has to be soft-delete enabled to perform the following operations. See for more information about soft-delete:
 # # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create a secret (set_secret)
@@ -74,7 +74,7 @@ async def run_sample():
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:
-            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+            print("\n{0} Please enable soft-delete on Key Vault to perform this operation.".format(e.message))
         else:
             print("\nrun_sample has caught an error. {0}".format(e.message))
 
