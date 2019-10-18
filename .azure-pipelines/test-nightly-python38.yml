@@ -22,6 +22,7 @@ jobs:
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/bin:$PATH   
           sudo apt-get install python-packaging
+          sudo apt install python3-distutils
           python3.8 -m pip install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
           python3.8 -m pip freeze
           cd sdk/core/azure-core
