@@ -108,7 +108,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    prepare_to_set.metadata = {'url': '/operations/update'}
+    prepare_to_set.metadata = {'url': '/operations/policy/update'}
 
     def get(
             self, authorization, tee, custom_headers=None, raw=False, **operation_config):
