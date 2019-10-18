@@ -88,7 +88,7 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
 
