@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dimensions_operations import DimensionsOperations
-from .query_operations import QueryOperations
-from .exports_operations import ExportsOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'DimensionsOperations',
-    'QueryOperations',
-    'ExportsOperations',
-    'Operations',
-]
+
+class DimensionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Dimension <azure.mgmt.costmanagement.models.Dimension>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Dimension]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DimensionPaged, self).__init__(*args, **kwargs)
