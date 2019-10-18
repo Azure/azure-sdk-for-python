@@ -21,12 +21,10 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/bin:$PATH
-          python3 --version
-          sudo apt-get install python-pip
-          python3 -m pip show -v                   
-          python3 -m pip install setuptools tox tox-monorepo
+          python3.8 --version               
+          python3.8 -m pip install setuptools tox tox-monorepo
           which tox
-          python3 ./scripts/devops_tasks/setup_execute_tests.py -p python3 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
+          python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python3.8 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
 
