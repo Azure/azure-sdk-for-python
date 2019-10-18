@@ -326,8 +326,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         """
         http_request = request.http_request
         options = request.context.options
-        logger = options.pop("logger", self.logger)
-        request.context["logger"] = logger
+        # Get logger in my context first (request has been retried)
+        # then read from kwargs (pop if that's the case)
+        # then use my instance logger
+        logger = request.context.setdefault("logger", options.pop("logger", self.logger))
 
         if not logger.isEnabledFor(logging.INFO):
             return
@@ -352,7 +354,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
         http_response = response.http_response
-        logger = response.context.pop("logger")
+        logger = response.context.get("logger")
 
         if not logger.isEnabledFor(logging.INFO):
             return
