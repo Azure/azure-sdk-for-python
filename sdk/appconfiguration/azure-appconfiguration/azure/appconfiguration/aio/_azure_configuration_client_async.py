@@ -5,33 +5,34 @@
 # -------------------------------------------------------------------------
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
     ResourceExistsError,
-    ResourceNotFoundError,
     ResourceModifiedError,
+    ResourceNotFoundError,
     ResourceNotModifiedError,
 )
-from ._azure_appconfiguration_error import ResourceReadOnlyError
-from ._generated.models import KeyValue
-from ._generated import AzureAppConfiguration
-from ._generated.models import ErrorException
-from ._generated._configuration import AzureAppConfigurationConfiguration
-from ._models import ConfigurationSetting
-from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from .azure_appconfiguration_credential import AppConfigConnectionStringCredential
-from ._utils import (
+from .._azure_appconfiguration_error import ResourceReadOnlyError
+from .._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
     prep_if_match,
     prep_if_none_match,
 )
-from ._user_agent import USER_AGENT
+from .._generated.aio import AzureAppConfiguration
+from .._generated.models import ErrorException
+from .._generated.aio._configuration_async import AzureAppConfigurationConfiguration
+from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
+from .._generated.models import KeyValue
+from .._models import ConfigurationSetting
+from .._user_agent import USER_AGENT
 
 
 class AzureAppConfigurationClient:
@@ -43,6 +44,8 @@ class AzureAppConfigurationClient:
         :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
         :keyword HttpTransport transport: If omitted, the standard pipeline is used.
         :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
     """
 
@@ -64,6 +67,7 @@ class AzureAppConfigurationClient:
             credentials=credential, base_url=base_url, pipeline=pipeline
         )
 
+
     @classmethod
     def from_connection_string(
         cls,
@@ -78,13 +82,15 @@ class AzureAppConfigurationClient:
                     used to access the Azure App Configuration.
                 :type connection_string: str
 
+            This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
+
             Example
 
             .. code-block:: python
 
-                from azure.appconfiguration import AzureAppConfigurationClient
+                from azure.appconfiguration.aio import AzureAppConfigurationClient
                 connection_str = "<my connection string>"
-                client = AzureAppConfigurationClient.from_connection_string(connection_str)
+                async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
             """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
@@ -108,9 +114,12 @@ class AzureAppConfigurationClient:
             ]
 
         if not transport:
-            transport = RequestsTransport(**kwargs)
+            transport = AsyncioRequestsTransport(**kwargs)
 
-        return Pipeline(transport, policies)
+        return AsyncPipeline(
+            transport,
+            policies,
+        )
 
     @distributed_trace
     def list_configuration_settings(
@@ -141,14 +150,14 @@ class AzureAppConfigurationClient:
 
             accept_datetime = datetime.today() + timedelta(days=-1)
 
-            all_listed = client.list_configuration_settings()
-            for item in all_listed:
+            all_listed = async_client.list_configuration_settings()
+            async for item in all_listed:
                 pass  # do something
 
-            filtered_listed = client.list_configuration_settings(
+            filtered_listed = async_client.list_configuration_settings(
                 labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
             )
-            for item in filtered_listed:
+            async for item in filtered_listed:
                 pass  # do something
         """
         select = kwargs.pop("fields", None)
@@ -172,10 +181,10 @@ class AzureAppConfigurationClient:
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
-    @distributed_trace
-    def get_configuration_setting(
-        self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
+    @distributed_trace_async
+    async def get_configuration_setting(
+            self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs):
+        # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -198,7 +207,8 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            fetched_config_setting = client.get_configuration_setting(
+            # in async function
+            fetched_config_setting = await async_client.get_configuration_setting(
                 key="MyKey", label="MyLabel"
             )
         """
@@ -216,7 +226,7 @@ class AzureAppConfigurationClient:
             error_map[412] = ResourceExistsError
 
         try:
-            key_value = self._impl.get_key_value(
+            key_value = await self._impl.get_key_value(
                 key=key,
                 label=label,
                 if_match=prep_if_match(etag, match_condition),
@@ -230,8 +240,8 @@ class AzureAppConfigurationClient:
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
-    @distributed_trace
-    def add_configuration_setting(self, configuration_setting, **kwargs):
+    @distributed_trace_async
+    async def add_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """Add a ConfigurationSetting into the Azure App Configuration service.
@@ -247,6 +257,7 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
+            # in async fuction
             config_setting = ConfigurationSetting(
                 key="MyKey",
                 label="MyLabel",
@@ -254,7 +265,7 @@ class AzureAppConfigurationClient:
                 content_type="my content type",
                 tags={"my tag": "my tag value"}
             )
-            added_config_setting = client.add_configuration_setting(config_setting)
+            added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
         key_value = KeyValue(
             key=configuration_setting.key,
@@ -268,8 +279,9 @@ class AzureAppConfigurationClient:
             401: ClientAuthenticationError,
             412: ResourceExistsError
         }
+
         try:
-            key_value_added = self._impl.put_key_value(
+            key_value_added = await self._impl.put_key_value(
                 entity=key_value,
                 key=key_value.key,
                 label=key_value.label,
@@ -281,8 +293,8 @@ class AzureAppConfigurationClient:
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
-    @distributed_trace
-    def set_configuration_setting(
+    @distributed_trace_async
+    async def set_configuration_setting(
         self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
     ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
 
@@ -306,6 +318,7 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
+            # in async function
             config_setting = ConfigurationSetting(
                 key="MyKey",
                 label="MyLabel",
@@ -313,7 +326,7 @@ class AzureAppConfigurationClient:
                 content_type="my set content type",
                 tags={"my set tag": "my set tag value"}
             )
-            returned_config_setting = client.set_configuration_setting(config_setting)
+            returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
         key_value = KeyValue(
             key=configuration_setting.key,
@@ -337,7 +350,7 @@ class AzureAppConfigurationClient:
             error_map[412] = ResourceExistsError
 
         try:
-            key_value_set = self._impl.put_key_value(
+            key_value_set = await self._impl.put_key_value(
                 entity=key_value,
                 key=key_value.key,
                 label=key_value.label,
@@ -350,8 +363,8 @@ class AzureAppConfigurationClient:
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
 
-    @distributed_trace
-    def delete_configuration_setting(
+    @distributed_trace_async
+    async def delete_configuration_setting(
         self, key, label=None, etag=None, match_condition=MatchConditions.Unconditionally, **kwargs
     ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
 
@@ -376,7 +389,8 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            deleted_config_setting = client.delete_configuration_setting(
+            # in async function
+            deleted_config_setting = await async_client.delete_configuration_setting(
                 key="MyKey", label="MyLabel"
             )
         """
@@ -395,7 +409,7 @@ class AzureAppConfigurationClient:
             error_map[412] = ResourceExistsError
 
         try:
-            key_value_deleted = self._impl.delete_key_value(
+            key_value_deleted = await self._impl.delete_key_value(
                 key=key,
                 label=label,
                 if_match=prep_if_match(etag, match_condition),
@@ -431,18 +445,19 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
+            # in async function
             from datetime import datetime, timedelta
 
             accept_datetime = datetime.today() + timedelta(days=-1)
 
-            all_revisions = client.list_revisions()
-            for item in all_revisions:
+            all_revisions = async_client.list_revisions()
+            async for item in all_revisions:
                 pass  # do something
 
-            filtered_revisions = client.list_revisions(
+            filtered_revisions = async_client.list_revisions(
                 labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
             )
-            for item in filtered_revisions:
+            async for item in filtered_revisions:
                 pass  # do something
         """
         select = kwargs.pop("fields", None)
@@ -467,8 +482,8 @@ class AzureAppConfigurationClient:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
-    def set_read_only(
-        self, configuration_setting, **kwargs
+    async def set_read_only(
+            self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """Set a configuration setting read only
@@ -484,11 +499,11 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            config_setting = client.get_configuration_setting(
+            config_setting = await async_client.get_configuration_setting(
                 key="MyKey", label="MyLabel"
             )
 
-            read_only_config_setting = client.set_read_only(config_setting)
+            read_only_config_setting = await async_client.set_read_only(config_setting)
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -496,7 +511,7 @@ class AzureAppConfigurationClient:
         }
 
         try:
-            key_value = self._impl.put_lock(
+            key_value = await self._impl.put_lock(
                 key=configuration_setting.key,
                 label=configuration_setting.label,
                 error_map=error_map,
@@ -507,7 +522,7 @@ class AzureAppConfigurationClient:
             raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
-    def clear_read_only(
+    async def clear_read_only(
             self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
@@ -524,11 +539,11 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            config_setting = client.get_configuration_setting(
+            config_setting = await async_client.get_configuration_setting(
                 key="MyKey", label="MyLabel"
             )
 
-            read_only_config_setting = client.clear_read_only(config_setting)
+            read_only_config_setting = await async_client.clear_read_only(config_setting)
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -536,7 +551,7 @@ class AzureAppConfigurationClient:
         }
 
         try:
-            key_value = self._impl.delete_lock(
+            key_value = await self._impl.delete_lock(
                 key=configuration_setting.key,
                 label=configuration_setting.label,
                 error_map=error_map,
