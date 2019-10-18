@@ -499,7 +499,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
                                                                 source_etag=source_properties.get('etag'),
-                                                                source_match_conditions=MatchConditions.IfModified)
+                                                                source_match_condition=MatchConditions.IfModified)
 
     @record
     def test_append_block_from_url_with_source_if_none_match_async(self):
