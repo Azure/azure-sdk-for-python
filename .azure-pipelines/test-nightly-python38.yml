@@ -23,6 +23,7 @@ jobs:
           PATH=/usr/bin:$PATH   
           sudo apt-get install python-packaging
           sudo apt install python3-distutils
+          pyhton3.8 -m pip3 install wheel
           sudo apt install python3-setuptools
           python3.8 -m pip3 install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
           python3.8 -m pip3 freeze
