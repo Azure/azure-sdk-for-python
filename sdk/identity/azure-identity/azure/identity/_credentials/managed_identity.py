@@ -11,6 +11,7 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HeadersPolicy,
+    HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     RetryPolicy,
 )
@@ -70,6 +71,7 @@ class _ManagedIdentityBase(object):
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(),
+            HttpLoggingPolicy(**kwargs),
         ]
         self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
 
