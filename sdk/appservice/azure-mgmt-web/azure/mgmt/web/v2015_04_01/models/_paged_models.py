@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DomainPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Domain <azure.mgmt.web.models.Domain>` object
+    A paging container for iterating over a list of :class:`Domain <azure.mgmt.web.v2015_04_01.models.Domain>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class DomainPaged(Paged):
         super(DomainPaged, self).__init__(*args, **kwargs)
 class NameIdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`NameIdentifier <azure.mgmt.web.models.NameIdentifier>` object
+    A paging container for iterating over a list of :class:`NameIdentifier <azure.mgmt.web.v2015_04_01.models.NameIdentifier>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class NameIdentifierPaged(Paged):
         super(NameIdentifierPaged, self).__init__(*args, **kwargs)
 class DomainOwnershipIdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DomainOwnershipIdentifier <azure.mgmt.web.models.DomainOwnershipIdentifier>` object
+    A paging container for iterating over a list of :class:`DomainOwnershipIdentifier <azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifier>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class DomainOwnershipIdentifierPaged(Paged):
         super(DomainOwnershipIdentifierPaged, self).__init__(*args, **kwargs)
 class TopLevelDomainPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>` object
+    A paging container for iterating over a list of :class:`TopLevelDomain <azure.mgmt.web.v2015_04_01.models.TopLevelDomain>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class TopLevelDomainPaged(Paged):
         super(TopLevelDomainPaged, self).__init__(*args, **kwargs)
 class TldLegalAgreementPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`TldLegalAgreement <azure.mgmt.web.models.TldLegalAgreement>` object
+    A paging container for iterating over a list of :class:`TldLegalAgreement <azure.mgmt.web.v2015_04_01.models.TldLegalAgreement>` object
     """
 
     _attribute_map = {
@@ -79,7 +79,7 @@ class TldLegalAgreementPaged(Paged):
         super(TldLegalAgreementPaged, self).__init__(*args, **kwargs)
 class CsmOperationDescriptionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.models.CsmOperationDescription>` object
+    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.v2015_04_01.models.CsmOperationDescription>` object
     """
 
     _attribute_map = {
