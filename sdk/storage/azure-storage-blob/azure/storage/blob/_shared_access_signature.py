@@ -404,8 +404,6 @@ def generate_container_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
-    :keyword str account_name:
-        Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
     :keyword str cache_control:
         Response header value for Cache-Control when resource is accessed
         using this shared access signature.
@@ -522,8 +520,6 @@ def generate_blob_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
-    :keyword str account_name:
-        Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
     :keyword str cache_control:
         Response header value for Cache-Control when resource is accessed
         using this shared access signature.
