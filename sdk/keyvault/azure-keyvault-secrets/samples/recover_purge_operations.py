@@ -60,6 +60,8 @@ try:
 
     # Let's delete storage account now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
+    # Calling result() on the method will immediately return the `DeletedSecret`, but calling wait() blocks
+    # until the secret is deleted server-side so it can be purged.
     print("\n.. Deleting secret...")
     client.begin_delete_secret(storage_secret.name).wait()
 

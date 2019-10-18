@@ -50,7 +50,8 @@ try:
 
     # The rsa key is no longer in use, so you delete it.
     print("\n.. Delete the key")
-    client.begin_delete_key(key.name).wait()
+    deleted_key = client.begin_delete_key(key.name).result()
+    print("Deleted Key with name '{0}'".format(deleted_key.name))
 
     # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the key using the backed up key bytes")

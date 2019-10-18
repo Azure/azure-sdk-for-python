@@ -166,7 +166,8 @@ class KeyClientTests(KeyVaultTestCase):
             polling_interval = 0
         else:
             polling_interval = None
-        deleted_key = client.begin_delete_key(created_rsa_key.name, _polling_interval=polling_interval).result()
+        deleted_key_poller = client.begin_delete_key(created_rsa_key.name, _polling_interval=polling_interval)
+        deleted_key = deleted_key_poller.result()
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.key_type, deleted_key.key_type)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
@@ -174,7 +175,7 @@ class KeyClientTests(KeyVaultTestCase):
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
             "Missing required deleted key attributes.",
         )
-
+        deleted_key_poller.wait()
         # get the deleted key when soft deleted enabled
         deleted_key = client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)

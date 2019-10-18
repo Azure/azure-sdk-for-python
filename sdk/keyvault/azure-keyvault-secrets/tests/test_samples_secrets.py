@@ -88,7 +88,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_secret]
 
         # delete a secret
-        deleted_secret = secret_client.begin_delete_secret("secret-name").result()
+        deleted_secret_poller = secret_client.begin_delete_secret("secret-name")
+        deleted_secret = deleted_secret_poller.result()
 
         print(deleted_secret.name)
 
@@ -97,6 +98,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_secret.deleted_date)
         print(deleted_secret.scheduled_purge_date)
         print(deleted_secret.recovery_id)
+
+        # if you want to block until secret is deleted server-side, call wait() on the poller
+        deleted_secret_poller.wait()
 
         # [END delete_secret]
 
@@ -162,7 +166,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
 
         # [END backup_secret]
-        deleted_secret = secret_client.begin_delete_secret("secret-name").result()
+        secret_client.begin_delete_secret("secret-name").wait()
         # [START restore_secret_backup]
 
         # restores a backed up secret
@@ -188,8 +192,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_secret]
 
         # recover deleted secret to the latest version
-        recovered_secret = secret_client.begin_recover_deleted_secret("secret-name").result()
+        recovered_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
+        recovered_secret = recovered_secret_poller.result()
         print(recovered_secret.id)
         print(recovered_secret.name)
+
+        # if you want to block until secret is recovered server-side, call wait() on the poller
+        recovered_secret_poller.wait()
 
         # [END recover_deleted_secret]

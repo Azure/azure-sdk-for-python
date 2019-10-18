@@ -29,7 +29,9 @@ class DeleteResourcePollerAsync(AsyncPollingMethod):
         except ResourceNotFoundError:
             self._status = "deleting"
         except HttpResponseError as e:
-            if e.status_code != 403:
+            if e.status_code == 403:
+                self._status = "deleted"
+            else:
                 raise
 
     def initialize(self, client: "Any", initial_response: str, _: "Callable") -> None:
@@ -68,7 +70,9 @@ class RecoverDeletedResourcePollerAsync(AsyncPollingMethod):
         except ResourceNotFoundError:
             self._status = "recovering"
         except HttpResponseError as e:
-            if e.status_code != 403:
+            if e.status_code == 403:
+                self._status = "recovered"
+            else:
                 raise
 
     def initialize(self, client: "Any", initial_response: str, _: "Callable") -> None:

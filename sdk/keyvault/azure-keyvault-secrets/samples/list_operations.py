@@ -79,10 +79,12 @@ def run_sample():
             )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
+        # Calling result() on the method will immediately return the `DeletedSecret`, but calling wait() blocks
+        # until the secret is deleted server-side.
         print("\n.. Deleting secrets...")
         client.begin_delete_secret(bank_secret.name).wait()
         client.begin_delete_secret(storage_secret.name).wait()
-        
+
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted secrets from the Key Vault")

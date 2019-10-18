@@ -4,12 +4,11 @@
 # ------------------------------------
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
 
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import DeleteResourcePoller, RecoverDeletedResourcePoller
+from ._shared._polling import DeleteResourcePoller, RecoverDeletedResourcePoller, KeyVaultOperationPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -272,9 +271,10 @@ class SecretClient(KeyVaultClientBase):
         # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :returns: An LROPoller for the delete secret operation. Deleting is not instant on the server side, so
-         we return a poller that polls until the secret is deleted server side and then returns the deleted secret.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.DeletedSecret]
+        :returns: An poller for the delete secret operation. Calling result() on the poller will return the deleted
+         secret instantly. If you are planning to purge the deleted secret, you will want to call wait() on the poller,
+         which blocks until the secret is deleted server_side.
+        :rtype: ~azure.keyvault.secrets.KeyVaultOperationPoller[~azure.keyvault.secrets.DeletedSecret]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -294,7 +294,7 @@ class SecretClient(KeyVaultClientBase):
         )
         command = partial(self.get_deleted_secret, name=name, **kwargs)
         delete_secret_polling = DeleteResourcePoller(interval=polling_interval)
-        return LROPoller(command, deleted_secret, None, delete_secret_polling)
+        return KeyVaultOperationPoller(command, deleted_secret, None, delete_secret_polling)
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
@@ -350,7 +350,8 @@ class SecretClient(KeyVaultClientBase):
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, **Any) -> None
         """Permanently delete a secret. This is only possible in vaults with soft-delete enabled. If a vault
-        doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will return an error.
+        doesn't have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will return
+        an error.
 
         Requires the secrets/purge permission.
 
@@ -362,7 +363,7 @@ class SecretClient(KeyVaultClientBase):
             .. code-block:: python
 
                 # if the vault has soft-delete enabled, purge permanently deletes the secret
-                # (with soft-delete disabled, delete_secret is permanent)
+                # (with soft-delete disabled, begin_delete_secret is permanent)
                 secret_client.purge_deleted_secret("secret-name")
 
         """
@@ -371,13 +372,17 @@ class SecretClient(KeyVaultClientBase):
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
         # type: (str, **Any) -> SecretProperties
-        """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
+        """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled. If
+        a vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will return
+        an error. Attempting to recover an non-deleted secret will also return an error.
+
         Requires the secrets/recover permission.
 
         :param str name: Name of the secret
-        :returns: An LROPoller for the recover secret operation. Recovering is not instant on the server side, so
-         we return a poller that polls until the secret is recovered server side and then returns the recovered secret.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.SecretProperties]
+        :returns: An poller for the recover secret operation. Calling result() on the poller will return the recovered
+         secret instantly. If you are planning to use the recovered secret, you will want to call wait() on the poller,
+         which blocks until the secret is recovered server_side.
+        :rtype: ~azure.keyvault.secrets.KeyVaultOperationPoller[~azure.keyvault.secrets.SecretProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -395,4 +400,4 @@ class SecretClient(KeyVaultClientBase):
         )
         command = partial(self.get_secret, name=name, **kwargs)
         recover_secret_poller = RecoverDeletedResourcePoller(interval=polling_interval)
-        return LROPoller(command, recovered_secret, None, recover_secret_poller)
+        return KeyVaultOperationPoller(command, recovered_secret, None, recover_secret_poller)

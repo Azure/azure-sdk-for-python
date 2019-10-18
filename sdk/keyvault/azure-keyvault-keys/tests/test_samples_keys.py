@@ -118,7 +118,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_key]
 
         # delete a key
-        deleted_key = key_client.begin_delete_key("key-name").result()
+        deleted_key_poller = key_client.begin_delete_key("key-name")
+        deleted_key = deleted_key_poller.result()
 
         print(deleted_key.name)
 
@@ -127,6 +128,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.deleted_date)
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
+
+        # if you want to block until key is recovered server-side, call wait() on the poller
+        deleted_key_poller.wait()
 
         # [END delete_key]
 
@@ -225,8 +229,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
-        recovered_key = key_client.begin_recover_deleted_key("key-name").result()
+        recovered_key_poller = key_client.begin_recover_deleted_key("key-name")
+        recovered_key = recovered_key_poller.result()
         print(recovered_key.id)
         print(recovered_key.name)
+
+        # if you want to block until key is recovered server-side, call wait() on the poller
+        recovered_key_poller.wait()
 
         # [END recover_deleted_key]

@@ -50,12 +50,12 @@ async def run_sample():
         print("Backup created for key with name '{0}'.".format(key.name))
 
         # The rsa key is no longer in use, so you delete it.
-        await client.delete_key(key.name)
-        print("Deleted Key with name '{0}'".format(key.name))
+        deleted_key = await client.delete_key(key.name)
+        print("Deleted Key with name '{0}'".format(deleted_key.name))
 
         # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the key using the backed up key bytes")
-        key = await client.restore_key(key_backup)
+        key = await client.restore_key_backup(key_backup)
         print("Restored Key with name '{0}'".format(key.name))
 
     except HttpResponseError as e:

@@ -50,8 +50,8 @@ try:
 
     # The storage account secret is no longer in use, so you delete it.
     print("\n.. Deleting secret...")
-    client.begin_delete_secret(secret.name).wait()
-    print("Deleted Secret with name '{0}'".format(secret.name))
+    deleted_secret = client.begin_delete_secret(secret.name).result()
+    print("Deleted Secret with name '{0}'".format(deleted_secret.name))
 
     # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the secret using the backed up secret bytes")

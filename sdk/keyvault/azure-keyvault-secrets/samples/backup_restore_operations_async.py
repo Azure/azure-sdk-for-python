@@ -57,7 +57,7 @@ async def run_sample():
 
         # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the secret using the backed up secret bytes")
-        secret = await client.restore_secret(secret_backup)
+        secret = await client.restore_secret_backup(secret_backup)
         print("Restored Secret with name '{0}'".format(secret.name))
 
     except HttpResponseError as e:
