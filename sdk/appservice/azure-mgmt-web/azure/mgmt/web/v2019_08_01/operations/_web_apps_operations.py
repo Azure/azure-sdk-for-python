@@ -27,7 +27,7 @@ class WebAppsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2018-02-01".
+    :ivar api_version: API Version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class WebAppsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -45,7 +45,7 @@ class WebAppsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get all apps for a subscription.
 
-        Get all apps for a subscription.
+        Description for Get all apps for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -54,9 +54,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Site
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SitePaged[~azure.mgmt.web.v2018_02_01.models.Site]
+         ~azure.mgmt.web.v2019_08_01.models.SitePaged[~azure.mgmt.web.v2019_08_01.models.Site]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -112,7 +112,8 @@ class WebAppsOperations(object):
             self, resource_group_name, include_slots=None, custom_headers=None, raw=False, **operation_config):
         """Gets all web, mobile, and API apps in the specified resource group.
 
-        Gets all web, mobile, and API apps in the specified resource group.
+        Description for Gets all web, mobile, and API apps in the specified
+        resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -128,9 +129,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Site
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SitePaged[~azure.mgmt.web.v2018_02_01.models.Site]
+         ~azure.mgmt.web.v2019_08_01.models.SitePaged[~azure.mgmt.web.v2019_08_01.models.Site]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -189,7 +190,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the details of a web, mobile, or API app.
 
-        Gets the details of a web, mobile, or API app.
+        Description for Gets the details of a web, mobile, or API app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -202,9 +203,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Site or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Site or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -234,9 +236,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -304,8 +304,8 @@ class WebAppsOperations(object):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
+        Description for Creates a new web, mobile, or API app in an existing
+        resource group, or updates an existing app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -315,7 +315,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_envelope: A JSON representation of the app properties. See
          example.
-        :type site_envelope: ~azure.mgmt.web.v2018_02_01.models.Site
+        :type site_envelope: ~azure.mgmt.web.v2019_08_01.models.Site
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -324,11 +324,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Site or
          ClientRawResponse<Site> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.Site]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.Site]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.Site]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.Site]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -361,7 +361,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a web, mobile, or API app, or one of the deployment slots.
 
-        Deletes a web, mobile, or API app, or one of the deployment slots.
+        Description for Deletes a web, mobile, or API app, or one of the
+        deployment slots.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -381,7 +382,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -414,9 +416,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -428,8 +428,8 @@ class WebAppsOperations(object):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
+        Description for Creates a new web, mobile, or API app in an existing
+        resource group, or updates an existing app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -440,17 +440,17 @@ class WebAppsOperations(object):
         :param site_envelope: A JSON representation of the app properties. See
          example.
         :type site_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SitePatchResource
+         ~azure.mgmt.web.v2019_08_01.models.SitePatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Site or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Site or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -503,7 +503,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, host_name=None, custom_headers=None, raw=False, **operation_config):
         """Analyze a custom hostname.
 
-        Analyze a custom hostname.
+        Description for Analyze a custom hostname.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -519,10 +519,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CustomHostnameAnalysisResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.CustomHostnameAnalysisResult or
+         ~azure.mgmt.web.v2019_08_01.models.CustomHostnameAnalysisResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.analyze_custom_hostname.metadata['url']
@@ -572,8 +572,8 @@ class WebAppsOperations(object):
         """Applies the configuration settings from the target slot onto the
         current slot.
 
-        Applies the configuration settings from the target slot onto the
-        current slot.
+        Description for Applies the configuration settings from the target slot
+        onto the current slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -592,7 +592,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -627,9 +628,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -640,7 +639,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
         """Creates a backup of an app.
 
-        Creates a backup of an app.
+        Description for Creates a backup of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -649,17 +648,17 @@ class WebAppsOperations(object):
         :type name: str
         :param request: Backup configuration. You can use the JSON response
          from the POST action as input here.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.backup.metadata['url']
@@ -710,7 +709,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets existing backups of an app.
 
-        Gets existing backups of an app.
+        Description for Gets existing backups of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -724,9 +723,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BackupItem
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.BackupItemPaged[~azure.mgmt.web.v2018_02_01.models.BackupItem]
+         ~azure.mgmt.web.v2019_08_01.models.BackupItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItem]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -784,7 +783,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
         """Gets a backup of an app by its ID.
 
-        Gets a backup of an app by its ID.
+        Description for Gets a backup of an app by its ID.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -799,10 +798,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_backup_status.metadata['url']
@@ -850,7 +849,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a backup of an app by its ID.
 
-        Deletes a backup of an app by its ID.
+        Description for Deletes a backup of an app by its ID.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -866,7 +865,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_backup.metadata['url']
@@ -896,9 +896,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -912,10 +910,10 @@ class WebAppsOperations(object):
         Also can be used to update the SAS URL for the backup if a new URL is
         passed in the request body.
 
-        Gets status of a web app backup that may be in progress, including
-        secrets associated with the backup, such as the Azure Storage SAS URL.
-        Also can be used to update the SAS URL for the backup if a new URL is
-        passed in the request body.
+        Description for Gets status of a web app backup that may be in
+        progress, including secrets associated with the backup, such as the
+        Azure Storage SAS URL. Also can be used to update the SAS URL for the
+        backup if a new URL is passed in the request body.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -925,17 +923,17 @@ class WebAppsOperations(object):
         :param backup_id: ID of backup.
         :type backup_id: str
         :param request: Information on backup request.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_backup_status_secrets.metadata['url']
@@ -1018,9 +1016,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1031,8 +1027,8 @@ class WebAppsOperations(object):
         """Restores a specific backup to another app (or deployment slot, if
         specified).
 
-        Restores a specific backup to another app (or deployment slot, if
-        specified).
+        Description for Restores a specific backup to another app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1042,7 +1038,7 @@ class WebAppsOperations(object):
         :param backup_id: ID of the backup.
         :type backup_id: str
         :param request: Information on restore request .
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1052,7 +1048,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_initial(
             resource_group_name=resource_group_name,
@@ -1082,7 +1079,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List the configurations of an app.
 
-        List the configurations of an app.
+        Description for List the configurations of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1096,9 +1093,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteConfigResource
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResourcePaged[~azure.mgmt.web.v2018_02_01.models.SiteConfigResource]
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResourcePaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1156,7 +1153,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the application settings of an app.
 
-        Replaces the application settings of an app.
+        Description for Replaces the application settings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1173,10 +1170,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         app_settings = models.StringDictionary(kind=kind, properties=properties)
 
@@ -1229,7 +1226,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the application settings of an app.
 
-        Gets the application settings of an app.
+        Description for Gets the application settings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1242,10 +1239,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_application_settings.metadata['url']
@@ -1293,8 +1290,8 @@ class WebAppsOperations(object):
         """Updates the Authentication / Authorization settings associated with web
         app.
 
-        Updates the Authentication / Authorization settings associated with web
-        app.
+        Description for Updates the Authentication / Authorization settings
+        associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1303,17 +1300,17 @@ class WebAppsOperations(object):
         :type name: str
         :param site_auth_settings: Auth settings associated with web app.
         :type site_auth_settings:
-         ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings
+         ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteAuthSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_auth_settings.metadata['url']
@@ -1364,7 +1361,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the Authentication/Authorization settings of an app.
 
-        Gets the Authentication/Authorization settings of an app.
+        Description for Gets the Authentication/Authorization settings of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1377,10 +1375,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteAuthSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_auth_settings.metadata['url']
@@ -1427,7 +1425,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates the Azure storage account configurations of an app.
 
-        Updates the Azure storage account configurations of an app.
+        Description for Updates the Azure storage account configurations of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1438,7 +1437,7 @@ class WebAppsOperations(object):
         :type kind: str
         :param properties: Azure storage accounts.
         :type properties: dict[str,
-         ~azure.mgmt.web.v2018_02_01.models.AzureStorageInfoValue]
+         ~azure.mgmt.web.v2019_08_01.models.AzureStorageInfoValue]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1447,10 +1446,10 @@ class WebAppsOperations(object):
         :return: AzureStoragePropertyDictionaryResource or ClientRawResponse
          if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.AzureStoragePropertyDictionaryResource
+         ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         azure_storage_accounts = models.AzureStoragePropertyDictionaryResource(kind=kind, properties=properties)
 
@@ -1503,7 +1502,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the Azure storage account configurations of an app.
 
-        Gets the Azure storage account configurations of an app.
+        Description for Gets the Azure storage account configurations of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1518,10 +1518,10 @@ class WebAppsOperations(object):
         :return: AzureStoragePropertyDictionaryResource or ClientRawResponse
          if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.AzureStoragePropertyDictionaryResource
+         ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_azure_storage_accounts.metadata['url']
@@ -1568,7 +1568,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
         """Updates the backup configuration of an app.
 
-        Updates the backup configuration of an app.
+        Description for Updates the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1576,17 +1576,17 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Edited backup configuration.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_backup_configuration.metadata['url']
@@ -1637,7 +1637,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Deletes the backup configuration of an app.
 
-        Deletes the backup configuration of an app.
+        Description for Deletes the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1651,7 +1651,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_backup_configuration.metadata['url']
@@ -1680,9 +1681,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1693,7 +1692,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the backup configuration of an app.
 
-        Gets the backup configuration of an app.
+        Description for Gets the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1706,10 +1705,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_backup_configuration.metadata['url']
@@ -1752,11 +1751,141 @@ class WebAppsOperations(object):
         return deserialized
     get_backup_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/backup/list'}
 
+    def get_app_settings_key_vault_references(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Gets the config reference app settings and status of an app.
+
+        Description for Gets the config reference app settings and status of an
+        app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyVaultReferenceCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyVaultReferenceCollection
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_app_settings_key_vault_references.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyVaultReferenceCollection', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_app_settings_key_vault_references.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/configreferences/appsettings'}
+
+    def get_app_setting_key_vault_reference(
+            self, resource_group_name, name, app_setting_key, custom_headers=None, raw=False, **operation_config):
+        """Gets the config reference and status of an app.
+
+        Description for Gets the config reference and status of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param app_setting_key: App Setting key name.
+        :type app_setting_key: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyVaultReferenceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.KeyVaultReferenceResource
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_app_setting_key_vault_reference.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'appSettingKey': self._serialize.url("app_setting_key", app_setting_key, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyVaultReferenceResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_app_setting_key_vault_reference.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/configreferences/appsettings/{appSettingKey}'}
+
     def update_connection_strings(
             self, resource_group_name, name, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the connection strings of an app.
 
-        Replaces the connection strings of an app.
+        Description for Replaces the connection strings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1767,17 +1896,17 @@ class WebAppsOperations(object):
         :type kind: str
         :param properties: Connection strings.
         :type properties: dict[str,
-         ~azure.mgmt.web.v2018_02_01.models.ConnStringValueTypePair]
+         ~azure.mgmt.web.v2019_08_01.models.ConnStringValueTypePair]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionStringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ConnectionStringDictionary
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
 
@@ -1830,7 +1959,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the connection strings of an app.
 
-        Gets the connection strings of an app.
+        Description for Gets the connection strings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1843,10 +1972,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionStringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ConnectionStringDictionary
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_connection_strings.metadata['url']
@@ -1893,7 +2022,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the logging configuration of an app.
 
-        Gets the logging configuration of an app.
+        Description for Gets the logging configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1906,10 +2035,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteLogsConfig or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_diagnostic_logs_configuration.metadata['url']
@@ -1956,7 +2085,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_logs_config, custom_headers=None, raw=False, **operation_config):
         """Updates the logging configuration of an app.
 
-        Updates the logging configuration of an app.
+        Description for Updates the logging configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1966,17 +2095,17 @@ class WebAppsOperations(object):
         :param site_logs_config: A SiteLogsConfig JSON object that contains
          the logging configuration to change in the "properties" property.
         :type site_logs_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig
+         ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteLogsConfig or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_diagnostic_logs_config.metadata['url']
@@ -2027,7 +2156,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the metadata of an app.
 
-        Replaces the metadata of an app.
+        Description for Replaces the metadata of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2044,10 +2173,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         metadata = models.StringDictionary(kind=kind, properties=properties)
 
@@ -2100,7 +2229,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the metadata of an app.
 
-        Gets the metadata of an app.
+        Description for Gets the metadata of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2113,10 +2242,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_metadata.metadata['url']
@@ -2207,7 +2336,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gets the Git/FTP publishing credentials of an app.
 
-        Gets the Git/FTP publishing credentials of an app.
+        Description for Gets the Git/FTP publishing credentials of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2222,11 +2351,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns User or
          ClientRawResponse<User> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.User]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.User]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.User]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.User]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._list_publishing_credentials_initial(
             resource_group_name=resource_group_name,
@@ -2258,7 +2387,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, push_settings, custom_headers=None, raw=False, **operation_config):
         """Updates the Push settings associated with web app.
 
-        Updates the Push settings associated with web app.
+        Description for Updates the Push settings associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2266,17 +2395,17 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param push_settings: Push settings associated with web app.
-        :type push_settings: ~azure.mgmt.web.v2018_02_01.models.PushSettings
+        :type push_settings: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PushSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PushSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_site_push_settings.metadata['url']
@@ -2327,7 +2456,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the Push settings associated with web app.
 
-        Gets the Push settings associated with web app.
+        Description for Gets the Push settings associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2340,10 +2469,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PushSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PushSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_site_push_settings.metadata['url']
@@ -2391,8 +2520,8 @@ class WebAppsOperations(object):
         """Gets the names of app settings and connection strings that stick to the
         slot (not swapped).
 
-        Gets the names of app settings and connection strings that stick to the
-        slot (not swapped).
+        Description for Gets the names of app settings and connection strings
+        that stick to the slot (not swapped).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2405,10 +2534,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SlotConfigNamesResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SlotConfigNamesResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotConfigNamesResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_slot_configuration_names.metadata['url']
@@ -2456,8 +2585,8 @@ class WebAppsOperations(object):
         """Updates the names of application settings and connection string that
         remain with the slot during swap operation.
 
-        Updates the names of application settings and connection string that
-        remain with the slot during swap operation.
+        Description for Updates the names of application settings and
+        connection string that remain with the slot during swap operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2467,17 +2596,17 @@ class WebAppsOperations(object):
         :param slot_config_names: Names of application settings and connection
          strings. See example.
         :type slot_config_names:
-         ~azure.mgmt.web.v2018_02_01.models.SlotConfigNamesResource
+         ~azure.mgmt.web.v2019_08_01.models.SlotConfigNamesResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SlotConfigNamesResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SlotConfigNamesResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SlotConfigNamesResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_slot_configuration_names.metadata['url']
@@ -2529,8 +2658,9 @@ class WebAppsOperations(object):
         """Gets the configuration of an app, such as platform version and bitness,
         default documents, virtual applications, Always On, etc.
 
-        Gets the configuration of an app, such as platform version and bitness,
-        default documents, virtual applications, Always On, etc.
+        Description for Gets the configuration of an app, such as platform
+        version and bitness, default documents, virtual applications, Always
+        On, etc.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2543,10 +2673,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_configuration.metadata['url']
@@ -2593,7 +2723,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
         """Updates the configuration of an app.
 
-        Updates the configuration of an app.
+        Description for Updates the configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2603,17 +2733,17 @@ class WebAppsOperations(object):
         :param site_config: JSON representation of a SiteConfig object. See
          example.
         :type site_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_configuration.metadata['url']
@@ -2664,7 +2794,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
         """Updates the configuration of an app.
 
-        Updates the configuration of an app.
+        Description for Updates the configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2674,17 +2804,17 @@ class WebAppsOperations(object):
         :param site_config: JSON representation of a SiteConfig object. See
          example.
         :type site_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_configuration.metadata['url']
@@ -2736,8 +2866,9 @@ class WebAppsOperations(object):
         """Gets a list of web app configuration snapshots identifiers. Each
         element of the list contains a timestamp and the ID of the snapshot.
 
-        Gets a list of web app configuration snapshots identifiers. Each
-        element of the list contains a timestamp and the ID of the snapshot.
+        Description for Gets a list of web app configuration snapshots
+        identifiers. Each element of the list contains a timestamp and the ID
+        of the snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2751,9 +2882,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteConfigurationSnapshotInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.v2018_02_01.models.SiteConfigurationSnapshotInfo]
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfo]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2812,8 +2943,8 @@ class WebAppsOperations(object):
         """Gets a snapshot of the configuration of an app at a previous point in
         time.
 
-        Gets a snapshot of the configuration of an app at a previous point in
-        time.
+        Description for Gets a snapshot of the configuration of an app at a
+        previous point in time.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2828,10 +2959,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_configuration_snapshot.metadata['url']
@@ -2879,7 +3010,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, snapshot_id, custom_headers=None, raw=False, **operation_config):
         """Reverts the configuration of an app to a previous snapshot.
 
-        Reverts the configuration of an app to a previous snapshot.
+        Description for Reverts the configuration of an app to a previous
+        snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -2895,7 +3027,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.recover_site_configuration_snapshot.metadata['url']
@@ -2925,9 +3058,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -2938,7 +3069,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the last lines of docker logs for the given site.
 
-        Gets the last lines of docker logs for the given site.
+        Description for Gets the last lines of docker logs for the given site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3004,7 +3135,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the ZIP archived docker log files for the given site.
 
-        Gets the ZIP archived docker log files for the given site.
+        Description for Gets the ZIP archived docker log files for the given
+        site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3070,7 +3202,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List continuous web jobs for an app, or a deployment slot.
 
-        List continuous web jobs for an app, or a deployment slot.
+        Description for List continuous web jobs for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3084,9 +3217,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ContinuousWebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ContinuousWebJobPaged[~azure.mgmt.web.v2018_02_01.models.ContinuousWebJob]
+         ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobPaged[~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3144,7 +3277,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
-        Gets a continuous web job by its ID for an app, or a deployment slot.
+        Description for Gets a continuous web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3159,9 +3293,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ContinuousWebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ContinuousWebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_continuous_web_job.metadata['url']
@@ -3192,9 +3327,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -3211,7 +3344,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
-        Delete a continuous web job by its ID for an app, or a deployment slot.
+        Description for Delete a continuous web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3227,7 +3361,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_continuous_web_job.metadata['url']
@@ -3257,9 +3392,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -3270,7 +3403,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Start a continuous web job for an app, or a deployment slot.
 
-        Start a continuous web job for an app, or a deployment slot.
+        Description for Start a continuous web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3286,7 +3420,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start_continuous_web_job.metadata['url']
@@ -3316,9 +3451,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -3329,7 +3462,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Stop a continuous web job for an app, or a deployment slot.
 
-        Stop a continuous web job for an app, or a deployment slot.
+        Description for Stop a continuous web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3345,7 +3479,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_continuous_web_job.metadata['url']
@@ -3375,9 +3510,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -3388,7 +3521,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List deployments for an app, or a deployment slot.
 
-        List deployments for an app, or a deployment slot.
+        Description for List deployments for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3402,9 +3535,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Deployment
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.DeploymentPaged[~azure.mgmt.web.v2018_02_01.models.Deployment]
+         ~azure.mgmt.web.v2019_08_01.models.DeploymentPaged[~azure.mgmt.web.v2019_08_01.models.Deployment]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3462,7 +3595,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
         """Get a deployment by its ID for an app, or a deployment slot.
 
-        Get a deployment by its ID for an app, or a deployment slot.
+        Description for Get a deployment by its ID for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3477,10 +3611,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_deployment.metadata['url']
@@ -3528,7 +3662,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, deployment, custom_headers=None, raw=False, **operation_config):
         """Create a deployment for an app, or a deployment slot.
 
-        Create a deployment for an app, or a deployment slot.
+        Description for Create a deployment for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3538,17 +3672,17 @@ class WebAppsOperations(object):
         :param id: ID of an existing deployment.
         :type id: str
         :param deployment: Deployment details.
-        :type deployment: ~azure.mgmt.web.v2018_02_01.models.Deployment
+        :type deployment: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_deployment.metadata['url']
@@ -3600,7 +3734,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
         """Delete a deployment by its ID for an app, or a deployment slot.
 
-        Delete a deployment by its ID for an app, or a deployment slot.
+        Description for Delete a deployment by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3616,7 +3751,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_deployment.metadata['url']
@@ -3646,9 +3782,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -3660,8 +3794,8 @@ class WebAppsOperations(object):
         """List deployment log for specific deployment for an app, or a deployment
         slot.
 
-        List deployment log for specific deployment for an app, or a deployment
-        slot.
+        Description for List deployment log for specific deployment for an app,
+        or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3678,10 +3812,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_deployment_log.metadata['url']
@@ -3731,9 +3865,9 @@ class WebAppsOperations(object):
         Azure storage. Use this to get information about the databases stored
         in a backup.
 
-        Discovers an existing app backup that can be restored from a blob in
-        Azure storage. Use this to get information about the databases stored
-        in a backup.
+        Description for Discovers an existing app backup that can be restored
+        from a blob in Azure storage. Use this to get information about the
+        databases stored in a backup.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3742,17 +3876,17 @@ class WebAppsOperations(object):
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage
          URL and blog name for discovery of backup.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RestoreRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.discover_backup.metadata['url']
@@ -3803,7 +3937,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Lists ownership identifiers for domain associated with web app.
 
-        Lists ownership identifiers for domain associated with web app.
+        Description for Lists ownership identifiers for domain associated with
+        web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3817,9 +3952,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Identifier
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.IdentifierPaged[~azure.mgmt.web.v2018_02_01.models.Identifier]
+         ~azure.mgmt.web.v2019_08_01.models.IdentifierPaged[~azure.mgmt.web.v2019_08_01.models.Identifier]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3877,7 +4012,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, domain_ownership_identifier_name, custom_headers=None, raw=False, **operation_config):
         """Get domain ownership identifier for web app.
 
-        Get domain ownership identifier for web app.
+        Description for Get domain ownership identifier for web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3893,10 +4028,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_domain_ownership_identifier.metadata['url']
@@ -3941,12 +4076,12 @@ class WebAppsOperations(object):
     get_domain_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/domainOwnershipIdentifiers/{domainOwnershipIdentifierName}'}
 
     def create_or_update_domain_ownership_identifier(
-            self, resource_group_name, name, domain_ownership_identifier_name, kind=None, identifier_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, domain_ownership_identifier_name, kind=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Creates a domain ownership identifier for web app, or updates an
         existing ownership identifier.
 
-        Creates a domain ownership identifier for web app, or updates an
-        existing ownership identifier.
+        Description for Creates a domain ownership identifier for web app, or
+        updates an existing ownership identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -3958,20 +4093,20 @@ class WebAppsOperations(object):
         :type domain_ownership_identifier_name: str
         :param kind: Kind of resource.
         :type kind: str
-        :param identifier_id: String representation of the identity.
-        :type identifier_id: str
+        :param value: String representation of the identity.
+        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
-        domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
+        domain_ownership_identifier = models.Identifier(kind=kind, value=value)
 
         # Construct URL
         url = self.create_or_update_domain_ownership_identifier.metadata['url']
@@ -4023,7 +4158,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, domain_ownership_identifier_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a domain ownership identifier for a web app.
 
-        Deletes a domain ownership identifier for a web app.
+        Description for Deletes a domain ownership identifier for a web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4040,7 +4175,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_domain_ownership_identifier.metadata['url']
@@ -4070,9 +4206,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -4080,12 +4214,12 @@ class WebAppsOperations(object):
     delete_domain_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/domainOwnershipIdentifiers/{domainOwnershipIdentifierName}'}
 
     def update_domain_ownership_identifier(
-            self, resource_group_name, name, domain_ownership_identifier_name, kind=None, identifier_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, domain_ownership_identifier_name, kind=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Creates a domain ownership identifier for web app, or updates an
         existing ownership identifier.
 
-        Creates a domain ownership identifier for web app, or updates an
-        existing ownership identifier.
+        Description for Creates a domain ownership identifier for web app, or
+        updates an existing ownership identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4097,20 +4231,20 @@ class WebAppsOperations(object):
         :type domain_ownership_identifier_name: str
         :param kind: Kind of resource.
         :type kind: str
-        :param identifier_id: String representation of the identity.
-        :type identifier_id: str
+        :param value: String representation of the identity.
+        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
-        domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
+        domain_ownership_identifier = models.Identifier(kind=kind, value=value)
 
         # Construct URL
         url = self.update_domain_ownership_identifier.metadata['url']
@@ -4162,7 +4296,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the status of the last MSDeploy operation.
 
-        Get the status of the last MSDeploy operation.
+        Description for Get the status of the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4175,10 +4309,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ms_deploy_status.metadata['url']
@@ -4256,9 +4390,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -4275,7 +4407,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, ms_deploy, custom_headers=None, raw=False, polling=True, **operation_config):
         """Invoke the MSDeploy web app extension.
 
-        Invoke the MSDeploy web app extension.
+        Description for Invoke the MSDeploy web app extension.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4283,7 +4415,7 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: ~azure.mgmt.web.v2018_02_01.models.MSDeploy
+        :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -4292,10 +4424,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus or
          ClientRawResponse<MSDeployStatus> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_ms_deploy_operation_initial(
             resource_group_name=resource_group_name,
@@ -4328,7 +4461,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the MSDeploy Log for the last MSDeploy operation.
 
-        Get the MSDeploy Log for the last MSDeploy operation.
+        Description for Get the MSDeploy Log for the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4341,9 +4474,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployLog or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployLog or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ms_deploy_log.metadata['url']
@@ -4373,9 +4507,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -4392,7 +4524,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List the functions for a web site, or a deployment slot.
 
-        List the functions for a web site, or a deployment slot.
+        Description for List the functions for a web site, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4406,8 +4539,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of FunctionEnvelope
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelopePaged[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopePaged[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -4448,9 +4582,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -4467,7 +4599,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Fetch a short lived token that can be exchanged for a master key.
 
-        Fetch a short lived token that can be exchanged for a master key.
+        Description for Fetch a short lived token that can be exchanged for a
+        master key.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4482,7 +4615,7 @@ class WebAppsOperations(object):
         :return: str or ClientRawResponse if raw=true
         :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_functions_admin_token.metadata['url']
@@ -4529,7 +4662,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
         """Get function information by its ID for web site, or a deployment slot.
 
-        Get function information by its ID for web site, or a deployment slot.
+        Description for Get function information by its ID for web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4544,9 +4678,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionEnvelope or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_function.metadata['url']
@@ -4577,9 +4712,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -4645,7 +4778,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, function_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create function for web site, or a deployment slot.
 
-        Create function for web site, or a deployment slot.
+        Description for Create function for web site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4656,7 +4789,7 @@ class WebAppsOperations(object):
         :type function_name: str
         :param function_envelope: Function details.
         :type function_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope
+         ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -4665,11 +4798,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns FunctionEnvelope or
          ClientRawResponse<FunctionEnvelope> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_function_initial(
             resource_group_name=resource_group_name,
@@ -4703,7 +4836,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
         """Delete a function for web site, or a deployment slot.
 
-        Delete a function for web site, or a deployment slot.
+        Description for Delete a function for web site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4719,7 +4852,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_function.metadata['url']
@@ -4749,231 +4883,20 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete_function.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}'}
 
-    def create_or_update_function_secret(
-            self, resource_group_name, name, function_name, key_name, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
-        """Add or update a function secret.
-
-        Add or update a function secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: The name of the function.
-        :type function_name: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param name1: Key name
-        :type name1: str
-        :param value: Key value
-        :type value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeyInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        key = models.KeyInfo(name=name1, value=value)
-
-        # Construct URL
-        url = self.create_or_update_function_secret.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(key, 'KeyInfo')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyInfo', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('KeyInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_function_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/keys/{keyName}'}
-
-    def delete_function_secret(
-            self, resource_group_name, name, function_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a function secret.
-
-        Delete a function secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: The name of the function.
-        :type function_name: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.delete_function_secret.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_function_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/keys/{keyName}'}
-
-    def list_function_keys(
-            self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
-        """Get function keys for a function in a web site, or a deployment slot.
-
-        Get function keys for a function in a web site, or a deployment slot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: Function name.
-        :type function_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_function_keys.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('StringDictionary', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_function_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/listkeys'}
-
     def list_function_secrets(
             self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
         """Get function secrets for a function in a web site, or a deployment
         slot.
 
-        Get function secrets for a function in a web site, or a deployment
-        slot.
+        Description for Get function secrets for a function in a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -4988,10 +4911,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionSecrets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionSecrets or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_function_secrets.metadata['url']
@@ -5035,327 +4958,11 @@ class WebAppsOperations(object):
         return deserialized
     list_function_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/listsecrets'}
 
-    def list_host_keys(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Get host secrets for a function app.
-
-        Get host secrets for a function app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: HostKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostKeys or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_host_keys.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('HostKeys', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_host_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/listkeys'}
-
-    def list_sync_status(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """This is to allow calling via powershell and ARM template.
-
-        This is to allow calling via powershell and ARM template.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_sync_status.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    list_sync_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/listsyncstatus'}
-
-    def sync_functions(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the management database.
-
-        Syncs function trigger metadata to the management database.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.sync_functions.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    sync_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/sync'}
-
-    def create_or_update_host_secret(
-            self, resource_group_name, name, key_type, key_name, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
-        """Add or update a host level secret.
-
-        Add or update a host level secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param key_type: The type of host key.
-        :type key_type: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param name1: Key name
-        :type name1: str
-        :param value: Key value
-        :type value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeyInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        key = models.KeyInfo(name=name1, value=value)
-
-        # Construct URL
-        url = self.create_or_update_host_secret.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'keyType': self._serialize.url("key_type", key_type, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(key, 'KeyInfo')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyInfo', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('KeyInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_host_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/{keyType}/{keyName}'}
-
-    def delete_host_secret(
-            self, resource_group_name, name, key_type, key_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a host level secret.
-
-        Delete a host level secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param key_type: The type of host key.
-        :type key_type: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_host_secret.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'keyType': self._serialize.url("key_type", key_type, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204, 404]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_host_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/{keyType}/{keyName}'}
-
     def list_host_name_bindings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get hostname bindings for an app or a deployment slot.
 
-        Get hostname bindings for an app or a deployment slot.
+        Description for Get hostname bindings for an app or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5369,9 +4976,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of HostNameBinding
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.HostNameBindingPaged[~azure.mgmt.web.v2018_02_01.models.HostNameBinding]
+         ~azure.mgmt.web.v2019_08_01.models.HostNameBindingPaged[~azure.mgmt.web.v2019_08_01.models.HostNameBinding]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -5430,8 +5037,8 @@ class WebAppsOperations(object):
         """Get the named hostname binding for an app (or deployment slot, if
         specified).
 
-        Get the named hostname binding for an app (or deployment slot, if
-        specified).
+        Description for Get the named hostname binding for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5446,10 +5053,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HostNameBinding or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostNameBinding or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_host_name_binding.metadata['url']
@@ -5497,7 +5104,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, host_name, host_name_binding, custom_headers=None, raw=False, **operation_config):
         """Creates a hostname binding for an app.
 
-        Creates a hostname binding for an app.
+        Description for Creates a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5509,17 +5116,17 @@ class WebAppsOperations(object):
         :param host_name_binding: Binding details. This is the JSON
          representation of a HostNameBinding object.
         :type host_name_binding:
-         ~azure.mgmt.web.v2018_02_01.models.HostNameBinding
+         ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HostNameBinding or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostNameBinding or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_host_name_binding.metadata['url']
@@ -5571,7 +5178,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, host_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a hostname binding for an app.
 
-        Deletes a hostname binding for an app.
+        Description for Deletes a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5587,7 +5194,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_host_name_binding.metadata['url']
@@ -5617,9 +5225,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -5631,8 +5237,8 @@ class WebAppsOperations(object):
         """Retrieves a specific Service Bus Hybrid Connection used by this Web
         App.
 
-        Retrieves a specific Service Bus Hybrid Connection used by this Web
-        App.
+        Description for Retrieves a specific Service Bus Hybrid Connection used
+        by this Web App.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5649,10 +5255,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hybrid_connection.metadata['url']
@@ -5701,7 +5307,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """Creates a new Hybrid Connection using a Service Bus relay.
 
-        Creates a new Hybrid Connection using a Service Bus relay.
+        Description for Creates a new Hybrid Connection using a Service Bus
+        relay.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5714,17 +5321,17 @@ class WebAppsOperations(object):
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.HybridConnection
+         ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_hybrid_connection.metadata['url']
@@ -5777,7 +5384,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Removes a Hybrid Connection from this site.
 
-        Removes a Hybrid Connection from this site.
+        Description for Removes a Hybrid Connection from this site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5795,7 +5402,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_hybrid_connection.metadata['url']
@@ -5826,9 +5434,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -5839,7 +5445,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """Creates a new Hybrid Connection using a Service Bus relay.
 
-        Creates a new Hybrid Connection using a Service Bus relay.
+        Description for Creates a new Hybrid Connection using a Service Bus
+        relay.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5852,17 +5459,17 @@ class WebAppsOperations(object):
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.HybridConnection
+         ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_hybrid_connection.metadata['url']
@@ -5911,80 +5518,12 @@ class WebAppsOperations(object):
         return deserialized
     update_hybrid_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'}
 
-    def list_hybrid_connection_keys(
-            self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the send key name and value for a Hybrid Connection.
-
-        Gets the send key name and value for a Hybrid Connection.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: The name of the web app.
-        :type name: str
-        :param namespace_name: The namespace for this hybrid connection.
-        :type namespace_name: str
-        :param relay_name: The relay name for this hybrid connection.
-        :type relay_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: HybridConnectionKey or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionKey or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_hybrid_connection_keys.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnectionKey', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_hybrid_connection_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/listKeys'}
-
     def list_hybrid_connections(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
-        Retrieves all Service Bus Hybrid Connections used by this Web App.
+        Description for Retrieves all Service Bus Hybrid Connections used by
+        this Web App.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -5997,10 +5536,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_hybrid_connections.metadata['url']
@@ -6048,8 +5587,8 @@ class WebAppsOperations(object):
         """Gets hybrid connections configured for an app (or deployment slot, if
         specified).
 
-        Gets hybrid connections configured for an app (or deployment slot, if
-        specified).
+        Description for Gets hybrid connections configured for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6063,10 +5602,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_relay_service_connections.metadata['url']
@@ -6113,7 +5652,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
         """Gets a hybrid connection configuration by its name.
 
-        Gets a hybrid connection configuration by its name.
+        Description for Gets a hybrid connection configuration by its name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6129,10 +5668,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_relay_service_connection.metadata['url']
@@ -6181,8 +5720,8 @@ class WebAppsOperations(object):
         """Creates a new hybrid connection configuration (PUT), or updates an
         existing one (PATCH).
 
-        Creates a new hybrid connection configuration (PUT), or updates an
-        existing one (PATCH).
+        Description for Creates a new hybrid connection configuration (PUT), or
+        updates an existing one (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6194,7 +5733,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Details of the hybrid connection
          configuration.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -6202,10 +5741,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_relay_service_connection.metadata['url']
@@ -6257,7 +5796,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a relay service connection by its name.
 
-        Deletes a relay service connection by its name.
+        Description for Deletes a relay service connection by its name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6273,7 +5812,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_relay_service_connection.metadata['url']
@@ -6303,9 +5843,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -6317,8 +5855,8 @@ class WebAppsOperations(object):
         """Creates a new hybrid connection configuration (PUT), or updates an
         existing one (PATCH).
 
-        Creates a new hybrid connection configuration (PUT), or updates an
-        existing one (PATCH).
+        Description for Creates a new hybrid connection configuration (PUT), or
+        updates an existing one (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6330,7 +5868,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Details of the hybrid connection
          configuration.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -6338,10 +5876,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_relay_service_connection.metadata['url']
@@ -6393,7 +5931,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets all scale-out instances of an app.
 
-        Gets all scale-out instances of an app.
+        Description for Gets all scale-out instances of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6407,9 +5945,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteInstance
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteInstancePaged[~azure.mgmt.web.v2018_02_01.models.SiteInstance]
+         ~azure.mgmt.web.v2019_08_01.models.SiteInstancePaged[~azure.mgmt.web.v2019_08_01.models.SiteInstance]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -6463,11 +6001,77 @@ class WebAppsOperations(object):
         return deserialized
     list_instance_identifiers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances'}
 
+    def get_instance_info(
+            self, resource_group_name, name, instance_id, custom_headers=None, raw=False, **operation_config):
+        """Gets all scale-out instances of an app.
+
+        Description for Gets all scale-out instances of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param instance_id:
+        :type instance_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WebSiteInstanceStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.WebSiteInstanceStatus or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_instance_info.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('WebSiteInstanceStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_instance_info.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}'}
+
     def get_instance_ms_deploy_status(
             self, resource_group_name, name, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get the status of the last MSDeploy operation.
 
-        Get the status of the last MSDeploy operation.
+        Description for Get the status of the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6482,10 +6086,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_ms_deploy_status.metadata['url']
@@ -6565,9 +6169,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -6584,7 +6186,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, instance_id, ms_deploy, custom_headers=None, raw=False, polling=True, **operation_config):
         """Invoke the MSDeploy web app extension.
 
-        Invoke the MSDeploy web app extension.
+        Description for Invoke the MSDeploy web app extension.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6594,7 +6196,7 @@ class WebAppsOperations(object):
         :param instance_id: ID of web app instance.
         :type instance_id: str
         :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: ~azure.mgmt.web.v2018_02_01.models.MSDeploy
+        :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -6603,10 +6205,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus or
          ClientRawResponse<MSDeployStatus> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_instance_ms_deploy_operation_initial(
             resource_group_name=resource_group_name,
@@ -6640,7 +6243,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get the MSDeploy Log for the last MSDeploy operation.
 
-        Get the MSDeploy Log for the last MSDeploy operation.
+        Description for Get the MSDeploy Log for the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6655,9 +6258,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployLog or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployLog or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_ms_deploy_log.metadata['url']
@@ -6688,9 +6292,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -6708,8 +6310,8 @@ class WebAppsOperations(object):
         """Get list of processes for a web site, or a deployment slot, or for a
         specific scaled-out instance in a web site.
 
-        Get list of processes for a web site, or a deployment slot, or for a
-        specific scaled-out instance in a web site.
+        Description for Get list of processes for a web site, or a deployment
+        slot, or for a specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6727,8 +6329,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -6770,9 +6373,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -6790,8 +6391,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6810,9 +6411,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process.metadata['url']
@@ -6844,9 +6446,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -6864,8 +6464,8 @@ class WebAppsOperations(object):
         """Terminate a process by its ID for a web site, or a deployment slot, or
         specific scaled-out instance in a web site.
 
-        Terminate a process by its ID for a web site, or a deployment slot, or
-        specific scaled-out instance in a web site.
+        Description for Terminate a process by its ID for a web site, or a
+        deployment slot, or specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6885,7 +6485,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_instance_process.metadata['url']
@@ -6916,9 +6517,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -6930,8 +6529,8 @@ class WebAppsOperations(object):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
-        Get a memory dump of a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for Get a memory dump of a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -6956,7 +6555,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process_dump.metadata['url']
@@ -6988,9 +6588,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = self._client.stream_download(response, callback)
 
@@ -7006,8 +6604,8 @@ class WebAppsOperations(object):
         """List module information for a process by its ID for a specific
         scaled-out instance in a web site.
 
-        List module information for a process by its ID for a specific
-        scaled-out instance in a web site.
+        Description for List module information for a process by its ID for a
+        specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7027,8 +6625,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessModuleInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -7071,9 +6670,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -7091,8 +6688,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7113,9 +6710,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessModuleInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process_module.metadata['url']
@@ -7148,9 +6746,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -7168,8 +6764,8 @@ class WebAppsOperations(object):
         """List the threads in a process by its ID for a specific scaled-out
         instance in a web site.
 
-        List the threads in a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for List the threads in a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7189,8 +6785,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessThreadInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -7233,9 +6830,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -7248,90 +6843,13 @@ class WebAppsOperations(object):
         return deserialized
     list_instance_process_threads.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/processes/{processId}/threads'}
 
-    def get_instance_process_thread(
-            self, resource_group_name, name, process_id, thread_id, instance_id, custom_headers=None, raw=False, **operation_config):
-        """Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param process_id: PID.
-        :type process_id: str
-        :param thread_id: TID.
-        :type thread_id: str
-        :param instance_id: ID of a specific scaled-out instance. This is the
-         value of the name property in the JSON response from "GET
-         api/sites/{siteName}/instances".
-        :type instance_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ProcessThreadInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_instance_process_thread.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'processId': self._serialize.url("process_id", process_id, 'str'),
-            'threadId': self._serialize.url("thread_id", thread_id, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ProcessThreadInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_instance_process_thread.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/processes/{processId}/threads/{threadId}'}
-
     def is_cloneable(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Shows whether an app can be cloned to another resource group or
         subscription.
 
-        Shows whether an app can be cloned to another resource group or
-        subscription.
+        Description for Shows whether an app can be cloned to another resource
+        group or subscription.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7344,10 +6862,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteCloneability or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteCloneability or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteCloneability or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.is_cloneable.metadata['url']
@@ -7390,11 +6908,86 @@ class WebAppsOperations(object):
         return deserialized
     is_cloneable.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/iscloneable'}
 
+    def list_site_backups(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Gets existing backups of an app.
+
+        Description for Gets existing backups of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of BackupItem
+        :rtype:
+         ~azure.mgmt.web.v2019_08_01.models.BackupItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItem]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_site_backups.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.BackupItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_site_backups.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/listbackups'}
+
     def list_sync_function_triggers(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """This is to allow calling via powershell and ARM template.
 
-        This is to allow calling via powershell and ARM template.
+        Description for This is to allow calling via powershell and ARM
+        template.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7407,10 +7000,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionSecrets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionSecrets or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_sync_function_triggers.metadata['url']
@@ -7452,169 +7045,6 @@ class WebAppsOperations(object):
 
         return deserialized
     list_sync_function_triggers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/listsyncfunctiontriggerstatus'}
-
-    def list_metric_definitions(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets all metric definitions of an app (or deployment slot, if
-        specified).
-
-        Gets all metric definitions of an app (or deployment slot, if
-        specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetricDefinition
-        :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metric_definitions.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metricdefinitions'}
-
-    def list_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets performance metrics of an app (or deployment slot, if specified).
-
-        Gets performance metrics of an app (or deployment slot, if specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param details: Specify "true" to include metric details in the
-         response. It is "false" by default.
-        :type details: bool
-        :param filter: Return only metrics specified in the filter (using
-         OData syntax). For example: $filter=(name.value eq 'Metric1' or
-         name.value eq 'Metric2') and startTime eq 2014-01-01T00:00:00Z and
-         endTime eq 2014-12-31T23:59:59Z and timeGrain eq
-         duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metrics.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metrics'}
 
 
     def _migrate_storage_initial(
@@ -7669,7 +7099,7 @@ class WebAppsOperations(object):
             self, subscription_name, resource_group_name, name, migration_options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores a web app.
 
-        Restores a web app.
+        Description for Restores a web app.
 
         :param subscription_name: Azure subscription.
         :type subscription_name: str
@@ -7680,7 +7110,7 @@ class WebAppsOperations(object):
         :type name: str
         :param migration_options: Migration migrationOptions.
         :type migration_options:
-         ~azure.mgmt.web.v2018_02_01.models.StorageMigrationOptions
+         ~azure.mgmt.web.v2019_08_01.models.StorageMigrationOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -7690,11 +7120,11 @@ class WebAppsOperations(object):
          StorageMigrationResponse or
          ClientRawResponse<StorageMigrationResponse> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.StorageMigrationResponse]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.StorageMigrationResponse]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.StorageMigrationResponse]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.StorageMigrationResponse]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._migrate_storage_initial(
             subscription_name=subscription_name,
@@ -7776,7 +7206,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, migration_request_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Migrates a local (in-app) MySql database to a remote MySql database.
 
-        Migrates a local (in-app) MySql database to a remote MySql database.
+        Description for Migrates a local (in-app) MySql database to a remote
+        MySql database.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7785,7 +7216,7 @@ class WebAppsOperations(object):
         :type name: str
         :param migration_request_envelope: MySql migration options.
         :type migration_request_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.MigrateMySqlRequest
+         ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -7794,11 +7225,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Operation or
          ClientRawResponse<Operation> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.Operation]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.Operation]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.Operation]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.Operation]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._migrate_my_sql_initial(
             resource_group_name=resource_group_name,
@@ -7832,8 +7263,8 @@ class WebAppsOperations(object):
         """Returns the status of MySql in app migration, if one is active, and
         whether or not MySql in app is enabled.
 
-        Returns the status of MySql in app migration, if one is active, and
-        whether or not MySql in app is enabled.
+        Description for Returns the status of MySql in app migration, if one is
+        active, and whether or not MySql in app is enabled.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7846,10 +7277,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MigrateMySqlStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MigrateMySqlStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_migrate_my_sql_status.metadata['url']
@@ -7896,7 +7327,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets a Swift Virtual Network connection.
 
-        Gets a Swift Virtual Network connection.
+        Description for Gets a Swift Virtual Network connection.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -7909,10 +7340,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_swift_virtual_network_connection.metadata['url']
@@ -7962,9 +7393,10 @@ class WebAppsOperations(object):
         that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
-        Integrates this Web App with a Virtual Network. This requires that 1)
-        "swiftSupported" is true when doing a GET against this resource, and 2)
-        that the target Subnet has already been delegated, and is not
+        Description for Integrates this Web App with a Virtual Network. This
+        requires that 1) "swiftSupported" is true when doing a GET against this
+        resource, and 2) that the target Subnet has already been delegated, and
+        is not
         in use by another App Service Plan other than the one this App is in.
 
         :param resource_group_name: Name of the resource group to which the
@@ -7975,17 +7407,17 @@ class WebAppsOperations(object):
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork
+         ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_swift_virtual_network_connection.metadata['url']
@@ -8037,8 +7469,8 @@ class WebAppsOperations(object):
         """Deletes a Swift Virtual Network connection from an app (or deployment
         slot).
 
-        Deletes a Swift Virtual Network connection from an app (or deployment
-        slot).
+        Description for Deletes a Swift Virtual Network connection from an app
+        (or deployment slot).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8052,7 +7484,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_swift_virtual_network.metadata['url']
@@ -8081,9 +7514,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -8097,9 +7528,10 @@ class WebAppsOperations(object):
         that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
-        Integrates this Web App with a Virtual Network. This requires that 1)
-        "swiftSupported" is true when doing a GET against this resource, and 2)
-        that the target Subnet has already been delegated, and is not
+        Description for Integrates this Web App with a Virtual Network. This
+        requires that 1) "swiftSupported" is true when doing a GET against this
+        resource, and 2) that the target Subnet has already been delegated, and
+        is not
         in use by another App Service Plan other than the one this App is in.
 
         :param resource_group_name: Name of the resource group to which the
@@ -8110,17 +7542,17 @@ class WebAppsOperations(object):
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork
+         ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_swift_virtual_network_connection.metadata['url']
@@ -8172,8 +7604,8 @@ class WebAppsOperations(object):
         """Gets all network features used by the app (or deployment slot, if
         specified).
 
-        Gets all network features used by the app (or deployment slot, if
-        specified).
+        Description for Gets all network features used by the app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8189,9 +7621,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: NetworkFeatures or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.NetworkFeatures or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.NetworkFeatures or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_network_features.metadata['url']
@@ -8222,9 +7655,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -8242,8 +7673,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8258,10 +7689,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_trace_operation.metadata['url']
@@ -8311,7 +7742,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, **operation_config):
         """Start capturing network packets for the site (To be deprecated).
 
-        Start capturing network packets for the site (To be deprecated).
+        Description for Start capturing network packets for the site (To be
+        deprecated).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8332,7 +7764,7 @@ class WebAppsOperations(object):
         :return: str or ClientRawResponse if raw=true
         :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start_web_site_network_trace.metadata['url']
@@ -8437,7 +7869,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Start capturing network packets for the site.
 
-        Start capturing network packets for the site.
+        Description for Start capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8458,11 +7890,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns list or
          ClientRawResponse<list> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._start_web_site_network_trace_operation_initial(
             resource_group_name=resource_group_name,
@@ -8497,7 +7929,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Stop ongoing capturing network packets for the site.
 
-        Stop ongoing capturing network packets for the site.
+        Description for Stop ongoing capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8511,7 +7943,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_web_site_network_trace.metadata['url']
@@ -8540,9 +7973,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -8554,8 +7985,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8570,10 +8001,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_traces.metadata['url']
@@ -8622,8 +8053,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8638,10 +8069,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_trace_operation_v2.metadata['url']
@@ -8692,8 +8123,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8708,10 +8139,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_traces_v2.metadata['url']
@@ -8760,8 +8191,8 @@ class WebAppsOperations(object):
         """Generates a new publishing password for an app (or deployment slot, if
         specified).
 
-        Generates a new publishing password for an app (or deployment slot, if
-        specified).
+        Description for Generates a new publishing password for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8775,7 +8206,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.generate_new_site_publishing_password.metadata['url']
@@ -8804,9 +8236,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -8817,7 +8247,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets perfmon counters for web app.
 
-        Gets perfmon counters for web app.
+        Description for Gets perfmon counters for web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8836,9 +8266,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PerfMonResponse
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.PerfMonResponsePaged[~azure.mgmt.web.v2018_02_01.models.PerfMonResponse]
+         ~azure.mgmt.web.v2019_08_01.models.PerfMonResponsePaged[~azure.mgmt.web.v2019_08_01.models.PerfMonResponse]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -8898,7 +8328,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets web app's event logs.
 
-        Gets web app's event logs.
+        Description for Gets web app's event logs.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8911,10 +8341,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SitePhpErrorLogFlag or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SitePhpErrorLogFlag or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SitePhpErrorLogFlag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_php_error_log_flag.metadata['url']
@@ -8961,7 +8391,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the premier add-ons of an app.
 
-        Gets the premier add-ons of an app.
+        Description for Gets the premier add-ons of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -8974,10 +8404,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_premier_add_ons.metadata['url']
@@ -9024,7 +8454,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, custom_headers=None, raw=False, **operation_config):
         """Gets a named add-on of an app.
 
-        Gets a named add-on of an app.
+        Description for Gets a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9039,10 +8469,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_premier_add_on.metadata['url']
@@ -9090,7 +8520,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, premier_add_on, custom_headers=None, raw=False, **operation_config):
         """Updates a named add-on of an app.
 
-        Updates a named add-on of an app.
+        Description for Updates a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9101,17 +8531,17 @@ class WebAppsOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
-        :type premier_add_on: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn
+        :type premier_add_on: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.add_premier_add_on.metadata['url']
@@ -9163,7 +8593,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, custom_headers=None, raw=False, **operation_config):
         """Delete a premier add-on from an app.
 
-        Delete a premier add-on from an app.
+        Description for Delete a premier add-on from an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9179,7 +8609,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_premier_add_on.metadata['url']
@@ -9209,9 +8640,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -9222,7 +8651,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, premier_add_on, custom_headers=None, raw=False, **operation_config):
         """Updates a named add-on of an app.
 
-        Updates a named add-on of an app.
+        Description for Updates a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9234,17 +8663,17 @@ class WebAppsOperations(object):
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
         :type premier_add_on:
-         ~azure.mgmt.web.v2018_02_01.models.PremierAddOnPatchResource
+         ~azure.mgmt.web.v2019_08_01.models.PremierAddOnPatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_premier_add_on.metadata['url']
@@ -9297,8 +8726,8 @@ class WebAppsOperations(object):
         """Gets data around private site access enablement and authorized Virtual
         Networks that can access the site.
 
-        Gets data around private site access enablement and authorized Virtual
-        Networks that can access the site.
+        Description for Gets data around private site access enablement and
+        authorized Virtual Networks that can access the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9311,10 +8740,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateAccess or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_private_access.metadata['url']
@@ -9362,8 +8791,8 @@ class WebAppsOperations(object):
         """Sets data around private site access enablement and authorized Virtual
         Networks that can access the site.
 
-        Sets data around private site access enablement and authorized Virtual
-        Networks that can access the site.
+        Description for Sets data around private site access enablement and
+        authorized Virtual Networks that can access the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9371,17 +8800,17 @@ class WebAppsOperations(object):
         :param name: The name of the web app.
         :type name: str
         :param access: The information for the private access
-        :type access: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess
+        :type access: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateAccess or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.put_private_access_vnet.metadata['url']
@@ -9433,8 +8862,8 @@ class WebAppsOperations(object):
         """Get list of processes for a web site, or a deployment slot, or for a
         specific scaled-out instance in a web site.
 
-        Get list of processes for a web site, or a deployment slot, or for a
-        specific scaled-out instance in a web site.
+        Description for Get list of processes for a web site, or a deployment
+        slot, or for a specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9448,8 +8877,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -9490,9 +8920,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -9510,8 +8938,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9526,9 +8954,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process.metadata['url']
@@ -9559,9 +8988,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -9579,8 +9006,8 @@ class WebAppsOperations(object):
         """Terminate a process by its ID for a web site, or a deployment slot, or
         specific scaled-out instance in a web site.
 
-        Terminate a process by its ID for a web site, or a deployment slot, or
-        specific scaled-out instance in a web site.
+        Description for Terminate a process by its ID for a web site, or a
+        deployment slot, or specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9596,7 +9023,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_process.metadata['url']
@@ -9626,9 +9054,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -9640,8 +9066,8 @@ class WebAppsOperations(object):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
-        Get a memory dump of a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for Get a memory dump of a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9662,7 +9088,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process_dump.metadata['url']
@@ -9693,9 +9120,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = self._client.stream_download(response, callback)
 
@@ -9711,8 +9136,8 @@ class WebAppsOperations(object):
         """List module information for a process by its ID for a specific
         scaled-out instance in a web site.
 
-        List module information for a process by its ID for a specific
-        scaled-out instance in a web site.
+        Description for List module information for a process by its ID for a
+        specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9728,8 +9153,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessModuleInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -9771,9 +9197,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -9791,8 +9215,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9809,9 +9233,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessModuleInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process_module.metadata['url']
@@ -9843,9 +9268,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -9863,8 +9286,8 @@ class WebAppsOperations(object):
         """List the threads in a process by its ID for a specific scaled-out
         instance in a web site.
 
-        List the threads in a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for List the threads in a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -9880,8 +9303,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessThreadInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -9923,9 +9347,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -9938,83 +9360,12 @@ class WebAppsOperations(object):
         return deserialized
     list_process_threads.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/processes/{processId}/threads'}
 
-    def get_process_thread(
-            self, resource_group_name, name, process_id, thread_id, custom_headers=None, raw=False, **operation_config):
-        """Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param process_id: PID.
-        :type process_id: str
-        :param thread_id: TID.
-        :type thread_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ProcessThreadInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_process_thread.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'processId': self._serialize.url("process_id", process_id, 'str'),
-            'threadId': self._serialize.url("thread_id", thread_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ProcessThreadInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_process_thread.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/processes/{processId}/threads/{threadId}'}
-
     def list_public_certificates(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get public certificates for an app or a deployment slot.
 
-        Get public certificates for an app or a deployment slot.
+        Description for Get public certificates for an app or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10028,9 +9379,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PublicCertificate
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.PublicCertificatePaged[~azure.mgmt.web.v2018_02_01.models.PublicCertificate]
+         ~azure.mgmt.web.v2019_08_01.models.PublicCertificatePaged[~azure.mgmt.web.v2019_08_01.models.PublicCertificate]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -10089,8 +9440,8 @@ class WebAppsOperations(object):
         """Get the named public certificate for an app (or deployment slot, if
         specified).
 
-        Get the named public certificate for an app (or deployment slot, if
-        specified).
+        Description for Get the named public certificate for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10105,10 +9456,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PublicCertificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PublicCertificate or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_public_certificate.metadata['url']
@@ -10156,7 +9507,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, public_certificate_name, public_certificate, custom_headers=None, raw=False, **operation_config):
         """Creates a hostname binding for an app.
 
-        Creates a hostname binding for an app.
+        Description for Creates a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10168,17 +9519,17 @@ class WebAppsOperations(object):
         :param public_certificate: Public certificate details. This is the
          JSON representation of a PublicCertificate object.
         :type public_certificate:
-         ~azure.mgmt.web.v2018_02_01.models.PublicCertificate
+         ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PublicCertificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PublicCertificate or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_public_certificate.metadata['url']
@@ -10230,7 +9581,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, public_certificate_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a hostname binding for an app.
 
-        Deletes a hostname binding for an app.
+        Description for Deletes a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10246,7 +9597,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_public_certificate.metadata['url']
@@ -10276,9 +9628,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10290,8 +9640,8 @@ class WebAppsOperations(object):
         """Gets the publishing profile for an app (or deployment slot, if
         specified).
 
-        Gets the publishing profile for an app (or deployment slot, if
-        specified).
+        Description for Gets the publishing profile for an app (or deployment
+        slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10303,7 +9653,7 @@ class WebAppsOperations(object):
          WebDeploy -- default
          Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
         :type format: str or
-         ~azure.mgmt.web.v2018_02_01.models.PublishingProfileFormat
+         ~azure.mgmt.web.v2019_08_01.models.PublishingProfileFormat
         :param include_disaster_recovery_endpoints: Include the
          DisasterRecover endpoint if true
         :type include_disaster_recovery_endpoints: bool
@@ -10320,7 +9670,7 @@ class WebAppsOperations(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         publishing_profile_options = models.CsmPublishingProfileOptions(format=format, include_disaster_recovery_endpoints=include_disaster_recovery_endpoints)
 
@@ -10372,8 +9722,8 @@ class WebAppsOperations(object):
         """Resets the configuration settings of the current slot if they were
         previously modified by calling the API with POST.
 
-        Resets the configuration settings of the current slot if they were
-        previously modified by calling the API with POST.
+        Description for Resets the configuration settings of the current slot
+        if they were previously modified by calling the API with POST.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10387,7 +9737,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_production_slot_config.metadata['url']
@@ -10416,9 +9767,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10429,7 +9778,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
         """Restarts an app (or deployment slot, if specified).
 
-        Restarts an app (or deployment slot, if specified).
+        Description for Restarts an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10451,7 +9800,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.restart.metadata['url']
@@ -10484,9 +9834,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10527,9 +9875,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10539,7 +9885,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores an app from a backup blob in Azure Storage.
 
-        Restores an app from a backup blob in Azure Storage.
+        Description for Restores an app from a backup blob in Azure Storage.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10547,7 +9893,7 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Information on restore request .
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -10557,7 +9903,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_from_backup_blob_initial(
             resource_group_name=resource_group_name,
@@ -10616,9 +9963,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10628,7 +9973,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, restore_request, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores a deleted web app to this web app.
 
-        Restores a deleted web app to this web app.
+        Description for Restores a deleted web app to this web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10637,7 +9982,7 @@ class WebAppsOperations(object):
         :type name: str
         :param restore_request: Deleted web app restore information.
         :type restore_request:
-         ~azure.mgmt.web.v2018_02_01.models.DeletedAppRestoreRequest
+         ~azure.mgmt.web.v2019_08_01.models.DeletedAppRestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -10647,7 +9992,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_from_deleted_app_initial(
             resource_group_name=resource_group_name,
@@ -10706,9 +10052,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -10718,7 +10062,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, restore_request, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores a web app from a snapshot.
 
-        Restores a web app from a snapshot.
+        Description for Restores a web app from a snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10729,7 +10073,7 @@ class WebAppsOperations(object):
          information can be obtained by calling GetDeletedSites or
          GetSiteSnapshots API.
         :type restore_request:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotRestoreRequest
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotRestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -10739,7 +10083,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_snapshot_initial(
             resource_group_name=resource_group_name,
@@ -10768,7 +10113,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get list of siteextensions for a web site, or a deployment slot.
 
-        Get list of siteextensions for a web site, or a deployment slot.
+        Description for Get list of siteextensions for a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10782,8 +10128,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteExtensionInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfoPaged[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoPaged[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -10824,9 +10171,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -10844,8 +10189,8 @@ class WebAppsOperations(object):
         """Get site extension information by its ID for a web site, or a
         deployment slot.
 
-        Get site extension information by its ID for a web site, or a
-        deployment slot.
+        Description for Get site extension information by its ID for a web
+        site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10860,9 +10205,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteExtensionInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_extension.metadata['url']
@@ -10893,9 +10239,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -10940,9 +10284,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 429]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -10961,7 +10303,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_extension_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Install site extension on a web site, or a deployment slot.
 
-        Install site extension on a web site, or a deployment slot.
+        Description for Install site extension on a web site, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -10978,10 +10321,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteExtensionInfo or
          ClientRawResponse<SiteExtensionInfo> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._install_site_extension_initial(
             resource_group_name=resource_group_name,
@@ -11014,7 +10358,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_extension_id, custom_headers=None, raw=False, **operation_config):
         """Remove a site extension from a web site, or a deployment slot.
 
-        Remove a site extension from a web site, or a deployment slot.
+        Description for Remove a site extension from a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11030,7 +10375,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_site_extension.metadata['url']
@@ -11060,20 +10406,117 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete_site_extension.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{siteExtensionId}'}
 
+
+    def _copy_production_slot_initial(
+            self, resource_group_name, name, target_slot, site_config, custom_headers=None, raw=False, **operation_config):
+        copy_slot_entity = models.CsmCopySlotEntity(target_slot=target_slot, site_config=site_config)
+
+        # Construct URL
+        url = self.copy_production_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(copy_slot_entity, 'CsmCopySlotEntity')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def copy_production_slot(
+            self, resource_group_name, name, target_slot, site_config, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Copies a deployment slot to another deployment slot of an app.
+
+        Description for Copies a deployment slot to another deployment slot of
+        an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param target_slot: Destination deployment slot during copy operation.
+        :type target_slot: str
+        :param site_config: The site object which will be merged with the
+         source slot site
+         to produce new destination slot site object.
+         <code>null</code> to just copy source slot content. Otherwise a
+         <code>Site</code>
+         object with properties to override source slot site.
+        :type site_config: ~azure.mgmt.web.v2019_08_01.models.SiteConfig
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        raw_result = self._copy_production_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            target_slot=target_slot,
+            site_config=site_config,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    copy_production_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slotcopy'}
+
     def list_slots(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets an app's deployment slots.
 
-        Gets an app's deployment slots.
+        Description for Gets an app's deployment slots.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11087,9 +10530,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Site
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SitePaged[~azure.mgmt.web.v2018_02_01.models.Site]
+         ~azure.mgmt.web.v2019_08_01.models.SitePaged[~azure.mgmt.web.v2019_08_01.models.Site]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -11147,7 +10590,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the details of a web, mobile, or API app.
 
-        Gets the details of a web, mobile, or API app.
+        Description for Gets the details of a web, mobile, or API app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11163,9 +10606,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Site or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Site or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_slot.metadata['url']
@@ -11196,9 +10640,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -11267,8 +10709,8 @@ class WebAppsOperations(object):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
+        Description for Creates a new web, mobile, or API app in an existing
+        resource group, or updates an existing app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11278,7 +10720,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_envelope: A JSON representation of the app properties. See
          example.
-        :type site_envelope: ~azure.mgmt.web.v2018_02_01.models.Site
+        :type site_envelope: ~azure.mgmt.web.v2019_08_01.models.Site
         :param slot: Name of the deployment slot to create or update. By
          default, this API attempts to create or modify the production slot.
         :type slot: str
@@ -11290,11 +10732,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns Site or
          ClientRawResponse<Site> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.Site]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.Site]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.Site]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.Site]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_slot_initial(
             resource_group_name=resource_group_name,
@@ -11328,7 +10770,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, delete_metrics=None, delete_empty_server_farm=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a web, mobile, or API app, or one of the deployment slots.
 
-        Deletes a web, mobile, or API app, or one of the deployment slots.
+        Description for Deletes a web, mobile, or API app, or one of the
+        deployment slots.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11351,7 +10794,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_slot.metadata['url']
@@ -11385,9 +10829,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -11399,8 +10841,8 @@ class WebAppsOperations(object):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
+        Description for Creates a new web, mobile, or API app in an existing
+        resource group, or updates an existing app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11411,7 +10853,7 @@ class WebAppsOperations(object):
         :param site_envelope: A JSON representation of the app properties. See
          example.
         :type site_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SitePatchResource
+         ~azure.mgmt.web.v2019_08_01.models.SitePatchResource
         :param slot: Name of the deployment slot to create or update. By
          default, this API attempts to create or modify the production slot.
         :type slot: str
@@ -11421,10 +10863,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Site or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Site or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Site or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_slot.metadata['url']
@@ -11478,7 +10920,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, host_name=None, custom_headers=None, raw=False, **operation_config):
         """Analyze a custom hostname.
 
-        Analyze a custom hostname.
+        Description for Analyze a custom hostname.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11497,10 +10939,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CustomHostnameAnalysisResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.CustomHostnameAnalysisResult or
+         ~azure.mgmt.web.v2019_08_01.models.CustomHostnameAnalysisResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.analyze_custom_hostname_slot.metadata['url']
@@ -11551,8 +10993,8 @@ class WebAppsOperations(object):
         """Applies the configuration settings from the target slot onto the
         current slot.
 
-        Applies the configuration settings from the target slot onto the
-        current slot.
+        Description for Applies the configuration settings from the target slot
+        onto the current slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11574,7 +11016,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -11610,9 +11053,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -11623,7 +11064,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
         """Creates a backup of an app.
 
-        Creates a backup of an app.
+        Description for Creates a backup of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11632,7 +11073,7 @@ class WebAppsOperations(object):
         :type name: str
         :param request: Backup configuration. You can use the JSON response
          from the POST action as input here.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a backup for the production slot.
         :type slot: str
@@ -11642,10 +11083,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.backup_slot.metadata['url']
@@ -11697,7 +11138,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets existing backups of an app.
 
-        Gets existing backups of an app.
+        Description for Gets existing backups of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11714,9 +11155,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BackupItem
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.BackupItemPaged[~azure.mgmt.web.v2018_02_01.models.BackupItem]
+         ~azure.mgmt.web.v2019_08_01.models.BackupItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItem]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -11775,7 +11216,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a backup of an app by its ID.
 
-        Gets a backup of an app by its ID.
+        Description for Gets a backup of an app by its ID.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11793,10 +11234,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_backup_status_slot.metadata['url']
@@ -11845,7 +11286,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
         """Deletes a backup of an app by its ID.
 
-        Deletes a backup of an app by its ID.
+        Description for Deletes a backup of an app by its ID.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11864,7 +11305,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_backup_slot.metadata['url']
@@ -11895,9 +11337,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -11911,10 +11351,10 @@ class WebAppsOperations(object):
         Also can be used to update the SAS URL for the backup if a new URL is
         passed in the request body.
 
-        Gets status of a web app backup that may be in progress, including
-        secrets associated with the backup, such as the Azure Storage SAS URL.
-        Also can be used to update the SAS URL for the backup if a new URL is
-        passed in the request body.
+        Description for Gets status of a web app backup that may be in
+        progress, including secrets associated with the backup, such as the
+        Azure Storage SAS URL. Also can be used to update the SAS URL for the
+        backup if a new URL is passed in the request body.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -11924,7 +11364,7 @@ class WebAppsOperations(object):
         :param backup_id: ID of backup.
         :type backup_id: str
         :param request: Information on backup request.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -11934,10 +11374,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupItem or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupItem or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupItem or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_backup_status_secrets_slot.metadata['url']
@@ -12022,9 +11462,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -12035,8 +11473,8 @@ class WebAppsOperations(object):
         """Restores a specific backup to another app (or deployment slot, if
         specified).
 
-        Restores a specific backup to another app (or deployment slot, if
-        specified).
+        Description for Restores a specific backup to another app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12046,7 +11484,7 @@ class WebAppsOperations(object):
         :param backup_id: ID of the backup.
         :type backup_id: str
         :param request: Information on restore request .
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will restore a backup of the production slot.
         :type slot: str
@@ -12059,7 +11497,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_slot_initial(
             resource_group_name=resource_group_name,
@@ -12090,7 +11529,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List the configurations of an app.
 
-        List the configurations of an app.
+        Description for List the configurations of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12107,9 +11546,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteConfigResource
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResourcePaged[~azure.mgmt.web.v2018_02_01.models.SiteConfigResource]
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResourcePaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -12168,7 +11607,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the application settings of an app.
 
-        Replaces the application settings of an app.
+        Description for Replaces the application settings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12188,10 +11627,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         app_settings = models.StringDictionary(kind=kind, properties=properties)
 
@@ -12245,7 +11684,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the application settings of an app.
 
-        Gets the application settings of an app.
+        Description for Gets the application settings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12261,10 +11700,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_application_settings_slot.metadata['url']
@@ -12313,8 +11752,8 @@ class WebAppsOperations(object):
         """Updates the Authentication / Authorization settings associated with web
         app.
 
-        Updates the Authentication / Authorization settings associated with web
-        app.
+        Description for Updates the Authentication / Authorization settings
+        associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12323,7 +11762,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_auth_settings: Auth settings associated with web app.
         :type site_auth_settings:
-         ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings
+         ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -12333,10 +11772,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteAuthSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_auth_settings_slot.metadata['url']
@@ -12388,7 +11827,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the Authentication/Authorization settings of an app.
 
-        Gets the Authentication/Authorization settings of an app.
+        Description for Gets the Authentication/Authorization settings of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12404,10 +11844,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteAuthSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteAuthSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteAuthSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_auth_settings_slot.metadata['url']
@@ -12455,7 +11895,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates the Azure storage account configurations of an app.
 
-        Updates the Azure storage account configurations of an app.
+        Description for Updates the Azure storage account configurations of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12470,7 +11911,7 @@ class WebAppsOperations(object):
         :type kind: str
         :param properties: Azure storage accounts.
         :type properties: dict[str,
-         ~azure.mgmt.web.v2018_02_01.models.AzureStorageInfoValue]
+         ~azure.mgmt.web.v2019_08_01.models.AzureStorageInfoValue]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -12479,10 +11920,10 @@ class WebAppsOperations(object):
         :return: AzureStoragePropertyDictionaryResource or ClientRawResponse
          if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.AzureStoragePropertyDictionaryResource
+         ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         azure_storage_accounts = models.AzureStoragePropertyDictionaryResource(kind=kind, properties=properties)
 
@@ -12536,7 +11977,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the Azure storage account configurations of an app.
 
-        Gets the Azure storage account configurations of an app.
+        Description for Gets the Azure storage account configurations of an
+        app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12555,10 +11997,10 @@ class WebAppsOperations(object):
         :return: AzureStoragePropertyDictionaryResource or ClientRawResponse
          if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.AzureStoragePropertyDictionaryResource
+         ~azure.mgmt.web.v2019_08_01.models.AzureStoragePropertyDictionaryResource
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_azure_storage_accounts_slot.metadata['url']
@@ -12606,7 +12048,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the backup configuration of an app.
 
-        Updates the backup configuration of an app.
+        Description for Updates the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12614,7 +12056,7 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Edited backup configuration.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.BackupRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.BackupRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the backup configuration for the production slot.
         :type slot: str
@@ -12624,10 +12066,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_backup_configuration_slot.metadata['url']
@@ -12679,7 +12121,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Deletes the backup configuration of an app.
 
-        Deletes the backup configuration of an app.
+        Description for Deletes the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12696,7 +12138,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_backup_configuration_slot.metadata['url']
@@ -12726,9 +12169,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -12739,7 +12180,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the backup configuration of an app.
 
-        Gets the backup configuration of an app.
+        Description for Gets the backup configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12755,10 +12196,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: BackupRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.BackupRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.BackupRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_backup_configuration_slot.metadata['url']
@@ -12806,7 +12247,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the connection strings of an app.
 
-        Replaces the connection strings of an app.
+        Description for Replaces the connection strings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12820,17 +12261,17 @@ class WebAppsOperations(object):
         :type kind: str
         :param properties: Connection strings.
         :type properties: dict[str,
-         ~azure.mgmt.web.v2018_02_01.models.ConnStringValueTypePair]
+         ~azure.mgmt.web.v2019_08_01.models.ConnStringValueTypePair]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionStringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ConnectionStringDictionary
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
 
@@ -12884,7 +12325,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the connection strings of an app.
 
-        Gets the connection strings of an app.
+        Description for Gets the connection strings of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12900,10 +12341,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ConnectionStringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ConnectionStringDictionary
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ConnectionStringDictionary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_connection_strings_slot.metadata['url']
@@ -12951,7 +12392,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the logging configuration of an app.
 
-        Gets the logging configuration of an app.
+        Description for Gets the logging configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -12967,10 +12408,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteLogsConfig or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_diagnostic_logs_configuration_slot.metadata['url']
@@ -13018,7 +12459,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_logs_config, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the logging configuration of an app.
 
-        Updates the logging configuration of an app.
+        Description for Updates the logging configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13028,7 +12469,7 @@ class WebAppsOperations(object):
         :param site_logs_config: A SiteLogsConfig JSON object that contains
          the logging configuration to change in the "properties" property.
         :type site_logs_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig
+         ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the logging configuration for the production slot.
         :type slot: str
@@ -13038,10 +12479,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteLogsConfig or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteLogsConfig or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteLogsConfig or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_diagnostic_logs_config_slot.metadata['url']
@@ -13093,7 +12534,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, kind=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Replaces the metadata of an app.
 
-        Replaces the metadata of an app.
+        Description for Replaces the metadata of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13113,10 +12554,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         metadata = models.StringDictionary(kind=kind, properties=properties)
 
@@ -13170,7 +12611,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the metadata of an app.
 
-        Gets the metadata of an app.
+        Description for Gets the metadata of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13186,10 +12627,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_metadata_slot.metadata['url']
@@ -13282,7 +12723,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gets the Git/FTP publishing credentials of an app.
 
-        Gets the Git/FTP publishing credentials of an app.
+        Description for Gets the Git/FTP publishing credentials of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13300,11 +12741,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns User or
          ClientRawResponse<User> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.User]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.User]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.User]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.User]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._list_publishing_credentials_slot_initial(
             resource_group_name=resource_group_name,
@@ -13337,7 +12778,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, push_settings, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the Push settings associated with web app.
 
-        Updates the Push settings associated with web app.
+        Description for Updates the Push settings associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13345,7 +12786,7 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param push_settings: Push settings associated with web app.
-        :type push_settings: ~azure.mgmt.web.v2018_02_01.models.PushSettings
+        :type push_settings: ~azure.mgmt.web.v2019_08_01.models.PushSettings
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -13355,10 +12796,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PushSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PushSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_site_push_settings_slot.metadata['url']
@@ -13410,7 +12851,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the Push settings associated with web app.
 
-        Gets the Push settings associated with web app.
+        Description for Gets the Push settings associated with web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13426,10 +12867,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PushSettings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PushSettings or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PushSettings or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_site_push_settings_slot.metadata['url']
@@ -13478,8 +12919,9 @@ class WebAppsOperations(object):
         """Gets the configuration of an app, such as platform version and bitness,
         default documents, virtual applications, Always On, etc.
 
-        Gets the configuration of an app, such as platform version and bitness,
-        default documents, virtual applications, Always On, etc.
+        Description for Gets the configuration of an app, such as platform
+        version and bitness, default documents, virtual applications, Always
+        On, etc.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13495,10 +12937,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_configuration_slot.metadata['url']
@@ -13546,7 +12988,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the configuration of an app.
 
-        Updates the configuration of an app.
+        Description for Updates the configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13556,7 +12998,7 @@ class WebAppsOperations(object):
         :param site_config: JSON representation of a SiteConfig object. See
          example.
         :type site_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update configuration for the production slot.
         :type slot: str
@@ -13566,10 +13008,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_configuration_slot.metadata['url']
@@ -13621,7 +13063,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the configuration of an app.
 
-        Updates the configuration of an app.
+        Description for Updates the configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13631,7 +13073,7 @@ class WebAppsOperations(object):
         :param site_config: JSON representation of a SiteConfig object. See
          example.
         :type site_config:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update configuration for the production slot.
         :type slot: str
@@ -13641,10 +13083,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_configuration_slot.metadata['url']
@@ -13697,8 +13139,9 @@ class WebAppsOperations(object):
         """Gets a list of web app configuration snapshots identifiers. Each
         element of the list contains a timestamp and the ID of the snapshot.
 
-        Gets a list of web app configuration snapshots identifiers. Each
-        element of the list contains a timestamp and the ID of the snapshot.
+        Description for Gets a list of web app configuration snapshots
+        identifiers. Each element of the list contains a timestamp and the ID
+        of the snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13715,9 +13158,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteConfigurationSnapshotInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.v2018_02_01.models.SiteConfigurationSnapshotInfo]
+         ~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.v2019_08_01.models.SiteConfigurationSnapshotInfo]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -13777,8 +13220,8 @@ class WebAppsOperations(object):
         """Gets a snapshot of the configuration of an app at a previous point in
         time.
 
-        Gets a snapshot of the configuration of an app at a previous point in
-        time.
+        Description for Gets a snapshot of the configuration of an app at a
+        previous point in time.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13796,10 +13239,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteConfigResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteConfigResource or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteConfigResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_configuration_snapshot_slot.metadata['url']
@@ -13848,7 +13291,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, snapshot_id, slot, custom_headers=None, raw=False, **operation_config):
         """Reverts the configuration of an app to a previous snapshot.
 
-        Reverts the configuration of an app to a previous snapshot.
+        Description for Reverts the configuration of an app to a previous
+        snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13867,7 +13311,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.recover_site_configuration_snapshot_slot.metadata['url']
@@ -13898,9 +13343,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -13911,7 +13354,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the last lines of docker logs for the given site.
 
-        Gets the last lines of docker logs for the given site.
+        Description for Gets the last lines of docker logs for the given site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -13981,7 +13424,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the ZIP archived docker log files for the given site.
 
-        Gets the ZIP archived docker log files for the given site.
+        Description for Gets the ZIP archived docker log files for the given
+        site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14051,7 +13495,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List continuous web jobs for an app, or a deployment slot.
 
-        List continuous web jobs for an app, or a deployment slot.
+        Description for List continuous web jobs for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14068,9 +13513,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ContinuousWebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ContinuousWebJobPaged[~azure.mgmt.web.v2018_02_01.models.ContinuousWebJob]
+         ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJobPaged[~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -14129,7 +13574,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
-        Gets a continuous web job by its ID for an app, or a deployment slot.
+        Description for Gets a continuous web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14147,9 +13593,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ContinuousWebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ContinuousWebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ContinuousWebJob or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_continuous_web_job_slot.metadata['url']
@@ -14181,9 +13628,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -14200,7 +13645,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
-        Delete a continuous web job by its ID for an app, or a deployment slot.
+        Description for Delete a continuous web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14219,7 +13665,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_continuous_web_job_slot.metadata['url']
@@ -14250,9 +13697,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -14263,7 +13708,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Start a continuous web job for an app, or a deployment slot.
 
-        Start a continuous web job for an app, or a deployment slot.
+        Description for Start a continuous web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14282,7 +13728,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start_continuous_web_job_slot.metadata['url']
@@ -14313,9 +13760,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -14326,7 +13771,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Stop a continuous web job for an app, or a deployment slot.
 
-        Stop a continuous web job for an app, or a deployment slot.
+        Description for Stop a continuous web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14345,7 +13791,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_continuous_web_job_slot.metadata['url']
@@ -14376,9 +13823,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -14389,7 +13834,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List deployments for an app, or a deployment slot.
 
-        List deployments for an app, or a deployment slot.
+        Description for List deployments for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14406,9 +13851,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Deployment
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.DeploymentPaged[~azure.mgmt.web.v2018_02_01.models.Deployment]
+         ~azure.mgmt.web.v2019_08_01.models.DeploymentPaged[~azure.mgmt.web.v2019_08_01.models.Deployment]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -14467,7 +13912,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
         """Get a deployment by its ID for an app, or a deployment slot.
 
-        Get a deployment by its ID for an app, or a deployment slot.
+        Description for Get a deployment by its ID for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14485,10 +13931,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_deployment_slot.metadata['url']
@@ -14537,7 +13983,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, slot, deployment, custom_headers=None, raw=False, **operation_config):
         """Create a deployment for an app, or a deployment slot.
 
-        Create a deployment for an app, or a deployment slot.
+        Description for Create a deployment for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14550,17 +13996,17 @@ class WebAppsOperations(object):
          the API creates a deployment for the production slot.
         :type slot: str
         :param deployment: Deployment details.
-        :type deployment: ~azure.mgmt.web.v2018_02_01.models.Deployment
+        :type deployment: ~azure.mgmt.web.v2019_08_01.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_deployment_slot.metadata['url']
@@ -14613,7 +14059,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a deployment by its ID for an app, or a deployment slot.
 
-        Delete a deployment by its ID for an app, or a deployment slot.
+        Description for Delete a deployment by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14632,7 +14079,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_deployment_slot.metadata['url']
@@ -14663,9 +14111,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -14677,8 +14123,8 @@ class WebAppsOperations(object):
         """List deployment log for specific deployment for an app, or a deployment
         slot.
 
-        List deployment log for specific deployment for an app, or a deployment
-        slot.
+        Description for List deployment log for specific deployment for an app,
+        or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14698,10 +14144,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Deployment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Deployment or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Deployment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_deployment_log_slot.metadata['url']
@@ -14752,9 +14198,9 @@ class WebAppsOperations(object):
         Azure storage. Use this to get information about the databases stored
         in a backup.
 
-        Discovers an existing app backup that can be restored from a blob in
-        Azure storage. Use this to get information about the databases stored
-        in a backup.
+        Description for Discovers an existing app backup that can be restored
+        from a blob in Azure storage. Use this to get information about the
+        databases stored in a backup.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14763,7 +14209,7 @@ class WebAppsOperations(object):
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage
          URL and blog name for discovery of backup.
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will perform discovery for the production slot.
         :type slot: str
@@ -14773,10 +14219,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RestoreRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.discover_backup_slot.metadata['url']
@@ -14828,7 +14274,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Lists ownership identifiers for domain associated with web app.
 
-        Lists ownership identifiers for domain associated with web app.
+        Description for Lists ownership identifiers for domain associated with
+        web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14845,9 +14292,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Identifier
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.IdentifierPaged[~azure.mgmt.web.v2018_02_01.models.Identifier]
+         ~azure.mgmt.web.v2019_08_01.models.IdentifierPaged[~azure.mgmt.web.v2019_08_01.models.Identifier]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -14906,7 +14353,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, domain_ownership_identifier_name, slot, custom_headers=None, raw=False, **operation_config):
         """Get domain ownership identifier for web app.
 
-        Get domain ownership identifier for web app.
+        Description for Get domain ownership identifier for web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14925,10 +14372,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_domain_ownership_identifier_slot.metadata['url']
@@ -14974,12 +14421,12 @@ class WebAppsOperations(object):
     get_domain_ownership_identifier_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/domainOwnershipIdentifiers/{domainOwnershipIdentifierName}'}
 
     def create_or_update_domain_ownership_identifier_slot(
-            self, resource_group_name, name, domain_ownership_identifier_name, slot, kind=None, identifier_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, domain_ownership_identifier_name, slot, kind=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Creates a domain ownership identifier for web app, or updates an
         existing ownership identifier.
 
-        Creates a domain ownership identifier for web app, or updates an
-        existing ownership identifier.
+        Description for Creates a domain ownership identifier for web app, or
+        updates an existing ownership identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -14994,20 +14441,20 @@ class WebAppsOperations(object):
         :type slot: str
         :param kind: Kind of resource.
         :type kind: str
-        :param identifier_id: String representation of the identity.
-        :type identifier_id: str
+        :param value: String representation of the identity.
+        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
-        domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
+        domain_ownership_identifier = models.Identifier(kind=kind, value=value)
 
         # Construct URL
         url = self.create_or_update_domain_ownership_identifier_slot.metadata['url']
@@ -15060,7 +14507,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, domain_ownership_identifier_name, slot, custom_headers=None, raw=False, **operation_config):
         """Deletes a domain ownership identifier for a web app.
 
-        Deletes a domain ownership identifier for a web app.
+        Description for Deletes a domain ownership identifier for a web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15080,7 +14527,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_domain_ownership_identifier_slot.metadata['url']
@@ -15111,9 +14559,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -15121,12 +14567,12 @@ class WebAppsOperations(object):
     delete_domain_ownership_identifier_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/domainOwnershipIdentifiers/{domainOwnershipIdentifierName}'}
 
     def update_domain_ownership_identifier_slot(
-            self, resource_group_name, name, domain_ownership_identifier_name, slot, kind=None, identifier_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, domain_ownership_identifier_name, slot, kind=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Creates a domain ownership identifier for web app, or updates an
         existing ownership identifier.
 
-        Creates a domain ownership identifier for web app, or updates an
-        existing ownership identifier.
+        Description for Creates a domain ownership identifier for web app, or
+        updates an existing ownership identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15141,20 +14587,20 @@ class WebAppsOperations(object):
         :type slot: str
         :param kind: Kind of resource.
         :type kind: str
-        :param identifier_id: String representation of the identity.
-        :type identifier_id: str
+        :param value: String representation of the identity.
+        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Identifier or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.Identifier or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.Identifier or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
-        domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
+        domain_ownership_identifier = models.Identifier(kind=kind, value=value)
 
         # Construct URL
         url = self.update_domain_ownership_identifier_slot.metadata['url']
@@ -15207,7 +14653,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Get the status of the last MSDeploy operation.
 
-        Get the status of the last MSDeploy operation.
+        Description for Get the status of the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15223,10 +14669,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ms_deploy_status_slot.metadata['url']
@@ -15306,9 +14752,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -15325,7 +14769,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, ms_deploy, custom_headers=None, raw=False, polling=True, **operation_config):
         """Invoke the MSDeploy web app extension.
 
-        Invoke the MSDeploy web app extension.
+        Description for Invoke the MSDeploy web app extension.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15336,7 +14780,7 @@ class WebAppsOperations(object):
          to production slot.
         :type slot: str
         :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: ~azure.mgmt.web.v2018_02_01.models.MSDeploy
+        :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -15345,10 +14789,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus or
          ClientRawResponse<MSDeployStatus> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_ms_deploy_operation_slot_initial(
             resource_group_name=resource_group_name,
@@ -15382,7 +14827,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Get the MSDeploy Log for the last MSDeploy operation.
 
-        Get the MSDeploy Log for the last MSDeploy operation.
+        Description for Get the MSDeploy Log for the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15398,9 +14843,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployLog or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployLog or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_ms_deploy_log_slot.metadata['url']
@@ -15431,9 +14877,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -15450,7 +14894,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List the functions for a web site, or a deployment slot.
 
-        List the functions for a web site, or a deployment slot.
+        Description for List the functions for a web site, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15466,8 +14911,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of FunctionEnvelope
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelopePaged[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelopePaged[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -15509,9 +14955,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -15528,7 +14972,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Fetch a short lived token that can be exchanged for a master key.
 
-        Fetch a short lived token that can be exchanged for a master key.
+        Description for Fetch a short lived token that can be exchanged for a
+        master key.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15546,7 +14991,7 @@ class WebAppsOperations(object):
         :return: str or ClientRawResponse if raw=true
         :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_functions_admin_token_slot.metadata['url']
@@ -15594,7 +15039,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
         """Get function information by its ID for web site, or a deployment slot.
 
-        Get function information by its ID for web site, or a deployment slot.
+        Description for Get function information by its ID for web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15611,9 +15057,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionEnvelope or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_function_slot.metadata['url']
@@ -15645,9 +15092,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -15714,7 +15159,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, slot, function_envelope, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create function for web site, or a deployment slot.
 
-        Create function for web site, or a deployment slot.
+        Description for Create function for web site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15727,7 +15172,7 @@ class WebAppsOperations(object):
         :type slot: str
         :param function_envelope: Function details.
         :type function_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope
+         ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -15736,11 +15181,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns FunctionEnvelope or
          ClientRawResponse<FunctionEnvelope> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.FunctionEnvelope]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_instance_function_slot_initial(
             resource_group_name=resource_group_name,
@@ -15775,7 +15220,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a function for web site, or a deployment slot.
 
-        Delete a function for web site, or a deployment slot.
+        Description for Delete a function for web site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -15793,7 +15238,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_instance_function_slot.metadata['url']
@@ -15824,240 +15270,20 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete_instance_function_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}'}
 
-    def create_or_update_function_secret_slot(
-            self, resource_group_name, name, function_name, key_name, slot, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
-        """Add or update a function secret.
-
-        Add or update a function secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: The name of the function.
-        :type function_name: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param name1: Key name
-        :type name1: str
-        :param value: Key value
-        :type value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeyInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        key = models.KeyInfo(name=name1, value=value)
-
-        # Construct URL
-        url = self.create_or_update_function_secret_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(key, 'KeyInfo')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyInfo', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('KeyInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_function_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/keys/{keyName}'}
-
-    def delete_function_secret_slot(
-            self, resource_group_name, name, function_name, key_name, slot, custom_headers=None, raw=False, **operation_config):
-        """Delete a function secret.
-
-        Delete a function secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: The name of the function.
-        :type function_name: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.delete_function_secret_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_function_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/keys/{keyName}'}
-
-    def list_function_keys_slot(
-            self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
-        """Get function keys for a function in a web site, or a deployment slot.
-
-        Get function keys for a function in a web site, or a deployment slot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: Function name.
-        :type function_name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: StringDictionary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_function_keys_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'functionName': self._serialize.url("function_name", function_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('StringDictionary', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_function_keys_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/listkeys'}
-
     def list_function_secrets_slot(
             self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
         """Get function secrets for a function in a web site, or a deployment
         slot.
 
-        Get function secrets for a function in a web site, or a deployment
-        slot.
+        Description for Get function secrets for a function in a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16074,10 +15300,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionSecrets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionSecrets or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_function_secrets_slot.metadata['url']
@@ -16122,341 +15348,11 @@ class WebAppsOperations(object):
         return deserialized
     list_function_secrets_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/listsecrets'}
 
-    def list_host_keys_slot(
-            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Get host secrets for a function app.
-
-        Get host secrets for a function app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: HostKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostKeys or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_host_keys_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('HostKeys', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_host_keys_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/listkeys'}
-
-    def list_sync_status_slot(
-            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """This is to allow calling via powershell and ARM template.
-
-        This is to allow calling via powershell and ARM template.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_sync_status_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    list_sync_status_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/listsyncstatus'}
-
-    def sync_functions_slot(
-            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the management database.
-
-        Syncs function trigger metadata to the management database.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.sync_functions_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    sync_functions_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/sync'}
-
-    def create_or_update_host_secret_slot(
-            self, resource_group_name, name, key_type, key_name, slot, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
-        """Add or update a host level secret.
-
-        Add or update a host level secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param key_type: The type of host key.
-        :type key_type: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param name1: Key name
-        :type name1: str
-        :param value: Key value
-        :type value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeyInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        key = models.KeyInfo(name=name1, value=value)
-
-        # Construct URL
-        url = self.create_or_update_host_secret_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'keyType': self._serialize.url("key_type", key_type, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(key, 'KeyInfo')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyInfo', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('KeyInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create_or_update_host_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/{keyType}/{keyName}'}
-
-    def delete_host_secret_slot(
-            self, resource_group_name, name, key_type, key_name, slot, custom_headers=None, raw=False, **operation_config):
-        """Delete a host level secret.
-
-        Delete a host level secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param key_type: The type of host key.
-        :type key_type: str
-        :param key_name: The name of the key.
-        :type key_name: str
-        :param slot: Name of the deployment slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_host_secret_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'keyType': self._serialize.url("key_type", key_type, 'str'),
-            'keyName': self._serialize.url("key_name", key_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204, 404]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_host_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/{keyType}/{keyName}'}
-
     def list_host_name_bindings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Get hostname bindings for an app or a deployment slot.
 
-        Get hostname bindings for an app or a deployment slot.
+        Description for Get hostname bindings for an app or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16473,9 +15369,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of HostNameBinding
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.HostNameBindingPaged[~azure.mgmt.web.v2018_02_01.models.HostNameBinding]
+         ~azure.mgmt.web.v2019_08_01.models.HostNameBindingPaged[~azure.mgmt.web.v2019_08_01.models.HostNameBinding]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -16535,8 +15431,8 @@ class WebAppsOperations(object):
         """Get the named hostname binding for an app (or deployment slot, if
         specified).
 
-        Get the named hostname binding for an app (or deployment slot, if
-        specified).
+        Description for Get the named hostname binding for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16554,10 +15450,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HostNameBinding or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostNameBinding or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_host_name_binding_slot.metadata['url']
@@ -16606,7 +15502,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, host_name, host_name_binding, slot, custom_headers=None, raw=False, **operation_config):
         """Creates a hostname binding for an app.
 
-        Creates a hostname binding for an app.
+        Description for Creates a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16618,7 +15514,7 @@ class WebAppsOperations(object):
         :param host_name_binding: Binding details. This is the JSON
          representation of a HostNameBinding object.
         :type host_name_binding:
-         ~azure.mgmt.web.v2018_02_01.models.HostNameBinding
+         ~azure.mgmt.web.v2019_08_01.models.HostNameBinding
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a binding for the production slot.
         :type slot: str
@@ -16628,10 +15524,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HostNameBinding or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostNameBinding or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HostNameBinding or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_host_name_binding_slot.metadata['url']
@@ -16684,7 +15580,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, host_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a hostname binding for an app.
 
-        Deletes a hostname binding for an app.
+        Description for Deletes a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16703,7 +15599,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_host_name_binding_slot.metadata['url']
@@ -16734,9 +15631,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -16748,8 +15643,8 @@ class WebAppsOperations(object):
         """Retrieves a specific Service Bus Hybrid Connection used by this Web
         App.
 
-        Retrieves a specific Service Bus Hybrid Connection used by this Web
-        App.
+        Description for Retrieves a specific Service Bus Hybrid Connection used
+        by this Web App.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16768,10 +15663,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hybrid_connection_slot.metadata['url']
@@ -16821,7 +15716,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """Creates a new Hybrid Connection using a Service Bus relay.
 
-        Creates a new Hybrid Connection using a Service Bus relay.
+        Description for Creates a new Hybrid Connection using a Service Bus
+        relay.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16834,7 +15730,7 @@ class WebAppsOperations(object):
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.HybridConnection
+         ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -16843,10 +15739,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_hybrid_connection_slot.metadata['url']
@@ -16900,7 +15796,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, slot, custom_headers=None, raw=False, **operation_config):
         """Removes a Hybrid Connection from this site.
 
-        Removes a Hybrid Connection from this site.
+        Description for Removes a Hybrid Connection from this site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16920,7 +15816,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_hybrid_connection_slot.metadata['url']
@@ -16952,9 +15849,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -16965,7 +15860,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, namespace_name, relay_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """Creates a new Hybrid Connection using a Service Bus relay.
 
-        Creates a new Hybrid Connection using a Service Bus relay.
+        Description for Creates a new Hybrid Connection using a Service Bus
+        relay.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -16978,7 +15874,7 @@ class WebAppsOperations(object):
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.HybridConnection
+         ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -16987,10 +15883,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_hybrid_connection_slot.metadata['url']
@@ -17040,83 +15936,12 @@ class WebAppsOperations(object):
         return deserialized
     update_hybrid_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'}
 
-    def list_hybrid_connection_keys_slot(
-            self, resource_group_name, name, namespace_name, relay_name, slot, custom_headers=None, raw=False, **operation_config):
-        """Gets the send key name and value for a Hybrid Connection.
-
-        Gets the send key name and value for a Hybrid Connection.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: The name of the web app.
-        :type name: str
-        :param namespace_name: The namespace for this hybrid connection.
-        :type namespace_name: str
-        :param relay_name: The relay name for this hybrid connection.
-        :type relay_name: str
-        :param slot: The name of the slot for the web app.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: HybridConnectionKey or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionKey or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_hybrid_connection_keys_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnectionKey', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list_hybrid_connection_keys_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/listKeys'}
-
     def list_hybrid_connections_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
-        Retrieves all Service Bus Hybrid Connections used by this Web App.
+        Description for Retrieves all Service Bus Hybrid Connections used by
+        this Web App.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17131,10 +15956,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: HybridConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_hybrid_connections_slot.metadata['url']
@@ -17183,8 +16008,8 @@ class WebAppsOperations(object):
         """Gets hybrid connections configured for an app (or deployment slot, if
         specified).
 
-        Gets hybrid connections configured for an app (or deployment slot, if
-        specified).
+        Description for Gets hybrid connections configured for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17201,10 +16026,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_relay_service_connections_slot.metadata['url']
@@ -17252,7 +16077,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a hybrid connection configuration by its name.
 
-        Gets a hybrid connection configuration by its name.
+        Description for Gets a hybrid connection configuration by its name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17271,10 +16096,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_relay_service_connection_slot.metadata['url']
@@ -17324,8 +16149,8 @@ class WebAppsOperations(object):
         """Creates a new hybrid connection configuration (PUT), or updates an
         existing one (PATCH).
 
-        Creates a new hybrid connection configuration (PUT), or updates an
-        existing one (PATCH).
+        Description for Creates a new hybrid connection configuration (PUT), or
+        updates an existing one (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17337,7 +16162,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Details of the hybrid connection
          configuration.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create or update a hybrid connection for the production
          slot.
@@ -17349,10 +16174,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_relay_service_connection_slot.metadata['url']
@@ -17405,7 +16230,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
         """Deletes a relay service connection by its name.
 
-        Deletes a relay service connection by its name.
+        Description for Deletes a relay service connection by its name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17424,7 +16249,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_relay_service_connection_slot.metadata['url']
@@ -17455,9 +16281,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -17469,8 +16293,8 @@ class WebAppsOperations(object):
         """Creates a new hybrid connection configuration (PUT), or updates an
         existing one (PATCH).
 
-        Creates a new hybrid connection configuration (PUT), or updates an
-        existing one (PATCH).
+        Description for Creates a new hybrid connection configuration (PUT), or
+        updates an existing one (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17482,7 +16306,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Details of the hybrid connection
          configuration.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create or update a hybrid connection for the production
          slot.
@@ -17494,10 +16318,10 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.v2019_08_01.models.RelayServiceConnectionEntity or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_relay_service_connection_slot.metadata['url']
@@ -17550,7 +16374,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets all scale-out instances of an app.
 
-        Gets all scale-out instances of an app.
+        Description for Gets all scale-out instances of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17567,9 +16391,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteInstance
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteInstancePaged[~azure.mgmt.web.v2018_02_01.models.SiteInstance]
+         ~azure.mgmt.web.v2019_08_01.models.SiteInstancePaged[~azure.mgmt.web.v2019_08_01.models.SiteInstance]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -17624,11 +16448,81 @@ class WebAppsOperations(object):
         return deserialized
     list_instance_identifiers_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances'}
 
+    def get_instance_info_slot(
+            self, resource_group_name, name, instance_id, slot, custom_headers=None, raw=False, **operation_config):
+        """Gets all scale-out instances of an app.
+
+        Description for Gets all scale-out instances of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param instance_id:
+        :type instance_id: str
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API gets the production slot instances.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WebSiteInstanceStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.WebSiteInstanceStatus or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_instance_info_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('WebSiteInstanceStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_instance_info_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}'}
+
     def get_instance_ms_deploy_status_slot(
             self, resource_group_name, name, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get the status of the last MSDeploy operation.
 
-        Get the status of the last MSDeploy operation.
+        Description for Get the status of the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17646,10 +16540,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_ms_deploy_status_slot.metadata['url']
@@ -17731,9 +16625,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201, 409]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -17750,7 +16642,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, instance_id, ms_deploy, custom_headers=None, raw=False, polling=True, **operation_config):
         """Invoke the MSDeploy web app extension.
 
-        Invoke the MSDeploy web app extension.
+        Description for Invoke the MSDeploy web app extension.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17763,7 +16655,7 @@ class WebAppsOperations(object):
         :param instance_id: ID of web app instance.
         :type instance_id: str
         :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: ~azure.mgmt.web.v2018_02_01.models.MSDeploy
+        :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -17772,10 +16664,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns MSDeployStatus or
          ClientRawResponse<MSDeployStatus> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.MSDeployStatus]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.MSDeployStatus]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_instance_ms_deploy_operation_slot_initial(
             resource_group_name=resource_group_name,
@@ -17810,7 +16703,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get the MSDeploy Log for the last MSDeploy operation.
 
-        Get the MSDeploy Log for the last MSDeploy operation.
+        Description for Get the MSDeploy Log for the last MSDeploy operation.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17828,9 +16721,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MSDeployLog or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MSDeployLog or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MSDeployLog or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_ms_deploy_log_slot.metadata['url']
@@ -17862,9 +16756,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -17882,8 +16774,8 @@ class WebAppsOperations(object):
         """Get list of processes for a web site, or a deployment slot, or for a
         specific scaled-out instance in a web site.
 
-        Get list of processes for a web site, or a deployment slot, or for a
-        specific scaled-out instance in a web site.
+        Description for Get list of processes for a web site, or a deployment
+        slot, or for a specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17904,8 +16796,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -17948,9 +16841,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -17968,8 +16859,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -17991,9 +16882,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process_slot.metadata['url']
@@ -18026,9 +16918,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -18046,8 +16936,8 @@ class WebAppsOperations(object):
         """Terminate a process by its ID for a web site, or a deployment slot, or
         specific scaled-out instance in a web site.
 
-        Terminate a process by its ID for a web site, or a deployment slot, or
-        specific scaled-out instance in a web site.
+        Description for Terminate a process by its ID for a web site, or a
+        deployment slot, or specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18070,7 +16960,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_instance_process_slot.metadata['url']
@@ -18102,9 +16993,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -18116,8 +17005,8 @@ class WebAppsOperations(object):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
-        Get a memory dump of a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for Get a memory dump of a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18145,7 +17034,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process_dump_slot.metadata['url']
@@ -18178,9 +17068,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = self._client.stream_download(response, callback)
 
@@ -18196,8 +17084,8 @@ class WebAppsOperations(object):
         """List module information for a process by its ID for a specific
         scaled-out instance in a web site.
 
-        List module information for a process by its ID for a specific
-        scaled-out instance in a web site.
+        Description for List module information for a process by its ID for a
+        specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18220,8 +17108,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessModuleInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -18265,9 +17154,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -18285,8 +17172,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18310,9 +17197,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessModuleInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_instance_process_module_slot.metadata['url']
@@ -18346,9 +17234,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -18366,8 +17252,8 @@ class WebAppsOperations(object):
         """List the threads in a process by its ID for a specific scaled-out
         instance in a web site.
 
-        List the threads in a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for List the threads in a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18390,8 +17276,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessThreadInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -18435,9 +17322,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -18450,94 +17335,13 @@ class WebAppsOperations(object):
         return deserialized
     list_instance_process_threads_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/processes/{processId}/threads'}
 
-    def get_instance_process_thread_slot(
-            self, resource_group_name, name, process_id, thread_id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
-        """Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param process_id: PID.
-        :type process_id: str
-        :param thread_id: TID.
-        :type thread_id: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API returns deployments for the production slot.
-        :type slot: str
-        :param instance_id: ID of a specific scaled-out instance. This is the
-         value of the name property in the JSON response from "GET
-         api/sites/{siteName}/instances".
-        :type instance_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ProcessThreadInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_instance_process_thread_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'processId': self._serialize.url("process_id", process_id, 'str'),
-            'threadId': self._serialize.url("thread_id", thread_id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ProcessThreadInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_instance_process_thread_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/processes/{processId}/threads/{threadId}'}
-
     def is_cloneable_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Shows whether an app can be cloned to another resource group or
         subscription.
 
-        Shows whether an app can be cloned to another resource group or
-        subscription.
+        Description for Shows whether an app can be cloned to another resource
+        group or subscription.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18553,10 +17357,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteCloneability or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteCloneability or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteCloneability or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.is_cloneable_slot.metadata['url']
@@ -18600,11 +17404,90 @@ class WebAppsOperations(object):
         return deserialized
     is_cloneable_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/iscloneable'}
 
+    def list_site_backups_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
+        """Gets existing backups of an app.
+
+        Description for Gets existing backups of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API will get backups of the production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of BackupItem
+        :rtype:
+         ~azure.mgmt.web.v2019_08_01.models.BackupItemPaged[~azure.mgmt.web.v2019_08_01.models.BackupItem]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_site_backups_slot.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.BackupItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_site_backups_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/listbackups'}
+
     def list_sync_function_triggers_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """This is to allow calling via powershell and ARM template.
 
-        This is to allow calling via powershell and ARM template.
+        Description for This is to allow calling via powershell and ARM
+        template.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18619,10 +17502,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: FunctionSecrets or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.FunctionSecrets or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.FunctionSecrets or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_sync_function_triggers_slot.metadata['url']
@@ -18666,184 +17549,13 @@ class WebAppsOperations(object):
         return deserialized
     list_sync_function_triggers_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/listsyncfunctiontriggerstatus'}
 
-    def list_metric_definitions_slot(
-            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Gets all metric definitions of an app (or deployment slot, if
-        specified).
-
-        Gets all metric definitions of an app (or deployment slot, if
-        specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will get metric definitions of the production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetricDefinition
-        :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metric_definitions_slot.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metric_definitions_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metricdefinitions'}
-
-    def list_metrics_slot(
-            self, resource_group_name, name, slot, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets performance metrics of an app (or deployment slot, if specified).
-
-        Gets performance metrics of an app (or deployment slot, if specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will get metrics of the production slot.
-        :type slot: str
-        :param details: Specify "true" to include metric details in the
-         response. It is "false" by default.
-        :type details: bool
-        :param filter: Return only metrics specified in the filter (using
-         OData syntax). For example: $filter=(name.value eq 'Metric1' or
-         name.value eq 'Metric2') and startTime eq 2014-01-01T00:00:00Z and
-         endTime eq 2014-12-31T23:59:59Z and timeGrain eq
-         duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceMetric
-        :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
-        :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_metrics_slot.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if details is not None:
-                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_metrics_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metrics'}
-
     def get_migrate_my_sql_status_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Returns the status of MySql in app migration, if one is active, and
         whether or not MySql in app is enabled.
 
-        Returns the status of MySql in app migration, if one is active, and
-        whether or not MySql in app is enabled.
+        Description for Returns the status of MySql in app migration, if one is
+        active, and whether or not MySql in app is enabled.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18858,10 +17570,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MigrateMySqlStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.MigrateMySqlStatus or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_migrate_my_sql_status_slot.metadata['url']
@@ -18909,7 +17621,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a Swift Virtual Network connection.
 
-        Gets a Swift Virtual Network connection.
+        Description for Gets a Swift Virtual Network connection.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -18925,10 +17637,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_swift_virtual_network_connection_slot.metadata['url']
@@ -18979,9 +17691,10 @@ class WebAppsOperations(object):
         that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
-        Integrates this Web App with a Virtual Network. This requires that 1)
-        "swiftSupported" is true when doing a GET against this resource, and 2)
-        that the target Subnet has already been delegated, and is not
+        Description for Integrates this Web App with a Virtual Network. This
+        requires that 1) "swiftSupported" is true when doing a GET against this
+        resource, and 2) that the target Subnet has already been delegated, and
+        is not
         in use by another App Service Plan other than the one this App is in.
 
         :param resource_group_name: Name of the resource group to which the
@@ -18992,7 +17705,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork
+         ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -19002,10 +17715,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_swift_virtual_network_connection_slot.metadata['url']
@@ -19058,8 +17771,8 @@ class WebAppsOperations(object):
         """Deletes a Swift Virtual Network connection from an app (or deployment
         slot).
 
-        Deletes a Swift Virtual Network connection from an app (or deployment
-        slot).
+        Description for Deletes a Swift Virtual Network connection from an app
+        (or deployment slot).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19076,7 +17789,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_swift_virtual_network_slot.metadata['url']
@@ -19106,9 +17820,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -19122,9 +17834,10 @@ class WebAppsOperations(object):
         that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
 
-        Integrates this Web App with a Virtual Network. This requires that 1)
-        "swiftSupported" is true when doing a GET against this resource, and 2)
-        that the target Subnet has already been delegated, and is not
+        Description for Integrates this Web App with a Virtual Network. This
+        requires that 1) "swiftSupported" is true when doing a GET against this
+        resource, and 2) that the target Subnet has already been delegated, and
+        is not
         in use by another App Service Plan other than the one this App is in.
 
         :param resource_group_name: Name of the resource group to which the
@@ -19135,7 +17848,7 @@ class WebAppsOperations(object):
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork
+         ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -19145,10 +17858,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SwiftVirtualNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SwiftVirtualNetwork or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SwiftVirtualNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_swift_virtual_network_connection_slot.metadata['url']
@@ -19201,8 +17914,8 @@ class WebAppsOperations(object):
         """Gets all network features used by the app (or deployment slot, if
         specified).
 
-        Gets all network features used by the app (or deployment slot, if
-        specified).
+        Description for Gets all network features used by the app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19221,9 +17934,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: NetworkFeatures or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.NetworkFeatures or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.NetworkFeatures or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_network_features_slot.metadata['url']
@@ -19255,9 +17969,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -19275,8 +17987,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19294,10 +18006,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_trace_operation_slot.metadata['url']
@@ -19348,7 +18060,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, **operation_config):
         """Start capturing network packets for the site (To be deprecated).
 
-        Start capturing network packets for the site (To be deprecated).
+        Description for Start capturing network packets for the site (To be
+        deprecated).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19371,7 +18084,7 @@ class WebAppsOperations(object):
         :return: str or ClientRawResponse if raw=true
         :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start_web_site_network_trace_slot.metadata['url']
@@ -19478,7 +18191,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Start capturing network packets for the site.
 
-        Start capturing network packets for the site.
+        Description for Start capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19501,11 +18214,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns list or
          ClientRawResponse<list> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._start_web_site_network_trace_operation_slot_initial(
             resource_group_name=resource_group_name,
@@ -19541,7 +18254,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Stop ongoing capturing network packets for the site.
 
-        Stop ongoing capturing network packets for the site.
+        Description for Stop ongoing capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19557,7 +18270,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_web_site_network_trace_slot.metadata['url']
@@ -19587,9 +18301,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -19601,8 +18313,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19620,10 +18332,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_traces_slot.metadata['url']
@@ -19673,8 +18385,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19692,10 +18404,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_trace_operation_slot_v2.metadata['url']
@@ -19747,8 +18459,8 @@ class WebAppsOperations(object):
         """Gets a named operation for a network trace capturing (or deployment
         slot, if specified).
 
-        Gets a named operation for a network trace capturing (or deployment
-        slot, if specified).
+        Description for Gets a named operation for a network trace capturing
+        (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19766,10 +18478,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_network_traces_slot_v2.metadata['url']
@@ -19819,8 +18531,8 @@ class WebAppsOperations(object):
         """Generates a new publishing password for an app (or deployment slot, if
         specified).
 
-        Generates a new publishing password for an app (or deployment slot, if
-        specified).
+        Description for Generates a new publishing password for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19837,7 +18549,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.generate_new_site_publishing_password_slot.metadata['url']
@@ -19867,9 +18580,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -19880,7 +18591,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets perfmon counters for web app.
 
-        Gets perfmon counters for web app.
+        Description for Gets perfmon counters for web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19902,9 +18613,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PerfMonResponse
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.PerfMonResponsePaged[~azure.mgmt.web.v2018_02_01.models.PerfMonResponse]
+         ~azure.mgmt.web.v2019_08_01.models.PerfMonResponsePaged[~azure.mgmt.web.v2019_08_01.models.PerfMonResponse]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -19965,7 +18676,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets web app's event logs.
 
-        Gets web app's event logs.
+        Description for Gets web app's event logs.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -19981,10 +18692,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SitePhpErrorLogFlag or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SitePhpErrorLogFlag or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SitePhpErrorLogFlag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_php_error_log_flag_slot.metadata['url']
@@ -20032,7 +18743,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the premier add-ons of an app.
 
-        Gets the premier add-ons of an app.
+        Description for Gets the premier add-ons of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20048,10 +18759,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_premier_add_ons_slot.metadata['url']
@@ -20099,7 +18810,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a named add-on of an app.
 
-        Gets a named add-on of an app.
+        Description for Gets a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20117,10 +18828,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_premier_add_on_slot.metadata['url']
@@ -20169,7 +18880,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, premier_add_on, slot, custom_headers=None, raw=False, **operation_config):
         """Updates a named add-on of an app.
 
-        Updates a named add-on of an app.
+        Description for Updates a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20180,7 +18891,7 @@ class WebAppsOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
-        :type premier_add_on: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn
+        :type premier_add_on: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the named add-on for the production slot.
         :type slot: str
@@ -20190,10 +18901,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.add_premier_add_on_slot.metadata['url']
@@ -20246,7 +18957,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a premier add-on from an app.
 
-        Delete a premier add-on from an app.
+        Description for Delete a premier add-on from an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20265,7 +18976,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_premier_add_on_slot.metadata['url']
@@ -20296,9 +19008,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -20309,7 +19019,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, premier_add_on_name, premier_add_on, slot, custom_headers=None, raw=False, **operation_config):
         """Updates a named add-on of an app.
 
-        Updates a named add-on of an app.
+        Description for Updates a named add-on of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20321,7 +19031,7 @@ class WebAppsOperations(object):
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
         :type premier_add_on:
-         ~azure.mgmt.web.v2018_02_01.models.PremierAddOnPatchResource
+         ~azure.mgmt.web.v2019_08_01.models.PremierAddOnPatchResource
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the named add-on for the production slot.
         :type slot: str
@@ -20331,10 +19041,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PremierAddOn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOn or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PremierAddOn or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_premier_add_on_slot.metadata['url']
@@ -20388,8 +19098,8 @@ class WebAppsOperations(object):
         """Gets data around private site access enablement and authorized Virtual
         Networks that can access the site.
 
-        Gets data around private site access enablement and authorized Virtual
-        Networks that can access the site.
+        Description for Gets data around private site access enablement and
+        authorized Virtual Networks that can access the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20404,10 +19114,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateAccess or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_private_access_slot.metadata['url']
@@ -20456,8 +19166,8 @@ class WebAppsOperations(object):
         """Sets data around private site access enablement and authorized Virtual
         Networks that can access the site.
 
-        Sets data around private site access enablement and authorized Virtual
-        Networks that can access the site.
+        Description for Sets data around private site access enablement and
+        authorized Virtual Networks that can access the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20465,7 +19175,7 @@ class WebAppsOperations(object):
         :param name: The name of the web app.
         :type name: str
         :param access: The information for the private access
-        :type access: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess
+        :type access: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -20474,10 +19184,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateAccess or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PrivateAccess or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PrivateAccess or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.put_private_access_vnet_slot.metadata['url']
@@ -20530,8 +19240,8 @@ class WebAppsOperations(object):
         """Get list of processes for a web site, or a deployment slot, or for a
         specific scaled-out instance in a web site.
 
-        Get list of processes for a web site, or a deployment slot, or for a
-        specific scaled-out instance in a web site.
+        Description for Get list of processes for a web site, or a deployment
+        slot, or for a specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20548,8 +19258,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -20591,9 +19302,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -20611,8 +19320,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20630,9 +19339,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process_slot.metadata['url']
@@ -20664,9 +19374,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -20684,8 +19392,8 @@ class WebAppsOperations(object):
         """Terminate a process by its ID for a web site, or a deployment slot, or
         specific scaled-out instance in a web site.
 
-        Terminate a process by its ID for a web site, or a deployment slot, or
-        specific scaled-out instance in a web site.
+        Description for Terminate a process by its ID for a web site, or a
+        deployment slot, or specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20704,7 +19412,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_process_slot.metadata['url']
@@ -20735,9 +19444,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -20749,8 +19456,8 @@ class WebAppsOperations(object):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
-        Get a memory dump of a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for Get a memory dump of a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20774,7 +19481,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process_dump_slot.metadata['url']
@@ -20806,9 +19514,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = self._client.stream_download(response, callback)
 
@@ -20824,8 +19530,8 @@ class WebAppsOperations(object):
         """List module information for a process by its ID for a specific
         scaled-out instance in a web site.
 
-        List module information for a process by its ID for a specific
-        scaled-out instance in a web site.
+        Description for List module information for a process by its ID for a
+        specific scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20844,8 +19550,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessModuleInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -20888,9 +19595,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -20908,8 +19613,8 @@ class WebAppsOperations(object):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
-        Get process information by its ID for a specific scaled-out instance in
-        a web site.
+        Description for Get process information by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -20929,9 +19634,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ProcessModuleInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ProcessModuleInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_process_module_slot.metadata['url']
@@ -20964,9 +19670,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -20984,8 +19688,8 @@ class WebAppsOperations(object):
         """List the threads in a process by its ID for a specific scaled-out
         instance in a web site.
 
-        List the threads in a process by its ID for a specific scaled-out
-        instance in a web site.
+        Description for List the threads in a process by its ID for a specific
+        scaled-out instance in a web site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21004,8 +19708,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ProcessThreadInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfoPaged[~azure.mgmt.web.v2019_08_01.models.ProcessThreadInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -21048,9 +19753,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -21063,87 +19766,12 @@ class WebAppsOperations(object):
         return deserialized
     list_process_threads_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/processes/{processId}/threads'}
 
-    def get_process_thread_slot(
-            self, resource_group_name, name, process_id, thread_id, slot, custom_headers=None, raw=False, **operation_config):
-        """Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        Get thread information by Thread ID for a specific process, in a
-        specific scaled-out instance in a web site.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param process_id: PID.
-        :type process_id: str
-        :param thread_id: TID.
-        :type thread_id: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API returns deployments for the production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ProcessThreadInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get_process_thread_slot.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'processId': self._serialize.url("process_id", process_id, 'str'),
-            'threadId': self._serialize.url("thread_id", thread_id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ProcessThreadInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_process_thread_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/processes/{processId}/threads/{threadId}'}
-
     def list_public_certificates_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Get public certificates for an app or a deployment slot.
 
-        Get public certificates for an app or a deployment slot.
+        Description for Get public certificates for an app or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21160,9 +19788,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PublicCertificate
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.PublicCertificatePaged[~azure.mgmt.web.v2018_02_01.models.PublicCertificate]
+         ~azure.mgmt.web.v2019_08_01.models.PublicCertificatePaged[~azure.mgmt.web.v2019_08_01.models.PublicCertificate]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -21222,8 +19850,8 @@ class WebAppsOperations(object):
         """Get the named public certificate for an app (or deployment slot, if
         specified).
 
-        Get the named public certificate for an app (or deployment slot, if
-        specified).
+        Description for Get the named public certificate for an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21241,10 +19869,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PublicCertificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PublicCertificate or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_public_certificate_slot.metadata['url']
@@ -21293,7 +19921,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, public_certificate_name, public_certificate, slot, custom_headers=None, raw=False, **operation_config):
         """Creates a hostname binding for an app.
 
-        Creates a hostname binding for an app.
+        Description for Creates a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21305,7 +19933,7 @@ class WebAppsOperations(object):
         :param public_certificate: Public certificate details. This is the
          JSON representation of a PublicCertificate object.
         :type public_certificate:
-         ~azure.mgmt.web.v2018_02_01.models.PublicCertificate
+         ~azure.mgmt.web.v2019_08_01.models.PublicCertificate
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a binding for the production slot.
         :type slot: str
@@ -21315,10 +19943,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PublicCertificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.PublicCertificate or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.PublicCertificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_public_certificate_slot.metadata['url']
@@ -21371,7 +19999,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, public_certificate_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a hostname binding for an app.
 
-        Deletes a hostname binding for an app.
+        Description for Deletes a hostname binding for an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21390,7 +20018,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_public_certificate_slot.metadata['url']
@@ -21421,9 +20050,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21435,8 +20062,8 @@ class WebAppsOperations(object):
         """Gets the publishing profile for an app (or deployment slot, if
         specified).
 
-        Gets the publishing profile for an app (or deployment slot, if
-        specified).
+        Description for Gets the publishing profile for an app (or deployment
+        slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21451,7 +20078,7 @@ class WebAppsOperations(object):
          WebDeploy -- default
          Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
         :type format: str or
-         ~azure.mgmt.web.v2018_02_01.models.PublishingProfileFormat
+         ~azure.mgmt.web.v2019_08_01.models.PublishingProfileFormat
         :param include_disaster_recovery_endpoints: Include the
          DisasterRecover endpoint if true
         :type include_disaster_recovery_endpoints: bool
@@ -21468,7 +20095,7 @@ class WebAppsOperations(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         publishing_profile_options = models.CsmPublishingProfileOptions(format=format, include_disaster_recovery_endpoints=include_disaster_recovery_endpoints)
 
@@ -21521,8 +20148,8 @@ class WebAppsOperations(object):
         """Resets the configuration settings of the current slot if they were
         previously modified by calling the API with POST.
 
-        Resets the configuration settings of the current slot if they were
-        previously modified by calling the API with POST.
+        Description for Resets the configuration settings of the current slot
+        if they were previously modified by calling the API with POST.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21539,7 +20166,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.reset_slot_configuration_slot.metadata['url']
@@ -21569,9 +20197,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21582,7 +20208,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
         """Restarts an app (or deployment slot, if specified).
 
-        Restarts an app (or deployment slot, if specified).
+        Description for Restarts an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21607,7 +20233,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.restart_slot.metadata['url']
@@ -21641,9 +20268,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21685,9 +20310,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21697,7 +20320,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores an app from a backup blob in Azure Storage.
 
-        Restores an app from a backup blob in Azure Storage.
+        Description for Restores an app from a backup blob in Azure Storage.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21705,7 +20328,7 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Information on restore request .
-        :type request: ~azure.mgmt.web.v2018_02_01.models.RestoreRequest
+        :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will restore a backup of the production slot.
         :type slot: str
@@ -21718,7 +20341,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_from_backup_blob_slot_initial(
             resource_group_name=resource_group_name,
@@ -21779,9 +20403,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21791,7 +20413,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, restore_request, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores a deleted web app to this web app.
 
-        Restores a deleted web app to this web app.
+        Description for Restores a deleted web app to this web app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21800,7 +20422,7 @@ class WebAppsOperations(object):
         :type name: str
         :param restore_request: Deleted web app restore information.
         :type restore_request:
-         ~azure.mgmt.web.v2018_02_01.models.DeletedAppRestoreRequest
+         ~azure.mgmt.web.v2019_08_01.models.DeletedAppRestoreRequest
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -21813,7 +20435,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_from_deleted_app_slot_initial(
             resource_group_name=resource_group_name,
@@ -21874,9 +20497,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -21886,7 +20507,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, restore_request, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restores a web app from a snapshot.
 
-        Restores a web app from a snapshot.
+        Description for Restores a web app from a snapshot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21897,7 +20518,7 @@ class WebAppsOperations(object):
          information can be obtained by calling GetDeletedSites or
          GetSiteSnapshots API.
         :type restore_request:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotRestoreRequest
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotRestoreRequest
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -21910,7 +20531,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._restore_snapshot_slot_initial(
             resource_group_name=resource_group_name,
@@ -21940,7 +20562,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Get list of siteextensions for a web site, or a deployment slot.
 
-        Get list of siteextensions for a web site, or a deployment slot.
+        Description for Get list of siteextensions for a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -21948,7 +20571,7 @@ class WebAppsOperations(object):
         :param name: Site name.
         :type name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -21957,8 +20580,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SiteExtensionInfo
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfoPaged[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfoPaged[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -22000,9 +20624,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -22020,8 +20642,8 @@ class WebAppsOperations(object):
         """Get site extension information by its ID for a web site, or a
         deployment slot.
 
-        Get site extension information by its ID for a web site, or a
-        deployment slot.
+        Description for Get site extension information by its ID for a web
+        site, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22031,7 +20653,7 @@ class WebAppsOperations(object):
         :param site_extension_id: Site extension name.
         :type site_extension_id: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -22039,9 +20661,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteExtensionInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_extension_slot.metadata['url']
@@ -22073,9 +20696,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -22121,9 +20742,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 429]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -22142,7 +20761,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_extension_id, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Install site extension on a web site, or a deployment slot.
 
-        Install site extension on a web site, or a deployment slot.
+        Description for Install site extension on a web site, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22152,7 +20772,7 @@ class WebAppsOperations(object):
         :param site_extension_id: Site extension name.
         :type site_extension_id: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -22162,10 +20782,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteExtensionInfo or
          ClientRawResponse<SiteExtensionInfo> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.SiteExtensionInfo]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.SiteExtensionInfo]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._install_site_extension_slot_initial(
             resource_group_name=resource_group_name,
@@ -22199,7 +20820,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_extension_id, slot, custom_headers=None, raw=False, **operation_config):
         """Remove a site extension from a web site, or a deployment slot.
 
-        Remove a site extension from a web site, or a deployment slot.
+        Description for Remove a site extension from a web site, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22218,7 +20840,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_site_extension_slot.metadata['url']
@@ -22249,20 +20872,123 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete_site_extension_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{siteExtensionId}'}
 
+
+    def _copy_slot_slot_initial(
+            self, resource_group_name, name, slot, target_slot, site_config, custom_headers=None, raw=False, **operation_config):
+        copy_slot_entity = models.CsmCopySlotEntity(target_slot=target_slot, site_config=site_config)
+
+        # Construct URL
+        url = self.copy_slot_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(copy_slot_entity, 'CsmCopySlotEntity')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def copy_slot_slot(
+            self, resource_group_name, name, slot, target_slot, site_config, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Copies a deployment slot to another deployment slot of an app.
+
+        Description for Copies a deployment slot to another deployment slot of
+        an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the source slot. If a slot is not specified, the
+         production slot is used as the source slot.
+        :type slot: str
+        :param target_slot: Destination deployment slot during copy operation.
+        :type target_slot: str
+        :param site_config: The site object which will be merged with the
+         source slot site
+         to produce new destination slot site object.
+         <code>null</code> to just copy source slot content. Otherwise a
+         <code>Site</code>
+         object with properties to override source slot site.
+        :type site_config: ~azure.mgmt.web.v2019_08_01.models.SiteConfig
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
+        """
+        raw_result = self._copy_slot_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            slot=slot,
+            target_slot=target_slot,
+            site_config=site_config,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    copy_slot_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/slotcopy'}
+
     def list_slot_differences_slot(
             self, resource_group_name, name, slot, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
         """Get the difference in configuration settings between two web app slots.
 
-        Get the difference in configuration settings between two web app slots.
+        Description for Get the difference in configuration settings between
+        two web app slots.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22284,9 +21010,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SlotDifference
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SlotDifferencePaged[~azure.mgmt.web.v2018_02_01.models.SlotDifference]
+         ~azure.mgmt.web.v2019_08_01.models.SlotDifferencePaged[~azure.mgmt.web.v2019_08_01.models.SlotDifference]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -22384,9 +21110,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -22396,7 +21120,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, target_slot, preserve_vnet, custom_headers=None, raw=False, polling=True, **operation_config):
         """Swaps two deployment slots of an app.
 
-        Swaps two deployment slots of an app.
+        Description for Swaps two deployment slots of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22420,7 +21144,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._swap_slot_slot_initial(
             resource_group_name=resource_group_name,
@@ -22451,7 +21176,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Returns all Snapshots to the user.
 
-        Returns all Snapshots to the user.
+        Description for Returns all Snapshots to the user.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22467,9 +21192,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Snapshot
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotPaged[~azure.mgmt.web.v2018_02_01.models.Snapshot]
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotPaged[~azure.mgmt.web.v2019_08_01.models.Snapshot]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -22528,7 +21253,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
-        Returns all Snapshots to the user from DRSecondary endpoint.
+        Description for Returns all Snapshots to the user from DRSecondary
+        endpoint.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22544,9 +21270,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Snapshot
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotPaged[~azure.mgmt.web.v2018_02_01.models.Snapshot]
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotPaged[~azure.mgmt.web.v2019_08_01.models.Snapshot]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -22605,7 +21331,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the source control configuration of an app.
 
-        Gets the source control configuration of an app.
+        Description for Gets the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22622,10 +21348,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteSourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_source_control_slot.metadata['url']
@@ -22730,7 +21456,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates the source control configuration of an app.
 
-        Updates the source control configuration of an app.
+        Description for Updates the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22740,7 +21466,7 @@ class WebAppsOperations(object):
         :param site_source_control: JSON representation of a SiteSourceControl
          object. See example.
         :type site_source_control:
-         ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl
+         ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the source control configuration for the
          production slot.
@@ -22753,11 +21479,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteSourceControl or
          ClientRawResponse<SiteSourceControl> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.SiteSourceControl]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.SiteSourceControl]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_source_control_slot_initial(
             resource_group_name=resource_group_name,
@@ -22791,7 +21517,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Deletes the source control configuration of an app.
 
-        Deletes the source control configuration of an app.
+        Description for Deletes the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22809,7 +21535,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_source_control_slot.metadata['url']
@@ -22839,9 +21566,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -22852,7 +21577,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
         """Updates the source control configuration of an app.
 
-        Updates the source control configuration of an app.
+        Description for Updates the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22862,7 +21587,7 @@ class WebAppsOperations(object):
         :param site_source_control: JSON representation of a SiteSourceControl
          object. See example.
         :type site_source_control:
-         ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl
+         ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the source control configuration for the
          production slot.
@@ -22873,10 +21598,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteSourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_source_control_slot.metadata['url']
@@ -22932,7 +21657,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Starts an app (or deployment slot, if specified).
 
-        Starts an app (or deployment slot, if specified).
+        Description for Starts an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -22949,7 +21674,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start_slot.metadata['url']
@@ -22979,9 +21705,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23045,7 +21769,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Start capturing network packets for the site.
 
-        Start capturing network packets for the site.
+        Description for Start capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23068,11 +21792,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns list or
          ClientRawResponse<list> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._start_network_trace_slot_initial(
             resource_group_name=resource_group_name,
@@ -23108,7 +21832,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Stops an app (or deployment slot, if specified).
 
-        Stops an app (or deployment slot, if specified).
+        Description for Stops an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23125,7 +21849,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_slot.metadata['url']
@@ -23155,9 +21880,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23168,7 +21891,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Stop ongoing capturing network packets for the site.
 
-        Stop ongoing capturing network packets for the site.
+        Description for Stop ongoing capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23184,7 +21907,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_network_trace_slot.metadata['url']
@@ -23214,9 +21938,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23227,7 +21949,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Sync web app repository.
 
-        Sync web app repository.
+        Description for Sync web app repository.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23244,7 +21966,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.sync_repository_slot.metadata['url']
@@ -23274,9 +21997,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23285,9 +22006,10 @@ class WebAppsOperations(object):
 
     def sync_function_triggers_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the management database.
+        """Syncs function trigger metadata to the scale controller.
 
-        Syncs function trigger metadata to the management database.
+        Description for Syncs function trigger metadata to the scale
+        controller.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23303,7 +22025,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.sync_function_triggers_slot.metadata['url']
@@ -23333,9 +22056,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23346,7 +22067,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List triggered web jobs for an app, or a deployment slot.
 
-        List triggered web jobs for an app, or a deployment slot.
+        Description for List triggered web jobs for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23363,9 +22085,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TriggeredWebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.TriggeredWebJobPaged[~azure.mgmt.web.v2018_02_01.models.TriggeredWebJob]
+         ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -23424,7 +22146,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
-        Gets a triggered web job by its ID for an app, or a deployment slot.
+        Description for Gets a triggered web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23434,7 +22157,7 @@ class WebAppsOperations(object):
         :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -23442,9 +22165,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TriggeredWebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.TriggeredWebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_triggered_web_job_slot.metadata['url']
@@ -23476,9 +22200,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -23495,7 +22217,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
-        Delete a triggered web job by its ID for an app, or a deployment slot.
+        Description for Delete a triggered web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23505,7 +22228,7 @@ class WebAppsOperations(object):
         :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API deletes web job for the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -23514,7 +22237,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_triggered_web_job_slot.metadata['url']
@@ -23545,9 +22269,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23558,7 +22280,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """List a triggered web job's history for an app, or a deployment slot.
 
-        List a triggered web job's history for an app, or a deployment slot.
+        Description for List a triggered web job's history for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23568,7 +22291,7 @@ class WebAppsOperations(object):
         :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -23577,8 +22300,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TriggeredJobHistory
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistoryPaged[~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -23621,9 +22345,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -23641,8 +22363,8 @@ class WebAppsOperations(object):
         """Gets a triggered web job's history by its ID for an app, , or a
         deployment slot.
 
-        Gets a triggered web job's history by its ID for an app, , or a
-        deployment slot.
+        Description for Gets a triggered web job's history by its ID for an
+        app, , or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23654,7 +22376,7 @@ class WebAppsOperations(object):
         :param id: History ID.
         :type id: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -23662,9 +22384,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TriggeredJobHistory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistory or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_triggered_web_job_history_slot.metadata['url']
@@ -23697,9 +22420,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -23716,7 +22437,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Run a triggered web job for an app, or a deployment slot.
 
-        Run a triggered web job for an app, or a deployment slot.
+        Description for Run a triggered web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23726,7 +22448,7 @@ class WebAppsOperations(object):
         :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+         the API uses the production slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -23735,7 +22457,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.run_triggered_web_job_slot.metadata['url']
@@ -23766,9 +22489,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -23780,8 +22501,8 @@ class WebAppsOperations(object):
         """Gets the quota usage information of an app (or deployment slot, if
         specified).
 
-        Gets the quota usage information of an app (or deployment slot, if
-        specified).
+        Description for Gets the quota usage information of an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23804,9 +22525,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmUsageQuota
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2018_02_01.models.CsmUsageQuota]
+         ~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuota]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -23867,7 +22588,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
-        Gets the virtual networks the app (or deployment slot) is connected to.
+        Description for Gets the virtual networks the app (or deployment slot)
+        is connected to.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23883,10 +22605,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetInfo] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetInfo] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_vnet_connections_slot.metadata['url']
@@ -23935,8 +22657,8 @@ class WebAppsOperations(object):
         """Gets a virtual network the app (or deployment slot) is connected to by
         name.
 
-        Gets a virtual network the app (or deployment slot) is connected to by
-        name.
+        Description for Gets a virtual network the app (or deployment slot) is
+        connected to by name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -23954,10 +22676,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_connection_slot.metadata['url']
@@ -24007,8 +22729,8 @@ class WebAppsOperations(object):
         """Adds a Virtual Network connection to an app or slot (PUT) or updates
         the connection properties (PATCH).
 
-        Adds a Virtual Network connection to an app or slot (PUT) or updates
-        the connection properties (PATCH).
+        Description for Adds a Virtual Network connection to an app or slot
+        (PUT) or updates the connection properties (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24019,7 +22741,7 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetInfo
+        :type connection_envelope: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -24029,10 +22751,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_vnet_connection_slot.metadata['url']
@@ -24086,8 +22808,8 @@ class WebAppsOperations(object):
         """Deletes a connection from an app (or deployment slot to a named virtual
         network.
 
-        Deletes a connection from an app (or deployment slot to a named virtual
-        network.
+        Description for Deletes a connection from an app (or deployment slot to
+        a named virtual network.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24106,7 +22828,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_vnet_connection_slot.metadata['url']
@@ -24137,9 +22860,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -24151,8 +22872,8 @@ class WebAppsOperations(object):
         """Adds a Virtual Network connection to an app or slot (PUT) or updates
         the connection properties (PATCH).
 
-        Adds a Virtual Network connection to an app or slot (PUT) or updates
-        the connection properties (PATCH).
+        Description for Adds a Virtual Network connection to an app or slot
+        (PUT) or updates the connection properties (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24163,7 +22884,7 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetInfo
+        :type connection_envelope: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -24173,10 +22894,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_connection_slot.metadata['url']
@@ -24229,7 +22950,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, vnet_name, gateway_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets an app's Virtual Network gateway.
 
-        Gets an app's Virtual Network gateway.
+        Description for Gets an app's Virtual Network gateway.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24250,9 +22971,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_connection_gateway_slot.metadata['url']
@@ -24285,9 +23007,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -24305,8 +23025,8 @@ class WebAppsOperations(object):
         """Adds a gateway to a connected Virtual Network (PUT) or updates it
         (PATCH).
 
-        Adds a gateway to a connected Virtual Network (PUT) or updates it
-        (PATCH).
+        Description for Adds a gateway to a connected Virtual Network (PUT) or
+        updates it (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24321,7 +23041,7 @@ class WebAppsOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.VnetGateway
+         ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update a gateway for the production slot's Virtual
          Network.
@@ -24332,10 +23052,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_vnet_connection_gateway_slot.metadata['url']
@@ -24390,8 +23110,8 @@ class WebAppsOperations(object):
         """Adds a gateway to a connected Virtual Network (PUT) or updates it
         (PATCH).
 
-        Adds a gateway to a connected Virtual Network (PUT) or updates it
-        (PATCH).
+        Description for Adds a gateway to a connected Virtual Network (PUT) or
+        updates it (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24406,7 +23126,7 @@ class WebAppsOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.VnetGateway
+         ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update a gateway for the production slot's Virtual
          Network.
@@ -24417,10 +23137,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_connection_gateway_slot.metadata['url']
@@ -24474,7 +23194,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List webjobs for an app, or a deployment slot.
 
-        List webjobs for an app, or a deployment slot.
+        Description for List webjobs for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24491,9 +23211,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of WebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.WebJobPaged[~azure.mgmt.web.v2018_02_01.models.WebJob]
+         ~azure.mgmt.web.v2019_08_01.models.WebJobPaged[~azure.mgmt.web.v2019_08_01.models.WebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -24552,7 +23272,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Get webjob information for an app, or a deployment slot.
 
-        Get webjob information for an app, or a deployment slot.
+        Description for Get webjob information for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24570,10 +23291,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.WebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJob or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_web_job_slot.metadata['url']
@@ -24622,7 +23343,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
         """Get the difference in configuration settings between two web app slots.
 
-        Get the difference in configuration settings between two web app slots.
+        Description for Get the difference in configuration settings between
+        two web app slots.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24641,9 +23363,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SlotDifference
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SlotDifferencePaged[~azure.mgmt.web.v2018_02_01.models.SlotDifference]
+         ~azure.mgmt.web.v2019_08_01.models.SlotDifferencePaged[~azure.mgmt.web.v2019_08_01.models.SlotDifference]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -24739,9 +23461,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -24751,7 +23471,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, target_slot, preserve_vnet, custom_headers=None, raw=False, polling=True, **operation_config):
         """Swaps two deployment slots of an app.
 
-        Swaps two deployment slots of an app.
+        Description for Swaps two deployment slots of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24772,7 +23492,8 @@ class WebAppsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._swap_slot_with_production_initial(
             resource_group_name=resource_group_name,
@@ -24802,7 +23523,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Returns all Snapshots to the user.
 
-        Returns all Snapshots to the user.
+        Description for Returns all Snapshots to the user.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24816,9 +23537,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Snapshot
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotPaged[~azure.mgmt.web.v2018_02_01.models.Snapshot]
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotPaged[~azure.mgmt.web.v2019_08_01.models.Snapshot]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -24876,7 +23597,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
-        Returns all Snapshots to the user from DRSecondary endpoint.
+        Description for Returns all Snapshots to the user from DRSecondary
+        endpoint.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24890,9 +23612,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Snapshot
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SnapshotPaged[~azure.mgmt.web.v2018_02_01.models.Snapshot]
+         ~azure.mgmt.web.v2019_08_01.models.SnapshotPaged[~azure.mgmt.web.v2019_08_01.models.Snapshot]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -24950,7 +23672,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the source control configuration of an app.
 
-        Gets the source control configuration of an app.
+        Description for Gets the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -24963,10 +23685,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteSourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_source_control.metadata['url']
@@ -25069,7 +23791,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates the source control configuration of an app.
 
-        Updates the source control configuration of an app.
+        Description for Updates the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25079,7 +23801,7 @@ class WebAppsOperations(object):
         :param site_source_control: JSON representation of a SiteSourceControl
          object. See example.
         :type site_source_control:
-         ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl
+         ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -25088,11 +23810,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns SiteSourceControl or
          ClientRawResponse<SiteSourceControl> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.SiteSourceControl]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.SiteSourceControl]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2019_08_01.models.SiteSourceControl]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_source_control_initial(
             resource_group_name=resource_group_name,
@@ -25125,7 +23847,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Deletes the source control configuration of an app.
 
-        Deletes the source control configuration of an app.
+        Description for Deletes the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25139,7 +23861,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_source_control.metadata['url']
@@ -25168,9 +23891,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25181,7 +23902,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
         """Updates the source control configuration of an app.
 
-        Updates the source control configuration of an app.
+        Description for Updates the source control configuration of an app.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25191,17 +23912,17 @@ class WebAppsOperations(object):
         :param site_source_control: JSON representation of a SiteSourceControl
          object. See example.
         :type site_source_control:
-         ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl
+         ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteSourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_source_control.metadata['url']
@@ -25256,7 +23977,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Starts an app (or deployment slot, if specified).
 
-        Starts an app (or deployment slot, if specified).
+        Description for Starts an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25270,7 +23991,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.start.metadata['url']
@@ -25299,9 +24021,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25364,7 +24084,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, duration_in_seconds=None, max_frame_length=None, sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Start capturing network packets for the site.
 
-        Start capturing network packets for the site.
+        Description for Start capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25385,11 +24105,11 @@ class WebAppsOperations(object):
         :return: An instance of LROPoller that returns list or
          ClientRawResponse<list> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]
+         ~msrestazure.azure_operation.AzureOperationPoller[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2018_02_01.models.NetworkTrace]]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[list[~azure.mgmt.web.v2019_08_01.models.NetworkTrace]]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._start_network_trace_initial(
             resource_group_name=resource_group_name,
@@ -25424,7 +24144,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Stops an app (or deployment slot, if specified).
 
-        Stops an app (or deployment slot, if specified).
+        Description for Stops an app (or deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25438,7 +24158,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop.metadata['url']
@@ -25467,9 +24188,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25480,7 +24199,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Stop ongoing capturing network packets for the site.
 
-        Stop ongoing capturing network packets for the site.
+        Description for Stop ongoing capturing network packets for the site.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25494,7 +24213,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.stop_network_trace.metadata['url']
@@ -25523,9 +24243,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25536,7 +24254,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Sync web app repository.
 
-        Sync web app repository.
+        Description for Sync web app repository.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25550,7 +24268,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.sync_repository.metadata['url']
@@ -25579,9 +24298,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25590,9 +24307,10 @@ class WebAppsOperations(object):
 
     def sync_function_triggers(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the management database.
+        """Syncs function trigger metadata to the scale controller.
 
-        Syncs function trigger metadata to the management database.
+        Description for Syncs function trigger metadata to the scale
+        controller.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25606,7 +24324,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.sync_function_triggers.metadata['url']
@@ -25635,9 +24354,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25648,7 +24365,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List triggered web jobs for an app, or a deployment slot.
 
-        List triggered web jobs for an app, or a deployment slot.
+        Description for List triggered web jobs for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25662,9 +24380,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TriggeredWebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.TriggeredWebJobPaged[~azure.mgmt.web.v2018_02_01.models.TriggeredWebJob]
+         ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJobPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -25722,7 +24440,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
-        Gets a triggered web job by its ID for an app, or a deployment slot.
+        Description for Gets a triggered web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25737,9 +24456,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TriggeredWebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.TriggeredWebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredWebJob or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_triggered_web_job.metadata['url']
@@ -25770,9 +24490,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -25789,7 +24507,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
-        Delete a triggered web job by its ID for an app, or a deployment slot.
+        Description for Delete a triggered web job by its ID for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25805,7 +24524,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_triggered_web_job.metadata['url']
@@ -25835,9 +24555,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -25848,7 +24566,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """List a triggered web job's history for an app, or a deployment slot.
 
-        List a triggered web job's history for an app, or a deployment slot.
+        Description for List a triggered web job's history for an app, or a
+        deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25864,8 +24583,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TriggeredJobHistory
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistoryPaged[~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistoryPaged[~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -25907,9 +24627,7 @@ class WebAppsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -25927,8 +24645,8 @@ class WebAppsOperations(object):
         """Gets a triggered web job's history by its ID for an app, , or a
         deployment slot.
 
-        Gets a triggered web job's history by its ID for an app, , or a
-        deployment slot.
+        Description for Gets a triggered web job's history by its ID for an
+        app, , or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -25945,9 +24663,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TriggeredJobHistory or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.TriggeredJobHistory or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.TriggeredJobHistory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_triggered_web_job_history.metadata['url']
@@ -25979,9 +24698,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -25998,7 +24715,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Run a triggered web job for an app, or a deployment slot.
 
-        Run a triggered web job for an app, or a deployment slot.
+        Description for Run a triggered web job for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26014,7 +24732,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.run_triggered_web_job.metadata['url']
@@ -26044,9 +24763,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -26058,8 +24775,8 @@ class WebAppsOperations(object):
         """Gets the quota usage information of an app (or deployment slot, if
         specified).
 
-        Gets the quota usage information of an app (or deployment slot, if
-        specified).
+        Description for Gets the quota usage information of an app (or
+        deployment slot, if specified).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26079,9 +24796,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmUsageQuota
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2018_02_01.models.CsmUsageQuota]
+         ~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuota]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -26141,7 +24858,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
-        Gets the virtual networks the app (or deployment slot) is connected to.
+        Description for Gets the virtual networks the app (or deployment slot)
+        is connected to.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26154,10 +24872,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetInfo] or
+        :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetInfo] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_vnet_connections.metadata['url']
@@ -26205,8 +24923,8 @@ class WebAppsOperations(object):
         """Gets a virtual network the app (or deployment slot) is connected to by
         name.
 
-        Gets a virtual network the app (or deployment slot) is connected to by
-        name.
+        Description for Gets a virtual network the app (or deployment slot) is
+        connected to by name.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26221,10 +24939,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_connection.metadata['url']
@@ -26273,8 +24991,8 @@ class WebAppsOperations(object):
         """Adds a Virtual Network connection to an app or slot (PUT) or updates
         the connection properties (PATCH).
 
-        Adds a Virtual Network connection to an app or slot (PUT) or updates
-        the connection properties (PATCH).
+        Description for Adds a Virtual Network connection to an app or slot
+        (PUT) or updates the connection properties (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26285,17 +25003,17 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetInfo
+        :type connection_envelope: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_vnet_connection.metadata['url']
@@ -26348,8 +25066,8 @@ class WebAppsOperations(object):
         """Deletes a connection from an app (or deployment slot to a named virtual
         network.
 
-        Deletes a connection from an app (or deployment slot to a named virtual
-        network.
+        Description for Deletes a connection from an app (or deployment slot to
+        a named virtual network.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26365,7 +25083,8 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.delete_vnet_connection.metadata['url']
@@ -26395,9 +25114,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -26409,8 +25126,8 @@ class WebAppsOperations(object):
         """Adds a Virtual Network connection to an app or slot (PUT) or updates
         the connection properties (PATCH).
 
-        Adds a Virtual Network connection to an app or slot (PUT) or updates
-        the connection properties (PATCH).
+        Description for Adds a Virtual Network connection to an app or slot
+        (PUT) or updates the connection properties (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26421,17 +25138,17 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetInfo
+        :type connection_envelope: ~azure.mgmt.web.v2019_08_01.models.VnetInfo
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetInfo or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_connection.metadata['url']
@@ -26483,7 +25200,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         """Gets an app's Virtual Network gateway.
 
-        Gets an app's Virtual Network gateway.
+        Description for Gets an app's Virtual Network gateway.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26501,9 +25218,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_vnet_connection_gateway.metadata['url']
@@ -26535,9 +25253,7 @@ class WebAppsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -26555,8 +25271,8 @@ class WebAppsOperations(object):
         """Adds a gateway to a connected Virtual Network (PUT) or updates it
         (PATCH).
 
-        Adds a gateway to a connected Virtual Network (PUT) or updates it
-        (PATCH).
+        Description for Adds a gateway to a connected Virtual Network (PUT) or
+        updates it (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26571,17 +25287,17 @@ class WebAppsOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.VnetGateway
+         ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update_vnet_connection_gateway.metadata['url']
@@ -26635,8 +25351,8 @@ class WebAppsOperations(object):
         """Adds a gateway to a connected Virtual Network (PUT) or updates it
         (PATCH).
 
-        Adds a gateway to a connected Virtual Network (PUT) or updates it
-        (PATCH).
+        Description for Adds a gateway to a connected Virtual Network (PUT) or
+        updates it (PATCH).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26651,17 +25367,17 @@ class WebAppsOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope:
-         ~azure.mgmt.web.v2018_02_01.models.VnetGateway
+         ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VnetGateway or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_vnet_connection_gateway.metadata['url']
@@ -26714,7 +25430,7 @@ class WebAppsOperations(object):
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List webjobs for an app, or a deployment slot.
 
-        List webjobs for an app, or a deployment slot.
+        Description for List webjobs for an app, or a deployment slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26728,9 +25444,9 @@ class WebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of WebJob
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.WebJobPaged[~azure.mgmt.web.v2018_02_01.models.WebJob]
+         ~azure.mgmt.web.v2019_08_01.models.WebJobPaged[~azure.mgmt.web.v2019_08_01.models.WebJob]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -26788,7 +25504,8 @@ class WebAppsOperations(object):
             self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Get webjob information for an app, or a deployment slot.
 
-        Get webjob information for an app, or a deployment slot.
+        Description for Get webjob information for an app, or a deployment
+        slot.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -26803,10 +25520,10 @@ class WebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WebJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.WebJob or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.WebJob or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_web_job.metadata['url']
