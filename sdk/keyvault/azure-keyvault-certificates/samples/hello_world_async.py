@@ -65,15 +65,14 @@ async def run_sample():
         )
         cert_name = "HelloWorldCertificate"
 
-        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
         # if creation is successful, and the CertificateOperation if not.
-        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
-        certificate = await create_certificate_poller
+        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate_with_policy(name=cert_name)
+        bank_certificate = await client.get_certificate(name=cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
@@ -82,7 +81,7 @@ async def run_sample():
         updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
         print(
             "Certificate with name '{0}' was updated on date '{1}'".format(
-                bank_certificate.name, updated_certificate.properties.updated
+                bank_certificate.name, updated_certificate.properties.updated_on
             )
         )
         print(

@@ -5,9 +5,9 @@
 
 import asyncio
 import logging
-from typing import Any, Callable
-
+from typing import Any, Callable, Union
 from azure.core.polling import AsyncPollingMethod
+from ..models import KeyVaultCertificate, CertificateOperation
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
             return True
         return self._pending_certificate_op.status.lower() != "inprogress"
 
-    def resource(self) -> Any:
+    def resource(self) -> Union[KeyVaultCertificate, CertificateOperation]:
         return self._resource
 
     def status(self) -> str:

@@ -5,7 +5,7 @@
 from enum import Enum
 
 
-class ActionType(str, Enum):
+class CertificatePolicyAction(str, Enum):
     """The supported action types for the lifetime of a certificate"""
 
     email_contacts = "EmailContacts"

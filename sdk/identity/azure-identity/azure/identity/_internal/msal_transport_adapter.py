@@ -9,7 +9,13 @@ import json
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
+)
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 
 try:
@@ -48,8 +54,7 @@ class MsalTransportResponse:
 
 
 class MsalTransportAdapter(object):
-    """
-    Wraps an azure-core pipeline with the shape of requests.Session.
+    """Wraps an azure-core pipeline with the shape of ``requests.Session``.
 
     Used as a context manager, patches msal.authority to intercept calls to requests.
     """
@@ -78,7 +83,12 @@ class MsalTransportAdapter(object):
 
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         config = config or self._create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy]
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         if not transport:
             transport = RequestsTransport(**kwargs)
         return Pipeline(transport=transport, policies=policies)
