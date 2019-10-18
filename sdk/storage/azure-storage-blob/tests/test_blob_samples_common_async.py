@@ -105,6 +105,7 @@ class TestCommonBlobSamplesAsync(AsyncBlobTestCase):
 
         # Soft delete blob in the container (blob can be recovered with undelete)
         await blob_client.delete_blob()
+        await asyncio.sleep(1)
 
         # [START undelete_blob]
         # Undelete the blob before the retention policy expires

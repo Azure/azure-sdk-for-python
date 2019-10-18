@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import time
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
@@ -104,6 +105,7 @@ class TestCommonBlobSamples(StorageTestCase):
 
         # Soft delete blob in the container (blob can be recovered with undelete)
         blob_client.delete_blob()
+        time.sleep(1)
 
         # [START undelete_blob]
         # Undelete the blob before the retention policy expires
