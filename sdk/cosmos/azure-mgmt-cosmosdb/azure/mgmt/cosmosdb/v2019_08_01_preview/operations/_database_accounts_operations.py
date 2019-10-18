@@ -208,10 +208,10 @@ class DatabaseAccountsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}'}
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, account_name, create_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -257,9 +257,10 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, account_name, create_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates an Azure Cosmos DB database account.
+        """Creates or updates an Azure Cosmos DB database account. The "Update"
+        method is preferred when performing updates on an account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -283,7 +284,7 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             create_parameters=create_parameters,
@@ -308,7 +309,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}'}
 
 
     def _delete_initial(
