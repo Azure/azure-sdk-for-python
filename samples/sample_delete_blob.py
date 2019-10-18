@@ -1,4 +1,3 @@
-from azure.identity import EnvironmentCredential
 from azure.storage.blob import BlobServiceClient, ContainerClient
 import os
 
