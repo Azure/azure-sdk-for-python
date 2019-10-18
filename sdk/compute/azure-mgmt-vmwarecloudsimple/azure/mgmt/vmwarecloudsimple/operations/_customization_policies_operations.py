@@ -39,7 +39,7 @@ class CustomizationPoliciesOperations(object):
         self.config = config
 
     def list(
-            self, region_id, pc_name, guest_os_type=None, custom_headers=None, raw=False, **operation_config):
+            self, region_id, pc_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Implements get of customization policies list.
 
         Returns list of customization policies in region for private cloud.
@@ -48,9 +48,9 @@ class CustomizationPoliciesOperations(object):
         :type region_id: str
         :param pc_name: The private cloud name
         :type pc_name: str
-        :param guest_os_type: If specified response will be filtered by guest
-         os type. Possible values include: 'linux', 'windows', 'other'
-        :type guest_os_type: str
+        :param filter: The filter to apply on the list operation. only type is
+         allowed here as a filter e.g. $filter=type eq 'xxxx'
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -76,8 +76,8 @@ class CustomizationPoliciesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if guest_os_type is not None:
-                    query_parameters['guestOSType'] = self._serialize.query("guest_os_type", guest_os_type, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
