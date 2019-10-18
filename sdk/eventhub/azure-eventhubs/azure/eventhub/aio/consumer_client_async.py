@@ -33,17 +33,19 @@ class EventHubConsumerClient(EventHubClient):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         """
-        event_processor = EventProcessor(
-            self, consumer_group, event_handler,
-            partition_id=partition_id,
-            partition_manager=self._partition_manager,
-            error_handler=error_handler,
-            partition_initialize_handler=partition_initialize_handler,
-            partition_close_handler=partition_close_handler,
-            initial_event_position=initial_event_position or EventPosition("-1"),
-            polling_interval=polling_interval or 10
-        )
-        self._event_processors.append(event_processor)
+        async with self._lock:
+            event_processor = EventProcessor(
+                self, consumer_group, event_handler,
+                partition_id=partition_id,
+                partition_manager=self._partition_manager,
+                error_handler=error_handler,
+                partition_initialize_handler=partition_initialize_handler,
+                partition_close_handler=partition_close_handler,
+                initial_event_position=initial_event_position or EventPosition("-1"),
+                polling_interval=polling_interval or 10
+            )
+            self._event_processors.append(event_processor)
+
         await event_processor.start()
 
     async def update_checkpoint(self, event):
@@ -54,6 +56,7 @@ class EventHubConsumerClient(EventHubClient):
         """Stop retrieving events from event hubs and close the underlying AMQP connection.
 
         """
-        for ep in self._event_processors:
-            await ep.stop()
-        await super().close()
+        async with self._lock:
+            for ep in self._event_processors:
+                await ep.stop()
+            await super().close()
