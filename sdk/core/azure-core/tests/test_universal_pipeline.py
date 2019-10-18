@@ -257,11 +257,23 @@ def test_http_logger():
     assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/?country=france&city=REDACTED'"
     assert mock_handler.messages[1].message == "Request method: 'GET'"
     assert mock_handler.messages[2].message == "Request headers:"
-    assert mock_handler.messages[3].message == "    'Accept': 'Caramel'"
-    assert mock_handler.messages[4].message == "    'Hate': 'REDACTED'"
+    # Dict not ordered in Python, exact logging order doesn't matter
+    assert set([
+        mock_handler.messages[3].message,
+        mock_handler.messages[4].message
+    ]) == set([
+        "    'Accept': 'Caramel'",
+        "    'Hate': 'REDACTED'"
+    ])
     assert mock_handler.messages[5].message == "Response status: 202"
     assert mock_handler.messages[6].message == "Response headers:"
-    assert mock_handler.messages[7].message == "    'Content-Type': 'Caramel'"
-    assert mock_handler.messages[8].message == "    'HateToo': 'REDACTED'"
+    # Dict not ordered in Python, exact logging order doesn't matter
+    assert set([
+        mock_handler.messages[7].message,
+        mock_handler.messages[8].message
+    ]) == set([
+        "    'Content-Type': 'Caramel'",
+        "    'HateToo': 'REDACTED'"
+    ])
 
     mock_handler.reset()
