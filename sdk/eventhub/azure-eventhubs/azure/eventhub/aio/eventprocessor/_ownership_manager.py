@@ -91,7 +91,7 @@ class OwnershipManager(object):
         not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
         timed_out_partitions = [x for x in ownership_list
                                 if x["last_modified_time"] + self.ownership_timeout < now]
-        if self._initializing:  # greedily claim all partitions when an EventProcessor is started.
+        if self._initializing:  # greedily claim all available partitions when an EventProcessor is started.
             to_claim = timed_out_partitions
             for p in to_claim:
                 p["owner_id"] = self.owner_id
@@ -105,7 +105,8 @@ class OwnershipManager(object):
                      }
                 )
             self._initializing = False
-            return to_claim
+            if to_claim:  # if no expired or unclaimed partitions, go ahead with balancing
+                return to_claim
 
         timed_out_partition_ids = [ownership["partition_id"] for ownership in timed_out_partitions]
         claimable_partition_ids = not_owned_partition_ids + timed_out_partition_ids
