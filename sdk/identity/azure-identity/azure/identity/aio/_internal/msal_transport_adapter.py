@@ -42,7 +42,7 @@ class MsalTransportAdapter:
         policies = policies or [
             config.retry_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
         self._transport = transport or AioHttpTransport(configuration=config)

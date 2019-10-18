@@ -190,7 +190,7 @@ class AuthnClient(AuthnClientBase):
             ContentDecodePolicy(),
             config.retry_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
         if not transport:
