@@ -9896,6 +9896,12 @@ class Db2LinkedService(LinkedService):
     :type username: object
     :param password: Password for authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param package_collection: Under where packages are created when querying
+     database. Type: string (or Expression with resultType string).
+    :type package_collection: object
+    :param certificate_common_name: Certificate Common Name when TLS is
+     enabled. Type: string (or Expression with resultType string).
+    :type certificate_common_name: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -9920,6 +9926,8 @@ class Db2LinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'package_collection': {'key': 'typeProperties.packageCollection', 'type': 'object'},
+        'certificate_common_name': {'key': 'typeProperties.certificateCommonName', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -9930,6 +9938,8 @@ class Db2LinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
+        self.package_collection = kwargs.get('package_collection', None)
+        self.certificate_common_name = kwargs.get('certificate_common_name', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Db2'
 

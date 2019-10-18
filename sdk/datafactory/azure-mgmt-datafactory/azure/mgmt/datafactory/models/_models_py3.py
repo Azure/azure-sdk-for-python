@@ -9896,6 +9896,12 @@ class Db2LinkedService(LinkedService):
     :type username: object
     :param password: Password for authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param package_collection: Under where packages are created when querying
+     database. Type: string (or Expression with resultType string).
+    :type package_collection: object
+    :param certificate_common_name: Certificate Common Name when TLS is
+     enabled. Type: string (or Expression with resultType string).
+    :type certificate_common_name: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -9920,16 +9926,20 @@ class Db2LinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'package_collection': {'key': 'typeProperties.packageCollection', 'type': 'object'},
+        'certificate_common_name': {'key': 'typeProperties.certificateCommonName', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, database, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, server, database, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, package_collection=None, certificate_common_name=None, encrypted_credential=None, **kwargs) -> None:
         super(Db2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.server = server
         self.database = database
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
+        self.package_collection = package_collection
+        self.certificate_common_name = certificate_common_name
         self.encrypted_credential = encrypted_credential
         self.type = 'Db2'
 

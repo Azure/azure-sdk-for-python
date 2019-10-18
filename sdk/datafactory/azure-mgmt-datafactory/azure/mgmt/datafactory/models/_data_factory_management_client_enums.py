@@ -357,13 +357,6 @@ class OrcCompressionCodec(str, Enum):
     snappy = "snappy"
 
 
-class OrcCompressionCodec(str, Enum):
-
-    none = "none"
-    zlib = "zlib"
-    snappy = "snappy"
-
-
 class AvroCompressionCodec(str, Enum):
 
     none = "none"
