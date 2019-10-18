@@ -10,7 +10,7 @@ from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
 
-class AppConfigurationClientExamples(AzureMgmtTestCase):
+class AppConfigurationClientSamples(AzureMgmtTestCase):
     def _add_for_test(self, key, label):
         exist = bool(
             list(self.client.list_configuration_settings(keys=[key], labels=[label]))
@@ -33,7 +33,7 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
 
     def setUp(self):
         self.working_folder = path.dirname(__file__)
-        super(AppConfigurationClientExamples, self).setUp()
+        super(AppConfigurationClientSamples, self).setUp()
         # [START create_app_configuration_client]
         import os
         from azure.appconfiguration import AzureAppConfigurationClient

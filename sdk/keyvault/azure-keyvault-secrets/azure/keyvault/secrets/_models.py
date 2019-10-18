@@ -207,7 +207,7 @@ class KeyVaultSecret(object):
         """
         The secret's properties
 
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         """
         return self._properties
 
@@ -282,7 +282,7 @@ class DeletedSecret(object):
         """
         The properties of the deleted secret
 
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         """
         return self._properties
 
