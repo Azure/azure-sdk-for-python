@@ -1,5 +1,3 @@
-.. :changelog:
-
 ## Release History
 
 ### 2019-10-XX 4.0.0b5
