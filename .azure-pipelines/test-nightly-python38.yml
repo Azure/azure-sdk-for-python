@@ -15,21 +15,16 @@ jobs:
     steps:
       - script: |
           sudo apt-get update
-          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-          cd ~/
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          mkdir debug
-          cd debug
-          ../configure --enable-optimizations --prefix=$HOME
-          make install
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt-get update
+          sudo apt install python3.8
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python3 -m pip distutils wheel setuptools pathlib twine codecov beautifulsoup4 tox tox-monorepo
+          PATH=/usr/bin:$PATH
+          python3.8 -m pip install --user distutils wheel pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
           python3.8 -m pip freeze
-          cd sdk/core/azure-core
-          tox -e whl -c ../../../eng/tox/tox.ini
+          cd ./sdk/core/azure-core
+          #tox -e whl -c ../../../eng/tox/tox.ini
           #python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
