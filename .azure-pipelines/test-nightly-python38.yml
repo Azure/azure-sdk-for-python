@@ -23,12 +23,12 @@ jobs:
           PATH=/usr/bin:$PATH   
           sudo apt-get install python-packaging
           sudo apt install python3-distutils
-          pyhton3.8 -m pip3 install wheel
-          sudo apt install python3-setuptools
+          python3.8 -m pip3 install wheel
+          python3.8 -m pip3 install python3-setuptools
           python3.8 -m pip3 install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
           python3.8 -m pip3 freeze
           cd sdk/core/azure-core
-          tox -e whl -c ../../../eng/tox/tox.ini
+          #tox -e whl -c ../../../eng/tox/tox.ini
           #python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
