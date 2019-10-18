@@ -503,7 +503,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         blob_properties = await destination_blob_client.get_blob_properties()
-        await self.assertBlobEqual(self.source_container_name, destination_blob_client.blob_name, source_blob_data)
+        await self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -739,7 +739,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         blob_properties = await destination_blob_client.get_blob_properties()
-        await self.assertBlobEqual(self.source_container_name, destination_blob_client.blob_name, source_blob_data)
+        await self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
