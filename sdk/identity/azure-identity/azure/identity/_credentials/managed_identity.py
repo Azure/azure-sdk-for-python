@@ -4,10 +4,16 @@
 # ------------------------------------
 import os
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    NetworkTraceLoggingPolicy,
+    RetryPolicy,
+)
 
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
@@ -23,8 +29,7 @@ if TYPE_CHECKING:
 
 
 class ManagedIdentityCredential(object):
-    """
-    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+    """Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
     :param str client_id:
         (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
@@ -43,8 +48,7 @@ class ManagedIdentityCredential(object):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -60,14 +64,19 @@ class _ManagedIdentityBase(object):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
         config = config or self._create_config(**kwargs)
-        policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
+        policies = [
+            ContentDecodePolicy(),
+            config.headers_policy,
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
 
     @staticmethod
     def _create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
-        """
-        Build a default configuration for the credential's HTTP pipeline.
+        """Build a default configuration for the credential's HTTP pipeline.
 
         :rtype: :class:`azure.core.configuration`
         """
@@ -98,8 +107,7 @@ class _ManagedIdentityBase(object):
 
 
 class ImdsCredential(_ManagedIdentityBase):
-    """
-    Authenticates with a managed identity via the IMDS endpoint.
+    """Authenticates with a managed identity via the IMDS endpoint.
 
     :param config: optional configuration for the underlying HTTP pipeline
     :type config: :class:`azure.core.configuration`
@@ -112,8 +120,7 @@ class ImdsCredential(_ManagedIdentityBase):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -152,8 +159,7 @@ class ImdsCredential(_ManagedIdentityBase):
 
 
 class MsiCredential(_ManagedIdentityBase):
-    """
-    Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
     :param config: optional configuration for the underlying HTTP pipeline
     :type config: :class:`azure.core.configuration`
@@ -170,8 +176,7 @@ class MsiCredential(_ManagedIdentityBase):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

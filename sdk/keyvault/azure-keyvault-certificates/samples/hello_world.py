@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a new certificate (create_certificate)
+# 1. Create a new certificate (begin_create_certificate)
 #
 # 2. Get an existing certificate (get_certificate)
 #
@@ -61,15 +61,15 @@ try:
     )
     cert_name = "HelloWorldCertificate"
 
-    # create_certificate returns a poller. Calling result() on the poller will return the certificate
-    # if creation is successful, and the CertificateOperation if not. The wait() call on the poller will
-    # wait until the long running operation is complete.
-    certificate = client.create_certificate(name=cert_name, policy=cert_policy).result()
+    # begin_create_certificate returns a poller. Calling result() on the poller will return the certificate
+    # as a KeyVaultCertificate if creation is successful, and the CertificateOperation if not. The wait()
+    # call on the poller will wait until the long running operation is complete.
+    certificate = client.begin_create_certificate(name=cert_name, policy=cert_policy).result()
     print("Certificate with name '{0}' created".format(certificate.name))
 
     # Let's get the bank certificate using its name
     print("\n.. Get a Certificate by name")
-    bank_certificate = client.get_certificate_with_policy(name=cert_name)
+    bank_certificate = client.get_certificate(name=cert_name)
     print("Certificate with name '{0}' was found'.".format(bank_certificate.name))
 
     # After one year, the bank account is still active, and we have decided to update the tags.
@@ -78,7 +78,7 @@ try:
     updated_certificate = client.update_certificate_properties(name=bank_certificate.name, tags=tags)
     print(
         "Certificate with name '{0}' was updated on date '{1}'".format(
-            bank_certificate.name, updated_certificate.properties.updated
+            bank_certificate.name, updated_certificate.properties.updated_on
         )
     )
     print(

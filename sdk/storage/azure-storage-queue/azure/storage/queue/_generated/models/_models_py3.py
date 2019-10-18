@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 
 
 class AccessPolicy(Model):

@@ -52,9 +52,9 @@ class CertificatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Certificate
         :rtype:
-         ~azure.mgmt.web.models.CertificatePaged[~azure.mgmt.web.models.Certificate]
+         ~azure.mgmt.web.v2018_11_01.models.CertificatePaged[~azure.mgmt.web.v2018_11_01.models.Certificate]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -122,9 +122,9 @@ class CertificatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Certificate
         :rtype:
-         ~azure.mgmt.web.models.CertificatePaged[~azure.mgmt.web.models.Certificate]
+         ~azure.mgmt.web.v2018_11_01.models.CertificatePaged[~azure.mgmt.web.v2018_11_01.models.Certificate]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -194,10 +194,10 @@ class CertificatesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Certificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.Certificate or
+        :rtype: ~azure.mgmt.web.v2018_11_01.models.Certificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -253,17 +253,18 @@ class CertificatesOperations(object):
         :type name: str
         :param certificate_envelope: Details of certificate, if it exists
          already.
-        :type certificate_envelope: ~azure.mgmt.web.models.Certificate
+        :type certificate_envelope:
+         ~azure.mgmt.web.v2018_11_01.models.Certificate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Certificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.Certificate or
+        :rtype: ~azure.mgmt.web.v2018_11_01.models.Certificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -380,17 +381,17 @@ class CertificatesOperations(object):
         :param certificate_envelope: Details of certificate, if it exists
          already.
         :type certificate_envelope:
-         ~azure.mgmt.web.models.CertificatePatchResource
+         ~azure.mgmt.web.v2018_11_01.models.CertificatePatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Certificate or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.Certificate or
+        :rtype: ~azure.mgmt.web.v2018_11_01.models.Certificate or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']

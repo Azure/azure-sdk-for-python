@@ -1,5 +1,5 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
-# https://github.com/Azure/azure-sdk/blob/master/docs/engineering-system/codeowners.md
+# https://github.com/Azure/azure-sdk/blob/master/docs/policies/opensource.md#codeowners
 
 ###########
 # SDK
@@ -15,7 +15,7 @@
 # Service team
 /sdk/identity/ @chlowell @schaabs
 /sdk/eventhub/ @annatisch @yunhaoling @YijunXieMS
-/sdk/storage/ @zezha-msft @annatisch @rakshith91
+/sdk/storage/ @zezha-msft @annatisch @rakshith91 @xiafu-msft
 /sdk/applicationinsights/ @alexeldeib
 /sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish

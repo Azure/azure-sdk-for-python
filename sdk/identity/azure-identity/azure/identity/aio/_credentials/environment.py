@@ -12,15 +12,13 @@ from .client_credential import CertificateCredential, ClientSecretCredential
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline.policies import HTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class EnvironmentCredential:
-    """
-    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
-    password, depending on environment variable settings. Configuration is attempted in this order, using these
-    environment variables:
+    """A credential configured by environment variables.
+
+    This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
+    a user with a username and password. Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
       - **AZURE_CLIENT_ID**: the service principal's client ID
@@ -39,7 +37,7 @@ class EnvironmentCredential:
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
+                client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
@@ -51,9 +49,8 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
