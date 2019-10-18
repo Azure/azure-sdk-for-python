@@ -6,7 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._generated import KeyVaultClient
@@ -89,6 +89,7 @@ class AsyncKeyVaultClientBase:
             config.authentication_policy,
             config.logging_policy,
             DistributedTracingPolicy(),
+            HttpLoggingPolicy(**kwargs),
         ]
 
         if transport is None:
