@@ -4,7 +4,7 @@
 
 **Disclaimer**
 
-This package and the `azure.keyvault` does not contain code anymore. This package now installs three sub-packages instead:
+This package and the `azure.keyvault` namespace does not contain code anymore. This package now installs three sub-packages instead:
 
 * azure-keyvault-keys
 * azure-keyvault-secrets
