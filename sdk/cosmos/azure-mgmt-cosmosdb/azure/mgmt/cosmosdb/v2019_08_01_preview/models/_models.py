@@ -618,8 +618,8 @@ class DatabaseAccountConnectionString(Model):
         self.description = None
 
 
-class DatabaseAccountCreateParameters(ARMResourceProperties):
-    """Parameters to create Cosmos DB database accounts.
+class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create or update Cosmos DB database accounts.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -720,7 +720,7 @@ class DatabaseAccountCreateParameters(ARMResourceProperties):
     database_account_offer_type = "Standard"
 
     def __init__(self, **kwargs):
-        super(DatabaseAccountCreateParameters, self).__init__(**kwargs)
+        super(DatabaseAccountCreateUpdateParameters, self).__init__(**kwargs)
         self.kind = kwargs.get('kind', "GlobalDocumentDB")
         self.consistency_policy = kwargs.get('consistency_policy', None)
         self.locations = kwargs.get('locations', None)

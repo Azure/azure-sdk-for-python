@@ -209,7 +209,7 @@ class DatabaseAccountsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, account_name, create_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, create_update_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -235,7 +235,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_parameters, 'DatabaseAccountCreateParameters')
+        body_content = self._serialize.body(create_update_parameters, 'DatabaseAccountCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -258,7 +258,7 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, account_name, create_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, create_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an Azure Cosmos DB database account. The "Update"
         method is preferred when performing updates on an account.
 
@@ -266,10 +266,10 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param create_parameters: The parameters to provide for the current
-         database account.
-        :type create_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountCreateParameters
+        :param create_update_parameters: The parameters to provide for the
+         current database account.
+        :type create_update_parameters:
+         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.DatabaseAccountCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -287,7 +287,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            create_parameters=create_parameters,
+            create_update_parameters=create_update_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

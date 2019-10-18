@@ -27,7 +27,7 @@ try:
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
     from ._models_py3 import DatabaseAccountConnectionString
-    from ._models_py3 import DatabaseAccountCreateParameters
+    from ._models_py3 import DatabaseAccountCreateUpdateParameters
     from ._models_py3 import DatabaseAccountGetResults
     from ._models_py3 import DatabaseAccountListConnectionStringsResult
     from ._models_py3 import DatabaseAccountListKeysResult
@@ -113,7 +113,7 @@ except (SyntaxError, ImportError):
     from ._models import ConsistencyPolicy
     from ._models import ContainerPartitionKey
     from ._models import DatabaseAccountConnectionString
-    from ._models import DatabaseAccountCreateParameters
+    from ._models import DatabaseAccountCreateUpdateParameters
     from ._models import DatabaseAccountGetResults
     from ._models import DatabaseAccountListConnectionStringsResult
     from ._models import DatabaseAccountListKeysResult
@@ -236,7 +236,7 @@ __all__ = [
     'ConsistencyPolicy',
     'ContainerPartitionKey',
     'DatabaseAccountConnectionString',
-    'DatabaseAccountCreateParameters',
+    'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountGetResults',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountListKeysResult',
