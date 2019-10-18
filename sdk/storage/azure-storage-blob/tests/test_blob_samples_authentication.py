@@ -130,6 +130,8 @@ class TestAuthSamples(StorageTestCase):
         # Get a credential for authentication
         # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
         # For example user (who must be an Azure Event Hubs Data Owner role) to be logged in can be specified by the environment variable AZURE_USERNAME
+        # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
+        # The docs above specify all mechanisms which the defaultCredential internally support.
         from azure.identity import DefaultAzureCredential
         default_credential = DefaultAzureCredential()
  
