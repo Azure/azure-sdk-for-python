@@ -25,10 +25,9 @@ from .._shared.response_handlers import (
     return_headers_and_deserialized)
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import (
-    ModifiedAccessConditions,
     StorageErrorException,
     SignedIdentifier)
-from .._deserialize import deserialize_container_properties
+from .._deserialize import deserialize_container_properties, get_modify_conditions
 from ..container_client import ContainerClient as ContainerClientBase
 from ..lease import get_access_conditions
 from ..models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
@@ -180,15 +179,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -204,11 +199,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
             await self._client.container.delete(
@@ -250,15 +241,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
@@ -373,7 +360,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
-        mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
+        mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.container.set_metadata( # type: ignore
@@ -485,9 +472,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
         signed_identifiers = identifiers # type: ignore
 
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None))
+        mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
             return await self._client.container.set_access_policy(
@@ -647,15 +632,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -753,15 +734,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -821,15 +798,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An async iterator of responses, one for each blob in order
