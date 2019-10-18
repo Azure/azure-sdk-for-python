@@ -20,23 +20,10 @@ jobs:
           sudo apt install python3.8
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
-          PATH=/usr/bin:$PATH
-          python3.8 --version               
+          PATH=/usr/bin:$PATH   
+          sudo apt-get install python-packaging           
           python3.8 -m pip install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
-          cd /home/vsts
-          ls
-          echo '/hom/vsts/.local'
-          cd .local
-          ls
-          echo '/lib'
-          cd lib
-          ls
-          echo 'python3.8'
-          cd python3.8
-          ls
-          echo 'site-packages'
-          cd site-packages
-          ls
+          python3.8 -m pip freeze         
           python3.8 -c "from packaging import *"
           python3.8 -c "from setuptools import *"
           python3.8 -c "from packaging.specifiers import SpecifierSet"
