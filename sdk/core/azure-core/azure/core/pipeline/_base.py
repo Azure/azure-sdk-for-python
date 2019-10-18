@@ -125,7 +125,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
+        .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START build_pipeline]
             :end-before: [END build_pipeline]
             :language: python
