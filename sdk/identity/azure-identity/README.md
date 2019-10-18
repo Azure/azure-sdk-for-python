@@ -197,7 +197,7 @@ client_secret = ClientSecretCredential(client_id, client_secret, tenant_id)
 credential_chain = ChainedTokenCredential(managed_identity, client_secret)
 
 # the ChainedTokenCredential can be used anywhere a credential is required
-client = EventHubClient(host, event_hub_path, credential)
+client = EventHubClient(host, event_hub_path, credential_chain)
 ```
 
 ## Async credentials:
