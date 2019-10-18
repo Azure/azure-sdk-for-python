@@ -218,7 +218,10 @@ class StorageAccountHostsMixin(object):
             if raise_on_any_failure:
                 failures = [p for p in parts if p.status_code not in [200, 202]]
                 if failures:
-                    error = PartialBatchErrorException(message="There is a partial failure in the batch operation.", response=response, parts=iter(parts))
+                    error = PartialBatchErrorException(
+                        message="There is a partial failure in the batch operation.",
+                        response=response, parts=iter(parts)
+                    )
                     error.failed_operations = failures
                     raise error
             return iter(parts)

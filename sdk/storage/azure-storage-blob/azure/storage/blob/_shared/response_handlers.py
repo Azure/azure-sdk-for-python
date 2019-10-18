@@ -40,12 +40,11 @@ class PartialBatchErrorException(HttpResponseError):
 
     def __init__(self, message, response, parts):
 
-      self.response = response
-      self.parts = parts
-      self.failed_operations = None
-      self.message = message
-      self.response.status_code = 207
-      super(PartialBatchErrorException, self).__init__(message=self.message, response=response)
+        self.response = response
+        self.parts = parts
+        self.failed_operations = None
+        self.message = message
+        super(PartialBatchErrorException, self).__init__(message=self.message, response=response)
 
 
 def parse_length_from_content_range(content_range):
