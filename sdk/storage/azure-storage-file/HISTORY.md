@@ -13,8 +13,7 @@ To use a directory_url, the method `from_directory_url` must be used.
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
-- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, 
-`DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
+- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
@@ -22,7 +21,13 @@ To use a directory_url, the method `from_directory_url` must be used.
   - `validate_content`
   - `timeout` etc.
 - The `generate_shared_access_signature` methods on each of `FileServiceClient`, `ShareClient` and `FileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
-
+- `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
+the following APIs:
+  - download_file
+  - upload_range
+  - upload_range_from_url
+  - clear_range
+  - get_ranges
 
 **New features**
 
