@@ -338,7 +338,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             from azure.keyvault.keys.crypto import SignatureAlgorithm
 
             verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
-            assert verified.result is True
+            assert verified.is_valid
 
         """
 

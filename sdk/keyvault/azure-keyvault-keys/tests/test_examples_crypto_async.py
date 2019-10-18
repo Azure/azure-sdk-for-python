@@ -107,6 +107,6 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
-        assert verified.is_valid is True
+        assert verified.is_valid
 
         # [END verify]

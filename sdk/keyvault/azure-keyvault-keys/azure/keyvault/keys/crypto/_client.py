@@ -354,7 +354,7 @@ class CryptographyClient(KeyVaultClientBase):
             from azure.keyvault.keys.crypto import SignatureAlgorithm
 
             verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
-            assert verified.result is True
+            assert verified.is_valid
 
         """
         local_key = self._get_local_key(**kwargs)
