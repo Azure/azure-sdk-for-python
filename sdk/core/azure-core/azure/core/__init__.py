@@ -24,13 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
-from .version import VERSION
+from ._version import VERSION
 __version__ = VERSION
 
-from .configuration import Configuration  # pylint: disable=unused-import
-from .pipeline_client import PipelineClient
-from .pipeline.transport import HttpRequest  # pylint: disable=unused-import
-from .exceptions import HttpResponseError  # pylint: disable=unused-import
+from ._pipeline_client import PipelineClient
 from ._match_conditions import MatchConditions
 
 
@@ -40,7 +37,7 @@ __all__ = [
 ]
 
 try:
-    from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
+    from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
     __all__.extend(["AsyncPipelineClient"])
 except (ImportError, SyntaxError): # Python <= 3.5
     pass

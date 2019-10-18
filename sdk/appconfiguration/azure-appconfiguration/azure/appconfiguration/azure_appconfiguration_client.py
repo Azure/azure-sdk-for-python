@@ -10,6 +10,8 @@ from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPoli
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
+    HttpResponseError,
+    ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,
@@ -18,6 +20,7 @@ from azure.core.exceptions import (
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._generated.models import KeyValue
 from ._generated import AzureAppConfiguration
+from ._generated.models import ErrorException
 from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._models import ConfigurationSetting
 from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
@@ -37,6 +40,9 @@ class AzureAppConfigurationClient:
         :param str base_url: base url of the service
         :param credential: An object which can provide secrets for the app configuration service
         :type credential: azure.AppConfigConnectionStringCredential
+        :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
+        :keyword HttpTransport transport: If omitted, the standard pipeline is used.
+        :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
 
@@ -125,7 +131,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
-        :raises: :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
 
@@ -145,15 +151,26 @@ class AzureAppConfigurationClient:
             for item in filtered_listed:
                 pass  # do something
         """
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
-        return self._impl.get_key_values(
-            label=encoded_labels,
-            key=encoded_keys,
-            select=kwargs.get("fields"),
-            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
-            **kwargs
-        )
+        error_map = {
+            401: ClientAuthenticationError
+        }
+
+        try:
+            return self._impl.get_key_values(
+                label=encoded_labels,
+                key=encoded_keys,
+                select=select,
+                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                error_map=error_map,
+                **kwargs
+            )
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def get_configuration_setting(
@@ -174,7 +191,8 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceNotModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
         Example
 
@@ -185,10 +203,11 @@ class AzureAppConfigurationClient:
             )
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
             error_map[304] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
@@ -196,15 +215,20 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value = self._impl.get_key_value(
-            key=key,
-            label=label,
-            if_match=prep_if_match(etag, match_condition),
-            if_none_match=prep_if_none_match(etag, match_condition),
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = self._impl.get_key_value(
+                key=key,
+                label=label,
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except ResourceNotModifiedError:
+            return None
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -217,7 +241,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceExistsError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
 
         Example
 
@@ -241,17 +265,21 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             412: ResourceExistsError
         }
-        key_value_added = self._impl.put_key_value(
-            entity=key_value,
-            key=key_value.key,
-            label=key_value.label,
-            if_none_match="*",
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_added)
+        try:
+            key_value_added = self._impl.put_key_value(
+                entity=key_value,
+                key=key_value.key,
+                label=key_value.label,
+                if_none_match="*",
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_added)
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def set_configuration_setting(
@@ -270,7 +298,9 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
 
@@ -294,6 +324,7 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             409: ResourceReadOnlyError
         }
         if match_condition == MatchConditions.IfNotModified:
@@ -305,16 +336,19 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value_set = self._impl.put_key_value(
-            entity=key_value,
-            key=key_value.key,
-            label=key_value.label,
-            if_match=prep_if_match(configuration_setting.etag, match_condition),
-            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_set)
+        try:
+            key_value_set = self._impl.put_key_value(
+                entity=key_value,
+                key=key_value.key,
+                label=key_value.label,
+                if_match=prep_if_match(configuration_setting.etag, match_condition),
+                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_set)
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def delete_configuration_setting(
@@ -334,7 +368,9 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
 
@@ -346,6 +382,7 @@ class AzureAppConfigurationClient:
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
+            401: ClientAuthenticationError,
             409: ResourceReadOnlyError
         }
         if match_condition == MatchConditions.IfNotModified:
@@ -357,14 +394,17 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
 
-        key_value_deleted = self._impl.delete_key_value(
-            key=key,
-            label=label,
-            if_match=prep_if_match(etag, match_condition),
-            headers=custom_headers,
-            error_map=error_map,
-        )
-        return ConfigurationSetting._from_key_value(key_value_deleted)
+        try:
+            key_value_deleted = self._impl.delete_key_value(
+                key=key,
+                label=label,
+                if_match=prep_if_match(etag, match_condition),
+                headers=custom_headers,
+                error_map=error_map,
+            )
+            return ConfigurationSetting._from_key_value(key_value_deleted)
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def list_revisions(
@@ -385,7 +425,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
-        :raises: :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
 
@@ -405,15 +445,26 @@ class AzureAppConfigurationClient:
             for item in filtered_revisions:
                 pass  # do something
         """
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ['locked' if x == 'read_only' else x for x in select]
         encoded_labels = escape_and_tostr(labels)
         encoded_keys = escape_and_tostr(keys)
-        return self._impl.get_revisions(
-            label=encoded_labels,
-            key=encoded_keys,
-            select=kwargs.get("fields"),
-            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
-            **kwargs
-        )
+        error_map = {
+            401: ClientAuthenticationError
+        }
+
+        try:
+            return self._impl.get_revisions(
+                label=encoded_labels,
+                key=encoded_keys,
+                select=select,
+                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                error_map=error_map,
+                **kwargs
+            )
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def set_read_only(
@@ -427,7 +478,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
 
@@ -440,16 +491,20 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
 
-        key_value = self._impl.put_lock(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = self._impl.put_lock(
+                key=configuration_setting.key,
+                label=configuration_setting.label,
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)
 
     @distributed_trace
     def clear_read_only(
@@ -463,7 +518,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
 
@@ -476,13 +531,17 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.clear_read_only(config_setting)
         """
         error_map = {
+            401: ClientAuthenticationError,
             404: ResourceNotFoundError
         }
 
-        key_value = self._impl.delete_lock(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            error_map=error_map,
-            **kwargs
-        )
-        return ConfigurationSetting._from_key_value(key_value)
+        try:
+            key_value = self._impl.delete_lock(
+                key=configuration_setting.key,
+                label=configuration_setting.label,
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSetting._from_key_value(key_value)
+        except ErrorException as error:
+            raise HttpResponseError(message=error.message, response=error.response)

@@ -124,61 +124,51 @@ new versions of existing certificates, update certificate metadata, and delete c
 can also manage certificate issuers, contacts, and management policies of certificates. This is
 illustrated in the [examples](#examples) below.
 
-### Certificate
-  A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective,
-  Key Vault APIs accept and return certificates as the Certificate type. In addition to the
-  certificate data, the following attributes may be specified:
-* expires: Identifies the expiration time on or after which the certificate data should not be retrieved.
-* not_before: Identifies the time after which the certificate will be active.
-* enabled: Specifies whether the certificate data can be retrieved.
-* created: Indicates when this version of the certificate was created.
-* updated: Indicates when this version of the certificate was updated.
-
 ### Certificate Client:
 
 ## Examples
 This section contains code snippets covering common tasks:
 * [Create a Certificate](#create-a-certificate)
 * [Retrieve a Certificate](#retrieve-a-certificate)
-* [Update an existing Certificate](#update-an-existing-certificate)
+* [Update Properties of an existing Certificate](#update-properties-of-an-existing-certificate)
 * [Delete a Certificate](#delete-a-certificate)
-* [List Certificates](#list-certificates)
+* [List Properites of Certificates](#list-properties-of-certificates)
 * [Asynchronously create a Certificate](#asynchronously-create-a-certificate)
-* [Asynchronously list certificates](#asynchronously-list-certificates)
+* [Asynchronously list properties of Certificates](#asynchronously-list-properties-of-certificates)
 
 ### Create a Certificate
-`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with
+`begin_create_certificate` creates a certificate to be stored in the Azure Key Vault. If a certificate with
 the same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default
-policy will be used. The `create_certificate` operation returns a long running operation poller.
+policy will be used. The `begin_create_certificate` operation returns a long running operation poller.
 ```python
-create_certificate_poller = certificate_client.create_certificate(name="cert-name")
+create_certificate_poller = certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 
 print(create_certificate_poller.result())
 ```
 
 ### Retrieve a Certificate
-`get_certificate_with_policy` retrieves a certificate previously stored in the Key Vault without
+`get_certificate` retrieves a certificate previously stored in the Key Vault without
 having to specify version.
 ```python
-certificate = certificate_client.get_certificate_with_policy(name="cert-name")
+certificate = certificate_client.get_certificate(name="cert-name")
 
 print(certificate.name)
 print(certificate.properties.version)
 print(certificate.policy.id)
 ```
 
-`get_certificate` retrieves a certificate based on the certificate name and the version of the certificate.
+`get_certificate_version` retrieves a certificate based on the certificate name and the version of the certificate.
 Version is required.
 ```python
-certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
+certificate = certificate_client.get_certificate_version(name="cert-name", version="cert-version")
 
 print(certificate.name)
 print(certificate.properties.version)
 ```
 
-### Update an existing Certificate
-`update_certificate` updates a certificate previously stored in the Key Vault.
+### Update properties of an existing Certificate]
+`update_certificate_properties` updates a certificate previously stored in the Key Vault.
 ```python
 # You can specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
@@ -187,7 +177,7 @@ updated_certificate= certificate_client.update_certificate_properties(name="cert
 
 print(updated_certificate.name)
 print(updated_certificate.properties.version)
-print(updated_certificate.properties.updated)
+print(updated_certificate.properties.updated_on)
 print(updated_certificate.properties.tags)
 
 ```
@@ -201,10 +191,10 @@ deleted_certificate = certificate_client.delete_certificate(name="cert-name")
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)
 ```
-### List Certificates
-This example lists all the certificates in the specified Key Vault.
+### List properties of Certificates
+This example lists the properties of all certificates in the specified Key Vault.
 ```python
-certificates = certificate_client.list_certificates()
+certificates = certificate_client.list_properites_of_certificates()
 
 for certificate in certificates:
     # this list doesn't include versions of the certificates
@@ -219,18 +209,17 @@ See
 for more information.
 
 ### Asynchronously create a Certificate
-`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with the
+`create_certificate` creates a certificate to be stored in the Azure Key Vault. If a certificate with the
 same name already exists, then a new version of the certificate is created.
 Before creating a certificate, a management policy for the certificate can be created or our default policy
-will be used. The `create_certificate` operation returns an async long running operation poller.
+will be used. Awaiting the call to `create_certificate` returns your created certificate if creation is successful,
+and a `CertificateOperation` if creation is not.
 ```python
-create_certificate_poller = await certificate_client.create_certificate(name="cert-name")
-
-create_certificate_result = await create_certificate_poller
+create_certificate_result = await certificate_client.create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
 print(create_certificate_result)
 ```
 
-### Asynchronously list certificates
+### Asynchronously list properties of Certificates
 This example lists all the certificates in the client's vault:
 ```python
 certificates = certificate_client.list_certificates()
@@ -249,7 +238,7 @@ displaying additional information about the error.
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 try:
-    certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
+    certificate_client.get_certificate(name="deleted_certificate")
 except ResourceNotFoundError as e:
     print(e.message)
 
@@ -283,7 +272,7 @@ client = CertificateClient(vault_endpoint=url, credential=credential, logging_en
 
 Network trace logging can also be enabled for any single operation:
  ```python
-certificate = certificate_client.get_certificate_with_policy(name="cert-name", logging_enable=True)
+certificate = certificate_client.get_certificate(name="cert-name", logging_enable=True)
 ```
 
 ## Next steps
