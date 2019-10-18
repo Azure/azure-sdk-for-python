@@ -36,6 +36,7 @@ import types
 import re
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
+from six.moves import urllib
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
@@ -265,6 +266,106 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                         _LOGGER.debug(response.http_response.text())
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
+
+
+class HttpLoggingPolicy(SansIOHTTPPolicy):
+    """The Pipeline policy that handles logging of HTTP requests and responses.
+    """
+
+    DEFAULT_HEADERS_WHITELIST = set([
+        "x-ms-client-request-id",
+        "x-ms-return-client-request-id",
+        "traceparent",
+        "Accept",
+        "Cache-Control",
+        "Connection",
+        "Content-Length",
+        "Content-Type",
+        "Date",
+        "ETag",
+        "Expires",
+        "If-Match",
+        "If-Modified-Since",
+        "If-None-Match",
+        "If-Unmodified-Since",
+        "Last-Modified",
+        "Pragma",
+        "Request-Id",
+        "Retry-After",
+        "Server",
+        "Transfer-Encoding",
+        "User-Agent"
+    ])
+    REDACTED_PLACEHOLDER = "REDACTED"
+
+    def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
+        self.logger = logger or logging.getLogger(
+            "azure.core.pipeline.policies.http_logging_policy"
+        )
+        self.allowed_query_params = set()
+        self.allowed_header_namers = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+
+    def _redact_query_param(self, key, value):
+        lower_case_allowed_query_params = [
+            param.lower() for param in self.allowed_query_params
+        ]
+        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+    def _redact_header(self, key, value):
+        lower_case_allowed_header_namers = [
+            header.lower() for header in self.allowed_header_namers
+        ]
+        return value if key.lower() in lower_case_allowed_header_namers else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Logs HTTP method, url and headers.
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        http_request = request.http_request
+        options = request.context.options
+        # Get logger in my context first (request has been retried)
+        # then read from kwargs (pop if that's the case)
+        # then use my instance logger
+        logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+
+        if not logger.isEnabledFor(logging.INFO):
+            return
+
+        try:
+            parsed_url = list(urllib.parse.urlparse(http_request.url))
+            parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
+            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
+            # 4 is query
+            parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
+            redacted_url = urllib.parse.urlunparse(parsed_url)
+
+            logger.info("Request URL: %r", redacted_url)
+            logger.info("Request method: %r", http_request.method)
+            logger.info("Request headers:")
+            for header, value in http_request.headers.items():
+                value = self._redact_header(header, value)
+                logger.info("    %r: %r", header, value)
+        except Exception as err:  # pylint: disable=broad-except
+            logger.warning("Failed to log request: %s", repr(err))
+
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
+        http_response = response.http_response
+        logger = response.context.get("logger")
+
+        if not logger.isEnabledFor(logging.INFO):
+            return
+
+        try:
+            logger.info("Response status: %r", http_response.status_code)
+            logger.info("Response headers:")
+            for res_header, value in http_response.headers.items():
+                value = self._redact_header(res_header, value)
+                logger.info("    %r: %r", res_header, value)
+        except Exception as err:  # pylint: disable=broad-except
+            logger.warning("Failed to log response: %s", repr(err))
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
