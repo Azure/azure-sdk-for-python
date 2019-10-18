@@ -129,3 +129,29 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class EventSummaryPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EventSummary <azure.mgmt.consumption.models.EventSummary>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EventSummary]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EventSummaryPaged, self).__init__(*args, **kwargs)
+class LotSummaryPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`LotSummary <azure.mgmt.consumption.models.LotSummary>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LotSummary]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LotSummaryPaged, self).__init__(*args, **kwargs)

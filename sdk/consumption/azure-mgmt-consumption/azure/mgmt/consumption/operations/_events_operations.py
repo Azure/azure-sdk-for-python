@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class EventsOperations(object):
+    """EventsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,17 +39,26 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available consumption REST API operations.
+            self, billing_account_id, billing_profile_id, start_date, end_date, custom_headers=None, raw=False, **operation_config):
+        """Lists the events by billingAccountId and billingProfileId for given
+        start and end date.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
+        :param billing_profile_id: Azure Billing Profile ID.
+        :type billing_profile_id: str
+        :param start_date: Start date
+        :type start_date: str
+        :param end_date: End date
+        :type end_date: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of EventSummary
         :rtype:
-         ~azure.mgmt.consumption.models.OperationPaged[~azure.mgmt.consumption.models.Operation]
+         ~azure.mgmt.consumption.models.EventSummaryPaged[~azure.mgmt.consumption.models.EventSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -57,10 +66,17 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+                    'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
+                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
 
             else:
                 url = next_link
@@ -94,7 +110,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.EventSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Consumption/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/providers/Microsoft.Consumption/events'}

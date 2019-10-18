@@ -13,6 +13,34 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Amount(Model):
+    """The amount plus currency .
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar currency: Amount currency.
+    :vartype currency: str
+    :ivar value: Amount.
+    :vartype value: decimal.Decimal
+    """
+
+    _validation = {
+        'currency': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'currency': {'key': 'currency', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'decimal'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Amount, self).__init__(**kwargs)
+        self.currency = None
+        self.value = None
+
+
 class Resource(Model):
     """The Resource model definition.
 
@@ -398,6 +426,91 @@ class ChargesListResult(Model):
 class ChargeSummary(Resource):
     """A charge summary resource.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LegacyChargeSummary, ModernChargeSummary
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'legacy': 'LegacyChargeSummary', 'modern': 'ModernChargeSummary'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ChargeSummary, self).__init__(**kwargs)
+        self.kind = None
+        self.kind = 'ChargeSummary'
+
+
+class CloudError(Model):
+    """CloudError.
+    """
+
+    _attribute_map = {
+    }
+
+
+class CreditBalanceSummary(Model):
+    """Summary of credit balances.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar estimated_balance: Estimated balance.
+    :vartype estimated_balance: ~azure.mgmt.consumption.models.Amount
+    :ivar current_balance: Current balance.
+    :vartype current_balance: ~azure.mgmt.consumption.models.Amount
+    """
+
+    _validation = {
+        'estimated_balance': {'readonly': True},
+        'current_balance': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'estimated_balance': {'key': 'estimatedBalance', 'type': 'Amount'},
+        'current_balance': {'key': 'currentBalance', 'type': 'Amount'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CreditBalanceSummary, self).__init__(**kwargs)
+        self.estimated_balance = None
+        self.current_balance = None
+
+
+class CreditSummary(Resource):
+    """A credit summary resource.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -409,21 +522,16 @@ class ChargeSummary(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar billing_period_id: The id of the billing period resource that the
-     charge belongs to.
-    :vartype billing_period_id: str
-    :ivar usage_start: Usage start date.
-    :vartype usage_start: str
-    :ivar usage_end:  Usage end date.
-    :vartype usage_end: str
-    :ivar azure_charges: Azure Charges.
-    :vartype azure_charges: decimal.Decimal
-    :ivar charges_billed_separately: Charges Billed separately.
-    :vartype charges_billed_separately: decimal.Decimal
-    :ivar marketplace_charges: Marketplace Charges.
-    :vartype marketplace_charges: decimal.Decimal
-    :ivar currency: Currency Code
-    :vartype currency: str
+    :ivar balance_summary: Summary of balances associated with this credit
+     summary.
+    :vartype balance_summary:
+     ~azure.mgmt.consumption.models.CreditBalanceSummary
+    :ivar pending_credit_adjustments: Pending credit adjustments.
+    :vartype pending_credit_adjustments: ~azure.mgmt.consumption.models.Amount
+    :ivar expired_credit: Expired credit.
+    :vartype expired_credit: ~azure.mgmt.consumption.models.Amount
+    :ivar pending_eligible_charges: Pending eligible charges.
+    :vartype pending_eligible_charges: ~azure.mgmt.consumption.models.Amount
     """
 
     _validation = {
@@ -431,13 +539,10 @@ class ChargeSummary(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
-        'billing_period_id': {'readonly': True},
-        'usage_start': {'readonly': True},
-        'usage_end': {'readonly': True},
-        'azure_charges': {'readonly': True},
-        'charges_billed_separately': {'readonly': True},
-        'marketplace_charges': {'readonly': True},
-        'currency': {'readonly': True},
+        'balance_summary': {'readonly': True},
+        'pending_credit_adjustments': {'readonly': True},
+        'expired_credit': {'readonly': True},
+        'pending_eligible_charges': {'readonly': True},
     }
 
     _attribute_map = {
@@ -445,32 +550,18 @@ class ChargeSummary(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
-        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
-        'azure_charges': {'key': 'properties.azureCharges', 'type': 'decimal'},
-        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'decimal'},
-        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'decimal'},
-        'currency': {'key': 'properties.currency', 'type': 'str'},
+        'balance_summary': {'key': 'properties.balanceSummary', 'type': 'CreditBalanceSummary'},
+        'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
+        'expired_credit': {'key': 'properties.expiredCredit', 'type': 'Amount'},
+        'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'Amount'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ChargeSummary, self).__init__(**kwargs)
-        self.billing_period_id = None
-        self.usage_start = None
-        self.usage_end = None
-        self.azure_charges = None
-        self.charges_billed_separately = None
-        self.marketplace_charges = None
-        self.currency = None
-
-
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
+        super(CreditSummary, self).__init__(**kwargs)
+        self.balance_summary = None
+        self.pending_credit_adjustments = None
+        self.expired_credit = None
+        self.pending_eligible_charges = None
 
 
 class CurrentSpend(Model):
@@ -557,6 +648,86 @@ class ErrorResponseException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class EventSummary(Resource):
+    """An event summary resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar transaction_date: Transaction date.
+    :vartype transaction_date: datetime
+    :ivar description: Transaction description.
+    :vartype description: str
+    :ivar new_credit: New Credit.
+    :vartype new_credit: ~azure.mgmt.consumption.models.Amount
+    :ivar adjustments: Adjustments amount.
+    :vartype adjustments: ~azure.mgmt.consumption.models.Amount
+    :ivar credit_expired: Credit expired.
+    :vartype credit_expired: ~azure.mgmt.consumption.models.Amount
+    :ivar charges: Charges amount.
+    :vartype charges: ~azure.mgmt.consumption.models.Amount
+    :ivar closed_balance: Closed balance.
+    :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
+    :param event_type: The type of event. Possible values include:
+     'SettledCharges', 'PendingCharges', 'PendingAdjustments',
+     'PendingNewCredit', 'PendingExpiredCredit', 'UnKnown', 'NewCredit'
+    :type event_type: str or ~azure.mgmt.consumption.models.EventType
+    :ivar invoice_number: Invoice number.
+    :vartype invoice_number: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'transaction_date': {'readonly': True},
+        'description': {'readonly': True},
+        'new_credit': {'readonly': True},
+        'adjustments': {'readonly': True},
+        'credit_expired': {'readonly': True},
+        'charges': {'readonly': True},
+        'closed_balance': {'readonly': True},
+        'invoice_number': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'new_credit': {'key': 'properties.newCredit', 'type': 'Amount'},
+        'adjustments': {'key': 'properties.adjustments', 'type': 'Amount'},
+        'credit_expired': {'key': 'properties.creditExpired', 'type': 'Amount'},
+        'charges': {'key': 'properties.charges', 'type': 'Amount'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
+        'event_type': {'key': 'properties.eventType', 'type': 'str'},
+        'invoice_number': {'key': 'properties.invoiceNumber', 'type': 'str'},
+    }
+
+    def __init__(self, *, event_type=None, **kwargs) -> None:
+        super(EventSummary, self).__init__(**kwargs)
+        self.transaction_date = None
+        self.description = None
+        self.new_credit = None
+        self.adjustments = None
+        self.credit_expired = None
+        self.charges = None
+        self.closed_balance = None
+        self.event_type = event_type
+        self.invoice_number = None
 
 
 class Filters(Model):
@@ -693,6 +864,657 @@ class ForecastPropertiesConfidenceLevelsItem(Model):
         self.percentage = None
         self.bound = bound
         self.value = None
+
+
+class LegacyChargeSummary(ChargeSummary):
+    """Legacy charge summary.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar billing_period_id: The id of the billing period resource that the
+     charge belongs to.
+    :vartype billing_period_id: str
+    :ivar usage_start: Usage start date.
+    :vartype usage_start: str
+    :ivar usage_end: Usage end date.
+    :vartype usage_end: str
+    :ivar azure_charges: Azure Charges.
+    :vartype azure_charges: decimal.Decimal
+    :ivar charges_billed_separately: Charges Billed separately.
+    :vartype charges_billed_separately: decimal.Decimal
+    :ivar marketplace_charges: Marketplace Charges.
+    :vartype marketplace_charges: decimal.Decimal
+    :ivar currency: Currency Code
+    :vartype currency: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+        'billing_period_id': {'readonly': True},
+        'usage_start': {'readonly': True},
+        'usage_end': {'readonly': True},
+        'azure_charges': {'readonly': True},
+        'charges_billed_separately': {'readonly': True},
+        'marketplace_charges': {'readonly': True},
+        'currency': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
+        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
+        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
+        'azure_charges': {'key': 'properties.azureCharges', 'type': 'decimal'},
+        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'decimal'},
+        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'decimal'},
+        'currency': {'key': 'properties.currency', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LegacyChargeSummary, self).__init__(**kwargs)
+        self.billing_period_id = None
+        self.usage_start = None
+        self.usage_end = None
+        self.azure_charges = None
+        self.charges_billed_separately = None
+        self.marketplace_charges = None
+        self.currency = None
+        self.kind = 'legacy'
+
+
+class ReservationRecommendation(Model):
+    """A reservation recommendation resource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LegacyReservationRecommendation,
+    ModernReservationRecommendation
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'legacy': 'LegacyReservationRecommendation', 'modern': 'ModernReservationRecommendation'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ReservationRecommendation, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = None
+        self.location = None
+        self.sku = None
+        self.kind = None
+
+
+class LegacyReservationRecommendation(ReservationRecommendation):
+    """Legacy reservation recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar look_back_period: The number of days of usage to look back for
+     recommendation.
+    :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: int
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity
+     Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID)
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without
+     reserved instances.
+    :vartype cost_with_no_reserved_instances: decimal.Decimal
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: decimal.Decimal
+    :ivar total_cost_with_reserved_instances: The total amount of cost with
+     reserved instances.
+    :vartype total_cost_with_reserved_instances: decimal.Decimal
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: decimal.Decimal
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: datetime
+    :ivar scope: Shared or single recommendation.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+        'look_back_period': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
+        'normalized_size': {'readonly': True},
+        'recommended_quantity_normalized': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'term': {'readonly': True},
+        'cost_with_no_reserved_instances': {'readonly': True},
+        'recommended_quantity': {'readonly': True},
+        'total_cost_with_reserved_instances': {'readonly': True},
+        'net_savings': {'readonly': True},
+        'first_usage_date': {'readonly': True},
+        'scope': {'readonly': True},
+        'sku_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
+        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
+        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'decimal'},
+        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
+        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'decimal'},
+        'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
+        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LegacyReservationRecommendation, self).__init__(**kwargs)
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope = None
+        self.sku_properties = None
+        self.kind = 'legacy'
+
+
+class UsageDetail(Resource):
+    """An usage detail resource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LegacyUsageDetail, ModernUsageDetail
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'legacy': 'LegacyUsageDetail', 'modern': 'ModernUsageDetail'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UsageDetail, self).__init__(**kwargs)
+        self.kind = None
+        self.kind = 'UsageDetail'
+
+
+class LegacyUsageDetail(UsageDetail):
+    """Legacy usage detail.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar billing_account_id: Billing Account identifier.
+    :vartype billing_account_id: str
+    :ivar billing_account_name: Billing Account Name.
+    :vartype billing_account_name: str
+    :ivar billing_period_start_date: The billing period start date.
+    :vartype billing_period_start_date: datetime
+    :ivar billing_period_end_date: The billing period end date.
+    :vartype billing_period_end_date: datetime
+    :ivar billing_profile_id: Billing Profile identifier.
+    :vartype billing_profile_id: str
+    :ivar billing_profile_name: Billing Profile Name.
+    :vartype billing_profile_name: str
+    :ivar account_owner_id: Account Owner Id.
+    :vartype account_owner_id: str
+    :ivar account_name: Account Name.
+    :vartype account_name: str
+    :ivar subscription_id: Subscription guid.
+    :vartype subscription_id: str
+    :ivar subscription_name: Subscription name.
+    :vartype subscription_name: str
+    :ivar date_property: Date for the usage record.
+    :vartype date_property: datetime
+    :ivar product: Product name for the consumed service or purchase. Not
+     available for Marketplace.
+    :vartype product: str
+    :ivar part_number: Part Number of the service used. Can be used to join
+     with the price sheet. Not available for marketplace.
+    :vartype part_number: str
+    :ivar meter_id: The meter id (GUID). Not available for marketplace. For
+     reserved instance this represents the primary meter for which the
+     reservation was purchased. For the actual VM Size for which the
+     reservation is purchased see productOrderName.
+    :vartype meter_id: str
+    :ivar meter_details: The details about the meter. By default this is not
+     populated, unless it's specified in $expand.
+    :vartype meter_details:
+     ~azure.mgmt.consumption.models.MeterDetailsResponse
+    :ivar quantity: The usage quantity.
+    :vartype quantity: decimal.Decimal
+    :ivar effective_price: Effective Price that's charged for the usage.
+    :vartype effective_price: decimal.Decimal
+    :ivar cost: The amount of cost before tax.
+    :vartype cost: decimal.Decimal
+    :ivar unit_price: Unit Price is the price applicable to you. (your EA or
+     other contract price).
+    :vartype unit_price: decimal.Decimal
+    :ivar billing_currency: Billing Currency.
+    :vartype billing_currency: str
+    :ivar resource_location: Resource Location.
+    :vartype resource_location: str
+    :ivar consumed_service: Consumed service name. Name of the azure resource
+     provider that emits the usage or was purchased. This value is not provided
+     for marketplace usage.
+    :vartype consumed_service: str
+    :ivar resource_id: Azure resource manager resource identifier.
+    :vartype resource_id: str
+    :ivar resource_name: Resource Name.
+    :vartype resource_name: str
+    :ivar service_info1: Service Info 1.
+    :vartype service_info1: str
+    :ivar service_info2: Service Info 2.
+    :vartype service_info2: str
+    :ivar additional_info: Additional details of this usage item. By default
+     this is not populated, unless it's specified in $expand. Use this field to
+     get usage line item specific details such as the actual VM Size
+     (ServiceType) or the ratio in which the reservation discount is applied.
+    :vartype additional_info: str
+    :ivar invoice_section: Invoice Section Name.
+    :vartype invoice_section: str
+    :ivar cost_center: The cost center of this department if it is a
+     department and a cost center is provided.
+    :vartype cost_center: str
+    :ivar resource_group: Resource Group Name.
+    :vartype resource_group: str
+    :ivar reservation_id: ARM resource id of the reservation. Only applies to
+     records relevant to reservations.
+    :vartype reservation_id: str
+    :ivar reservation_name: User provided display name of the reservation.
+     Last known name for a particular day is populated in the daily data. Only
+     applies to records relevant to reservations.
+    :vartype reservation_name: str
+    :ivar product_order_id: Product Order Id. For reservations this is the
+     Reservation Order ID.
+    :vartype product_order_id: str
+    :ivar product_order_name: Product Order Name. For reservations this is the
+     SKU that was purchased.
+    :vartype product_order_name: str
+    :ivar offer_id: Offer Id. Ex: MS-AZR-0017P, MS-AZR-0148P.
+    :vartype offer_id: str
+    :ivar is_azure_credit_eligible: Is Azure Credit Eligible.
+    :vartype is_azure_credit_eligible: bool
+    :ivar term: Term (in months). 1 month for monthly recurring purchase. 12
+     months for a 1 year reservation. 36 months for a 3 year reservation.
+    :vartype term: str
+    :ivar publisher_name: Publisher Name.
+    :vartype publisher_name: str
+    :ivar publisher_type: Publisher Type.
+    :vartype publisher_type: str
+    :ivar plan_name: Plan Name.
+    :vartype plan_name: str
+    :ivar charge_type: Indicates a charge represents credits, usage, a
+     Marketplace purchase, a reservation fee, or a refund.
+    :vartype charge_type: str
+    :ivar frequency: Indicates how frequently this charge will occur. OneTime
+     for purchases which only happen once, Monthly for fees which recur every
+     month, and UsageBased for charges based on how much a service is used.
+    :vartype frequency: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+        'billing_account_id': {'readonly': True},
+        'billing_account_name': {'readonly': True},
+        'billing_period_start_date': {'readonly': True},
+        'billing_period_end_date': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
+        'billing_profile_name': {'readonly': True},
+        'account_owner_id': {'readonly': True},
+        'account_name': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'subscription_name': {'readonly': True},
+        'date_property': {'readonly': True},
+        'product': {'readonly': True},
+        'part_number': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'meter_details': {'readonly': True},
+        'quantity': {'readonly': True},
+        'effective_price': {'readonly': True},
+        'cost': {'readonly': True},
+        'unit_price': {'readonly': True},
+        'billing_currency': {'readonly': True},
+        'resource_location': {'readonly': True},
+        'consumed_service': {'readonly': True},
+        'resource_id': {'readonly': True},
+        'resource_name': {'readonly': True},
+        'service_info1': {'readonly': True},
+        'service_info2': {'readonly': True},
+        'additional_info': {'readonly': True},
+        'invoice_section': {'readonly': True},
+        'cost_center': {'readonly': True},
+        'resource_group': {'readonly': True},
+        'reservation_id': {'readonly': True},
+        'reservation_name': {'readonly': True},
+        'product_order_id': {'readonly': True},
+        'product_order_name': {'readonly': True},
+        'offer_id': {'readonly': True},
+        'is_azure_credit_eligible': {'readonly': True},
+        'term': {'readonly': True},
+        'publisher_name': {'readonly': True},
+        'publisher_type': {'readonly': True},
+        'plan_name': {'readonly': True},
+        'charge_type': {'readonly': True},
+        'frequency': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
+        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'iso-8601'},
+        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'iso-8601'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
+        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'account_owner_id': {'key': 'properties.accountOwnerId', 'type': 'str'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
+        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
+        'date_property': {'key': 'properties.date', 'type': 'iso-8601'},
+        'product': {'key': 'properties.product', 'type': 'str'},
+        'part_number': {'key': 'properties.partNumber', 'type': 'str'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetailsResponse'},
+        'quantity': {'key': 'properties.quantity', 'type': 'decimal'},
+        'effective_price': {'key': 'properties.effectivePrice', 'type': 'decimal'},
+        'cost': {'key': 'properties.cost', 'type': 'decimal'},
+        'unit_price': {'key': 'properties.unitPrice', 'type': 'decimal'},
+        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
+        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
+        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
+        'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
+        'service_info1': {'key': 'properties.serviceInfo1', 'type': 'str'},
+        'service_info2': {'key': 'properties.serviceInfo2', 'type': 'str'},
+        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
+        'invoice_section': {'key': 'properties.invoiceSection', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
+        'reservation_name': {'key': 'properties.reservationName', 'type': 'str'},
+        'product_order_id': {'key': 'properties.productOrderId', 'type': 'str'},
+        'product_order_name': {'key': 'properties.productOrderName', 'type': 'str'},
+        'offer_id': {'key': 'properties.offerId', 'type': 'str'},
+        'is_azure_credit_eligible': {'key': 'properties.isAzureCreditEligible', 'type': 'bool'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
+        'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
+        'plan_name': {'key': 'properties.planName', 'type': 'str'},
+        'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
+        'frequency': {'key': 'properties.frequency', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LegacyUsageDetail, self).__init__(**kwargs)
+        self.billing_account_id = None
+        self.billing_account_name = None
+        self.billing_period_start_date = None
+        self.billing_period_end_date = None
+        self.billing_profile_id = None
+        self.billing_profile_name = None
+        self.account_owner_id = None
+        self.account_name = None
+        self.subscription_id = None
+        self.subscription_name = None
+        self.date_property = None
+        self.product = None
+        self.part_number = None
+        self.meter_id = None
+        self.meter_details = None
+        self.quantity = None
+        self.effective_price = None
+        self.cost = None
+        self.unit_price = None
+        self.billing_currency = None
+        self.resource_location = None
+        self.consumed_service = None
+        self.resource_id = None
+        self.resource_name = None
+        self.service_info1 = None
+        self.service_info2 = None
+        self.additional_info = None
+        self.invoice_section = None
+        self.cost_center = None
+        self.resource_group = None
+        self.reservation_id = None
+        self.reservation_name = None
+        self.product_order_id = None
+        self.product_order_name = None
+        self.offer_id = None
+        self.is_azure_credit_eligible = None
+        self.term = None
+        self.publisher_name = None
+        self.publisher_type = None
+        self.plan_name = None
+        self.charge_type = None
+        self.frequency = None
+        self.kind = 'legacy'
+
+
+class LotSummary(Resource):
+    """A lot summary resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar original_amount: Original amount.
+    :vartype original_amount: ~azure.mgmt.consumption.models.Amount
+    :ivar closed_balance: Closed balance.
+    :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
+    :ivar source: Lot source. Possible values include: 'PurchasedCredit',
+     'PromotionalCredit'
+    :vartype source: str or ~azure.mgmt.consumption.models.LotSource
+    :ivar start_date: Start date.
+    :vartype start_date: datetime
+    :ivar expiration_date: Expiration date.
+    :vartype expiration_date: datetime
+    :ivar po_number: PO number.
+    :vartype po_number: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'original_amount': {'readonly': True},
+        'closed_balance': {'readonly': True},
+        'source': {'readonly': True},
+        'start_date': {'readonly': True},
+        'expiration_date': {'readonly': True},
+        'po_number': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'original_amount': {'key': 'properties.originalAmount', 'type': 'Amount'},
+        'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
+        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
+        'po_number': {'key': 'properties.poNumber', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LotSummary, self).__init__(**kwargs)
+        self.original_amount = None
+        self.closed_balance = None
+        self.source = None
+        self.start_date = None
+        self.expiration_date = None
+        self.po_number = None
 
 
 class ManagementGroupAggregatedCostResult(Resource):
@@ -1065,6 +1887,660 @@ class MeterDetailsResponse(Model):
         self.service_family = None
 
 
+class ModernChargeSummary(ChargeSummary):
+    """Modern charge summary.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar billing_period_id: The id of the billing period resource that the
+     charge belongs to.
+    :vartype billing_period_id: str
+    :ivar usage_start: Usage start date.
+    :vartype usage_start: str
+    :ivar usage_end: Usage end date.
+    :vartype usage_end: str
+    :ivar azure_charges: Azure Charges.
+    :vartype azure_charges: ~azure.mgmt.consumption.models.Amount
+    :ivar charges_billed_separately: Charges Billed separately.
+    :vartype charges_billed_separately: ~azure.mgmt.consumption.models.Amount
+    :ivar marketplace_charges: Marketplace Charges.
+    :vartype marketplace_charges: ~azure.mgmt.consumption.models.Amount
+    :ivar billing_account_id: Billing Account Id
+    :vartype billing_account_id: str
+    :ivar billing_profile_id: Billing Profile Id
+    :vartype billing_profile_id: str
+    :ivar invoice_section_id: Invoice Section Id
+    :vartype invoice_section_id: str
+    :ivar customer_id: Customer Id
+    :vartype customer_id: str
+    :ivar is_invoiced: Is charge Invoiced
+    :vartype is_invoiced: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+        'billing_period_id': {'readonly': True},
+        'usage_start': {'readonly': True},
+        'usage_end': {'readonly': True},
+        'azure_charges': {'readonly': True},
+        'charges_billed_separately': {'readonly': True},
+        'marketplace_charges': {'readonly': True},
+        'billing_account_id': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
+        'invoice_section_id': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'is_invoiced': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
+        'usage_start': {'key': 'properties.usageStart', 'type': 'str'},
+        'usage_end': {'key': 'properties.usageEnd', 'type': 'str'},
+        'azure_charges': {'key': 'properties.azureCharges', 'type': 'Amount'},
+        'charges_billed_separately': {'key': 'properties.chargesBilledSeparately', 'type': 'Amount'},
+        'marketplace_charges': {'key': 'properties.marketplaceCharges', 'type': 'Amount'},
+        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
+        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
+        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        'is_invoiced': {'key': 'properties.isInvoiced', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ModernChargeSummary, self).__init__(**kwargs)
+        self.billing_period_id = None
+        self.usage_start = None
+        self.usage_end = None
+        self.azure_charges = None
+        self.charges_billed_separately = None
+        self.marketplace_charges = None
+        self.billing_account_id = None
+        self.billing_profile_id = None
+        self.invoice_section_id = None
+        self.customer_id = None
+        self.is_invoiced = None
+        self.kind = 'modern'
+
+
+class ModernReservationRecommendation(ReservationRecommendation):
+    """Modern reservation recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location
+    :vartype location: str
+    :ivar sku: Resource sku
+    :vartype sku: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar look_back_period: The number of days of usage to look back for
+     recommendation.
+    :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: int
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity
+     Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID)
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without
+     reserved instances.
+    :vartype cost_with_no_reserved_instances:
+     ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: decimal.Decimal
+    :ivar total_cost_with_reserved_instances: The total amount of cost with
+     reserved instances.
+    :vartype total_cost_with_reserved_instances:
+     ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: datetime
+    :ivar scope: Shared or single recommendation.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
+        'kind': {'required': True},
+        'look_back_period': {'readonly': True},
+        'instance_flexibility_ratio': {'readonly': True},
+        'instance_flexibility_group': {'readonly': True},
+        'normalized_size': {'readonly': True},
+        'recommended_quantity_normalized': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'term': {'readonly': True},
+        'cost_with_no_reserved_instances': {'readonly': True},
+        'recommended_quantity': {'readonly': True},
+        'total_cost_with_reserved_instances': {'readonly': True},
+        'net_savings': {'readonly': True},
+        'first_usage_date': {'readonly': True},
+        'scope': {'readonly': True},
+        'sku_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
+        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
+        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'Amount'},
+        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
+        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'Amount'},
+        'net_savings': {'key': 'properties.netSavings', 'type': 'Amount'},
+        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ModernReservationRecommendation, self).__init__(**kwargs)
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope = None
+        self.sku_properties = None
+        self.kind = 'modern'
+
+
+class ModernUsageDetail(UsageDetail):
+    """Modern usage detail.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar billing_account_id: Billing Account identifier.
+    :vartype billing_account_id: str
+    :ivar billing_account_name: Name of the Billing Account.
+    :vartype billing_account_name: str
+    :ivar billing_period_start_date: Billing Period Start Date as in the
+     invoice.
+    :vartype billing_period_start_date: datetime
+    :ivar billing_period_end_date: Billing Period End Date as in the invoice.
+    :vartype billing_period_end_date: datetime
+    :ivar billing_profile_id: Identifier for the billing profile that groups
+     costs across invoices in the a singular billing currency across across the
+     customers who have onboarded the Microsoft customer agreement and the
+     customers in CSP who have made entitlement purchases like SaaS,
+     Marketplace, RI, etc.
+    :vartype billing_profile_id: str
+    :ivar billing_profile_name: Name of the billing profile that groups costs
+     across invoices in the a singular billing currency across across the
+     customers who have onboarded the Microsoft customer agreement and the
+     customers in CSP who have made entitlement purchases like SaaS,
+     Marketplace, RI, etc.
+    :vartype billing_profile_name: str
+    :ivar subscription_guid: Unique Microsoft generated identifier for the
+     Azure Subscription.
+    :vartype subscription_guid: str
+    :ivar subscription_name: Name of the Azure Subscription.
+    :vartype subscription_name: str
+    :ivar date_property: Date for the usage record.
+    :vartype date_property: datetime
+    :ivar product: Name of the product that has accrued charges by consumption
+     or purchase as listed in the invoice. Not available for Marketplace.
+    :vartype product: str
+    :ivar meter_id: The meter id (GUID). Not available for marketplace. For
+     reserved instance this represents the primary meter for which the
+     reservation was purchased. For the actual VM Size for which the
+     reservation is purchased see productOrderName.
+    :vartype meter_id: str
+    :ivar meter_name: Identifies the name of the meter against which
+     consumption is measured.
+    :vartype meter_name: str
+    :ivar meter_region: Identifies the location of the datacenter for certain
+     services that are priced based on datacenter location.
+    :vartype meter_region: str
+    :ivar meter_category: Identifies the top-level service for the usage.
+    :vartype meter_category: str
+    :ivar meter_sub_category: Defines the type or sub-category of Azure
+     service that can affect the rate.
+    :vartype meter_sub_category: str
+    :ivar service_family: List the service family for the product purchased or
+     charged (Example: Storage ; Compute).
+    :vartype service_family: str
+    :ivar quantity: Measure the quantity purchased or consumed.The amount of
+     the meter used during the billing period.
+    :vartype quantity: decimal.Decimal
+    :ivar unit_of_measure: Identifies the Unit that the service is charged in.
+     For example, GB, hours, 10,000 s.
+    :vartype unit_of_measure: str
+    :ivar instance_name: Instance Name.
+    :vartype instance_name: str
+    :ivar cost_in_usd: Estimated extendedCost or blended cost before tax in
+     USD.
+    :vartype cost_in_usd: decimal.Decimal
+    :ivar unit_price: Unit Price is the price applicable to you. (your EA or
+     other contract price).
+    :vartype unit_price: decimal.Decimal
+    :ivar billing_currency_code: The currency defining the billed cost.
+    :vartype billing_currency_code: str
+    :ivar resource_location: Name of the resource location.
+    :vartype resource_location: str
+    :ivar consumed_service: Consumed service name. Name of the azure resource
+     provider that emits the usage or was purchased. This value is not provided
+     for marketplace usage.
+    :vartype consumed_service: str
+    :ivar service_info1: Service Info 1.
+    :vartype service_info1: str
+    :ivar service_info2: Service Info 2.
+    :vartype service_info2: str
+    :ivar additional_info: Additional details of this usage item. Use this
+     field to get usage line item specific details such as the actual VM Size
+     (ServiceType) or the ratio in which the reservation discount is applied.
+    :vartype additional_info: str
+    :ivar invoice_section_id: Identifier of the project that is being charged
+     in the invoice. Not applicable for Microsoft Customer Agreements onboarded
+     by partners.
+    :vartype invoice_section_id: str
+    :ivar invoice_section_name: Name of the project that is being charged in
+     the invoice. Not applicable for Microsoft Customer Agreements onboarded by
+     partners.
+    :vartype invoice_section_name: str
+    :ivar cost_center: The cost center of this department if it is a
+     department and a cost center is provided.
+    :vartype cost_center: str
+    :ivar resource_group: Name of the Azure resource group used for cohesive
+     lifecycle management of resources.
+    :vartype resource_group: str
+    :ivar reservation_id: ARM resource id of the reservation. Only applies to
+     records relevant to reservations.
+    :vartype reservation_id: str
+    :ivar reservation_name: User provided display name of the reservation.
+     Last known name for a particular day is populated in the daily data. Only
+     applies to records relevant to reservations.
+    :vartype reservation_name: str
+    :ivar product_order_id: The identifier for the asset or Azure plan name
+     that the subscription belongs to. For example: Azure Plan. For
+     reservations this is the Reservation Order ID.
+    :vartype product_order_id: str
+    :ivar product_order_name: Product Order Name. For reservations this is the
+     SKU that was purchased.
+    :vartype product_order_name: str
+    :ivar is_azure_credit_eligible: Determines if the cost is eligible to be
+     paid for using Azure credits.
+    :vartype is_azure_credit_eligible: bool
+    :ivar term: Term (in months). Displays the term for the validity of the
+     offer. For example. In case of reserved instances it displays 12 months
+     for yearly term of reserved instance. For one time purchases or recurring
+     purchases, the terms displays 1 month; This is not applicable for Azure
+     consumption.
+    :vartype term: str
+    :ivar publisher_name: Name of the publisher of the service including
+     Microsoft or Third Party publishers.
+    :vartype publisher_name: str
+    :ivar publisher_type: Type of publisher that identifies if the publisher
+     is first party, third party reseller or third party agency.
+    :vartype publisher_type: str
+    :ivar charge_type: Indicates a charge represents credits, usage, a
+     Marketplace purchase, a reservation fee, or a refund.
+    :vartype charge_type: str
+    :ivar frequency: Indicates how frequently this charge will occur. OneTime
+     for purchases which only happen once, Monthly for fees which recur every
+     month, and UsageBased for charges based on how much a service is used.
+    :vartype frequency: str
+    :ivar cost_in_billing_currency: ExtendedCost or blended cost before tax in
+     billed currency.
+    :vartype cost_in_billing_currency: decimal.Decimal
+    :ivar cost_in_pricing_currency: ExtendedCost or blended cost before tax in
+     pricing currency to correlate with prices.
+    :vartype cost_in_pricing_currency: decimal.Decimal
+    :ivar exchange_rate: Exchange rate used in conversion from pricing
+     currency to billing currency.
+    :vartype exchange_rate: str
+    :ivar exchange_rate_date: Date on which exchange rate used in conversion
+     from pricing currency to billing currency.
+    :vartype exchange_rate_date: datetime
+    :ivar invoice_id: Invoice ID as on the invoice where the specific
+     transaction appears.
+    :vartype invoice_id: str
+    :ivar previous_invoice_id: Reference to an original invoice there is a
+     refund (negative cost). This is populated only when there is a refund.
+    :vartype previous_invoice_id: str
+    :ivar pricing_currency_code: Pricing Billing Currency.
+    :vartype pricing_currency_code: str
+    :ivar product_identifier: Identifer for the product that has accrued
+     charges by consumption or purchase . This is the concatenated key of
+     productId and SKuId in partner center.
+    :vartype product_identifier: str
+    :ivar resource_location_normalized: Resource Location Normalized.
+    :vartype resource_location_normalized: str
+    :ivar service_period_start_date: Start date for the rating period when the
+     service usage was rated for charges. The prices for Azure services are
+     determined for the rating period.
+    :vartype service_period_start_date: datetime
+    :ivar service_period_end_date: End date for the period when the service
+     usage was rated for charges. The prices for Azure services are determined
+     based on the rating period.
+    :vartype service_period_end_date: datetime
+    :ivar customer_tenant_id: Identifier of the customer's AAD tenant.
+    :vartype customer_tenant_id: str
+    :ivar customer_name: Name of the customer's AAD tenant.
+    :vartype customer_name: str
+    :ivar partner_tenant_id: Identifier for the partner's AAD tenant.
+    :vartype partner_tenant_id: str
+    :ivar partner_name: Name of the partner' AAD tenant.
+    :vartype partner_name: str
+    :ivar reseller_mpn_id: MPNId for the reseller associated with the
+     subscription.
+    :vartype reseller_mpn_id: str
+    :ivar reseller_name: Reseller Name.
+    :vartype reseller_name: str
+    :ivar publisher_id: Publisher Id.
+    :vartype publisher_id: str
+    :ivar market_price: Market Price that's charged for the usage.
+    :vartype market_price: decimal.Decimal
+    :ivar exchange_rate_pricing_to_billing: Exchange Rate from pricing
+     currency to billing currency.
+    :vartype exchange_rate_pricing_to_billing: decimal.Decimal
+    :ivar payg_cost_in_billing_currency: The amount of PayG cost before tax in
+     billing currency.
+    :vartype payg_cost_in_billing_currency: decimal.Decimal
+    :ivar payg_cost_in_usd: The amount of PayG cost before tax in US Dollar
+     currency.
+    :vartype payg_cost_in_usd: decimal.Decimal
+    :ivar partner_earned_credit_rate: Rate of discount applied if there is a
+     partner earned credit (PEC) based on partner admin link access.
+    :vartype partner_earned_credit_rate: decimal.Decimal
+    :ivar partner_earned_credit_applied: Flag to indicate if partner earned
+     credit has been applied or not.
+    :vartype partner_earned_credit_applied: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'kind': {'required': True},
+        'billing_account_id': {'readonly': True},
+        'billing_account_name': {'readonly': True},
+        'billing_period_start_date': {'readonly': True},
+        'billing_period_end_date': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
+        'billing_profile_name': {'readonly': True},
+        'subscription_guid': {'readonly': True},
+        'subscription_name': {'readonly': True},
+        'date_property': {'readonly': True},
+        'product': {'readonly': True},
+        'meter_id': {'readonly': True},
+        'meter_name': {'readonly': True},
+        'meter_region': {'readonly': True},
+        'meter_category': {'readonly': True},
+        'meter_sub_category': {'readonly': True},
+        'service_family': {'readonly': True},
+        'quantity': {'readonly': True},
+        'unit_of_measure': {'readonly': True},
+        'instance_name': {'readonly': True},
+        'cost_in_usd': {'readonly': True},
+        'unit_price': {'readonly': True},
+        'billing_currency_code': {'readonly': True},
+        'resource_location': {'readonly': True},
+        'consumed_service': {'readonly': True},
+        'service_info1': {'readonly': True},
+        'service_info2': {'readonly': True},
+        'additional_info': {'readonly': True},
+        'invoice_section_id': {'readonly': True},
+        'invoice_section_name': {'readonly': True},
+        'cost_center': {'readonly': True},
+        'resource_group': {'readonly': True},
+        'reservation_id': {'readonly': True},
+        'reservation_name': {'readonly': True},
+        'product_order_id': {'readonly': True},
+        'product_order_name': {'readonly': True},
+        'is_azure_credit_eligible': {'readonly': True},
+        'term': {'readonly': True},
+        'publisher_name': {'readonly': True},
+        'publisher_type': {'readonly': True},
+        'charge_type': {'readonly': True},
+        'frequency': {'readonly': True},
+        'cost_in_billing_currency': {'readonly': True},
+        'cost_in_pricing_currency': {'readonly': True},
+        'exchange_rate': {'readonly': True},
+        'exchange_rate_date': {'readonly': True},
+        'invoice_id': {'readonly': True},
+        'previous_invoice_id': {'readonly': True},
+        'pricing_currency_code': {'readonly': True},
+        'product_identifier': {'readonly': True},
+        'resource_location_normalized': {'readonly': True},
+        'service_period_start_date': {'readonly': True},
+        'service_period_end_date': {'readonly': True},
+        'customer_tenant_id': {'readonly': True},
+        'customer_name': {'readonly': True},
+        'partner_tenant_id': {'readonly': True},
+        'partner_name': {'readonly': True},
+        'reseller_mpn_id': {'readonly': True},
+        'reseller_name': {'readonly': True},
+        'publisher_id': {'readonly': True},
+        'market_price': {'readonly': True},
+        'exchange_rate_pricing_to_billing': {'readonly': True},
+        'payg_cost_in_billing_currency': {'readonly': True},
+        'payg_cost_in_usd': {'readonly': True},
+        'partner_earned_credit_rate': {'readonly': True},
+        'partner_earned_credit_applied': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
+        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'iso-8601'},
+        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'iso-8601'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
+        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'subscription_guid': {'key': 'properties.subscriptionGuid', 'type': 'str'},
+        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
+        'date_property': {'key': 'properties.date', 'type': 'iso-8601'},
+        'product': {'key': 'properties.product', 'type': 'str'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'meter_name': {'key': 'properties.meterName', 'type': 'str'},
+        'meter_region': {'key': 'properties.meterRegion', 'type': 'str'},
+        'meter_category': {'key': 'properties.meterCategory', 'type': 'str'},
+        'meter_sub_category': {'key': 'properties.meterSubCategory', 'type': 'str'},
+        'service_family': {'key': 'properties.serviceFamily', 'type': 'str'},
+        'quantity': {'key': 'properties.quantity', 'type': 'decimal'},
+        'unit_of_measure': {'key': 'properties.unitOfMeasure', 'type': 'str'},
+        'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
+        'cost_in_usd': {'key': 'properties.costInUSD', 'type': 'decimal'},
+        'unit_price': {'key': 'properties.unitPrice', 'type': 'decimal'},
+        'billing_currency_code': {'key': 'properties.billingCurrencyCode', 'type': 'str'},
+        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
+        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
+        'service_info1': {'key': 'properties.serviceInfo1', 'type': 'str'},
+        'service_info2': {'key': 'properties.serviceInfo2', 'type': 'str'},
+        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
+        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
+        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
+        'reservation_name': {'key': 'properties.reservationName', 'type': 'str'},
+        'product_order_id': {'key': 'properties.productOrderId', 'type': 'str'},
+        'product_order_name': {'key': 'properties.productOrderName', 'type': 'str'},
+        'is_azure_credit_eligible': {'key': 'properties.isAzureCreditEligible', 'type': 'bool'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
+        'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
+        'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
+        'frequency': {'key': 'properties.frequency', 'type': 'str'},
+        'cost_in_billing_currency': {'key': 'properties.costInBillingCurrency', 'type': 'decimal'},
+        'cost_in_pricing_currency': {'key': 'properties.costInPricingCurrency', 'type': 'decimal'},
+        'exchange_rate': {'key': 'properties.exchangeRate', 'type': 'str'},
+        'exchange_rate_date': {'key': 'properties.exchangeRateDate', 'type': 'iso-8601'},
+        'invoice_id': {'key': 'properties.invoiceId', 'type': 'str'},
+        'previous_invoice_id': {'key': 'properties.previousInvoiceId', 'type': 'str'},
+        'pricing_currency_code': {'key': 'properties.pricingCurrencyCode', 'type': 'str'},
+        'product_identifier': {'key': 'properties.productIdentifier', 'type': 'str'},
+        'resource_location_normalized': {'key': 'properties.resourceLocationNormalized', 'type': 'str'},
+        'service_period_start_date': {'key': 'properties.servicePeriodStartDate', 'type': 'iso-8601'},
+        'service_period_end_date': {'key': 'properties.servicePeriodEndDate', 'type': 'iso-8601'},
+        'customer_tenant_id': {'key': 'properties.customerTenantId', 'type': 'str'},
+        'customer_name': {'key': 'properties.customerName', 'type': 'str'},
+        'partner_tenant_id': {'key': 'properties.partnerTenantId', 'type': 'str'},
+        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
+        'reseller_mpn_id': {'key': 'properties.resellerMpnId', 'type': 'str'},
+        'reseller_name': {'key': 'properties.resellerName', 'type': 'str'},
+        'publisher_id': {'key': 'properties.publisherId', 'type': 'str'},
+        'market_price': {'key': 'properties.marketPrice', 'type': 'decimal'},
+        'exchange_rate_pricing_to_billing': {'key': 'properties.exchangeRatePricingToBilling', 'type': 'decimal'},
+        'payg_cost_in_billing_currency': {'key': 'properties.paygCostInBillingCurrency', 'type': 'decimal'},
+        'payg_cost_in_usd': {'key': 'properties.paygCostInUSD', 'type': 'decimal'},
+        'partner_earned_credit_rate': {'key': 'properties.partnerEarnedCreditRate', 'type': 'decimal'},
+        'partner_earned_credit_applied': {'key': 'properties.partnerEarnedCreditApplied', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ModernUsageDetail, self).__init__(**kwargs)
+        self.billing_account_id = None
+        self.billing_account_name = None
+        self.billing_period_start_date = None
+        self.billing_period_end_date = None
+        self.billing_profile_id = None
+        self.billing_profile_name = None
+        self.subscription_guid = None
+        self.subscription_name = None
+        self.date_property = None
+        self.product = None
+        self.meter_id = None
+        self.meter_name = None
+        self.meter_region = None
+        self.meter_category = None
+        self.meter_sub_category = None
+        self.service_family = None
+        self.quantity = None
+        self.unit_of_measure = None
+        self.instance_name = None
+        self.cost_in_usd = None
+        self.unit_price = None
+        self.billing_currency_code = None
+        self.resource_location = None
+        self.consumed_service = None
+        self.service_info1 = None
+        self.service_info2 = None
+        self.additional_info = None
+        self.invoice_section_id = None
+        self.invoice_section_name = None
+        self.cost_center = None
+        self.resource_group = None
+        self.reservation_id = None
+        self.reservation_name = None
+        self.product_order_id = None
+        self.product_order_name = None
+        self.is_azure_credit_eligible = None
+        self.term = None
+        self.publisher_name = None
+        self.publisher_type = None
+        self.charge_type = None
+        self.frequency = None
+        self.cost_in_billing_currency = None
+        self.cost_in_pricing_currency = None
+        self.exchange_rate = None
+        self.exchange_rate_date = None
+        self.invoice_id = None
+        self.previous_invoice_id = None
+        self.pricing_currency_code = None
+        self.product_identifier = None
+        self.resource_location_normalized = None
+        self.service_period_start_date = None
+        self.service_period_end_date = None
+        self.customer_tenant_id = None
+        self.customer_name = None
+        self.partner_tenant_id = None
+        self.partner_name = None
+        self.reseller_mpn_id = None
+        self.reseller_name = None
+        self.publisher_id = None
+        self.market_price = None
+        self.exchange_rate_pricing_to_billing = None
+        self.payg_cost_in_billing_currency = None
+        self.payg_cost_in_usd = None
+        self.partner_earned_credit_rate = None
+        self.partner_earned_credit_applied = None
+        self.kind = 'modern'
+
+
 class Notification(Model):
     """The notification associated with a budget.
 
@@ -1386,128 +2862,6 @@ class ReservationDetail(Resource):
         self.instance_id = None
         self.total_reserved_quantity = None
         self.kind = None
-
-
-class ReservationRecommendation(Model):
-    """Reservation recommendation resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: Resource location
-    :vartype location: str
-    :ivar sku: Resource sku
-    :vartype sku: str
-    :ivar look_back_period: The number of days of usage to look back for
-     recommendation.
-    :vartype look_back_period: str
-    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
-    :ivar instance_flexibility_group: The instance Flexibility Group.
-    :vartype instance_flexibility_group: str
-    :ivar normalized_size: The normalized Size.
-    :vartype normalized_size: str
-    :ivar recommended_quantity_normalized: The recommended Quantity
-     Normalized.
-    :vartype recommended_quantity_normalized: float
-    :ivar meter_id: The meter id (GUID)
-    :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
-    :vartype term: str
-    :ivar cost_with_no_reserved_instances: The total amount of cost without
-     reserved instances.
-    :vartype cost_with_no_reserved_instances: decimal.Decimal
-    :ivar recommended_quantity: Recommended quality for reserved instances.
-    :vartype recommended_quantity: decimal.Decimal
-    :ivar total_cost_with_reserved_instances: The total amount of cost with
-     reserved instances.
-    :vartype total_cost_with_reserved_instances: decimal.Decimal
-    :ivar net_savings: Total estimated savings with reserved instances.
-    :vartype net_savings: decimal.Decimal
-    :ivar first_usage_date: The usage date for looking back.
-    :vartype first_usage_date: datetime
-    :ivar scope: Shared or single recommendation.
-    :vartype scope: str
-    :ivar sku_properties: List of sku properties
-    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
-        'look_back_period': {'readonly': True},
-        'instance_flexibility_ratio': {'readonly': True},
-        'instance_flexibility_group': {'readonly': True},
-        'normalized_size': {'readonly': True},
-        'recommended_quantity_normalized': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'term': {'readonly': True},
-        'cost_with_no_reserved_instances': {'readonly': True},
-        'recommended_quantity': {'readonly': True},
-        'total_cost_with_reserved_instances': {'readonly': True},
-        'net_savings': {'readonly': True},
-        'first_usage_date': {'readonly': True},
-        'scope': {'readonly': True},
-        'sku_properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
-        'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
-        'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
-        'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'decimal'},
-        'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
-        'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'decimal'},
-        'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
-        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ReservationRecommendation, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
-        self.location = None
-        self.sku = None
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
-        self.scope = None
-        self.sku_properties = None
 
 
 class ReservationSummary(Resource):
@@ -1887,270 +3241,3 @@ class TagsResult(ProxyResource):
     def __init__(self, *, e_tag: str=None, tags=None, **kwargs) -> None:
         super(TagsResult, self).__init__(e_tag=e_tag, **kwargs)
         self.tags = tags
-
-
-class UsageDetail(Resource):
-    """An usage detail resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar billing_account_id: Billing Account identifier.
-    :vartype billing_account_id: str
-    :ivar billing_account_name: Billing Account Name.
-    :vartype billing_account_name: str
-    :ivar billing_period_start_date: The billing period start date.
-    :vartype billing_period_start_date: datetime
-    :ivar billing_period_end_date: The billing period end date.
-    :vartype billing_period_end_date: datetime
-    :ivar billing_profile_id: Billing Profile identifier.
-    :vartype billing_profile_id: str
-    :ivar billing_profile_name: Billing Profile Name.
-    :vartype billing_profile_name: str
-    :ivar account_owner_id: Account Owner Id.
-    :vartype account_owner_id: str
-    :ivar account_name: Account Name.
-    :vartype account_name: str
-    :ivar subscription_id: Subscription guid.
-    :vartype subscription_id: str
-    :ivar subscription_name: Subscription name.
-    :vartype subscription_name: str
-    :ivar date_property: Date for the usage record.
-    :vartype date_property: datetime
-    :ivar product: Product name for the consumed service or purchase. Not
-     available for Marketplace.
-    :vartype product: str
-    :ivar part_number: Part Number of the service used. Can be used to join
-     with the price sheet. Not available for marketplace.
-    :vartype part_number: str
-    :ivar meter_id: The meter id (GUID). Not available for marketplace. For
-     reserved instance this represents the primary meter for which the
-     reservation was purchased. For the actual VM Size for which the
-     reservation is purchased see productOrderName.
-    :vartype meter_id: str
-    :ivar meter_details: The details about the meter. By default this is not
-     populated, unless it's specified in $expand.
-    :vartype meter_details:
-     ~azure.mgmt.consumption.models.MeterDetailsResponse
-    :ivar quantity: The usage quantity.
-    :vartype quantity: decimal.Decimal
-    :ivar effective_price: Effective Price that's charged for the usage.
-    :vartype effective_price: decimal.Decimal
-    :ivar cost: The amount of cost before tax.
-    :vartype cost: decimal.Decimal
-    :ivar unit_price: Unit Price is the price applicable to you. (your EA or
-     other contract price).
-    :vartype unit_price: decimal.Decimal
-    :ivar billing_currency: Billing Currency.
-    :vartype billing_currency: str
-    :ivar resource_location: Resource Location.
-    :vartype resource_location: str
-    :ivar consumed_service: Consumed service name. Name of the azure resource
-     provider that emits the usage or was purchased. This value is not provided
-     for marketplace usage.
-    :vartype consumed_service: str
-    :ivar resource_id: Azure resource manager resource identifier.
-    :vartype resource_id: str
-    :ivar resource_name: Resource Name.
-    :vartype resource_name: str
-    :ivar service_info1: Service Info 1.
-    :vartype service_info1: str
-    :ivar service_info2: Service Info 2.
-    :vartype service_info2: str
-    :ivar additional_info: Additional details of this usage item. By default
-     this is not populated, unless it's specified in $expand. Use this field to
-     get usage line item specific details such as the actual VM Size
-     (ServiceType) or the ratio in which the reservation discount is applied.
-    :vartype additional_info: str
-    :ivar invoice_section: Invoice Section Name.
-    :vartype invoice_section: str
-    :ivar cost_center: The cost center of this department if it is a
-     department and a cost center is provided.
-    :vartype cost_center: str
-    :ivar resource_group: Resource Group Name.
-    :vartype resource_group: str
-    :ivar reservation_id: ARM resource id of the reservation. Only applies to
-     records relevant to reservations.
-    :vartype reservation_id: str
-    :ivar reservation_name: User provided display name of the reservation.
-     Last known name for a particular day is populated in the daily data. Only
-     applies to records relevant to reservations.
-    :vartype reservation_name: str
-    :ivar product_order_id: Product Order Id. For reservations this is the
-     Reservation Order ID.
-    :vartype product_order_id: str
-    :ivar product_order_name: Product Order Name. For reservations this is the
-     SKU that was purchased.
-    :vartype product_order_name: str
-    :ivar offer_id: Offer Id. Ex: MS-AZR-0017P, MS-AZR-0148P.
-    :vartype offer_id: str
-    :ivar is_azure_credit_eligible: Is Azure Credit Eligible.
-    :vartype is_azure_credit_eligible: bool
-    :ivar term: Term (in months). 1 month for monthly recurring purchase. 12
-     months for a 1 year reservation. 36 months for a 3 year reservation.
-    :vartype term: str
-    :ivar publisher_name: Publisher Name.
-    :vartype publisher_name: str
-    :ivar publisher_type: Publisher Type.
-    :vartype publisher_type: str
-    :ivar plan_name: Plan Name.
-    :vartype plan_name: str
-    :ivar charge_type: Indicates a charge represents credits, usage, a
-     Marketplace purchase, a reservation fee, or a refund.
-    :vartype charge_type: str
-    :ivar frequency: Indicates how frequently this charge will occur. OneTime
-     for purchases which only happen once, Monthly for fees which recur every
-     month, and UsageBased for charges based on how much a service is used.
-    :vartype frequency: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'billing_account_id': {'readonly': True},
-        'billing_account_name': {'readonly': True},
-        'billing_period_start_date': {'readonly': True},
-        'billing_period_end_date': {'readonly': True},
-        'billing_profile_id': {'readonly': True},
-        'billing_profile_name': {'readonly': True},
-        'account_owner_id': {'readonly': True},
-        'account_name': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'subscription_name': {'readonly': True},
-        'date_property': {'readonly': True},
-        'product': {'readonly': True},
-        'part_number': {'readonly': True},
-        'meter_id': {'readonly': True},
-        'meter_details': {'readonly': True},
-        'quantity': {'readonly': True},
-        'effective_price': {'readonly': True},
-        'cost': {'readonly': True},
-        'unit_price': {'readonly': True},
-        'billing_currency': {'readonly': True},
-        'resource_location': {'readonly': True},
-        'consumed_service': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'resource_name': {'readonly': True},
-        'service_info1': {'readonly': True},
-        'service_info2': {'readonly': True},
-        'additional_info': {'readonly': True},
-        'invoice_section': {'readonly': True},
-        'cost_center': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'reservation_id': {'readonly': True},
-        'reservation_name': {'readonly': True},
-        'product_order_id': {'readonly': True},
-        'product_order_name': {'readonly': True},
-        'offer_id': {'readonly': True},
-        'is_azure_credit_eligible': {'readonly': True},
-        'term': {'readonly': True},
-        'publisher_name': {'readonly': True},
-        'publisher_type': {'readonly': True},
-        'plan_name': {'readonly': True},
-        'charge_type': {'readonly': True},
-        'frequency': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
-        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
-        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'iso-8601'},
-        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'iso-8601'},
-        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
-        'account_owner_id': {'key': 'properties.accountOwnerId', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
-        'date_property': {'key': 'properties.date', 'type': 'iso-8601'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'part_number': {'key': 'properties.partNumber', 'type': 'str'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetailsResponse'},
-        'quantity': {'key': 'properties.quantity', 'type': 'decimal'},
-        'effective_price': {'key': 'properties.effectivePrice', 'type': 'decimal'},
-        'cost': {'key': 'properties.cost', 'type': 'decimal'},
-        'unit_price': {'key': 'properties.unitPrice', 'type': 'decimal'},
-        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
-        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
-        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
-        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
-        'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
-        'service_info1': {'key': 'properties.serviceInfo1', 'type': 'str'},
-        'service_info2': {'key': 'properties.serviceInfo2', 'type': 'str'},
-        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
-        'invoice_section': {'key': 'properties.invoiceSection', 'type': 'str'},
-        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
-        'reservation_name': {'key': 'properties.reservationName', 'type': 'str'},
-        'product_order_id': {'key': 'properties.productOrderId', 'type': 'str'},
-        'product_order_name': {'key': 'properties.productOrderName', 'type': 'str'},
-        'offer_id': {'key': 'properties.offerId', 'type': 'str'},
-        'is_azure_credit_eligible': {'key': 'properties.isAzureCreditEligible', 'type': 'bool'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
-        'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
-        'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(UsageDetail, self).__init__(**kwargs)
-        self.billing_account_id = None
-        self.billing_account_name = None
-        self.billing_period_start_date = None
-        self.billing_period_end_date = None
-        self.billing_profile_id = None
-        self.billing_profile_name = None
-        self.account_owner_id = None
-        self.account_name = None
-        self.subscription_id = None
-        self.subscription_name = None
-        self.date_property = None
-        self.product = None
-        self.part_number = None
-        self.meter_id = None
-        self.meter_details = None
-        self.quantity = None
-        self.effective_price = None
-        self.cost = None
-        self.unit_price = None
-        self.billing_currency = None
-        self.resource_location = None
-        self.consumed_service = None
-        self.resource_id = None
-        self.resource_name = None
-        self.service_info1 = None
-        self.service_info2 = None
-        self.additional_info = None
-        self.invoice_section = None
-        self.cost_center = None
-        self.resource_group = None
-        self.reservation_id = None
-        self.reservation_name = None
-        self.product_order_id = None
-        self.product_order_name = None
-        self.offer_id = None
-        self.is_azure_credit_eligible = None
-        self.term = None
-        self.publisher_name = None
-        self.publisher_type = None
-        self.plan_name = None
-        self.charge_type = None
-        self.frequency = None

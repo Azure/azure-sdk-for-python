@@ -61,6 +61,23 @@ class Bound(str, Enum):
     lower = "Lower"
 
 
+class EventType(str, Enum):
+
+    settled_charges = "SettledCharges"
+    pending_charges = "PendingCharges"
+    pending_adjustments = "PendingAdjustments"
+    pending_new_credit = "PendingNewCredit"
+    pending_expired_credit = "PendingExpiredCredit"
+    un_known = "UnKnown"
+    new_credit = "NewCredit"
+
+
+class LotSource(str, Enum):
+
+    purchased_credit = "PurchasedCredit"
+    promotional_credit = "PromotionalCredit"
+
+
 class Datagrain(str, Enum):
 
     daily_grain = "daily"  #: Daily grain of data

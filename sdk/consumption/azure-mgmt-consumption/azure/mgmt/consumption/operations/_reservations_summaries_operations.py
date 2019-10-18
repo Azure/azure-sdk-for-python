@@ -24,7 +24,7 @@ class ReservationsSummariesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-06-01. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01. Constant value: "2019-10-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ReservationsSummariesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -193,15 +193,25 @@ class ReservationsSummariesOperations(object):
         return deserialized
     list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'}
 
-    def list_by_billing_account_id(
-            self, billing_account_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the reservations summaries for daily or monthly grain.
+    def list(
+            self, scope, grain, start_date=None, end_date=None, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the reservations summaries for the defined scope daily or monthly
+        grain.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
+        :param scope: The scope associated with reservations summaries
+         operations. This includes
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         BillingAccount scope (legacy), and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for BillingProfile scope (modern).
+        :type scope: str
         :param grain: Can be daily or monthly. Possible values include:
          'DailyGrain', 'MonthlyGrain'
         :type grain: str or ~azure.mgmt.consumption.models.Datagrain
+        :param start_date: Start date
+        :type start_date: str
+        :param end_date: End date
+        :type end_date: str
         :param filter: Required only for daily grain. The properties/UsageDate
          for start date and end date. The filter supports 'le' and  'ge'
         :type filter: str
@@ -219,15 +229,19 @@ class ReservationsSummariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_billing_account_id.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['grain'] = self._serialize.query("grain", grain, 'str')
+                if start_date is not None:
+                    query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
+                if end_date is not None:
+                    query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -267,4 +281,4 @@ class ReservationsSummariesOperations(object):
         deserialized = models.ReservationSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationSummaries'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationSummaries'}

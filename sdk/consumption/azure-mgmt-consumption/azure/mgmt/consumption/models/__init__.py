@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import Amount
     from ._models_py3 import Balance
     from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
     from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
@@ -17,16 +18,26 @@ try:
     from ._models_py3 import BudgetTimePeriod
     from ._models_py3 import ChargesListResult
     from ._models_py3 import ChargeSummary
+    from ._models_py3 import CreditBalanceSummary
+    from ._models_py3 import CreditSummary
     from ._models_py3 import CurrentSpend
     from ._models_py3 import ErrorDetails
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import EventSummary
     from ._models_py3 import Filters
     from ._models_py3 import Forecast
     from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
+    from ._models_py3 import LegacyChargeSummary
+    from ._models_py3 import LegacyReservationRecommendation
+    from ._models_py3 import LegacyUsageDetail
+    from ._models_py3 import LotSummary
     from ._models_py3 import ManagementGroupAggregatedCostResult
     from ._models_py3 import Marketplace
     from ._models_py3 import MeterDetails
     from ._models_py3 import MeterDetailsResponse
+    from ._models_py3 import ModernChargeSummary
+    from ._models_py3 import ModernReservationRecommendation
+    from ._models_py3 import ModernUsageDetail
     from ._models_py3 import Notification
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -44,6 +55,7 @@ try:
     from ._models_py3 import TagsResult
     from ._models_py3 import UsageDetail
 except (SyntaxError, ImportError):
+    from ._models import Amount
     from ._models import Balance
     from ._models import BalancePropertiesAdjustmentDetailsItem
     from ._models import BalancePropertiesNewPurchasesDetailsItem
@@ -51,16 +63,26 @@ except (SyntaxError, ImportError):
     from ._models import BudgetTimePeriod
     from ._models import ChargesListResult
     from ._models import ChargeSummary
+    from ._models import CreditBalanceSummary
+    from ._models import CreditSummary
     from ._models import CurrentSpend
     from ._models import ErrorDetails
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import EventSummary
     from ._models import Filters
     from ._models import Forecast
     from ._models import ForecastPropertiesConfidenceLevelsItem
+    from ._models import LegacyChargeSummary
+    from ._models import LegacyReservationRecommendation
+    from ._models import LegacyUsageDetail
+    from ._models import LotSummary
     from ._models import ManagementGroupAggregatedCostResult
     from ._models import Marketplace
     from ._models import MeterDetails
     from ._models import MeterDetailsResponse
+    from ._models import ModernChargeSummary
+    from ._models import ModernReservationRecommendation
+    from ._models import ModernUsageDetail
     from ._models import Notification
     from ._models import Operation
     from ._models import OperationDisplay
@@ -78,7 +100,9 @@ except (SyntaxError, ImportError):
     from ._models import TagsResult
     from ._models import UsageDetail
 from ._paged_models import BudgetPaged
+from ._paged_models import EventSummaryPaged
 from ._paged_models import ForecastPaged
+from ._paged_models import LotSummaryPaged
 from ._paged_models import MarketplacePaged
 from ._paged_models import OperationPaged
 from ._paged_models import ReservationDetailPaged
@@ -94,11 +118,14 @@ from ._consumption_management_client_enums import (
     Grain,
     ChargeType,
     Bound,
+    EventType,
+    LotSource,
     Datagrain,
     Metrictype,
 )
 
 __all__ = [
+    'Amount',
     'Balance',
     'BalancePropertiesAdjustmentDetailsItem',
     'BalancePropertiesNewPurchasesDetailsItem',
@@ -106,16 +133,26 @@ __all__ = [
     'BudgetTimePeriod',
     'ChargesListResult',
     'ChargeSummary',
+    'CreditBalanceSummary',
+    'CreditSummary',
     'CurrentSpend',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
+    'EventSummary',
     'Filters',
     'Forecast',
     'ForecastPropertiesConfidenceLevelsItem',
+    'LegacyChargeSummary',
+    'LegacyReservationRecommendation',
+    'LegacyUsageDetail',
+    'LotSummary',
     'ManagementGroupAggregatedCostResult',
     'Marketplace',
     'MeterDetails',
     'MeterDetailsResponse',
+    'ModernChargeSummary',
+    'ModernReservationRecommendation',
+    'ModernUsageDetail',
     'Notification',
     'Operation',
     'OperationDisplay',
@@ -141,6 +178,8 @@ __all__ = [
     'ReservationTransactionPaged',
     'ForecastPaged',
     'OperationPaged',
+    'EventSummaryPaged',
+    'LotSummaryPaged',
     'BillingFrequency',
     'CategoryType',
     'TimeGrainType',
@@ -148,6 +187,8 @@ __all__ = [
     'Grain',
     'ChargeType',
     'Bound',
+    'EventType',
+    'LotSource',
     'Datagrain',
     'Metrictype',
 ]

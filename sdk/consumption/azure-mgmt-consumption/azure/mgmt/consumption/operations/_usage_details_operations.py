@@ -24,7 +24,7 @@ class UsageDetailsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-06-01. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01. Constant value: "2019-10-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class UsageDetailsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -59,7 +59,16 @@ class UsageDetailsOperations(object):
          billing period to the scope using
          '/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'. For
          e.g. to specify billing period at department scope use
-         '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
+         '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'.
+         Also, Modern Commerce Account scopes are
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         billingAccount scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param expand: May be used to expand the properties/additionalInfo or
          properties/meterDetails within a list of usage details. By default,

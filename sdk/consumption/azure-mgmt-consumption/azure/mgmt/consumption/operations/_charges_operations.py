@@ -24,7 +24,7 @@ class ChargesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-06-01. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-10-01. Constant value: "2019-10-01".
     """
 
     models = models
@@ -34,44 +34,62 @@ class ChargesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
-    def list_by_scope(
-            self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
+    def list(
+            self, scope, start_date=None, end_date=None, filter=None, apply=None, custom_headers=None, raw=False, **operation_config):
         """Lists the charges based for the defined scope.
 
-        :param scope: The scope associated with usage details operations. This
+        :param scope: The scope associated with charges operations. This
          includes
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
-         for Department scope and
+         for Department scope, and
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope. For department and enrollment accounts,
          you can also add billing period to the scope using
          '/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'. For
          e.g. to specify billing period at department scope use
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'.
+         Also, Modern Commerce Account scopes are
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         billingAccount scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
+        :param start_date: Start date
+        :type start_date: str
+        :param end_date: End date
+        :type end_date: str
         :param filter: May be used to filter charges by properties/usageEnd
          (Utc time), properties/usageStart (Utc time). The filter supports
          'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not currently support
          'ne', 'or', or 'not'. Tag filter is a key value pair string where key
          and value is separated by a colon (:).
         :type filter: str
+        :param apply: May be used to group charges for billingAccount scope by
+         properties/billingProfileId, properties/invoiceSectionId,
+         properties/customerId (specific for Partner Led), or for
+         billingProfile scope by properties/invoiceSectionId.
+        :type apply: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChargeSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.ChargeSummary or
+        :return: ChargesListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.ChargesListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_scope.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
@@ -80,8 +98,14 @@ class ChargesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if start_date is not None:
+            query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
+        if end_date is not None:
+            query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        if apply is not None:
+            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -102,11 +126,11 @@ class ChargesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ChargeSummary', response)
+            deserialized = self._deserialize('ChargesListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/charges'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/charges'}

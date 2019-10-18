@@ -27,6 +27,9 @@ from .operations import PriceSheetOperations
 from .operations import ForecastsOperations
 from .operations import Operations
 from .operations import AggregatedCostOperations
+from .operations import EventsOperations
+from .operations import LotsOperations
+from .operations import CreditsOperations
 from . import models
 
 
@@ -64,6 +67,12 @@ class ConsumptionManagementClient(SDKClient):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
+    :ivar events: Events operations
+    :vartype events: azure.mgmt.consumption.operations.EventsOperations
+    :ivar lots: Lots operations
+    :vartype lots: azure.mgmt.consumption.operations.LotsOperations
+    :ivar credits: Credits operations
+    :vartype credits: azure.mgmt.consumption.operations.CreditsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -80,7 +89,7 @@ class ConsumptionManagementClient(SDKClient):
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-01'
+        self.api_version = '2019-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -111,4 +120,10 @@ class ConsumptionManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.events = EventsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.lots = LotsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.credits = CreditsOperations(
             self._client, self.config, self._serialize, self._deserialize)
