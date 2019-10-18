@@ -189,7 +189,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ]
 
         transport = kwargs.pop("transport", None)
-        self.pipeline_client = PipelineClient(url_connection, "empty-config", transport=transport, policies=policies)
+        self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when

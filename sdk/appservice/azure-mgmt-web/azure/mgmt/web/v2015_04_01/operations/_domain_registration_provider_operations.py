@@ -54,7 +54,7 @@ class DomainRegistrationProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmOperationDescription
         :rtype:
-         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
+         ~azure.mgmt.web.v2015_04_01.models.CsmOperationDescriptionPaged[~azure.mgmt.web.v2015_04_01.models.CsmOperationDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

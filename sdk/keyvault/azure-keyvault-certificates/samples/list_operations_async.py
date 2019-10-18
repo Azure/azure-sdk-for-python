@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -46,12 +47,12 @@ async def run_sample():
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
-
-        # await the creation of the bank and storage certificate
-        bank_certificate = await bank_certificate_poller
-        storage_certificate = await storage_certificate_poller
+        bank_certificate = await client.create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default()
+        )
+        storage_certificate = await client.create_certificate(
+            name=storage_cert_name, policy=CertificatePolicy.get_default()
+        )
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
         print("Certificate with name '{0}' was created.".format(storage_certificate.name))
@@ -67,7 +68,9 @@ async def run_sample():
 
         tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
+        updated_bank_certificate_poller = await client.create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+        )
         bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
