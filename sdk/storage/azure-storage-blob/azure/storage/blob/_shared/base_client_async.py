@@ -9,8 +9,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
-
 from azure.core.pipeline import AsyncPipeline
+from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
@@ -30,7 +30,7 @@ from .policies import (
 from .policies_async import AsyncStorageResponseHook
 
 from .._generated.models import StorageErrorException
-from .response_handlers import process_storage_error
+from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -124,10 +124,17 @@ class AsyncStorageAccountHostsMixin(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts() # Return an AsyncIterator
+            parts_list = []
             if raise_on_any_failure:
-                failures = [p for p in parts if p.status_code not in [202]]
+                failures = []
+                async for part in parts:
+                    parts_list.append(part)
+                    if part.status_code not in [200,202]:
+                        failures.append(part)
                 if failures:
-                    raise HttpResponseError(message="There is a partial failure in the batch operation.")
-            return parts
+                    error = PartialBatchErrorException(message="There is a partial failure in the batch operation.", response=response, parts=AsyncList(parts_list))
+                    error.failed_operations = failures
+                    raise error
+            return AsyncList(parts_list)
         except StorageErrorException as error:
             process_storage_error(error)

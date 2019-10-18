@@ -832,7 +832,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             operation if it does exist.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An async iterator of responses, one for each blob in order
@@ -893,7 +894,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
@@ -949,7 +951,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
+            is raised even if there is a single operation failure. For optimal performance,
+            this should be set to False.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """

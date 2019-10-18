@@ -1249,6 +1249,35 @@ class StorageContainerTestAsync(StorageTestCase):
         assert response[2].status_code == 202
 
     @record
+    def test_delete_blobs_simple_no_raise(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_simple())
+
+    async def _test_delete_blobs_simple_no_raise(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            await container.get_blob_client('blob1').upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = await _to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @record
     def test_delete_blobs_snapshot(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blobs_snapshot())
@@ -1270,19 +1299,24 @@ class StorageContainerTestAsync(StorageTestCase):
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
-        response = await _to_list(await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            delete_snapshots='only'
-        ))
-        assert len(response) == 3
-        assert response[0].status_code == 202
-        assert response[1].status_code == 404  # There was no snapshot
-        assert response[2].status_code == 404  # There was no snapshot
+        try:
+            response = await _to_list(await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                delete_snapshots='only'
+            ))
+        except HttpResponseError as err:
+            parts_list = []
+            async for p in err.parts:
+                parts_list.append(p)
+            assert len(parts_list) == 3
+            assert parts_list[0].status_code == 202
+            assert parts_list[1].status_code == 404  # There was no snapshot
+            assert parts_list[2].status_code == 404  # There was no snapshot
 
-        blobs = await _to_list(container.list_blobs(include='snapshots'))
-        assert len(blobs) == 3  # 3 blobs
+            blobs = await _to_list(container.list_blobs(include='snapshots'))
+            assert len(blobs) == 3  # 3 blobs
 
     @record
     def test_standard_blob_tier_set_tier_api_batch(self):
