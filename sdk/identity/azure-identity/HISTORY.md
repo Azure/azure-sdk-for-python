@@ -1,6 +1,14 @@
 # Release History
 
 ## 1.0.0b5
+### Breaking changes:
+- Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
+for transport but the library does not require it as a dependency because the
+async API is optional. To use async credentials, please install
+[`aiohttp`](https://pypi.org/project/aiohttp/) or see
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for information about customizing the transport.
+- Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
 
 
 ## 1.0.0b4 (2019-10-07)

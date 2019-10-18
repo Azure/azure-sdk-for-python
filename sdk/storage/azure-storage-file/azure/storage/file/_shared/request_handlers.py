@@ -14,6 +14,8 @@ from os import fstat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
+
+from azure.core.configuration import Configuration
 from azure.core.exceptions import raise_with_traceback
 
 

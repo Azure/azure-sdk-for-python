@@ -26,7 +26,7 @@ from .queue_client import QueueClient
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
     from .models import (
         QueueProperties,
