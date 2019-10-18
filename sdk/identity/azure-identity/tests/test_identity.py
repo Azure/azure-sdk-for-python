@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import datetime
 import functools
 import json
-import os
 import time
-import uuid
 
 try:
     from unittest.mock import Mock, patch
@@ -315,12 +314,21 @@ def test_device_code_credential():
         client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False
     )
 
+    now = datetime.datetime.utcnow()
     token = credential.get_token("scope")
     assert token.token == expected_token
 
     # prompt_callback should have been called as documented
     assert callback.call_count == 1
-    assert callback.call_args[0] == (verification_uri, user_code, expires_in)
+    uri, code, expires_on = callback.call_args[0]
+    assert uri == verification_uri
+    assert code == user_code
+
+    # validating expires_on exactly would require depending on internals of the credential and
+    # patching time, so we'll be satisfied if expires_on is a datetime at least expires_in
+    # seconds later than our call to get_token
+    assert isinstance(expires_on, datetime.datetime)
+    assert expires_on - now >= datetime.timedelta(seconds=expires_in)
 
 
 def test_device_code_credential_timeout():

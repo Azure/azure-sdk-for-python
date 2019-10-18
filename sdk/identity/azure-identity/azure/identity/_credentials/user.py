@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import os
 import sys
 import time
@@ -46,12 +47,12 @@ class DeviceCodeCredential(PublicClientCredential):
           authenticate work or school accounts.
         - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
           device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
-        - **prompt_callback** (Callable[str, str, str]): A callback enabling control of how authentication instructions
-          are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_in``):
+        - **prompt_callback** (Callable[str, str, datetime.datetime]): A callback enabling control of how authentication
+          instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
             - ``verification_uri`` (str) the URL the user must visit
             - ``user_code`` (str) the code the user must enter there
-            - ``expires_in`` (int) the number of seconds the code will be valid
-          If not provided, the credential will print instructions to stdout.
+            - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
+          If this argument isn't provided, the credential will print instructions to stdout.
     """
 
     def __init__(self, client_id, **kwargs):
@@ -84,14 +85,18 @@ class DeviceCodeCredential(PublicClientCredential):
             )
 
         if self._prompt_callback:
-            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
+            self._prompt_callback(
+                flow["verification_uri"], flow["user_code"], datetime.utcfromtimestamp(flow["expires_at"])
+            )
         else:
             print(flow["message"])
 
         if self._timeout is not None and self._timeout < flow["expires_in"]:
+            # user specified an effective timeout we will observe
             deadline = now + self._timeout
             result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
         else:
+            # MSAL will stop polling when the device code expires
             result = app.acquire_token_by_device_flow(flow)
 
         if "access_token" not in result:

@@ -16,6 +16,8 @@ the Azure CLI's client ID will be used.
   - Optional keyword argument `tenant` renamed `tenant_id`
 - Changes to `DeviceCodeCredential`
   - optional positional parameter `prompt_callback` is now a keyword argument
+  - `prompt_callback`'s third argument is now a `datetime` representing the
+  expiration time of the device code
   - optional keyword argument `tenant` renamed `tenant_id`
 - Changes to `ManagedIdentityCredential`
   - now accepts no positional arguments, and only one keyword argument:
