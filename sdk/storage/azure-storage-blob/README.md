@@ -48,7 +48,7 @@ Interaction with Storage Blobs starts with an instance of the BlobServiceClient 
 #### Get credentials
 
 To authenticate the client you have a few options:
-1. Use a SAS token string 
+1. Use a SAS token string
 2. Use an account shared access key
 3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
@@ -76,7 +76,7 @@ Blob storage offers three types of resources:
 #### Clients
 
 The Storage Blobs SDK provides four different clients to interact with the Blob Service:
-1. **BlobServiceClient** - this client interacts with the Blob Service at the account level. 
+1. **BlobServiceClient** - this client interacts with the Blob Service at the account level.
     It provides operations to retrieve and configure the account properties
     as well as list, create, and delete containers within the account.
     For operations relating to a specific container or blob, clients for those entities
@@ -87,7 +87,7 @@ The Storage Blobs SDK provides four different clients to interact with the Blob 
     For operations relating to a specific blob, the client can also be retrieved using
     the `get_blob_client` function.
 3. **BlobClient** - this client represents interaction with a specific
-    blob, although that blob need not exist yet. It provides blob operations to upload, download, delete, 
+    blob, although that blob need not exist yet. It provides blob operations to upload, download, delete,
     create snapshots, and list blobs, as well as specific operations per blob type.
 4. **LeaseClient** - this client represents lease interactions with a ContainerClient or BlobClient.
     It provides operations to acquire, renew, release, change, and break leases on the resources.
@@ -114,6 +114,8 @@ The following sections provide several code snippets covering some of the most c
 
 ### Client creation with a connection string
 Create the BlobServiceClient using the connection string to your Azure Storage account.
+To get the connection string from the portal, navigate to `Access keys` under `Settings`, and
+copy over the `Connection string`.
 
 ```python
 from azure.storage.blob import BlobServiceClient
@@ -189,7 +191,7 @@ from azure.storage.blob.aio import ContainerClient
 
 container = ContainerClient.from_connection_string("my_connection_string", container="mycontainer")
 
-blob_list = [] 
+blob_list = []
 async for blob in container.list_blobs():
     blob_list.append(blob)
 print(blob_list)
@@ -220,7 +222,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * From a shared access key
     * From a shared access signature token
     * From active directory
-    
+
 * [`test_blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests/test_blob_samples_service_async.py)) - Examples for interacting with the blob service:
     * Get account information
     * Get and set service properties
