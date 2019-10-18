@@ -12,11 +12,12 @@ import logging
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
-    AsyncRedirectPolicy)
+    AsyncRedirectPolicy,
+    DistributedTracingPolicy
+)
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
@@ -27,7 +28,8 @@ from .policies import (
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy,
-    QueueMessagePolicy)
+    QueueMessagePolicy
+)
 from .policies_async import AsyncStorageResponseHook
 
 from .._generated.models import StorageErrorException
@@ -36,7 +38,7 @@ from .response_handlers import process_storage_error
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 

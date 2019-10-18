@@ -11,11 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:51:57 GMT
+      - Wed, 16 Oct 2019 06:48:14 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 06 Sep 2019 21:51:56 GMT
+      - Wed, 16 Oct 2019 06:48:13 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -47,11 +45,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:51:58 GMT
+      - Wed, 16 Oct 2019 06:48:14 GMT
       x-ms-meta:
       - '{''val'': ''value''}'
       x-ms-meta-val:
@@ -63,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueAlreadyExists</Code><Message>The
-        specified queue already exists.\nRequestId:89891175-c003-007e-39fd-64aeac000000\nTime:2019-09-06T21:51:56.7590787Z</Message></Error>"
+        specified queue already exists.\nRequestId:f11e1c9f-5003-0034-0aed-835e07000000\nTime:2019-10-16T06:48:14.3921675Z</Message></Error>"
     headers:
       content-length:
       - '222'
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:51:56 GMT
+      - Wed, 16 Oct 2019 06:48:13 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

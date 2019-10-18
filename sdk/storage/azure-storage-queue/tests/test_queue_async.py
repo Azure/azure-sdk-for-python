@@ -253,7 +253,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         props = await queue_client.get_queue_properties()
 
         # Asserts
@@ -294,10 +294,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action.  No exception means pass. No asserts needed.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        message = await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        message = await queue_client.send_message(u'message4')
 
         # Asserts
         self.assertIsNotNone(message)
@@ -315,7 +315,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
         # There should be no upper bound on a queue message's time to live
-        await queue_client.enqueue_message(u'message1', time_to_live=1024*1024*1024)
+        await queue_client.send_message(u'message1', time_to_live=1024*1024*1024)
 
         # Act
         messages = await queue_client.peek_messages()
@@ -332,7 +332,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1', time_to_live=-1)
+        await queue_client.send_message(u'message1', time_to_live=-1)
 
         # Act
         messages = await queue_client.peek_messages()
@@ -347,10 +347,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -376,10 +376,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         pager = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
         result = []
         async for el in pager:
@@ -406,10 +406,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         result = await queue_client.peek_messages()
 
         # Asserts
@@ -432,10 +432,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         result = await queue_client.peek_messages(max_messages=4)
 
         # Asserts
@@ -458,10 +458,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         await queue_client.clear_messages()
         result = await queue_client.peek_messages()
 
@@ -476,10 +476,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -497,7 +497,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -537,7 +537,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
 
         messages = []
         async for m in queue_client.receive_messages():
@@ -583,7 +583,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         token = qsc.generate_shared_access_signature(
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
@@ -646,7 +646,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -654,7 +654,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -685,11 +685,11 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
-        result = await service.enqueue_message(u'addedmessage')
+        result = await service.send_message(u'addedmessage')
 
         # Assert
         messages = []
@@ -709,7 +709,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -720,7 +720,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         result = messages[0]
  
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -749,14 +749,14 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         token = queue_client.generate_shared_access_signature(
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -790,14 +790,14 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue_client = await self._create_queue(qsc)
         resp = await queue_client.set_queue_access_policy(identifiers)
 
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
 
         token = queue_client.generate_shared_access_signature(
             policy_id='testid'
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -983,7 +983,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1㚈')
+        await queue_client.send_message(u'message1㚈')
         message = None
         async for m in queue_client.receive_messages():
             message = m
@@ -1004,7 +1004,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue_client = await self._create_queue(qsc)
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)

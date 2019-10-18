@@ -8,7 +8,7 @@ import sys
 import threading
 from io import BytesIO
 
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -109,7 +109,7 @@ class _ChunkDownloader(object):
 
     def process_chunk(self, chunk_start):
         chunk_start, chunk_end = self._calculate_range(chunk_start)
-        chunk_data = self._download_chunk(chunk_start, chunk_end)
+        chunk_data = self._download_chunk(chunk_start, chunk_end-1)
         length = chunk_end - chunk_start
         if length > 0:
             self._write_to_stream(chunk_data, chunk_start)
@@ -132,7 +132,7 @@ class _ChunkDownloader(object):
             chunk_start, chunk_end, chunk_end, self.encryption_options
         )
         range_header, range_validation = validate_and_format_range_headers(
-            download_range[0], download_range[1] - 1, check_content_md5=self.validate_content
+            download_range[0], download_range[1], check_content_md5=self.validate_content
         )
 
         try:

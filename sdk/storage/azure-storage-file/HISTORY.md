@@ -4,35 +4,37 @@
 
 **Breaking changes**
 
-- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`. 
+- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`.
 To use a share_url, the method `from_share_url` must be used.
 - `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
 To use a directory_url, the method `from_directory_url` must be used.
-- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and 
+- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and
 `file_path`. To use a file_url, the method `from_file_url` must be used.
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
-- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, 
-`DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
   - `max_concurrency`
   - `validate_content`
   - `timeout` etc.
-
-
-**New features**
-
-- `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
+- `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
+the following APIs:
+  - download_file
+  - upload_range
+  - upload_range_from_url
+  - clear_range
+  - get_ranges
+- `close_handles` renamed to `begin_close_handles`
 
 ## Version 12.0.0b4:
 
 **Breaking changes**
 
 - Permission models.
-  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to 
+  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to
   `AccountSasPermissions`, `ShareSasPermissions` and `FileSasPermissions` respectively.
   - enum-like list parameters have been removed from all three of them.
   - `__add__` and `__or__` methods are removed.
@@ -40,7 +42,7 @@ To use a directory_url, the method `from_directory_url` must be used.
 
 **New features**
 
-- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which 
+- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which
 takes parameters as a string.
 
 ## Version 12.0.0b3:

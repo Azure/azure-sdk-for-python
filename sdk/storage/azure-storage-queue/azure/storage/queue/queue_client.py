@@ -24,7 +24,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
+from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy, NoEncodePolicy, NoDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
@@ -105,8 +105,14 @@ class QueueClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
-        self._config.message_encode_policy = kwargs.get('message_encode_policy') or TextXMLEncodePolicy()
-        self._config.message_decode_policy = kwargs.get('message_decode_policy') or TextXMLDecodePolicy()
+        if 'message_encode_policy' in kwargs:
+            self._config.message_encode_policy = kwargs['message_encode_policy'] or NoEncodePolicy()
+        else:
+            self._config.message_encode_policy = TextXMLEncodePolicy()
+        if 'message_decode_policy' in kwargs:
+            self._config.message_decode_policy = kwargs['message_decode_policy'] or NoDecodePolicy()
+        else:
+            self._config.message_decode_policy = TextXMLDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
     @classmethod
@@ -474,7 +480,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def enqueue_message( # type: ignore
+    def send_message( # type: ignore
             self, content, # type: Any
             **kwargs  # type: Optional[Any]
         ):
@@ -518,11 +524,11 @@ class QueueClient(StorageAccountHostsMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../tests/test_queue_samples_message.py
-                :start-after: [START enqueue_messages]
-                :end-before: [END enqueue_messages]
+                :start-after: [START send_messages]
+                :end-before: [END send_messages]
                 :language: python
                 :dedent: 12
-                :caption: Enqueue messages.
+                :caption: Send messages.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
