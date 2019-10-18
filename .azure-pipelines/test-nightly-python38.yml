@@ -21,12 +21,10 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/bin:$PATH   
-          sudo apt-get install python-packaging           
+          sudo apt-get install python-packaging 
+          python3.8 -m pip freeze          
           python3.8 -m pip install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
-          python3.8 -m pip freeze         
-          python3.8 -c "from packaging import *"
-          python3.8 -c "from setuptools import *"
-          python3.8 -c "from packaging.specifiers import SpecifierSet"
+          python3.8 -m pip freeze
           python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
         continueOnError: true
