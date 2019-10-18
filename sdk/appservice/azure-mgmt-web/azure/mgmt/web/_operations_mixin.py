@@ -17,7 +17,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def check_name_availability(self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
         """Check if a resource name is available.
 
-        Check if a resource name is available.
+        Description for Check if a resource name is available.
 
         :param name: Resource name to verify.
         :type name: str
@@ -26,7 +26,7 @@ class WebSiteManagementClientOperationsMixin(object):
          'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
          'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
         :type type: str or
-         ~azure.mgmt.web.v2018_02_01.models.CheckNameResourceTypes
+         ~azure.mgmt.web.v2019_08_01.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name.
         :type is_fqdn: bool
         :param dict custom_headers: headers that will be added to the request
@@ -35,10 +35,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ResourceNameAvailability or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceNameAvailability or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ResourceNameAvailability or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('check_name_availability')
@@ -46,6 +46,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -58,7 +60,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def get_publishing_user(self, custom_headers=None, raw=False, **operation_config):
         """Gets publishing user.
 
-        Gets publishing user.
+        Description for Gets publishing user.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -66,10 +68,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: User or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.User or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.User or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('get_publishing_user')
@@ -77,6 +79,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -89,7 +93,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def get_source_control(self, source_control_type, custom_headers=None, raw=False, **operation_config):
         """Gets source control token.
 
-        Gets source control token.
+        Description for Gets source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
@@ -99,10 +103,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('get_source_control')
@@ -110,6 +114,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -122,7 +128,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def get_subscription_deployment_locations(self, custom_headers=None, raw=False, **operation_config):
         """Gets list of available geo regions plus ministamps.
 
-        Gets list of available geo regions plus ministamps.
+        Description for Gets list of available geo regions plus ministamps.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -130,10 +136,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentLocations or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.DeploymentLocations or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.DeploymentLocations or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('get_subscription_deployment_locations')
@@ -141,6 +147,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -153,7 +161,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_billing_meters(self, billing_location=None, os_type=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of meters for a given location.
 
-        Gets a list of meters for a given location.
+        Description for Gets a list of meters for a given location.
 
         :param billing_location: Azure Location of billable resource
         :type billing_location: str
@@ -166,14 +174,16 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BillingMeter
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.BillingMeterPaged[~azure.mgmt.web.v2018_02_01.models.BillingMeter]
+         ~azure.mgmt.web.v2019_08_01.models.BillingMeterPaged[~azure.mgmt.web.v2019_08_01.models.BillingMeter]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_billing_meters')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -186,12 +196,12 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_geo_regions(self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, linux_dynamic_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
-        Get a list of available geographical regions.
+        Description for Get a list of available geographical regions.
 
         :param sku: Name of SKU used to filter the regions. Possible values
          include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
          'Isolated', 'PremiumV2', 'ElasticPremium', 'ElasticIsolated'
-        :type sku: str or ~azure.mgmt.web.v2018_02_01.models.SkuName
+        :type sku: str or ~azure.mgmt.web.v2019_08_01.models.SkuName
         :param linux_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Linux workers.
         :type linux_workers_enabled: bool
@@ -208,9 +218,9 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of GeoRegion
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.GeoRegionPaged[~azure.mgmt.web.v2018_02_01.models.GeoRegion]
+         ~azure.mgmt.web.v2019_08_01.models.GeoRegionPaged[~azure.mgmt.web.v2019_08_01.models.GeoRegion]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_geo_regions')
@@ -218,6 +228,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -230,7 +242,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_premier_add_on_offers(self, custom_headers=None, raw=False, **operation_config):
         """List all premier add-on offers.
 
-        List all premier add-on offers.
+        Description for List all premier add-on offers.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -239,9 +251,9 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PremierAddOnOffer
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.PremierAddOnOfferPaged[~azure.mgmt.web.v2018_02_01.models.PremierAddOnOffer]
+         ~azure.mgmt.web.v2019_08_01.models.PremierAddOnOfferPaged[~azure.mgmt.web.v2019_08_01.models.PremierAddOnOffer]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_premier_add_on_offers')
@@ -249,6 +261,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -261,7 +275,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_site_identifiers_assigned_to_host_name(self, name=None, custom_headers=None, raw=False, **operation_config):
         """List all apps that are assigned to a hostname.
 
-        List all apps that are assigned to a hostname.
+        Description for List all apps that are assigned to a hostname.
 
         :param name: Name of the object.
         :type name: str
@@ -272,9 +286,9 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Identifier
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.IdentifierPaged[~azure.mgmt.web.v2018_02_01.models.Identifier]
+         ~azure.mgmt.web.v2019_08_01.models.IdentifierPaged[~azure.mgmt.web.v2019_08_01.models.Identifier]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_site_identifiers_assigned_to_host_name')
@@ -282,6 +296,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -294,7 +310,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_skus(self, custom_headers=None, raw=False, **operation_config):
         """List all SKUs.
 
-        List all SKUs.
+        Description for List all SKUs.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -302,10 +318,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SkuInfos or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SkuInfos or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SkuInfos or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_skus')
@@ -313,6 +329,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -325,7 +343,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_source_controls(self, custom_headers=None, raw=False, **operation_config):
         """Gets the source controls available for Azure websites.
 
-        Gets the source controls available for Azure websites.
+        Description for Gets the source controls available for Azure websites.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -334,9 +352,9 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SourceControl
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.SourceControlPaged[~azure.mgmt.web.v2018_02_01.models.SourceControl]
+         ~azure.mgmt.web.v2019_08_01.models.SourceControlPaged[~azure.mgmt.web.v2019_08_01.models.SourceControl]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('list_source_controls')
@@ -344,6 +362,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -356,7 +376,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def move(self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Move resources between resource groups.
 
-        Move resources between resource groups.
+        Description for Move resources between resource groups.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -372,7 +392,8 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('move')
@@ -380,6 +401,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -392,20 +415,20 @@ class WebSiteManagementClientOperationsMixin(object):
     def update_publishing_user(self, user_details, custom_headers=None, raw=False, **operation_config):
         """Updates publishing user.
 
-        Updates publishing user.
+        Description for Updates publishing user.
 
         :param user_details: Details of publishing user
-        :type user_details: ~azure.mgmt.web.v2018_02_01.models.User
+        :type user_details: ~azure.mgmt.web.v2019_08_01.models.User
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: User or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.User or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.User or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('update_publishing_user')
@@ -413,6 +436,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -425,23 +450,23 @@ class WebSiteManagementClientOperationsMixin(object):
     def update_source_control(self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
         """Updates source control token.
 
-        Updates source control token.
+        Description for Updates source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
         :param request_message: Source control token information
         :type request_message:
-         ~azure.mgmt.web.v2018_02_01.models.SourceControl
+         ~azure.mgmt.web.v2019_08_01.models.SourceControl
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SourceControl or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.SourceControl or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.SourceControl or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('update_source_control')
@@ -449,6 +474,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -461,24 +488,24 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate(self, resource_group_name, validate_request, custom_headers=None, raw=False, **operation_config):
         """Validate if a resource can be created.
 
-        Validate if a resource can be created.
+        Description for Validate if a resource can be created.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
         :param validate_request: Request with the resources to validate.
         :type validate_request:
-         ~azure.mgmt.web.v2018_02_01.models.ValidateRequest
+         ~azure.mgmt.web.v2019_08_01.models.ValidateRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ValidateResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.v2018_02_01.models.ValidateResponse or
+        :rtype: ~azure.mgmt.web.v2019_08_01.models.ValidateResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('validate')
@@ -486,6 +513,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -532,7 +561,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate_move(self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Validate whether a resource can be moved.
 
-        Validate whether a resource can be moved.
+        Description for Validate whether a resource can be moved.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -548,7 +577,8 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('validate_move')
@@ -556,6 +586,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -569,11 +601,11 @@ class WebSiteManagementClientOperationsMixin(object):
         """Verifies if this VNET is compatible with an App Service Environment by
         analyzing the Network Security Group rules.
 
-        Verifies if this VNET is compatible with an App Service Environment by
-        analyzing the Network Security Group rules.
+        Description for Verifies if this VNET is compatible with an App Service
+        Environment by analyzing the Network Security Group rules.
 
         :param parameters: VNET information
-        :type parameters: ~azure.mgmt.web.v2018_02_01.models.VnetParameters
+        :type parameters: ~azure.mgmt.web.v2019_08_01.models.VnetParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -581,10 +613,10 @@ class WebSiteManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: VnetValidationFailureDetails or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.web.v2018_02_01.models.VnetValidationFailureDetails or
+         ~azure.mgmt.web.v2019_08_01.models.VnetValidationFailureDetails or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2019_08_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('verify_hosting_environment_vnet')
@@ -592,6 +624,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
