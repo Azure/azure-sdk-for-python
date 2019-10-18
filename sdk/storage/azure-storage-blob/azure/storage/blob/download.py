@@ -9,7 +9,7 @@ import threading
 import warnings
 from io import BytesIO
 
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers

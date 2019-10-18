@@ -8,13 +8,18 @@ import time
 
 from msal import TokenCache
 
-from azure.core import Configuration, HttpRequest
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
+    DistributedTracingPolicy
+)
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from azure.identity._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
 
 try:
@@ -131,8 +136,7 @@ class AuthnClientBase(ABC):
     @staticmethod
     def _parse_app_service_expires_on(expires_on):
         # type: (str) -> struct_time
-        """
-        Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
+        """Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
         Expects the time is given in UTC (i.e. has offset +00:00).
         """
         if not expires_on.endswith(" +00:00"):
@@ -160,8 +164,7 @@ class AuthnClientBase(ABC):
 
 
 class AuthnClient(AuthnClientBase):
-    """
-    Synchronous authentication client.
+    """Synchronous authentication client.
 
     :param str auth_url:
     :param config: Optional configuration for the HTTP pipeline.

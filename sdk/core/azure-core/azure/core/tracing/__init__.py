@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.tracing.abstract_span import AbstractSpan, SpanKind
+from ._abstract_span import AbstractSpan, SpanKind, HttpSpanMixin
 
 __all__ = [
-    "AbstractSpan", "SpanKind"
+    "AbstractSpan", "SpanKind", "HttpSpanMixin"
 ]

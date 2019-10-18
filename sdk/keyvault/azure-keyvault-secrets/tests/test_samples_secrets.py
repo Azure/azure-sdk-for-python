@@ -4,6 +4,8 @@
 # -------------------------------------
 from __future__ import print_function
 import functools
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -31,7 +33,11 @@ def test_create_secret_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -39,14 +45,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START set_secret]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
+        secret = secret_client.set_secret("secret-name", "secret-value", expires_on=expires_on)
 
         print(secret.name)
         print(secret.properties.version)
-        print(secret.properties.expires)
+        print(secret.properties.expires_on)
 
         # [END set_secret]
         # [START get_secret]
@@ -74,7 +80,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         print(updated_secret_properties.version)
-        print(updated_secret_properties.updated)
+        print(updated_secret_properties.updated_on)
         print(updated_secret_properties.content_type)
         print(updated_secret_properties.tags)
 
@@ -94,7 +100,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_secret]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -105,7 +111,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_secrets]
 
         # list secrets
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_properties_of_secrets()
 
         for secret in secrets:
             # the list doesn't include values or versions of the secrets
@@ -124,7 +130,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # the list doesn't include the values at each version
             print(secret.id)
             print(secret.enabled)
-            print(secret.updated)
+            print(secret.updated_on)
 
         # [END list_secret_versions]
         # [START list_deleted_secrets]
@@ -142,7 +148,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_secrets]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -157,16 +163,16 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_secret]
         deleted_secret = secret_client.delete_secret("secret-name")
-        # [START restore_secret]
+        # [START restore_secret_backup]
 
         # restores a backed up secret
-        restored_secret = secret_client.restore_secret(secret_backup)
+        restored_secret = secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
 
-        # [END restore_secret]
+        # [END restore_secret_backup]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets

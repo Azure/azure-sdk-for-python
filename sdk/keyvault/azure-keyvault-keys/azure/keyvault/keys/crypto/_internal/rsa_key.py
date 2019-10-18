@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKey,
 )
 
-from azure.keyvault.keys.models import JsonWebKey
+from azure.keyvault.keys._models import JsonWebKey
 from ._internal import _bytes_to_int, _int_to_bytes
 from .key import Key
 from .algorithms import Ps256, Ps384, Ps512, Rsa1_5, RsaOaep, RsaOaep256, Rs256, Rs384, Rs512

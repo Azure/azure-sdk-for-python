@@ -1,6 +1,17 @@
 # Release History
 
 ## 4.0.0b5
+### Breaking changes:
+- Moved optional parameters of two methods into kwargs (
+[docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
+detail the new keyword arguments):
+  - `set_secret` now has positional parameters `name` and `value`
+  - `update_secret_properties` now has positional parameters `name` and
+    (optional) `version`
+- Renamed `list_secrets` to `list_properties_of_secrets`
+- Renamed `Secret` to `KeyVaultSecret`
+- `KeyVaultSecret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
+`expires_on`, and `updated_on`
 
 
 ## 4.0.0b4 (2019-10-08)

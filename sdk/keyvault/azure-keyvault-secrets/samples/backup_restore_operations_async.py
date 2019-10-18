@@ -27,7 +27,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (delete_secret)
 #
-# 4. Restore a secret (restore_secret)
+# 4. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a secret client that will be used to call the service.

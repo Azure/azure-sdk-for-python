@@ -6,7 +6,7 @@
 import pytest
 
 from datetime import datetime, timedelta
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,

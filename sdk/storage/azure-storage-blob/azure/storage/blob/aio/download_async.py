@@ -10,7 +10,7 @@ from io import BytesIO
 from itertools import islice
 import warnings
 
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
