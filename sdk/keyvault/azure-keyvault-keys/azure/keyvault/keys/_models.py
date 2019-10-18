@@ -23,7 +23,7 @@ KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 class JsonWebKey(object):
     # pylint:disable=too-many-instance-attributes
-    """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
+    """As defined in http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :param str kid: Key identifier.
     :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
@@ -252,7 +252,8 @@ class KeyVaultKey(object):
 
 
 class DeletedKey(KeyVaultKey):
-    """A deleted key's id, attributes, and cryptographic material, as well as when it will be purged"""
+    """A deleted key's properties and cryptographic material, as well information about its deletion
+    and recovery, if soft-delete is enabled"""
 
     def __init__(
         self,
@@ -309,7 +310,7 @@ class DeletedKey(KeyVaultKey):
     def recovery_id(self):
         # type: () -> str
         """
-        An identifier used to recover the deleted key
+        An identifier used to recover the deleted key. Will only exist if soft-delete is enabled.
 
         :rtype: str
         """
@@ -319,7 +320,7 @@ class DeletedKey(KeyVaultKey):
     def scheduled_purge_date(self):
         # type: () -> datetime
         """
-        When the key is scheduled to be purged, in UTC
+        When the key is scheduled to be purged, in UTC. Will only exist if soft-delete is enabled.
 
         :rtype: datetime.datetime
         """
