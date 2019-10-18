@@ -22,7 +22,7 @@ jobs:
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/bin:$PATH
           python3.8 --version               
-          python3.8 -m pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
+          python3.8 -m pip install --user pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging setuptools
           which tox
           python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python3.8 "azure-core" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
