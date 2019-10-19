@@ -44,6 +44,7 @@ class StorageFileClientTest(FileTestCase):
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, self.account_name)
         self.assertEqual(service.credential.account_name, self.account_name)
         self.assertEqual(service.credential.account_key, self.account_key)
         self.assertTrue(service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
@@ -77,6 +78,7 @@ class StorageFileClientTest(FileTestCase):
             # Assert
             self.assertIsNotNone(service)
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.endswith(self.sas_token))
 
     def test_create_service_with_token(self):
@@ -98,6 +100,7 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(
@@ -175,6 +178,7 @@ class StorageFileClientTest(FileTestCase):
             # Assert
             self.assertIsNotNone(service)
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.endswith(self.sas_token))
 
     def test_create_service_with_connection_string_endpoint_protocol(self):
@@ -189,6 +193,7 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
@@ -233,6 +238,7 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')
