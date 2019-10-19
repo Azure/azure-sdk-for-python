@@ -27,6 +27,7 @@ jobs:
           echo $PATH
           python3.8 -c "print('Executing python 3.8')"
           cd /usr/lib/python3.8
+          cd ./distutils
           ls
           python3.8 -m pip install tox tox-monorepo packaging
           python3.8 -m pip install wheel pathlib twine codecov beautifulsoup4
