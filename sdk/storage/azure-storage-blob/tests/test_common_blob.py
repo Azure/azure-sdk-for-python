@@ -1919,6 +1919,7 @@ class StorageCommonBlobTest(StorageTestCase):
             bsc.get_service_properties()
             assert transport.session is not None
 
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

@@ -2359,6 +2359,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
     def test_transport_closed_only_once(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_transport_closed_only_once())
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

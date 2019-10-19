@@ -15,7 +15,8 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.core.pipeline import Pipeline
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     return_response_headers,
@@ -205,9 +206,14 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.storage.file.DirectoryClient
         """
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
@@ -220,10 +226,15 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A File Client.
         :rtype: ~azure.storage.file.FileClient
         """
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return FileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode)
+            _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
     def create_share(self, **kwargs):  # type: ignore
