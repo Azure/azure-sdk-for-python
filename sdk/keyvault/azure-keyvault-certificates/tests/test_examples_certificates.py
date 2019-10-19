@@ -4,6 +4,8 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
+import hashlib
+import os
 
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
@@ -30,7 +32,11 @@ def test_create_certificate_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
 
@@ -53,7 +59,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns a long running operation poller
-        certificate_operation_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        certificate_operation_poller = certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy)
 
         # Here we are waiting for the certificate creation operation to be completed
         certificate = certificate_operation_poller.result()
@@ -70,7 +76,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START get_certificate]
 
         # get the certificate
-        certificate = certificate_client.get_certificate_with_policy(name=cert_name)
+        certificate = certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -84,7 +90,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
         print(updated_certificate.properties.version)
-        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.updated_on)
         print(updated_certificate.properties.tags)
 
         # [END update_certificate]
@@ -103,7 +109,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -124,7 +130,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         for i in range(4):
-            certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
+            certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
 
         # [START list_certificates]
 
@@ -133,9 +139,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificates:
             print(certificate.id)
-            print(certificate.created)
+            print(certificate.created_on)
             print(certificate.name)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.enabled)
 
         # [END list_certificates]
@@ -146,7 +152,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.version)
 
         # [END list_certificate_versions]
@@ -164,7 +170,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -185,7 +191,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
 
@@ -202,7 +208,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START restore_certificate]
 
         # restore a certificate backup
-        restored_certificate = certificate_client.restore_certificate(backup=certificate_backup)
+        restored_certificate = certificate_client.restore_certificate_backup(backup=certificate_backup)
 
         print(restored_certificate.id)
         print(restored_certificate.name)
@@ -210,7 +216,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END restore_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
@@ -232,7 +238,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
         certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
             functools.partial(certificate_client.get_deleted_certificate, cert_name), HttpResponseError
@@ -260,10 +266,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
 
         certificate_client = vault_client.certificates
 
@@ -271,8 +277,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = certificate_client.create_contacts(contacts=contact_list)
@@ -306,7 +312,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END delete_contacts]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_issuers(self, vault_client, **kwargs):
         from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy

@@ -17,11 +17,10 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientSecretCredentialBase):
-    """
-    Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client ID and client secret.
 
     :param str client_id: the service principal's client ID
-    :param str secret: one of the service principal's client secrets
+    :param str client_secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
 
     Keyword arguments
@@ -30,15 +29,14 @@ class ClientSecretCredential(ClientSecretCredentialBase):
           authorities for other clouds.
     """
 
-    def __init__(self, client_id, secret, tenant_id, **kwargs):
+    def __init__(self, client_id, client_secret, tenant_id, **kwargs):
         # type: (str, str, str, Mapping[str, Any]) -> None
-        super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
+        super(ClientSecretCredential, self).__init__(client_id, client_secret, tenant_id, **kwargs)
         self._client = AuthnClient(tenant=tenant_id, **kwargs)
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -52,8 +50,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
 
 class CertificateCredential(CertificateCredentialBase):
-    """
-    Authenticates as a service principal using a certificate.
+    """Authenticates as a service principal using a certificate.
 
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -72,8 +69,7 @@ class CertificateCredential(CertificateCredentialBase):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

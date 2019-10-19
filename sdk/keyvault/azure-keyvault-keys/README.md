@@ -154,14 +154,14 @@ of that key is created.
 
 ```python
 # Create an RSA key
-rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key_material.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
-ec_key = key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key_material.kty)
+print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
@@ -181,7 +181,7 @@ updated_key_properties = key_client.update_key_properties("key-name", tags=tags)
 
 print(updated_key_properties.name)
 print(updated_key_properties.version)
-print(updated_key_properties.updated)
+print(updated_key_properties.updated_on)
 print(updated_key_properties.tags)
 ```
 
@@ -200,7 +200,7 @@ print(deleted_key.deleted_date)
 This example lists all the keys in the client's vault.
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 for key in keys:
     # the list doesn't include values or versions of the keys
@@ -214,13 +214,13 @@ wrap/unwrap, sign/verify) using a particular key.
 ```py
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.keys.crypto import EncryptionAlgorithm
+from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 key = key_client.get_key("mykey")
-crypto_client = key_client.get_cryptography_client(key)
+crypto_client = CryptographyClient(key, credential=credential)
 
 result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
@@ -249,21 +249,21 @@ credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 # Create an RSA key
-rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = await key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key_material.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
-ec_key = await key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = await key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key_material.kty)
+print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
 This example lists all the keys in the client's vault:
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 async for key in keys:
     print(key.name)
