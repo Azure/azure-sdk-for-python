@@ -18,6 +18,7 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy,
     DistributedTracingPolicy
 )
+from azure.core.pipeline.transport import AsyncHttpTransport
 
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
@@ -126,3 +127,27 @@ class AsyncStorageAccountHostsMixin(object):
             return response.parts()  # Return an AsyncIterator
         except StorageErrorException as error:
             process_storage_error(error)
+
+
+class AsyncTransportWrapper(AsyncHttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+    def __init__(self, async_transport):
+        self._transport = async_transport
+
+    async def send(self, request, **kwargs):
+        return await self._transport.send(request, **kwargs)
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+        pass

@@ -11,7 +11,7 @@ from typing import ( # pylint: disable=unused-import
 )
 
 from azure.core.async_paging import AsyncItemPaged
-
+from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _get_file_permission, _datetime_to_str
@@ -20,7 +20,7 @@ from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import StorageErrorException
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -111,10 +111,15 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
+
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return FileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -137,10 +142,15 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 :caption: Gets the subdirectory client.
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, **kwargs): # type: ignore

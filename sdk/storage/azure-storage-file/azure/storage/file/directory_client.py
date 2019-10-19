@@ -18,12 +18,13 @@ except ImportError:
 
 import six
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
@@ -216,10 +217,15 @@ class DirectoryClient(StorageAccountHostsMixin):
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return FileClient(
             self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -242,9 +248,14 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Gets the subdirectory client.
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace
