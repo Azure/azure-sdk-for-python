@@ -14,7 +14,6 @@ To use a directory_url, the method `from_directory_url` must be used.
 - `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
   - `max_concurrency`
@@ -28,7 +27,12 @@ the following APIs:
   - upload_range_from_url
   - clear_range
   - get_ranges
-- `close_handles` renamed to `begin_close_handles`
+- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
+
+**New features**
+
+- `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
+
 
 ## Version 12.0.0b4:
 
