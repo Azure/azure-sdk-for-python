@@ -20,7 +20,8 @@ jobs:
           sudo apt install python3.8
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
-          PATH=/usr/bin:$PATH
+          PATH=/usr/lib/python3.8:$PATH
+          echo $PATH
           python3.8 -c "print('Executing python 3.8')"
           python3.8 -m pip install distutils
           cd /usr/lib/python3.8
