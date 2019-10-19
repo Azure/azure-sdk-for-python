@@ -18,12 +18,13 @@ jobs:
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt-get update
           sudo apt install python3.8
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3.8 get-pip.py
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/bin:$PATH
           PATH=/usr/lib/python3.8:$PATH
           echo $PATH
           python3.8 -c "print('Executing python 3.8')"
-          sudo python3.8 get-pip.py
           cd /usr/lib/python3.8
           ls
           python3.8 -m pip install tox tox-monorepo packaging
