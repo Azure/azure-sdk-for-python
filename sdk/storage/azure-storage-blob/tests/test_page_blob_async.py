@@ -1654,7 +1654,6 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
     async def _test_blob_tier_on_create(self):
         # Test can only run live
-        pytest.skip("")
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1716,7 +1715,6 @@ class StoragePageBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_blob_tier_on_create())
 
     async def _test_blob_tier_set_tier_api(self):
-        pytest.skip("")
         await self._setup()
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
@@ -1777,7 +1775,6 @@ class StoragePageBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_blob_tier_set_tier_api())
 
     async def _test_blob_tier_copy_blob(self):
-        pytest.skip("")
         await self._setup()
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()

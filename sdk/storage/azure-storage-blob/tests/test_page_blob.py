@@ -1382,7 +1382,6 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_on_create(self):
-        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1435,7 +1434,6 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_set_tier_api(self):
-        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -1487,7 +1485,6 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_copy_blob(self):
-        pytest.skip("")
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
