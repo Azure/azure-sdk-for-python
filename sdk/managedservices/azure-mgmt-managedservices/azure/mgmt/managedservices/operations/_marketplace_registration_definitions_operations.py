@@ -39,17 +39,16 @@ class MarketplaceRegistrationDefinitionsOperations(object):
         self.config = config
 
     def list(
-            self, scope, marketplace_identifier, custom_headers=None, raw=False, **operation_config):
+            self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the marketplace registration definitions for the
         marketplace identifier.
 
         :param scope: Scope of the resource.
         :type scope: str
-        :param marketplace_identifier: Market place identifer. Expected
-         Formats - {publisher}.{product[-preview]}.{planName}.{version} or
-         {publisher}.{product[-preview]}.{planName} or
-         {publisher}.{product[-preview]} or {publisher}).
-        :type marketplace_identifier: str
+        :param filter: The filter query parameter. Might be used to filter
+         marketplace registration definition by plan identifier, publisher,
+         version etc.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,13 +65,14 @@ class MarketplaceRegistrationDefinitionsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'marketplaceIdentifier': self._serialize.url("marketplace_identifier", marketplace_identifier, 'str', skip_quote=True)
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -110,4 +110,67 @@ class MarketplaceRegistrationDefinitionsOperations(object):
         deserialized = models.RegistrationDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions/{marketplaceIdentifier}'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions'}
+
+    def get(
+            self, scope, marketplace_identifier, custom_headers=None, raw=False, **operation_config):
+        """Get the marketplace registration definition for the marketplace
+        identifier.
+
+        :param scope: Scope of the resource.
+        :type scope: str
+        :param marketplace_identifier: Market place identifer. Expected
+         Formats - {publisher}.{product[-preview]}.{planName}.{version} or
+         {publisher}.{product[-preview]}.{planName} or
+         {publisher}.{product[-preview]} or {publisher}).
+        :type marketplace_identifier: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RegistrationDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.managedservices.models.RegistrationDefinition or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'marketplaceIdentifier': self._serialize.url("marketplace_identifier", marketplace_identifier, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RegistrationDefinition', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions/{marketplaceIdentifier}'}
