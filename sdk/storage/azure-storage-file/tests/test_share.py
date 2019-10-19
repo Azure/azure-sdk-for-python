@@ -765,15 +765,20 @@ class StorageShareTest(FileTestCase):
 
     @record
     def test_transport_closed_only_once(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         transport = RequestsTransport()
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        share = self._get_share_reference()
+        prefix = TEST_SHARE_PREFIX
+        share_name = self.get_resource_name(prefix)
         with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+            fsc.get_service_properties()
             assert transport.session is not None
-            with fsc.get_share_client(share.share_name) as fc:
+            with fsc.get_share_client(share_name) as fc:
                 assert transport.session is not None
-            assert transport.session is not None  # Right now it's None
+            fsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

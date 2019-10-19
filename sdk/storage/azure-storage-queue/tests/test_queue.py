@@ -967,14 +967,18 @@ class StorageQueueTest(QueueTestCase):
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            return
         transport = RequestsTransport()
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)
         with QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport) as qsc:
+            qsc.get_service_properties()
             assert transport.session is not None
             with qsc.get_queue_client(queue_name) as qc:
                 assert transport.session is not None
-            assert transport.session is not None  # Right now it's None
+            qsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
