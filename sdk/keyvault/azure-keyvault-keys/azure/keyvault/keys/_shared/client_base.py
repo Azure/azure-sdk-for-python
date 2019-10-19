@@ -81,6 +81,8 @@ class KeyVaultClientBase(object):
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport, **Any) -> Pipeline
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_namers.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -90,7 +92,7 @@ class KeyVaultClientBase(object):
             config.authentication_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:
