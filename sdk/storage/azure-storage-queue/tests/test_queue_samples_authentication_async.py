@@ -87,7 +87,11 @@ class TestQueueAuthSamplesAsync(AsyncQueueTestCase):
         queue_service = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Create a SAS token to use for authentication of a client
-        sas_token = queue_service.generate_shared_access_signature(
+        from azure.storage.queue import generate_account_sas
+
+        sas_token = generate_account_sas(
+            queue_service.account_name,
+            queue_service.credential.account_key,
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)

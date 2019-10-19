@@ -21,6 +21,7 @@ from azure.core.exceptions import (
 from azure.storage.file import (
     AccessPolicy,
     ShareSasPermissions,
+    generate_share_sas,
 )
 from azure.storage.file.aio import (
     FileServiceClient,
@@ -875,7 +876,10 @@ class StorageShareTest(FileTestCase):
         dir1 = await share.create_directory(dir_name)
         await dir1.upload_file(file_name, data)
 
-        token = share.generate_shared_access_signature(
+        token = generate_share_sas(
+            share.account_name,
+            share.share_name,
+            share.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
         )
