@@ -13,8 +13,8 @@ import asyncio
 import os
 import unittest
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
@@ -462,7 +462,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_match=source_properties.get('etag'))
+                                  source_etag=source_properties.get('etag'),
+                                  source_match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -479,7 +480,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                source_if_match='0x111111111111111')
+                                                                source_etag='0x111111111111111',
+                                                                source_match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_append_block_from_url_with_source_if_match_async(self):
@@ -508,7 +510,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_none_match='0x111111111111111')
+                                  source_etag='0x111111111111111',
+                                  source_match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -525,7 +528,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                source_if_none_match=source_properties.get('etag'))
+                                                                source_etag=source_properties.get('etag'),
+                                                                source_match_condition=MatchConditions.IfModified)
 
     @record
     def test_append_block_from_url_with_source_if_none_match_async(self):
@@ -557,7 +561,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_match=destination_blob_properties_on_creation.get('etag'))
+                                  etag=destination_blob_properties_on_creation.get('etag'),
+                                  match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -574,7 +579,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                if_match='0x111111111111111')
+                                                                etag='0x111111111111111',
+                                                                match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_append_block_from_url_with_if_match_async(self):
@@ -602,7 +608,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_none_match='0x111111111111111')
+                                  etag='0x111111111111111', match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -620,7 +626,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                if_none_match=destination_blob_properties.get('etag'))
+                                                                etag=destination_blob_properties.get('etag'),
+                                                                match_condition=MatchConditions.IfModified)
 
     @record
     def test_append_block_from_url_with_if_none_match_async(self):

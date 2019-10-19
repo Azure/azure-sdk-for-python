@@ -14,8 +14,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException,
-    ModifiedAccessConditions,
     LeaseAccessConditions)
+from .._serialize import get_modify_conditions
 from ..lease import LeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
@@ -86,24 +86,16 @@ class LeaseClient(LeaseClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             response = await self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
@@ -141,24 +133,16 @@ class LeaseClient(LeaseClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             response = await self._client.renew_lease(
                 lease_id=self.id,
@@ -193,24 +177,16 @@ class LeaseClient(LeaseClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             response = await self._client.release_lease(
                 lease_id=self.id,
@@ -244,24 +220,16 @@ class LeaseClient(LeaseClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             response = await self._client.change_lease(
                 lease_id=self.id,
@@ -315,9 +283,7 @@ class LeaseClient(LeaseClientBase):
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             response = await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),

@@ -9,8 +9,8 @@
 - Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
 `BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
 - `Logging` has been renamed to `BlobAnalyticsLogging`.
+- All operations that take Etag conditional parameters (`if_match` and `if_none_match`) now take explicit `etag` and `match_condition` parameters, where `etag` is the Etag value, and `match_condition` is an instance of `azure.core.MatchConditions`.
 - The `generate_shared_access_signature` methods on each of `BlobServiceClient`, `ContainerClient` and `BlobClient` have been replaced by module level functions `generate_account_sas`, `generate_container_sas` and `generate_blob_sas`.
-
 
 **New features**
 
