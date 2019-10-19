@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
+    generate_blob_sas,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -198,7 +199,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Arrange
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -240,7 +246,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -273,7 +284,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -311,7 +327,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -349,7 +370,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -387,7 +413,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -424,7 +455,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Arrange
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -465,7 +501,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Arrange
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -501,7 +542,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Arrange
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -536,7 +582,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Arrange
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -572,7 +623,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -609,7 +665,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data)
         source_properties = source_blob_client.append_block(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
