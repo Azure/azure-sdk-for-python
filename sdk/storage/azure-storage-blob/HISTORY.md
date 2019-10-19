@@ -9,6 +9,8 @@
 - Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
 `BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
 - `Logging` has been renamed to `BlobAnalyticsLogging`.
+- The `generate_shared_access_signature` methods on each of `BlobServiceClient`, `ContainerClient` and `BlobClient` have been replaced by module level functions `generate_account_sas`, `generate_container_sas` and `generate_blob_sas`.
+
 
 **New features**
 

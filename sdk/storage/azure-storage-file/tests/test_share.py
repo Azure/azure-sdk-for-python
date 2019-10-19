@@ -15,11 +15,15 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.models import AccessPolicy, ShareSasPermissions
-from azure.storage.file.file_service_client import FileServiceClient
-from azure.storage.file.directory_client import DirectoryClient
-from azure.storage.file.file_client import FileClient
-from azure.storage.file.share_client import ShareClient
+from azure.storage.file import (
+    AccessPolicy,
+    ShareSasPermissions,
+    FileServiceClient,
+    DirectoryClient,
+    FileClient,
+    ShareClient,
+    generate_share_sas)
+
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
@@ -725,7 +729,10 @@ class StorageShareTest(FileTestCase):
         dir1 = share.create_directory(dir_name)
         dir1.upload_file(file_name, data)
 
-        token = share.generate_shared_access_signature(
+        token = generate_share_sas(
+            share.account_name,
+            share.share_name,
+            share.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
         )

@@ -9,8 +9,9 @@ from .file_client import FileClient
 from .directory_client import DirectoryClient
 from .share_client import ShareClient
 from .file_service_client import FileServiceClient
+from ._shared_access_signature import generate_account_sas, generate_share_sas, generate_file_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
-from ._shared.models import(
+from ._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
@@ -58,5 +59,8 @@ __all__ = [
     'ContentSettings',
     'Handle',
     'NTFSAttributes',
-    'HandleItem'
+    'HandleItem',
+    'generate_account_sas',
+    'generate_share_sas',
+    'generate_file_sas'
 ]

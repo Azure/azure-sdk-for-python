@@ -64,7 +64,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):
+class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -80,11 +80,14 @@ class StorageAccountHostsMixin(object):
         if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
+        self.account_name = account[0]
         secondary_hostname = None
+
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
+            self.account_name = self.credential.account_name
             secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
