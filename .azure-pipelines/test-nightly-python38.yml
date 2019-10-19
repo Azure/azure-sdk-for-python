@@ -39,5 +39,5 @@ jobs:
       - task: PublishTestResults@2
         condition: succeededOrFailed()
         inputs:
-          testResultsFiles: '**/test-*.xml'
+          testResultsFiles: '**/test_*.xml'
           testRunTitle: '$(OSName) Python $(PythonVersion)'
