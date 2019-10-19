@@ -16,10 +16,10 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-
+from azure.core.pipeline import Pipeline
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import Services
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
@@ -431,6 +431,11 @@ class FileServiceClient(StorageAccountHostsMixin):
             share_name = share.name
         except AttributeError:
             share_name = share
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return ShareClient(
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
+            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode)

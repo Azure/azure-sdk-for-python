@@ -130,6 +130,7 @@ class AsyncStorageAccountHostsMixin(object):
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):
+
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
