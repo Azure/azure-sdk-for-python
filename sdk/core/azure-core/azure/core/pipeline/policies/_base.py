@@ -125,7 +125,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../examples/test_example_sansio.py
+            .. literalinclude:: ../samples/test_example_sansio.py
                 :start-after: [START on_exception]
                 :end-before: [END on_exception]
                 :language: python
