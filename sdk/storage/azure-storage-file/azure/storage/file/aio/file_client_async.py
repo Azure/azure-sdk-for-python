@@ -440,6 +440,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -462,29 +464,27 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 :dedent: 12
                 :caption: Download a file.
         """
-        validate_content = kwargs.pop('validate_content', False)
-        timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
+
         range_end = None
         if length is not None:
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
         downloader = StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
-            offset=offset,
-            length=range_end,
-            validate_content=validate_content,
+            start_range=offset,
+            end_range=range_end,
             encryption_options=None,
+            name=self.file_name,
+            path='/'.join(self.file_path),
+            share=self.share_name,
             cls=deserialize_file_stream,
-            timeout=timeout,
             **kwargs
         )
-        await downloader.setup(
-            extra_properties={"share": self.share_name, "name": self.file_name, "path": "/".join(self.file_path)}
-        )
+        await downloader._setup()  # pylint: disable=protected-access
         return downloader
 
     @distributed_trace_async
@@ -758,8 +758,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         content_range = None
         if offset is not None:
             if length is not None:
-                length = offset + length - 1  # Reformat to an inclusive range index
-                content_range = "bytes={0}-{1}".format(offset, length)
+                end_range = offset + length - 1  # Reformat to an inclusive range index
+                content_range = "bytes={0}-{1}".format(offset, end_range)
             else:
                 content_range = "bytes={0}-".format(offset)
         try:

@@ -432,8 +432,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          timedelta(minutes=15))
 
         # Act
-        content = blob.download_blob(if_modified_since=test_datetime)
-        content = b"".join(list(content))
+        content = blob.download_blob(if_modified_since=test_datetime).readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -462,8 +461,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          timedelta(minutes=15))
 
         # Act
-        content = blob.download_blob(if_unmodified_since=test_datetime)
-        content = b"".join(list(content))
+        content = blob.download_blob(if_unmodified_since=test_datetime).readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -491,8 +489,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        content = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
-        content = b"".join(list(content))
+        content = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -517,8 +514,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        content = blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
-        content = b"".join(list(content))
+        content = blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified).readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -1458,7 +1454,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
+        self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @record
     def test_put_block_list_with_if_modified_fail(self):
@@ -1497,7 +1493,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
+        self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @record
     def test_put_block_list_with_if_unmodified_fail(self):
@@ -1535,7 +1531,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
+        self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @record
     def test_put_block_list_with_if_match_fail(self):
@@ -1570,7 +1566,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
+        self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @record
     def test_put_block_list_with_if_none_match_fail(self):
@@ -1867,7 +1863,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.assertIsNotNone(resp)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -1896,7 +1892,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.assertIsNotNone(resp)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -1925,7 +1921,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.assertIsNotNone(resp)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -1952,7 +1948,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.assertIsNotNone(resp)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -1981,7 +1977,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -2010,7 +2006,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -2039,7 +2035,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -2068,7 +2064,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        content = b"".join(list(blob.download_blob()))
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record

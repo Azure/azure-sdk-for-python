@@ -767,7 +767,7 @@ class StorageShareTest(FileTestCase):
         permission_key2 = share_client.create_permission_for_share(server_returned_permission)
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
-        self.assertEquals(permission_key, permission_key2)
+        self.assertEqual(permission_key, permission_key2)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -287,6 +287,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to download.
+        :keyword str encoding:
+            Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -307,12 +311,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             offset=offset,
             length=length,
             **kwargs)
-        extra_properties = {
-            'name': self.blob_name,
-            'container': self.container_name
-        }
         downloader = StorageStreamDownloader(**options)
-        await downloader.setup(extra_properties=extra_properties)
+        await downloader._setup()  # pylint: disable=protected-access
         return downloader
 
     @distributed_trace_async

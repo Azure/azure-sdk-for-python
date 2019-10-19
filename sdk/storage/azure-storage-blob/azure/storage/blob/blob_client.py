@@ -493,8 +493,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = {
             'clients': self._client,
             'config': self._config,
-            'offset': offset,
-            'length': length,
+            'start_range': offset,
+            'end_range': length,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -504,7 +504,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'cls': deserialize_blob_stream,
-            'timeout': kwargs.pop('timeout', None)}
+            'max_concurrency':kwargs.pop('max_concurrency', 1),
+            'encoding': kwargs.pop('encoding', None),
+            'timeout': kwargs.pop('timeout', None),
+            'name': self.blob_name,
+            'container': self.container_name}
         options.update(kwargs)
         return options
 
@@ -554,6 +558,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to download.
+        :keyword str encoding:
+            Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -574,11 +582,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             offset=offset,
             length=length,
             **kwargs)
-        extra_properties = {
-            'name': self.blob_name,
-            'container': self.container_name
-        }
-        return StorageStreamDownloader(extra_properties=extra_properties, **options)
+        return StorageStreamDownloader(**options)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):

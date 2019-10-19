@@ -226,10 +226,9 @@ class StorageCommonBlobTest(StorageTestCase):
         blob.upload_blob(blob_data)
 
         # Assert
-        data = blob.download_blob()
+        data = blob.download_blob(encoding='utf-8')
         self.assertIsNotNone(data)
-        content = b"".join(list(data))
-        self.assertEqual(content.decode('utf-8'), blob_data)
+        self.assertEqual(data.readall(), blob_data)
 
     @record
     def test_create_blob_with_special_chars(self):
@@ -242,9 +241,8 @@ class StorageCommonBlobTest(StorageTestCase):
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob.upload_blob(blob_data, length=len(blob_data))
 
-            data = blob.download_blob()
-            content = b"".join(list(data))
-            self.assertEqual(content.decode('utf-8'), blob_data)
+            data = blob.download_blob(encoding='utf-8')
+            self.assertEqual(data.readall(), blob_data)
 
         # Assert
 
@@ -261,7 +259,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
-        content = b"".join(list(blob.download_blob(lease=lease)))
+        content = blob.download_blob(lease=lease).readall()
         self.assertEqual(content, data)
 
     @record
@@ -290,7 +288,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = blob.download_blob()
 
         # Assert
-        content = b"".join(list(data))
+        content = data.readall()
         self.assertEqual(content, self.byte_data)
 
     @record
@@ -305,7 +303,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = snapshot.download_blob()
 
         # Assert
-        content = b"".join(list(data))
+        content = data.readall()
         self.assertEqual(content, self.byte_data)
 
     @record
@@ -324,8 +322,8 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_latest = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(blob_previous)), self.byte_data)
-        self.assertEqual(b"".join(list(blob_latest)), b'hello world again')
+        self.assertEqual(blob_previous.readall(), self.byte_data)
+        self.assertEqual(blob_latest.readall(), b'hello world again')
 
     @record
     def test_get_blob_with_range(self):
@@ -337,7 +335,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = blob.download_blob(offset=0, length=5)
 
         # Assert
-        self.assertEqual(b"".join(list(data)), self.byte_data[:5])
+        self.assertEqual(data.readall(), self.byte_data[:5])
 
     @record
     def test_get_blob_with_lease(self):
@@ -351,7 +349,7 @@ class StorageCommonBlobTest(StorageTestCase):
         lease.release()
 
         # Assert
-        self.assertEqual(b"".join(list(data)), self.byte_data)
+        self.assertEqual(data.readall(), self.byte_data)
 
     @record
     def test_get_blob_with_non_existing_blob(self):
@@ -863,7 +861,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(copy['copy_status'], 'success')
         self.assertIsNotNone(copy['copy_id'])
 
-        copy_content = copyblob.download_blob().content_as_bytes()
+        copy_content = copyblob.download_blob().readall()
         self.assertEqual(copy_content, self.byte_data)
 
     @record
@@ -967,7 +965,7 @@ class StorageCommonBlobTest(StorageTestCase):
         props = self._wait_for_async_copy(target_blob)
         self.assertEqual(props.copy.status, 'success')
         actual_data = target_blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), data)
+        self.assertEqual(actual_data.readall(), data)
 
     @record
     def test_abort_copy_blob(self):
@@ -985,7 +983,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         actual_data = copied_blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), b"")
+        self.assertEqual(actual_data.readall(), b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
     @record
@@ -1138,7 +1136,7 @@ class StorageCommonBlobTest(StorageTestCase):
         data = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(data)), b'hello world')
+        self.assertEqual(data.readall(), b'hello world')
 
     @record
     def test_create_blob_blob_unicode_data(self):
@@ -1200,7 +1198,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url)
         #self._set_test_proxy(service, self.settings)
-        content = service.download_blob().content_as_bytes()
+        content = service.download_blob().readall()
 
         # Assert
         self.assertEqual(data, content)
@@ -1228,7 +1226,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
-        content = service.download_blob().content_as_bytes()
+        content = service.download_blob().readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -1257,7 +1255,7 @@ class StorageCommonBlobTest(StorageTestCase):
         service = BlobClient.from_blob_url(blob_snapshot_client.url, credential=token)
 
         # Act
-        snapshot_content = service.download_blob().content_as_bytes()
+        snapshot_content = service.download_blob().readall()
 
         # Assert
         self.assertEqual(self.byte_data, snapshot_content)
@@ -1299,7 +1297,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         #self._set_test_proxy(service, self.settings)
-        result = service.download_blob().content_as_bytes()
+        result = service.download_blob().readall()
 
         # Assert
         self.assertEqual(self.byte_data, result)
@@ -1400,7 +1398,7 @@ class StorageCommonBlobTest(StorageTestCase):
         content = new_blob_client.download_blob()
 
         # Assert
-        self.assertEqual(self.byte_data, b"".join(list(content)))
+        self.assertEqual(self.byte_data, content.readall())
 
     @record
     def test_token_credential(self):
@@ -1520,7 +1518,7 @@ class StorageCommonBlobTest(StorageTestCase):
         response.raise_for_status()
         self.assertTrue(response.ok)
         data = blob.download_blob()
-        self.assertEqual(updated_data, b"".join(list(data)))
+        self.assertEqual(updated_data, data.readall())
 
     @record
     def test_shared_delete_access_blob(self):
@@ -1778,7 +1776,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -1798,7 +1796,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -1819,7 +1817,7 @@ class StorageCommonBlobTest(StorageTestCase):
                 blob.url, data, credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Assert
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(b"existing_data", content)
 
     @record
@@ -1842,7 +1840,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     @record
@@ -1862,7 +1860,9 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = blob.download_blob().content_as_text()
+
+        stream = blob.download_blob(encoding='UTF-8')
+        content = stream.readall()
         self.assertEqual(data, content)
 
     @record
@@ -1885,7 +1885,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(data, content)
 
     def test_set_blob_permission_from_string(self):

@@ -138,7 +138,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_content = await file_client.download_file()
-        file_content = await file_content.content_as_bytes()
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(file_content, file_data)
@@ -166,7 +166,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_content = await file_client.download_file()
-        file_content = await file_content.content_as_bytes()
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(file_content, binary_data)
@@ -193,7 +193,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_output = await file_client.download_file()
-        file_content = await file_output.content_as_bytes()
+        file_content = await file_output.readall()
 
         # Assert
         self.assertEqual(file_data, file_content)
@@ -220,8 +220,8 @@ class StorageGetFileTest(FileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        file_output = await file_client.download_file()
-        file_content = await file_output.content_as_bytes(max_concurrency=2)
+        file_output = await file_client.download_file(max_concurrency=2)
+        file_content = await file_output.readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -254,8 +254,8 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_output = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_output.content_as_bytes(max_concurrency=2)
+        file_output = await file_client.download_file(raw_response_hook=callback, max_concurrency=2)
+        file_content = await file_output.readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -290,7 +290,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_output = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_output.content_as_bytes()
+        file_content = await file_output.readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -328,7 +328,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_output = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_output.content_as_bytes()
+        file_content = await file_output.readall()
 
         # Assert
         self.assertEqual(file_data, file_content)
@@ -360,11 +360,12 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file()
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await file_client.download_file(max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(props.properties, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -392,7 +393,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             download = await file_client.download_file()
-            async for data in download:
+            async for data in download.chunks():
                 stream.write(data)
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -428,11 +429,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await file_client.download_file(raw_response_hook=callback, max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -467,11 +468,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await file_client.download_file(raw_response_hook=callback, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -509,11 +510,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await file_client.download_file(raw_response_hook=callback, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data, actual)
@@ -556,11 +557,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await snapshot_client.download_file()
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await snapshot_client.download_file(max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -605,11 +606,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await snapshot_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -655,11 +656,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await snapshot_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -709,11 +710,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await snapshot_client.download_file(raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data, actual)
@@ -747,11 +748,11 @@ class StorageGetFileTest(FileTestCase):
         start = 4
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=start, length=end_range-start+1)
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await file_client.download_file(offset=start, length=end_range-start+1, max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[start:end_range + 1], actual)
@@ -780,10 +781,10 @@ class StorageGetFileTest(FileTestCase):
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
             props = await file_client.download_file(offset=0, length=1)
-            props = await props.download_to_stream(stream)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(1, len(actual))
@@ -813,11 +814,11 @@ class StorageGetFileTest(FileTestCase):
         # the get request should fail in this case since the blob is empty and yet there is a range specified
         with self.assertRaises(HttpResponseError):
             props = await file_client.download_file(offset=0, length=5)
-            await props.content_as_bytes()
+            await props.readall()
 
         with self.assertRaises(HttpResponseError):
             props = await file_client.download_file(offset=3, length=5)
-            await props.content_as_bytes()
+            await props.readall()
 
     @record
     def test_ranged_get_file_to_bytes_with_zero_byte_async(self):
@@ -850,11 +851,15 @@ class StorageGetFileTest(FileTestCase):
         start_range = 3
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=start_range, length=end_range-start_range+1, raw_response_hook=callback)
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await file_client.download_file(
+                offset=start_range,
+                length=end_range - start_range + 1,
+                max_concurrency=2,
+                raw_response_hook=callback)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[start_range:end_range + 1], actual)
@@ -882,11 +887,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=4)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await file_client.download_file(offset=1, length=4, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
@@ -909,11 +914,11 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=3)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await file_client.download_file(offset=1, length=3, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
@@ -945,11 +950,11 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range)
-            props = await props.download_to_stream(stream, max_concurrency=2)
+            props = await file_client.download_file(offset=1, length=end_range, max_concurrency=2)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[1:file_size], actual)
@@ -979,11 +984,11 @@ class StorageGetFileTest(FileTestCase):
         start = 4
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=start, length=end_range-start+1)
-            props = await props.download_to_stream(stream, max_concurrency=1)
+            props = await file_client.download_file(offset=start, length=end_range-start+1, max_concurrency=1)
+            read_bytes = await props.readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[start:file_size], actual)
@@ -1012,8 +1017,8 @@ class StorageGetFileTest(FileTestCase):
         await file_client.upload_file(text_data)
 
         # Act
-        file_content = await file_client.download_file()
-        file_content = await file_content.content_as_text(max_concurrency=2)
+        file_content = await file_client.download_file(max_concurrency=2, encoding='utf-8')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -1049,8 +1054,9 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_content.content_as_text(max_concurrency=2)
+        file_content = await file_client.download_file(
+            raw_response_hook=callback, max_concurrency=2, encoding='utf-8')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -1087,8 +1093,9 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_content.content_as_text(max_concurrency=1)
+        file_content = await file_client.download_file(
+            raw_response_hook=callback, max_concurrency=1, encoding='utf-8')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -1125,8 +1132,8 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_content.content_as_text()
+        file_content = await file_client.download_file(raw_response_hook=callback, encoding='utf-8')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(file_data, file_content)
@@ -1157,8 +1164,8 @@ class StorageGetFileTest(FileTestCase):
         await file_client.upload_file(data)
 
         # Act
-        file_content = await file_client.download_file()
-        file_content = await file_content.content_as_text(encoding='UTF-16')
+        file_content = await file_client.download_file(encoding='UTF-16')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(text, file_content)
@@ -1191,8 +1198,8 @@ class StorageGetFileTest(FileTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        file_content = await file_client.download_file(raw_response_hook=callback)
-        file_content = await file_content.content_as_text(encoding='UTF-16')
+        file_content = await file_client.download_file(raw_response_hook=callback, encoding='UTF-16')
+        file_content = await file_content.readall()
 
         # Assert
         self.assertEqual(text, file_content)
@@ -1221,11 +1228,11 @@ class StorageGetFileTest(FileTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
-            file_props = await file_client.download_file()
-            file_props = await file_props.download_to_stream(non_seekable_stream, max_concurrency=1)
+            file_props = await file_client.download_file(max_concurrency=1)
+            read_bytes = await file_props.readinto(non_seekable_stream)
 
         # Assert
-        self.assertIsInstance(file_props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -1255,8 +1262,8 @@ class StorageGetFileTest(FileTestCase):
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
-                data = await file_client.download_file()
-                await data.download_to_stream(non_seekable_stream, max_concurrency=2)
+                data = await file_client.download_file(max_concurrency=2)
+                await data.readinto(non_seekable_stream)
 
                 # Assert
 
@@ -1290,11 +1297,11 @@ class StorageGetFileTest(FileTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
-            file_props = await snapshot_client.download_file()
-            file_props = await file_props.download_to_stream(non_seekable_stream, max_concurrency=1)
+            file_props = await snapshot_client.download_file(max_concurrency=1)
+            read_bytes = await file_props.readinto(non_seekable_stream)
 
         # Assert
-        self.assertIsInstance(file_props, FileProperties)
+        self.assertIsInstance(read_bytes, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -1335,8 +1342,8 @@ class StorageGetFileTest(FileTestCase):
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
-                data = await snapshot_client.download_file()
-                await data.download_to_stream(non_seekable_stream, max_concurrency=2)
+                data = await snapshot_client.download_file(max_concurrency=2)
+                await data.readinto(non_seekable_stream)
 
     @record
     def test_get_file_non_seekable_parallel_from_snapshot_async(self):
@@ -1366,7 +1373,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_content = await file_client.download_file(raw_response_hook=callback)
-        file_bytes = await file_content.content_as_bytes()
+        file_bytes = await file_content.readall()
 
         # Assert
         self.assertEqual(byte_data, file_bytes)
@@ -1407,8 +1414,8 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = await file_client.download_file(raw_response_hook=callback)
-        file_bytes = await file_content.content_as_bytes(max_concurrency=2)
+        file_content = await file_client.download_file(raw_response_hook=callback, max_concurrency=2)
+        file_bytes = await file_content.readall()
 
         # Assert
         self.assertEqual(byte_data, file_bytes)
@@ -1440,7 +1447,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         file_content = await file_client.download_file(validate_content=True)
-        file_bytes = await file_content.content_as_bytes()
+        file_bytes = await file_content.readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_bytes)

@@ -184,7 +184,7 @@ class StorageFileAsyncTest(FileTestCase):
 
     async def assertFileEqual(self, file_client, expected_data):
         content = await file_client.download_file()
-        actual_data = await content.content_as_bytes()
+        actual_data = await content.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -512,10 +512,10 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         properties = await file_client.get_file_properties()
-        self.assertEquals(properties.content_settings.content_language, content_settings.content_language)
-        self.assertEquals(properties.content_settings.content_disposition, content_settings.content_disposition)
-        self.assertEquals(properties.creation_time, creation_time)
-        self.assertEquals(properties.last_write_time, last_write_time)
+        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertEqual(properties.creation_time, creation_time)
+        self.assertEqual(properties.last_write_time, last_write_time)
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
@@ -710,7 +710,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -788,7 +788,7 @@ class StorageFileAsyncTest(FileTestCase):
         # To make sure the range of the file is actually updated
         file_ranges = await destination_file_client.get_ranges()
         file_content = await destination_file_client.download_file(offset=0, length=512)
-        file_content = await file_content.content_as_bytes()
+        file_content = await file_content.readall()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(511, file_ranges[0].get('end'))
@@ -828,8 +828,8 @@ class StorageFileAsyncTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = await destination_file_client.get_ranges()
-        file_content = await destination_file_client.download_file(offset=0, length=end+1)
-        file_content = await file_content.content_as_bytes()
+        file_content = await destination_file_client.download_file(offset=0, length=end + 1)
+        file_content = await file_content.readall()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(end, file_ranges[0].get('end'))
@@ -849,7 +849,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'\x00' * 512, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -872,7 +872,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(encoded, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -1036,7 +1036,7 @@ class StorageFileAsyncTest(FileTestCase):
         self.assertIsNotNone(copy['copy_id'])
 
         copy_file = await file_client.download_file()
-        content = await copy_file.content_as_bytes()
+        content = await copy_file.readall()
         self.assertEqual(content, self.short_byte_data)
 
     @record
@@ -1099,7 +1099,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._wait_for_async_copy(self.share_name, target_file_name) 
 
         content = await file_client.download_file()
-        actual_data = await content.content_as_bytes()
+        actual_data = await content.readall()
         self.assertEqual(actual_data, data)
 
     @record
@@ -1137,7 +1137,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         target_file = await file_client.download_file()
-        content = await target_file.content_as_bytes()
+        content = await target_file.readall()
         self.assertEqual(content, b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
@@ -1185,7 +1185,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -1211,7 +1211,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, data)
 
     @record
@@ -1229,7 +1229,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Assert
         content = await file_client.download_file()
-        transformed_content = await content.content_as_bytes()
+        transformed_content = await content.readall()
         properties = await file_client.get_file_properties()
         self.assertEqual(transformed_content, data)
         self.assertIn('Temporary', properties.file_attributes)
@@ -1255,7 +1255,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, binary_data)
@@ -1769,7 +1769,7 @@ class StorageFileAsyncTest(FileTestCase):
             file_path=file_client.file_name,
             credential=token)
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(self.short_byte_data, content)
@@ -1808,7 +1808,7 @@ class StorageFileAsyncTest(FileTestCase):
             credential=token)
 
         content = await file_client.download_file()
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(self.short_byte_data, content)
@@ -1955,7 +1955,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Assert
         self.assertTrue(response.ok)
         file_content = await file_client_admin.download_file()
-        file_content = await file_content.content_as_bytes()
+        file_content = await file_content.readall()
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
     @record

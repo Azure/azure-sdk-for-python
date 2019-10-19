@@ -1251,9 +1251,9 @@ class StorageContainerTest(StorageTestCase):
             blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = blob.download_blob()
+            blob_data = blob.download_blob(encoding='utf-8')
             self.assertIsNotNone(blob)
-            self.assertEqual(b"".join(list(blob_data)).decode('utf-8'), blob_content)
+            self.assertEqual(blob_data.readall(), blob_content)
 
         finally:
             # delete container
@@ -1288,10 +1288,10 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
-        content = new_blob_client.download_blob()
+        content = new_blob_client.download_blob(encoding='utf-8')
 
         # Assert
-        self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
+        self.assertEqual(blob_content, content.readall())
 
     def test_set_container_permission_from_string(self):
         # Arrange

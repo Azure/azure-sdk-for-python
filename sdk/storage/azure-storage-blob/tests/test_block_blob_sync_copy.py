@@ -103,7 +103,7 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
         self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
 
@@ -158,5 +158,5 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual('success', copy_props['copy_status'])
 
         # Verify content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)

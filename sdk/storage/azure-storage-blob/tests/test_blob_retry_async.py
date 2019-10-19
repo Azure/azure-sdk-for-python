@@ -101,7 +101,7 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     def test_retry_put_block_with_seekable_stream_async(self):
@@ -140,7 +140,7 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     def test_retry_put_block_with_non_seekable_stream_async(self):

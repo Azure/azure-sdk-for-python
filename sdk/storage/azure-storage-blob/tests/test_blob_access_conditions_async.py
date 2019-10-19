@@ -525,7 +525,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         content = await blob.download_blob(if_modified_since=test_datetime)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -563,7 +563,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         content = await blob.download_blob(if_unmodified_since=test_datetime)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -600,7 +600,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         content = await blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -634,7 +634,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         content = await blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -1807,7 +1807,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1857,7 +1857,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1906,7 +1906,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1952,7 +1952,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -2316,7 +2316,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2354,7 +2354,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2392,7 +2392,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2428,7 +2428,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2466,7 +2466,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2504,7 +2504,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2542,7 +2542,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2580,7 +2580,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record

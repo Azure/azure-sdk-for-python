@@ -107,7 +107,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await self._setup()
         blob = self.bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob()
-        actual_data = await stream.content_as_bytes()
+        actual_data = await stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -185,7 +185,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        actual = await content.content_as_bytes()
+        actual = await content.readall()
         self.assertEqual(actual, b'AAABBBCCC')
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
@@ -528,7 +528,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         output = await blob.download_blob(lease=lease)
-        actual = await output.content_as_bytes()
+        actual = await output.readall()
         self.assertEqual(actual, data)
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
@@ -640,7 +640,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         db = await blob.download_blob()
-        output = await db.content_as_bytes()
+        output = await db.readall()
         self.assertEqual(data[3:], output)
 
     @record
@@ -660,7 +660,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         db = await blob.download_blob()
-        output = await db.content_as_bytes()
+        output = await db.readall()
         self.assertEqual(data[3:8], output)
 
     @record
@@ -683,7 +683,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         db = await blob.download_blob()
-        output = await db.content_as_bytes()
+        output = await db.readall()
         self.assertEqual(data[3:8],output)
         properties = await blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)

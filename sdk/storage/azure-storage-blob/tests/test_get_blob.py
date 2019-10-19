@@ -109,7 +109,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsInstance(content.properties, BlobProperties)
-        self.assertEqual(content.content_as_bytes(), blob_data)
+        self.assertEqual(content.readall(), blob_data)
 
     @record
     def test_unicode_get_blob_binary_data(self):
@@ -126,7 +126,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsInstance(content.properties, BlobProperties)
-        self.assertEqual(content.content_as_bytes(), binary_data)
+        self.assertEqual(content.readall(), binary_data)
 
     @record
     def test_get_blob_no_content(self):
@@ -140,7 +140,7 @@ class StorageGetBlobTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(blob_data, content.content_as_bytes())
+        self.assertEqual(blob_data, content.readall())
         self.assertEqual(0, content.properties.size)
 
     def test_get_blob_to_bytes(self):
@@ -152,7 +152,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = blob.download_blob().content_as_bytes(max_concurrency=2)
+        content = blob.download_blob(max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -166,14 +166,14 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = blob.download_blob(offset=0, length=1).content_as_bytes()
+        content = blob.download_blob(offset=0, length=1).readall()
 
         # Assert
         self.assertEqual(1, len(content))
         self.assertEqual(self.byte_data[0], content[0])
 
         # Act
-        content = blob.download_blob(offset=5, length=1).content_as_bytes()
+        content = blob.download_blob(offset=5, length=1).readall()
 
         # Assert
         self.assertEqual(1, len(content))
@@ -221,7 +221,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(self.byte_data, overwrite=True) # Modify the blob so the Etag no longer matches
 
         # Act
-        content = snapshot.download_blob().content_as_bytes(max_concurrency=2)
+        content = snapshot.download_blob(max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -241,7 +241,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_bytes(max_concurrency=2)
+        content = blob.download_blob(raw_response_hook=callback, max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -263,7 +263,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_bytes(max_concurrency=1)
+        content = blob.download_blob(raw_response_hook=callback, max_concurrency=1).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -289,7 +289,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
+        content = blob.download_blob(raw_response_hook=callback).readall()
 
         # Assert
         self.assertEqual(blob_data, content)
@@ -309,11 +309,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob()
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, len(self.byte_data))
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -334,10 +334,10 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(raw_response_hook=callback)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, len(self.byte_data))
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -360,11 +360,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(raw_response_hook=callback)
-            properties = downloader.download_to_stream(stream, max_concurrency=1)
+            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=1)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, len(self.byte_data))
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -392,11 +392,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(raw_response_hook=callback)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, 1024)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(blob_data, actual)
@@ -417,11 +417,11 @@ class StorageGetBlobTest(StorageTestCase):
         # Act
         end_range = self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=1, length=end_range - 1)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(offset=1, length=end_range - 1, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, end_range - 1)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:end_range], actual)
@@ -444,11 +444,15 @@ class StorageGetBlobTest(StorageTestCase):
         start_range = 3
         end_range = self.config.max_single_get_size + 1024
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=start_range, length=end_range, raw_response_hook=callback)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(
+                offset=start_range,
+                length=end_range,
+                raw_response_hook=callback,
+                max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, end_range)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[start_range:end_range + start_range], actual)
@@ -465,11 +469,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=1, length=4)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(offset=1, length=4, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, 4)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
@@ -481,11 +485,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=1, length=3)
-            properties = downloader.download_to_stream(stream, max_concurrency=1)
+            downloader = blob.download_blob(offset=1, length=3, max_concurrency=1)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, 3)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
@@ -506,11 +510,11 @@ class StorageGetBlobTest(StorageTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=1, length=end_range)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, blob_size)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(blob_data[1:blob_size], actual)
@@ -531,11 +535,11 @@ class StorageGetBlobTest(StorageTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=1, length=end_range)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, blob_size)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(blob_data[1:blob_size], actual)
@@ -554,7 +558,8 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(text_data)
 
         # Act
-        content = blob.download_blob().content_as_text(max_concurrency=2)
+        stream = blob.download_blob(max_concurrency=2, encoding='UTF-8')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(text_data, content)
@@ -578,7 +583,11 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_text(max_concurrency=2)
+        stream = blob.download_blob(
+            raw_response_hook=callback,
+            max_concurrency=2,
+            encoding='UTF-8')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(text_data, content)
@@ -604,7 +613,11 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_text(max_concurrency=1)
+        stream = blob.download_blob(
+            raw_response_hook=callback,
+            max_concurrency=1,
+            encoding='UTF-8')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(text_data, content)
@@ -630,7 +643,8 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_text()
+        stream = blob.download_blob(raw_response_hook=callback, encoding='UTF-8')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(blob_data, content)
@@ -649,7 +663,8 @@ class StorageGetBlobTest(StorageTestCase):
         blob.upload_blob(text, encoding='utf-16')
 
         # Act
-        content = blob.download_blob().content_as_text(encoding='utf-16')
+        stream = blob.download_blob(encoding='UTF-16')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(text, content)
@@ -670,7 +685,8 @@ class StorageGetBlobTest(StorageTestCase):
             total = response.context['data_stream_total']
             progress.append((current, total))
 
-        content = blob.download_blob(raw_response_hook=callback).content_as_text(encoding='utf-16')
+        stream = blob.download_blob(raw_response_hook=callback, encoding='UTF-16')
+        content = stream.readall()
 
         # Assert
         self.assertEqual(text, content)
@@ -688,11 +704,11 @@ class StorageGetBlobTest(StorageTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetBlobTest.NonSeekableFile(stream)
-            downloader = blob.download_blob()
-            properties = downloader.download_to_stream(non_seekable_stream, max_concurrency=1)
+            downloader = blob.download_blob(max_concurrency=1)
+            read_bytes = downloader.readinto(non_seekable_stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, len(self.byte_data))
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -710,8 +726,8 @@ class StorageGetBlobTest(StorageTestCase):
             non_seekable_stream = StorageGetBlobTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
-                downloader = blob.download_blob()
-                properties = downloader.download_to_stream(non_seekable_stream, max_concurrency=2)
+                downloader = blob.download_blob(max_concurrency=2)
+                properties = downloader.readinto(non_seekable_stream)
 
     @record
     def test_get_blob_to_stream_exact_get_size(self):
@@ -730,8 +746,8 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(raw_response_hook=callback)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            properties = downloader.readinto(stream)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -759,7 +775,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
+        content = blob.download_blob(raw_response_hook=callback).readall()
 
         # Assert
         self.assertEqual(byte_data, content)
@@ -790,7 +806,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
+        content = blob.download_blob(raw_response_hook=callback).readall()
 
         # Assert
         self.assertEqual(byte_data, content)
@@ -810,11 +826,11 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(validate_content=True)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(validate_content=True, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
+        self.assertEqual(read_bytes, len(self.byte_data))
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -828,7 +844,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = blob.download_blob(validate_content=True).content_as_bytes(max_concurrency=2)
+        content = blob.download_blob(validate_content=True, max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -846,13 +862,13 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = blob.download_blob(offset=0, length=1024, validate_content=True)
-            properties = downloader.download_to_stream(stream, max_concurrency=2)
+            downloader = blob.download_blob(offset=0, length=1024, validate_content=True, max_concurrency=2)
+            read_bytes = downloader.readinto(stream)
 
         # Assert
-        self.assertEqual(len(downloader), 1024)
-        self.assertIsInstance(properties, BlobProperties)
-        self.assertEqual(b'MDAwMDAwMDA=', properties.content_settings.content_md5)
+        self.assertEqual(downloader.size, 1024)
+        self.assertEqual(read_bytes, 1024)
+        self.assertEqual(b'MDAwMDAwMDA=', downloader.properties.content_settings.content_md5)
 
     def test_get_blob_range_with_overall_md5(self):
         # parallel tests introduce random order of requests, can only run live
