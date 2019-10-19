@@ -20,11 +20,11 @@ jobs:
           sudo apt install python3.8
           sudo apt-get install python3.8-dev
           sudo apt-get install python3.8-distutils
-          sudo apt-get install python3-pip
-          sudo apt-get install python3.8-tox          
-          cd $(Build.SourcesDirectory)
           export PATH=~/.local/bin:$PATH
           PATH=/usr/lib/python3.8:$PATH
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3.8 get-pip.py
+          sudo apt-get install tox   
           echo $PATH
           python3.8 -c "print('Executing python 3.8')"
           cd /usr/lib/python3.8
@@ -33,6 +33,7 @@ jobs:
           cd ../site-packages
           ls
           python3.8 -m pip install tox tox-monorepo packaging
+          cd $(Build.SourcesDirectory)
           #python3.8 -m pip install wheel pathlib twine codecov beautifulsoup4
           #python3.8 -m pip install freeze          
           #tox -e whl -c ../../../eng/tox/tox.ini
