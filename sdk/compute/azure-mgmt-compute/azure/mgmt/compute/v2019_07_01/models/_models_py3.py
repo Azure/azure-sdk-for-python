@@ -70,7 +70,7 @@ class ApiErrorBase(Model):
 
 
 class CloudError(Model):
-    """An error response from the Gallery service.
+    """An error response from the Compute service.
 
     :param error:
     :type error: ~azure.mgmt.compute.v2019_07_01.models.ApiError
