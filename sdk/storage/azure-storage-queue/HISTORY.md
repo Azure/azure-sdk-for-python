@@ -20,6 +20,8 @@ should be imported from azure.storage.queue.aio
 to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
 - `Logging` has been renamed to `QueueAnalyticsLogging`.
 - `enqueue_message` is now called `send_message`.
+- The `generate_shared_access_signature` methods on both `QueueServiceClient` and `QueueClient` have been replaced by module level functions `generate_account_sas` and `generate_queue_sas`.
+
 
  **New features**
  

@@ -13,6 +13,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
     BlobBlock,
+    generate_blob_sas
 )
 from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
 from testcase import (
@@ -218,7 +219,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -297,7 +303,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -392,7 +403,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )

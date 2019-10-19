@@ -396,7 +396,7 @@ class SubStream(IOBase):
         pass
 
     def read(self, size=None):
-        if self.closed:
+        if self.closed:  # pylint: disable=using-constant-test
             raise ValueError("Stream is closed.")
 
         if size is None:

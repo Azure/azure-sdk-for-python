@@ -104,7 +104,7 @@ class TestFileServiceSamples(FileTestCase):
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
-        share = await file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare")
         # [END get_share_client]
 
     def test_get_share_client(self):

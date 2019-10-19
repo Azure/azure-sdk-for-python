@@ -23,6 +23,8 @@ from azure.storage.blob.aio import (
 from azure.storage.blob import (
     ContainerSasPermissions,
     BlobSasPermissions,
+    generate_container_sas,
+    generate_blob_sas
 )
 
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
@@ -87,7 +89,12 @@ class StorageLoggingTestAsync(StorageTestCase):
                 await source_blob.upload_blob(self.source_blob_data)
 
                 # generate a SAS so that it is accessible with a URL
-                sas_token = source_blob.generate_shared_access_signature(
+                sas_token = generate_blob_sas(
+                    source_blob.account_name,
+                    source_blob.container_name,
+                    source_blob.blob_name,
+                    snapshot=source_blob.snapshot,
+                    account_key=source_blob.credential.account_key,
                     permission=BlobSasPermissions(read=True),
                     expiry=datetime.utcnow() + timedelta(hours=1),
                 )
@@ -123,7 +130,10 @@ class StorageLoggingTestAsync(StorageTestCase):
         await self._setup()
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

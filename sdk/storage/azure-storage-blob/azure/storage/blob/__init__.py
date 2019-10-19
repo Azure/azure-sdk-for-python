@@ -13,6 +13,7 @@ from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
 from .download import StorageStreamDownloader
+from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
     LocationMode,
@@ -199,5 +200,8 @@ __all__ = [
     'AccountSasPermissions',
     'StorageStreamDownloader',
     'CustomerProvidedEncryptionKey',
-    'RehydratePriority'
+    'RehydratePriority',
+    'generate_account_sas',
+    'generate_container_sas',
+    'generate_blob_sas'
 ]
