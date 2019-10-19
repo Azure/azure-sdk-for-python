@@ -88,7 +88,7 @@ class BlobStorageAccountTestAsync(StorageTestCase):
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
-        actual_data = await blob.download_blob().content_as_bytes()
+        actual_data = await blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
@@ -163,7 +163,7 @@ class BlobStorageAccountTestAsync(StorageTestCase):
         blob_props = await blob_client.get_blob_properties()
 
         # Assert
-        self.assertEquals('rehydrate-pending-to-cool', blob_props.archive_status)
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @record
     def test_set_standard_blob_tier_with_rehydrate_priority_async(self):

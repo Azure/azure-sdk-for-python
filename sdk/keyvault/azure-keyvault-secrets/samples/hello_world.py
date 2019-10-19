@@ -43,9 +43,9 @@ def run_sample():
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n.. Create Secret")
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
+        secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
-        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires))
+        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
 
         # Let's get the bank secret using its name
         print("\n.. Get a Secret by name")
@@ -56,12 +56,12 @@ def run_sample():
         # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
         # the value of the secret.
         print("\n.. Update a Secret by name")
-        expires = bank_secret.properties.expires + datetime.timedelta(days=365)
-        updated_secret_properties = client.update_secret_properties(secret.name, expires=expires)
-        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated))
+        expires = bank_secret.properties.expires_on + datetime.timedelta(days=365)
+        updated_secret_properties = client.update_secret_properties(secret.name, expires_on=expires)
+        print("Secret with name '{0}' was updated on date '{1}'".format(secret.name, updated_secret_properties.updated_on))
         print(
             "Secret with name '{0}' was updated to expire on '{1}'".format(
-                secret.name, updated_secret_properties.expires
+                secret.name, updated_secret_properties.expires_on
             )
         )
 

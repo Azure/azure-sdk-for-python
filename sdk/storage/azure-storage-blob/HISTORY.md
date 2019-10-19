@@ -5,13 +5,29 @@
 **Breaking changes**
 
 - `set_container_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
+- The public attributes of `StorageStreamDownloader` have been limited to:
+  - `name` (str): The name of the blob.
+  - `container` (str): The container the blob is being downloaded from.
+  - `properties` (`BlobProperties`): The properties of the blob.
+  - `size` (int): The size of the download. Either the total blob size, or the length of a subsection if sepcified. Previously called `download_size`.
+- `StorageStreamDownloader` now has new functions:
+  - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
+  - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+- Module level functions `upload_blob_to_url` and `download_blob_from_url` functions options are now keyword only:
+  - `overwrite`
+  - `max_concurrency`
+  - `encoding`
 - Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
 `BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
 - `Logging` has been renamed to `BlobAnalyticsLogging`.
+- All operations that take Etag conditional parameters (`if_match` and `if_none_match`) now take explicit `etag` and `match_condition` parameters, where `etag` is the Etag value, and `match_condition` is an instance of `azure.core.MatchConditions`.
+- The `generate_shared_access_signature` methods on each of `BlobServiceClient`, `ContainerClient` and `BlobClient` have been replaced by module level functions `generate_account_sas`, `generate_container_sas` and `generate_blob_sas`.
 
 **New features**
 
+- Added async module-level `upload_blob_to_url` and `download_blob_from_url` functions.
 - `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 ## Version 12.0.0b4:

@@ -15,12 +15,13 @@ except ImportError:
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.policies_async import ExponentialRetry
 from ..queue_service_client import QueueServiceClient as QueueServiceClientBase
 from .._shared.models import LocationMode
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import process_storage_error
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties, StorageErrorException
@@ -30,7 +31,7 @@ from .queue_client_async import QueueClient
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core import Configuration
+    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
     from ..models import (
         QueueProperties,
@@ -372,8 +373,14 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             queue_name = queue.name
         except AttributeError:
             queue_name = queue
+
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, _pipeline=self._pipeline, _configuration=self._config,
+            key_encryption_key=self.key_encryption_key, _pipeline=_pipeline, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, loop=self._loop, **kwargs)

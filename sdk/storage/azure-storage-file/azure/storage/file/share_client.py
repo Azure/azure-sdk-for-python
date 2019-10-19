@@ -15,7 +15,8 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.core.pipeline import Pipeline
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     return_response_headers,
@@ -31,10 +32,9 @@ from ._generated.models import (
 from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
 from .directory_client import DirectoryClient
 from .file_client import FileClient
-from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy, ShareSasPermissions
+    from .models import ShareProperties, AccessPolicy
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -196,97 +196,6 @@ class ShareClient(StorageAccountHostsMixin):
         return cls(
             account_url, share_name=share_name, snapshot=snapshot, credential=credential, **kwargs)
 
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            **kwargs # type: Any
-        ):  # type: (...) -> str
-        """Generates a shared access signature for the share.
-        Use the returned signature with the credential parameter of any FileServiceClient,
-        ShareClient, DirectoryClient, or FileClient.
-
-        :param ~azure.storage.file.ShareSasPermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: ~datetime.datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_share_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. Possible values are
-            both HTTPS and HTTP (https,http) or HTTPS only (https). The default value
-            is https,http. Note that HTTP only is not a permitted value.
-        :keyword str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :keyword str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :keyword str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :keyword str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :keyword str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        protocol = kwargs.pop('protocol', None)
-        cache_control = kwargs.pop('cache_control', None)
-        content_disposition = kwargs.pop('content_disposition', None)
-        content_encoding = kwargs.pop('content_encoding', None)
-        content_language = kwargs.pop('content_language', None)
-        content_type = kwargs.pop('content_type', None)
-        if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_share(
-            share_name=self.share_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-            cache_control=cache_control,
-            content_disposition=content_disposition,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_type=content_type,
-        )
-
     def get_directory_client(self, directory_path=None):
         # type: (Optional[str]) -> DirectoryClient
         """Get a client to interact with the specified directory.
@@ -297,9 +206,14 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A Directory Client.
         :rtype: ~azure.storage.file.DirectoryClient
         """
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
@@ -312,10 +226,15 @@ class ShareClient(StorageAccountHostsMixin):
         :returns: A File Client.
         :rtype: ~azure.storage.file.FileClient
         """
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
         return FileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode)
+            _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
     def create_share(self, **kwargs):  # type: ignore

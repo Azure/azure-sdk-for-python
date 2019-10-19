@@ -16,6 +16,7 @@ from datetime import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -28,6 +29,8 @@ from azure.storage.queue import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_queue_sas
 )
 from azure.storage.queue.aio import QueueServiceClient, QueueClient
 
@@ -583,7 +586,9 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.send_message(u'message1')
-        token = qsc.generate_shared_access_signature(
+        token = generate_account_sas(
+            qsc.account_name,
+            qsc.credential.account_key,
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -646,7 +651,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
@@ -678,7 +686,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         # Arrange
         queue_client = await self._create_queue(qsc)
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -709,7 +720,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -749,7 +763,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         # Arrange
         queue_client = await self._create_queue(qsc)
         await queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -791,7 +808,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
 
         await queue_client.send_message(u'message1')
 
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             policy_id='testid'
         )
 
@@ -1025,6 +1045,22 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            return
+        transport = AioHttpTransport()
+        prefix = TEST_QUEUE_PREFIX
+        queue_name = self.get_resource_name(prefix)
+        async with QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport) as qsc:
+            await qsc.get_service_properties()
+            assert transport.session is not None
+            async with qsc.get_queue_client(queue_name) as qc:
+                assert transport.session is not None
+            await qsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

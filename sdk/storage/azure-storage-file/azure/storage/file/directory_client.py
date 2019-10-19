@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import time
 from typing import (  # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
@@ -16,20 +17,19 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
-from ._polling import CloseHandles
 from .file_client import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
@@ -217,10 +217,15 @@ class DirectoryClient(StorageAccountHostsMixin):
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return FileClient(
             self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> DirectoryClient
@@ -231,7 +236,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
 
         .. admonition:: Example:
 
@@ -243,9 +248,14 @@ class DirectoryClient(StorageAccountHostsMixin):
                 :caption: Gets the subdirectory client.
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace
@@ -367,53 +377,79 @@ class DirectoryClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handles(
-            self, handle=None, # type: Union[str, HandleItem]
-            recursive=False,  # type: bool
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Any
-        """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
+    def close_handle(self, handle, **kwargs):
+        # type: (Union[str, HandleItem], Any) -> int
+        """Close an open file handle.
 
         :param handle:
-            Optionally, a specific handle to close. The default value is '*'
-            which will attempt to close all open handles.
+            A specific handle to close.
         :type handle: str or ~azure.storage.file.Handle
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            The total number of handles closed. This could be 0 if the supplied
+            handle was not found.
+        :rtype: int
+        """
+        try:
+            handle_id = handle.id # type: ignore
+        except AttributeError:
+            handle_id = handle
+        if handle_id == '*':
+            raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
+        try:
+            response = self._client.directory.force_close_handles(
+                handle_id,
+                marker=None,
+                recursive=None,
+                sharesnapshot=self.snapshot,
+                cls=return_response_headers,
+                **kwargs
+            )
+            return response.get('number_of_handles_closed', 0)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def close_all_handles(self, recursive=False, **kwargs):
+        # type: (bool, Any) -> int
+        """Close any open file handles.
+
+        This operation will block until the service has closed all open handles.
+
         :param bool recursive:
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: The total number of handles closed.
+        :rtype: int
         """
         timeout = kwargs.pop('timeout', None)
-        try:
-            handle_id = handle.id # type: ignore
-        except AttributeError:
-            handle_id = handle or '*'
-        command = functools.partial(
-            self._client.directory.force_close_handles,
-            handle_id,
-            timeout=timeout,
-            sharesnapshot=self.snapshot,
-            recursive=recursive,
-            cls=return_response_headers,
-            **kwargs)
-        try:
-            start_close = command()
-        except StorageErrorException as error:
-            process_storage_error(error)
+        start_time = time.time()
 
-        polling_method = CloseHandles(self._config.copy_polling_interval)
-        return LROPoller(
-            command,
-            start_close,
-            None,
-            polling_method)
+        try_close = True
+        continuation_token = None
+        total_handles = 0
+        while try_close:
+            try:
+                response = self._client.directory.force_close_handles(
+                    handle_id='*',
+                    timeout=timeout,
+                    marker=continuation_token,
+                    recursive=recursive,
+                    sharesnapshot=self.snapshot,
+                    cls=return_response_headers,
+                    **kwargs
+                )
+            except StorageErrorException as error:
+                process_storage_error(error)
+            continuation_token = response.get('marker')
+            try_close = bool(continuation_token)
+            total_handles += response.get('number_of_handles_closed', 0)
+            if timeout:
+                timeout = max(0, timeout - (time.time() - start_time))
+        return total_handles
 
     @distributed_trace
     def get_directory_properties(self, **kwargs):
@@ -533,7 +569,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
 
         .. admonition:: Example:
 

@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
+import os
+
 from devtools_testutils import ResourceGroupPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -19,7 +22,7 @@ def test_create_certificate():
     from azure.identity.aio import DefaultAzureCredential
     from azure.keyvault.certificates.aio import CertificateClient
 
-    # Create a Certificate using default Azure credentials
+    # Create a KeyVaultCertificate using default Azure credentials
     credential = DefaultAzureCredential()
     certificate_client = CertificateClient(vault_endpoint, credential)
 
@@ -27,7 +30,11 @@ def test_create_certificate():
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
@@ -49,7 +56,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # awaiting the certificate poller gives us the result of the long running operation
         certificate = await create_certificate_poller
@@ -63,7 +70,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_certificate]
 
         # get the latest version of a certificate
-        certificate = await certificate_client.get_certificate_with_policy(name=cert_name)
+        certificate = await certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -77,7 +84,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
 
         print(updated_certificate.properties.version)
-        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.updated_on)
         print(updated_certificate.properties.tags)
 
         # [END update_certificate]
@@ -96,7 +103,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
@@ -120,7 +127,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         create_certificate_pollers = []
         for i in range(4):
             create_certificate_pollers.append(
-                await certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
             )
 
         for poller in create_certificate_pollers:
@@ -133,9 +140,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificates:
             print(certificate.id)
-            print(certificate.created)
+            print(certificate.created_on)
             print(certificate.name)
-            print(certificate.updated)
+            print(certificate.updated_on)
             print(certificate.enabled)
 
         # [END list_certificates]
@@ -146,7 +153,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.properties.updated)
+            print(certificate.properties.updated_on)
             print(certificate.properties.version)
 
         # [END list_certificate_versions]
@@ -164,7 +171,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
@@ -187,7 +194,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         await create_certificate_poller
 
@@ -206,14 +213,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START restore_certificate]
 
         # restores a certificate backup
-        restored_certificate = await certificate_client.restore_certificate(certificate_backup)
+        restored_certificate = await certificate_client.restore_certificate_backup(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
         print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
@@ -236,7 +243,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
         await create_certificate_poller
 
         await certificate_client.delete_certificate(name=cert_name)
@@ -260,11 +267,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, Contact
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
 
         certificate_client = vault_client.certificates
 
@@ -272,8 +279,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
-            Contact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            Contact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         contacts = await certificate_client.create_contacts(contacts=contact_list)
@@ -307,7 +314,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_contacts]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):

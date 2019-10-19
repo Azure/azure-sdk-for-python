@@ -16,11 +16,11 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared.shared_access_signature import SharedAccessSignature
-from ._shared.models import LocationMode, Services, UserDelegationKey
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.models import LocationMode
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
     parse_to_internal_user_delegation_key
@@ -28,16 +28,17 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from .container_client import ContainerClient
 from .blob_client import BlobClient
-from .models import ContainerProperties, ContainerPropertiesPaged
+from .models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ._shared.models import AccountSasPermissions, ResourceTypes
+    from ._shared.models import UserDelegationKey
     from .lease import LeaseClient
     from .models import (
         BlobProperties,
+        ContainerProperties,
         BlobAnalyticsLogging,
         Metrics,
         RetentionPolicy,
@@ -156,79 +157,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
-
-    def generate_shared_access_signature(
-            self, resource_types,  # type: Union[ResourceTypes, str]
-            permission,  # type: Union[AccountSasPermissions, str]
-            expiry,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            ip=None,  # type: Optional[str]
-            **kwargs # type: Any
-        ):  # type: (...) -> str
-        """Generates a shared access signature for the blob service.
-
-        Use the returned signature with the credential parameter of any BlobServiceClient,
-        ContainerClient or BlobClient.
-
-        :param resource_types:
-            Specifies the resource types that are accessible with the account SAS.
-        :type resource_types: str or ~azure.storage.blob.ResourceTypes
-        :param permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.AccountSasPermissions
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: ~datetime.datetime or str
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
-                :start-after: [START create_sas_token]
-                :end-before: [END create_sas_token]
-                :language: python
-                :dedent: 8
-                :caption: Generating a shared access signature.
-        """
-        protocol = kwargs.pop('protocol', None)
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-
-        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_account(
-            services=Services(blob=True),
-            resource_types=resource_types,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            ip=ip,
-            protocol=protocol
-        ) # type: ignore
 
     @distributed_trace
     def get_user_delegation_key(self, key_start_time,  # type: datetime
@@ -550,15 +478,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -606,11 +530,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             container_name = container.name
         except AttributeError:
             container_name = container
-
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return ContainerClient(
             self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
@@ -656,10 +583,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return BlobClient( # type: ignore
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

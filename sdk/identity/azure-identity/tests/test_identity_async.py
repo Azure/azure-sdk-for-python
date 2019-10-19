@@ -83,7 +83,7 @@ async def test_client_secret_credential():
     )
 
     token = await ClientSecretCredential(
-        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
+        client_id=client_id, client_secret=secret, tenant_id=tenant_id, transport=transport
     ).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere

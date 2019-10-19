@@ -339,11 +339,12 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
-        chunk_end = chunk_offset + len(chunk_data) - 1
+        length = len(chunk_data)
+        chunk_end = chunk_offset + length - 1
         response = self.service.upload_range(
             chunk_data,
             chunk_offset,
-            chunk_end,
+            length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options
@@ -395,7 +396,7 @@ class SubStream(IOBase):
         pass
 
     def read(self, size=None):
-        if self.closed:
+        if self.closed:  # pylint: disable=using-constant-test
             raise ValueError("Stream is closed.")
 
         if size is None:

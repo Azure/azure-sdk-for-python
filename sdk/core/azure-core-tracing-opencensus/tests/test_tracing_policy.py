@@ -6,8 +6,7 @@
 import logging
 
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies.universal import UserAgentPolicy
+from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.samplers import AlwaysOnSampler

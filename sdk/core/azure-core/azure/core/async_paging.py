@@ -41,6 +41,10 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
+__all__ = [
+    "AsyncPageIterator",
+    "AsyncItemPaged"
+]
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:

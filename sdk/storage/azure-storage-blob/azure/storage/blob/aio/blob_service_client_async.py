@@ -11,12 +11,13 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.parser import _to_utc_datetime
 from .._shared.response_handlers import parse_to_internal_user_delegation_key
@@ -432,15 +433,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -487,11 +484,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             container_name = container.name
         except AttributeError:
             container_name = container
-
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return ContainerClient(
             self.url, container_name=container_name,
             credential=self.credential, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)
 
@@ -537,10 +537,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return BlobClient( # type: ignore
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)

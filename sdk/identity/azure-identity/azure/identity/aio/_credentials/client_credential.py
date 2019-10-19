@@ -13,11 +13,10 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientSecretCredentialBase):
-    """
-    Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client ID and client secret.
 
     :param str client_id: the service principal's client ID
-    :param str secret: one of the service principal's client secrets
+    :param str client_secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
 
     Keyword arguments
@@ -26,13 +25,12 @@ class ClientSecretCredential(ClientSecretCredentialBase):
           authorities for other clouds.
     """
 
-    def __init__(self, client_id: str, secret: str, tenant_id: str, **kwargs: "Mapping[str, Any]") -> None:
-        super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
+    def __init__(self, client_id: str, client_secret: str, tenant_id: str, **kwargs: "Mapping[str, Any]") -> None:
+        super(ClientSecretCredential, self).__init__(client_id, client_secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -46,8 +44,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
 
 class CertificateCredential(CertificateCredentialBase):
-    """
-    Authenticates as a service principal using a certificate.
+    """Authenticates as a service principal using a certificate.
 
     :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -64,8 +61,7 @@ class CertificateCredential(CertificateCredentialBase):
         self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

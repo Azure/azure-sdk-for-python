@@ -4,35 +4,52 @@
 
 **Breaking changes**
 
-- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`. 
+- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`.
 To use a share_url, the method `from_share_url` must be used.
 - `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
 To use a directory_url, the method `from_directory_url` must be used.
-- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and 
+- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and
 `file_path`. To use a file_url, the method `from_file_url` must be used.
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
 - NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
-- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, 
-`DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
   - `max_concurrency`
   - `validate_content`
   - `timeout` etc.
-
+- The `generate_shared_access_signature` methods on each of `FileServiceClient`, `ShareClient` and `FileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
+- `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
+the following APIs:
+  - download_file
+  - upload_range
+  - upload_range_from_url
+  - clear_range
+  - get_ranges
+- `StorageStreamDownloader` is no longer iterable. To iterate over the file data stream, use `StorageStreamDownloader.chunks`.
+- The public attributes of `StorageStreamDownloader` have been limited to:
+  - `name` (str): The name of the file.
+  - `path` (str): The full path of the file.
+  - `share` (str): The share the file will be downloaded from.
+  - `properties` (`FileProperties`): The properties of the file.
+  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if sepcified. Previously called `download_size`.
+- `StorageStreamDownloader` now has new functions:
+  - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
+  - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
 
 **New features**
 
 - `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
+
 
 ## Version 12.0.0b4:
 
 **Breaking changes**
 
 - Permission models.
-  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to 
+  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to
   `AccountSasPermissions`, `ShareSasPermissions` and `FileSasPermissions` respectively.
   - enum-like list parameters have been removed from all three of them.
   - `__add__` and `__or__` methods are removed.
@@ -40,7 +57,7 @@ To use a directory_url, the method `from_directory_url` must be used.
 
 **New features**
 
-- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which 
+- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which
 takes parameters as a string.
 
 ## Version 12.0.0b3:
