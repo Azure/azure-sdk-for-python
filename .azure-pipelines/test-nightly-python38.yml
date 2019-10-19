@@ -29,7 +29,7 @@ jobs:
           cd /usr/lib/python3.8
           cd ./distutils
           ls
-          python3.8 -m pip3 install tox tox-monorepo packaging
+          python3.8 -m pip install tox tox-monorepo packaging
           #python3.8 -m pip install wheel pathlib twine codecov beautifulsoup4
           #python3.8 -m pip install freeze          
           #tox -e whl -c ../../../eng/tox/tox.ini
