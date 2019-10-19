@@ -303,7 +303,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_namers = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
@@ -312,10 +312,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def _redact_header(self, key, value):
-        lower_case_allowed_header_namers = [
-            header.lower() for header in self.allowed_header_namers
+        lower_case_allowed_header_names = [
+            header.lower() for header in self.allowed_header_names
         ]
-        return value if key.lower() in lower_case_allowed_header_namers else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
