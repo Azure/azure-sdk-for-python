@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
+import time
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
     Optional, Union, IO, List, Dict, Any, Iterable,
@@ -18,7 +19,6 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
@@ -32,7 +32,6 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
-from ._polling import CloseHandles
 from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from .download import StorageStreamDownloader
 
@@ -1011,45 +1010,70 @@ class FileClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def begin_close_handles(
-            self, handle=None, # type: Union[str, HandleItem]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Any
-        """Close open file handles.
-
-        This operation may not finish with a single call, so a long-running poller
-        is returned that can be used to wait until the operation is complete.
+    def close_handle(self, handle, **kwargs):
+        # type: (Union[str, HandleItem], Any) -> int
+        """Close an open file handle.
 
         :param handle:
-            Optionally, a specific handle to close. The default value is '*'
-            which will attempt to close all open handles.
+            A specific handle to close.
         :type handle: str or ~azure.storage.file.Handle
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A long-running poller to get operation status.
-        :rtype: ~azure.core.polling.LROPoller
+        :returns:
+            The number of handles closed (this may be 0 if the specified handle was not found).
+        :rtype: int
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             handle_id = handle.id # type: ignore
         except AttributeError:
-            handle_id = handle or '*'
-        command = functools.partial(
-            self._client.file.force_close_handles,
-            handle_id,
-            timeout=timeout,
-            sharesnapshot=self.snapshot,
-            cls=return_response_headers,
-            **kwargs)
+            handle_id = handle
+        if handle_id == '*':
+            raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
         try:
-            start_close = command()
+            response = self._client.file.force_close_handles(
+                handle_id,
+                marker=None,
+                sharesnapshot=self.snapshot,
+                cls=return_response_headers,
+                **kwargs
+            )
+            return response.get('number_of_handles_closed', 0)
         except StorageErrorException as error:
             process_storage_error(error)
 
-        polling_method = CloseHandles(self._config.copy_polling_interval)
-        return LROPoller(
-            command,
-            start_close,
-            None,
-            polling_method)
+    @distributed_trace
+    def close_all_handles(self, **kwargs):
+        # type: (Any) -> int
+        """Close any open file handles.
+
+        This operation will block until the service has closed all open handles.
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: The total number of handles closed.
+        :rtype: int
+        """
+        timeout = kwargs.pop('timeout', None)
+        start_time = time.time()
+
+        try_close = True
+        continuation_token = None
+        total_handles = 0
+        while try_close:
+            try:
+                response = self._client.file.force_close_handles(
+                    handle_id='*',
+                    timeout=timeout,
+                    marker=continuation_token,
+                    sharesnapshot=self.snapshot,
+                    cls=return_response_headers,
+                    **kwargs
+                )
+            except StorageErrorException as error:
+                process_storage_error(error)
+            continuation_token = response.get('marker')
+            try_close = bool(continuation_token)
+            total_handles += response.get('number_of_handles_closed', 0)
+            if timeout:
+                timeout = max(0, timeout - (time.time() - start_time))
+        return total_handles

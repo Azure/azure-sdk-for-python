@@ -12,6 +12,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -675,11 +676,10 @@ class StoragePageBlobTestAsync(StorageTestCase):
         destination_blob_client = await self._create_blob(SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   source_if_match=source_properties.get('etag'))
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            source_etag=source_properties.get('etag'),
+            source_match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -691,10 +691,10 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_if_match='0x111111111111111')
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                source_etag='0x111111111111111',
+                source_match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_upload_pages_from_url_with_source_if_match_async(self):
@@ -719,11 +719,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
         destination_blob_client = await self._create_blob(SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   source_if_none_match='0x111111111111111')
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            source_etag='0x111111111111111', source_match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -735,10 +733,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_if_none_match=source_properties.get('etag'))
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                source_etag=source_properties.get('etag'), source_match_condition=MatchConditions.IfModified)
 
     @record
     def test_upload_pages_from_url_with_source_if_none_match_async(self):
@@ -857,11 +854,10 @@ class StoragePageBlobTestAsync(StorageTestCase):
         destination_blob_properties = await destination_blob_client.get_blob_properties()
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   if_match=destination_blob_properties.get('etag'))
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            etag=destination_blob_properties.get('etag'),
+            match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -873,10 +869,10 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                if_match='0x111111111111111')
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_upload_pages_from_url_with_if_match_async(self):
@@ -904,7 +900,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
                                                                    0,
                                                                    SOURCE_BLOB_SIZE,
                                                                    0,
-                                                                   if_none_match='0x111111111111111')
+                                                                   etag='0x111111111111111',
+                                                                   match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -919,7 +916,8 @@ class StoragePageBlobTestAsync(StorageTestCase):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
                                                                 SOURCE_BLOB_SIZE,
                                                                 0,
-                                                                if_none_match=blob_properties.get('etag'))
+                                                                etag=blob_properties.get('etag'),
+                                                                match_condition=MatchConditions.IfModified)
 
     @record
     def test_upload_pages_from_url_with_if_none_match_async(self):
