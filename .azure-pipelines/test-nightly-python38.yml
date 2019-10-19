@@ -21,6 +21,7 @@ jobs:
           sudo apt-get install python3.8-dev
           sudo apt-get install python3.8-distutils
           sudo apt-get install python3-pip
+          sudo apt-get install python3.8-tox          
           cd $(Build.SourcesDirectory)
           export PATH=~/.local/bin:$PATH
           PATH=/usr/lib/python3.8:$PATH
@@ -28,6 +29,8 @@ jobs:
           python3.8 -c "print('Executing python 3.8')"
           cd /usr/lib/python3.8
           cd ./distutils
+          ls
+          cd ../site-packages
           ls
           python3.8 -m pip install tox tox-monorepo packaging
           #python3.8 -m pip install wheel pathlib twine codecov beautifulsoup4
