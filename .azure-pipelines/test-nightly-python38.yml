@@ -23,7 +23,7 @@ jobs:
           PATH=/usr/lib/python3.8:$PATH
           echo $PATH
           python3.8 -c "print('Executing python 3.8')"
-          python3.8 -m pip install distutils
+          sudo python3.8 get-pip.py
           cd /usr/lib/python3.8
           ls
           python3.8 -m pip install tox tox-monorepo packaging
