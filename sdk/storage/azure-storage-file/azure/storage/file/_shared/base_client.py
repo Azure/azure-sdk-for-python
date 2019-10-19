@@ -29,7 +29,6 @@ from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
