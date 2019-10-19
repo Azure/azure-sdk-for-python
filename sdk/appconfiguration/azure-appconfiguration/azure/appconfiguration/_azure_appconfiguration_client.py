@@ -6,7 +6,11 @@
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
+from azure.core.pipeline.policies import (
+    UserAgentPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy
+)
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
@@ -104,7 +108,8 @@ class AzureAppConfigurationClient:
                 AppConfigRequestsCredentialsPolicy(self.config.credentials),
                 self.config.retry_policy,
                 self.config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs)
             ]
 
         if not transport:
