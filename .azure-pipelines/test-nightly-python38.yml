@@ -14,14 +14,15 @@ jobs:
 
     steps:
       - script: |
-          sudo apt-get remove --purge python3.6
           sudo apt-get update
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt-get update
           sudo apt install python3.8
-          sudo apt install python3-pip
+          sudo apt-get install python3.8-dev
+          sudo apt-get install python3.8-distutils
+          sudo apt-get install python3-pip
           cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
+          export PATH=~/.local/bin:$PATH
           PATH=/usr/lib/python3.8:$PATH
           echo $PATH
           python3.8 -c "print('Executing python 3.8')"
