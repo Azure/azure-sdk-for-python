@@ -129,14 +129,13 @@ class AsyncStorageAccountHostsMixin(object):
                 failures = []
                 async for part in parts:
                     parts_list.append(part)
-                    if part.status_code not in [200, 202]:
+                    if not (200 <= part.status_code < 300):
                         failures.append(part)
                 if failures:
                     error = PartialBatchErrorException(
                         message="There is a partial failure in the batch operation.",
                         response=response, parts=AsyncList(parts_list)
                     )
-                    error.failed_operations = failures
                     raise error
             return AsyncList(parts_list)
         except StorageErrorException as error:

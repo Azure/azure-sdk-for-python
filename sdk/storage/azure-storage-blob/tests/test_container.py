@@ -1007,8 +1007,9 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
-    @record
     def test_delete_blobs_simple_no_raise(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         container = self._create_container()
         data = b'hello world'

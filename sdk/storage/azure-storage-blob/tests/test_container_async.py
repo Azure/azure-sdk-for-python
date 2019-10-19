@@ -1250,6 +1250,8 @@ class StorageContainerTestAsync(StorageTestCase):
 
     @record
     def test_delete_blobs_simple_no_raise(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blobs_simple())
 

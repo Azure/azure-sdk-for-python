@@ -846,6 +846,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             timeout=timeout,
             **kwargs
         )
+        options.update({'raise_on_any_failure': kwargs.pop('raise_on_any_failure', True)})
         query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
         # To pass kwargs to "_batch_send", we need to remove anything that was
         # in the Autorest signature for Autorest, otherwise transport will be upset
