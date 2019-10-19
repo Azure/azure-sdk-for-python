@@ -1105,10 +1105,11 @@ class ContainerClient(StorageAccountHostsMixin):
         :return: An iterator of responses, one for each blob in order
         :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
         """
+        raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
             **kwargs
         )
-        options.update({'raise_on_any_failure': kwargs.pop('raise_on_any_failure', True)})
+        options.update({'raise_on_any_failure': raise_on_any_failure})
         query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
         # To pass kwargs to "_batch_send", we need to remove anything that was
         # in the Autorest signature for Autorest, otherwise transport will be upset
