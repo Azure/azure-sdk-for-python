@@ -21,6 +21,7 @@ excluded_packages = [
     "azure.keyvault.certificates", # Github issue 7879
     "azure.keyvault.keys", # Github issue 7879
     "azure.keyvault.secrets", # Github issue 7879
+    "azure.appconfiguration", # Github issue 7879. revisit and close after azure-core POST b4 is released.
     "azure",
     "azure-mgmt"]
 
