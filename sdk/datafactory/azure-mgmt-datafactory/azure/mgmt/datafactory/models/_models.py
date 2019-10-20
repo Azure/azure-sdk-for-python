@@ -30712,12 +30712,12 @@ class WebActivityAuthentication(Model):
      (Basic/ClientCertificate/MSI)
     :type type: str
     :param pfx: Base64-encoded contents of a PFX file.
-    :type pfx: ~azure.mgmt.datafactory.models.SecureString
+    :type pfx: ~azure.mgmt.datafactory.models.SecretBase
     :param username: Web activity authentication user name for basic
      authentication.
     :type username: str
     :param password: Password for the PFX file or basic authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param resource: Resource for which Azure Auth token will be requested
      when using MSI Authentication.
     :type resource: str
@@ -30729,9 +30729,9 @@ class WebActivityAuthentication(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'pfx': {'key': 'pfx', 'type': 'SecureString'},
+        'pfx': {'key': 'pfx', 'type': 'SecretBase'},
         'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'SecureString'},
+        'password': {'key': 'password', 'type': 'SecretBase'},
         'resource': {'key': 'resource', 'type': 'str'},
     }
 
