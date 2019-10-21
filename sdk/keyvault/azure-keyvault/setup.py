@@ -16,7 +16,7 @@ with open("HISTORY.md", encoding="utf-8") as f:
 setup(
     name='azure-keyvault',
     version='4.0.0b5',
-    description='Microsoft Azure Resource Management Client Libraries for Python',
+    description='Microsoft Azure Key Vault Client Libraries for Python',
     long_description=README + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
     license='MIT License',
