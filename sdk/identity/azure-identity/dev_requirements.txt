@@ -1,4 +1,3 @@
 ../../core/azure-core
 aiohttp;python_full_version>="3.5.2"
 typing_extensions>=3.7.2
-
