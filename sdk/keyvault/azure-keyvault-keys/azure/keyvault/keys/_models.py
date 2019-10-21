@@ -115,7 +115,7 @@ class KeyProperties(object):
     @property
     def not_before(self):
         # type: () -> datetime
-        """The key's not-before time, in UTC
+        """The time before which the key can not be used, in UTC
 
         :rtype: datetime.datetime
         """
@@ -256,8 +256,8 @@ class KeyVaultKey(object):
 
 
 class DeletedKey(KeyVaultKey):
-    """A deleted key's properties and cryptographic material, as well information about its deletion
-    and recovery, if soft-delete is enabled"""
+    """A deleted key's properties, cryptographic material and its deletion information. If soft-delete
+    is enabled, returns information about its recovery as well."""
 
     def __init__(
         self,

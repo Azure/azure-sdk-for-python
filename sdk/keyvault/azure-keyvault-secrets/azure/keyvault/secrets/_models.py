@@ -88,7 +88,7 @@ class SecretProperties(object):
     @property
     def not_before(self):
         # type: () -> datetime
-        """Not-before time, in UTC
+        """The time before which the secret can not be used, in UTC
 
         :rtype: datetime.datetime
         """
@@ -213,8 +213,8 @@ class KeyVaultSecret(object):
 
 
 class DeletedSecret(object):
-    """A deleted secret's properties, as well as information about its deletion and recovery,
-    if soft-delete is enabled"""
+    """A deleted secret's properties and information about its deletion. If soft-delete
+    is enabled, returns information about its recovery as well."""
 
     def __init__(
         self,
