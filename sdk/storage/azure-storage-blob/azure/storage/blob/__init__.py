@@ -6,15 +6,16 @@
 
 import os
 
-from typing import Union, Iterable, AnyStr, IO, Any # pylint: disable=unused-import
-from .version import VERSION
-from .blob_client import BlobClient
-from .container_client import ContainerClient
-from .blob_service_client import BlobServiceClient
-from .lease import LeaseClient
-from .download import StorageStreamDownloader
+from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
+from ._version import VERSION
+from ._blob_client import BlobClient
+from ._container_client import ContainerClient
+from ._blob_service_client import BlobServiceClient
+from ._lease import LeaseClient
+from ._download import StorageStreamDownloader
 from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
+from ._shared.response_handlers import PartialBatchErrorException
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -25,7 +26,7 @@ from ._shared.models import(
 from ._generated.models import (
     RehydratePriority
 )
-from .models import (
+from ._models import (
     BlobType,
     BlockState,
     StandardBlobTier,
@@ -58,7 +59,7 @@ def upload_blob_to_url(
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
         credential=None,  # type: Any
         **kwargs):
-    # type: (...) -> dict[str, Any]
+    # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -203,5 +204,6 @@ __all__ = [
     'RehydratePriority',
     'generate_account_sas',
     'generate_container_sas',
-    'generate_blob_sas'
+    'generate_blob_sas',
+    'PartialBatchErrorException'
 ]

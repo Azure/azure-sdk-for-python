@@ -4,9 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .version import VERSION
-from .queue_client import QueueClient
-from .queue_service_client import QueueServiceClient
+from ._version import VERSION
+from ._queue_client import QueueClient
+from ._queue_service_client import QueueServiceClient
 from ._shared_access_signature import generate_account_sas, generate_queue_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
@@ -23,7 +23,7 @@ from ._message_encoding import (
     TextXMLEncodePolicy,
     TextXMLDecodePolicy
 )
-from .models import (
+from ._models import (
     QueueMessage,
     QueueProperties,
     QueueSasPermissions,

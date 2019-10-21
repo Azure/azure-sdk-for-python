@@ -19,6 +19,7 @@ To use a directory_url, the method `from_directory_url` must be used.
   - `max_concurrency`
   - `validate_content`
   - `timeout` etc.
+- Client and model files have been made internal. Users should import from the top level modules `azure.storage.file` and `azure.storage.file.aio` only.
 - The `generate_shared_access_signature` methods on each of `FileServiceClient`, `ShareClient` and `FileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
 - `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
 the following APIs:

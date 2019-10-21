@@ -11,7 +11,7 @@ from azure.core.async_paging import AsyncPageIterator
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._generated.models import StorageErrorException
 from .._generated.models import DirectoryItem
-from ..models import Handle, ShareProperties
+from .._models import Handle, ShareProperties
 
 
 def _wrap_item(item):

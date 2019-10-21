@@ -14,8 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from .._deserialize import get_page_ranges_result
-from ..download import process_range_and_offset, _ChunkDownloader
+from .._download import process_range_and_offset, _ChunkDownloader
 
 
 async def process_content(data, start_offset, end_offset, encryption):
@@ -78,42 +77,31 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
     async def _download_chunk(self, chunk_start, chunk_end):
         download_range, offset = process_range_and_offset(
-            chunk_start, chunk_end, chunk_end, self.encryption_options)
-
-        # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
-        # Do optimize and create empty chunk locally if condition is met.
-        if self._do_optimize(download_range[0], download_range[1]):
-            chunk_data = b"\x00" * self.chunk_size
-        else:
-            range_header, range_validation = validate_and_format_range_headers(
-                download_range[0],
-                download_range[1],
-                check_content_md5=self.validate_content
+            chunk_start, chunk_end, chunk_end, self.encryption_options
+        )
+        range_header, range_validation = validate_and_format_range_headers(
+            download_range[0],
+            download_range[1],
+            check_content_md5=self.validate_content
+        )
+        try:
+            _, response = await self.client.download(
+                range=range_header,
+                range_get_content_md5=range_validation,
+                validate_content=self.validate_content,
+                data_stream_total=self.total_size,
+                download_stream_current=self.progress_total,
+                **self.request_options
             )
-            try:
-                _, response = await self.client.download(
-                    range=range_header,
-                    range_get_content_md5=range_validation,
-                    validate_content=self.validate_content,
-                    data_stream_total=self.total_size,
-                    download_stream_current=self.progress_total,
-                    **self.request_options
-                )
-            except HttpResponseError as error:
-                process_storage_error(error)
+        except HttpResponseError as error:
+            process_storage_error(error)
 
-            chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
-
-            # This makes sure that if_match is set so that we can validate
-            # that subsequent downloads are to an unmodified blob
-            if self.request_options.get('modified_access_conditions'):
-                self.request_options['modified_access_conditions'].if_match = response.properties.etag
-
+        chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
         return chunk_data
 
 
 class _AsyncChunkIterator(object):
-    """Async iterator for chunks in blob download stream."""
+    """Async iterator for chunks in file download stream."""
 
     def __init__(self, size, content, downloader):
         self.size = size
@@ -157,20 +145,22 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
-        The name of the blob being downloaded.
-    :ivar str container:
-        The name of the container where the blob is.
-    :ivar ~azure.storage.blob.BlobProperties properties:
-        The properties of the blob being downloaded. If only a range of the data is being
+        The name of the file being downloaded.
+    :ivar: str path:
+        The full path of the file.
+    :ivar str share:
+        The name of the share where the file is.
+    :ivar ~azure.storage.file.FileProperties properties:
+        The properties of the file being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
         The size of the total data in the stream. This will be the byte range if speficied,
-        otherwise the total size of the blob.
+        otherwise the total size of the file.
     """
 
     def __init__(
             self,
-            clients=None,
+            client=None,
             config=None,
             start_range=None,
             end_range=None,
@@ -178,16 +168,18 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             encryption_options=None,
             max_concurrency=1,
             name=None,
-            container=None,
+            path=None,
+            share=None,
             encoding=None,
             **kwargs
     ):
         self.name = name
-        self.container = container
+        self.path = path
+        self.share = share
         self.properties = None
         self.size = None
 
-        self._clients = clients
+        self._client = client
         self._config = config
         self._start_range = start_range
         self._end_range = end_range
@@ -200,7 +192,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._download_complete = False
         self._current_content = None
         self._file_size = None
-        self._non_empty_ranges = None
         self._response = None
 
         # The service only provides transactional MD5s for chunks under 4MB.
@@ -225,7 +216,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._response = await self._initial_request()
         self.properties = self._response.properties
         self.properties.name = self.name
-        self.properties.container = self.container
+        self.properties.path = self.path
+        self.properties.share = self.share
 
         # Set the content length to the download size instead of the size of
         # the last range
@@ -262,7 +254,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self._validate_content)
 
         try:
-            location_mode, response = await self._clients.blob.download(
+            location_mode, response = await self._client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self._validate_content,
@@ -291,7 +283,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = await self._clients.blob.download(
+                    _, response = await self._client.download(
                         validate_content=self._validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -305,22 +297,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             else:
                 process_storage_error(error)
 
-        # get page ranges to optimize downloading sparse page blob
-        if response.properties.blob_type == 'PageBlob':
-            try:
-                page_ranges = await self._clients.page_blob.get_page_ranges()
-                self._non_empty_ranges = get_page_ranges_result(page_ranges)[0]
-            except HttpResponseError:
-                pass
-
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        if response.properties.size != self.size:
-            # Lock on the etag. This can be overriden by the user by specifying '*'
-            if self._request_options.get('modified_access_conditions'):
-                if not self._request_options['modified_access_conditions'].if_match:
-                    self._request_options['modified_access_conditions'].if_match = response.properties.etag
-        else:
+        if response.properties.size == self.size:
             self._download_complete = True
         return response
 
@@ -337,8 +316,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # Use the length unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
             iter_downloader = _AsyncChunkDownloader(
-                client=self._clients.blob,
-                non_empty_ranges=self._non_empty_ranges,
+                client=self._client,
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
                 current_progress=self._first_get_size,
@@ -356,7 +334,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             downloader=iter_downloader)
 
     async def readall(self):
-        """Download the contents of this blob.
+        """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
         :rtype: bytes or str
@@ -385,7 +363,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return await self.readall()
 
     async def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
-        """Download the contents of this blob, and decode as text.
+        """Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
 
@@ -404,7 +382,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return await self.readall()
 
     async def readinto(self, stream):
-        """Download the contents of this blob to a stream.
+        """Download the contents of this file to a stream.
 
         :param stream:
             The stream to download to. This can be an open file-handle,
@@ -436,8 +414,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self._file_size, self._end_range + 1)
 
         downloader = _AsyncChunkDownloader(
-            client=self._clients.blob,
-            non_empty_ranges=self._non_empty_ranges,
+            client=self._client,
             total_size=self.size,
             chunk_size=self._config.max_chunk_get_size,
             current_progress=self._first_get_size,
@@ -472,13 +449,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return self.size
 
     async def download_to_stream(self, stream, max_concurrency=1):
-        """Download the contents of this blob to a stream.
+        """Download the contents of this file to a stream.
 
         :param stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
-        :returns: The properties of the downloaded blob.
+        :returns: The properties of the downloaded file.
         :rtype: Any
         """
         warnings.warn(

@@ -12,7 +12,7 @@ from .._shared.response_handlers import (
     process_storage_error,
     return_context_and_deserialized)
 from .._generated.models import StorageErrorException
-from ..models import QueueMessage, QueueProperties
+from .._models import QueueMessage, QueueProperties
 
 
 class MessagesPaged(AsyncPageIterator):

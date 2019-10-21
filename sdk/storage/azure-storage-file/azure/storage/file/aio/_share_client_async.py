@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import ( # pylint: disable=unused-import
-    Optional, Union, Dict, Any, TYPE_CHECKING
+    Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
@@ -25,12 +25,12 @@ from .._generated.models import (
     SignedIdentifier,
     DeleteSnapshotsOptionType)
 from .._deserialize import deserialize_share_properties, deserialize_permission
-from ..share_client import ShareClient as ShareClientBase
-from .directory_client_async import DirectoryClient
-from .file_client_async import FileClient
+from .._share_client import ShareClient as ShareClientBase
+from ._directory_client_async import DirectoryClient
+from ._file_client_async import FileClient
 
 if TYPE_CHECKING:
-    from ..models import ShareProperties, AccessPolicy
+    from .._models import ShareProperties, AccessPolicy
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
@@ -292,7 +292,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         return props # type: ignore
 
     @distributed_trace_async
-    async def set_share_quota(self, quota, **kwargs): # type: ignore
+    async def set_share_quota(self, quota, **kwargs):
         # type: (int, Any) ->  Dict[str, Any]
         """Sets the quota for the share.
 
@@ -324,7 +324,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_share_metadata(self, metadata, **kwargs): # type: ignore
+    async def set_share_metadata(self, metadata, **kwargs):
         # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
@@ -386,7 +386,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         }
 
     @distributed_trace_async
-    async def set_share_access_policy(self, signed_identifiers, **kwargs): # type: ignore
+    async def set_share_access_policy(self, signed_identifiers, **kwargs):
         # type: (Dict[str, AccessPolicy], Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
@@ -425,7 +425,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_share_stats(self, **kwargs): # type: ignore
+    async def get_share_stats(self, **kwargs):
         # type: (Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
 
@@ -453,7 +453,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             marker=None,  # type: Optional[str]
             **kwargs  # type: Any
         ):
-        # type: (...) -> Iterable[dict[str,str]]
+        # type: (...) -> Iterable[Dict[str,str]]
         """Lists the directories and files under the share.
 
         :param str directory_name:

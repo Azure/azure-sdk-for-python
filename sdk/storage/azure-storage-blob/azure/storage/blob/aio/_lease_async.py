@@ -16,7 +16,7 @@ from .._generated.models import (
     StorageErrorException,
     LeaseAccessConditions)
 from .._serialize import get_modify_conditions
-from ..lease import LeaseClient as LeaseClientBase
+from .._lease import LeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime

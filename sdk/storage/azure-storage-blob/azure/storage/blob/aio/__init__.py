@@ -6,12 +6,12 @@
 
 import os
 
-from ..models import BlobType
+from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
-from .blob_client_async import BlobClient
-from .container_client_async import ContainerClient
-from .blob_service_client_async import BlobServiceClient
-from .lease_async import LeaseClient
+from ._blob_client_async import BlobClient
+from ._container_client_async import ContainerClient
+from ._blob_service_client_async import BlobServiceClient
+from ._lease_async import LeaseClient
 
 
 async def upload_blob_to_url(

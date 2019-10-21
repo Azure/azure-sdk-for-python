@@ -10,7 +10,7 @@ from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
-from ..models import BlobProperties, ContainerProperties
+from .._models import BlobProperties, ContainerProperties
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._shared.models import DictMixin
 

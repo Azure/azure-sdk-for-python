@@ -27,6 +27,7 @@ from azure.storage.blob import (
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
+    PartialBatchErrorException
 )
 
 from azure.identity import ClientSecretCredential
@@ -1001,6 +1002,33 @@ class StorageContainerTest(StorageTestCase):
             'blob2',
             'blob3',
         )
+        response = list(response)
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
+    def test_delete_blobs_simple_no_raise(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        try:
+            container.get_blob_client('blob1').upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
@@ -1025,19 +1053,22 @@ class StorageContainerTest(StorageTestCase):
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
-        response = container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            delete_snapshots='only'
-        )
-        assert len(response) == 3
-        assert response[0].status_code == 202
-        assert response[1].status_code == 404  # There was no snapshot
-        assert response[2].status_code == 404  # There was no snapshot
+        try:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                delete_snapshots='only'
+            )
+        except PartialBatchErrorException as err:
+            parts = list(err.parts)
+            assert len(parts) == 3
+            assert parts[0].status_code == 202
+            assert parts[1].status_code == 404  # There was no snapshot
+            assert parts[2].status_code == 404  # There was no snapshot
 
-        blobs = list(container.list_blobs(include='snapshots'))
-        assert len(blobs) == 3  # 3 blobs
+            blobs = list(container.list_blobs(include='snapshots'))
+            assert len(blobs) == 3  # 3 blobs
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @record
@@ -1045,13 +1076,13 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
-        response = container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-        )
-
         for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
             blob = container.get_blob_client('blob1')
             data = b'hello world'
             blob.upload_blob(data)
@@ -1082,11 +1113,12 @@ class StorageContainerTest(StorageTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-            response = container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
-            )
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
     # once we have premium tests, still we don't want to test Py 2.7

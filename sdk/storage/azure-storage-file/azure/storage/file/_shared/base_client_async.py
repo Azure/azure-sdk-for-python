@@ -16,10 +16,11 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
 )
-
 from azure.core.pipeline.transport import AsyncHttpTransport
+
 from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
@@ -28,7 +29,8 @@ from .policies import (
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy,
-    QueueMessagePolicy)
+    QueueMessagePolicy
+)
 from .policies_async import AsyncStorageResponseHook
 
 from .._generated.models import StorageErrorException
@@ -36,7 +38,9 @@ from .response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -89,12 +93,14 @@ class AsyncStorageAccountHostsMixin(object):
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
         ]
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs  # type: HttpRequest
+        self, *reqs: 'HttpRequest',
+        **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
@@ -114,7 +120,7 @@ class AsyncStorageAccountHostsMixin(object):
         )
 
         pipeline_response = await self._pipeline.run(
-            request,
+            request, **kwargs
         )
         response = pipeline_response.http_response
 

@@ -28,13 +28,14 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport  # pylint: disable=unused-import
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
@@ -187,7 +188,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
         ]
         return config, Pipeline(config.transport, policies=policies)
 
@@ -223,7 +225,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             return response.parts()
         except StorageErrorException as error:
             process_storage_error(error)
-
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

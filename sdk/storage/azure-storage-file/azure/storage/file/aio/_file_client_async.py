@@ -3,79 +3,73 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+
 import functools
 import time
 from io import BytesIO
-from typing import ( # pylint: disable=unused-import
-    Optional, Union, IO, List, Dict, Any, Iterable,
-    TYPE_CHECKING
-)
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+from typing import Optional, Union, IO, List, Dict, Any, Iterable, TYPE_CHECKING  # pylint: disable=unused-import
 
 import six
-from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.async_paging import AsyncItemPaged
 
-from ._generated import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, FileHTTPHeaders
-from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.request_handlers import add_metadata_headers, get_length
-from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._shared.parser import _str
-from ._parser import _get_file_permission, _datetime_to_str
-from ._deserialize import deserialize_file_properties, deserialize_file_stream
-from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
-from .download import StorageStreamDownloader
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._parser import _datetime_to_str, _get_file_permission
+from .._shared.parser import _str
+
+from .._generated.aio import AzureFileStorage
+from .._generated.version import VERSION
+from .._generated.models import StorageErrorException, FileHTTPHeaders
+from .._shared.policies_async import ExponentialRetry
+from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.request_handlers import add_metadata_headers, get_length
+from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._deserialize import deserialize_file_properties, deserialize_file_stream
+from .._file_client import FileClient as FileClientBase
+from ._models import HandlesPaged
+from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .models import ShareProperties, ContentSettings, FileProperties
-    from ._generated.models import HandleItem
+    from .._models import ShareProperties, ContentSettings, FileProperties, NTFSAttributes
+    from .._generated.models import HandleItem
 
 
-def _upload_file_helper(
-        client,
-        stream,
-        size,
-        metadata,
-        content_settings,
-        validate_content,
-        timeout,
-        max_concurrency,
-        file_settings,
-        file_attributes="none",
-        file_creation_time="now",
-        file_last_write_time="now",
-        file_permission=None,
-        file_permission_key=None,
-        **kwargs):
+async def _upload_file_helper(
+    client,
+    stream,
+    size,
+    metadata,
+    content_settings,
+    validate_content,
+    timeout,
+    max_concurrency,
+    file_settings,
+    file_attributes="none",
+    file_creation_time="now",
+    file_last_write_time="now",
+    file_permission=None,
+    file_permission_key=None,
+    **kwargs
+):
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
-        response = client.create_file(
-            size,
-            content_settings=content_settings,
-            metadata=metadata,
-            timeout=timeout,
+        response = await client.create_file(
+            size, content_settings=content_settings, metadata=metadata,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             permission_key=file_permission_key,
+            timeout=timeout,
             **kwargs
         )
         if size == 0:
             return response
 
-        responses = upload_data_chunks(
+        responses = await upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -91,7 +85,7 @@ def _upload_file_helper(
         process_storage_error(error)
 
 
-class FileClient(StorageAccountHostsMixin):
+class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:
@@ -127,152 +121,39 @@ class FileClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword loop:
+        The event loop to run the asynchronous tasks.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name,  # type: str
-            file_path,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
+
+    def __init__(  # type: ignore
+        self,
+        account_url,  # type: str
+        share_name,  # type: str
+        file_path,  # type: str
+        snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+        credential=None,  # type: Optional[Any]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not (share_name and file_path):
-            raise ValueError("Please specify a share name and file name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+        loop = kwargs.pop('loop', None)
+        super(FileClient, self).__init__(
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
+            credential=credential, loop=loop, **kwargs
+        )
+        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._loop = loop
 
-        path_snapshot = None
-        path_snapshot, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
-        try:
-            self.snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                self.snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                self.snapshot = snapshot or path_snapshot
-
-        self.share_name = share_name
-        self.file_path = file_path.split('/')
-        self.file_name = self.file_path[-1]
-        self.directory_path = "/".join(self.file_path[:-1])
-
-        self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-
-    @classmethod
-    def from_file_url(
-            cls, file_url,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> FileClient
-        """A client to interact with a specific file, although that file may not yet exist.
-
-        :param str file_url: The full URI to the file.
-        :param str snapshot:
-            An optional file snapshot on which to operate.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
-            shared access key.
-        """
-        try:
-            if not file_url.lower().startswith('http'):
-                file_url = "https://" + file_url
-        except AttributeError:
-            raise ValueError("File URL must be a string.")
-        parsed_url = urlparse(file_url.rstrip('/'))
-
-        if not (parsed_url.netloc and parsed_url.path):
-            raise ValueError("Invalid URL: {}".format(file_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-
-        path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
-        path_snapshot, _ = parse_query(parsed_url.query)
-        snapshot = snapshot or path_snapshot
-        share_name = unquote(path_share)
-        file_path = '/'.join([unquote(p) for p in path_file.split('/')])
-        return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        share_name = self.share_name
-        if isinstance(share_name, six.text_type):
-            share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            "/".join([quote(p, safe='~') for p in self.file_path]),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            share_name=None, # type: str
-            file_path=None, # type: Optional[str]
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> FileClient
-        """Create FileClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param share_name: The share. This can either be the name of the share,
-            or an instance of ShareProperties
-        :type share_name: str or ~azure.storage.file.ShareProperties
-        :param str file_path:
-            The file path.
-        :param str snapshot:
-            An optional file snapshot on which to operate.
-        :param credential:
-            The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
-            shared access key.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_file_samples_hello_world.py
-                :start-after: [START create_file_client]
-                :end-before: [END create_file_client]
-                :language: python
-                :dedent: 12
-                :caption: Creates the file client with connection string.
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
-
-    @distributed_trace
-    def create_file(  # type: ignore
-            self, size,  # type: int
-            file_attributes="none",  # type: Union[str, NTFSAttributes]
-            file_creation_time="now",  # type: Union[str, datetime]
-            file_last_write_time="now",  # type: Union[str, datetime]
-            file_permission=None,   # type: Optional[str]
-            permission_key=None,  # type: Optional[str]
-            **kwargs  # type: Any
+    @distributed_trace_async
+    async def create_file(  # type: ignore
+        self,
+        size,  # type: int
+        file_attributes="none",  # type: Union[str, NTFSAttributes]
+        file_creation_time="now",  # type: Union[str, datetime]
+        file_last_write_time="now",  # type: Union[str, datetime]
+        file_permission=None,  # type: Optional[str]
+        permission_key=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Creates a new file.
@@ -289,10 +170,10 @@ class FileClient(StorageAccountHostsMixin):
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -316,7 +197,7 @@ class FileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
                 :language: python
@@ -329,7 +210,7 @@ class FileClient(StorageAccountHostsMixin):
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
-        headers = kwargs.pop('headers', {})
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         file_http_headers = None
         if content_settings:
@@ -339,11 +220,11 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 file_content_encoding=content_settings.content_encoding,
                 file_content_language=content_settings.content_language,
-                file_content_disposition=content_settings.content_disposition
+                file_content_disposition=content_settings.content_disposition,
             )
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         try:
-            return self._client.file.create(  # type: ignore
+            return await self._client.file.create(  # type: ignore
                 file_content_length=size,
                 metadata=metadata,
                 file_attributes=_str(file_attributes),
@@ -355,21 +236,22 @@ class FileClient(StorageAccountHostsMixin):
                 headers=headers,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def upload_file(
-            self, data,  # type: Any
-            length=None,  # type: Optional[int]
-            file_attributes="none",  # type: Union[str, NTFSAttributes]
-            file_creation_time="now",  # type: Union[str, datetime]
-            file_last_write_time="now",  # type: Union[str, datetime]
-            file_permission=None,  # type: Optional[str]
-            permission_key=None,  # type: Optional[str]
-            **kwargs  # type: Any
-        ):
+    @distributed_trace_async
+    async def upload_file(
+        self, data,  # type: Any
+        length=None,  # type: Optional[int]
+        file_attributes="none",  # type: Union[str, NTFSAttributes]
+        file_creation_time="now",  # type: Union[str, datetime]
+        file_last_write_time="now",  # type: Union[str, datetime]
+        file_permission=None,  # type: Optional[str]
+        permission_key=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Dict[str, Any]
         """Uploads a new file.
 
@@ -382,13 +264,13 @@ class FileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or ~azure.storage.file.NTFSAttributes
+        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -414,16 +296,16 @@ class FileClient(StorageAccountHostsMixin):
             file.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
         :keyword str encoding:
             Defaults to UTF-8.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
                 :language: python
@@ -448,13 +330,13 @@ class FileClient(StorageAccountHostsMixin):
 
         if isinstance(data, bytes):
             stream = BytesIO(data)
-        elif hasattr(data, 'read'):
+        elif hasattr(data, "read"):
             stream = data
-        elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding) # type: ignore
+        elif hasattr(data, "__iter__"):
+            stream = IterStreamer(data, encoding=encoding)  # type: ignore
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return _upload_file_helper( # type: ignore
+        return await _upload_file_helper(  # type: ignore
             self,
             stream,
             length,
@@ -469,13 +351,15 @@ class FileClient(StorageAccountHostsMixin):
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
-            **kwargs)
+            **kwargs
+        )
 
-    @distributed_trace
-    def start_copy_from_url(
-            self, source_url, # type: str
-            **kwargs # type: Any
-        ):
+    @distributed_trace_async
+    async def start_copy_from_url(
+        self,
+        source_url,  # type: str
+        **kwargs  # type: Any
+    ):
         # type: (...) -> Any
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
@@ -494,7 +378,7 @@ class FileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
                 :language: python
@@ -503,22 +387,19 @@ class FileClient(StorageAccountHostsMixin):
         """
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
-        headers = kwargs.pop('headers', {})
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
         try:
-            return self._client.file.start_copy(
-                source_url,
-                timeout=timeout,
-                metadata=metadata,
-                headers=headers,
-                cls=return_response_headers,
-                **kwargs)
+            return await self._client.file.start_copy(
+                source_url, timeout=timeout, metadata=metadata, headers=headers, cls=return_response_headers, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], Any) -> Dict[str, Any]
+    @distributed_trace_async
+    async def abort_copy(self, copy_id, **kwargs):
+        # type: (Union[str, FileProperties], Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -528,8 +409,6 @@ class FileClient(StorageAccountHostsMixin):
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
         :type copy_id: str or ~azure.storage.file.FileProperties
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
         :rtype: None
         """
         timeout = kwargs.pop('timeout', None)
@@ -537,20 +416,21 @@ class FileClient(StorageAccountHostsMixin):
             copy_id = copy_id.copy.id
         except AttributeError:
             try:
-                copy_id = copy_id['copy_id']
+                copy_id = copy_id["copy_id"]
             except TypeError:
                 pass
         try:
-            self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
+            await self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def download_file(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def download_file(
+        self,
+        offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        **kwargs
+    ):
         # type: (...) -> Iterable[bytes]
         """Downloads a file to a stream with automatic chunking.
 
@@ -577,7 +457,7 @@ class FileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
                 :language: python
@@ -592,7 +472,7 @@ class FileClient(StorageAccountHostsMixin):
         range_end = None
         if length is not None:
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
-        return StorageStreamDownloader(
+        downloader = StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
             start_range=offset,
@@ -602,10 +482,13 @@ class FileClient(StorageAccountHostsMixin):
             path='/'.join(self.file_path),
             share=self.share_name,
             cls=deserialize_file_stream,
-            **kwargs)
+            **kwargs
+        )
+        await downloader._setup()  # pylint: disable=protected-access
+        return downloader
 
-    @distributed_trace
-    def delete_file(self, **kwargs):
+    @distributed_trace_async
+    async def delete_file(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
@@ -616,7 +499,7 @@ class FileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file.py
+            .. literalinclude:: ../tests/test_file_samples_file_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]
                 :language: python
@@ -625,51 +508,48 @@ class FileClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            self._client.file.delete(timeout=timeout, **kwargs)
+            await self._client.file.delete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def get_file_properties(self, **kwargs):
+    @distributed_trace_async
+    async def get_file_properties(self, **kwargs):
         # type: (Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: FileProperties
         :rtype: ~azure.storage.file.FileProperties
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            file_props = self._client.file.get_properties(
-                sharesnapshot=self.snapshot,
-                timeout=timeout,
-                cls=deserialize_file_properties,
-                **kwargs)
+            file_props = await self._client.file.get_properties(
+                sharesnapshot=self.snapshot, timeout=timeout, cls=deserialize_file_properties, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
         file_props.name = self.file_name
         file_props.share = self.share_name
         file_props.snapshot = self.snapshot
-        file_props.path = '/'.join(self.file_path)
-        return file_props # type: ignore
+        file_props.path = "/".join(self.file_path)
+        return file_props  # type: ignore
 
-    @distributed_trace
-    def set_http_headers(self, content_settings,  # type: ContentSettings
-                         file_attributes="preserve",  # type: Union[str, NTFSAttributes]
-                         file_creation_time="preserve",  # type: Union[str, datetime]
-                         file_last_write_time="preserve",  # type: Union[str, datetime]
-                         file_permission=None,  # type: Optional[str]
-                         permission_key=None,  # type: Optional[str]
-                         **kwargs  # Any
-                         ):  # type: ignore
-        # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
+    @distributed_trace_async
+    async def set_http_headers(self, content_settings,  # type: ContentSettings
+                               file_attributes="preserve",  # type: Union[str, NTFSAttributes]
+                               file_creation_time="preserve",  # type: Union[str, datetime]
+                               file_last_write_time="preserve",  # type: Union[str, datetime]
+                               file_permission=None,  # type: Optional[str]
+                               permission_key=None,  # type: Optional[str]
+                               **kwargs  # type: Any
+                               ):
+        # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
@@ -677,10 +557,10 @@ class FileClient(StorageAccountHostsMixin):
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -692,22 +572,24 @@ class FileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         timeout = kwargs.pop('timeout', None)
-        file_content_length = kwargs.pop('size', None)
+        file_content_length = kwargs.pop("size", None)
         file_http_headers = FileHTTPHeaders(
             file_cache_control=content_settings.cache_control,
             file_content_type=content_settings.content_type,
             file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
             file_content_encoding=content_settings.content_encoding,
             file_content_language=content_settings.content_language,
-            file_content_disposition=content_settings.content_disposition
+            file_content_disposition=content_settings.content_disposition,
         )
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         try:
-            return self._client.file.set_http_headers(  # type: ignore
+            return await self._client.file.set_http_headers(  # type: ignore
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 file_attributes=_str(file_attributes),
@@ -717,13 +599,14 @@ class FileClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def set_file_metadata(self, metadata=None, **kwargs): # type: ignore
-        #type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
+    @distributed_trace_async
+    async def set_file_metadata(self, metadata=None, **kwargs):  # type: ignore
+        # type: (Optional[Dict[str, Any]], Any) -> Dict[str, Any]
         """Sets user-defined metadata for the specified file as one or more
         name-value pairs.
 
@@ -740,25 +623,23 @@ class FileClient(StorageAccountHostsMixin):
         :rtype: dict(str, Any)
         """
         timeout = kwargs.pop('timeout', None)
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers = kwargs.pop("headers", {})
+        headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
-            return self._client.file.set_metadata( # type: ignore
-                timeout=timeout,
-                cls=return_response_headers,
-                headers=headers,
-                metadata=metadata,
-                **kwargs)
+            return await self._client.file.set_metadata(  # type: ignore
+                timeout=timeout, cls=return_response_headers, headers=headers, metadata=metadata, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def upload_range(  # type: ignore
-            self, data,  # type: bytes
-            offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def upload_range(  # type: ignore
+        self,
+        data,  # type: bytes
+        offset,  # type: int
+        length,  # type: int
+        **kwargs
+    ):
         # type: (...) -> Dict[str, Any]
         """Upload a range of bytes to a file.
 
@@ -791,59 +672,28 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
-
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
         try:
-            return self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
                 content_length=length,
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @staticmethod
-    def _upload_range_from_url_options(source_url,  # type: str
-                                       offset,  # type: int
-                                       length,  # type: int
-                                       source_offset,  # type: int
-                                       **kwargs
-                                       ):
-        # type: (...) -> Dict[str, Any]
-
-        if offset is None:
-            raise ValueError("offset must be provided.")
-        if length is None:
-            raise ValueError("length must be provided.")
-        if source_offset is None:
-            raise ValueError("source_offset must be provided.")
-
-        # Format range
-        end_range = offset + length - 1
-        destination_range = 'bytes={0}-{1}'.format(offset, end_range)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
-
-        options = {
-            'copy_source': source_url,
-            'content_length': 0,
-            'source_range': source_range,
-            'range': destination_range,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
-    @distributed_trace
-    def upload_range_from_url(self, source_url,  # type: str
-                              offset,  # type: int
-                              length,  # type: int
-                              source_offset,  # type: int
-                              **kwargs  # type: Any
-                              ):
+    @distributed_trace_async
+    async def upload_range_from_url(self, source_url,
+                                    offset,
+                                    length,
+                                    source_offset,
+                                    **kwargs
+                                    ):
         # type: (str, int, int, int, **Any) -> Dict[str, Any]
         '''
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
@@ -869,6 +719,7 @@ class FileClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         '''
+
         options = self._upload_range_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -877,23 +728,24 @@ class FileClient(StorageAccountHostsMixin):
             **kwargs
         )
         try:
-            return self._client.file.upload_range_from_url(**options)  # type: ignore
+            return await self._client.file.upload_range_from_url(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def get_ranges( # type: ignore
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> List[dict[str, int]]
+    @distributed_trace_async
+    async def get_ranges(  # type: ignore
+        self,
+        offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        **kwargs
+    ):
+        # type: (...) -> List[Dict[str, int]]
         """Returns the list of valid ranges of a file.
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
         :param int length:
-           Number of bytes to use over which to get ranges.
+            Number of bytes to use over which to get ranges.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
@@ -907,34 +759,33 @@ class FileClient(StorageAccountHostsMixin):
         if offset is not None:
             if length is not None:
                 end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, end_range)
+                content_range = "bytes={0}-{1}".format(offset, end_range)
             else:
-                content_range = 'bytes={0}-'.format(offset)
+                content_range = "bytes={0}-".format(offset)
         try:
-            ranges = self._client.file.get_range_list(
-                sharesnapshot=self.snapshot,
-                timeout=timeout,
-                range=content_range,
-                **kwargs)
+            ranges = await self._client.file.get_range_list(
+                sharesnapshot=self.snapshot, timeout=timeout, range=content_range, **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
-        return [{'start': b.start, 'end': b.end} for b in ranges]
+        return [{"start": b.start, "end": b.end} for b in ranges]
 
-    @distributed_trace
-    def clear_range( # type: ignore
-            self, offset,  # type: int
-            length,  # type: int
-            **kwargs
-        ):
+    @distributed_trace_async
+    async def clear_range(  # type: ignore
+        self,
+        offset,  # type: int
+        length,  # type: int
+        **kwargs
+    ):
         # type: (...) -> Dict[str, Any]
         """Clears the specified range and releases the space used in storage for
         that range.
 
         :param int offset:
-            Number of bytes to use for clearing a section of the file.
+            Start of byte range to use for clearing a section of the file.
             The range can be up to 4 MB in size.
         :param int length:
-            End of byte range to use for clearing a section of the file.
+            Number of bytes to use for clearing a section of the file.
             The range can be up to 4 MB in size.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -950,20 +801,21 @@ class FileClient(StorageAccountHostsMixin):
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = "bytes={0}-{1}".format(offset, end_range)
         try:
-            return self._client.file.upload_range( # type: ignore
+            return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
                 file_range_write="clear",
                 range=content_range,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def resize_file(self, size, **kwargs): # type: ignore
+    @distributed_trace_async
+    async def resize_file(self, size, **kwargs):
         # type: (int, Any) -> Dict[str, Any]
         """Resizes a file to the specified size.
 
@@ -976,7 +828,7 @@ class FileClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.file.set_http_headers( # type: ignore
+            return await self._client.file.set_http_headers(  # type: ignore
                 file_content_length=size,
                 file_attributes="preserve",
                 file_creation_time="preserve",
@@ -984,33 +836,34 @@ class FileClient(StorageAccountHostsMixin):
                 file_permission="preserve",
                 cls=return_response_headers,
                 timeout=timeout,
-                **kwargs)
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
     def list_handles(self, **kwargs):
-        # type: (int, Any) -> ItemPaged[Handle]
+        # type: (Any) -> AsyncItemPaged
         """Lists handles for file.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
         """
         timeout = kwargs.pop('timeout', None)
-        results_per_page = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.file.list_handles,
             sharesnapshot=self.snapshot,
             timeout=timeout,
             **kwargs)
-        return ItemPaged(
+        return AsyncItemPaged(
             command, results_per_page=results_per_page,
             page_iterator_class=HandlesPaged)
 
-    @distributed_trace
-    def close_handle(self, handle, **kwargs):
+    @distributed_trace_async
+    async def close_handle(self, handle, **kwargs):
         # type: (Union[str, HandleItem], Any) -> int
         """Close an open file handle.
 
@@ -1020,7 +873,8 @@ class FileClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
-            The number of handles closed (this may be 0 if the specified handle was not found).
+            The total number of handles closed. This could be 0 if the supplied
+            handle was not found.
         :rtype: int
         """
         try:
@@ -1030,7 +884,7 @@ class FileClient(StorageAccountHostsMixin):
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
         try:
-            response = self._client.file.force_close_handles(
+            response = await self._client.file.force_close_handles(
                 handle_id,
                 marker=None,
                 sharesnapshot=self.snapshot,
@@ -1041,8 +895,8 @@ class FileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    @distributed_trace
-    def close_all_handles(self, **kwargs):
+    @distributed_trace_async
+    async def close_all_handles(self, **kwargs):
         # type: (Any) -> int
         """Close any open file handles.
 
@@ -1061,7 +915,7 @@ class FileClient(StorageAccountHostsMixin):
         total_handles = 0
         while try_close:
             try:
-                response = self._client.file.force_close_handles(
+                response = await self._client.file.force_close_handles(
                     handle_id='*',
                     timeout=timeout,
                     marker=continuation_token,
