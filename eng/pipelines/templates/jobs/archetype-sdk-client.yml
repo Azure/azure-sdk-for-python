@@ -111,7 +111,7 @@ jobs:
        - 'Build'
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
     steps:
     - template: ../steps/build-test-python38.yml
@@ -120,7 +120,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         OSName: 'Linux'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         PythonVersion: '3.8'
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
