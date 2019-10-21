@@ -34,32 +34,28 @@ steps:
       sudo python3.8 -m pip install tox-monorepo packaging
       cd $(Build.SourcesDirectory)
       sudo python3.8 -m pip install twine codecov beautifulsoup4
+      sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "${{ parameters.BuildTargetingString }}" 
     displayName: 'Prep Environment using Python 3.8'
-    
+
   - ${{ parameters.BeforeTestSteps }}
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      script: |
-        cd $(Build.SourcesDirectory)
-        python3.8 scripts/devops_tasks/setup_execute_tests.py
-      arguments: >-
-        -p=python
+  - script: |
+      cd $(Build.SourcesDirectory)
+      sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python
+    arguments: >-
         "${{ parameters.BuildTargetingString }}" 
         ${{ parameters.AdditionalTestArgs }} 
         ${{ parameters.CoverageArg }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
-    env: ${{ parameters.EnvVars }}
+    displayName: 'Prep Environment using Python 3.8'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
-
   
   - template: publish-coverage.yml
     parameters: 
