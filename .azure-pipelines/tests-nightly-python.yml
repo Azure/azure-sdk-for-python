@@ -28,11 +28,18 @@ jobs:
           cd debug
           ../configure --enable-optimizations --prefix=$HOME
           make install
+          sudo apt-get install python3.8-dev
+          sudo apt-get install python3.8-distutils
+          export PATH=~/.local/bin:$PATH
+          PATH=/usr/lib/python3.8:$PATH
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          sudo python3.9 get-pip.py
+          sudo apt-get install tox   
+          sudo python3.9 -m pip install tox-monorepo packaging
           cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml"
-        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+          sudo python3.9 -m pip install twine codecov beautifulsoup4
+          sudo python3.9 ./scripts/devops_tasks/setup_execute_tests.py -p python "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
+        displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         continueOnError: true
 
       - task: PublishTestResults@2
