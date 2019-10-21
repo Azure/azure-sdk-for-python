@@ -123,8 +123,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # pylint: disable=unused-variable
 
-        # [START list_secret_versions]
-        secret_versions = secret_client.list_secret_versions("secret-name")
+        # [START list_properties_of_secret_versions]
+        secret_versions = secret_client.list_properties_of_secret_versions("secret-name")
 
         for secret in secrets:
             # the list doesn't include the values at each version
@@ -132,7 +132,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(secret.enabled)
             print(secret.updated_on)
 
-        # [END list_secret_versions]
+        # [END list_properties_of_secret_versions]
         # [START list_deleted_secrets]
 
         # gets an iterator of deleted secrets (requires soft-delete enabled for the vault)
