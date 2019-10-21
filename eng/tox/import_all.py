@@ -16,12 +16,15 @@ logging.getLogger().setLevel(logging.INFO)
 # keyvault has dependency issue when loading private module _BearerTokenCredentialPolicyBase from azure.core.pipeline.policies
 # azure.core.tracing.opencensus and azure.eventhub.checkpointstoreblob.aio are skipped due to a known issue in loading azure.core.tracing.opencensus
 excluded_packages = [
-    "azure.core.tracing.opencensus", 
+    "azure.core.tracing.opencensus",
     "azure.eventhub.checkpointstoreblob.aio",
     "azure.keyvault.certificates", # Github issue 7879
     "azure.keyvault.keys", # Github issue 7879
     "azure.keyvault.secrets", # Github issue 7879
     "azure.appconfiguration", # Github issue 7879. revisit and close after azure-core POST b4 is released.
+    "azure.storage.blob", # Github issue 7879.
+    "azure.storage.file", # Github issue 7879.
+    "azure.storage.queue", # Github issue 7879.
     "azure",
     "azure-mgmt"]
 
@@ -58,4 +61,4 @@ if __name__ == "__main__":
         logging.info("Verified module dependency, no issues found")
     else:
         pass
-        logging.error("Package {} is excluded from dependency check".format(package_name)) 
+        logging.error("Package {} is excluded from dependency check".format(package_name))
