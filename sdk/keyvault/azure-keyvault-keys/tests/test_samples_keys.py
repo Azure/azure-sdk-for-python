@@ -151,16 +151,16 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_keys]
 
-        # [START list_key_versions]
+        # [START list_properties_of_key_versions]
 
         # get an iterator of a key's versions
-        key_versions = key_client.list_key_versions("key-name")
+        key_versions = key_client.list_properties_of_key_versions("key-name")
 
         for key in key_versions:
             print(key.id)
             print(key.name)
 
-        # [END list_key_versions]
+        # [END list_properties_of_key_versions]
 
         # [START list_deleted_keys]
 
