@@ -13,8 +13,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 
 
-class StorageCacheMgmtClientConfiguration(AzureConfiguration):
-    """Configuration for StorageCacheMgmtClient
+class StorageCacheManagementClientConfiguration(AzureConfiguration):
+    """Configuration for StorageCacheManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -38,7 +38,7 @@ class StorageCacheMgmtClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(StorageCacheMgmtClientConfiguration, self).__init__(base_url)
+        super(StorageCacheManagementClientConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True

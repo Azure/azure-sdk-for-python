@@ -27,7 +27,7 @@ class StorageTargetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-08-01-preview".
+    :ivar api_version: Client API version. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,18 +37,17 @@ class StorageTargetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
     def list_by_cache(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the StorageTargets for this cache in the subscription and
-        resource group.
+        """Returns a list of Storage Targets for the specified Cache.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -167,15 +166,17 @@ class StorageTargetsOperations(object):
 
     def delete(
             self, resource_group_name, cache_name, storage_target_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Removes a storage target from a cache.  This operation is allowed at
-        any time, but if the cache is down or unhealthy, the actual removal of
-        the storage target may be delayed until the cache is healthy again.
+        """Removes a Storage Target from a Cache. This operation is allowed at any
+        time, but if the Cache is down or unhealthy, the actual removal of the
+        Storage Target may be delayed until the Cache is healthy again. Note
+        that if the Cache has data to flush to the Storage Target, the data
+        will be flushed before the Storage Target will be deleted.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
-        :param storage_target_name: Name of storage target.
+        :param storage_target_name: Name of Storage Target.
         :type storage_target_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -217,13 +218,13 @@ class StorageTargetsOperations(object):
 
     def get(
             self, resource_group_name, cache_name, storage_target_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a storage target from a cache.
+        """Returns a Storage Target from a Cache.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
-        :param storage_target_name: Name of storage target.
+        :param storage_target_name: Name of the Storage Target.
         :type storage_target_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -280,10 +281,10 @@ class StorageTargetsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}'}
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, cache_name, storage_target_name, storagetarget=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -335,20 +336,21 @@ class StorageTargetsOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, cache_name, storage_target_name, storagetarget=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create/update a storage target.  This operation is allowed at any time,
-        but if the cache is down or unhealthy, the actual creation/modification
-        of the storage target may be delayed until the cache is healthy again.
+        """Create or update a Storage Target. This operation is allowed at any
+        time, but if the Cache is down or unhealthy, the actual
+        creation/modification of the Storage Target may be delayed until the
+        Cache is healthy again.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
-        :param storage_target_name: Name of storage target.
+        :param storage_target_name: Name of the Storage Target.
         :type storage_target_name: str
-        :param storagetarget: Object containing the definition of a storage
-         target.
+        :param storagetarget: Object containing the definition of a Storage
+         Target.
         :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -363,7 +365,7 @@ class StorageTargetsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storagecache.models.StorageTarget]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             storage_target_name=storage_target_name,
@@ -389,80 +391,4 @@ class StorageTargetsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}'}
-
-    def update(
-            self, resource_group_name, cache_name, storage_target_name, storagetarget=None, custom_headers=None, raw=False, **operation_config):
-        """Update a storage target.  This operation is allowed at any time, but if
-        the cache is down or unhealthy, the actual creation/modification of the
-        storage target may be delayed until the cache is healthy again.
-
-        :param resource_group_name: Target resource group.
-        :type resource_group_name: str
-        :param cache_name: Name of cache.
-        :type cache_name: str
-        :param storage_target_name: Name of storage target.
-        :type storage_target_name: str
-        :param storagetarget: Object containing the definition of a storage
-         target.
-        :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: StorageTarget or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storagecache.models.StorageTarget or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'cacheName': self._serialize.url("cache_name", cache_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$'),
-            'storageTargetName': self._serialize.url("storage_target_name", storage_target_name, 'str', pattern=r'^[-0-9a-zA-Z_]{1,31}$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        if storagetarget is not None:
-            body_content = self._serialize.body(storagetarget, 'StorageTarget')
-        else:
-            body_content = None
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('StorageTarget', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}'}

@@ -54,7 +54,7 @@ from ._paged_models import CachePaged
 from ._paged_models import ResourceSkuPaged
 from ._paged_models import StorageTargetPaged
 from ._paged_models import UsageModelPaged
-from ._storage_cache_mgmt_client_enums import (
+from ._storage_cache_management_client_enums import (
     HealthStateType,
     ProvisioningStateType,
     FirmwareStatusType,
