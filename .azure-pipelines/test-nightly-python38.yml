@@ -25,15 +25,11 @@ jobs:
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           sudo python3.8 get-pip.py
           sudo apt-get install tox   
-          echo $PATH
-          python3.8 -c "print('Executing python 3.8')"
-          cd /usr/lib/python3.8
-          ls
           sudo python3.8 -m pip install tox-monorepo packaging
           cd $(Build.SourcesDirectory)
           sudo python3.8 -m pip install twine codecov beautifulsoup4
           sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "azure-identity" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
-        displayName: 'Setup - Run Tests "Nightly" using Python 3.8'
+        displayName: 'Setup - Run Tests Using Python 3.8'
         continueOnError: true
 
       - task: PublishTestResults@2
