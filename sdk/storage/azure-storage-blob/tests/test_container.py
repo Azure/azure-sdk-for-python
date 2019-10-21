@@ -1029,7 +1029,6 @@ class StorageContainerTest(StorageTestCase):
             'blob3',
             raise_on_any_failure=False
         )
-        response = list(response)
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
