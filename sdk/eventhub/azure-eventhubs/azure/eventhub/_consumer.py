@@ -14,8 +14,8 @@ import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
-from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import _error_handler
+from ._common import EventData, EventPosition
+from ._error import _error_handler
 from ._consumer_producer_mixin import ConsumerProducerMixin
 
 

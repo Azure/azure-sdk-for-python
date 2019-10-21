@@ -2,27 +2,47 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import unicode_literals
+
 import uuid
-import asyncio
 import logging
-from typing import Iterable, Union, Type
 import time
+from typing import Iterable, Union, Type
 
 from uamqp import types, constants, errors  # type: ignore
-from uamqp import SendClientAsync  # type: ignore
+from uamqp import SendClient  # type: ignore
 
 from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub.common import EventData, EventDataBatch
-from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
-from ..producer import _error, _set_partition_key, _set_trace_message
-from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from ._common import EventData, EventDataBatch
+from ._error import _error_handler, OperationTimeoutError, EventDataError
+from ._consumer_producer_mixin import ConsumerProducerMixin
+
 
 log = logging.getLogger(__name__)
 
 
-class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-instance-attributes
+def _error(outcome, condition):
+    if outcome != constants.MessageSendResult.Ok:
+        raise condition
+
+
+def _set_partition_key(event_datas, partition_key):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._set_partition_key(partition_key)  # pylint:disable=protected-access
+        yield ed
+
+
+def _set_trace_message(event_datas, parent_span=None):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._trace_message(parent_span)  # pylint:disable=protected-access
+        yield ed
+
+
+class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
     grouped together in batches. Depending on the options specified at creation, the producer may
@@ -33,50 +53,46 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
     """
     _timeout_symbol = b'com.microsoft:timeout'
 
-    def __init__(  # pylint: disable=super-init-not-called
-            self, client, target, **kwargs):
+    def __init__(self, client, target, **kwargs):
         """
-        Instantiate an async EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer`
-        method in EventHubClient.
+        Instantiate an EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer` method
+        in EventHubClient.
 
-        :param client: The parent EventHubClientAsync.
-        :type client: ~azure.eventhub.aio.EventHubClientAsync
+        :param client: The parent EventHubClient.
+        :type client: ~azure.eventhub.client.EventHubClient.
         :param target: The URI of the EventHub to send to.
         :type target: str
-        :param partition: The specific partition ID to send to. Default is `None`, in which case the service
+        :param partition: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
         :type partition: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
-         periods of inactivity. The default value is `None`, i.e. no keep alive pings.
+         periods of inactivity. The default value is None, i.e. no keep alive pings.
         :type keep_alive: float
         :param auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
-        :param loop: An event loop. If not specified the default event loop will be used.
         """
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        loop = kwargs.get("loop", None)
 
         super(EventHubProducer, self).__init__()
-        self._loop = loop or asyncio.get_event_loop()
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
         self._partition = partition
+        self._timeout = send_timeout
+        self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._timeout = send_timeout
-        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint: disable=protected-access
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = None
-        self._error = None
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
@@ -86,7 +102,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._link_properties = {types.AMQPSymbol(self._timeout_symbol): types.AMQPLong(int(self._timeout * 1000))}
 
     def _create_handler(self):
-        self._handler = SendClientAsync(
+        self._handler = SendClient(
             self._target,
             auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
@@ -95,16 +111,14 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
-            properties=self._client._create_properties(  # pylint: disable=protected-access
-                self._client._config.user_agent),  # pylint:disable=protected-access
-            loop=self._loop)
+            properties=self._client._create_properties(self._client._config.user_agent))  # pylint: disable=protected-access
 
-    async def _open_with_retry(self):
-        return await self._do_retryable_operation(self._open, operation_need_param=False)
+    def _open_with_retry(self):
+        return self._do_retryable_operation(self._open, operation_need_param=False)
 
-    async def _send_event_data(self, timeout_time=None, last_exception=None):
+    def _send_event_data(self, timeout_time=None, last_exception=None):
         if self._unsent_events:
-            await self._open()
+            self._open()
             remaining_time = timeout_time - time.time()
             if remaining_time <= 0.0:
                 if last_exception:
@@ -115,16 +129,15 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 raise error
             self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
             self._handler.queue_message(*self._unsent_events)
-            await self._handler.wait_async()
+            self._handler.wait()
             self._unsent_events = self._handler.pending_messages
             if self._outcome != constants.MessageSendResult.Ok:
                 if self._outcome == constants.MessageSendResult.Timeout:
                     self._condition = OperationTimeoutError("send operation timed out")
                 _error(self._outcome, self._condition)
-        return
 
-    async def _send_event_data_with_retry(self, timeout=None):
-        return await self._do_retryable_operation(self._send_event_data, timeout=timeout)
+    def _send_event_data_with_retry(self, timeout=None):
+        return self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -138,7 +151,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._outcome = outcome
         self._condition = condition
 
-    async def create_batch(self, max_size=None, partition_key=None):
+    def create_batch(self, max_size=None, partition_key=None):
         # type:(int, str) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
@@ -153,9 +166,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         :rtype: ~azure.eventhub.EventDataBatch
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_create_batch]
-                :end-before: [END eventhub_client_async_create_batch]
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_create_batch]
+                :end-before: [END eventhub_client_sync_create_batch]
                 :language: python
                 :dedent: 4
                 :caption: Create EventDataBatch object within limited size
@@ -163,7 +176,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         """
 
         if not self._max_message_size_on_link:
-            await self._open_with_retry()
+            self._open_with_retry()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -171,9 +184,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
 
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
-    async def send(
-            self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
-            *, partition_key: Union[str, bytes] = None, timeout: float = None):
+    def send(self, event_data, partition_key=None, timeout=None):
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -194,9 +206,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         :rtype: None
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_send]
-                :end-before: [END eventhub_client_async_send]
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
                 :language: python
                 :dedent: 4
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
@@ -216,39 +228,38 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             wrapper_event_data = event_data
             wrapper_event_data._trace_message(child)  # pylint: disable=protected-access
         else:
-            if isinstance(event_data, EventDataBatch):
+            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
                     raise EventDataError('The partition_key does not match the one of the EventDataBatch')
-                wrapper_event_data = event_data  #type: ignore
+                wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 event_data = _set_trace_message(event_data, child)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
-
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
 
-        if span_impl_type is not None:
+        if span_impl_type is not None and child is not None:
             with child:
                 self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
-                await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+                self._send_event_data_with_retry(timeout=timeout)
         else:
-            await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+            self._send_event_data_with_retry(timeout=timeout)
 
-    async def close(self):
-        # type: () -> None
+    def close(self):  # pylint:disable=useless-super-delegation
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_sender_close]
-                :end-before: [END eventhub_client_async_sender_close]
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sender_close]
+                :end-before: [END eventhub_client_sender_close]
                 :language: python
                 :dedent: 4
                 :caption: Close down the handler.
 
         """
-        await super(EventHubProducer, self).close()
+        super(EventHubProducer, self).close()

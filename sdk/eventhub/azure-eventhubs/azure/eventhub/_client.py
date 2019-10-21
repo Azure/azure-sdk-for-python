@@ -17,13 +17,13 @@ from uamqp import Message  # type: ignore
 from uamqp import authentication  # type: ignore
 from uamqp import constants  # type: ignore
 
-from azure.eventhub.producer import EventHubProducer
-from azure.eventhub.consumer import EventHubConsumer
-from azure.eventhub.common import parse_sas_token, EventPosition
-from .client_abstract import EventHubClientAbstract
-from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
+from ._producer import EventHubProducer
+from ._consumer import EventHubConsumer
+from ._common import parse_sas_token, EventPosition
+from ._client_abstract import EventHubClientAbstract
+from ._common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
-from .error import _handle_exception
+from ._error import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
