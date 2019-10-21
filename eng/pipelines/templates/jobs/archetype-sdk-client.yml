@@ -99,7 +99,7 @@ jobs:
 
     steps:
     - template: ../steps/build-test.yml
-      condition: and(eq($(CustomImage), 'false'), eq($(PythonVersion), '3.8'))
+      condition: eq($(CustomImage), 'false')
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
