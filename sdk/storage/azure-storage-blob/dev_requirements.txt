@@ -5,4 +5,3 @@
 aiohttp>=3.0; python_version >= '3.5'
 pytest
 coverage
-

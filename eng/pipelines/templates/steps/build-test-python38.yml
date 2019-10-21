@@ -20,9 +20,9 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
-      apt-get update
-      add-apt-repository ppa:deadsnakes/ppa
-      apt-get update
+      sudo apt-get update
+      sudo add-apt-repository ppa:deadsnakes/ppa
+      sudo apt-get update
       apt install python3.8
       apt-get install python3.8-dev
       apt-get install python3.8-distutils
