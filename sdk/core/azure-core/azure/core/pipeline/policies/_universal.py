@@ -353,12 +353,13 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
         http_response = response.http_response
-        logger = response.context.get("logger")
-
-        if not logger.isEnabledFor(logging.INFO):
-            return
 
         try:
+            logger = response.context["logger"]
+
+            if not logger.isEnabledFor(logging.INFO):
+                return
+
             logger.info("Response status: %r", http_response.status_code)
             logger.info("Response headers:")
             for res_header, value in http_response.headers.items():

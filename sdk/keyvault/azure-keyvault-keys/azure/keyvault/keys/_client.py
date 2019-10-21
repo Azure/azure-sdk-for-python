@@ -250,7 +250,6 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        # TODO: which exception is raised when soft-delete is not enabled
         bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
