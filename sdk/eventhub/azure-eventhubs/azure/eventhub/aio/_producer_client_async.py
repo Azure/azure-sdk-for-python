@@ -6,9 +6,9 @@ import asyncio
 import logging
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
-from .client_async import EventHubClient
-from .producer_async import EventHubProducer
-from azure.eventhub.common import EventData, \
+from ._client_async import EventHubClient
+from ._producer_async import EventHubProducer
+from .._common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
 
 if TYPE_CHECKING:

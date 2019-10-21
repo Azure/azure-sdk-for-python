@@ -5,13 +5,10 @@
 import logging
 import asyncio
 from typing import Any, Union, TYPE_CHECKING
-from azure.eventhub.common import EventPosition,\
+from .._common import EventPosition,\
     EventHubSharedKeyCredential, EventHubSASTokenCredential
-
-from .eventprocessor.event_processor import EventProcessor
-
-from .client_async import EventHubClient
-
+from ._eventprocessor.event_processor import EventProcessor
+from ._client_async import EventHubClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
@@ -19,6 +16,9 @@ log = logging.getLogger(__name__)
 
 
 class EventHubConsumerClient(EventHubClient):
+    """Represents an AMQP connection to an EventHub.
+
+    """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
@@ -29,8 +29,10 @@ class EventHubConsumerClient(EventHubClient):
 
     async def receive(
             self, event_handler, consumer_group, *, partition_id=None,
+            owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
+            initial_event_position=None, load_balancing_interval=10,
             error_handler=None, partition_initialize_handler=None, partition_close_handler=None,
-            initial_event_position=None, polling_interval=None):
+    ):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         """
@@ -53,7 +55,10 @@ class EventHubConsumerClient(EventHubClient):
                 partition_initialize_handler=partition_initialize_handler,
                 partition_close_handler=partition_close_handler,
                 initial_event_position=initial_event_position or EventPosition("-1"),
-                polling_interval=polling_interval or 10
+                polling_interval=load_balancing_interval,
+                owner_level=owner_level,
+                prefetch=prefetch,
+                track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             )
             if partition_id:
                 self._event_processors[partition_id] = event_processor
@@ -68,6 +73,12 @@ class EventHubConsumerClient(EventHubClient):
                     del self._event_processors[partition_id]
                 elif 'all' in self._event_processors:
                     del self._event_processors['all']
+
+    async def get_last_enqueued_event_properties(self, partition_id: str):
+        if partition_id in self._event_processors or 'all' in self._event_processors:
+            return self._event_processors[partition_id].get_last_enqueued_event_properties(partition_id)
+        else:
+            raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     async def update_checkpoint(self, event):
         self._partition_manager.update_checkpoint(event)

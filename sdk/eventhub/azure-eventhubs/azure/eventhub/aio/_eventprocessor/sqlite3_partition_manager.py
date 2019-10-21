@@ -7,7 +7,7 @@ import time
 import uuid
 import sqlite3
 import logging
-from .partition_manager import PartitionManager, OwnershipLostError
+from .partition_manager import PartitionManager
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def _check_table_name(table_name: str):
     return table_name
 
 
-class SamplePartitionManager(PartitionManager):
+class Sqlite3PartitionManager(PartitionManager):
     """An implementation of PartitionManager by using the sqlite3 in Python standard library.
     Sqlite3 is a mini sql database that runs in memory or files.
     Please don't use this PartitionManager for production use.
@@ -48,7 +48,7 @@ class SamplePartitionManager(PartitionManager):
          Sqlite3 will run in memory without a file when db_filename is ":memory:".
         :param ownership_table: The table name of the sqlite3 database.
         """
-        super(SamplePartitionManager, self).__init__()
+        super(Sqlite3PartitionManager, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
         conn = sqlite3.connect(db_filename)
