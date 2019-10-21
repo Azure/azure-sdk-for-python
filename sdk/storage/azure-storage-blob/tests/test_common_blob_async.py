@@ -32,8 +32,6 @@ from azure.storage.blob.aio import (
 )
 
 from azure.storage.blob import (
-    upload_blob_to_url,
-    download_blob_from_url,
     generate_blob_sas,
     generate_account_sas,
     generate_container_sas,
