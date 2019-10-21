@@ -15,6 +15,7 @@ from ._lease import LeaseClient
 from ._download import StorageStreamDownloader
 from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
+from ._shared.response_handlers import PartialBatchErrorException
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -203,5 +204,6 @@ __all__ = [
     'RehydratePriority',
     'generate_account_sas',
     'generate_container_sas',
-    'generate_blob_sas'
+    'generate_blob_sas',
+    'PartialBatchErrorException'
 ]
