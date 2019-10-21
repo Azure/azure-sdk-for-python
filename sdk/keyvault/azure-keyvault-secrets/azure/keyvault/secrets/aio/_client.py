@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict
 
 from azure.core.tracing.decorator import distributed_trace
