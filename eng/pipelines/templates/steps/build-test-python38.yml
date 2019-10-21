@@ -28,13 +28,13 @@ steps:
       sudo apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH
       PATH=/usr/lib/python3.8:$PATH
-      which python3.8
+      sudo which python3.8
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3.8 get-pip.py
       sudo apt-get install tox   
-      python3.8 -m pip install tox-monorepo packaging
+      sudo python3.8 -m pip install tox-monorepo packaging
       cd $(Build.SourcesDirectory)
-      python3.8 -m pip install twine codecov beautifulsoup4
+      sudo python3.8 -m pip install twine codecov beautifulsoup4
     displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}
