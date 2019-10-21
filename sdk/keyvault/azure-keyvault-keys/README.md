@@ -186,9 +186,10 @@ print(updated_key_properties.tags)
 ```
 
 ### Delete a Key
-`begin_delete_key` returns an LRO poller that polls on the deletion of a key previously stored
-in the Key Vault. If [soft-delete][soft_delete] is not enabled for the vault, this permanently
-deletes the key.
+`begin_delete_key` requests Key Vault delete a key, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the key as soon as possible.
+When [soft-delete][soft_delete] is disabled, deletion is always permanent.
 
 ```python
 deleted_key = key_client.begin_delete_key("key-name").result()

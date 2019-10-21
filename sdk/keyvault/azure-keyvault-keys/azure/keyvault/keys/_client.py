@@ -193,10 +193,15 @@ class KeyClient(KeyVaultClientBase):
         )
         sd_disabled = deleted_key.recovery_id is None
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeletePollingMethod(
-            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        delete_key_polling_method = DeletePollingMethod(
+            command=command,
+            final_resource=deleted_key,
+            initial_status="deleting",
+            finished_status="deleted",
+            sd_disabled=sd_disabled,
+            interval=polling_interval
         )
-        return KeyVaultOperationPoller(command, deleted_key, None, delete_key_polling)
+        return KeyVaultOperationPoller(delete_key_polling_method)
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
@@ -377,10 +382,14 @@ class KeyClient(KeyVaultClientBase):
             self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
         )
         command = partial(self.get_key, name=name, **kwargs)
-        recover_key_poller = RecoverDeletedPollingMethod(
-            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        recover_key_polling_method = RecoverDeletedPollingMethod(
+            command=command,
+            final_resource=recovered_key,
+            initial_status="recovering",
+            finished_status="recovered",
+            interval=polling_interval
         )
-        return KeyVaultOperationPoller(command, recovered_key, None, recover_key_poller)
+        return KeyVaultOperationPoller(recover_key_polling_method)
 
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):

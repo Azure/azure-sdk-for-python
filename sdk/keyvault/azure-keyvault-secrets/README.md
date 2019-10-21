@@ -185,8 +185,10 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 ```
 
 ### Delete a Secret
-`begin_delete_secret` returns an LRO poller that polls on the deletion of the secret. If [soft-delete][soft_delete] is not enabled
-for the vault, this permanently deletes the secret.
+`begin_delete_secret` requests Key Vault delete a secret, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the secret as soon as possible.
+When [soft-delete][soft_delete] is disabled, deletion is always permanent.
 
 ```python
     deleted_secret = secret_client.begin_delete_secret("secret-name").result()
