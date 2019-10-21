@@ -101,7 +101,7 @@ jobs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
 
-  - job: 'Test Python_38'
+  - job: 'Test_Python_38'
     condition: ne(variables['Skip.Test'], 'true')
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
