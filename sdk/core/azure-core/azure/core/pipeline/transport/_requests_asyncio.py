@@ -103,11 +103,11 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
             # That's not ideal, but a list is our only choice. Memory not optimal here,
             # but providing an async generator to a requests based transport is not optimal too
             new_data = []
-            async for part in request.data:
+            async for part in request.data:  # type: ignore
                 new_data.append(part)
             data_to_send = iter(new_data)
         else:
-            data_to_send = request.data
+            data_to_send = request.data  # type: ignore
         try:
             response = await loop.run_in_executor(
                 None,

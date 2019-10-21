@@ -33,16 +33,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
-    try:
+    if package_name in MYPY_HARD_FAILURE_OPTED:
+        logging.info("Package {} has opted to run mypy".format(package_name))
         check_call(
-            [sys.executable, "-m", "mypy", os.path.join(args.target_package, "azure")]
+            [
+                sys.executable,
+                "-m",
+                "mypy",
+                "--ignore-missing",
+                os.path.join(args.target_package, "azure"),
+            ]
         )
-    except CalledProcessError as e:
-        logging.error("{} exited with mypy error {}".format(package_name, e.returncode))
-
-        # return failure if package has opted in mark mypy failure as hard error
-        if package_name in MYPY_HARD_FAILURE_OPTED:
-            logging.error(
-                "Package {} has opted to fail CI when mypy fails".format(package_name)
-            )
-            exit(1)
