@@ -285,7 +285,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_key_versions(self, name, **kwargs):
+    def list_properties_of_key_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[KeyProperties]
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
@@ -295,8 +295,8 @@ class KeyClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
-                :start-after: [START list_key_versions]
-                :end-before: [END list_key_versions]
+                :start-after: [START list_properties_of_key_versions]
+                :end-before: [END list_properties_of_key_versions]
                 :language: python
                 :caption: List all versions of a key
                 :dedent: 8

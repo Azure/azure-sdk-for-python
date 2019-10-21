@@ -245,7 +245,7 @@ class KeyClientTests(KeyVaultTestCase):
             key = client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_key_versions(key_name, max_page_size=max_page_size)
+        result = client.list_properties_of_key_versions(key_name, max_page_size=max_page_size)
 
         # validate list key versions with attributes
         for key in result:

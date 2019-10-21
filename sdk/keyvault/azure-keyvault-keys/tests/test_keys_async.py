@@ -232,7 +232,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             key = await client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_key_versions(key_name)
+        result = client.list_properties_of_key_versions(key_name)
 
         # validate list key versions with attributes
         async for key in result:
