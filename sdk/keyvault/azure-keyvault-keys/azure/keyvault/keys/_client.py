@@ -271,7 +271,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all the deleted keys
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_keys(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -295,7 +295,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all keys
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_keys(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -304,7 +304,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_key_versions(self, name, **kwargs):
+    def list_properties_of_key_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[KeyProperties]
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
@@ -314,13 +314,13 @@ class KeyClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
-                :start-after: [START list_key_versions]
-                :end-before: [END list_key_versions]
+                :start-after: [START list_properties_of_key_versions]
+                :end-before: [END list_properties_of_key_versions]
                 :language: python
                 :caption: List all versions of a key
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_key_versions(
             self._vault_endpoint,
             name,

@@ -197,7 +197,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret.id] = secret
 
         # list secret versions
-        result = client.list_secret_versions(secret_name)
+        result = client.list_properties_of_secret_versions(secret_name)
 
         # validate list secret versions with attributes
         async for secret in result:

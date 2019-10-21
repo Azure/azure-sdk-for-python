@@ -182,7 +182,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_secrets(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -191,7 +191,7 @@ class SecretClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_secret_versions(self, name, **kwargs):
+    def list_properties_of_secret_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[SecretProperties]
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
@@ -202,14 +202,14 @@ class SecretClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
-                :start-after: [START list_secret_versions]
-                :end-before: [END list_secret_versions]
+                :start-after: [START list_properties_of_secret_versions]
+                :end-before: [END list_properties_of_secret_versions]
                 :language: python
                 :caption: List all versions of a secret
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_secret_versions(
             self._vault_endpoint,
             name,
@@ -348,7 +348,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_secrets(
             self._vault_endpoint,
             maxresults=max_page_size,

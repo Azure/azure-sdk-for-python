@@ -172,7 +172,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_secret_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
+    def list_properties_of_secret_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
@@ -182,8 +182,8 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
-                :start-after: [START list_secret_versions]
-                :end-before: [END list_secret_versions]
+                :start-after: [START list_properties_of_secret_versions]
+                :end-before: [END list_properties_of_secret_versions]
                 :language: python
                 :caption: List all versions of a secret
                 :dedent: 8

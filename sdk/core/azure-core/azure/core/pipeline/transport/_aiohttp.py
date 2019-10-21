@@ -62,7 +62,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START aiohttp]
             :end-before: [END aiohttp]
             :language: python

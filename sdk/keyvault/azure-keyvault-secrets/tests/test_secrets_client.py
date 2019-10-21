@@ -171,7 +171,7 @@ class SecretClientTests(KeyVaultTestCase):
                 secret = client.set_secret(secret_name, secret_value)
                 expected[secret.id] = secret
 
-        result = client.list_secret_versions(secret_name, max_page_size=max_page_size)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_page_size)
 
         # validate list secret versions with attributes
         for secret in result:

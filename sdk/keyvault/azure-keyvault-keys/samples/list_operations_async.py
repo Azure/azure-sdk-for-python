@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. List keys from the Key Vault (list_keys)
 #
-# 3. List key versions from the Key Vault (list_key_versions)
+# 3. List key versions from the Key Vault (list_properties_of_key_versions)
 #
 # 4. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this
 # operation.
@@ -71,7 +71,7 @@ async def run_sample():
 
         # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.
         print("\n.. List versions of the key using its name")
-        key_versions = client.list_key_versions(rsa_key.name)
+        key_versions = client.list_properties_of_key_versions(rsa_key.name)
         async for key in key_versions:
             print("RSA Key with name '{0}' has version: '{1}'".format(key.name, key.version))
 
