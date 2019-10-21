@@ -112,7 +112,7 @@ class AttestationProviderListResult(Model):
 class AttestationServiceCreationParams(Model):
     """Client supplied parameters passed to attestation service.
 
-    :param attestation_policy: Name of attestationpolicy.
+    :param attestation_policy: Name of attestation policy.
     :type attestation_policy: str
     :param policy_signing_certificates: JSON Web Key Set defining a set of
      X.509 Certificates that will represent the parent certificate for the

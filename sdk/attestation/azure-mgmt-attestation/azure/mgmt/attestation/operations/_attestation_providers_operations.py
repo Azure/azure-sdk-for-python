@@ -110,7 +110,7 @@ class AttestationProvidersOperations(object):
         :type resource_group_name: str
         :param provider_name: Name of the attestation service
         :type provider_name: str
-        :param attestation_policy: Name of attestationpolicy.
+        :param attestation_policy: Name of attestation policy.
         :type attestation_policy: str
         :param policy_signing_certificates: JSON Web Key Set defining a set of
          X.509 Certificates that will represent the parent certificate for the
