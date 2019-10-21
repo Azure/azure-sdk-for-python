@@ -2,7 +2,7 @@ parameters:
   ServiceDirectory: ''
   BeforePublishSteps: []
   TestMarkArgument: ''
-  BuildTargetingString: 'azure-*'
+  BuildTargetingString: 'azure-identity'
 
 jobs:
   - job: 'Build'
