@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Optional, Union, Dict, Any, TYPE_CHECKING
+    Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -30,11 +30,11 @@ from ._generated.models import (
     DeleteSnapshotsOptionType,
     SharePermission)
 from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
-from .directory_client import DirectoryClient
-from .file_client import FileClient
+from ._directory_client import DirectoryClient
+from ._file_client import FileClient
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy
+    from ._models import ShareProperties, AccessPolicy
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -237,7 +237,7 @@ class ShareClient(StorageAccountHostsMixin):
             _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
-    def create_share(self, **kwargs):  # type: ignore
+    def create_share(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Creates a new Share under the account. If a share with the
         same name already exists, the operation fails.
@@ -396,7 +396,7 @@ class ShareClient(StorageAccountHostsMixin):
         return props # type: ignore
 
     @distributed_trace
-    def set_share_quota(self, quota, **kwargs): # type: ignore
+    def set_share_quota(self, quota, **kwargs):
         # type: (int, Any) ->  Dict[str, Any]
         """Sets the quota for the share.
 
@@ -428,7 +428,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_share_metadata(self, metadata, **kwargs): # type: ignore
+    def set_share_metadata(self, metadata, **kwargs):
         # type: (Dict[str, Any], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
 
@@ -490,7 +490,7 @@ class ShareClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def set_share_access_policy(self, signed_identifiers, **kwargs): # type: ignore
+    def set_share_access_policy(self, signed_identifiers, **kwargs):
         # type: (Dict[str, AccessPolicy], Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
         policies that may be used with Shared Access Signatures. The permissions
@@ -528,7 +528,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_share_stats(self, **kwargs): # type: ignore
+    def get_share_stats(self, **kwargs):
         # type: (Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
 
@@ -550,13 +550,13 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def list_directories_and_files( # type: ignore
+    def list_directories_and_files(
             self, directory_name=None,  # type: Optional[str]
             name_starts_with=None,  # type: Optional[str]
             marker=None,  # type: Optional[str]
             **kwargs  # type: Any
         ):
-        # type: (...) -> Iterable[dict[str,str]]
+        # type: (...) -> Iterable[Dict[str,str]]
         """Lists the directories and files under the share.
 
         :param str directory_name:
@@ -664,7 +664,7 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
-        :rtype: ~azure.storage.file.directory_client.DirectoryClient
+        :rtype: ~azure.storage.file.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)

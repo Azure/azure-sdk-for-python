@@ -30,19 +30,19 @@ from .._generated.models import (
     SignedIdentifier)
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions
-from ..container_client import ContainerClient as ContainerClientBase
-from ..lease import get_access_conditions
-from ..models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
-from .models import BlobPropertiesPaged, BlobPrefix
-from .lease_async import LeaseClient
-from .blob_client_async import BlobClient
+from .._container_client import ContainerClient as ContainerClientBase
+from .._lease import get_access_conditions
+from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
+from ._models import BlobPropertiesPaged, BlobPrefix
+from ._lease_async import LeaseClient
+from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import ContainerSasPermissions, PublicAccess
+    from .._models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
-    from ..models import ( # pylint: disable=unused-import
+    from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
         ContentSettings,
         StandardBlobTier,
@@ -104,7 +104,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     """
     def __init__(
             self, account_url,  # type: str
-            container_name=None,  # type: str
+            container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
@@ -269,7 +269,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         return lease
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs): # type: ignore
+    async def get_account_information(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 

@@ -20,20 +20,20 @@ from .._serialize import get_modify_conditions
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
 from .._deserialize import deserialize_blob_properties
-from ..blob_client import BlobClient as BlobClientBase
+from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ..models import BlobType, BlobBlock
-from ..lease import get_access_conditions
-from .lease_async import LeaseClient
-from .download_async import StorageStreamDownloader
+from .._models import BlobType, BlobBlock
+from .._lease import get_access_conditions
+from ._lease_async import LeaseClient
+from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
-    from ..models import (  # pylint: disable=unused-import
+    from .._models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobSasPermissions,
@@ -914,7 +914,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
-        # type: (int, Optional[str], Optional[int], Any) -> LeaseClient
+        # type: (int, Optional[str], Any) -> LeaseClient
         """Requests a new lease.
 
         If the blob does not have an active lease, the Blob
@@ -1204,7 +1204,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
+        # type: (Union[str, PremiumPageBlobTier], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -1241,7 +1241,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
-        # type: (...) -> List[dict[str, int]]
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
@@ -1575,7 +1575,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def clear_page(self, offset, length, **kwargs):
-        # type: (int, int) -> Dict[str, Union[str, datetime]]
+        # type: (int, int, Any) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
         :param int offset:
@@ -1710,8 +1710,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async()
     async def append_block_from_url(self, copy_source_url,  # type: str
-                                    source_offset=None,  # type Optional[int]
-                                    source_length=None,  # type Optional[int]
+                                    source_offset=None,  # type: Optional[int]
+                                    source_length=None,  # type: Optional[int]
                                     **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """

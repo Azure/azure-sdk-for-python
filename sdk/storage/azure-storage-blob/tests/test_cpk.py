@@ -13,9 +13,11 @@ from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
     BlobBlock,
+    CustomerProvidedEncryptionKey,
+    BlobSasPermissions,
     generate_blob_sas
 )
-from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
+
 from testcase import (
     StorageTestCase,
     TestMode,

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .models import ShareProperties, DirectoryProperties, FileProperties
+from ._models import ShareProperties, DirectoryProperties, FileProperties
 from ._shared.response_handlers import deserialize_metadata
 
 

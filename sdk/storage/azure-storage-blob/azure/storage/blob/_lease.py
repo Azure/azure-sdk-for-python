@@ -78,7 +78,7 @@ class LeaseClient(object):
 
     @distributed_trace
     def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, Optional[int], **Any) -> None
+        # type: (int, **Any) -> None
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a

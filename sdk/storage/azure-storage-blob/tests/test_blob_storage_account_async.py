@@ -19,7 +19,7 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from azure.storage.blob.models import (
+from azure.storage.blob import (
     StandardBlobTier
 )
 

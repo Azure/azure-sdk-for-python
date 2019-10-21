@@ -28,7 +28,7 @@ from ._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .models import BlobProperties, ContainerProperties
+from ._models import BlobProperties, ContainerProperties
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import

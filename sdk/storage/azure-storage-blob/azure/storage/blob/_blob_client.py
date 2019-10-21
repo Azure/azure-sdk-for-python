@@ -43,14 +43,14 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .models import BlobType, BlobBlock
-from .download import StorageStreamDownloader
-from .lease import LeaseClient, get_access_conditions
+from ._models import BlobType, BlobBlock
+from ._download import StorageStreamDownloader
+from ._lease import LeaseClient, get_access_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
-    from .models import (  # pylint: disable=unused-import
+    from ._models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         BlobSasPermissions,
@@ -470,7 +470,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return upload_append_blob(**options)
 
     def _download_blob_options(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], bool, **Any) -> Dict[str, Any]
+        # type: (Optional[int], Optional[int], **Any) -> Dict[str, Any]
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
@@ -514,7 +514,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], bool, **Any) -> Iterable[bytes]
+        # type: (Optional[int], Optional[int], **Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
@@ -1692,7 +1692,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _get_block_list_result(self, blocks):
-        # type: (BlockList) -> Tuple(List[BlobBlock], List[BlobBlock])
+        # type: (BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]
         committed = [] # type: List
         uncommitted = [] # type: List
         if blocks.committed_blocks:
@@ -1863,7 +1863,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
+        # type: (Union[str, PremiumPageBlobTier], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -1902,6 +1902,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
             length = offset + length - 1  # Reformat to an inclusive range index
         page_range, _ = validate_and_format_range_headers(
@@ -1931,7 +1933,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
-        # type: (...) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
@@ -2638,8 +2640,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _append_block_from_url_options(  # type: ignore
             self, copy_source_url,  # type: str
-            source_offset=None,  # type Optional[int]
-            source_length=None,  # type Optional[int]
+            source_offset=None,  # type: Optional[int]
+            source_length=None,  # type: Optional[int]
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
@@ -2696,8 +2698,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def append_block_from_url(self, copy_source_url,  # type: str
-                              source_offset=None,  # type Optional[int]
-                              source_length=None,  # type Optional[int]
+                              source_offset=None,  # type: Optional[int]
+                              source_length=None,  # type: Optional[int]
                               **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """

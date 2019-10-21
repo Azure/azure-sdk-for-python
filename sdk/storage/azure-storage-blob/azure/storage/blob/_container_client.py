@@ -36,23 +36,24 @@ from ._generated.models import (
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
 from ._serialize import get_modify_conditions
-from .models import ( # pylint: disable=unused-import
+from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobPropertiesPaged,
     BlobType,
     BlobPrefix)
-from .lease import LeaseClient, get_access_conditions
-from .blob_client import BlobClient
+from ._lease import LeaseClient, get_access_conditions
+from ._blob_client import BlobClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
     from datetime import datetime
-    from .models import ( # pylint: disable=unused-import
+    from ._models import (  # pylint: disable=unused-import
         PublicAccess,
         AccessPolicy,
         ContentSettings,
+        StandardBlobTier,
         PremiumPageBlobTier)
 
 
@@ -363,7 +364,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return lease
 
     @distributed_trace
-    def get_account_information(self, **kwargs): # type: ignore
+    def get_account_information(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
