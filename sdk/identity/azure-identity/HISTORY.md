@@ -9,6 +9,22 @@ async API is optional. To use async credentials, please install
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for information about customizing the transport.
 - Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
+- All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
+- Changes to `InteractiveBrowserCredential` parameters
+  - positional parameter `client_id` is now an optional keyword argument. If no value is provided,
+the Azure CLI's client ID will be used.
+  - Optional keyword argument `tenant` renamed `tenant_id`
+- Changes to `DeviceCodeCredential`
+  - optional positional parameter `prompt_callback` is now a keyword argument
+  - `prompt_callback`'s third argument is now a `datetime` representing the
+  expiration time of the device code
+  - optional keyword argument `tenant` renamed `tenant_id`
+- Changes to `ManagedIdentityCredential`
+  - now accepts no positional arguments, and only one keyword argument:
+  `client_id`
+  - transport configuration is now done through keyword arguments as
+  described in
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
 
 
 ## 1.0.0b4 (2019-10-07)
