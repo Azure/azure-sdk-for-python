@@ -1,6 +1,6 @@
 # Azure Storage Queues client library for Python
 
-Azure Storage Queues is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
+Azure Queue storage is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
 
 Common uses of Queue storage include:
 
@@ -39,13 +39,10 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 ### Create the client
-The Azure Storage Queues client library for Python allows you to interact with three types of resources:
-* The storage account itself
-* A queue within the storage account, which contains a set of messages
-* A message within a queue, in any format, of up to 64 KB
-
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will
-need the storage account's queue service endpoint URL and a credential that allows you to access the storage account:
+The Azure Storage Queues client library for Python allows you to interact with three types of resources: the storage
+account itself, queues, and messages. Interaction with these resources starts with an instance of a [client](#clients).
+To create a client object, you will need the storage account's queue service endpoint URL and a credential that allows
+you to access the storage account:
 
 ```python
 from azure.storage.queue import QueueServiceClient
@@ -86,8 +83,17 @@ from azure.storage.queue import QueueServiceClient
 service = QueueServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
 
-## Clients
-The Storage Queues SDK provides two different clients to interact with the Queue Service:
+## Key concepts
+The following components make up the Azure Queue Service:
+* The storage account itself
+* A queue within the storage account, which contains a set of messages
+* A message within a queue, in any format, of up to 64 KB
+
+The Azure Storage Queues client library for Python allows you to interact with each of these components through the
+use of a dedicated client object.
+
+### Clients
+Two different clients are provided to to interact with the various components of the Queue Service:
 1. **[QueueServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html#azure.storage.queue.QueueServiceClient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the queues within. It provides operations to retrieve and configure the account
@@ -98,7 +104,7 @@ The Storage Queues SDK provides two different clients to interact with the Queue
     operations to create, delete, or configure a queue and includes operations to enqueue, receive, peek, delete, and
     update messages within it.
 
-## Messages
+### Messages
 Once you've initialized a `QueueClient`, you can use the following operations to work with the messages in the queue:
 * **Enqueue** - Adds a message to the queue and optionally sets a visibility timeout for the message.
 * **Receive** - Retrieves a message from the queue and makes it invisible to other consumers.
@@ -240,9 +246,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
     * Peek and update messages
     
 ### Additional documentation
-
-For more extensive documentation on the Azure Storage Queues, see the [Azure Storage Queues documentation](https://docs.microsoft.com/azure/storage/) on docs.microsoft.com.
-
+For more extensive documentation on Azure Queue storage, see the [Azure Queue storage documentation](https://docs.microsoft.com/en-us/azure/storage/queues/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

@@ -1,4 +1,4 @@
-# Azure Storage File client library for Python
+# Azure Storage Files client library for Python
 Azure File storage offers fully managed file shares in the cloud that are accessible via the industry standard [Server Message Block (SMB) protocol](https://docs.microsoft.com/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview). Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
 
 Azure file shares can be used to:
@@ -17,7 +17,7 @@ Azure file shares can be used to:
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
 ### Install the package
-Install the Azure Storage File client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Storage Files client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
 pip install azure-storage-file --pre
@@ -39,14 +39,10 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 ### Create the client
-The Azure Storage File client library for Python allows you to interact with four types of resources:
-* The storage account itself
-* A file share within the storage account
-* An optional hierarchy of directories within the file share
-* A file within the file share, which may be up to 1 TiB in size
-
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will
-need the storage account's file service endpoint URL and a credential that allows you to access the storage account:
+The Azure Storage Files client library for Python allows you to interact with four types of resources: the storage
+account itself, file shares, directories, and files. Interaction with these resources starts with an instance of a
+[client](#clients). To create a client object, you will need the storage account's file service endpoint URL and a
+credential that allows you to access the storage account:
 
 ```python
 from azure.storage.file import FileServiceClient
@@ -84,8 +80,18 @@ from azure.storage.file import FileServiceClient
 service = FileServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
 
-## Clients
-The Storage File SDK provides four different clients to interact with the File Service:
+## Key concepts
+The following components make up the Azure File Service:
+* The storage account itself
+* A file share within the storage account
+* An optional hierarchy of directories within the file share
+* A file within the file share, which may be up to 1 TiB in size
+
+The Azure Storage Files client library for Python allows you to interact with each of these components through the
+use of a dedicated client object.
+
+### Clients
+Four different clients are provided to to interact with the various components of the File Service:
 1. **[FileServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.FileServiceClient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
@@ -255,9 +261,7 @@ Several Storage File Python SDK samples are available to you in the SDK's GitHub
     * Copy a file from a URL
 
 ### Additional documentation
-
-For more extensive documentation on the Azure Storage File, see the [Azure Storage File documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file) on docs.microsoft.com.
-
+For more extensive documentation on Azure File storage, see the [Azure File storage documentation](https://docs.microsoft.com/en-us/azure/storage/files/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

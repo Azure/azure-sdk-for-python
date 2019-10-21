@@ -42,13 +42,10 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 ### Create the client
-The Azure Storage Blobs client library for Python allows you to interact with three types of resources:
-* The storage account itself
-* A container within the storage account
-* A blob within a container
-
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will
-need the storage account's blob service endpoint URL and a credential that allows you to access the storage account:
+The Azure Storage Blobs client library for Python allows you to interact with three types of resources: the storage
+account itself, blob storage containers, and blobs. Interaction with these resources starts with an instance of a
+[client](#clients). To create a client object, you will need the storage account's blob service endpoint URL and a
+credential that allows you to access the storage account:
 
 ```python
 from azure.storage.blob import BlobServiceClient
@@ -91,8 +88,17 @@ from azure.storage.blob import BlobServiceClient
 service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
 
-## Clients
-The Storage Blobs SDK provides four different clients to interact with the Blob Service:
+## Key concepts
+The following components make up the Azure Blob Service:
+* The storage account itself
+* A container within the storage account
+* A blob within a container
+
+The Azure Storage Blobs client library for Python allows you to interact with each of these components through the
+use of a dedicated client object.
+
+### Clients
+Four different clients are provided to to interact with the various components of the Blob Service:
 1. **[BlobServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.BlobServiceClient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the containers and blobs within. It provides operations to retrieve and configure the
@@ -111,7 +117,7 @@ The Storage Blobs SDK provides four different clients to interact with the Blob 
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
-## Blob Types
+### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
 * **[Block blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)**
   store text and binary data, up to about 4.7 TB. Block blobs are made up of blocks of data that can be managed
@@ -256,9 +262,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
 
 
 ### Additional documentation
-
-For more extensive documentation on the Azure Storage Blobs, see the [Azure Storage Blobs documentation](https://docs.microsoft.com/azure/storage/) on docs.microsoft.com.
-
+For more extensive documentation on Azure Blob storage, see the [Azure Blob storage documentation](https://docs.microsoft.com/en-us/azure/storage/blobs/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
