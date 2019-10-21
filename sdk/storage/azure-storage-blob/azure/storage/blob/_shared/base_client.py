@@ -34,7 +34,8 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
@@ -187,7 +188,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
         ]
         return config, Pipeline(config.transport, policies=policies)
 

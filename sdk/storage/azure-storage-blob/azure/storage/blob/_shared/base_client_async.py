@@ -16,7 +16,8 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -91,7 +92,8 @@ class AsyncStorageAccountHostsMixin(object):
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
         ]
         return config, AsyncPipeline(config.transport, policies=policies)
 
