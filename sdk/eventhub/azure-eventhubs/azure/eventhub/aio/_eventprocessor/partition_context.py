@@ -12,15 +12,16 @@ class PartitionContext(object):
 
     Users can use update_checkpoint() of this class to save checkpoint data.
     """
-    def __init__(self, eventhub_name: str, consumer_group_name: str,
-                 partition_id: str, owner_id: str, partition_manager: PartitionManager):
+    def __init__(self, namespace: str, eventhub_name: str, consumer_group_name: str,
+                 partition_id: str, owner_id: str, partition_manager: PartitionManager=None):
+        self.namespace = namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
         self._partition_manager = partition_manager
 
-    async def update_checkpoint(self, offset, sequence_number=None):
+    async def update_checkpoint(self, event):
         """
         Updates the checkpoint using the given information for the associated partition and consumer group in the
         chosen storage service.
@@ -32,8 +33,8 @@ class PartitionContext(object):
         :type sequence_number: int
         :return: None
         """
-        # TODO: whether change this method to accept event_data as well
+        assert self._partition_manager is not None
         await self._partition_manager.update_checkpoint(
-            self.eventhub_name, self.consumer_group_name, self.partition_id, self.owner_id, offset,
-            sequence_number
+            self.namespace, self.eventhub_name, self.consumer_group_name, self.partition_id, event.offset,
+            event.sequence_number
         )

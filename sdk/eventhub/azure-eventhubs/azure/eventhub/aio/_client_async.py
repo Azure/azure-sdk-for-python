@@ -13,14 +13,14 @@ from typing import Any, List, Dict, Union, TYPE_CHECKING
 from uamqp import authentication, constants  # type: ignore
 from uamqp import Message, AMQPClientAsync  # type: ignore
 
-from azure.eventhub.common import parse_sas_token, EventPosition, \
+from .._common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ..client_abstract import EventHubClientAbstract
+from .._client_abstract import EventHubClientAbstract
 
-from .producer_async import EventHubProducer
-from .consumer_async import EventHubConsumer
+from ._producer_async import EventHubProducer
+from ._consumer_async import EventHubConsumer
 from ._connection_manager_async import get_connection_manager
-from .error_async import _handle_exception
+from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -202,7 +202,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(
+    def _create_consumer(
             self,
             consumer_group: str,
             partition_id: str,
@@ -256,7 +256,7 @@ class EventHubClient(EventHubClientAbstract):
             track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
         return handler
 
-    def create_producer(
+    def _create_producer(
             self, *,
             partition_id: str = None,
             send_timeout: float = None,

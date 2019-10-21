@@ -14,8 +14,8 @@ from typing import Union, Any, TYPE_CHECKING
 
 from uamqp import types  # type: ignore
 from azure.eventhub import __version__
-from azure.eventhub.configuration import _Configuration
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+from ._configuration import Configuration
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
 try:
     from urlparse import urlparse  # type: ignore
@@ -145,7 +145,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._config = _Configuration(**kwargs)
+        self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
 
         log.info("%r: Created the Event Hub client", self._container_id)

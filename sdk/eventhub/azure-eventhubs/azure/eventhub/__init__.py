@@ -4,15 +4,15 @@
 # --------------------------------------------------------------------------------------------
 
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
-__version__ = "5.0.0b4"
+__version__ = "5.0.0b5"
 from uamqp import constants  # type: ignore
-from azure.eventhub.common import EventData, EventDataBatch, EventPosition
-from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
+from ._common import EventData, EventDataBatch, EventPosition
+from ._error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
-from azure.eventhub.client import EventHubClient
-from azure.eventhub.producer import EventHubProducer
-from azure.eventhub.consumer import EventHubConsumer
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._client import EventHubClient
+from ._producer import EventHubProducer
+from ._consumer import EventHubConsumer
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 TransportType = constants.TransportType
 
