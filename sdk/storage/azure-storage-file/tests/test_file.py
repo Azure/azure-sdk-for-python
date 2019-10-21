@@ -16,6 +16,8 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 
 from azure.storage.file import (
+    generate_account_sas,
+    generate_file_sas,
     FileClient,
     FileServiceClient,
     ContentSettings,
@@ -147,7 +149,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(properties.copy.status, 'success')
 
     def assertFileEqual(self, file_client, expected_data):
-        actual_data = file_client.download_file().content_as_bytes()
+        actual_data = file_client.download_file().readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -413,10 +415,10 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         properties = file_client.get_file_properties()
-        self.assertEquals(properties.content_settings.content_language, content_settings.content_language)
-        self.assertEquals(properties.content_settings.content_disposition, content_settings.content_disposition)
-        self.assertEquals(properties.creation_time, creation_time)
-        self.assertEquals(properties.last_write_time, last_write_time)
+        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertEqual(properties.creation_time, creation_time)
+        self.assertEqual(properties.last_write_time, last_write_time)
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
@@ -568,10 +570,11 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511)
+        file_client.upload_range(data, offset=0, length=512)
 
         # Assert
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
+        self.assertEqual(len(data), 512)
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -582,7 +585,7 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511, validate_content=True)
+        file_client.upload_range(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -596,15 +599,19 @@ class StorageFileTest(FileTestCase):
         destination_file_client = self._create_file(destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = \
-            source_file_client.generate_shared_access_signature()
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+        )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
         # Act
         with self.assertRaises(HttpResponseError):
             # when the source file has less bytes than 2050, throw exception
-            destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+            destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
     @record
     def test_update_range_from_file_url(self):
@@ -612,25 +619,28 @@ class StorageFileTest(FileTestCase):
         source_file_name = 'testfile'
         source_file_client = self._create_file(file_name=source_file_name)
         data = b'abcdefghijklmnop' * 32
-        source_file_client.upload_range(data, 0, 511)
+        source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = \
-            source_file_client.generate_shared_access_signature(
-                                                          FileSasPermissions(read=True),
-                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=511).content_as_bytes()
+        file_content = destination_file_client.download_file(offset=0, length=512).readall()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(511, file_ranges[0].get('end'))
@@ -644,26 +654,29 @@ class StorageFileTest(FileTestCase):
 
         source_file_client = self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
         data = b'abcdefghijklmnop' * 65536
-        source_file_client.upload_range(data, 0, end)
+        source_file_client.upload_range(data, offset=0, length=end+1)
 
         destination_file_name = 'filetoupdate1'
         destination_file_client = self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
 
         # generate SAS for the source file
-        sas_token_for_source_file = \
-            source_file_client.generate_shared_access_signature(
-                                                          FileSasPermissions(read=True),
-                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=end+1, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        file_content = destination_file_client.download_file(offset=0, length=end + 1).readall()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(end, file_ranges[0].get('end'))
@@ -677,10 +690,10 @@ class StorageFileTest(FileTestCase):
         file_client = self._create_file()
 
         # Act
-        resp = file_client.clear_range(0, 511)
+        resp = file_client.clear_range(offset=0, length=512)
 
         # Assert
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
         self.assertEqual(b'\x00' * 512, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -691,12 +704,12 @@ class StorageFileTest(FileTestCase):
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        file_client.upload_range(data, 0, 511)
+        file_client.upload_range(data, offset=0, length=512)
 
         encoded = data.encode('utf-8')
 
         # Assert
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
         self.assertEqual(encoded, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -732,8 +745,8 @@ class StorageFileTest(FileTestCase):
         file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
-        resp1 = file_client.upload_range(data, 0, 511)
-        resp2 = file_client.upload_range(data, 1024, 1535)
+        resp1 = file_client.upload_range(data, offset=0, length=512)
+        resp2 = file_client.upload_range(data, offset=1024, length=512)
 
         # Act
         ranges = file_client.get_ranges()
@@ -786,8 +799,8 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
-        resp1 = file_client.upload_range(data, 0, 511)
-        resp2 = file_client.upload_range(data, 1024, 1535)
+        resp1 = file_client.upload_range(data, offset=0, length=512)
+        resp2 = file_client.upload_range(data, offset=1024, length=512)
         
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
@@ -829,7 +842,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(copy['copy_status'], 'success')
         self.assertIsNotNone(copy['copy_id'])
 
-        copy_file = file_client.download_file().content_as_bytes()
+        copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
     @record
@@ -857,7 +870,11 @@ class StorageFileTest(FileTestCase):
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
-        sas_token = source_file.generate_shared_access_signature(
+        sas_token = generate_file_sas(
+            source_file.account_name,
+            source_file.share_name,
+            source_file.file_path,
+            source_file.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -876,7 +893,7 @@ class StorageFileTest(FileTestCase):
         self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
         self._wait_for_async_copy(self.share_name, target_file_name)
 
-        actual_data = file_client.download_file().content_as_bytes()
+        actual_data = file_client.download_file().readall()
         self.assertEqual(actual_data, data)
 
     @record
@@ -885,7 +902,11 @@ class StorageFileTest(FileTestCase):
         data = b'12345678' * 1024 * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
-        sas_token = source_file.generate_shared_access_signature(
+        sas_token = generate_file_sas(
+            source_file.account_name,
+            source_file.share_name,
+            source_file.file_path,
+            source_file.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -904,7 +925,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         target_file = file_client.download_file()
-        self.assertEqual(target_file.content_as_bytes(), b'')
+        self.assertEqual(target_file.readall(), b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
     @record
@@ -939,7 +960,7 @@ class StorageFileTest(FileTestCase):
         file_client.upload_file(b'hello world')
 
         # Act
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -959,7 +980,7 @@ class StorageFileTest(FileTestCase):
         file_client.upload_file(data)
 
         # Assert
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
         self.assertEqual(content, data)
 
     @record
@@ -972,7 +993,7 @@ class StorageFileTest(FileTestCase):
         file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
 
         # Assert
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
         properties = file_client.get_file_properties()
         self.assertEqual(content, data)
         self.assertIn('Temporary', properties.file_attributes)
@@ -992,7 +1013,7 @@ class StorageFileTest(FileTestCase):
         file_client.upload_file(binary_data)
 
         # Act
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(content, binary_data)
@@ -1402,7 +1423,11 @@ class StorageFileTest(FileTestCase):
 
         # Arrange
         file_client = self._create_file()
-        token = file_client.generate_shared_access_signature(
+        token = generate_file_sas(
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1413,7 +1438,7 @@ class StorageFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(self.short_byte_data, content)
@@ -1435,14 +1460,19 @@ class StorageFileTest(FileTestCase):
         identifiers = {'testid': access_policy}
         share_client.set_share_access_policy(identifiers)
 
-        token = file_client.generate_shared_access_signature(policy_id='testid')
+        token = generate_file_sas(
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
+            policy_id='testid')
 
         # Act
-        sas_file = FileClient(
+        sas_file = FileClient.from_file_url(
             file_client.url,
             credential=token)
 
-        content = file_client.download_file().content_as_bytes()
+        content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(self.short_byte_data, content)
@@ -1455,7 +1485,9 @@ class StorageFileTest(FileTestCase):
 
         # Arrange
         file_client = self._create_file()
-        token = self.fsc.generate_shared_access_signature(
+        token = generate_account_sas(
+            self.fsc.account_name,
+            self.fsc.credential.account_key,
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -1482,7 +1514,11 @@ class StorageFileTest(FileTestCase):
 
         # Arrange
         file_client = self._create_file()
-        token = file_client.generate_shared_access_signature(
+        token = generate_file_sas(
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1507,7 +1543,11 @@ class StorageFileTest(FileTestCase):
 
         # Arrange
         file_client = self._create_file()
-        token = file_client.generate_shared_access_signature(
+        token = generate_file_sas(
+            file_client.account_name,
+            file_client.share_name,
+            file_client.file_path,
+            file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
@@ -1542,7 +1582,11 @@ class StorageFileTest(FileTestCase):
         # Arrange
         updated_data = b'updated file data'
         file_client_admin = self._create_file()
-        token = file_client_admin.generate_shared_access_signature(
+        token = generate_file_sas(
+            file_client_admin.account_name,
+            file_client_admin.share_name,
+            file_client_admin.file_path,
+            file_client_admin.credential.account_key,
             permission=FileSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1558,7 +1602,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertTrue(response.ok)
-        file_content = file_client_admin.download_file().content_as_bytes()
+        file_content = file_client_admin.download_file().readall()
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
     @record
@@ -1569,7 +1613,11 @@ class StorageFileTest(FileTestCase):
 
         # Arrange
         file_client_admin = self._create_file()
-        token = file_client_admin.generate_shared_access_signature(
+        token = generate_file_sas(
+            file_client_admin.account_name,
+            file_client_admin.share_name,
+            file_client_admin.file_path,
+            file_client_admin.credential.account_key,
             permission=FileSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

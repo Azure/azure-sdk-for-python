@@ -4,7 +4,7 @@
 # ------------------------------------
 import datetime
 import os
-from azure.keyvault.certificates import CertificateClient
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -21,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
-# 1. Create certificate (create_certificate)
+# 1. Create certificate (begin_create_certificate)
 #
 # 2. List certificates from the Key Vault (list_certificates)
 #
@@ -45,8 +45,12 @@ try:
     bank_cert_name = "BankListCertificate"
     storage_cert_name = "StorageListCertificate"
 
-    bank_certificate_poller = client.create_certificate(name=bank_cert_name)
-    storage_certificate_poller = client.create_certificate(name=storage_cert_name)
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default()
+    )
+    storage_certificate_poller = client.begin_create_certificate(
+        name=storage_cert_name, policy=CertificatePolicy.get_default()
+    )
 
     # await the creation of the bank and storage certificate
     bank_certificate = bank_certificate_poller.result()
@@ -61,11 +65,13 @@ try:
     for certificate in certificates:
         print("Certificate with name '{0}' was found.".format(certificate.name))
 
-    # You've decided to add tags to the certificate you created. Calling create_certificate on an existing
+    # You've decided to add tags to the certificate you created. Calling begin_create_certificate on an existing
     # certificate creates a new version of the certificate in the Key Vault with the new value.
 
     tags = {"a": "b"}
-    bank_certificate_poller = client.create_certificate(name=bank_cert_name, tags=tags)
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+    )
     bank_certificate = bank_certificate_poller.result()
     print(
         "Certificate with name '{0}' was created again with tags '{1}'".format(

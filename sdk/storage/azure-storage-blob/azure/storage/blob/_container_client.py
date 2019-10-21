@@ -21,9 +21,10 @@ import six
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
 
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
@@ -31,10 +32,10 @@ from ._shared.response_handlers import (
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
-    ModifiedAccessConditions,
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
+from ._serialize import get_modify_conditions
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
@@ -43,14 +44,13 @@ from ._models import ( # pylint: disable=unused-import
     BlobPrefix)
 from ._lease import LeaseClient, get_access_conditions
 from ._blob_client import BlobClient
-from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.pipeline.policies import HTTPPolicy # pylint: disable=ungrouped-imports
-    from ._models import ContainerSasPermissions, PublicAccess
     from datetime import datetime
-    from ._models import ( # pylint: disable=unused-import
+    from ._models import (  # pylint: disable=unused-import
+        PublicAccess,
         AccessPolicy,
         ContentSettings,
         StandardBlobTier,
@@ -213,120 +213,6 @@ class ContainerClient(StorageAccountHostsMixin):
         return cls(
             account_url, container_name=container_name, credential=credential, **kwargs)
 
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            user_delegation_key=None,  # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Any
-        """Generates a shared access signature for the container.
-        Use the returned signature with the credential parameter of any BlobServiceClient,
-        ContainerClient or BlobClient.
-
-        :param permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.ContainerSasPermissions
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_container_access_policy`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-            Instead of an account key, the user could pass in a user delegation key.
-            A user delegation key can be obtained from the service by authenticating with an AAD identity;
-            this can be accomplished by calling get_user_delegation_key.
-            When present, the SAS is signed with the user delegation key instead.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :keyword str account_name:
-            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
-        :keyword str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :keyword str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :keyword str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :keyword str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :keyword str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
-                :start-after: [START generate_sas_token]
-                :end-before: [END generate_sas_token]
-                :language: python
-                :dedent: 12
-                :caption: Generating a sas token.
-        """
-        protocol = kwargs.pop('protocol', None)
-        account_name = kwargs.pop('account_name', None)
-        cache_control = kwargs.pop('cache_control', None)
-        content_disposition = kwargs.pop('content_disposition', None)
-        content_encoding = kwargs.pop('content_encoding', None)
-        content_language = kwargs.pop('content_language', None)
-        content_type = kwargs.pop('content_type', None)
-        if user_delegation_key is not None:
-            if not hasattr(self.credential, 'account_name') and not account_name:
-                raise ValueError("No account_name available. Please provide account_name parameter.")
-
-            account_name = self.credential.account_name if hasattr(self.credential, 'account_name') else account_name
-            sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
-        else:
-            if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-                raise ValueError("No account SAS key available.")
-            sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_container(
-            self.container_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-            cache_control=cache_control,
-            content_disposition=content_disposition,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_type=content_type,
-        )
-
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
@@ -390,15 +276,11 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -414,11 +296,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.container.delete(
@@ -460,15 +338,11 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object, that can be run in a context manager.
@@ -583,7 +457,7 @@ class ContainerClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
-        mod_conditions = ModifiedAccessConditions(if_modified_since=kwargs.pop('if_modified_since', None))
+        mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_metadata( # type: ignore
@@ -694,9 +568,7 @@ class ContainerClient(StorageAccountHostsMixin):
             identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
         signed_identifiers = identifiers # type: ignore
         lease = kwargs.pop('lease', None)
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None))
+        mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
@@ -856,15 +728,11 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -964,15 +832,11 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1089,15 +953,11 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An iterator of responses, one for each blob in order
@@ -1299,6 +1159,10 @@ class ContainerClient(StorageAccountHostsMixin):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, _configuration=self._config,

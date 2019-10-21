@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (delete_key)
 #
-# 4. Restore a key (restore_key)
+# 4. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
@@ -41,7 +41,7 @@ async def run_sample():
         # if the key already exists in the Key Vault, then a new version of the key is created.
         print("\n.. Create Key")
         key = await client.create_key("keyName", "RSA")
-        print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_material.kty))
+        print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
         # Backups are good to have, if in case keys gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.

@@ -27,7 +27,8 @@ from azure.storage.blob import (
     BlobProperties,
     ContainerSasPermissions,
     StandardBlobTier,
-    PremiumPageBlobTier
+    PremiumPageBlobTier,
+    generate_container_sas
 )
 
 from azure.storage.blob.aio import (
@@ -1477,7 +1478,10 @@ class StorageContainerTestAsync(StorageTestCase):
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data)
 
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
@@ -1518,7 +1522,7 @@ class StorageContainerTestAsync(StorageTestCase):
             await blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = await (await blob.download_blob()).content_as_bytes()
+            blob_data = await (await blob.download_blob()).readall()
             self.assertIsNotNone(blob)
             self.assertEqual(blob_data.decode('utf-8'), blob_content)
 

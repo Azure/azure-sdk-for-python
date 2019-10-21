@@ -2,8 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from .client import KeyClient
-from .enums import KeyCurveName, KeyOperation, KeyType
-from .models import JsonWebKey
+from ._enums import KeyCurveName, KeyOperation, KeyType
+from ._models import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey
+from ._client import KeyClient
 
-__all__ = ["JsonWebKey", "KeyCurveName", "KeyOperation", "KeyType", "KeyClient"]
+__all__ = [
+    "KeyClient",
+    "JsonWebKey",
+    "KeyVaultKey",
+    "KeyCurveName",
+    "KeyOperation",
+    "KeyType",
+    "DeletedKey",
+    "KeyProperties",
+]

@@ -13,12 +13,12 @@ import asyncio
 import os
 import unittest
 
-from azure.core import HttpResponseError
-from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import BlobSasPermissions
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.blob._shared.policies import StorageContentValidation
 from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
@@ -116,7 +116,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
     async def assertBlobEqual(self, blob, expected_data):
         stream = await blob.download_blob()
-        actual_data = await stream.content_as_bytes()
+        actual_data = await stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -254,7 +254,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -280,7 +285,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         blob = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(blob.get('etag'), resp.get('etag'))
         self.assertEqual(blob.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(blob.get('size'), LARGE_BLOB_SIZE)
@@ -301,7 +306,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -318,7 +328,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -339,7 +349,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_blob_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -359,7 +374,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -382,7 +397,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_blob_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -402,7 +422,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
@@ -426,7 +446,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -437,7 +462,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_match=source_properties.get('etag'))
+                                  source_etag=source_properties.get('etag'),
+                                  source_match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -445,7 +471,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -454,7 +480,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                source_if_match='0x111111111111111')
+                                                                source_etag='0x111111111111111',
+                                                                source_match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_append_block_from_url_with_source_if_match_async(self):
@@ -467,7 +494,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -478,7 +510,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_none_match='0x111111111111111')
+                                  source_etag='0x111111111111111',
+                                  source_match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -486,7 +519,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -495,7 +528,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                source_if_none_match=source_properties.get('etag'))
+                                                                source_etag=source_properties.get('etag'),
+                                                                source_match_condition=MatchConditions.IfModified)
 
     @record
     def test_append_block_from_url_with_source_if_none_match_async(self):
@@ -507,7 +541,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -522,7 +561,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_match=destination_blob_properties_on_creation.get('etag'))
+                                  etag=destination_blob_properties_on_creation.get('etag'),
+                                  match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -530,7 +570,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -539,7 +579,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                if_match='0x111111111111111')
+                                                                etag='0x111111111111111',
+                                                                match_condition=MatchConditions.IfNotModified)
 
     @record
     def test_append_block_from_url_with_if_match_async(self):
@@ -551,7 +592,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -562,7 +608,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_none_match='0x111111111111111')
+                                  etag='0x111111111111111', match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -570,7 +616,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
@@ -580,7 +626,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_offset=0,
                                                                 source_length=LARGE_BLOB_SIZE,
-                                                                if_none_match=destination_blob_properties.get('etag'))
+                                                                etag=destination_blob_properties.get('etag'),
+                                                                match_condition=MatchConditions.IfModified)
 
     @record
     def test_append_block_from_url_with_if_none_match_async(self):
@@ -592,7 +639,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -611,7 +663,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
@@ -633,7 +685,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         await self._setup()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -652,7 +709,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
@@ -675,7 +732,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -694,7 +756,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
@@ -718,7 +780,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -737,7 +804,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, source_blob_data)
+        await self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
         self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)

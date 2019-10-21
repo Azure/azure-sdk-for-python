@@ -40,10 +40,10 @@ credential = DefaultAzureCredential()
 client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     print("\n.. Create keys")
-    rsa_key = client.create_rsa_key("rsaKeyName", hsm=False)
-    ec_key = client.create_ec_key("ecKeyName", hsm=False)
-    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
-    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_material.kty))
+    rsa_key = client.create_rsa_key("rsaKeyName")
+    ec_key = client.create_ec_key("ecKeyName")
+    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
+    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_type))
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):

@@ -20,6 +20,7 @@ Install the Azure Storage Blobs client library for Python with [pip](https://pyp
 ```bash
 pip install azure-storage-blob --pre
 ```
+*Requires Python 2.7, 3.5 or later to use this package.
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
 [Storage Account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
@@ -27,11 +28,18 @@ pip install azure-storage-blob --pre
 To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
 [Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
 
+If you need to create a new resource group:
+
 ```bash
-az storage account create -n MyStorageAccountName -g MyResourceGroupName
+az group create --name my-resource-group --location westus2
 ```
 
-Requires Python 2.7, 3.5 or later to use this package.
+Create your storage account:
+
+```bash
+az storage account create -n mystorageaccountname -g my-resource-group
+```
+
 
 ### Authenticate the client
 
@@ -145,7 +153,7 @@ blob = BlobClient.from_connection_string("my_connection_string", container="myco
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     blob_data = blob.download_blob()
-    my_blob.writelines(blob_data.content_as_bytes())
+    my_blob.writelines(blob_data.readall())
 ```
 
 Download a blob asynchronously.
@@ -157,7 +165,7 @@ blob = BlobClient.from_connection_string("my_connection_string", container="myco
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     stream = await blob.download_blob()
-    data = await stream.content_as_bytes()
+    data = await stream.readall()
     my_blob.write(data)
 ```
 

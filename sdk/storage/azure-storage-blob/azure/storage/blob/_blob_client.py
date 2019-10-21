@@ -27,21 +27,18 @@ from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._deserialize import get_page_ranges_result
 from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
-    SourceModifiedAccessConditions,
-    ModifiedAccessConditions,
     SequenceNumberAccessConditions,
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-
-from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
+from ._serialize import get_modify_conditions, get_source_conditions
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
@@ -49,7 +46,6 @@ from ._upload_helpers import (
 from ._models import BlobType, BlobBlock
 from ._download import StorageStreamDownloader
 from ._lease import LeaseClient, get_access_conditions
-from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -261,116 +257,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=snapshot, credential=credential, **kwargs
-            )
-
-    def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[Union[BlobSasPermissions, str]]
-            expiry=None,  # type: Optional[Union[datetime, str]]
-            start=None,  # type: Optional[Union[datetime, str]]
-            policy_id=None,  # type: Optional[str]
-            ip=None,  # type: Optional[str]
-            user_delegation_key=None,  # type: Optional[UserDelegationKey]
-            **kwargs # type: Any
-            ):
-        # type: (...) -> Any
-        """
-        Generates a shared access signature for the blob.
-        Use the returned signature with the credential parameter of any BlobServiceClient,
-        ContainerClient or BlobClient.
-
-        :param permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :type permission: str or ~azure.storage.blob.BlobSasPermissions
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: ~datetime.datetime or str
-        :param str policy_id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use
-            :func:`~ContainerClient.set_container_access_policy()`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
-            restricts the request to those IP addresses.
-        :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-            Instead of an account key, the user could pass in a user delegation key.
-            A user delegation key can be obtained from the service by authenticating with an AAD identity;
-            this can be accomplished by calling get_user_delegation_key.
-            When present, the SAS is signed with the user delegation key instead.
-        :keyword str protocol:
-            Specifies the protocol permitted for a request made. The default value is https.
-        :keyword str account_name:
-            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
-        :keyword str cache_control:
-            Response header value for Cache-Control when resource is accessed
-            using this shared access signature.
-        :keyword str content_disposition:
-            Response header value for Content-Disposition when resource is accessed
-            using this shared access signature.
-        :keyword str content_encoding:
-            Response header value for Content-Encoding when resource is accessed
-            using this shared access signature.
-        :keyword str content_language:
-            Response header value for Content-Language when resource is accessed
-            using this shared access signature.
-        :keyword str content_type:
-            Response header value for Content-Type when resource is accessed
-            using this shared access signature.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        """
-        protocol = kwargs.pop('protocol', None)
-        account_name = kwargs.pop('account_name', None)
-        cache_control = kwargs.pop('cache_control', None)
-        content_disposition = kwargs.pop('content_disposition', None)
-        content_encoding = kwargs.pop('content_encoding', None)
-        content_language = kwargs.pop('content_language', None)
-        content_type = kwargs.pop('content_type', None)
-
-        if user_delegation_key is not None:
-            if not hasattr(self.credential, 'account_name') and not account_name:
-                raise ValueError("No account_name available. Please provide account_name parameter.")
-
-            account_name = self.credential.account_name if hasattr(self.credential, 'account_name') else account_name
-            sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
-        else:
-            if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
-                raise ValueError("No account SAS key available.")
-            sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
-        return sas.generate_blob(
-            self.container_name,
-            self.blob_name,
-            snapshot=self.snapshot,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            policy_id=policy_id,
-            ip=ip,
-            protocol=protocol,
-            cache_control=cache_control,
-            content_disposition=content_disposition,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_type=content_type,
         )
 
     @distributed_trace
@@ -443,11 +329,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
         if content_settings:
             kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -531,15 +413,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -602,11 +480,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -619,8 +493,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = {
             'clients': self._client,
             'config': self._config,
-            'offset': offset,
-            'length': length,
+            'start_range': offset,
+            'end_range': length,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -630,7 +504,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'cls': deserialize_blob_stream,
-            'timeout': kwargs.pop('timeout', None)}
+            'max_concurrency':kwargs.pop('max_concurrency', 1),
+            'encoding': kwargs.pop('encoding', None),
+            'timeout': kwargs.pop('timeout', None),
+            'name': self.blob_name,
+            'container': self.container_name}
         options.update(kwargs)
         return options
 
@@ -670,20 +548,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to download.
+        :keyword str encoding:
+            Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -704,21 +582,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             offset=offset,
             length=length,
             **kwargs)
-        extra_properties = {
-            'name': self.blob_name,
-            'container': self.container_name
-        }
-        return StorageStreamDownloader(extra_properties=extra_properties, **options)
+        return StorageStreamDownloader(**options)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
         # type: (bool, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
             delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         options = {
@@ -773,15 +643,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -849,15 +715,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -878,11 +740,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         # TODO: extract this out as _get_blob_properties_options
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -908,11 +766,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _set_http_headers_options(self, content_settings=None, **kwargs):
         # type: (Optional[ContentSettings], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -957,15 +811,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -982,11 +832,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -1031,15 +877,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1068,11 +910,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1156,15 +994,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1193,11 +1027,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1255,15 +1085,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1288,11 +1114,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -1340,15 +1162,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -1395,11 +1213,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
 
         timeout = kwargs.pop('timeout', None)
-        dest_mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('destination_if_modified_since', None),
-            if_unmodified_since=kwargs.pop('destination_if_unmodified_since', None),
-            if_match=kwargs.pop('destination_if_match', None),
-            if_none_match=kwargs.pop('destination_if_none_match', None))
+        dest_mod_conditions = get_modify_conditions(kwargs)
         options = {
             'copy_source': source_url,
             'timeout': timeout,
@@ -1408,11 +1222,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'cls': return_response_headers,
         }
         if not incremental_copy:
-            source_mod_conditions = SourceModifiedAccessConditions(
-                source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-                source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-                source_if_match=kwargs.pop('source_if_match', None),
-                source_if_none_match=kwargs.pop('source_if_none_match', None))
+            source_mod_conditions = get_source_conditions(kwargs)
             dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
             options['source_modified_access_conditions'] = source_mod_conditions
             options['lease_access_conditions'] = dest_access_conditions
@@ -1491,19 +1301,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source blob
             has not been modified since the specified date/time.
-        :keyword str source_if_match:
-            An ETag value, or the wildcard character (*). Specify this conditional
-            header to copy the source blob only if its ETag matches the value
-            specified. If the ETag values do not match, the Blob service returns
-            status code 412 (Precondition Failed). This header cannot be specified
-            if the source is an Azure File.
-        :keyword str source_if_none_match:
-            An ETag value, or the wildcard character (*). Specify this conditional
-            header to copy the blob only if its ETag does not match the value
-            specified. If the values are identical, the Blob service returns status
-            code 412 (Precondition Failed). This header cannot be specified if the
-            source is an Azure File.
-        :keyword ~datetime.datetime destination_if_modified_since:
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` source_match_condition:
+            The source match condition to use upon the etag.
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1511,7 +1314,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has been modified since the specified date/time.
             If the destination blob has not been modified, the Blob service returns
             status code 412 (Precondition Failed).
-        :keyword ~datetime.datetime destination_if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -1519,19 +1322,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if the destination blob has not been modified since the specified
             date/time. If the destination blob has been modified, the Blob service
             returns status code 412 (Precondition Failed).
-        :keyword str destination_if_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for
-            this conditional header to copy the blob only if the specified ETag value
-            matches the ETag value for an existing destination blob. If the ETag for
-            the destination blob does not match the ETag specified for If-Match, the
-            Blob service returns status code 412 (Precondition Failed).
-        :keyword str destination_if_none_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for
-            this conditional header to copy the blob only if the specified ETag value
-            does not match the ETag value for the destination blob. Specify the wildcard
-            character (*) to perform the operation only if the destination blob does not
-            exist. If the specified condition isn't met, the Blob service returns status
-            code 412 (Precondition Failed).
+        :keyword str etag:
+            The destination ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The destination match condition to use upon the etag.
         :keyword destination_lease:
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
@@ -1653,15 +1448,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
@@ -1965,11 +1756,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if content_settings:
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -2046,15 +1833,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :param ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -2118,11 +1901,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         ):
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
@@ -2192,15 +1971,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
@@ -2225,11 +2000,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _set_sequence_number_options(self, sequence_number_action, sequence_number=None, **kwargs):
         # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if sequence_number_action is None:
             raise ValueError("A sequence number action must be specified")
         options = {
@@ -2270,15 +2041,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword  int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2294,11 +2061,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _resize_blob_options(self, size, **kwargs):
         # type: (int, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if size is None:
             raise ValueError("A content length must be specified for a Page Blob.")
 
@@ -2345,15 +2108,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -2393,11 +2152,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
 
         validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
@@ -2476,15 +2231,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
-            header to write the page only if the blob's ETag value matches the
-            value specified. If the values do not match, the Blob service fails.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
-            header to write the page only if the blob's ETag value does not
-            match the value specified. If the values are identical, the Blob
-            service fails.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :param ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -2537,16 +2288,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
-        source_mod_conditions = SourceModifiedAccessConditions(
-            source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-            source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-            source_if_match=kwargs.pop('source_if_match', None),
-            source_if_none_match=kwargs.pop('source_if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
+        source_mod_conditions = get_source_conditions(kwargs)
 
         source_content_md5 = kwargs.pop('source_content_md5', None)
         cpk = kwargs.pop('cpk', None)
@@ -2614,15 +2357,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the source resource has not been modified since the specified date/time.
-        :keyword str source_if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the source resource's ETag matches the value specified.
-        :keyword str source_if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the source resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the source resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` source_match_condition:
+            The source match condition to use upon the etag.
         :param str lease:
             Required if the blob has an active lease.
         :keyword int if_sequence_number_lte:
@@ -2646,15 +2385,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            The destination ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The destination match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -2686,12 +2421,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None)
-        )
+        mod_conditions = get_modify_conditions(kwargs)
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
         if length is None or length % 512 != 0:
@@ -2759,15 +2489,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
-            header to write the page only if the blob's ETag value matches the
-            value specified. If the values do not match, the Blob service fails.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
-            header to write the page only if the blob's ETag value does not
-            match the value specified. If the values are identical, the Blob
-            service fails.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -2814,11 +2540,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 append_position=appendpos_condition
             )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -2889,15 +2611,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
@@ -2951,16 +2669,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 append_position=appendpos_condition
             )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = ModifiedAccessConditions(
-            if_modified_since=kwargs.pop('if_modified_since', None),
-            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-            if_match=kwargs.pop('if_match', None),
-            if_none_match=kwargs.pop('if_none_match', None))
-        source_mod_conditions = SourceModifiedAccessConditions(
-            source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-            source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-            source_if_match=kwargs.pop('source_if_match', None),
-            source_if_none_match=kwargs.pop('source_if_none_match', None))
+        mod_conditions = get_modify_conditions(kwargs)
+        source_mod_conditions = get_source_conditions(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -3032,15 +2742,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            The destination ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The destination match condition to use upon the etag.
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -3053,15 +2759,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the source resource has not been modified since the specified date/time.
-        :keyword str source_if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the source resource's ETag matches the value specified.
-        :keyword str source_if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the source resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the source resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` source_match_condition:
+            The source match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.

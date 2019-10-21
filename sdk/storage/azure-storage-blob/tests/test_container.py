@@ -25,7 +25,8 @@ from azure.storage.blob import (
     ContainerSasPermissions,
     AccessPolicy,
     StandardBlobTier,
-    PremiumPageBlobTier
+    PremiumPageBlobTier,
+    generate_container_sas,
 )
 
 from azure.identity import ClientSecretCredential
@@ -1210,7 +1211,10 @@ class StorageContainerTest(StorageTestCase):
         blob = container.get_blob_client(blob_name)
         blob.upload_blob(data)
 
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
@@ -1247,9 +1251,9 @@ class StorageContainerTest(StorageTestCase):
             blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = blob.download_blob()
+            blob_data = blob.download_blob(encoding='utf-8')
             self.assertIsNotNone(blob)
-            self.assertEqual(b"".join(list(blob_data)).decode('utf-8'), blob_content)
+            self.assertEqual(blob_data.readall(), blob_content)
 
         finally:
             # delete container
@@ -1268,7 +1272,10 @@ class StorageContainerTest(StorageTestCase):
                                                                      datetime.utcnow() + timedelta(hours=1))
 
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
-        token = container_client.generate_shared_access_signature(
+        token = generate_container_sas(
+            container_client.account_name,
+            container_client.container_name,
+            account_key=container_client.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
@@ -1281,10 +1288,10 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
-        content = new_blob_client.download_blob()
+        content = new_blob_client.download_blob(encoding='utf-8')
 
         # Assert
-        self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
+        self.assertEqual(blob_content, content.readall())
 
     def test_set_container_permission_from_string(self):
         # Arrange

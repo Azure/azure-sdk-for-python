@@ -18,6 +18,7 @@ from datetime import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.mgmt.storage.models import Endpoints
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -31,6 +32,8 @@ from azure.storage.queue import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_queue_sas
 )
 
 from queuetestcase import (
@@ -541,7 +544,9 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         queue_client.send_message(u'message1')
-        token = qsc.generate_shared_access_signature(
+        token = generate_account_sas(
+            qsc.account_name,
+            qsc.credential.account_key,
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -599,7 +604,10 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
@@ -631,7 +639,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -659,7 +670,10 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -694,7 +708,10 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         queue_client.send_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -733,7 +750,10 @@ class StorageQueueTest(QueueTestCase):
 
         queue_client.send_message(u'message1')
 
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             policy_id='testid'
         )
 
@@ -963,6 +983,21 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            return
+        transport = RequestsTransport()
+        prefix = TEST_QUEUE_PREFIX
+        queue_name = self.get_resource_name(prefix)
+        with QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport) as qsc:
+            qsc.get_service_properties()
+            assert transport.session is not None
+            with qsc.get_queue_client(queue_name) as qc:
+                assert transport.session is not None
+            qsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
