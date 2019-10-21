@@ -50,42 +50,74 @@ jobs:
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
           CoverageArg: ''
+          CustomImage: false
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
           CoverageArg: ''
+          CustomImage: false
         Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
           CoverageArg: ''
+          CustomImage: false
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
           CoverageArg: ''
+          CustomImage: false
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
           CoverageArg: ''
+          CustomImage: false
         MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '2.7'
           CoverageArg: ''
+          CustomImage: false
         Linux_pypy3:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: 'pypy3'
           CoverageArg: '--disablecov'
+          CustomImage: false
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-18.04'
+          PythonVersion: '3.8'
+          CoverageArg: ''
+          CustomImage: true          
 
     pool:
       vmImage: '$(OSVmImage)'
 
     steps:
     - template: ../steps/build-test.yml
+      condition: and(eq($(CustomImage), 'false'), eq($(PythonVersion), '3.8'))
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: $(OSName)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+    steps:
+    - template: ../steps/build-test-python38.yml
+      condition: eq($(CustomImage), 'true')
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
