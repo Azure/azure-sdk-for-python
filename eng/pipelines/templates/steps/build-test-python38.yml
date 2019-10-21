@@ -23,16 +23,15 @@ steps:
       sudo apt-get update
       sudo add-apt-repository ppa:deadsnakes/ppa
       sudo apt-get update
-      apt install python3.8
-      apt-get install python3.8-dev
-      apt-get install python3.8-distutils
+      sudo apt install python3.8
+      sudo apt-get install python3.8-dev
+      sudo apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH
       PATH=/usr/lib/python3.8:$PATH
-      PATH=~/lib/python3.8:$PATH
       which python3.8
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3.8 get-pip.py
-      apt-get install tox   
+      sudo apt-get install tox   
       python3.8 -m pip install tox-monorepo packaging
       cd $(Build.SourcesDirectory)
       python3.8 -m pip install twine codecov beautifulsoup4
@@ -40,9 +39,7 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
-  - script: |
-      cd $(Build.SourcesDirectory)
-      sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}"
+  - script: python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}"
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2

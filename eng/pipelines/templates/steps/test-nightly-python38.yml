@@ -24,11 +24,11 @@ steps:
       sudo apt-get update
       sudo add-apt-repository ppa:deadsnakes/ppa
       sudo apt-get update
-      apt install python3.8
-      apt-get install python3.8-dev
-      apt-get install python3.8-distutils
+      sudo apt install python3.8
+      sudo apt-get install python3.8-dev
+      sudo apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH      
-      PATH=~/lib/python3.8:$PATH
+      PATH=/usr/lib/python3.8:$PATH
       echo $PATH
       which python3.8
       which python3      
