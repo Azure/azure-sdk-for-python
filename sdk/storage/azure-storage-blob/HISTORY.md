@@ -1,6 +1,6 @@
 # Change Log azure-storage-blob
 
-## Version 12.0.0:
+## Version 12.0.0b5:
 
 **Breaking changes**
 
