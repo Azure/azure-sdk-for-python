@@ -86,7 +86,9 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(result.key_id, imported_key.id)
 
         result = crypto_client.decrypt(result.algorithm, result.ciphertext)
-        self.assertEqual(self.plaintext, result.decrypted_bytes)
+        self.assertEqual(result.key_id, imported_key.id)
+        self.assertEqual(EncryptionAlgorithm.rsa_oaep, result.algorithm)
+        self.assertEqual(self.plaintext, result.plaintext)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(permissions=NO_GET)
@@ -106,7 +108,9 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(result.key_id, imported_key.id)
 
         verified = crypto_client.verify(result.algorithm, digest, result.signature)
-        self.assertTrue(verified.result)
+        self.assertEqual(result.key_id, imported_key.id)
+        self.assertEqual(result.algorithm, SignatureAlgorithm.rs256)
+        self.assertTrue(verified.is_valid)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(permissions=NO_GET)
@@ -124,7 +128,7 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(result.key_id, created_key.id)
 
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
-        self.assertEqual(key_bytes, result.unwrapped_bytes)
+        self.assertEqual(key_bytes, result.key)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -140,7 +144,7 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.key_id, key.id)
 
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
-            self.assertEqual(result.decrypted_bytes, self.plaintext)
+            self.assertEqual(result.plaintext, self.plaintext)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -156,7 +160,7 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.key_id, key.id)
 
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
-            self.assertEqual(result.unwrapped_bytes, self.plaintext)
+            self.assertEqual(result.key, self.plaintext)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -182,7 +186,7 @@ class CryptoClientTests(KeyVaultTestCase):
                 self.assertEqual(result.key_id, key.id)
 
                 result = crypto_client.verify(result.algorithm, digest, result.signature)
-                self.assertTrue(result.result)
+                self.assertTrue(result.is_valid)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -208,4 +212,4 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.key_id, key.id)
 
             result = crypto_client.verify(result.algorithm, digest, result.signature)
-            self.assertTrue(result.result)
+            self.assertTrue(result.is_valid)

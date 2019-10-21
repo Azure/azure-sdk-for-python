@@ -180,7 +180,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_secrets(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -207,7 +207,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_secret_versions(
             self._vault_endpoint,
             name,
@@ -329,7 +329,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_secrets(
             self._vault_endpoint,
             maxresults=max_page_size,

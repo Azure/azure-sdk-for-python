@@ -67,7 +67,7 @@ class AsyncPipelineClient(PipelineClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START build_async_pipeline_client]
             :end-before: [END build_async_pipeline_client]
             :language: python

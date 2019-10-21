@@ -52,7 +52,7 @@ class RedirectPolicy(HTTPPolicy):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
+        .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START redirect_policy]
             :end-before: [END redirect_policy]
             :language: python
