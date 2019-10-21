@@ -41,7 +41,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
-      script: sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py
+      script: python3.8 scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         -p=python
         "${{ parameters.BuildTargetingString }}" 
