@@ -17,8 +17,7 @@ if TYPE_CHECKING:
 
 
 class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
-    """
-    Authenticates using tokens in the local cache shared between Microsoft applications.
+    """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
@@ -27,9 +26,9 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
 
     @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
-        using a cached refresh token.
+        """Get an access token for `scopes` from the shared cache.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

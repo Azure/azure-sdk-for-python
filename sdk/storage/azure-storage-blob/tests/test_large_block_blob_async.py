@@ -94,7 +94,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = await blob.download_blob()
         actual_bytes = b""
-        async for data in actual_data:
+        async for data in actual_data.chunks():
             actual_bytes += data
         self.assertEqual(actual_bytes, expected_data)
 

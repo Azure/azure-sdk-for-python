@@ -12,6 +12,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -24,7 +25,8 @@ from azure.storage.blob import (
     BlobType,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    StorageErrorCode
+    StorageErrorCode,
+    generate_blob_sas
 )
 
 from azure.storage.blob.aio import (
@@ -117,13 +119,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
     async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob()
-        actual_data = await stream.content_as_bytes()
+        actual_data = await stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     async def assertRangeEqual(self, container_name, blob_name, expected_data, offset, length, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob(offset=offset, length=length)
-        actual_data = await stream.content_as_bytes()
+        actual_data = await stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -183,7 +185,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         content = await blob.download_blob(lease=lease)
-        actual = await content.content_as_bytes()
+        actual = await content.readall()
         self.assertEqual(actual, data)
 
     @GlobalStorageAccountPreparer()
@@ -391,7 +393,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -410,7 +417,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert the destination blob is constructed correctly
         blob_properties = await destination_blob_client.get_blob_properties()
-        await self.assertBlobEqual(self.source_container_name, destination_blob_client.blob_name, source_blob_data, bsc)
+        await self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data, bsc)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -423,7 +430,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -461,7 +473,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -501,7 +518,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -541,18 +563,22 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   source_if_match=source_properties.get('etag'))
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            source_etag=source_properties.get('etag'),
+            source_match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -564,10 +590,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_if_match='0x111111111111111')
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                source_etag='0x111111111111111',
+                source_match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
@@ -578,18 +604,21 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   source_if_none_match='0x111111111111111')
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            source_etag='0x111111111111111', source_match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -601,10 +630,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_if_none_match=source_properties.get('etag'))
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                source_etag=source_properties.get('etag'), source_match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
@@ -615,7 +643,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -634,7 +667,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert the destination blob is constructed correctly
         blob_properties = await destination_blob_client.get_blob_properties()
-        await self.assertBlobEqual(self.source_container_name, destination_blob_client.blob_name, source_blob_data, bsc)
+        await self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data, bsc)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
@@ -655,7 +688,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = await source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -694,7 +732,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -702,11 +745,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         destination_blob_properties = await destination_blob_client.get_blob_properties()
 
         # Act: make update page from url calls
-        resp = await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                                                   0,
-                                                                   SOURCE_BLOB_SIZE,
-                                                                   0,
-                                                                   if_match=destination_blob_properties.get('etag'))
+        resp = await destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            etag=destination_blob_properties.get('etag'),
+            match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -718,10 +760,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                if_match='0x111111111111111')
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
@@ -731,7 +773,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -742,7 +789,8 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                    0,
                                                                    SOURCE_BLOB_SIZE,
                                                                    0,
-                                                                   if_none_match='0x111111111111111')
+                                                                   etag='0x111111111111111',
+                                                                   match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -757,7 +805,8 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
                                                                 SOURCE_BLOB_SIZE,
                                                                 0,
-                                                                if_none_match=blob_properties.get('etag'))
+                                                                etag=blob_properties.get('etag'),
+                                                                match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
@@ -768,7 +817,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -805,7 +859,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -842,7 +901,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -1475,7 +1539,12 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         snapshot_blob = BlobClient.from_blob_url(
             source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
-        sas_token = snapshot_blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            snapshot_blob.account_name,
+            snapshot_blob.container_name,
+            snapshot_blob.blob_name,
+            snapshot=snapshot_blob.snapshot,
+            account_key=snapshot_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1712,7 +1781,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         end = page_ranges[0]['end']
 
         content = await blob_client.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(sparse_page_blob_size, len(content))

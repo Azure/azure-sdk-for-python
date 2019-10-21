@@ -18,7 +18,7 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from azure.storage.blob.models import (
+from azure.storage.blob import (
     StandardBlobTier
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -66,7 +66,7 @@ class BlobStorageAccountTestAsync(AsyncBlobTestCase):
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
-        actual_data = await blob.download_blob().content_as_bytes()
+        actual_data = await blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------

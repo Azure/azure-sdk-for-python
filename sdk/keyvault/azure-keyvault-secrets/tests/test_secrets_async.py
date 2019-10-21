@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -14,15 +16,19 @@ from dateutil import parser as date_parse
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
-        self.assertEqual(s1.expires, s2.expires)
-        self.assertEqual(s1.created, s2.created)
-        self.assertEqual(s1.updated, s2.updated)
+        self.assertEqual(s1.expires_on, s2.expires_on)
+        self.assertEqual(s1.created_on, s2.created_on)
+        self.assertEqual(s1.updated_on, s2.updated_on)
         self.assertEqual(s1.recovery_level, s2.recovery_level)
         self.assertEqual(s1.key_id, s2.key_id)
 
@@ -36,7 +42,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
         self.assertTrue(
-            secret_attributes.properties.created and secret_attributes.properties.updated,
+            secret_attributes.properties.created_on and secret_attributes.properties.updated_on,
             "Missing required date attributes.",
         )
 
@@ -49,7 +55,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
@@ -89,18 +95,18 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             enabled = not secret.properties.enabled
             updated_secret = await client.update_secret_properties(
                 secret.name,
-                secret.properties.version,
+                version=secret.properties.version,
                 content_type=content_type,
-                expires=expires,
+                expires_on=expires,
                 tags=tags,
                 enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)
             self.assertEqual(content_type, updated_secret.content_type)
-            self.assertEqual(expires, updated_secret.expires)
+            self.assertEqual(expires, updated_secret.expires_on)
             self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.properties.updated, updated_secret.updated)
+            self.assertNotEqual(secret.properties.updated_on, updated_secret.updated_on)
             return updated_secret
 
         # update secret with version
@@ -116,7 +122,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         await self._poll_until_exception(client.get_secret, updated.name, expected_exception=ResourceNotFoundError)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_list(self, vault_client, **kwargs):
@@ -136,10 +142,10 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_secrets(max_results=max_secrets)
+        result = client.list_properties_of_secrets(max_results=max_secrets)
         await self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
@@ -170,7 +176,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
@@ -200,7 +206,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -220,11 +226,11 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         await client.delete_secret(created_bundle.name)
 
         # restore secret
-        restored = await client.restore_secret(secret_backup)
+        restored = await client.restore_secret_backup(secret_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -259,7 +265,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
         )
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):

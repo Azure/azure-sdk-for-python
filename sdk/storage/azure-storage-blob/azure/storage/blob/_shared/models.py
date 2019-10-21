@@ -261,8 +261,8 @@ class ResourceTypes(object):
 
 class AccountSasPermissions(object):
     """
-    :class:`~ResourceTypes` class to be used with generate_shared_access_signature
-    method and for the AccessPolicies used with set_*_acl. There are two types of
+    :class:`~ResourceTypes` class to be used with generate_account_sas
+    function and for the AccessPolicies used with set_*_acl. There are two types of
     SAS which may be used to grant resource access. One is to grant access to a
     specific resource (resource-specific). Another is to grant access to the
     entire service for a specific account and allow certain operations based on
@@ -331,11 +331,11 @@ class Services(object):
     """Specifies the services accessible with the account SAS.
 
     :param bool blob:
-        Access for the `~azure.storage.blob.blob_service_client.BlobServiceClient`
+        Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
-        Access for the `~azure.storage.queue.queue_service_client.QueueServiceClient`
+        Access for the `~azure.storage.queue.QueueServiceClient`
     :param bool file:
-        Access for the `~azure.storage.file.file_service_client.FileServiceClient`
+        Access for the `~azure.storage.file.FileServiceClient`
     """
 
     def __init__(self, blob=False, queue=False, file=False):

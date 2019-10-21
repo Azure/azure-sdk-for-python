@@ -87,7 +87,8 @@ class TestBlobSamples(StorageTestCase):
 
             # [START download_a_blob]
             with open(DEST_FILE, "wb") as my_blob:
-                my_blob.writelines(blob_client.download_blob())
+                download_stream = blob_client.download_blob()
+                my_blob.write(download_stream.readall())
             # [END download_a_blob]
 
             # [START delete_blob]
@@ -122,7 +123,8 @@ class TestBlobSamples(StorageTestCase):
 
             # Download Page Blob
             with open(DEST_FILE, "wb") as my_blob:
-                my_blob.writelines(blob_client.download_blob())
+                download_stream = blob_client.download_blob()
+                my_blob.write(download_stream.readall())
 
             # Delete Page Blob
             blob_client.delete_blob()
@@ -155,7 +157,8 @@ class TestBlobSamples(StorageTestCase):
 
             # Download Append Blob
             with open(DEST_FILE, "wb") as my_blob:
-                my_blob.writelines(blob_client.download_blob())
+                download_stream = blob_client.download_blob()
+                my_blob.write(download_stream.readall())
 
             # Delete Append Blob
             blob_client.delete_blob()

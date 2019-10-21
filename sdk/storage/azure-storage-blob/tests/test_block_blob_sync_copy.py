@@ -6,13 +6,14 @@
 import pytest
 
 from datetime import datetime, timedelta
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
     StorageErrorCode,
-    BlobSasPermissions
+    BlobSasPermissions,
+    generate_blob_sas
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
@@ -47,7 +48,12 @@ class StorageBlockBlobTest(StorageTestCase):
             blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -81,7 +87,7 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
         self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
 
@@ -136,5 +142,5 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual('success', copy_props['copy_status'])
 
         # Verify content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)

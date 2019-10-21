@@ -13,6 +13,9 @@ from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
     BlobBlock,
+    CustomerProvidedEncryptionKey,
+    BlobSasPermissions,
+    generate_blob_sas
 )
 from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
 from testcase import StorageTestCase, GlobalStorageAccountPreparer
@@ -113,7 +116,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), b'AAABBBCCC')
+        self.assertEqual(blob.readall(), b'AAABBBCCC')
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -158,7 +161,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.etag, upload_response['etag'])
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -200,7 +203,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.etag, upload_response['etag'])
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -238,7 +241,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), data)
+        self.assertEqual(blob.readall(), data)
         self.assertEqual(blob.properties.etag, upload_response['etag'])
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -262,7 +265,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -304,7 +312,7 @@ class StorageCPKTest(StorageTestCase):
         blob = destination_blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data[0: 8 * 1024])
+        self.assertEqual(blob.readall(), self.byte_data[0: 8 * 1024])
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
@@ -344,7 +352,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), b'AAABBBCCC')
+        self.assertEqual(blob.readall(), b'AAABBBCCC')
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @GlobalStorageAccountPreparer()
@@ -364,7 +372,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
         source_blob_client, _ = self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -394,7 +407,7 @@ class StorageCPKTest(StorageTestCase):
         blob = destination_blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data[0: 4 * 1024])
+        self.assertEqual(blob.readall(), self.byte_data[0: 4 * 1024])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
@@ -432,7 +445,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
@@ -474,7 +487,7 @@ class StorageCPKTest(StorageTestCase):
                                          cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
@@ -495,7 +508,12 @@ class StorageCPKTest(StorageTestCase):
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
-        source_blob_sas = source_blob_client.generate_shared_access_signature(
+        source_blob_sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -528,7 +546,7 @@ class StorageCPKTest(StorageTestCase):
                                          cpk=TEST_ENCRYPTION_KEY, )
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
@@ -569,7 +587,7 @@ class StorageCPKTest(StorageTestCase):
         blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
-        self.assertEqual(blob.content_as_bytes(), self.byte_data)
+        self.assertEqual(blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
@@ -583,7 +601,7 @@ class StorageCPKTest(StorageTestCase):
     #
     #     # Act
     #     blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
-    #     self.assertEquals(blob.content_as_bytes(), data)
+    #     self.assertEqual(blob.readall(), data)
     #
     #     # with self.assertRaises(HttpResponseError):
     #     #     blob_client.clear_page(0, 511)
@@ -595,10 +613,10 @@ class StorageCPKTest(StorageTestCase):
     #     self.assertIsNotNone(resp.get('etag'))
     #     self.assertIsNotNone(resp.get('last_modified'))
     #     self.assertIsNotNone(resp.get('blob_sequence_number'))
-    #     self.assertEquals(blob.content_as_bytes(), b'\x00' * 512)
+    #     self.assertEqual(blob.readall(), b'\x00' * 512)
     #
     #     blob = blob_client.download_blob(512, 1023, cpk=TEST_ENCRYPTION_KEY)
-    #     self.assertEquals(blob.content_as_bytes(), data[512:])
+    #     self.assertEqual(blob.readall(), data[512:])
 
     @GlobalStorageAccountPreparer()
     def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):

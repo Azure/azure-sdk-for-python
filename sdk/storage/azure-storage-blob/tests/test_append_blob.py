@@ -13,9 +13,12 @@ from os import (
 )
 import unittest
 from datetime import datetime, timedelta
+
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
 
 from azure.storage.blob import (
+    generate_blob_sas,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -69,7 +72,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
     def assertBlobEqual(self, blob, expected_data):
         stream = blob.download_blob()
-        actual_data = b"".join(list(stream))
+        actual_data = stream.readall()
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -186,7 +189,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -230,7 +238,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -265,7 +278,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -305,7 +323,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -345,7 +368,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -356,7 +384,8 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_match=source_blob_properties.get('etag'))
+                                  source_etag=source_blob_properties.get('etag'),
+                                  source_match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -373,7 +402,8 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                                          source_if_match='0x111111111111111')
+                                                          source_etag='0x111111111111111',
+                                                          source_match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
@@ -383,7 +413,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -394,7 +429,8 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  source_if_none_match='0x111111111111111')
+                                  source_etag='0x111111111111111',
+                                  source_match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -411,7 +447,8 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                                          source_if_none_match=source_blob_properties.get('etag'))
+                                                          source_etag=source_blob_properties.get('etag'),
+                                                          source_match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
@@ -420,7 +457,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -435,7 +477,8 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_match=destination_blob_properties_on_creation.get('etag'))
+                                  etag=destination_blob_properties_on_creation.get('etag'),
+                                  match_condition=MatchConditions.IfNotModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -452,7 +495,8 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                                          if_match='0x111111111111111')
+                                                          etag='0x111111111111111',
+                                                          match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
@@ -461,7 +505,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -472,7 +521,7 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_none_match='0x111111111111111')
+                                  etag='0x111111111111111', match_condition=MatchConditions.IfModified)
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -489,7 +538,8 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                                          if_none_match=destination_blob_properties.get('etag'))
+                                                          etag=destination_blob_properties.get('etag'),
+                                                          match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url_with_maxsize_condition(self, resource_group, location, storage_account, storage_account_key):
@@ -498,7 +548,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -535,7 +590,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -573,7 +633,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -612,7 +677,12 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.append_block(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

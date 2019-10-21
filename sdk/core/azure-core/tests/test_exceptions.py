@@ -38,7 +38,7 @@ except ImportError:
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error
 from azure.core.pipeline.transport import RequestsTransportResponse
-from azure.core.pipeline.transport.base import _HttpResponseBase
+from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
 class FakeErrorOne(object):

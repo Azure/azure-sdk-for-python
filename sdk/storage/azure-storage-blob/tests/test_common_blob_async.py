@@ -18,7 +18,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     ClientAuthenticationError)
-
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
@@ -26,11 +26,16 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    upload_blob_to_url,
+    download_blob_from_url,
 )
 
 from azure.storage.blob import (
     upload_blob_to_url,
     download_blob_from_url,
+    generate_blob_sas,
+    generate_account_sas,
+    generate_container_sas,
     BlobType,
     StorageErrorCode,
     BlobSasPermissions,
@@ -240,7 +245,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         stream = await blob.download_blob()
-        data = await stream.content_as_bytes()
+        data = await stream.readall()
         self.assertIsNotNone(data)
         content = data.decode('utf-8')
         self.assertEqual(content, blob_data)
@@ -258,7 +263,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             await blob.upload_blob(blob_data, length=len(blob_data))
 
-            data = await (await blob.download_blob()).content_as_bytes()
+            data = await (await blob.download_blob()).readall()
             content = data.decode('utf-8')
             self.assertEqual(content, blob_data)
 
@@ -280,7 +285,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(resp.get('etag'))
         stream = await blob.download_blob(lease=lease)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
         self.assertEqual(content, data)
 
 
@@ -313,7 +318,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         stream = await blob.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data)
@@ -332,7 +337,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         stream = await snapshot.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data)
@@ -354,9 +359,9 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         blob_previous = await snapshot.download_blob()
-        blob_previous_bytes = await blob_previous.content_as_bytes()
+        blob_previous_bytes = await blob_previous.readall()
         blob_latest = await blob.download_blob()
-        blob_latest_bytes = await blob_latest.content_as_bytes()
+        blob_latest_bytes = await blob_latest.readall()
 
         # Assert
         self.assertEqual(blob_previous_bytes, self.byte_data)
@@ -373,7 +378,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         stream = await blob.download_blob(offset=0, length=5)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, self.byte_data[:5])
@@ -390,7 +395,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         stream = await blob.download_blob(lease=lease)
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
         await lease.release()
 
         # Assert
@@ -1031,7 +1036,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(copy['copy_status'], 'success')
         self.assertIsNotNone(copy['copy_id'])
 
-        copy_content = await (await copyblob.download_blob()).content_as_bytes()
+        copy_content = await (await copyblob.download_blob()).readall()
         self.assertEqual(copy_content, self.byte_data)
 
 
@@ -1088,7 +1093,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        sas_token = source_blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            snapshot=source_blob.snapshot,
+            account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1102,7 +1112,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         props = await self._wait_for_async_copy(target_blob)
         self.assertEqual(props.copy.status, 'success')
-        actual_data = await (await target_blob.download_blob()).content_as_bytes()
+        actual_data = await (await target_blob.download_blob()).readall()
         self.assertEqual(actual_data, data)
 
 
@@ -1124,7 +1134,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
         actual_data = await copied_blob.download_blob()
-        bytes_data = await (await copied_blob.download_blob()).content_as_bytes()
+        bytes_data = await (await copied_blob.download_blob()).readall()
         self.assertEqual(bytes_data, b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
@@ -1306,7 +1316,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         stream = await blob.download_blob()
-        content = await stream.content_as_bytes()
+        content = await stream.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -1389,7 +1399,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url)
         # self._set_test_proxy(service, self.settings)
-        content = await (await service.download_blob()).content_as_bytes()
+        content = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(data, content)
@@ -1407,7 +1417,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1415,7 +1430,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
-        content = await (await service.download_blob()).content_as_bytes()
+        content = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
@@ -1442,12 +1457,18 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         resp = await container.set_container_access_policy(identifiers)
 
-        token = blob.generate_shared_access_signature(policy_id='testid')
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            policy_id='testid')
 
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
         # self._set_test_proxy(service, self.settings)
-        result = await (await service.download_blob()).content_as_bytes()
+        result = await (await service.download_blob()).readall()
 
         # Assert
         self.assertEqual(self.byte_data, result)
@@ -1464,7 +1485,9 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         await self._setup(storage_account.name, storage_account_key)
         blob_name = await self._create_block_blob()
 
-        token = self.bsc.generate_shared_access_signature(
+        token = generate_account_sas(
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
             ResourceTypes(container=True, object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -1525,7 +1548,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1552,7 +1580,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
@@ -1589,7 +1622,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1602,7 +1640,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         response.raise_for_status()
         self.assertTrue(response.ok)
-        data = await (await blob.download_blob()).content_as_bytes()
+        data = await (await blob.download_blob()).readall()
         self.assertEqual(updated_data, data)
 
 
@@ -1618,7 +1656,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1684,7 +1727,10 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         container = self.bsc.get_container_client(self.container_name)
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1710,7 +1756,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1736,7 +1787,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        sas_token = source_blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            snapshot=source_blob.snapshot,
+            account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1744,7 +1800,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
-        download_blob_from_url(blob.url, FILE_PATH)
+        await download_blob_from_url(blob.url, FILE_PATH)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1766,7 +1822,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'to_file_with_credential.async.dat'
         # Act
-        download_blob_from_url(
+        await download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_concurrency=2,
             credential=rmt_key)
@@ -1792,7 +1848,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         FILE_PATH = 'to_stream_with_credential.async.dat'
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            download_blob_from_url(
+            await download_blob_from_url(
                 source_blob.url, stream,
                 max_concurrency=2,
                 credential=rmt_key)
@@ -1817,12 +1873,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'with_existing_file.async.dat'
         # Act
-        download_blob_from_url(
+        await download_blob_from_url(
             source_blob.url, FILE_PATH,
             credential=rmt_key)
 
         with self.assertRaises(ValueError):
-            download_blob_from_url(source_blob.url, FILE_PATH)
+            await download_blob_from_url(source_blob.url, FILE_PATH)
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1844,13 +1900,13 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         source_blob = await self._create_remote_block_blob(blob_data=data)
         FILE_PATH = 'existing_file_overwrite.async.dat'
         # Act
-        download_blob_from_url(
+        await download_blob_from_url(
             source_blob.url, FILE_PATH,
             credential=rmt_key)
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = await self._create_remote_block_blob(blob_data=data2)
-        download_blob_from_url(
+        await download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
             credential=rmt_key)
 
@@ -1873,18 +1929,23 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        token = blob.generate_shared_access_signature(
+        token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        uploaded = upload_blob_to_url(sas_blob.url, data)
+        uploaded = await upload_blob_to_url(sas_blob.url, data)
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
 
@@ -1902,12 +1963,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        uploaded = upload_blob_to_url(
+        uploaded = await upload_blob_to_url(
             blob.url, data, credential=storage_account_key)
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
 
@@ -1927,11 +1988,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         with self.assertRaises(ResourceExistsError):
-            upload_blob_to_url(
+            await upload_blob_to_url(
                 blob.url, data, credential=storage_account_key)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(b"existing_data", content)
 
 
@@ -1950,14 +2011,14 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         await blob.upload_blob(b"existing_data")
 
         # Act
-        uploaded = upload_blob_to_url(
+        uploaded = await upload_blob_to_url(
             blob.url, data,
             overwrite=True,
             credential=storage_account_key)
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
 
@@ -1975,12 +2036,13 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        uploaded = upload_blob_to_url(
+        uploaded = await upload_blob_to_url(
             blob.url, data, credential=storage_account_key)
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_text()
+        stream = await blob.download_blob(encoding='UTF-8')
+        content = await stream.readall()
         self.assertEqual(data, content)
 
 
@@ -2002,13 +2064,33 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         with open(FILE_PATH, 'rb'):
-            uploaded = upload_blob_to_url(
+            uploaded = await upload_blob_to_url(
                 blob.url, data, credential=storage_account_key)
 
         # Assert
         self.assertIsNotNone(uploaded)
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
         self._teardown(FILE_PATH)
+
+    async def _test_transport_closed_only_once(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        transport = AioHttpTransport()
+        url = self._get_account_url()
+        credential = self._get_shared_key_credential()
+        blob_name = self._get_blob_reference()
+        async with BlobServiceClient(url, credential=credential, transport=transport) as bsc:
+            await bsc.get_service_properties()
+            assert transport.session is not None
+            async with bsc.get_blob_client(self.container_name, blob_name) as bc:
+                assert transport.session is not None
+            await bsc.get_service_properties()
+            assert transport.session is not None
+
+    @record
+    def test_transport_closed_only_once(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_transport_closed_only_once())
 
 # ------------------------------------------------------------------------------

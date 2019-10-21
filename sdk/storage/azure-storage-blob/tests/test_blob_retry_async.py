@@ -101,7 +101,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     @GlobalStorageAccountPreparer()
@@ -138,7 +138,7 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     @GlobalStorageAccountPreparer()

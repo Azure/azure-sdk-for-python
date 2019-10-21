@@ -44,7 +44,7 @@ Alternatively, get the connection string from the Azure Portal.
 
 #### Create client
 
-Once you have the value of the connection string, you can create the ConfigurationClient:
+Once you have the value of the connection string, you can create the AzureAppConfigurationClient:
 
 ```python
     from azure.appconfiguration import AzureAppConfigurationClient

@@ -25,7 +25,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (delete_secret)
 #
-# 4. Restore a secret (restore_secret)
+# 4. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
@@ -54,7 +54,7 @@ try:
 
     # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the secret using the backed up secret bytes")
-    secret = client.restore_secret(secret_backup)
+    secret = client.restore_secret_backup(secret_backup)
     print("Restored Secret with name '{0}'".format(secret.name))
 
 except HttpResponseError as e:

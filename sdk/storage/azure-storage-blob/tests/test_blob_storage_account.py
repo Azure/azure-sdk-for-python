@@ -46,7 +46,7 @@ class BlobStorageAccountTest(StorageTestCase):
 
     def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
-        actual_data = blob.download_blob().content_as_bytes()
+        actual_data = blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
@@ -116,7 +116,7 @@ class BlobStorageAccountTest(StorageTestCase):
         blob_props = blob_client.get_blob_properties()
 
         # Assert
-        self.assertEquals('rehydrate-pending-to-cool', blob_props.archive_status)
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @GlobalStorageAccountPreparer()
     def test_rehydration_status(self, resource_group, location, storage_account, storage_account_key):

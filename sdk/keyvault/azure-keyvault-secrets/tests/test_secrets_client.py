@@ -5,6 +5,8 @@
 import functools
 from dateutil import parser as date_parse
 import time
+import hashlib
+import os
 
 from devtools_testutils import ResourceGroupPreparer
 from secrets_preparer import VaultClientPreparer
@@ -13,15 +15,19 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
 class SecretClientTests(KeyVaultTestCase):
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "keyvault" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
-        self.assertEqual(s1.expires, s2.expires)
-        self.assertEqual(s1.created, s2.created)
-        self.assertEqual(s1.updated, s2.updated)
+        self.assertEqual(s1.expires_on, s2.expires_on)
+        self.assertEqual(s1.created_on, s2.created_on)
+        self.assertEqual(s1.updated_on, s2.updated_on)
         self.assertEqual(s1.recovery_level, s2.recovery_level)
         self.assertEqual(s1.key_id, s2.key_id)
 
@@ -35,7 +41,7 @@ class SecretClientTests(KeyVaultTestCase):
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
         self.assertTrue(
-            secret_attributes.properties.created and secret_attributes.properties.updated,
+            secret_attributes.properties.created_on and secret_attributes.properties.updated_on,
             "Missing required date attributes.",
         )
 
@@ -47,7 +53,7 @@ class SecretClientTests(KeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
@@ -72,14 +78,14 @@ class SecretClientTests(KeyVaultTestCase):
             enabled=enabled,
             content_type=content_type,
             not_before=not_before,
-            expires=expires,
+            expires_on=expires,
             tags=tags,
         )
         self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
         self.assertEqual(content_type, created.properties.content_type)
         self.assertEqual(enabled, created.properties.enabled)
         self.assertEqual(not_before, created.properties.not_before)
-        self.assertEqual(expires, created.properties.expires)
+        self.assertEqual(expires, created.properties.expires_on)
         self.assertEqual(tags, created.properties.tags)
 
         self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
@@ -94,18 +100,18 @@ class SecretClientTests(KeyVaultTestCase):
             enabled = not secret.properties.enabled
             updated_secret = client.update_secret_properties(
                 secret.name,
-                secret.properties.version,
+                version=secret.properties.version,
                 content_type=content_type,
-                expires=expires,
+                expires_on=expires,
                 tags=tags,
                 enabled=enabled,
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)
             self.assertEqual(content_type, updated_secret.content_type)
-            self.assertEqual(expires, updated_secret.expires)
+            self.assertEqual(expires, updated_secret.expires_on)
             self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.properties.updated, updated_secret.updated)
+            self.assertNotEqual(secret.properties.updated_on, updated_secret.updated_on)
             return updated_secret
 
         if self.is_live:
@@ -120,7 +126,7 @@ class SecretClientTests(KeyVaultTestCase):
 
         self._poll_until_exception(functools.partial(client.get_secret, updated.name), ResourceNotFoundError)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_secret_list(self, vault_client, **kwargs):
 
@@ -140,10 +146,10 @@ class SecretClientTests(KeyVaultTestCase):
                 expected[secret.name] = secret
 
         # list secrets
-        result = list(client.list_secrets(max_page_size=max_secrets))
+        result = list(client.list_properties_of_secrets(max_page_size=max_secrets))
         self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_list_versions(self, vault_client, **kwargs):
 
@@ -173,7 +179,7 @@ class SecretClientTests(KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_list_deleted_secrets(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -203,7 +209,7 @@ class SecretClientTests(KeyVaultTestCase):
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -222,10 +228,10 @@ class SecretClientTests(KeyVaultTestCase):
         client.delete_secret(created_bundle.name)
 
         # restore secret
-        restored = client.restore_secret(secret_backup)
+        restored = client.restore_secret_backup(secret_backup)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -262,7 +268,7 @@ class SecretClientTests(KeyVaultTestCase):
             )
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)

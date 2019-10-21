@@ -65,7 +65,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(actual_data.readall(), expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -127,7 +127,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
+        self.assertEqual(content.readall(), b'AAABBBCCC')
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
@@ -418,7 +418,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         output = blob.download_blob(lease=lease)
-        self.assertEqual(b"".join(list(output)), data)
+        self.assertEqual(output.readall(), data)
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
@@ -507,7 +507,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data[3:])
 
         # Assert
-        self.assertEqual(data[3:], b"".join(list(blob.download_blob())))
+        self.assertEqual(data[3:], blob.download_blob().readall())
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
@@ -520,7 +520,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data[3:], length=5)
 
         # Assert
-        self.assertEqual(data[3:8], b"".join(list(blob.download_blob())))
+        self.assertEqual(data[3:8], blob.download_blob().readall())
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count_and_properties(self, resource_group, location, storage_account, storage_account_key):
@@ -536,7 +536,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data[3:], length=5, content_settings=content_settings)
 
         # Assert
-        self.assertEqual(data[3:8], b"".join(list(blob.download_blob())))
+        self.assertEqual(data[3:8], blob.download_blob().readall())
         properties = blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)

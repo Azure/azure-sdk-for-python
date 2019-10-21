@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -79,7 +79,7 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.0.0b4",
+        "azure-core<2.0.0,>=1.0.0b5",
         "msrest>=0.6.10",
         "cryptography>=2.1.4"
     ],

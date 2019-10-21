@@ -7,11 +7,11 @@ import pytest
 import asyncio
 
 from datetime import datetime, timedelta
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import StorageErrorCode, BlobSasPermissions
+from azure.storage.blob import StorageErrorCode, BlobSasPermissions, generate_blob_sas
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -71,7 +71,12 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
             await blob.upload_blob(self.source_blob_data, overwrite=True)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -109,7 +114,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         await dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
-        content = await (await dest_blob.download_blob()).content_as_bytes()
+        content = await (await dest_blob.download_blob()).readall()
         self.assertEqual(content, self.source_blob_data)
         self.assertEqual(len(content), 8 * 1024)
 
@@ -168,5 +173,5 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual('success', copy_props['copy_status'])
 
         # Verify content
-        content = await (await dest_blob.download_blob()).content_as_bytes()
+        content = await (await dest_blob.download_blob()).readall()
         self.assertEqual(self.source_blob_data, content)

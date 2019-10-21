@@ -53,6 +53,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type, account_name, account_key):
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, account_name)
         self.assertEqual(service.credential.account_name, account_name)
         self.assertEqual(service.credential.account_key, account_key)
         self.assertTrue('{}.{}.core.windows.net'.format(account_name, url_type) in service.url)
@@ -95,6 +96,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
@@ -110,6 +112,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertIsNotNone(service)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertEqual(service.credential, self.token_credential)
+            self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_token_and_http_async(self, resource_group, location, storage_account, storage_account_key):
@@ -131,6 +134,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith(
@@ -165,6 +169,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertIsNotNone(service)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_service_custom_domain_async(self, resource_group, location, storage_account, storage_account_key):
@@ -181,6 +186,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -250,6 +256,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_client_with_complete_blob_url_async(self, resource_group, location, storage_account, storage_account_key):
@@ -261,6 +268,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.container_name, 'foo')
         self.assertEqual(service.blob_name, 'bar')
+        self.assertEqual(service.account_name, self.account_name)
 
     @GlobalStorageAccountPreparer()
     def test_creat_serv_w_connstr_endpoint_protocol_async(self, resource_group, location, storage_account, storage_account_key):
@@ -274,6 +282,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
@@ -305,6 +314,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
         # Assert
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, "www.mydomain.com")
         self.assertIsNone(service.credential)
         self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
         with self.assertRaises(ValueError):
@@ -322,6 +332,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -339,6 +350,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -357,6 +369,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -391,6 +404,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))

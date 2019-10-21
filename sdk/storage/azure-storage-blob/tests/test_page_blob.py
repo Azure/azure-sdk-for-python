@@ -11,6 +11,7 @@ import pytest
 import os
 import unittest
 from datetime import datetime, timedelta
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 
 from azure.storage.blob import (
@@ -22,7 +23,8 @@ from azure.storage.blob import (
     BlobType,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    StorageErrorCode)
+    StorageErrorCode,
+    generate_blob_sas)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
@@ -93,12 +95,12 @@ class StoragePageBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(actual_data.readall(), expected_data)
 
     def assertRangeEqual(self, container_name, blob_name, expected_data, offset, length, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob(offset=offset, length=length)
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(actual_data.readall(), expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -118,7 +120,12 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -151,7 +158,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -189,7 +201,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -229,7 +246,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -268,7 +290,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -280,7 +307,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    offset=0,
                                    length=SOURCE_BLOB_SIZE,
                                    source_offset=0,
-                                   source_if_match=source_properties.get('etag'))
+                                   source_etag=source_properties.get('etag'),
+                                   source_match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -296,7 +324,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
                                        length=SOURCE_BLOB_SIZE,
                                        source_offset=0,
-                                       source_if_match='0x111111111111111')
+                                       source_etag='0x111111111111111',
+                                       source_match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
@@ -306,7 +335,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -318,7 +352,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    offset=0,
                                    length=SOURCE_BLOB_SIZE,
                                    source_offset=0,
-                                   source_if_none_match='0x111111111111111')
+                                   source_etag='0x111111111111111',
+                                   source_match_condition=MatchConditions.IfModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -334,7 +369,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, offset=0,
                                        length=SOURCE_BLOB_SIZE,
                                        source_offset=0,
-                                       source_if_none_match=source_properties.get('etag'))
+                                       source_etag=source_properties.get('etag'),
+                                       source_match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
@@ -344,7 +380,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -383,7 +424,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         source_properties = source_blob_client.get_blob_properties()
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -422,7 +468,12 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -430,12 +481,10 @@ class StoragePageBlobTest(StorageTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
 
         # Act: make update page from url calls
-        resp = destination_blob_client \
-            .upload_pages_from_url(source_blob_client.url + "?" + sas,
-                                   0,
-                                   SOURCE_BLOB_SIZE,
-                                   0,
-                                   if_match=destination_blob_properties.get('etag'))
+        resp = destination_blob_client.upload_pages_from_url(
+            source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+            etag=destination_blob_properties.get('etag'),
+            match_condition=MatchConditions.IfNotModified)
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 
@@ -447,11 +496,10 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(HttpResponseError):
-            destination_blob_client \
-                .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                       SOURCE_BLOB_SIZE,
-                                       0,
-                                       if_match='0x111111111111111')
+            destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0, SOURCE_BLOB_SIZE, 0,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
@@ -460,7 +508,12 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -472,7 +525,8 @@ class StoragePageBlobTest(StorageTestCase):
                                    0,
                                    SOURCE_BLOB_SIZE,
                                    0,
-                                   if_none_match='0x111111111111111')
+                                   etag='0x111111111111111',
+                                   match_condition=MatchConditions.IfModified)
 
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
@@ -489,7 +543,8 @@ class StoragePageBlobTest(StorageTestCase):
                 .upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
                                        SOURCE_BLOB_SIZE,
                                        0,
-                                       if_none_match=blob_properties.get('etag'))
+                                       etag=blob_properties.get('etag'),
+                                       match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_lt(self, resource_group, location, storage_account, storage_account_key):
@@ -499,7 +554,12 @@ class StoragePageBlobTest(StorageTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -537,7 +597,12 @@ class StoragePageBlobTest(StorageTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -575,7 +640,12 @@ class StoragePageBlobTest(StorageTestCase):
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        sas = source_blob_client.generate_shared_access_signature(
+        sas = generate_blob_sas(
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -1410,7 +1480,12 @@ class StoragePageBlobTest(StorageTestCase):
 
         snapshot_blob = BlobClient.from_blob_url(
             source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
-        sas_token = snapshot_blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            snapshot_blob.account_name,
+            snapshot_blob.container_name,
+            snapshot_blob.blob_name,
+            snapshot=snapshot_blob.snapshot,
+            account_key=snapshot_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -1450,7 +1525,7 @@ class StoragePageBlobTest(StorageTestCase):
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
-        content = blob_client.download_blob().content_as_bytes()
+        content = blob_client.download_blob().readall()
 
         # Assert
         self.assertEqual(sparse_page_blob_size, len(content))
@@ -1483,6 +1558,13 @@ class StoragePageBlobTest(StorageTestCase):
         sparse_page_blob_size = 1024 * 1024
         data = self.get_random_bytes(2048)
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
+
+        # Act
+        page_ranges, cleared = blob_client.get_page_ranges()
+        start = page_ranges[0]['start']
+        end = page_ranges[0]['end']
+
+        content = blob_client.download_blob(max_concurrency=3).readall()
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
@@ -1665,7 +1747,3 @@ class StoragePageBlobTest(StorageTestCase):
             self.assertTrue(copy_ref3.blob_tier_inferred)
         finally:
             container.delete_container()
-
-
-#------------------------------------------------------------------------------
-

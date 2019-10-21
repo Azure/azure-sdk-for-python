@@ -28,7 +28,9 @@ from azure.storage.blob import (
     BlobProperties,
     ContainerSasPermissions,
     StandardBlobTier,
-    PremiumPageBlobTier
+    PremiumPageBlobTier,
+    generate_container_sas,
+    PartialBatchErrorException
 )
 
 from testcase import LogCaptured, GlobalStorageAccountPreparer
@@ -1072,10 +1074,36 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
-    async def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
+    async def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            await container.get_blob_client('blob1').upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = await self._to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        container = await self._create_container()
         data = b'hello world'
 
         try:
@@ -1086,23 +1114,26 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
             await container.get_blob_client('blob3').upload_blob(data)
         except:
             pass
-        blobs = await self._to_list(container.list_blobs(include='snapshots'))
+        blobs = await _to_list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
-        response = await self._to_list(await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            delete_snapshots='only'
-        ))
-        assert len(response) == 3
-        assert response[0].status_code == 202
-        assert response[1].status_code == 404  # There was no snapshot
-        assert response[2].status_code == 404  # There was no snapshot
+        try:
+            response = await _to_list(await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                delete_snapshots='only'
+            ))
+        except PartialBatchErrorException as err:
+            parts_list = err.parts
+            assert len(parts_list) == 3
+            assert parts_list[0].status_code == 202
+            assert parts_list[1].status_code == 404  # There was no snapshot
+            assert parts_list[2].status_code == 404  # There was no snapshot
 
-        blobs = await self._to_list(container.list_blobs(include='snapshots'))
-        assert len(blobs) == 3  # 3 blobs
+            blobs = await _to_list(container.list_blobs(include='snapshots'))
+            assert len(blobs) == 3  # 3 blobs
 
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
@@ -1282,7 +1313,10 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data)
 
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
@@ -1321,7 +1355,7 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
             await blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = await (await blob.download_blob()).content_as_bytes()
+            blob_data = await (await blob.download_blob()).readall()
             self.assertIsNotNone(blob)
             self.assertEqual(blob_data.decode('utf-8'), blob_content)
 

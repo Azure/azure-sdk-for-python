@@ -5,9 +5,22 @@
 
 ## 2019-XX-XX Version 1.0.0
 
+### Features
+
+- Tracing: DistributedTracingPolicy now accepts kwargs network_span_namer to change network span name  #7773
+- Tracing: Implementation of AbstractSpan can now use the mixin HttpSpanMixin to get HTTP span update automatically  #7773
+- Tracing: AbstractSpan contract "change_context" introduced  #7773
+- Introduce new policy HttpLoggingPolicy  #7988
+
 ### Bug fixes
 
+- Fix AsyncioRequestsTransport if input stream is an async generator  #7743
 - Fix form-data with aiohttp transport  #7749
+
+### Breaking changes
+
+- Tracing: AbstractSpan.set_current_span is longer supported. Use change_context instead.  #7773
+- azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_text changed
 
 ## 2019-10-07 Version 1.0.0b4
 
