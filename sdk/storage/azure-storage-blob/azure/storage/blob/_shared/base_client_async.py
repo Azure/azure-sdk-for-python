@@ -127,17 +127,14 @@ class AsyncStorageAccountHostsMixin(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts() # Return an AsyncIterator
-            parts_list = []
-            failures = []
             if raise_on_any_failure:
+                parts_list = []
                 async for part in parts:
                     parts_list.append(part)
-                    if not 200 <= part.status_code < 300:
-                        failures.append(part)
-                if failures:
+                if any(p for p in parts_list if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
                         message="There is a partial failure in the batch operation.",
-                        response=response, parts=AsyncList(parts_list)
+                        response=response, parts=parts_list
                     )
                     raise error
                 return AsyncList(parts_list)

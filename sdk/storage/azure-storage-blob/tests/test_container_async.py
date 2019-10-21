@@ -28,7 +28,8 @@ from azure.storage.blob import (
     ContainerSasPermissions,
     StandardBlobTier,
     PremiumPageBlobTier,
-    generate_container_sas
+    generate_container_sas,
+    PartialBatchErrorException
 )
 
 from azure.storage.blob.aio import (
@@ -1250,7 +1251,7 @@ class StorageContainerTestAsync(StorageTestCase):
         assert response[2].status_code == 202
 
     @record
-    def test_delete_blobs_simple_no_raise(self):
+    def test_delete_blobs_simple_no_raise_async(self):
         if TestMode.need_recording_file(self.test_mode):
             return
         loop = asyncio.get_event_loop()
@@ -1309,10 +1310,8 @@ class StorageContainerTestAsync(StorageTestCase):
                 'blob3',
                 delete_snapshots='only'
             ))
-        except HttpResponseError as err:
-            parts_list = []
-            async for p in err.parts:
-                parts_list.append(p)
+        except PartialBatchErrorException as err:
+            parts_list = err.parts
             assert len(parts_list) == 3
             assert parts_list[0].status_code == 202
             assert parts_list[1].status_code == 404  # There was no snapshot

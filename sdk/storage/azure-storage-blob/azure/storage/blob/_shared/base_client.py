@@ -224,16 +224,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 raise HttpResponseError(response=response)
             parts = response.parts()
             if raise_on_any_failure:
-                failures = [p for p in parts if not 200 <= p.status_code < 300]
-                if failures:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
                         message="There is a partial failure in the batch operation.",
-                        response=response, parts=iter(parts)
+                        response=response, parts=parts
                     )
                     raise error
-            return iter(parts)
+                return iter(parts)
+            return parts
         except StorageErrorException as error:
-            process_storage_error(error)
+            process_storage_error(error)    
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

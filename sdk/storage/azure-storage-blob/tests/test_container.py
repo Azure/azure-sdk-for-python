@@ -27,6 +27,7 @@ from azure.storage.blob import (
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
+    PartialBatchErrorException
 )
 
 from azure.identity import ClientSecretCredential
@@ -1008,9 +1009,8 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @record
     def test_delete_blobs_simple_no_raise(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         # Arrange
         container = self._create_container()
         data = b'hello world'
@@ -1061,7 +1061,7 @@ class StorageContainerTest(StorageTestCase):
                 'blob3',
                 delete_snapshots='only'
             )
-        except HttpResponseError as err:
+        except PartialBatchErrorException as err:
             parts = list(err.parts)
             assert len(parts) == 3
             assert parts[0].status_code == 202
@@ -1078,14 +1078,12 @@ class StorageContainerTest(StorageTestCase):
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            try:
-                response = container.delete_blobs(
-                    'blob1',
-                    'blob2',
-                    'blob3',
-                )
-            except HttpResponseError as err:
-                response = err.parts
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
             blob = container.get_blob_client('blob1')
             data = b'hello world'
             blob.upload_blob(data)
@@ -1120,6 +1118,7 @@ class StorageContainerTest(StorageTestCase):
             'blob1',
             'blob2',
             'blob3',
+            raise_on_any_failure=False
         )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")

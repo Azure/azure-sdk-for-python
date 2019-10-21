@@ -36,7 +36,7 @@ class PartialBatchErrorException(HttpResponseError):
 
     :param message: The message of the exception.
     :param response: Server response to be deserialized.
-    :param parts: An iterable of the parts in multipart response.
+    :param parts: A list of the parts in multipart response.
     """
 
     def __init__(self, message, response, parts):
