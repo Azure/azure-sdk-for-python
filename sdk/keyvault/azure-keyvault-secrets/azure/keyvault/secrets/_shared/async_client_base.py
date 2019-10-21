@@ -6,7 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._generated import KeyVaultClient
@@ -80,6 +80,8 @@ class AsyncKeyVaultClientBase:
 
     @staticmethod
     def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -88,7 +90,8 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:
