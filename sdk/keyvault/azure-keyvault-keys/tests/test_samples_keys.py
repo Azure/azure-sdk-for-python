@@ -129,7 +129,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
 
-        # if you want to block until key is recovered server-side, call wait() on the poller
+        # if you want to block until deletion is complete, call wait() on the poller
         deleted_key_poller.wait()
 
         # [END delete_key]

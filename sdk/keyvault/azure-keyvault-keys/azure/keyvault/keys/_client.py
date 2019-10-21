@@ -169,12 +169,11 @@ class KeyClient(KeyVaultClientBase):
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: A poller for the delete key operation. Calling
-         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.result` on the poller will return a
-         :class:`~azure.keyvault.keys.DeletedKey` immediately. If you are planning to purge the deleted key,
-         you will want to call :func:`~azure.keyvault.keys.KeyVaultOperationPoller.wait` on the poller, which
-         blocks until deletion is complete.
-        :rtype: ~azure.keyvault.keys.KeyVaultOperationPoller[~azure.keyvault.keys.DeletedKey]
+        :returns: A poller for the delete key operation. Calling `result` returns the
+         :class:`~azure.keyvault.keys.DeletedKey`without waiting for the operation to complete.
+         If you are planning to immediately purge the deleted key, call `wait` on the poller,
+         which blocks until deletion is complete.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -360,12 +359,10 @@ class KeyClient(KeyVaultClientBase):
         Requires the keys/recover permission.
 
         :param str name: The name of the deleted key
-        :returns: A poller for the recover key operation. Calling
-         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.result` on the poller will return the recovered key
-         object immediately. If you are planning to use the recovered key, you will want to call
-         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.wait` on the poller, which blocks until the key is
-         ready to use.
-        :rtype: ~azure.keyvault.keys.KeyVaultOperationPoller[~azure.keyvault.keys.KeyVaultKey]
+        :returns: A poller for the recover key operation. Calling `result` on the poller returns the recovered
+         :class: `~azure.keyvault.keys.KeyVaultKey`. If you are planning to immediately use the recovered key,
+         call `wait` on the poller, which blocks until the key is ready to use.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:

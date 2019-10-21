@@ -271,12 +271,11 @@ class SecretClient(KeyVaultClientBase):
         # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
-        :returns: A poller for the delete secret operation. Calling
-         :func:`~azure.keyvault.secrets.KeyVaultOperationPoller.result` on the poller will return a
-         :class:`~azure.keyvault.secrets.DeletedSecret` immediately. If you are planning to purge the deleted
-         secret, you will want to call :func:`~azure.keyvault.secrets.KeyVaultOperationPoller.wait` on the
-         poller, which blocks until deletion is complete.
-        :rtype: ~azure.keyvault.secrets.KeyVaultOperationPoller[~azure.keyvault.secrets.DeletedSecret]
+        :returns: A poller for the delete secret operation. Calling `result` returns the
+         :class:`~azure.keyvault.secrets.DeletedSecret`without waiting for the operation to complete.
+         If you are planning to immediately purge the deleted secret, call `wait` on the poller,
+         which blocks until deletion is complete.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.DeletedSecret]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -389,12 +388,10 @@ class SecretClient(KeyVaultClientBase):
         Requires the secrets/recover permission.
 
         :param str name: Name of the secret
-        :returns: A poller for the recover secret operation. Calling
-         :func:`~azure.keyvault.secrets.KeyVaultOperationPoller.result` on the poller will return the recovered secret
-         object immediately. If you are planning to use the recovered secret, you will  want to call
-         :func:`~azure.keyvault.secrets.KeyVaultOperationPoller.wait` on the poller, which blocks until the secret is
-         ready to use.
-        :rtype: ~azure.keyvault.secrets.KeyVaultOperationPoller[~azure.keyvault.secrets.SecretProperties]
+        :returns: A poller for the recover secret operation. Calling `result` on the poller returns the recovered
+         :class: `~azure.keyvault.secrets.SecretProperties`. If you are planning to immediately use the recovered secret,
+         call `wait` on the poller, which blocks until the secret is ready to use.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.SecretProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
