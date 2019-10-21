@@ -234,7 +234,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 return iter(parts)
             return parts
         except StorageErrorException as error:
-            process_storage_error(error)    
+            process_storage_error(error)
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
