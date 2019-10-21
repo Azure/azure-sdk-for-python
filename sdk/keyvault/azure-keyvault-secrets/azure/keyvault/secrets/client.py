@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from ._shared.exceptions import error_map as _error_map
 from .models import Secret, DeletedSecret, SecretProperties
 
 try:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class SecretClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's secrets.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
@@ -59,10 +59,10 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_secret(
-            vault_base_url=self._vault_url,
+            vault_base_url=self._vault_endpoint,
             secret_name=name,
             secret_version=version or "",
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return Secret._from_secret_bundle(bundle)
@@ -73,10 +73,8 @@ class SecretClient(KeyVaultClientBase):
         name,  # type: str
         value,  # type: str
         content_type=None,  # type: Optional[str]
-        enabled=None,  # type: Optional[bool]
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type:  **Any
     ):
         # type: (...) -> Secret
@@ -86,12 +84,14 @@ class SecretClient(KeyVaultClientBase):
         :param str name: The name of the secret
         :param str value: The value of the secret
         :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
         :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
         :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :rtype: ~azure.keyvault.secrets.models.Secret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -102,17 +102,17 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = self._client.set_secret(
-            vault_base_url=self.vault_url,
+            vault_base_url=self.vault_endpoint,
             secret_name=name,
             value=value,
             secret_attributes=attributes,
             content_type=content_type,
-            tags=tags,
             **kwargs
         )
         return Secret._from_secret_bundle(bundle)
@@ -123,10 +123,8 @@ class SecretClient(KeyVaultClientBase):
         name,  # type: str
         version=None,  # type: Optional[str]
         content_type=None,  # type: Optional[str]
-        enabled=None,  # type: Optional[bool]
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
-        tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
         # type: (...) -> SecretProperties
@@ -137,14 +135,16 @@ class SecretClient(KeyVaultClientBase):
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
         :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param bool enabled: (optional) Whether the secret is enabled for use
         :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
         :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
-        :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Keyword arguments
+            - *enabled (bool)* - Whether the secret is enabled for use.
+            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -155,18 +155,18 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
+        enabled = kwargs.pop('enabled', None)
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         else:
             attributes = None
         bundle = self._client.update_secret(
-            self.vault_url,
+            self.vault_endpoint,
             name,
             secret_version=version or "",
             content_type=content_type,
-            tags=tags,
             secret_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -191,7 +191,7 @@ class SecretClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_secrets(
-            self._vault_url,
+            self._vault_endpoint,
             maxresults=max_page_size,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
@@ -218,7 +218,7 @@ class SecretClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_secret_versions(
-            self._vault_url,
+            self._vault_endpoint,
             name,
             maxresults=max_page_size,
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
@@ -247,7 +247,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         backup_result = self._client.backup_secret(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
+            self.vault_endpoint, name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -272,7 +272,9 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = self._client.restore_secret(
+            self.vault_endpoint, backup, error_map=_error_map, **kwargs
+        )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -295,7 +297,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -319,7 +321,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.get_deleted_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -342,7 +344,7 @@ class SecretClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_deleted_secrets(
-            self._vault_url,
+            self._vault_endpoint,
             maxresults=max_page_size,
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
@@ -368,7 +370,7 @@ class SecretClient(KeyVaultClientBase):
                 secret_client.purge_deleted_secret("secret-name")
 
         """
-        self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
+        self._client.purge_deleted_secret(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace
     def recover_deleted_secret(self, name, **kwargs):
@@ -390,5 +392,5 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+        bundle = self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)

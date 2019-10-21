@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ from azure.core.exceptions import HttpResponseError
 # Instantiate a certificate client that will be used to call the service. Notice that the client is using default
 # Azure credentials. To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_URL = os.environ["VAULT_URL"]
+VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
 credential = DefaultAzureCredential()
-client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
 try:
     # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
     # already exists in the Key Vault, then a new version of the certificate is created.
@@ -65,10 +65,11 @@ try:
     # certificate creates a new version of the certificate in the Key Vault with the new value.
 
     tags = {"a": "b"}
-    bank_certificate = client.create_certificate(name=bank_cert_name, tags=tags).result()
+    bank_certificate_poller = client.create_certificate(name=bank_cert_name, tags=tags)
+    bank_certificate = bank_certificate_poller.result()
     print(
         "Certificate with name '{0}' was created again with tags '{1}'".format(
-            bank_certificate.name, bank_certificate.tags
+            bank_certificate.name, bank_certificate.properties.tags
         )
     )
 

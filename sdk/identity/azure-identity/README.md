@@ -144,7 +144,7 @@ from azure.storage.blob import BlobServiceClient
 # If environment configuration is incomplete, it will try managed identity.
 credential = DefaultAzureCredential()
 
-client = BlobServiceClient(account_url=<your storage account url>, credential=credential)
+client = BlobServiceClient(account_url, credential=credential)
 ```
 Executing this on a development machine requires first
 [configuring the environment][#environment-variables] with appropriate values
@@ -160,7 +160,7 @@ from azure.keyvault.keys import KeyClient
 
 credential = ClientSecretCredential(client_id, client_secret, tenant_id)
 
-client = KeyClient(vault_url=<your vault url>, credential=credential)
+client = KeyClient(vault_endpoint, credential)
 ```
 
 ## Authenticating a service principal with a certificate:
@@ -175,7 +175,7 @@ from azure.keyvault.secrets import SecretClient
 cert_path = "/app/certs/certificate.pem"
 credential = CertificateCredential(client_id, tenant_id, cert_path)
 
-client = SecretClient(vault_url=<your vault url>, credential=credential)
+client = SecretClient(vault_endpoint, credential)
 ```
 
 ## Chaining credentials:
@@ -210,7 +210,7 @@ for more information.
 This example demonstrates authenticating the asynchronous `SecretClient` from
 [`azure-keyvault-secrets`][azure_keyvault_secrets] with asynchronous credentials.
 ```py
-# all credentials have async equivalents supported on Python 3.5.3+
+# most credentials have async equivalents supported on Python 3.5.3+
 from azure.identity.aio import DefaultAzureCredential
 
 default_credential = DefaultAzureCredential()
@@ -233,7 +233,7 @@ to authenticate. `ClientAuthenticationError` has a `message` attribute which
 describes why authentication failed. When raised by `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
-For more details on dealing with Azure Active Directory errors please refer to the
+For more details on handling Azure Active Directory errors please refer to the
 Azure Active Directory
 [error code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes).
 

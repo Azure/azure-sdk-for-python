@@ -21,14 +21,16 @@ KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 class VaultClient(AsyncKeyVaultClientBase):
     def __init__(
         self,
-        vault_url: str,
+        vault_endpoint: str,
         credential: "TokenCredential",
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
-        super(VaultClient, self).__init__(vault_url, credential, transport=transport, api_version=api_version, **kwargs)
-        self._certificates = CertificateClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        super(VaultClient, self).__init__(
+            vault_endpoint, credential, transport=transport, api_version=api_version, **kwargs
+        )
+        self._certificates = CertificateClient(self.vault_endpoint, credential, generated_client=self._client, **kwargs)
 
     @property
     def certificates(self):

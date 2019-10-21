@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 64b03e74-d064-11e9-8cda-001a7dda7113
+      - ed953574-d9a6-11e9-99b0-001a7dda7113
       x-ms-date:
-      - Fri, 06 Sep 2019 05:08:41 GMT
+      - Tue, 17 Sep 2019 23:57:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -23,18 +23,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 05:08:41 GMT
+      : Tue, 17 Sep 2019 23:57:38 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D7328848E3717A"'
+      : '"0x8D73BCAD1C0BBD3"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Fri, 06 Sep 2019 05:08:41 GMT
+      : Tue, 17 Sep 2019 23:57:38 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 64b03e74-d064-11e9-8cda-001a7dda7113
-      x-ms-request-id: 6773a1fe-401a-006b-5c71-64d400000000
+      x-ms-request-id: a0c6098a-901a-00a3-02b3-6d3631000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -51,15 +50,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 64bc92c0-d064-11e9-a113-001a7dda7113
+      - ed9ed5e6-d9a6-11e9-ae1a-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 06 Sep 2019 05:08:41 GMT
+      - Tue, 17 Sep 2019 23:57:38 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -77,7 +76,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:19b630ff-501a-0083-4771-644d96000000\nTime:2019-09-06T05:08:41.6820912Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:7d279e6b-601a-000e-5ab3-6d7a44000000\nTime:2019-09-17T23:57:38.5327643Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
@@ -87,13 +86,12 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Fri, 06 Sep 2019 05:08:41 GMT
+      : Tue, 17 Sep 2019 23:57:38 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-client-request-id: 64bc92c0-d064-11e9-a113-001a7dda7113
       x-ms-error-code: FileInvalidPermission
-      x-ms-request-id: 19b630ff-501a-0083-4771-644d96000000
+      x-ms-request-id: 7d279e6b-601a-000e-5ab3-6d7a44000000
       x-ms-version: '2019-02-02'
     status:
       code: 400

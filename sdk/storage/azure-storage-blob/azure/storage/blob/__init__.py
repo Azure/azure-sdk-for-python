@@ -12,13 +12,17 @@ from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
+from .download import StorageStreamDownloader
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
-    StorageErrorCode
+    AccountSasPermissions,
+    StorageErrorCode,
+    UserDelegationKey
+)
+from ._generated.models import (
+    RehydratePriority
 )
 from .models import (
     BlobType,
@@ -43,8 +47,9 @@ from .models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
+    CustomerProvidedEncryptionKey,
 )
 
 __version__ = VERSION
@@ -57,6 +62,7 @@ __all__ = [
     'BlobType',
     'LeaseClient',
     'StorageErrorCode',
+    'UserDelegationKey',
     'ExponentialRetry',
     'LinearRetry',
     'NoRetry',
@@ -82,19 +88,20 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
-    'ContainerPermissions',
-    'BlobPermissions',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageStreamDownloader',
+    'CustomerProvidedEncryptionKey',
+    'RehydratePriority'
 ]
 
 
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        overwrite=False,  # type: bool
-        max_connections=1,  # type: int
+        max_concurrency=1,  # type: int
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
         **kwargs):
@@ -120,27 +127,26 @@ def upload_blob_to_url(
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         return client.upload_blob(
             data=data,
             blob_type=BlobType.BlockBlob,
-            overwrite=overwrite,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs)
 
 
-def _download_to_stream(client, handle, max_connections, **kwargs):
+def _download_to_stream(client, handle, max_concurrency, **kwargs):
     """Download data to specified open file-handle."""
     stream = client.download_blob(**kwargs)
-    stream.download_to_stream(handle, max_connections=max_connections)
+    stream.download_to_stream(handle, max_concurrency=max_concurrency)
 
 
 def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
         overwrite=False,  # type: bool
-        max_connections=1,  # type: int
+        max_concurrency=1,  # type: int
         credential=None,  # type: Any
         **kwargs):
     # type: (...) -> None
@@ -164,11 +170,11 @@ def download_blob_from_url(
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :rtype: None
     """
-    with BlobClient(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
-            _download_to_stream(client, output, max_connections, **kwargs)
+            _download_to_stream(client, output, max_concurrency, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError("The file '{}' already exists.".format(output))
             with open(output, 'wb') as file_handle:
-                _download_to_stream(client, file_handle, max_connections, **kwargs)
+                _download_to_stream(client, file_handle, max_concurrency, **kwargs)

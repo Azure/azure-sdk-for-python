@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
+    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_url=VAULT_URL, credential=credential)
+    client = SecretClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
     try:
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the key vault, then a new version of the secret is created.
@@ -58,9 +58,15 @@ async def run_sample():
         print("\n.. Update a Secret by name")
         expires = bank_secret.properties.expires + datetime.timedelta(days=365)
         updated_secret_properties = await client.update_secret_properties(secret.name, expires=expires)
-        print("Secret with name '{0}' was updated on date '{1}'".format(updated_secret_properties.name, updated_secret_properties.updated))
         print(
-            "Secret with name '{0}' was updated to expire on '{1}'".format(updated_secret_properties.name, updated_secret_properties.expires)
+            "Secret with name '{0}' was updated on date '{1}'".format(
+                updated_secret_properties.name, updated_secret_properties.updated
+            )
+        )
+        print(
+            "Secret with name '{0}' was updated to expire on '{1}'".format(
+                updated_secret_properties.name, updated_secret_properties.expires
+            )
         )
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.
