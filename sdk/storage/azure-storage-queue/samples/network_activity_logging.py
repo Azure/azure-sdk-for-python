@@ -19,18 +19,20 @@ USAGE: python network_activity_logging.py
 
 EXAMPLE OUTPUT:
 Request with logging enabled and log level set to DEBUG.
+Queue test
 ... <logged network activity> ...
-X containers.
-Request with logging enabled and log level set to WARNING.
-X containers.
+  Message: b'here is a message'
+  Message: Here is a non-base64 encoded message.
 """
 
+import base64
+import binascii
 import logging
 
 import os
 import sys
 
-from azure.storage.blob import BlobServiceClient
+from azure.storage.queue import QueueServiceClient
 
 # Retrieve connection string from environment variables
 # and construct a blob service client.
@@ -38,11 +40,11 @@ connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', None)
 if not connection_string:
     print('AZURE_STORAGE_CONNECTION_STRING required.')
     sys.exit(1)
-service_client = BlobServiceClient.from_connection_string(connection_string)
+service_client = QueueServiceClient.from_connection_string(connection_string)
 
 # Retrieve a compatible logger and add a handler to send the output to console (STDOUT).
 # Compatible loggers in this case include `azure` and `azure.storage`.
-logger = logging.getLogger('azure.storage.blob')
+logger = logging.getLogger('azure.storage.queue')
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Logging policy logs network activity at the DEBUG level. Set the level on the logger prior to the call.
@@ -51,13 +53,14 @@ logger.setLevel(logging.DEBUG)
 # The logger level must be set to DEBUG, AND one of the following must be true:
 # a) (PREFERRED) `logging_enable=True` passed as kwarg to the client constructor OR the API call OR,
 # b) service_client._config.logging_policy.enable_http_logger = True
-print("Request with logging enabled and log level set to DEBUG.")
-containers = list(service_client.list_containers(logging_enable=True))
-print("{} containers.".format(len(containers)))
-
-logger.setLevel(logging.WARNING)
-# Although logging is enabled, because the logger level is set to WARNING,
-# no logs will be output.
-print("Request with logging enabled and log level set to WARNING.")
-containers = list(service_client.list_containers(logging_enable=True))
-print("{} containers.".format(len(containers)))
+print('Request with logging enabled and log level set to DEBUG.')
+queues = service_client.list_queues(logging_enable=True)
+for queue in queues:
+    print('Queue: {}'.format(queue.name))
+    queue_client = service_client.get_queue_client(queue.name)
+    messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
+    for message in messages:
+        try:
+            print('  Message: {}'.format(base64.b64decode(message.content)))
+        except binascii.Error:
+            print('  Message: {}'.format(message.content))
