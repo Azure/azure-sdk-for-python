@@ -2073,9 +2073,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(data, content)
         self._teardown(FILE_PATH)
 
-    async def _test_transport_closed_only_once(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            pytest.skip("live only")
+
         transport = AioHttpTransport()
         url = self._get_account_url()
         credential = self._get_shared_key_credential()
@@ -2087,10 +2090,5 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
                 assert transport.session is not None
             await bsc.get_service_properties()
             assert transport.session is not None
-
-    @record
-    def test_transport_closed_only_once(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_transport_closed_only_once())
 
 # ------------------------------------------------------------------------------

@@ -16,7 +16,6 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import BlobType, BlobBlock, CustomerProvidedEncryptionKey, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob.models import CustomerProvidedEncryptionKey, BlobSasPermissions
 from testcase import GlobalStorageAccountPreparer
 from asyncblobtestcase import (
     AsyncBlobTestCase,
