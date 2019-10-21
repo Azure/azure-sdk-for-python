@@ -35,7 +35,7 @@ steps:
       cd $(Build.SourcesDirectory)
       sudo python3.8 -m pip install twine codecov beautifulsoup4
       sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "${{ parameters.BuildTargetingString }}" 
-    displayName: 'Prep Environment using Python 3.8'
+    displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}
 
@@ -49,7 +49,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
-    displayName: 'Prep Environment using Python 3.8'
+    displayName: 'Running Tests'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
