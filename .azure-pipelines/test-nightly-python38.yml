@@ -28,7 +28,7 @@ jobs:
           sudo python3.8 -m pip install tox-monorepo packaging
           cd $(Build.SourcesDirectory)
           sudo python3.8 -m pip install twine codecov beautifulsoup4
-          sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "azure-identity" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
+          sudo python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
         displayName: 'Setup - Run Tests Using Python 3.8'
         continueOnError: true
 
