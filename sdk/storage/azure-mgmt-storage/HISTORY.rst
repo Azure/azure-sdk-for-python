@@ -3,6 +3,17 @@
 Release History
 ===============
 
+5.0.0 (2019-10-21)
+++++++++++++++++++
+
+**Features**
+
+- Model AzureFilesIdentityBasedAuthentication has a new parameter active_directory_properties
+
+**Breaking changes**
+
+- Operation StorageAccountsOperations.list_keys has a new signature
+   
 4.2.0 (2019-10-07)
 ++++++++++++++++++
 
