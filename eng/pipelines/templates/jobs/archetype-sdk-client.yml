@@ -100,7 +100,6 @@ jobs:
 
     steps:
     - template: $(TestYml)
-      condition: eq($(CustomImage), 'false')
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
