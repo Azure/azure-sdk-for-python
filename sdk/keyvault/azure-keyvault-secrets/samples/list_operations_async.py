@@ -19,8 +19,8 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft-delete]
-# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create secret (set_secret)
 #

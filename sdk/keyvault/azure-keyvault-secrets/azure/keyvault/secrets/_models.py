@@ -73,8 +73,7 @@ class SecretProperties(object):
     @property
     def key_id(self):
         # type: () -> str
-        """
-        If this secret backs a certificate, this property is the identifier of the corresponding key.
+        """If this secret backs a certificate, this property is the identifier of the corresponding key.
 
         :rtype: str
         """
@@ -89,8 +88,7 @@ class SecretProperties(object):
     @property
     def not_before(self):
         # type: () -> datetime
-        """
-        Not-before time, in UTC
+        """Not-before time, in UTC
 
         :rtype: datetime.datetime
         """
@@ -99,8 +97,7 @@ class SecretProperties(object):
     @property
     def expires_on(self):
         # type: () -> datetime
-        """
-        When the secret expires, in UTC
+        """When the secret expires, in UTC
 
         :rtype: datetime.datetime
         """
@@ -109,8 +106,7 @@ class SecretProperties(object):
     @property
     def created_on(self):
         # type: () -> datetime
-        """
-        When the secret was created, in UTC
+        """When the secret was created, in UTC
 
         :rtype: datetime.datetime
         """
@@ -119,8 +115,7 @@ class SecretProperties(object):
     @property
     def updated_on(self):
         # type: () -> datetime
-        """
-        When the secret was last updated, in UTC
+        """When the secret was last updated, in UTC
 
         :rtype: datetime.datetime
         """
@@ -129,8 +124,7 @@ class SecretProperties(object):
     @property
     def recovery_level(self):
         # type: () -> str
-        """
-        The vault's deletion recovery level for secrets
+        """The vault's deletion recovery level for secrets
 
         :rtype: str
         """
@@ -139,8 +133,7 @@ class SecretProperties(object):
     @property
     def vault_endpoint(self):
         # type: () -> str
-        """
-        URL of the vault containing the secret
+        """URL of the vault containing the secret
 
         :rtype: str
         """
@@ -161,8 +154,7 @@ class SecretProperties(object):
     @property
     def tags(self):
         # type: () -> Dict[str, str]
-        """
-        Application specific metadata in the form of key-value pairs
+        """Application specific metadata in the form of key-value pairs
 
         :rtype: dict"""
         return self._tags
@@ -204,8 +196,7 @@ class KeyVaultSecret(object):
     @property
     def properties(self):
         # type: () -> SecretProperties
-        """
-        The secret's properties
+        """The secret's properties
 
         :rtype: ~azure.keyvault.secrets.SecretProperties
         """
@@ -214,8 +205,7 @@ class KeyVaultSecret(object):
     @property
     def value(self):
         # type: () -> str
-        """
-        The secret's value
+        """The secret's value
 
         :rtype: str
         """
@@ -280,8 +270,7 @@ class DeletedSecret(object):
     @property
     def properties(self):
         # type: () -> SecretProperties
-        """
-        The properties of the deleted secret
+        """The properties of the deleted secret
 
         :rtype: ~azure.keyvault.secrets.SecretProperties
         """
@@ -290,8 +279,7 @@ class DeletedSecret(object):
     @property
     def deleted_date(self):
         # type: () -> datetime
-        """
-        When the secret was deleted, in UTC
+        """When the secret was deleted, in UTC
 
         :rtype: datetime.datetime
         """
@@ -300,8 +288,7 @@ class DeletedSecret(object):
     @property
     def recovery_id(self):
         # type: () -> str
-        """
-        An identifier used to recover the deleted secret. Will only exist if soft-delete is enabled.
+        """An identifier used to recover the deleted secret. Returns None if soft-delete is disabled.
 
         :rtype: str
         """
@@ -310,8 +297,7 @@ class DeletedSecret(object):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """
-        When the secret is scheduled to be purged, in UTC. Will only exist if soft-delete is enabled.
+        """When the secret is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
 
         :rtype: datetime.datetime
         """

@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
+    from azure.core.configuration import Configuration
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
