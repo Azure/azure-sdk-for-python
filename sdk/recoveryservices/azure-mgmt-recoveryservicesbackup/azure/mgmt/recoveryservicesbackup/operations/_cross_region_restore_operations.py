@@ -12,8 +12,6 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -41,9 +39,25 @@ class CrossRegionRestoreOperations(object):
 
         self.config = config
 
-
-    def _trigger_initial(
+    def trigger(
             self, azure_region, parameters, custom_headers=None, raw=False, **operation_config):
+        """Restores the specified backed up data in a different region as compared
+        to where the data is backed up.
+
+        :param azure_region: Azure region to hit Api
+        :type azure_region: str
+        :param parameters: resource cross region restore request
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.models.CrossRegionRestoreRequestResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
         url = self.trigger.metadata['url']
         path_format_arguments = {
@@ -81,46 +95,4 @@ class CrossRegionRestoreOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-    def trigger(
-            self, azure_region, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Restores the specified backed up data in a different region as compared
-        to where the data is backed up.
-
-        :param azure_region: Azure region to hit Api
-        :type azure_region: str
-        :param parameters: resource cross region restore request
-        :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.models.CrossRegionRestoreRequestResource
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._trigger_initial(
-            azure_region=azure_region,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     trigger.metadata = {'url': '/Subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrossRegionRestore'}
