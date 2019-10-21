@@ -1116,14 +1116,11 @@ class StorageContainerTest(StorageTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        try:
-            response = container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
-            )
-        except:
-            pass
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
     # once we have premium tests, still we don't want to test Py 2.7

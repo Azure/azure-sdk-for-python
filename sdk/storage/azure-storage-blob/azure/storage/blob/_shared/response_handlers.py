@@ -34,17 +34,14 @@ _LOGGER = logging.getLogger(__name__)
 class PartialBatchErrorException(HttpResponseError):
     """There is a partial failure in batch operations.
 
-    :param deserialize: A deserializer
+    :param message: The message of the exception.
     :param response: Server response to be deserialized.
+    :param parts: An iterable of the parts in multipart response.
     """
 
     def __init__(self, message, response, parts):
-
-        self.response = response
         self.parts = parts
-        self.failed_operations = None
-        self.message = message
-        super(PartialBatchErrorException, self).__init__(message=self.message, response=response)
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
 def parse_length_from_content_range(content_range):

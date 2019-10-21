@@ -224,7 +224,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 raise HttpResponseError(response=response)
             parts = response.parts()
             if raise_on_any_failure:
-                failures = [p for p in parts if not (200 <= p.status_code < 300)]
+                failures = [p for p in parts if not 200 <= p.status_code < 300]
                 if failures:
                     error = PartialBatchErrorException(
                         message="There is a partial failure in the batch operation.",
