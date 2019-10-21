@@ -4,6 +4,7 @@
 # ------------------------------------
 import abc
 import calendar
+import os
 import time
 
 from msal import TokenCache
@@ -98,6 +99,7 @@ class AuthnClientBase(ABC):
 
     @abc.abstractmethod
     def obtain_token_by_refresh_token(self, scopes, username):
+        # type: (Iterable[str], Optional[str]) -> AccessToken
         pass
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
@@ -215,12 +217,27 @@ class AuthnClient(AuthnClientBase):
         return token
 
     def obtain_token_by_refresh_token(self, scopes, username):
-        # type: (Iterable[str], str) -> Optional[AccessToken]
-        """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
-        refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
+        # type: (Iterable[str], Optional[str]) -> AccessToken
+        """Acquire an access token using a cached refresh token. Raises ClientAuthenticationError if that fails.
+        This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
 
-        # find account matching username
-        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query={"username": username})
+        # if an username is provided, restrict our search to accounts that have that username
+        query = {"username": username} if username else {}
+        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query=query)
+
+        # if more than one account was returned, ensure that that they all have the same home_account_id. If so,
+        # we'll treat them as equal, otherwise we can't know which one to pick, so we'll raise an error.
+        if len(accounts) > 1 and any(
+            account.get("home_account_id") != accounts[0].get("home_account_id") for account in accounts):
+            message = ("Multiple accounts were discovered in the shared token cache. To fix, set the AZURE_USERNAME "
+                       "environment variable to the preferred username, or specify it when constructing "
+                       "SharedTokenCacheCredential.  {}"
+                       "Discoverd accounts: {}").format(os.linesep, ', '.join({u.get("username") for u in accounts}))
+            if username:
+                message = ("Multiple entries found for the user account '{}' were found in the shared token cache. "
+                           "This is not currently supported by SharedTokenCacheCredential").format(username)
+            raise ClientAuthenticationError(message=message)
+
         for account in accounts:
             # try each refresh token that might work, return the first access token acquired
             for token in self.get_refresh_tokens(scopes, account):
@@ -240,7 +257,11 @@ class AuthnClient(AuthnClientBase):
                 except ClientAuthenticationError:
                     continue
 
-        return None
+        message = "No cached token found"
+        if username:
+            message += " for '{}'".format(username)
+
+        raise ClientAuthenticationError(message=message)
 
     @staticmethod
     def _create_config(**kwargs):
