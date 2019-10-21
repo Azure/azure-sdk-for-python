@@ -69,7 +69,7 @@ class KeyVaultOperationPoller(LROPoller):
 
     # pylint: disable=arguments-differ
     def result(self):
-        # type: (Optional[int]) -> Model
+        # type: () -> Model
         """Returns the result of the long running operation without blocking until its completion.
 
         :returns: The deserialized resource of the long running operation,
@@ -82,7 +82,7 @@ class KeyVaultOperationPoller(LROPoller):
     def wait(self, timeout=None):
         # type: (Optional[int]) -> None
         """Wait on the long running operation for a specified length
-        of time. You can check if this call as ended with timeout with the
+        of time. You can check if this call has ended with timeout with the
         "done()" method.
 
         :param int timeout: Period of time to wait for the long running
@@ -163,4 +163,4 @@ class DeletePollingMethod(RecoverDeletedPollingMethod):
 
     def finished(self):
         # type: () -> bool
-        return self._sd_disabled or self._status == "deleted"
+        return self._sd_disabled or self._status == self._finished_status

@@ -13,7 +13,7 @@ from azure.core.polling import async_poller
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from .._shared._polling_async import DeleteResourcePollerAsync, RecoverDeletedResourcePollerAsync
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -265,9 +265,12 @@ class SecretClient(AsyncKeyVaultClientBase):
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
+        sd_disabled = deleted_secret.recovery_id is None
         command = partial(self.get_deleted_secret, name=name, **kwargs)
 
-        delete_secret_poller = DeleteResourcePollerAsync(interval=polling_interval)
+        delete_secret_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
         return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async
@@ -363,5 +366,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
         command = partial(self.get_secret, name=name, **kwargs)
 
-        recover_secret_poller = RecoverDeletedResourcePollerAsync(interval=polling_interval)
+        recover_secret_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
         return await async_poller(command, recovered_secret, None, recover_secret_poller)

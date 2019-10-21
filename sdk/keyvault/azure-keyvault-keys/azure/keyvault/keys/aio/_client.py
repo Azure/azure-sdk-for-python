@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import async_poller
 
-from .._shared._polling_async import DeleteResourcePollerAsync, RecoverDeletedResourcePollerAsync
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
 from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
@@ -183,9 +183,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         deleted_key = DeletedKey._from_deleted_key_bundle(
             await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
+        sd_disabled = deleted_key.recovery_id is None
         command = partial(self.get_deleted_key, name=name, **kwargs)
 
-        delete_key_poller = DeleteResourcePollerAsync(interval=polling_interval)
+        delete_key_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
         return await async_poller(command, deleted_key, None, delete_key_poller)
 
     @distributed_trace_async
@@ -358,7 +361,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
         command = partial(self.get_key, name=name, **kwargs)
 
-        recover_key_poller = RecoverDeletedResourcePollerAsync(interval=polling_interval)
+        recover_key_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
         return await async_poller(command, recovered_key, None, recover_key_poller)
 
     @distributed_trace_async
