@@ -120,7 +120,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         OSName: 'Linux'
-        CoverageArg: '--disablecov'
+        CoverageArg: ''
         PythonVersion: '3.8'
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
