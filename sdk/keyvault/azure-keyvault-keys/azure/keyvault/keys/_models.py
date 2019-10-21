@@ -23,7 +23,7 @@ KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 class JsonWebKey(object):
     # pylint:disable=too-many-instance-attributes
-    """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
+    """As defined in http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :param str kid: Key identifier.
     :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
@@ -115,8 +115,7 @@ class KeyProperties(object):
     @property
     def not_before(self):
         # type: () -> datetime
-        """
-        The key's not-before time, in UTC
+        """The time before which the key can not be used, in UTC
 
         :rtype: datetime.datetime
         """
@@ -125,8 +124,7 @@ class KeyProperties(object):
     @property
     def expires_on(self):
         # type: () -> datetime
-        """
-        When the key will expire, in UTC
+        """When the key will expire, in UTC
 
         :rtype: datetime.datetime
         """
@@ -135,8 +133,7 @@ class KeyProperties(object):
     @property
     def created_on(self):
         # type: () -> datetime
-        """
-        When the key was created, in UTC
+        """When the key was created, in UTC
 
         :rtype: datetime.datetime
         """
@@ -145,8 +142,7 @@ class KeyProperties(object):
     @property
     def updated_on(self):
         # type: () -> datetime
-        """
-        When the key was last updated, in UTC
+        """When the key was last updated, in UTC
 
         :rtype: datetime.datetime
         """
@@ -155,8 +151,7 @@ class KeyProperties(object):
     @property
     def vault_endpoint(self):
         # type: () -> str
-        """
-        URL of the vault containing the key
+        """URL of the vault containing the key
 
         :rtype: str
         """
@@ -165,8 +160,7 @@ class KeyProperties(object):
     @property
     def recovery_level(self):
         # type: () -> str
-        """
-        The vault's deletion recovery level for keys
+        """The vault's deletion recovery level for keys
 
         :rtype: str
         """
@@ -175,18 +169,16 @@ class KeyProperties(object):
     @property
     def tags(self):
         # type: () -> Dict[str, str]
-        """
-        Application specific metadata in the form of key-value pairs
+        """Application specific metadata in the form of key-value pairs
 
-        :rtype: dict
+        :rtype: dict[str, str]
         """
         return self._tags
 
     @property
     def managed(self):
         # type: () -> bool
-        """
-        Returns if the key's lifetime is managed by key vault
+        """Returns whether the key's lifetime is managed by key vault
 
         :rtype: bool
         """
@@ -229,30 +221,43 @@ class KeyVaultKey(object):
     @property
     def properties(self):
         # type: () -> KeyProperties
-        """The key's properties"""
+        """The key's properties
+
+        :rtype: ~azure.keyvault.keys.KeyProperties
+        """
         return self._properties
 
     @property
     def key(self):
         # type: () -> _models.JsonWebKey
-        """The JSON web key"""
+        """The JSON web key
+
+        :rtype: ~azure.keyvault.keys.JsonWebKey
+        """
         return self._key_material
 
     @property
     def key_type(self):
         # type: () -> str
-        """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values."""
+        """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
+
+        :rtype: ~azure.keyvault.keys.KeyType or str
+        """
         return self._key_material.kty
 
     @property
     def key_operations(self):
         # type: () -> list[KeyOperation]
-        """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values."""
+        """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
+
+        :rtype: list[~azure.keyvault.keys.KeyOperation or str]
+        """
         return self._key_material.key_ops
 
 
 class DeletedKey(KeyVaultKey):
-    """A deleted key's id, attributes, and cryptographic material, as well as when it will be purged"""
+    """A deleted key's properties, cryptographic material and its deletion information. If soft-delete
+    is enabled, returns information about its recovery as well."""
 
     def __init__(
         self,
@@ -298,8 +303,7 @@ class DeletedKey(KeyVaultKey):
     @property
     def deleted_date(self):
         # type: () -> datetime
-        """
-        When the key was deleted, in UTC
+        """When the key was deleted, in UTC
 
         :rtype: datetime.datetime
         """
@@ -308,8 +312,7 @@ class DeletedKey(KeyVaultKey):
     @property
     def recovery_id(self):
         # type: () -> str
-        """
-        An identifier used to recover the deleted key
+        """An identifier used to recover the deleted key. Returns None if soft-delete is disabled.
 
         :rtype: str
         """
@@ -318,8 +321,7 @@ class DeletedKey(KeyVaultKey):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """
-        When the key is scheduled to be purged, in UTC
+        """When the key is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
 
         :rtype: datetime.datetime
         """
