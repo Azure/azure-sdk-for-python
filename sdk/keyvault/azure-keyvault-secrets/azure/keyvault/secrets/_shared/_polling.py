@@ -107,32 +107,31 @@ class KeyVaultOperationPoller(LROPoller):
         except TypeError: # Was None
             pass
 
-
-
-class DeleteResourcePoller(PollingMethod):
-    def __init__(self, interval=2):
+class RecoverDeletedPollingMethod(PollingMethod):
+    def __init__(self, initial_status, finished_status, interval=2):
         self._command = None
-        self._deleted_resource = None
+        self._resource = None
         self._polling_interval = interval
-        self._status = "deleting"
+        self._status = initial_status
+        self._finished_status = finished_status
 
     def _update_status(self):
         # type: () -> None
         try:
             self._command()
-            self._status = "deleted"
+            self._status = self._finished_status
         except ResourceNotFoundError:
-            self._status = "deleting"
+            pass
         except HttpResponseError as e:
             if e.status_code == 403:
-                self._status = "deleted"
+                self._status = self._finished_status
             else:
                 raise
 
     def initialize(self, client, initial_response, _):
         # type: (Any, Any, Callable) -> None
         self._command = client
-        self._deleted_resource = initial_response
+        self._resource = initial_response
 
     def run(self):
         # type: () -> None
@@ -146,59 +145,22 @@ class DeleteResourcePoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        return not self._deleted_resource.recovery_id or self._status == "deleted"
+        return self._status == self._finished_status
 
     def resource(self):
         # type: () -> Any
-        return self._deleted_resource
+        return self._resource
 
     def status(self):
         # type: () -> str
         return self._status
 
-class RecoverDeletedResourcePoller(PollingMethod):
-    def __init__(self, interval=2):
-        self._command = None
-        self._recovered_resource = None
-        self._polling_interval = interval
-        self._status = "recovering"
 
-    def _update_status(self):
-        # type: () -> None
-        try:
-            self._command()
-            self._status = "recovered"
-        except ResourceNotFoundError:
-            self._status = "recovering"
-        except HttpResponseError as e:
-            if e.status_code == 403:
-                self._status = "recovered"
-            else:
-                raise
-
-    def initialize(self, client, initial_response, _):
-        # type: (Any, Any, Callable) -> None
-        self._command = client
-        self._recovered_resource = initial_response
-
-    def run(self):
-        # type: () -> None
-        try:
-            while not self.finished():
-                self._update_status()
-                time.sleep(self._polling_interval)
-        except Exception as e:
-            logger.warning(str(e))
-            raise
+class DeletePollingMethod(RecoverDeletedPollingMethod):
+    def __init__(self, initial_status, finished_status, sd_disabled, interval=2):
+        self._sd_disabled = sd_disabled
+        super(DeletePollingMethod, self).__init__(initial_status, finished_status, interval)
 
     def finished(self):
         # type: () -> bool
-        return self._status == "recovered"
-
-    def resource(self):
-        # type: () -> Any
-        return self._recovered_resource
-
-    def status(self):
-        # type: () -> str
-        return self._status
+        return self._sd_disabled or self._status == "deleted"

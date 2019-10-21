@@ -7,7 +7,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import DeleteResourcePoller, RecoverDeletedResourcePoller, KeyVaultOperationPoller
+from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
 from ._models import KeyVaultKey, KeyProperties, DeletedKey
 
 try:
@@ -169,15 +169,15 @@ class KeyClient(KeyVaultClientBase):
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
-        :returns: An poller for the delete key operation. Calling result() on the poller will return the deleted
-         key instantly. If you are planning to purge the deleted key, you will want to call wait() on the poller,
-         which blocks until the key is deleted server_side.
+        :returns: A poller for the delete key operation. Calling
+         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.result` on the poller will return a
+         :class:`~azure.keyvault.keys.DeletedKey` immediately. If you are planning to purge the deleted key,
+         you will want to call :func:`~azure.keyvault.keys.KeyVaultOperationPoller.wait` on the poller, which
+         blocks until deletion is complete.
         :rtype: ~azure.keyvault.keys.KeyVaultOperationPoller[~azure.keyvault.keys.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
-
-        Keyword
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -191,8 +191,11 @@ class KeyClient(KeyVaultClientBase):
         deleted_key = DeletedKey._from_deleted_key_bundle(
             self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         )
+        sd_disabled = deleted_key.recovery_id is None
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling = DeleteResourcePoller(interval=polling_interval)
+        delete_key_polling = DeletePollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
         return KeyVaultOperationPoller(command, deleted_key, None, delete_key_polling)
 
     @distributed_trace
@@ -353,9 +356,11 @@ class KeyClient(KeyVaultClientBase):
         Requires the keys/recover permission.
 
         :param str name: The name of the deleted key
-        :returns: An poller for the recover key operation. Calling result() on the poller will return the recovered
-         key instantly. If you are planning to use the recovered key, you will want to call wait() on the poller,
-         which blocks until the key is recovered server_side.
+        :returns: A poller for the recover key operation. Calling
+         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.result` on the poller will return the recovered key
+         object immediately. If you are planning to use the recovered key, you will want to call
+         :func:`~azure.keyvault.keys.KeyVaultOperationPoller.wait` on the poller, which blocks until the key is
+         ready to use.
         :rtype: ~azure.keyvault.keys.KeyVaultOperationPoller[~azure.keyvault.keys.KeyVaultKey]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -372,7 +377,9 @@ class KeyClient(KeyVaultClientBase):
             self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
         )
         command = partial(self.get_key, name=name, **kwargs)
-        recover_key_poller = RecoverDeletedResourcePoller(interval=polling_interval)
+        recover_key_poller = RecoverDeletedPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
         return KeyVaultOperationPoller(command, recovered_key, None, recover_key_poller)
 
     @distributed_trace
