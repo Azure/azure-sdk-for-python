@@ -41,7 +41,9 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
-      script: python3.8 scripts/devops_tasks/setup_execute_tests.py
+      script: |
+        cd $(Build.SourcesDirectory)
+        python3.8 scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         -p=python
         "${{ parameters.BuildTargetingString }}" 
