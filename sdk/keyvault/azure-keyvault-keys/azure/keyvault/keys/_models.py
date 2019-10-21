@@ -178,7 +178,7 @@ class KeyProperties(object):
     @property
     def managed(self):
         # type: () -> bool
-        """Returns if the key's lifetime is managed by key vault
+        """Returns whether the key's lifetime is managed by key vault
 
         :rtype: bool
         """

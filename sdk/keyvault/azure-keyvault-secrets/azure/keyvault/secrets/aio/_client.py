@@ -70,7 +70,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         Keyword arguments
             - **enabled** (bool): Whether the secret is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **content_type** (str): A descriptive string indicating the type of the secret, e.g. 'password'
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
             - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
             - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
