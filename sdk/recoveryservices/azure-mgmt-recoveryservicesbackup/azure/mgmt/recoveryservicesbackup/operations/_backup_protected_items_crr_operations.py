@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class BackupProtectedItemsOperations(object):
-    """BackupProtectedItemsOperations operations.
+class BackupProtectedItemsCrrOperations(object):
+    """BackupProtectedItemsCrrOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class BackupProtectedItemsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-05-13".
+    :ivar api_version: Client Api Version. Constant value: "2018-12-20".
     """
 
     models = models
@@ -35,7 +35,7 @@ class BackupProtectedItemsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-13"
+        self.api_version = "2018-12-20"
 
         self.config = config
 
@@ -119,4 +119,4 @@ class BackupProtectedItemsOperations(object):
         deserialized = models.ProtectedItemResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems'}
+    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems/'}

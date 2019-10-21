@@ -35,6 +35,8 @@ from .operations import BackupCrrJobDetailsOperations
 from .operations import BackupCrrJobsOperations
 from .operations import CrrOperationResultsOperations
 from .operations import CrrOperationStatusOperations
+from .operations import RecoveryPointsCrrOperations
+from .operations import BackupProtectedItemsCrrOperations
 from .operations import ProtectionIntentOperations
 from .operations import BackupStatusOperations
 from .operations import FeatureSupportOperations
@@ -110,6 +112,10 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype crr_operation_results: azure.mgmt.recoveryservicesbackup.operations.CrrOperationResultsOperations
     :ivar crr_operation_status: CrrOperationStatus operations
     :vartype crr_operation_status: azure.mgmt.recoveryservicesbackup.operations.CrrOperationStatusOperations
+    :ivar recovery_points_crr: RecoveryPointsCrr operations
+    :vartype recovery_points_crr: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsCrrOperations
+    :ivar backup_protected_items_crr: BackupProtectedItemsCrr operations
+    :vartype backup_protected_items_crr: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsCrrOperations
     :ivar protection_intent: ProtectionIntent operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatus operations
@@ -216,6 +222,10 @@ class RecoveryServicesBackupClient(SDKClient):
         self.crr_operation_results = CrrOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.crr_operation_status = CrrOperationStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_points_crr = RecoveryPointsCrrOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)

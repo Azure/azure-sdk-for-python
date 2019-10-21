@@ -31,6 +31,8 @@ from ._backup_crr_job_details_operations import BackupCrrJobDetailsOperations
 from ._backup_crr_jobs_operations import BackupCrrJobsOperations
 from ._crr_operation_results_operations import CrrOperationResultsOperations
 from ._crr_operation_status_operations import CrrOperationStatusOperations
+from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
+from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
 from ._protection_intent_operations import ProtectionIntentOperations
 from ._backup_status_operations import BackupStatusOperations
 from ._feature_support_operations import FeatureSupportOperations
@@ -77,6 +79,8 @@ __all__ = [
     'BackupCrrJobsOperations',
     'CrrOperationResultsOperations',
     'CrrOperationStatusOperations',
+    'RecoveryPointsCrrOperations',
+    'BackupProtectedItemsCrrOperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
