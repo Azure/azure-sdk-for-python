@@ -67,7 +67,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START async_retry_policy]
             :end-before: [END async_retry_policy]
             :language: python

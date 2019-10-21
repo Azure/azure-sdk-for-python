@@ -251,7 +251,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all the deleted keys
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_keys(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -275,7 +275,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all keys
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_keys(
             self._vault_endpoint,
             maxresults=max_page_size,
@@ -300,7 +300,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all versions of a key
                 :dedent: 8
         """
-        max_page_size = kwargs.get("max_page_size", None)
+        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_key_versions(
             self._vault_endpoint,
             name,
