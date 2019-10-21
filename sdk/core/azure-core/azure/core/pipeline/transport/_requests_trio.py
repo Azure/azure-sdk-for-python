@@ -137,7 +137,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START trio]
             :end-before: [END trio]
             :language: python

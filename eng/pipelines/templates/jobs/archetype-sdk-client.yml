@@ -21,7 +21,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
-    condition: ne(variables['Skip.Analyze'], 'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
     - template: ../variables/globals.yml
 
@@ -35,7 +35,7 @@ jobs:
     - template: ../steps/analyze.yml
 
   - job: 'Test'
-    condition: ne(variables['Skip.Test'], 'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
@@ -94,7 +94,7 @@ jobs:
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist,depends'
+        ToxTestEnv: 'whl,sdist'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:

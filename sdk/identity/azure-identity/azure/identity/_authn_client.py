@@ -14,6 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
+    HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     RetryPolicy,
@@ -189,7 +190,8 @@ class AuthnClient(AuthnClientBase):
             ContentDecodePolicy(),
             config.retry_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
         ]
         if not transport:
             transport = RequestsTransport(**kwargs)

@@ -68,7 +68,7 @@ class PipelineClient(PipelineClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
+        .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START build_pipeline_client]
             :end-before: [END build_pipeline_client]
             :language: python
