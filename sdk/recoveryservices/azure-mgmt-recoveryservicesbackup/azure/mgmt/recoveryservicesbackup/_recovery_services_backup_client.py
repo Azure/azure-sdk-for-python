@@ -31,7 +31,7 @@ from .operations import BackupProtectedItemsOperations
 from .operations import OperationOperations
 from .operations import AadPropertiesOperations
 from .operations import CrossRegionRestoreOperations
-from .operations import CrrJobDetailsOperations
+from .operations import BackupCrrJobDetailsOperations
 from .operations import BackupCrrJobsOperations
 from .operations import CrrOperationResultsOperations
 from .operations import CrrOperationStatusOperations
@@ -102,8 +102,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype aad_properties: azure.mgmt.recoveryservicesbackup.operations.AadPropertiesOperations
     :ivar cross_region_restore: CrossRegionRestore operations
     :vartype cross_region_restore: azure.mgmt.recoveryservicesbackup.operations.CrossRegionRestoreOperations
-    :ivar crr_job_details: CrrJobDetails operations
-    :vartype crr_job_details: azure.mgmt.recoveryservicesbackup.operations.CrrJobDetailsOperations
+    :ivar backup_crr_job_details: BackupCrrJobDetails operations
+    :vartype backup_crr_job_details: azure.mgmt.recoveryservicesbackup.operations.BackupCrrJobDetailsOperations
     :ivar backup_crr_jobs: BackupCrrJobs operations
     :vartype backup_crr_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupCrrJobsOperations
     :ivar crr_operation_results: CrrOperationResults operations
@@ -209,7 +209,7 @@ class RecoveryServicesBackupClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.cross_region_restore = CrossRegionRestoreOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.crr_job_details = CrrJobDetailsOperations(
+        self.backup_crr_job_details = BackupCrrJobDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_crr_jobs = BackupCrrJobsOperations(
             self._client, self.config, self._serialize, self._deserialize)

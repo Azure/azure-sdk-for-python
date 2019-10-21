@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class CrrJobDetailsOperations(object):
-    """CrrJobDetailsOperations operations.
+class BackupCrrJobDetailsOperations(object):
+    """BackupCrrJobDetailsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 

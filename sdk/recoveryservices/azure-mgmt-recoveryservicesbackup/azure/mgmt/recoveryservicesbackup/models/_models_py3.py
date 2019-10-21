@@ -10372,19 +10372,24 @@ class TargetRestoreInfo(Model):
     :param database_name: Database name InstanceName/DataBaseName for SQL or
      System/DbName for SAP Hana
     :type database_name: str
+    :param target_directory_mapping: This will contain the target folder
+     mapping for the Full/Diff/Log/Incremental pits.
+    :type target_directory_mapping: dict[str, str]
     """
 
     _attribute_map = {
         'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
+        'target_directory_mapping': {'key': 'targetDirectoryMapping', 'type': '{str}'},
     }
 
-    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, **kwargs) -> None:
+    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, target_directory_mapping=None, **kwargs) -> None:
         super(TargetRestoreInfo, self).__init__(**kwargs)
         self.overwrite_option = overwrite_option
         self.container_id = container_id
         self.database_name = database_name
+        self.target_directory_mapping = target_directory_mapping
 
 
 class TokenInformation(Model):

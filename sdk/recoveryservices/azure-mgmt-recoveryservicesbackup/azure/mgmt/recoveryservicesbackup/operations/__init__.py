@@ -27,7 +27,7 @@ from ._backup_protected_items_operations import BackupProtectedItemsOperations
 from ._operation_operations import OperationOperations
 from ._aad_properties_operations import AadPropertiesOperations
 from ._cross_region_restore_operations import CrossRegionRestoreOperations
-from ._crr_job_details_operations import CrrJobDetailsOperations
+from ._backup_crr_job_details_operations import BackupCrrJobDetailsOperations
 from ._backup_crr_jobs_operations import BackupCrrJobsOperations
 from ._crr_operation_results_operations import CrrOperationResultsOperations
 from ._crr_operation_status_operations import CrrOperationStatusOperations
@@ -73,7 +73,7 @@ __all__ = [
     'OperationOperations',
     'AadPropertiesOperations',
     'CrossRegionRestoreOperations',
-    'CrrJobDetailsOperations',
+    'BackupCrrJobDetailsOperations',
     'BackupCrrJobsOperations',
     'CrrOperationResultsOperations',
     'CrrOperationStatusOperations',
