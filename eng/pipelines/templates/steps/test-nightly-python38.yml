@@ -32,23 +32,23 @@ steps:
       cd Python-3.8.0
       mkdir debug
       cd debug
-      ../configure --enable-optimizations --prefix=$HOME/lib/python
+      ../configure --enable-optimizations --prefix=$HOME
       make
       echo $HOME
       make install
-      export PATH=~/lib/python:$PATH
+      export PATH=~/lib/python38:$PATH
+      which python3.8
       which python3
-      which python
-      python --version
-      python --version
+      python3 --version
+      python3.8 --version
       apt-get install python3.8-dev
       apt-get install python3.8-distutils          
-      wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python3 - --user
+      wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python3.8 - --user
       export PATH=~/.local/bin:$PATH  
       which pip      
-      python3 -m pip install tox tox-monorepo packaging
+      python3.8 -m pip install tox tox-monorepo packaging
       cd $(Build.SourcesDirectory)
-      python3 -m pip install twine codecov beautifulsoup4
+      python3.8 -m pip install twine codecov beautifulsoup4
     displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}
@@ -56,7 +56,7 @@ steps:
   - task: PythonScript@0
     inputs:
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
-      pythonInterpreter: python3
+      pythonInterpreter: python3.8
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
         --mark_arg="${{ parameters.TestMarkArgument }}" 
@@ -76,7 +76,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: python3.8
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
       arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
@@ -85,7 +85,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: python3.8
       script: scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
