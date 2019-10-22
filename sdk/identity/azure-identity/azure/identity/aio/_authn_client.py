@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     ContentDecodePolicy,
     DistributedTracingPolicy,
+    HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
@@ -43,7 +44,8 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
             ContentDecodePolicy(),
             config.retry_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
         ]
         if not transport:
             transport = AioHttpTransport(**kwargs)

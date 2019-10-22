@@ -19,13 +19,14 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
-# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)#
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+#
 # 1. Create secret (set_secret)
 #
 # 2. List secrets from the Key Vault (list_secrets)
 #
-# 3. List secret versions from the Key Vault (list_secret_versions)
+# 3. List secret versions from the Key Vault (list_properties_of_secret_versions)
 #
 # 4. List deleted secrets from the Key Vault (list_deleted_secrets). The vault has to be soft-delete enabled to perform
 # this operation.
@@ -70,7 +71,7 @@ def run_sample():
         # You need to check all the different values your bank account password secret had previously. Lets print all
         # the versions of this secret.
         print("\n.. List versions of the secret using its name")
-        secret_versions = client.list_secret_versions(bank_secret.name)
+        secret_versions = client.list_properties_of_secret_versions(bank_secret.name)
         for secret_version in secret_versions:
             print(
                 "Bank Secret with name '{0}' has version: '{1}'.".format(
@@ -79,12 +80,12 @@ def run_sample():
             )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
-        client.delete_secret(bank_secret.name)
-        client.delete_secret(storage_secret.name)
+        # Calling result() on the method will immediately return the `DeletedSecret`, but calling wait() blocks
+        # until the secret is deleted server-side.
+        print("\n.. Deleting secrets...")
+        client.begin_delete_secret(bank_secret.name).wait()
+        client.begin_delete_secret(storage_secret.name).wait()
 
-        # To ensure secret is deleted on the server side.
-        print("Deleting secrets...")
-        time.sleep(30)
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted secrets from the Key Vault")
@@ -96,7 +97,7 @@ def run_sample():
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:
-            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+            print("\n{0} Please enable soft-delete on Key Vault to perform this operation.".format(e.message))
         else:
             print("\nrun_sample has caught an error. {0}".format(e.message))
 

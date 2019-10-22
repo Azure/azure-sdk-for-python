@@ -131,7 +131,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         self.use_env = kwargs.pop('user_agent_use_env', True)
 
         if base_user_agent is None:
-            self._user_agent = "azsdk-python-core/{} Python/{} {}".format(
+            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
                 azcore_version,
                 platform.python_version(),
                 platform.platform()
@@ -353,12 +353,13 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
         http_response = response.http_response
-        logger = response.context.get("logger")
-
-        if not logger.isEnabledFor(logging.INFO):
-            return
 
         try:
+            logger = response.context["logger"]
+
+            if not logger.isEnabledFor(logging.INFO):
+                return
+
             logger.info("Response status: %r", http_response.status_code)
             logger.info("Response headers:")
             for res_header, value in http_response.headers.items():

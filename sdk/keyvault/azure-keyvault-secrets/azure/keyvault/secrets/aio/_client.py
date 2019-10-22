@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
 
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -113,7 +115,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         Keyword arguments
             - **enabled** (bool): Whether the secret is enabled for use.
             - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **content_type** (str): A descriptive string indicating the type of the secret, e.g. 'password'
             - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
             - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
@@ -160,16 +162,15 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Lists all secrets
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_secrets(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
-    def list_secret_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
+    def list_properties_of_secret_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
@@ -179,17 +180,16 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
-                :start-after: [START list_secret_versions]
-                :end-before: [END list_secret_versions]
+                :start-after: [START list_properties_of_secret_versions]
+                :end-before: [END list_properties_of_secret_versions]
                 :language: python
                 :caption: List all versions of a secret
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_secret_versions(
             self.vault_endpoint,
             name,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
@@ -240,9 +240,13 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
-        """Delete all versions of a secret. Requires the secrets/delete permission.
+        """Delete all versions of a secret.
 
-        :param str name: Name of the secret
+        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
+
+        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant, we poll
+         on the deletion of the secret. Awaiting this method returns the
+         :class:`~azure.keyvault.secrets.DeletedSecret`
         :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -256,8 +260,17 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        bundle = await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedSecret._from_deleted_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
+            await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        sd_disabled = deleted_secret.recovery_id is None
+        command = partial(self.get_deleted_secret, name=name, **kwargs)
+
+        delete_secret_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
+        return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
@@ -297,10 +310,9 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Lists deleted secrets
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_secrets(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
         )
@@ -329,10 +341,13 @@ class SecretClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
-        Requires the secrets/recover permission.
+
+        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
 
         :param str name: Name of the secret
-        :returns: The recovered secret
+        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant, we poll on
+         the recovery of the secret. Awaiting this method returns the recovered
+         :class:`~azure.keyvault.secrets.SecretProperties`
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -344,5 +359,13 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
-        return SecretProperties._from_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_secret = SecretProperties._from_secret_bundle(
+            await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_secret, name=name, **kwargs)
+
+        recover_secret_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
+        return await async_poller(command, recovered_secret, None, recover_secret_poller)

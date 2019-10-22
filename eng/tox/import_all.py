@@ -18,6 +18,7 @@ logging.getLogger().setLevel(logging.INFO)
 excluded_packages = [
     "azure.core.tracing.opencensus",
     "azure.eventhub.checkpointstoreblob.aio",
+    "azure.identity",
     "azure.keyvault.certificates", # Github issue 7879
     "azure.keyvault.keys", # Github issue 7879
     "azure.keyvault.secrets", # Github issue 7879

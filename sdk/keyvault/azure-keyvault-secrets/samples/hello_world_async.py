@@ -76,8 +76,7 @@ async def run_sample():
         print("Secret with name '{0}' created with value '{1}'".format(new_secret.name, new_secret.value))
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete Secret")
-        print("Deleting Secret..")
+        print("\n.. Deleting Secret...")
         deleted_secret = await client.delete_secret(secret.name)
         print("Secret with name '{0}' was deleted.".format(deleted_secret.name))
 
