@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
+from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
 from ._models import KeyVaultKey, KeyProperties, DeletedKey
 
 try:
@@ -162,13 +164,18 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace
-    def delete_key(self, name, **kwargs):
+    def begin_delete_key(self, name, **kwargs):
         # type: (str, **Any) -> DeletedKey
-        """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
+        """Delete all versions of a key and its cryptographic material.
+
+        Requires the keys/delete permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the key to delete.
-        :returns: The deleted key
-        :rtype: ~azure.keyvault.keys.DeletedKey
+        :returns: A poller for the delete key operation. Calling `result` returns the
+         :class:`~azure.keyvault.keys.DeletedKey` without waiting for the operation to complete.
+         If you are planning to immediately purge the deleted key, call `wait` on the poller,
+         which blocks until deletion is complete.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -181,8 +188,21 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedKey._from_deleted_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        deleted_key = DeletedKey._from_deleted_key_bundle(
+            self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        sd_disabled = deleted_key.recovery_id is None
+        command = partial(self.get_deleted_key, name=name, **kwargs)
+        delete_key_polling_method = DeletePollingMethod(
+            command=command,
+            final_resource=deleted_key,
+            initial_status="deleting",
+            finished_status="deleted",
+            sd_disabled=sd_disabled,
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(delete_key_polling_method)
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
@@ -231,7 +251,6 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        # TODO: which exception is raised when soft-delete is not enabled
         bundle = self._client.get_deleted_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
@@ -252,10 +271,9 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all the deleted keys
                 :dedent: 8
         """
-        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_deleted_keys(
             self._vault_endpoint,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs
         )
@@ -276,16 +294,15 @@ class KeyClient(KeyVaultClientBase):
                 :caption: List all keys
                 :dedent: 8
         """
-        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_keys(
             self._vault_endpoint,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
-    def list_key_versions(self, name, **kwargs):
+    def list_properties_of_key_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[KeyProperties]
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
@@ -295,17 +312,16 @@ class KeyClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
-                :start-after: [START list_key_versions]
-                :end-before: [END list_key_versions]
+                :start-after: [START list_properties_of_key_versions]
+                :end-before: [END list_properties_of_key_versions]
                 :language: python
                 :caption: List all versions of a key
                 :dedent: 8
         """
-        max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_key_versions(
             self._vault_endpoint,
             name,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
         )
@@ -314,7 +330,7 @@ class KeyClient(KeyVaultClientBase):
     def purge_deleted_key(self, name, **kwargs):
         # type: (str, **Any) -> None
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
-        does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
+        does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will return an error.
 
         Requires the keys/purge permission.
 
@@ -326,24 +342,26 @@ class KeyClient(KeyVaultClientBase):
             .. code-block:: python
 
                 # if the vault has soft-delete enabled, purge permanently deletes a deleted key
-                # (with soft-delete disabled, delete_key is permanent)
+                # (with soft-delete disabled, begin_delete_key is permanent)
                 key_client.purge_deleted_key("key-name")
 
         """
         self._client.purge_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
 
     @distributed_trace
-    def recover_deleted_key(self, name, **kwargs):
+    def begin_recover_deleted_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
-        vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
-        Attempting to recover an non-deleted key will also return an error.
+        """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled.
+        If a vault does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will
+        return an error. Attempting to recover an non-deleted key will also return an error.
 
-        Requires the keys/recover permission.
+        Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the deleted key
-        :returns: The recovered key
-        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :returns: A poller for the recover key operation. Calling `result` on the poller returns the recovered
+         :class:`~azure.keyvault.keys.KeyVaultKey`. If you are planning to immediately use the recovered key,
+         call `wait` on the poller, which blocks until the key is ready to use.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -354,8 +372,19 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
-        return KeyVaultKey._from_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_key = KeyVaultKey._from_key_bundle(
+            self._client.recover_deleted_key(vault_base_url=self.vault_endpoint, key_name=name, **kwargs)
+        )
+        command = partial(self.get_key, name=name, **kwargs)
+        recover_key_polling_method = RecoverDeletedPollingMethod(
+            command=command,
+            final_resource=recovered_key,
+            initial_status="recovering",
+            finished_status="recovered",
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(recover_key_polling_method)
 
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):

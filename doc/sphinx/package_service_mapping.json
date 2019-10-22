@@ -25,7 +25,7 @@
     "namespaces": [
       "azure.cognitiveservices.knowledge.qnamaker"
     ],
-    "service_name": "Cognitive Services Knozledge QnA Maker"
+    "service_name": "Cognitive Services Knowledge QnA Maker"
   },
   "azure-cognitiveservices-language-luis": {
     "category": "Client",

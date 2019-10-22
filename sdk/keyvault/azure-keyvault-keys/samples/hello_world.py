@@ -28,7 +28,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 4. Update an existing key (update_key)
 #
-# 5. Delete a key (delete_key)
+# 5. Delete a key (begin_delete_key)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a key client that will be used to call the service.
@@ -80,8 +80,8 @@ try:
 
     # The RSA key is no longer used, need to delete it from the Key Vault.
     print("\n.. Delete Keys")
-    deleted_ec_key = client.delete_key(ec_key.name)
-    deleted_rsa_key = client.delete_key(rsa_key.name)
+    deleted_ec_key = client.begin_delete_key(ec_key.name).result()
+    deleted_rsa_key = client.begin_delete_key(rsa_key.name).result()
     print("Deleted key '{0}'".format(deleted_ec_key.name))
     print("Deleted key '{0}'".format(deleted_rsa_key.name))
 

@@ -122,10 +122,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(secret.enabled)
 
         # [END list_secrets]
-        # [START list_secret_versions]
+        # [START list_properties_of_secret_versions]
 
         # gets a list of all versions of a secret
-        secret_versions = secret_client.list_secret_versions("secret-name")
+        secret_versions = secret_client.list_properties_of_secret_versions("secret-name")
 
         async for secret in secret_versions:
             # the list doesn't include the versions' values
@@ -133,7 +133,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(secret.enabled)
             print(secret.updated_on)
 
-        # [END list_secret_versions]
+        # [END list_properties_of_secret_versions]
         # [START list_deleted_secrets]
 
         # gets a list of deleted secrets (requires soft-delete enabled for the vault)
@@ -167,9 +167,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END backup_secret]
 
         await secret_client.delete_secret(created_secret.name)
-        await self._poll_until_exception(
-            secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-        )
 
         # [START restore_secret_backup]
 
@@ -187,10 +184,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
         await secret_client.delete_secret(created_secret.name)
-
-        await self._poll_until_no_exception(
-            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-        )
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)

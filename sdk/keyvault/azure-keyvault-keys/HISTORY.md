@@ -18,6 +18,9 @@ properties
     - Renamed the `result` property of `VerifyResult` to `is_valid`
 - Renamed the `UnwrapKeyResult` and `WrapKeyResult` classes to `UnwrapResult` and `WrapResult`
 - Renamed `list_keys` to `list_properties_of_keys`
+- Renamed `list_key_versions` to `list_properties_of_key_versions`
+- Renamed sync method `delete_key` to `begin_delete_key`
+- The sync method `begin_delete_key` and async `delete_key` now return pollers that return a `DeletedKey`
 - Renamed `Key` to `KeyVaultKey`
 - `KeyVaultKey` properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`

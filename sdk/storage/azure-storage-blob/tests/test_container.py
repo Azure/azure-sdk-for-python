@@ -83,9 +83,9 @@ class StorageContainerTest(StorageTestCase):
     def _generate_oauth_token(self):
 
         return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
         )
 
     #--Test cases for containers -----------------------------------------

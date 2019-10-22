@@ -106,11 +106,8 @@ class TestAuthSamplesAsync(StorageTestCase):
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
-        )
+        token_credential = ClientSecretCredential(self.active_directory_tenant_id, self.active_directory_application_id,
+                                                  self.active_directory_application_secret)
 
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob.aio import BlobServiceClient

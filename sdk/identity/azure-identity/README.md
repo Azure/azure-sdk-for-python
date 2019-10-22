@@ -158,7 +158,7 @@ This example demonstrates authenticating the `KeyClient` from the
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
 
-credential = ClientSecretCredential(client_id, client_secret, tenant_id)
+credential = ClientSecretCredential(tenant_id, client_id, client_secret)
 
 client = KeyClient(vault_endpoint, credential)
 ```
@@ -173,7 +173,7 @@ from azure.keyvault.secrets import SecretClient
 
 # requires a PEM-encoded certificate with private key, not protected with a password
 cert_path = "/app/certs/certificate.pem"
-credential = CertificateCredential(client_id, tenant_id, cert_path)
+credential = CertificateCredential(tenant_id, client_id, cert_path)
 
 client = SecretClient(vault_endpoint, credential)
 ```
@@ -190,14 +190,14 @@ from azure.eventhub import EventHubClient
 from azure.identity import ChainedTokenCredential, ClientSecretCredential, ManagedIdentityCredential
 
 managed_identity = ManagedIdentityCredential()
-client_secret = ClientSecretCredential(client_id, client_secret, tenant_id)
+client_secret = ClientSecretCredential(tenant_id, client_id, client_secret)
 
 # when an access token is requested, the chain will try each
 # credential in order, stopping when one provides a token
 credential_chain = ChainedTokenCredential(managed_identity, client_secret)
 
 # the ChainedTokenCredential can be used anywhere a credential is required
-client = EventHubClient(host, event_hub_path, credential)
+client = EventHubClient(host, event_hub_path, credential_chain)
 ```
 
 ## Async credentials:
@@ -218,7 +218,7 @@ default_credential = DefaultAzureCredential()
 # async credentials have the same API and configuration their synchronous counterparts,
 from azure.identity.aio import ClientSecretCredential
 
-credential = ClientSecretCredential(client_id, client_secret, tenant_id)
+credential = ClientSecretCredential(tenant_id, client_id, client_secret)
 
 # and are used with async Azure SDK clients in the same way
 from azure.keyvault.aio import SecretClient
