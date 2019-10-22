@@ -8,7 +8,7 @@ import threading
 import uuid
 from typing import TYPE_CHECKING
 
-from azure.core.polling import PollingMethod, LROPoller
+from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 try:
@@ -33,14 +33,9 @@ class KeyVaultOperationPoller(LROPoller):
 
     # pylint: disable=arguments-differ
     def __init__(self, polling_method):
-        # type: (PollingMethod) -> None
-        # pylint: disable=super-init-not-called
+        # type: (PollingMethod) -> None]
+        super(KeyVaultOperationPoller, self).__init__(None, None, None, NoPolling())
         self._polling_method = polling_method
-
-        # Prepare thread execution
-        self._thread = None
-        self._done = None
-        self._exception = None
 
     # pylint: disable=arguments-differ
     def result(self):
