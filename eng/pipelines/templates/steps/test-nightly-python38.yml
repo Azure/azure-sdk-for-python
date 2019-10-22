@@ -26,7 +26,7 @@ steps:
       ls
       tar -xf Python-3.8.0.tar.xz
       ls
-      find ~/Python-3.8 -type d | xargs chmod 0755
+      #find ~/python3.8 -type d | xargs chmod 0755
       cd Python-3.8.0
       mkdir debug
       cd debug
