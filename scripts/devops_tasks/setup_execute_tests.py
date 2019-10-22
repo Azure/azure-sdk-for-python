@@ -161,7 +161,8 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
         if os.path.isfile(source_coverage_file):
             shutil.move(source_coverage_file, target_coverage_file)
 
-    collect_pytest_coverage_files(targeted_packages)
+    if not parsed_args.disablecov:
+        collect_pytest_coverage_files(targeted_packages)
 
     # if any of the packages failed, we should get exit with errors
     if err_results:
