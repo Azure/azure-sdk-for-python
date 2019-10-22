@@ -18,7 +18,6 @@ import sys
 import asyncio
 import time
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob._generated.models import CopyStatusType
 
 async def main():
     try:
@@ -37,7 +36,7 @@ async def main():
         props = await copied_blob.get_blob_properties()
         status = props.copy.status
         print("Copy status: " + status)
-        if status == CopyStatusType.success:
+        if status == "success":
             print("Copy finished")
             break
         time.sleep(10)

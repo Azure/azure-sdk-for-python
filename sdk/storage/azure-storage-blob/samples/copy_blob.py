@@ -17,7 +17,6 @@ import os
 import sys
 import time
 from azure.storage.blob import BlobServiceClient
-from azure.storage.blob._generated.models import CopyStatusType
 
 def main():
     try:
@@ -35,9 +34,8 @@ def main():
     for i in range(10):
         props = copied_blob.get_blob_properties()
         status = props.copy.status
-        print(type(status))
         print("Copy status: " + status)
-        if status == CopyStatusType.success:
+        if status == "success":
             print("Copy finished")
             break
         time.sleep(10)
