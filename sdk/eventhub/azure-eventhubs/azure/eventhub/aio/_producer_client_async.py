@@ -49,7 +49,7 @@ class EventHubProducerClient(EventHubClient):
                 if self._producers is None:
                     num_of_producers = len(await self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
-                    self._producers_locks = [asyncio.Lock] * num_of_producers
+                    self._producers_locks = [asyncio.Lock()] * num_of_producers
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:
