@@ -228,11 +228,10 @@ class GenerateCredentialsParameters(Model):
      to be generated.
     :type token_id: str
     :param expiry: The expiry date of the generated credentials after which
-     the credentials become invalid. Default value:
-     "9999-12-31T15:59:59.9999999-08:00" .
+     the credentials become invalid.
     :type expiry: datetime
     :param name: Specifies name of the password which should be regenerated if
-     any -- password or password2. Possible values include: 'password1',
+     any -- password1 or password2. Possible values include: 'password1',
      'password2'
     :type name: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
@@ -244,7 +243,7 @@ class GenerateCredentialsParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, token_id: str=None, expiry="9999-12-31T15:59:59.9999999-08:00", name=None, **kwargs) -> None:
+    def __init__(self, *, token_id: str=None, expiry=None, name=None, **kwargs) -> None:
         super(GenerateCredentialsParameters, self).__init__(**kwargs)
         self.token_id = token_id
         self.expiry = expiry
@@ -1115,8 +1114,8 @@ class ScopeMap(ProxyResource):
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
     :param actions: Required. The list of scoped permissions for registry
      artifacts.
-     E.g. repositories/repository-name/pull,
-     repositories/repository-name/delete
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write
     :type actions: list[str]
     """
 
@@ -1467,7 +1466,7 @@ class TokenPassword(Model):
     :type creation_time: datetime
     :param expiry: The expiry datetime of the password.
     :type expiry: datetime
-    :param name: The password name "password" or "password2". Possible values
+    :param name: The password name "password1" or "password2". Possible values
      include: 'password1', 'password2'
     :type name: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
