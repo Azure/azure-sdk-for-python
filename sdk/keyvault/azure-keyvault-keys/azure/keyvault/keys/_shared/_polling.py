@@ -131,7 +131,13 @@ class RecoverDeletedPollingMethod(PollingMethod):
 class DeletePollingMethod(RecoverDeletedPollingMethod):
     def __init__(self, command, final_resource, initial_status, finished_status, sd_disabled, interval=2):
         self._sd_disabled = sd_disabled
-        super(DeletePollingMethod, self).__init__(command, final_resource, initial_status, finished_status, interval)
+        super(DeletePollingMethod, self).__init__(
+            command=command,
+            final_resource=final_resource,
+            initial_status=initial_status,
+            finished_status=finished_status,
+            interval=interval
+        )
 
     def finished(self):
         # type: () -> bool
