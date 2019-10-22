@@ -20,6 +20,8 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
+      sudo apt-get update
+      sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
       mkdir ~/python3.8
       cd ~/python3.8
       wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
@@ -31,7 +33,11 @@ steps:
       mkdir debug
       cd debug
       ../configure --enable-optimizations --prefix=$HOME
-      make install
+      make
+      echo $HOME
+      make DESTDIR=/home/vsts/lib/python38 install
+      which python3
+      which python
       cd ~/
       ls
       echo 'home/python3.8'
@@ -39,6 +45,7 @@ steps:
       ls
       export PATH=~/python3.8/Python-3.8.0/:$PATH
       which python3
+      python --version
       apt-get install python3.8-dev
       apt-get install python3.8-distutils          
       wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python3 - --user
