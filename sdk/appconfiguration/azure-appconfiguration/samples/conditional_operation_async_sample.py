@@ -46,7 +46,7 @@ async def main():
     first_get = await client.get_configuration_setting(key="MyKey")
     print_configuration_setting(first_get)
 
-    # Conditional get, expect to return None
+    # Conditional get, expect to return None because it is not modified
     second_get = await client.get_configuration_setting(
         key="MyKey",
         etag=first_get.etag,
@@ -61,7 +61,7 @@ async def main():
         match_condition=MatchConditions.IfNotModified
     )
 
-    # Conditional set, expect to see error
+    # Conditional set, expect to see error because it is modified
     try:
         await client.set_configuration_setting(
             configuration_setting=first_get,
