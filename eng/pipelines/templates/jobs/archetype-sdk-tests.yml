@@ -57,11 +57,11 @@ jobs:
     variables:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.8'
+      OSName: 'Linux'
 
     timeoutInMinutes: 120
-    strategy:
-      maxParallel: ${{ parameters.MaxParallel }}
-      matrix: ${{ parameters.Matrix }}
     continueOnError: false
 
     pool:
