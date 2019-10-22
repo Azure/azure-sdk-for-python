@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/create?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/create?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:50 GMT
+      date: Wed, 16 Oct 2019 23:08:09 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -29,9 +29,9 @@ interactions:
         resource="https://vault.azure.net"
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 401
@@ -40,7 +40,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/create
         - api-version=7.0
         - ''
@@ -48,39 +48,38 @@ interactions:
     body: '{"policy": {"key_props": {"exportable": true, "kty": "RSA", "key_size":
       2048, "reuse_key": false}, "secret_props": {"contentType": "application/x-pkcs12"},
       "x509_props": {"subject": "CN=*.microsoft.com", "sans": {"dns_names": ["sdk.azure-int.net"]},
-      "validity_months": 24}, "issuer": {"name": "Self"}}}'
+      "validity_months": 24}, "issuer": {"name": "Unknown"}}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '302'
+      - '305'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/create?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/create?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
-        certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1347'
+      content-length: '1290'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:51 GMT
+      date: Wed, 16 Oct 2019 23:08:10 GMT
       expires: '-1'
-      location: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0&request_id=e8db4efe09d4429699df5e4bd0ff500b
+      location: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0&request_id=0707cb3f8c1444d2a67106ac4d5e48ff
       pragma: no-cache
       retry-after: '10'
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 202
@@ -89,7 +88,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/create
         - api-version=7.0
         - ''
@@ -103,28 +102,27 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: PATCH
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
-        certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1346'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:51 GMT
+      date: Wed, 16 Oct 2019 23:08:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -133,7 +131,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -143,19 +141,18 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
-        certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1346'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:51 GMT
+      date: Wed, 16 Oct 2019 23:08:11 GMT
       expires: '-1'
       pragma: no-cache
       retry-after: '10'
@@ -163,9 +160,9 @@ interactions:
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -174,7 +171,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -184,19 +181,18 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
-        certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1346'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:01 GMT
+      date: Wed, 16 Oct 2019 23:08:21 GMT
       expires: '-1'
       pragma: no-cache
       retry-after: '10'
@@ -204,9 +200,9 @@ interactions:
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -215,7 +211,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -225,26 +221,28 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"cancelled","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1181'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:11 GMT
+      date: Wed, 16 Oct 2019 23:08:30 GMT
       expires: '-1'
       pragma: no-cache
+      retry-after: '10'
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -253,7 +251,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -263,26 +261,28 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"cancelled","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '1181'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:16 GMT
+      date: Wed, 16 Oct 2019 23:08:40 GMT
       expires: '-1'
       pragma: no-cache
+      retry-after: '10'
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -291,7 +291,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -301,74 +301,37 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-    method: DELETE
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
-  response:
-    body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8olnue30NRwvZAHfx/iMeA9ROsxI/PYHsUdPgwXmD1xEyg6G1Nn0Q1X7UviM2WBhvOdTIZXqsJnbg2E6UwXXw0SZBPP5UbX31lak8c6wqO9zK5pFW+PsdJMcoULC7jliZvyjHbw616CehDTNPR6ayE8Qq9PWe9Md1uAGbDmA98I9kYKQUW63PHeWW87gABnqtXo+gkCsdsHnAA6JsodSIozRteL9/V6WU9bPwggDsNbNZTWWywMUvvR06uhES8GBxVx6bT9wuTFB0ZNQ/EbK5boWxRkTthSTXmyqGIXxc5OJwDym41QlHlhUuoZhRBK0no9tZkHzFI0tTrS76h0fQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFz+i8t0Ta/Rm+YAirmNaH6Ds2dGHYwc+zUS6zBpCXe2gh4UEABO+xGTqr0zBycE5xIa4/A7ngGSpJNIHNoHh5KM8Lioiw15XpSsrAcJVJ4fb2W50cIiAob1ho6I+3JzShWMA+4yGiXSTD3f3T/TSXynouh1r4tsbcWOp23njwyai8C83BP85C2KglpC3J03kUahOBDQDAqvmbrxR6gBZ40sdr7tMj6JrsjEAIjuLI8s4cjEz7pskRTQMMJ0N62AcmnsYKJaedH38U1pu8BdxpxkwluTELGwIH0bWBXN9BVfLA6Fzn1bTOoVF/rpaer+AQ8porazfC5bdgG3ZkHV7UU=","cancellation_requested":true,"status":"cancelled","request_id":"e8db4efe09d4429699df5e4bd0ff500b"}'
-    headers:
-      cache-control: no-cache
-      content-length: '1181'
-      content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:16 GMT
-      expires: '-1'
-      pragma: no-cache
-      server: Microsoft-IIS/10.0
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
-      x-powered-by: ASP.NET
-    status:
-      code: 200
-      message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - vault95aa1ed5.vault.azure.net
-        - /certificates/asyncCanceledDeletedCert/pending
-        - api-version=7.0
-        - ''
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"error":{"code":"PendingCertificateNotFound","message":"Pending certificate
-        not found: asyncCanceledDeletedCert"}}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '115'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:16 GMT
+      date: Wed, 16 Oct 2019 23:08:51 GMT
       expires: '-1'
       pragma: no-cache
+      retry-after: '10'
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
+        - vault458ad70cc795aa1ed5.vault.azure.net
         - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
@@ -378,26 +341,28 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-    method: DELETE
-    uri: https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert?api-version=7.0
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/9f0e91d55bcd4ba88b5d77289633c473","attributes":{"enabled":false,"nbf":1568839130,"exp":1631998130,"created":1568839731,"updated":1568839731,"recoveryLevel":"Purgeable"},"policy":{"id":"https://vault95aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1568839731,"updated":1568839731}}}'
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
     headers:
       cache-control: no-cache
-      content-length: '922'
+      content-length: '1289'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:49:17 GMT
+      date: Wed, 16 Oct 2019 23:09:01 GMT
       expires: '-1'
       pragma: no-cache
+      retry-after: '10'
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -406,8 +371,1368 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vault95aa1ed5.vault.azure.net
-        - /certificates/asyncCanceledDeletedCert
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:09:11 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:09:21 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:09:31 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:09:41 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:09:51 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:02 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:11 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:21 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:32 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:42 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:10:51 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:02 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:12 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:22 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:32 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:42 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:11:52 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:02 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:12 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:23 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:33 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:42 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:12:52 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:03 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:13 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:23 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:33 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:43 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:13:53 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:14:03 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:14:13 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:14:23 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:14:34 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=7.0
+  response:
+    body:
+      string: '{"id":"https://vault458ad70cc795aa1ed5.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiz1S2jqpkUi/ejH7s63HLb3Ve3x48HoIcWs5VfduPrR4tjsmxj8QRrd1zAbj47kz0alaFnHDA+5ekJY02j8ZF8Y8SRXGVmsPzWK4b3DZHMejaGPCpq8UVdE7TjCHDFJ4c4Ae+OlMnG9Vl6qbcuolqDK+X+UK3S22RcH5nj7NLJ6QbKzcUZKhjqixbkZOMfyhOdRUHAbm5jNkE5TlI2wm7cVKLN1Z2RmWCE/8COP9zlhsb7rCC6k8hQ/Tix1JptbBD+HttBVcEkteF4FcKJwtEGA8Tlm9kNc7vmrPmZ7KzOH9J5gPh4T6JE/AwxgS20wIZwSS1ETUSFcgYK0h+32rPwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD3O/nyLvtLw8cPJxpAMIzOnHXwWNs++KIYgRVCTeNVIsuxYOdJHs6sF7N9UaJxoLU9pyCENqGiZDNe+5fvj5dgKaaSX0REcUyT+mTM/5H4zihqJLxzVi0B3DeWFYJtoXgtvTld9CZe4fG7EAhkSOFkukWpYf7UHCJsoSy3FMaYtr0/QGsXOjM6nq5TAkac8JNHAWT2RE0A09ezFL4Lg534LSiscfVVI+n/4OG0qRGar8E9zVgLlduHX43APShaQ5rxA/haCgZSblJ0JhzGj5TD38xOMoKrjkll3GwcFsY0VPJg1zJJJ0nZDE3l720292x117XwqkOOaI9k7/PlsMDg=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"0707cb3f8c1444d2a67106ac4d5e48ff"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1289'
+      content-type: application/json; charset=utf-8
+      date: Wed, 16 Oct 2019 23:14:44 GMT
+      expires: '-1'
+      pragma: no-cache
+      retry-after: '10'
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc795aa1ed5.vault.azure.net
+        - /certificates/asyncCanceledDeletedCert/pending
         - api-version=7.0
         - ''
 version: 1

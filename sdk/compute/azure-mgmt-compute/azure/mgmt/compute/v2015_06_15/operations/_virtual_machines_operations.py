@@ -1107,7 +1107,8 @@ class VirtualMachinesOperations(object):
 
     def redeploy(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """The operation to redeploy a virtual machine.
+        """Shuts down the virtual machine, moves it to a new node, and powers it
+        back on.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

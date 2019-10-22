@@ -25,7 +25,7 @@ SECRET = os.environ.get('AAD_SECRET')
 TENANT_ID = os.environ.get('AAD_TENANT_ID')
 
 
-credential = ClientSecretCredential(client_id=CLIENT_ID, secret=SECRET, tenant_id=TENANT_ID)
+credential = ClientSecretCredential(client_id=CLIENT_ID, client_secret=SECRET, tenant_id=TENANT_ID)
 client = EventHubClient(host=HOSTNAME,
                         event_hub_path=EVENT_HUB,
                         credential=credential)

@@ -48,3 +48,5 @@ stages:
       safeName: azurekeyvaultkeys
     - name: azure_keyvault_secrets
       safeName: azurekeyvaultsecrets
+    - name: azure_mgmt_keyvault
+      safeName: azuremgmtkeyvault      

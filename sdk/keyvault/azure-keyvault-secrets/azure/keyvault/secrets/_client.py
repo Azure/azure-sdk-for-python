@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
+from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from .models import Secret, DeletedSecret, SecretProperties
+from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -27,6 +29,11 @@ class SecretClient(KeyVaultClientBase):
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
 
+    Keyword arguments
+        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
+        - **transport**: :class:`~azure.core.pipeline.transport.HttpTransport` to use. Defaults to
+          :class:`~azure.core.pipeline.transport.RequestsTransport`.
+
     Example:
         .. literalinclude:: ../tests/test_samples_secrets.py
             :start-after: [START create_secret_client]
@@ -40,12 +47,12 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_secret(self, name, version=None, **kwargs):
-        # type: (str, str, **Any) -> Secret
+        # type: (str, str, **Any) -> KeyVaultSecret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -65,33 +72,25 @@ class SecretClient(KeyVaultClientBase):
             error_map=_error_map,
             **kwargs
         )
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def set_secret(
-        self,
-        name,  # type: str
-        value,  # type: str
-        content_type=None,  # type: Optional[str]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type:  **Any
-    ):
-        # type: (...) -> Secret
+    def set_secret(self, name, value, **kwargs):
+        # type: (str, str, **Any) -> KeyVaultSecret
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date of the secret in UTC
-        :rtype: ~azure.keyvault.secrets.models.Secret
+        :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -102,49 +101,40 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
         bundle = self._client.set_secret(
-            vault_base_url=self.vault_endpoint,
-            secret_name=name,
-            value=value,
-            secret_attributes=attributes,
-            content_type=content_type,
-            **kwargs
+            vault_base_url=self.vault_endpoint, secret_name=name, value=value, secret_attributes=attributes, **kwargs
         )
-        return Secret._from_secret_bundle(bundle)
+        return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret_properties(
-        self,
-        name,  # type: str
-        version=None,  # type: Optional[str]
-        content_type=None,  # type: Optional[str]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
-    ):
-        # type: (...) -> SecretProperties
+    def update_secret_properties(self, name, version=None, **kwargs):
+        # type: (str, Optional[str], **Any) -> SecretProperties
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
-        :param str content_type: (optional) An arbitrary string indicating the type of the secret, e.g. 'password'
-        :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
-        :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Keyword arguments
-            - *enabled (bool)* - Whether the secret is enabled for use.
-            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.
+            - **enabled** (bool): Whether the secret is enabled for use.
+            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
+            - **content_type** (str): A descriptive string indicating the type of the secret, e.g. 'password'
+            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
+            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -155,16 +145,19 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        enabled = kwargs.pop('enabled', None)
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        enabled = kwargs.pop("enabled", None)
+        not_before = kwargs.pop("not_before", None)
+        expires_on = kwargs.pop("expires_on", None)
+        if enabled is not None or not_before is not None or expires_on is not None:
+            attributes = self._client.models.SecretAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on
+            )
         else:
             attributes = None
         bundle = self._client.update_secret(
             self.vault_endpoint,
             name,
             secret_version=version or "",
-            content_type=content_type,
             secret_attributes=attributes,
             error_map=_error_map,
             **kwargs
@@ -172,13 +165,13 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_secrets(self, **kwargs):
+    def list_properties_of_secrets(self, **kwargs):
         # type: (**Any) -> ItemPaged[SecretProperties]
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.
 
         :returns: An iterator of secrets
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -189,38 +182,36 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_secrets(
             self._vault_endpoint,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
-    def list_secret_versions(self, name, **kwargs):
+    def list_properties_of_secret_versions(self, name, **kwargs):
         # type: (str, **Any) -> ItemPaged[SecretProperties]
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
         :param str name: Name of the secret
         :returns: An iterator of secrets
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
-                :start-after: [START list_secret_versions]
-                :end-before: [END list_secret_versions]
+                :start-after: [START list_properties_of_secret_versions]
+                :end-before: [END list_properties_of_secret_versions]
                 :language: python
                 :caption: List all versions of a secret
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_secret_versions(
             self._vault_endpoint,
             name,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
@@ -246,44 +237,45 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        backup_result = self._client.backup_secret(
-            self.vault_endpoint, name, error_map=_error_map, **kwargs
-        )
+        backup_result = self._client.backup_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
-    def restore_secret(self, backup, **kwargs):
+    def restore_secret_backup(self, backup, **kwargs):
         # type: (bytes, **Any) -> SecretProperties
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
-                :start-after: [START restore_secret]
-                :end-before: [END restore_secret]
+                :start-after: [START restore_secret_backup]
+                :end-before: [END restore_secret_backup]
                 :language: python
                 :caption: Restore a backed up secret
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(
-            self.vault_endpoint, backup, error_map=_error_map, **kwargs
-        )
+        bundle = self._client.restore_secret(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def delete_secret(self, name, **kwargs):
+    def begin_delete_secret(self, name, **kwargs):
         # type: (str, **Any) -> DeletedSecret
-        """Delete all versions of a secret. Requires the secrets/delete permission.
+        """Delete all versions of a secret.
 
-        :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
+
+        :returns: A poller for the delete secret operation. Calling `result` returns the
+         :class:`~azure.keyvault.secrets.DeletedSecret` without waiting for the operation to complete.
+         If you are planning to immediately purge the deleted secret, call `wait` on the poller,
+         which blocks until deletion is complete.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.DeletedSecret]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -297,8 +289,21 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedSecret._from_deleted_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
+            self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        sd_disabled = deleted_secret.recovery_id is None
+        command = partial(self.get_deleted_secret, name=name, **kwargs)
+        delete_secret_polling_method = DeletePollingMethod(
+            command=command,
+            final_resource=deleted_secret,
+            initial_status="deleting",
+            finished_status="deleted",
+            sd_disabled=sd_disabled,
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(delete_secret_polling_method)
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
@@ -307,7 +312,7 @@ class SecretClient(KeyVaultClientBase):
         permission.
 
         :param str name: Name of the secret
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecret
+        :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -331,7 +336,7 @@ class SecretClient(KeyVaultClientBase):
         secrets/list permission.
 
         :returns: An iterator of deleted secrets
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.DeletedSecret]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.DeletedSecret]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -342,10 +347,9 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        max_page_size = kwargs.get("max_page_size", None)
         return self._client.get_deleted_secrets(
             self._vault_endpoint,
-            maxresults=max_page_size,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
         )
@@ -354,7 +358,8 @@ class SecretClient(KeyVaultClientBase):
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, **Any) -> None
         """Permanently delete a secret. This is only possible in vaults with soft-delete enabled. If a vault
-        doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will return an error.
+        doesn't have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will return
+        an error.
 
         Requires the secrets/purge permission.
 
@@ -366,21 +371,26 @@ class SecretClient(KeyVaultClientBase):
             .. code-block:: python
 
                 # if the vault has soft-delete enabled, purge permanently deletes the secret
-                # (with soft-delete disabled, delete_secret is permanent)
+                # (with soft-delete disabled, begin_delete_secret is permanent)
                 secret_client.purge_deleted_secret("secret-name")
 
         """
         self._client.purge_deleted_secret(self.vault_endpoint, name, **kwargs)
 
     @distributed_trace
-    def recover_deleted_secret(self, name, **kwargs):
+    def begin_recover_deleted_secret(self, name, **kwargs):
         # type: (str, **Any) -> SecretProperties
-        """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
-        Requires the secrets/recover permission.
+        """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled. If
+        a vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will return
+        an error. Attempting to recover an non-deleted secret will also return an error.
+
+        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
 
         :param str name: Name of the secret
-        :returns: The recovered secret
-        :rtype: ~azure.keyvault.secrets.models.SecretProperties
+        :returns: A poller for the recover secret operation. Calling `result` on the poller returns the recovered
+         :class:`~azure.keyvault.secrets.SecretProperties`. If you are planning to immediately use the recovered
+         secret, call `wait` on the poller, which blocks until the secret is ready to use.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.SecretProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -392,5 +402,16 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
-        return SecretProperties._from_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_secret = SecretProperties._from_secret_bundle(
+            self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_secret, name=name, **kwargs)
+        recover_secret_polling_method = RecoverDeletedPollingMethod(
+            command=command,
+            final_resource=recovered_secret,
+            initial_status="recovering",
+            finished_status="recovered",
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(recover_secret_polling_method)

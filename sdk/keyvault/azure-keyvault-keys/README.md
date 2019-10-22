@@ -154,14 +154,14 @@ of that key is created.
 
 ```python
 # Create an RSA key
-rsa_key = key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key_material.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
-ec_key = key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key_material.kty)
+print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
@@ -180,18 +180,19 @@ tags = {"foo": "updated tag"}
 updated_key_properties = key_client.update_key_properties("key-name", tags=tags)
 
 print(updated_key_properties.name)
-print(updated_key_properties.properties.version)
-print(updated_key_properties.properties.updated)
-print(updated_key_properties.properties.tags)
+print(updated_key_properties.version)
+print(updated_key_properties.updated_on)
+print(updated_key_properties.tags)
 ```
 
 ### Delete a Key
-`delete_key` deletes a key previously stored in the Key Vault. If
-[soft-delete][soft_delete] is not enabled for the vault, this permanently
-deletes the key.
+`begin_delete_key` requests Key Vault delete a key, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the key as soon as possible.
+When [soft-delete][soft_delete] is disabled, deletion is always permanent.
 
 ```python
-deleted_key = key_client.delete_key("key-name")
+deleted_key = key_client.begin_delete_key("key-name").result()
 
 print(deleted_key.name)
 print(deleted_key.deleted_date)
@@ -200,7 +201,7 @@ print(deleted_key.deleted_date)
 This example lists all the keys in the client's vault.
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 for key in keys:
     # the list doesn't include values or versions of the keys
@@ -214,13 +215,13 @@ wrap/unwrap, sign/verify) using a particular key.
 ```py
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.keys.crypto import EncryptionAlgorithm
+from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 key = key_client.get_key("mykey")
-crypto_client = key_client.get_cryptography_client(key)
+crypto_client = CryptographyClient(key, credential=credential)
 
 result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
@@ -249,21 +250,21 @@ credential = DefaultAzureCredential()
 key_client = KeyClient(vault_endpoint=vault_endpoint, credential=credential)
 
 # Create an RSA key
-rsa_key = await key_client.create_rsa_key("rsa-key-name", hsm=False, size=2048)
+rsa_key = await key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
-print(rsa_key.key_material.kty)
+print(rsa_key.key_type)
 
 # Create an elliptic curve key
-ec_key = await key_client.create_ec_key("ec-key-name", hsm=False, curve="P-256")
+ec_key = await key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
-print(ec_key.key_material.kty)
+print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
 This example lists all the keys in the client's vault:
 
 ```python
-keys = key_client.list_keys()
+keys = key_client.list_properties_of_keys()
 
 async for key in keys:
     print(key.name)
@@ -278,7 +279,7 @@ raises `ResourceNotFoundError`:
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 
-key_client.delete_key("my-key")
+key_client.begin_delete_key("my-key").wait()
 
 try:
     key_client.get_key("my-key")

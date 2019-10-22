@@ -146,11 +146,10 @@ class StressTestRunner(object):
                                     network_tracing=False)
         elif self.args.aad_client_id:
             client = client_class(host=self.args.address,
-                                    event_hub_path=self.args.eventhub,
-                                    credential=ClientSecretCredential(
-                                        self.args.aad_client_id, self.args.aad_secret, self.args.tenant_id
-                                    ),
-                                    network_tracing=False)
+                                  event_hub_path=self.args.eventhub,
+                                  credential=ClientSecretCredential(self.args.tenant_id, self.args.aad_client_id,
+                                                                    self.args.aad_secret),
+                                  network_tracing=False)
         else:
             raise ValueError("Argument error. Must have one of connection string, sas and aad credentials")
 

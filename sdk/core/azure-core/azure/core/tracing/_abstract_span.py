@@ -11,7 +11,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union, Callable
+    from typing import Any, Dict, Optional, Union, Callable, ContextManager
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
@@ -168,7 +168,7 @@ class AbstractSpan(Protocol):
 
     @classmethod
     def change_context(cls, span):
-        # type: (Span) -> ContextManager
+        # type: (AbstractSpan) -> ContextManager
         """Change the context for the life of this context manager.
 
         :rtype: contextmanager
@@ -184,7 +184,14 @@ class AbstractSpan(Protocol):
         :rtype: callable
         """
 
-class HttpSpanMixin(object):
+# https://github.com/python/mypy/issues/5837
+if TYPE_CHECKING:
+    _MIXIN_BASE = AbstractSpan
+else:
+    _MIXIN_BASE = object
+
+
+class HttpSpanMixin(_MIXIN_BASE):
     """Can be used to get HTTP span attributes settings for free.
     """
     _SPAN_COMPONENT = "component"
@@ -210,7 +217,7 @@ class HttpSpanMixin(object):
         user_agent = request.headers.get("User-Agent")
         if user_agent:
             self.add_attribute(self._HTTP_USER_AGENT, user_agent)
-        if response:
+        if response and response.status_code:
             self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
         else:
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
