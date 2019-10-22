@@ -37,6 +37,7 @@ steps:
       make install
       export PATH=~/bin:$PATH
       export PATH=~/lib:$PATH
+      PATH=~/.local/bin:$PATH
       cd /home/vsts/bin
       ls
       which python3
