@@ -27,7 +27,7 @@ class VirtualMachineScaleSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class VirtualMachineScaleSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-10-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
@@ -104,7 +104,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type vm_scale_set_name: str
         :param parameters: The scale set object.
         :type parameters:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -113,9 +113,9 @@ class VirtualMachineScaleSetsOperations(object):
         :return: An instance of LROPoller that returns VirtualMachineScaleSet
          or ClientRawResponse<VirtualMachineScaleSet> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -206,7 +206,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type vm_scale_set_name: str
         :param parameters: The scale set object.
         :type parameters:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetUpdate
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -215,9 +215,9 @@ class VirtualMachineScaleSetsOperations(object):
         :return: An instance of LROPoller that returns VirtualMachineScaleSet
          or ClientRawResponse<VirtualMachineScaleSet> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -340,7 +340,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: VirtualMachineScaleSet or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet
+        :rtype: ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -590,7 +590,7 @@ class VirtualMachineScaleSetsOperations(object):
         :return: VirtualMachineScaleSetInstanceView or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetInstanceView
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetInstanceView
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -650,7 +650,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of VirtualMachineScaleSet
         :rtype:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -720,7 +720,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of VirtualMachineScaleSet
         :rtype:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSet]
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -791,7 +791,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of VirtualMachineScaleSetSku
         :rtype:
-         ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetSkuPaged[~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetSku]
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetSkuPaged[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -864,7 +864,7 @@ class VirtualMachineScaleSetsOperations(object):
         :return: An iterator like instance of
          UpgradeOperationHistoricalStatusInfo
         :rtype:
-         ~azure.mgmt.compute.v2018_10_01.models.UpgradeOperationHistoricalStatusInfoPaged[~azure.mgmt.compute.v2018_10_01.models.UpgradeOperationHistoricalStatusInfo]
+         ~azure.mgmt.compute.v2019_07_01.models.UpgradeOperationHistoricalStatusInfoPaged[~azure.mgmt.compute.v2019_07_01.models.UpgradeOperationHistoricalStatusInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -923,7 +923,7 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _power_off_initial(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, skip_shutdown=False, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -939,6 +939,8 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if skip_shutdown is not None:
+            query_parameters['skipShutdown'] = self._serialize.query("skip_shutdown", skip_shutdown, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -971,7 +973,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
     def power_off(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, skip_shutdown=False, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Power off (stop) one or more virtual machines in a VM scale set. Note
         that resources are still attached and you are getting charged for the
         resources. Instead, use deallocate to release resources and avoid
@@ -981,6 +983,11 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
+        :param skip_shutdown: The parameter to request non-graceful VM
+         shutdown. True value for this flag indicates non-graceful shutdown
+         whereas false indicates otherwise. Default value for this flag is
+         false if not specified
+        :type skip_shutdown: bool
         :param instance_ids: The virtual machine scale set instance ids.
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
@@ -1000,6 +1007,7 @@ class VirtualMachineScaleSetsOperations(object):
         raw_result = self._power_off_initial(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
+            skip_shutdown=skip_shutdown,
             instance_ids=instance_ids,
             custom_headers=custom_headers,
             raw=True,
@@ -1716,7 +1724,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RecoveryWalkResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2018_10_01.models.RecoveryWalkResponse or
+        :rtype: ~azure.mgmt.compute.v2019_07_01.models.RecoveryWalkResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1763,3 +1771,69 @@ class VirtualMachineScaleSetsOperations(object):
 
         return deserialized
     force_recovery_service_fabric_platform_update_domain_walk.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/forceRecoveryServiceFabricPlatformUpdateDomainWalk'}
+
+    def convert_to_single_placement_group(
+            self, resource_group_name, vm_scale_set_name, active_placement_group_id=None, custom_headers=None, raw=False, **operation_config):
+        """Converts SinglePlacementGroup property to false for a existing virtual
+        machine scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the virtual machine scale set to
+         create or update.
+        :type vm_scale_set_name: str
+        :param active_placement_group_id: Id of the placement group in which
+         you want future virtual machine instances to be placed. To query
+         placement group Id, please use Virtual Machine Scale Set VMs - Get
+         API. If not provided, the platform will choose one with maximum number
+         of virtual machine instances.
+        :type active_placement_group_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.VMScaleSetConvertToSinglePlacementGroupInput(active_placement_group_id=active_placement_group_id)
+
+        # Construct URL
+        url = self.convert_to_single_placement_group.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VMScaleSetConvertToSinglePlacementGroupInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    convert_to_single_placement_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/convertToSinglePlacementGroup'}
