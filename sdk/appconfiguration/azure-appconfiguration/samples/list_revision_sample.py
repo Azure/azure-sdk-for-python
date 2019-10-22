@@ -16,6 +16,7 @@ USAGE: python list_revision_sample.py
 import os
 import sys
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
+from util import print_configuration_setting
 
 def main():
     try:
@@ -42,7 +43,8 @@ def main():
 
     items = client.list_revisions(keys=["MyKey"])
     for item in items:
-        print(item)
+        print_configuration_setting(item)
+        print("")
 
     client.delete_configuration_setting(
         key="MyKey",

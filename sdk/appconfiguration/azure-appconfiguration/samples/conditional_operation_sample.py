@@ -18,6 +18,7 @@ import sys
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
+from util import print_configuration_setting
 
 def main():
     try:
@@ -41,7 +42,7 @@ def main():
 
     # Unconditional get
     first_get = client.get_configuration_setting(key="MyKey")
-    print(first_get)
+    print_configuration_setting(first_get)
 
     # Conditional get, expect to return None
     second_get = client.get_configuration_setting(
@@ -49,7 +50,7 @@ def main():
         etag=first_get.etag,
         match_condition=MatchConditions.IfModified
     )
-    print(second_get)
+    print_configuration_setting(second_get)
 
     # Conditional set
     first_get.value = "new value"

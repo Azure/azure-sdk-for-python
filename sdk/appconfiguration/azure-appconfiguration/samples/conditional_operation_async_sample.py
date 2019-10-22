@@ -20,6 +20,7 @@ from azure.core.exceptions import ResourceModifiedError
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from util import print_configuration_setting
 
 async def main():
     try:
@@ -43,7 +44,7 @@ async def main():
 
     # Unconditional get
     first_get = await client.get_configuration_setting(key="MyKey")
-    print(first_get)
+    print_configuration_setting(first_get)
 
     # Conditional get, expect to return None
     second_get = await client.get_configuration_setting(
@@ -51,7 +52,7 @@ async def main():
         etag=first_get.etag,
         match_condition=MatchConditions.IfModified
     )
-    print(second_get)
+    print_configuration_setting(second_get)
 
     # Conditional set
     first_get.value = "new value"

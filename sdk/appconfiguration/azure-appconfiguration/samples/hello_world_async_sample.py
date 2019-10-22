@@ -18,6 +18,7 @@ import sys
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from util import print_configuration_setting
 
 async def main():
     try:
@@ -30,7 +31,7 @@ async def main():
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
-    print("Set new configration setting")
+    print("Set new configuration setting")
     config_setting = ConfigurationSetting(
         key="MyKey",
         value="my value",
@@ -38,16 +39,16 @@ async def main():
         tags={"my tag": "my tag value"}
     )
     returned_config_setting = await client.set_configuration_setting(config_setting)
-    print("New configration setting:")
-    print(returned_config_setting)
+    print("New configuration setting:")
+    print_configuration_setting(returned_config_setting)
     print("")
 
     print("Get configuration setting")
     fetched_config_setting = await client.get_configuration_setting(
         key="MyKey"
     )
-    print("Fetched configration setting:")
-    print(fetched_config_setting)
+    print("Fetched configuration setting:")
+    print_configuration_setting(fetched_config_setting)
     print("")
 
     print("Delete configuration setting")

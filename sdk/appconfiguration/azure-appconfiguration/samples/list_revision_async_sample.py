@@ -18,6 +18,7 @@ import sys
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from util import print_configuration_setting
 
 async def main():
     try:
@@ -44,7 +45,8 @@ async def main():
 
     items = client.list_revisions(keys=["MyKey"])
     async for item in items:
-        print(item)
+        print_configuration_setting(item)
+        print("")
 
     await client.delete_configuration_setting(
         key="MyKey",

@@ -16,6 +16,7 @@ USAGE: python hello_world_advanced_sample.py
 import os
 import sys
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
+from util import print_configuration_setting
 
 def main():
     try:
@@ -28,7 +29,7 @@ def main():
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
-    print("Add new configration setting")
+    print("Add new configuration setting")
     config_setting = ConfigurationSetting(
         key="MyKey",
         label="MyLabel",
@@ -37,21 +38,21 @@ def main():
         tags={"my tag": "my tag value"}
     )
     added_config_setting = client.add_configuration_setting(config_setting)
-    print("New configration setting:")
-    print(added_config_setting)
+    print("New configuration setting:")
+    print_configuration_setting(added_config_setting)
     print("")
 
     print("Set configuration setting")
     added_config_setting.value = "new value"
     added_config_setting.content_type = "new content type"
     updated_config_setting = client.set_configuration_setting(config_setting)
-    print(updated_config_setting)
+    print_configuration_setting(updated_config_setting)
     print("")
 
     print("List configuration settings")
-    config_settings = client.list_configuration_settings()
+    config_settings = client.list_configuration_settings(labels=["MyLabel"])
     for item in config_settings:
-        print(item)
+        print_configuration_setting(item)
 
     print("Delete configuration setting")
     client.delete_configuration_setting(
