@@ -75,12 +75,6 @@ steps:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
   
-  - script: |
-      which tox
-      cd $(Build.SourcesDirectory)
-      tox -e whl -c ../../../eng/tox/tox.ini
-    displayName: 'Verify tox'
-
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:
@@ -103,7 +97,3 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
-
-  - template: publish-coverage.yml
-    parameters: 
-      RunCoverage: ${{ parameters.RunCoverage }}
