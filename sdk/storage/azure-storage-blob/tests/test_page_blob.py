@@ -716,7 +716,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob(lease=lease)
-        self.assertEqual(b"".join(list(content)), data)
+        self.assertEqual(content.readall(), data)
 
     @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):

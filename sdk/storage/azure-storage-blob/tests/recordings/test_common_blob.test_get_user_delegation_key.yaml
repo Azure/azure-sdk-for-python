@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
-      x-ms-date: ['Tue, 22 Oct 2019 18:30:36 GMT']
+      x-ms-date: ['Tue, 22 Oct 2019 22:07:26 GMT']
       x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainera85e1275?timeout=5&restype=container
@@ -15,10 +15,58 @@ interactions:
     body: {string: ''}
     headers:
       content-length: ['0']
-      date: ['Tue, 22 Oct 2019 18:30:37 GMT']
-      etag: ['"0x8D7571DEF4EC799"']
-      last-modified: ['Tue, 22 Oct 2019 18:30:37 GMT']
+      date: ['Tue, 22 Oct 2019 22:07:27 GMT']
+      etag: ['"0x8D7573C3A04E8B0"']
+      last-modified: ['Tue, 22 Oct 2019 22:07:27 GMT']
       server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
       x-ms-version: ['2019-02-02']
     status: {code: 201, message: Created}
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <KeyInfo><Start>2019-10-22T22:07:27Z</Start><Expiry>2019-10-22T23:07:27Z</Expiry></KeyInfo>'
+    headers:
+      Accept: [application/xml]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['130']
+      Content-Type: [application/xml; charset=utf-8]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 22:07:27 GMT']
+      x-ms-version: ['2019-02-02']
+    method: POST
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>49d3a7da-813b-403a-ac5c-b9cf16ce66f0</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-22T22:07:27Z</SignedStart><SignedExpiry>2019-10-22T23:07:27Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>pRlxj2pir014KbQtmYwomOWKWxrz4Hffb7XsXXz8SVE=</Value></UserDelegationKey>"}
+    headers:
+      content-type: [application/xml]
+      date: ['Tue, 22 Oct 2019 22:07:34 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+      x-ms-version: ['2019-02-02']
+    status: {code: 200, message: OK}
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <KeyInfo><Start>2019-10-22T22:07:27Z</Start><Expiry>2019-10-22T23:07:27Z</Expiry></KeyInfo>'
+    headers:
+      Accept: [application/xml]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['130']
+      Content-Type: [application/xml; charset=utf-8]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 22:07:35 GMT']
+      x-ms-version: ['2019-02-02']
+    method: POST
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>49d3a7da-813b-403a-ac5c-b9cf16ce66f0</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-22T22:07:27Z</SignedStart><SignedExpiry>2019-10-22T23:07:27Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>pRlxj2pir014KbQtmYwomOWKWxrz4Hffb7XsXXz8SVE=</Value></UserDelegationKey>"}
+    headers:
+      content-type: [application/xml]
+      date: ['Tue, 22 Oct 2019 22:07:34 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+      x-ms-version: ['2019-02-02']
+    status: {code: 200, message: OK}
 version: 1
