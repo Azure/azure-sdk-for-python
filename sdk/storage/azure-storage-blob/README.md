@@ -119,13 +119,13 @@ Four different clients are provided to to interact with the various components o
 ### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
 * **[Block blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)**
-  store text and binary data, up to about 4.7 TB. Block blobs are made up of blocks of data that can be managed
-  individually
+  store text and binary data, up to approximately 4.75 TiB. Block blobs are made up of blocks of data that can be
+  managed individually
 * **[Append blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-append-blobs)**
   are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios
   such as logging data from virtual machines
 * **[Page blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-page-blobs)**
-  store random access files up to 8 TB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for
+  store random access files up to 8 TiB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for
   Azure virtual machines
 
 ## Examples

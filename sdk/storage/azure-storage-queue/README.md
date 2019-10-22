@@ -1,6 +1,6 @@
 # Azure Storage Queues client library for Python
 
-Azure Queue storage is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
+Azure Queue storage is a service for storing large numbers of messages that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. A single queue message can be up to 64 KiB in size, and a queue can contain millions of messages, up to the total capacity limit of a storage account.
 
 Common uses of Queue storage include:
 
@@ -87,7 +87,7 @@ service = QueueServiceClient.from_connection_string(conn_str="my_connection_stri
 The following components make up the Azure Queue Service:
 * The storage account itself
 * A queue within the storage account, which contains a set of messages
-* A message within a queue, in any format, of up to 64 KB
+* A message within a queue, in any format, of up to 64 KiB
 
 The Azure Storage Queues client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
