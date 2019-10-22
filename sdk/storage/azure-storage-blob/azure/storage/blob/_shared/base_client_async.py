@@ -82,6 +82,7 @@ class AsyncStorageAccountHostsMixin(object):
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
+            config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),

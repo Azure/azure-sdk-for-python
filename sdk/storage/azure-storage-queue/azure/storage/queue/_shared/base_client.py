@@ -28,7 +28,7 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport  # pylint: disable=unused-import
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -54,7 +54,7 @@ from .policies import (
     ExponentialRetry,
 )
 from .._generated.models import StorageErrorException
-from .response_handlers import process_storage_error
+from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -178,6 +178,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
+            config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
@@ -199,6 +200,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     ):
         """Given a series of request, do a Storage batch call.
         """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
@@ -222,7 +225,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            return response.parts()
+            parts = response.parts()
+            if raise_on_any_failure:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
+                    error = PartialBatchErrorException(
+                        message="There is a partial failure in the batch operation.",
+                        response=response, parts=parts
+                    )
+                    raise error
+                return iter(parts)
+            return parts
         except StorageErrorException as error:
             process_storage_error(error)
 
