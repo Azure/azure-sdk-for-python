@@ -26,11 +26,11 @@ steps:
       ls
       tar -xf Python-3.8.0.tar.xz
       ls
-      find ~/python3.8 -type d | xargs chmod 0755
-      cd python-3.8.0
+      find ~/Python-3.8.0 -type d | xargs chmod 0755
+      cd Python-3.8.0
       ../configure --enable-optimizations --enable-shared --prefix=$HOME
       make install
-      export PATH=~/python3.8/python-3.8.0/:$PATH
+      export PATH=~/python3.8/Python-3.8.0/:$PATH
       which python3.8
       apt-get install python3.8-dev
       apt-get install python3.8-distutils          
