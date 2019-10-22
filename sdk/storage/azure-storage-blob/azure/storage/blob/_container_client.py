@@ -933,10 +933,6 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :keyword str delete_snapshots:
-            Required if the blob has associated snapshots. Values include:
-             - "only": Deletes only the blobs snapshots.
-             - "include": Deletes the blob along with all snapshots.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
