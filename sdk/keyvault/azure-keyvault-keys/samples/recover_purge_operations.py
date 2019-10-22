@@ -25,9 +25,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create a key (create_key)
 #
-# 2. Delete a key (delete_key)
+# 2. Delete a key (begin_delete_key)
 #
-# 3. Recover a deleted key (recover_deleted_key)
+# 3. Recover a deleted key (begin_recover_deleted_key)
 #
 # 4. Purge a deleted key (purge_deleted_key)
 # ----------------------------------------------------------------------------------------------------------
@@ -48,19 +48,15 @@ try:
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):
-        deleted_key = client.delete_key(key_name)
+        deleted_key = client.begin_delete_key(key_name).result()
         print("Deleted key '{0}'".format(deleted_key.name))
 
-    time.sleep(20)
-
     print("\n.. Recover a deleted key")
-    recovered_key = client.recover_deleted_key(rsa_key.name)
+    recovered_key = client.begin_recover_deleted_key(rsa_key.name).result()
     print("Recovered key '{0}'".format(recovered_key.name))
 
     # deleting the recovered key so it doesn't outlast this script
-    time.sleep(20)
-    client.delete_key(recovered_key.name)
-    time.sleep(20)
+    client.begin_delete_key(recovered_key.name).wait()
 
     print("\n.. Purge keys")
     for key_name in (ec_key.name, rsa_key.name):

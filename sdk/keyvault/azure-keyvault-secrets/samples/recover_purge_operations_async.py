@@ -50,22 +50,18 @@ async def run_sample():
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete a Secret")
         secret = await client.delete_secret(bank_secret.name)
-        await asyncio.sleep(20)
         print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
         # We accidentally deleted the bank account secret. Let's recover it.
         # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n.. Recover Deleted  Secret")
+        print("\n.. Recover Deleted Secret")
         recovered_secret = await client.recover_deleted_secret(bank_secret.name)
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
         # Let's delete storage account now.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
+        print("\n.. Deleting secret...")
         await client.delete_secret(storage_secret.name)
-
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting Storage Secret...")
-        await asyncio.sleep(20)
 
         # To ensure permanent deletion, we might need to purge the secret.
         print("\n.. Purge Deleted Secret")

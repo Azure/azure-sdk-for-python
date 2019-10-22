@@ -51,16 +51,12 @@ async def run_sample():
             deleted_key = await client.delete_key(key_name)
             print("Deleted key '{0}'".format(deleted_key.name))
 
-        await asyncio.sleep(20)
-
         print("\n.. Recover a deleted key")
         recovered_key = await client.recover_deleted_key(rsa_key.name)
         print("Recovered key '{0}'".format(recovered_key.name))
 
         # deleting the recovered key so it doesn't outlast this script
-        await asyncio.sleep(20)
         await client.delete_key(recovered_key.name)
-        await asyncio.sleep(20)
 
         print("\n.. Purge keys")
         for key_name in (ec_key.name, rsa_key.name):

@@ -77,12 +77,9 @@ async def run_sample():
             print("RSA Key with name '{0}' has version: '{1}'".format(key.name, key.version))
 
         # Both the rsa key and ec key are not needed anymore. Let's delete those keys.
+        print("\n..Deleting keys...")
         await client.delete_key(rsa_key.name)
         await client.delete_key(ec_key.name)
-
-        # To ensure key is deleted on the server side.
-        print("\nDeleting keys...")
-        await asyncio.sleep(10)
 
         # You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted keys from the Key Vault")
