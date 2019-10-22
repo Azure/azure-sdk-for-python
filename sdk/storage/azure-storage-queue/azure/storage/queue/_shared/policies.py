@@ -131,20 +131,20 @@ class StorageHeadersPolicy(HeadersPolicy):
         custom_id = request.context.options.pop('client_request_id', None)
         request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
 
-    def on_response(self, request, response):
-        # raise exception if the echoed client request id from the service is not identical to the one we sent
-        if self.request_id_header_name in response.http_response.headers:
+    # def on_response(self, request, response):
+    #     # raise exception if the echoed client request id from the service is not identical to the one we sent
+    #     if self.request_id_header_name in response.http_response.headers:
 
-            client_request_id = request.http_request.headers.get(self.request_id_header_name)
+    #         client_request_id = request.http_request.headers.get(self.request_id_header_name)
 
-            if response.http_response.headers[self.request_id_header_name] != client_request_id:
-                raise AzureError(
-                    "Echoed client request ID: {} does not match sent client request ID: {}.  "
-                    "Service request ID: {}".format(
-                        response.http_response.headers[self.request_id_header_name], client_request_id,
-                        response.http_response.headers['x-ms-request-id']),
-                    response=response.http_response
-                )
+    #         if response.http_response.headers[self.request_id_header_name] != client_request_id:
+    #             raise AzureError(
+    #                 "Echoed client request ID: {} does not match sent client request ID: {}.  "
+    #                 "Service request ID: {}".format(
+    #                     response.http_response.headers[self.request_id_header_name], client_request_id,
+    #                     response.http_response.headers['x-ms-request-id']),
+    #                 response=response.http_response
+    #             )
 
 
 class StorageHosts(SansIOHTTPPolicy):
