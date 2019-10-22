@@ -60,4 +60,4 @@ class ChainedTokenCredential(object):
                 attempts.append("{}: {}".format(credential.__class__.__name__, error))
             else:
                 attempts.append(credential.__class__.__name__)
-        return "No valid token received. {}".format(". ".join(attempts))
+        return "Chained credential request has failed, no valid token received.Attempts:\n{}".format("\n".join(attempts))
