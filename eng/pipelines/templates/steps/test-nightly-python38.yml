@@ -34,22 +34,16 @@ steps:
       cd debug
       ../configure --enable-optimizations --prefix=$HOME
       make
-      echo 'Home'
-      echo $HOME
       make install
       export PATH=~/bin:$PATH
       cd /home/vsts/bin
       ls
       which python3
       python3 --version
-      apt-get install python3.8-dev
-      apt-get install python3.8-distutils          
-      wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python3 - --user
-      export PATH=~/.local/bin:$PATH  
-      which pip      
-      python3 -m pip install tox tox-monorepo packaging
+      python3 -m pip3 install python3.8-dev python3.8-distutils tox tox-monorepo packaging twine codecov beautifulsoup4
+      python3 --version
+      python3 -c "from packaging import *"
       cd $(Build.SourcesDirectory)
-      python3 -m pip install twine codecov beautifulsoup4
     displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}
@@ -57,7 +51,7 @@ steps:
   - task: PythonScript@0
     inputs:
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
         --mark_arg="${{ parameters.TestMarkArgument }}" 
@@ -77,7 +71,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
       arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
@@ -86,7 +80,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       script: scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
