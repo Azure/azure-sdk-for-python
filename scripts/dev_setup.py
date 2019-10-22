@@ -20,8 +20,13 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", ".."))
 def pip_command(command, additional_dir=".", error_ok=False):
     try:
         print("Executing: {} from {}".format(command, additional_dir))
+
+        pip_command = "pip"
+        if sys.version_info >= (3,):
+            pip_command = "pip3"
+
         check_call(
-            [sys.executable, "-m", "pip"] + command.split(),
+            [sys.executable, "-m", pip_command] + command.split(),
             cwd=os.path.join(root_dir, additional_dir),
         )
         print()
