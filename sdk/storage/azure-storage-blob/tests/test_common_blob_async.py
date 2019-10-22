@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import pytest
 import asyncio
 import requests
@@ -1140,6 +1141,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertIsNotNone(copy)
         self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
         self.assertIsNotNone(copy['copy_id'])
 
         copy_content = await (await copyblob.download_blob()).readall()

@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 import pytest
 import requests
 import time
@@ -860,6 +861,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(copy)
         self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
         self.assertIsNotNone(copy['copy_id'])
 
         copy_content = copyblob.download_blob().readall()
@@ -1108,7 +1110,7 @@ class StorageCommonBlobTest(StorageTestCase):
         lease = blob.acquire_lease()
         first_id = lease.id
         lease.renew()
-        
+
         # Assert
         self.assertEqual(first_id, lease.id)
 
@@ -1213,7 +1215,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        
+
         token = generate_blob_sas(
             blob.account_name,
             blob.container_name,
@@ -1903,7 +1905,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.delete, True)
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrdx')
-    
+
     def test_transport_closed_only_once(self):
         if TestMode.need_recording_file(self.test_mode):
             return
