@@ -269,10 +269,12 @@ class SecretClient(KeyVaultClientBase):
     @distributed_trace
     def begin_delete_secret(self, name, **kwargs):
         # type: (str, **Any) -> DeletedSecret
-        """Delete all versions of a secret. Requires the secrets/delete permission.
+        """Delete all versions of a secret.
+
+        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
 
         :returns: A poller for the delete secret operation. Calling `result` returns the
-         :class:`~azure.keyvault.secrets.DeletedSecret`without waiting for the operation to complete.
+         :class:`~azure.keyvault.secrets.DeletedSecret` without waiting for the operation to complete.
          If you are planning to immediately purge the deleted secret, call `wait` on the poller,
          which blocks until deletion is complete.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.DeletedSecret]
@@ -385,12 +387,12 @@ class SecretClient(KeyVaultClientBase):
         a vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will return
         an error. Attempting to recover an non-deleted secret will also return an error.
 
-        Requires the secrets/recover permission.
+        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
 
         :param str name: Name of the secret
         :returns: A poller for the recover secret operation. Calling `result` on the poller returns the recovered
-         :class: `~azure.keyvault.secrets.SecretProperties`. If you are planning to immediately use the recovered secret,
-         call `wait` on the poller, which blocks until the secret is ready to use.
+         :class:`~azure.keyvault.secrets.SecretProperties`. If you are planning to immediately use the recovered
+         secret, call `wait` on the poller, which blocks until the secret is ready to use.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.SecretProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

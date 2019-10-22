@@ -166,11 +166,13 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def begin_delete_key(self, name, **kwargs):
         # type: (str, **Any) -> DeletedKey
-        """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
+        """Delete all versions of a key and its cryptographic material.
+
+        Requires the keys/delete permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the key to delete.
         :returns: A poller for the delete key operation. Calling `result` returns the
-         :class:`~azure.keyvault.keys.DeletedKey`without waiting for the operation to complete.
+         :class:`~azure.keyvault.keys.DeletedKey` without waiting for the operation to complete.
          If you are planning to immediately purge the deleted key, call `wait` on the poller,
          which blocks until deletion is complete.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
@@ -356,11 +358,11 @@ class KeyClient(KeyVaultClientBase):
         If a vault does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will
         return an error. Attempting to recover an non-deleted key will also return an error.
 
-        Requires the keys/recover permission.
+        Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the deleted key
         :returns: A poller for the recover key operation. Calling `result` on the poller returns the recovered
-         :class: `~azure.keyvault.keys.KeyVaultKey`. If you are planning to immediately use the recovered key,
+         :class:`~azure.keyvault.keys.KeyVaultKey`. If you are planning to immediately use the recovered key,
          call `wait` on the poller, which blocks until the key is ready to use.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

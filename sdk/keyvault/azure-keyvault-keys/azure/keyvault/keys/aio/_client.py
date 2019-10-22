@@ -161,11 +161,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
-        """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
+        """Delete all versions of a key and its cryptographic material.
+
+        Requires the keys/delete permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the key to delete.
-        :returns: A coroutine for the deletion of the key. Since deleting a key is not instant on the service side,
-         we poll on the deletion of the key. Awaiting this method returns the deleted key.
+        :returns: A coroutine for the deletion of the key. Since deleting a key is not instant,
+         we poll on the deletion of the key. Awaiting this method returns the
+         :class:`~azure.keyvault.keys.DeletedKey`
         :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -339,11 +342,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover a non-deleted key will also return an error.
 
-        Requires the keys/recover permission.
+        Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the deleted key
-        :returns: A coroutine for the recovery of the key. Since recovering a key is not instant on the service side,
-         we poll on the recovering of the key. Awaiting this method returns the recovered key.
+        :returns: A coroutine for the recovery of the key. Since recovering a key is not instant, we poll on the
+         recovering of the key. Awaiting this method returns the recovered
+         :class:`~azure.keyvault.keys.KeyVaultKey`
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

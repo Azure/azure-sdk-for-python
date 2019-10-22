@@ -242,11 +242,13 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
-        """Delete all versions of a secret. Requires the secrets/delete permission.
+        """Delete all versions of a secret.
 
-        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant
-         on the service side, we poll on the deletion of the secret. Awaiting this method returns
-         the deleted secret.
+        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
+
+        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant, we poll
+         on the deletion of the secret. Awaiting this method returns the
+         :class:`~azure.keyvault.secrets.DeletedSecret`
         :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -342,12 +344,13 @@ class SecretClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
-        Requires the secrets/recover permission.
+
+        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
 
         :param str name: Name of the secret
-        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant
-         on the service side, we poll on the recovery of the secret. Awaiting this method returns
-         the recovered secret.
+        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant, we poll on
+         the recovery of the secret. Awaiting this method returns the recovered
+         :class:`~azure.keyvault.secrets.SecretProperties`
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

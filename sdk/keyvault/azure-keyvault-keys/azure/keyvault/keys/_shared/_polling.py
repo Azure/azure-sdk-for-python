@@ -22,7 +22,6 @@ from azure.core.tracing.common import with_current_context
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
     from typing import Any, Callable, Union, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -45,7 +44,7 @@ class KeyVaultOperationPoller(LROPoller):
 
     # pylint: disable=arguments-differ
     def result(self):
-        # type: () -> Model
+        # type: () -> Any
         """Returns a representation of the final resource without waiting for the operation to complete.
 
         :returns: The deserialized resource of the long running operation
