@@ -28,9 +28,6 @@ steps:
       sudo apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH      
       PATH=/usr/lib/python3.8:$PATH
-      echo $PATH
-      which python3.8
-      which python3      
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       sudo python3.8 get-pip.py
       sudo apt-get install tox   
@@ -66,7 +63,7 @@ steps:
     inputs:
       pythonInterpreter: python3.8
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" -p=python3.8 --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
@@ -76,7 +73,8 @@ steps:
       pythonInterpreter: python3.8
       script: scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "${{ parameters.BuildTargetingString }}"
+        -p=python3.8 
         --runtype=execute 
         --disablecov 
         --mark_arg="${{ parameters.TestMarkArgument }}" 

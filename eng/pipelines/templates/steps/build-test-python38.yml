@@ -39,8 +39,19 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
-  - script: python3.8 ./scripts/devops_tasks/setup_execute_tests.py -p python "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}"
+  - task: PythonScript@0
     displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      pythonInterpreter: python3.8
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.AdditionalTestArgs }} 
+        ${{ parameters.CoverageArg }} 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="${{ parameters.ToxTestEnv }}"
+    env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
