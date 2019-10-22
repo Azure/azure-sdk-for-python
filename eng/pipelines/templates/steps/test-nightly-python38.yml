@@ -44,7 +44,7 @@ steps:
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3.8 get-pip.py
       which pip
-      python3 -m pip install distutils tox tox-monorepo packaging twine codecov beautifulsoup4
+      python3 -m pip install setuptools wheel tox tox-monorepo packaging twine codecov beautifulsoup4
       python3 --version
       python3 -c "from packaging import *"
       cd $(Build.SourcesDirectory)
