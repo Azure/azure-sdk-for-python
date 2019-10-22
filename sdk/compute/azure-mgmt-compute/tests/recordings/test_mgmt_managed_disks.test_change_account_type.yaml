@@ -19,7 +19,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"\
@@ -28,7 +28,7 @@ interactions:
         ,\r\n    \"isArmResource\": true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -40,7 +40,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?monitor=true&api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?monitor=true&api-version=2019-07-01
       pragma:
       - no-cache
       server:
@@ -70,13 +70,13 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/94cc987d-cd7c-481c-8d47-004d1297cb06?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:39:46.6459201+00:00\",\r\n  \"\
         endTime\": \"2019-10-22T06:39:46.7552719+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\
-        \n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -130,10 +130,10 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -188,10 +188,10 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -252,7 +252,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"myDisk\",\r\n  \"location\": \"westus\",\r\n  \"\
@@ -263,7 +263,7 @@ interactions:
         : true\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -275,7 +275,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?monitor=true&api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?monitor=true&api-version=2019-07-01
       pragma:
       - no-cache
       server:
@@ -305,13 +305,13 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/75ccf4cd-0bd1-4d2f-80f0-069f8c8cfd64?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:39:50.7709715+00:00\",\r\n  \"\
         endTime\": \"2019-10-22T06:39:50.8803319+00:00\",\r\n  \"status\": \"Succeeded\"\
         ,\r\n  \"properties\": {\r\n    \"output\": {\r\n  \"name\": \"myDisk\",\r\
-        \n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+        \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\
@@ -365,10 +365,10 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
+      string: "{\r\n  \"name\": \"myDisk\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_change_account_typedfe7139e/providers/Microsoft.Compute/disks/myDisk\"\
         ,\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\": \"Standard\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\"\

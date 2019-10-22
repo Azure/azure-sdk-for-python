@@ -18,7 +18,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2019-04-01
   response:
     body:
       string: ''
@@ -34,7 +34,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Storage/locations/westus/asyncoperations/6a4d090c-30f7-4842-9f8c-935ba05eae39?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westus/asyncoperations/6a4d090c-30f7-4842-9f8c-935ba05eae39?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -61,10 +61,10 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Storage/locations/westus/asyncoperations/6a4d090c-30f7-4842-9f8c-935ba05eae39?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westus/asyncoperations/6a4d090c-30f7-4842-9f8c-935ba05eae39?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10","name":"pyvmextstor15a60f10","type":"Microsoft.Storage/storageAccounts","location":"westus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2019-10-22T05:39:13.0242841Z"},"blob":{"enabled":true,"lastEnabledTime":"2019-10-22T05:39:13.0242841Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2019-10-22T05:39:12.9464303Z","primaryEndpoints":{"blob":"https://pyvmextstor15a60f10.blob.core.windows.net/","queue":"https://pyvmextstor15a60f10.queue.core.windows.net/","table":"https://pyvmextstor15a60f10.table.core.windows.net/","file":"https://pyvmextstor15a60f10.file.core.windows.net/"},"primaryLocation":"westus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10","name":"pyvmextstor15a60f10","type":"Microsoft.Storage/storageAccounts","location":"westus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2019-10-22T05:39:13.0242841Z"},"blob":{"enabled":true,"lastEnabledTime":"2019-10-22T05:39:13.0242841Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2019-10-22T05:39:12.9464303Z","primaryEndpoints":{"blob":"https://pyvmextstor15a60f10.blob.core.windows.net/","queue":"https://pyvmextstor15a60f10.queue.core.windows.net/","table":"https://pyvmextstor15a60f10.table.core.windows.net/","file":"https://pyvmextstor15a60f10.file.core.windows.net/"},"primaryLocation":"westus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -113,17 +113,17 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\"\
         ,\r\n  \"etag\": \"W/\\\"aa5d277e-58ad-4dfb-8240-6099fdb1ff74\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
         \   \"resourceGuid\": \"933abe67-06c8-457b-a064-6f996ec25073\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"pyvmextsub15a60f10\",\r\n        \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
+        : \"pyvmextsub15a60f10\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
         ,\r\n        \"etag\": \"W/\\\"aa5d277e-58ad-4dfb-8240-6099fdb1ff74\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
@@ -134,7 +134,7 @@ interactions:
         : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/e44ffda4-e838-41a9-881f-9ddc6a8457fd?api-version=2019-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e44ffda4-e838-41a9-881f-9ddc6a8457fd?api-version=2019-08-01
       cache-control:
       - no-cache
       content-length:
@@ -174,7 +174,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/e44ffda4-e838-41a9-881f-9ddc6a8457fd?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e44ffda4-e838-41a9-881f-9ddc6a8457fd?api-version=2019-08-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -220,17 +220,17 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\"\
         ,\r\n  \"etag\": \"W/\\\"0fb3dd82-c88c-497b-86d5-e325b1a31740\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
         \    \"resourceGuid\": \"933abe67-06c8-457b-a064-6f996ec25073\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
-        : \"pyvmextsub15a60f10\",\r\n        \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
+        : \"pyvmextsub15a60f10\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
         ,\r\n        \"etag\": \"W/\\\"0fb3dd82-c88c-497b-86d5-e325b1a31740\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
@@ -285,10 +285,10 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextsub15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextsub15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
         ,\r\n  \"etag\": \"W/\\\"0fb3dd82-c88c-497b-86d5-e325b1a31740\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
@@ -327,7 +327,7 @@ interactions:
       message: OK
 - request:
     body: '{"location": "westus", "properties": {"ipConfigurations": [{"properties":
-      {"privateIPAllocationMethod": "Dynamic", "subnet": {"id": "/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10",
+      {"privateIPAllocationMethod": "Dynamic", "subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10",
       "properties": {"addressPrefix": "10.0.0.0/24", "delegations": [], "provisioningState":
       "Succeeded", "privateEndpointNetworkPolicies": "Enabled", "privateLinkServiceNetworkPolicies":
       "Enabled"}, "name": "pyvmextsub15a60f10", "etag": "W/\"0fb3dd82-c88c-497b-86d5-e325b1a31740\""}},
@@ -349,20 +349,20 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
         ,\r\n  \"etag\": \"W/\\\"034518ff-2141-469f-880a-475390e28a4b\\\"\",\r\n \
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"24a1db82-87d6-4258-8281-db423e1d6a9e\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"pyarmconfig\"\
-        ,\r\n        \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10/ipConfigurations/pyarmconfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10/ipConfigurations/pyarmconfig\"\
         ,\r\n        \"etag\": \"W/\\\"034518ff-2141-469f-880a-475390e28a4b\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -372,7 +372,7 @@ interactions:
         \n  },\r\n  \"type\": \"Microsoft.Network/networkInterfaces\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/c86969d9-143b-42b2-b0d2-16e2c3e5b216?api-version=2019-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c86969d9-143b-42b2-b0d2-16e2c3e5b216?api-version=2019-08-01
       cache-control:
       - no-cache
       content-length:
@@ -412,7 +412,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Network/locations/westus/operations/c86969d9-143b-42b2-b0d2-16e2c3e5b216?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c86969d9-143b-42b2-b0d2-16e2c3e5b216?api-version=2019-08-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -458,20 +458,20 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2019-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
         ,\r\n  \"etag\": \"W/\\\"034518ff-2141-469f-880a-475390e28a4b\\\"\",\r\n \
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
         : \"Succeeded\",\r\n    \"resourceGuid\": \"24a1db82-87d6-4258-8281-db423e1d6a9e\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"pyarmconfig\"\
-        ,\r\n        \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10/ipConfigurations/pyarmconfig\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10/ipConfigurations/pyarmconfig\"\
         ,\r\n        \"etag\": \"W/\\\"034518ff-2141-469f-880a-475390e28a4b\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
-        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
+        : \"Dynamic\",\r\n          \"subnet\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\"\
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
@@ -517,7 +517,7 @@ interactions:
       {"name": "test", "vhd": {"uri": "https://pyvmextstor15a60f10.blob.core.windows.net/vhds/osdisk.vhd"},
       "caching": "None", "createOption": "FromImage"}}, "osProfile": {"computerName":
       "test", "adminUsername": "Foo12", "adminPassword": "BaR@123test_mgmt_compute_test_vm_extensions15a60f10"},
-      "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10"}]}}}'
+      "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10"}]}}}'
     headers:
       Accept:
       - application/json
@@ -535,10 +535,10 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextvm15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextvm15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"westus\",\r\n  \"properties\": {\r\n    \"vmId\": \"a0783c9a-313c-4a25-873f-08d7643ad3e1\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_A0\"\r\n \
@@ -555,13 +555,13 @@ interactions:
         : {\r\n        \"provisionVMAgent\": true,\r\n        \"enableAutomaticUpdates\"\
         : true\r\n      },\r\n      \"secrets\": [],\r\n      \"allowExtensionOperations\"\
         : true,\r\n      \"requireGuestProvisionSignal\": true\r\n    },\r\n    \"\
-        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
+        networkProfile\": {\"networkInterfaces\":[{\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
         }]},\r\n    \"provisioningState\": \"Creating\"\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -601,7 +601,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -649,7 +649,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -697,7 +697,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -745,7 +745,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -793,7 +793,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -841,7 +841,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -889,7 +889,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -937,7 +937,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -985,7 +985,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1033,7 +1033,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1081,7 +1081,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1129,7 +1129,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1177,7 +1177,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1225,7 +1225,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1273,7 +1273,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1321,7 +1321,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1369,7 +1369,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1417,7 +1417,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1465,7 +1465,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1513,7 +1513,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1561,7 +1561,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1609,7 +1609,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1657,7 +1657,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1705,7 +1705,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1753,7 +1753,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1801,7 +1801,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1849,7 +1849,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1897,7 +1897,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1945,7 +1945,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/502257e2-6cc5-42cf-9d40-00fe4dc4a0c5?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:40:15.4589163+00:00\",\r\n  \"\
@@ -1993,10 +1993,10 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pyvmextvm15a60f10\",\r\n  \"id\": \"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10\"\
+      string: "{\r\n  \"name\": \"pyvmextvm15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
         : \"westus\",\r\n  \"properties\": {\r\n    \"vmId\": \"a0783c9a-313c-4a25-873f-08d7643ad3e1\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_A0\"\r\n \
@@ -2014,7 +2014,7 @@ interactions:
         \n        \"enableAutomaticUpdates\": true\r\n      },\r\n      \"secrets\"\
         : [],\r\n      \"allowExtensionOperations\": true,\r\n      \"requireGuestProvisionSignal\"\
         : true\r\n    },\r\n    \"networkProfile\": {\"networkInterfaces\":[{\"id\"\
-        :\"/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\"\
         }]},\r\n    \"provisioningState\": \"Succeeded\"\r\n  }\r\n}"
     headers:
       cache-control:
@@ -2066,11 +2066,11 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyvmextvm15a60f10AccessAgent\",\r\n  \"id\": \"\
-        /subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"westus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Creating\",\r\n    \"publisher\":\
@@ -2080,7 +2080,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -2120,7 +2120,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2168,7 +2168,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2216,7 +2216,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2264,7 +2264,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2312,7 +2312,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2360,7 +2360,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2408,7 +2408,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2456,7 +2456,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2504,7 +2504,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2552,7 +2552,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2600,7 +2600,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2648,7 +2648,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2696,7 +2696,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2744,7 +2744,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2792,7 +2792,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2840,7 +2840,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2888,7 +2888,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2936,7 +2936,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -2984,7 +2984,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3032,7 +3032,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3080,7 +3080,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3128,7 +3128,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3176,7 +3176,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3224,7 +3224,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3272,7 +3272,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3320,7 +3320,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3368,7 +3368,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3416,7 +3416,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3464,7 +3464,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3512,7 +3512,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3560,7 +3560,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3608,7 +3608,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3656,7 +3656,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3704,7 +3704,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3752,7 +3752,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3800,7 +3800,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3848,7 +3848,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3896,7 +3896,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3944,7 +3944,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -3992,7 +3992,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4040,7 +4040,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4088,7 +4088,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4136,7 +4136,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4184,7 +4184,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4232,7 +4232,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4280,7 +4280,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4328,7 +4328,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4376,7 +4376,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4424,7 +4424,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4472,7 +4472,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4520,7 +4520,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4568,7 +4568,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4616,7 +4616,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4664,7 +4664,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4712,7 +4712,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4760,7 +4760,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4808,7 +4808,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4856,7 +4856,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4904,7 +4904,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -4952,7 +4952,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -5000,7 +5000,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/209162d2-357c-4709-a71c-4ab11a7e262a?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T05:55:21.153541+00:00\",\r\n  \"\
@@ -5048,11 +5048,11 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyvmextvm15a60f10AccessAgent\",\r\n  \"id\": \"\
-        /subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"westus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -5102,11 +5102,11 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyvmextvm15a60f10AccessAgent\",\r\n  \"id\": \"\
-        /subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines/extensions\",\r\n  \"\
         location\": \"westus\",\r\n  \"properties\": {\r\n    \"autoUpgradeMinorVersion\"\
         : true,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"publisher\"\
@@ -5158,7 +5158,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2019-07-01
   response:
     body:
       string: ''
@@ -5166,7 +5166,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -5176,7 +5176,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?monitor=true&api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?monitor=true&api-version=2019-07-01
       pragma:
       - no-cache
       server:
@@ -5206,7 +5206,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5254,7 +5254,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5302,7 +5302,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5350,7 +5350,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5398,7 +5398,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5446,7 +5446,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5494,7 +5494,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5542,7 +5542,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5590,7 +5590,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5638,7 +5638,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5686,7 +5686,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5734,7 +5734,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5782,7 +5782,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5830,7 +5830,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5878,7 +5878,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5926,7 +5926,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -5974,7 +5974,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6022,7 +6022,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6070,7 +6070,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6118,7 +6118,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6166,7 +6166,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6214,7 +6214,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6262,7 +6262,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6310,7 +6310,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
@@ -6358,7 +6358,7 @@ interactions:
       - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/0b1f6471-1bf0-4dda-aec3-cb9272f09590/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/0d4e496a-bf92-4d5b-b896-f1c4c64e763f?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"startTime\": \"2019-10-22T06:26:31.2315991+00:00\",\r\n  \"\
