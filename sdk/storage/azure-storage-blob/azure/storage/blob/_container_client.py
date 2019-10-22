@@ -693,7 +693,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param str encoding:
+        :keyword str encoding:
             Defaults to UTF-8.
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will silently overwrite the existing data. If set to False, the
@@ -808,10 +808,6 @@ class ContainerClient(StorageAccountHostsMixin):
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.BlobProperties
-        :param str delete_snapshots:
-            Required if the blob has associated snapshots. Values include:
-             - "only": Deletes only the blobs snapshots.
-             - "include": Deletes the blob along with all snapshots.
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.

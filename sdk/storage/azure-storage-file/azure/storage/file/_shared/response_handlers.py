@@ -31,6 +31,19 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+class PartialBatchErrorException(HttpResponseError):
+    """There is a partial failure in batch operations.
+
+    :param message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
+
+
 def parse_length_from_content_range(content_range):
     '''
     Parses the blob length from the content range header: bytes 1-3/65537
