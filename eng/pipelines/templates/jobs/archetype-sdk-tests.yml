@@ -57,7 +57,7 @@ jobs:
     variables:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
-      OSVmImage: 'ubuntu-18.04'
+      OSVmImage: 'ubuntu-16.04'
       PythonVersion: '3.8'
       OSName: 'Linux'
 
