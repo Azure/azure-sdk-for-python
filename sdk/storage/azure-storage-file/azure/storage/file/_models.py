@@ -609,7 +609,7 @@ class CopyProperties(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get('x-ms-copy-id')
         self.source = kwargs.get('x-ms-copy-source')
-        self.status = kwargs.get('x-ms-copy-status')
+        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
         self.progress = kwargs.get('x-ms-copy-progress')
         self.completion_time = kwargs.get('x-ms-copy-completion_time')
         self.status_description = kwargs.get('x-ms-copy-status-description')
