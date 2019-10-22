@@ -358,7 +358,7 @@ class BlobProperties(DictMixin):
         The container in which the blob resides.
     :ivar str snapshot:
         Datetime value that uniquely identifies the blob snapshot.
-    :ivar ~azure.blob.storage.models.BlobType blob_type:
+    :ivar ~azure.blob.storage.BlobType blob_type:
         String indicating this blob's type.
     :ivar dict metadata:
         Name-value pairs associated with the blob as metadata.
@@ -629,9 +629,9 @@ class LeaseProperties(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.status = kwargs.get('x-ms-lease-status')
-        self.state = kwargs.get('x-ms-lease-state')
-        self.duration = kwargs.get('x-ms-lease-duration')
+        self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
+        self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
+        self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
 
     @classmethod
     def _from_generated(cls, generated):
@@ -740,7 +740,7 @@ class CopyProperties(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get('x-ms-copy-id')
         self.source = kwargs.get('x-ms-copy-source')
-        self.status = kwargs.get('x-ms-copy-status')
+        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
         self.progress = kwargs.get('x-ms-copy-progress')
         self.completion_time = kwargs.get('x-ms-copy-completion_time')
         self.status_description = kwargs.get('x-ms-copy-status-description')
