@@ -23,6 +23,8 @@ steps:
       mkdir ~/python3.8
       cd ~/python3.8
       wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
+      cwd
+      ls
       tar zxfv Python-3.8.0.tar.xz
       find ~/python3.8 -type d | xargs chmod 0755
       cd python-3.8.0
