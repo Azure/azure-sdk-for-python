@@ -98,20 +98,19 @@ Four different clients are provided to to interact with the various components o
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
 2. **[ShareClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.ShareClient)** -
-    this client represents interaction with a specific file share, although that share need not exist yet, and allows
-    you to acquire preconfigured client instances to access the directories and files within. It provides operations to
-    create, delete, configure, or create snapshots of a share and includes operations to create and enumerate the
-    contents of directories within it. To perform operations on a specific directory or file, retrieve a client using
-    the `get_directory_client` or `get_file_client` methods.
+    this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
+    preconfigured client instances to access the directories and files within. It provides operations to create, delete,
+    configure, or create snapshots of a share and includes operations to create and enumerate the contents of
+    directories within it. To perform operations on a specific directory or file, retrieve a client using the
+    `get_directory_client` or `get_file_client` methods.
 3. **[DirectoryClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.DirectoryClient)** -
-    this client represents interaction with a specific directory, although that directory need not exist yet. It
-    provides operations to create, delete, or enumerate the contents of an immediate or nested subdirectory, and
-    includes operations to create and delete files within it. For operations relating to a specific subdirectory or
-    file, a client for that entity can also be retrieved using the `get_subdirectory_client` and `get_file_client`
-    functions.
+    this client represents interaction with a specific directory (which need not exist yet). It provides operations to
+    create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
+    and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
+    also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
 4. **[FileClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.FileClient)** -
-    this client represents interaction with a specific file, although the file need not exist yet. It provides
-    operations to upload, download, create, delete, and copy a file.
+    this client represents interaction with a specific file (which need not exist yet). It provides operations to
+    upload, download, create, delete, and copy a file.
 
 For details on path naming restrictions, see [Naming and Referencing Shares, Directories, Files, and Metadata](https://docs.microsoft.com/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata).
 

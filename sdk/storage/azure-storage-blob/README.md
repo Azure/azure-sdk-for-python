@@ -105,14 +105,13 @@ Four different clients are provided to to interact with the various components o
     account properties as well as list, create, and delete containers within the account. To perform operations on a
     specific container or blob, retrieve a client using the `get_container_client` or `get_blob_client` methods.
 2. **[ContainerClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.ContainerClient)** -
-    this client represents interaction with a specific container, although that container need not exist yet, and allows
-    you to acquire preconfigured client instances to access the blobs within. It provides operations to create, delete,
-    or configure a container and includes operations to list, upload, and delete the blobs within it. To perform
-    operations on a specific blob within the container, retrieve a client using the `get_blob_client` method.
+    this client represents interaction with a specific container (which need not exist yet), and allows you to acquire
+    preconfigured client instances to access the blobs within. It provides operations to create, delete, or configure a
+    container and includes operations to list, upload, and delete the blobs within it. To perform operations on a
+    specific blob within the container, retrieve a client using the `get_blob_client` method.
 3. **[BlobClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.BlobClient)** -
-    this client represents interaction with a specific blob, although that blob need not exist yet. It provides
-    operations to upload, download, delete, and create snapshots of a blob, as well as specific operations per blob
-    type.
+    this client represents interaction with a specific blob (which need not exist yet). It provides operations to
+    upload, download, delete, and create snapshots of a blob, as well as specific operations per blob type.
 4. **[LeaseClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.LeaseClient)** -
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.

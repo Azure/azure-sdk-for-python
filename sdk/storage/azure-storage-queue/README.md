@@ -100,9 +100,9 @@ Two different clients are provided to to interact with the various components of
     properties as well as list, create, and delete queues within the account. To perform operations on a specific queue,
     retrieve a client using the `get_queue_client` method.
 2. **[QueueClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html#azure.storage.queue.QueueClient)** -
-    this client represents interaction with a specific queue, although that queue need not exist yet. It provides
-    operations to create, delete, or configure a queue and includes operations to enqueue, receive, peek, delete, and
-    update messages within it.
+    this client represents interaction with a specific queue (which need not exist yet). It provides operations to
+    create, delete, or configure a queue and includes operations to enqueue, receive, peek, delete, and update messages
+    within it.
 
 ### Messages
 Once you've initialized a `QueueClient`, you can use the following operations to work with the messages in the queue:
