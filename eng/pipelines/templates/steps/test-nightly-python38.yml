@@ -20,19 +20,20 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
-      sudo apt-get update
-      sudo add-apt-repository ppa:deadsnakes/ppa
-      sudo apt-get update
-      apt install python3.8
-      cd python3.8
+      cd ~/python3.8
+      wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
+      tar zxfv Python-3.8.0.tar.xz
+      find ~/python3.8 -type d | xargs chmod 0755
+      cd python-3.8.0
       ../configure --enable-optimizations --enable-shared --prefix=$HOME
-      apt-get install python3.8-dev
-      apt-get install python3.8-distutils
-      export PATH=~/.local/bin:$PATH      
-      PATH=~/lib/python3.8:$PATH
+      make install
+      export PATH=~/python3.8/python-3.8.0/:$PATH
       which python3.8
-      curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-      python3.8 get-pip.py 
+      apt-get install python3.8-dev
+      apt-get install python3.8-distutils          
+      wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python3.8 - --user
+      export PATH=~/.local/bin:$PATH  
+      which pip      
       python3.8 -m pip install tox tox-monorepo packaging
       cd $(Build.SourcesDirectory)
       python3.8 -m pip install twine codecov beautifulsoup4
