@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
-    from ._lease_async import LeaseClient
+    from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
         BlobAnalyticsLogging,
@@ -404,7 +404,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     @distributed_trace_async
     async def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -417,7 +417,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param ~azure.storage.blob.BlobLeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.

@@ -34,7 +34,7 @@ from .._container_client import ContainerClient as ContainerClientBase
 from .._lease import get_access_conditions
 from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
 from ._models import BlobPropertiesPaged, BlobPrefix
-from ._lease_async import LeaseClient
+from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
 
 if TYPE_CHECKING:
@@ -165,7 +165,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :keyword ~azure.storage.blob.aio.LeaseClient lease:
+        :keyword ~azure.storage.blob.aio.BlobLeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
@@ -217,7 +217,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
             **kwargs):
-        # type: (...) -> LeaseClient
+        # type: (...) -> BlobLeaseClient
         """
         Requests a new lease. If the container does not have an active lease,
         the Blob service creates a lease on the container and returns a new
@@ -250,8 +250,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A LeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.blob.aio.LeaseClient
+        :returns: A BlobLeaseClient object, that can be run in a context manager.
+        :rtype: ~azure.storage.blob.aio.BlobLeaseClient
 
         .. admonition:: Example:
 
@@ -262,7 +262,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on the container.
         """
-        lease = LeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
         await lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
@@ -290,7 +290,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
-        :keyword ~azure.storage.blob.aio.LeaseClient lease:
+        :keyword ~azure.storage.blob.aio.BlobLeaseClient lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
         :keyword int timeout:
@@ -432,9 +432,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: container, blob.
         :keyword lease:
-            Required if the container has an active lease. Value can be a LeaseClient object
+            Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -619,9 +619,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
-            Required if the container has an active lease. Value can be a LeaseClient object
+            Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -723,7 +723,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -757,7 +757,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     async def delete_blobs(  # pylint: disable=arguments-differ
             self, *blobs: Union[str, BlobProperties],
             delete_snapshots: Optional[str] = None,
-            lease: Optional[Union[str, LeaseClient]] = None,
+            lease: Optional[Union[str, BlobLeaseClient]] = None,
             **kwargs
         ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
@@ -781,9 +781,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
         :param lease:
-            Required if the blob has an active lease. Value can be a Lease object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -866,9 +866,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -923,9 +923,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,

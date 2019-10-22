@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 def get_access_conditions(lease):
-    # type: (Optional[Union[LeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
@@ -33,8 +33,8 @@ def get_access_conditions(lease):
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
-class LeaseClient(object):
-    """Creates a new LeaseClient.
+class BlobLeaseClient(object):
+    """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
 

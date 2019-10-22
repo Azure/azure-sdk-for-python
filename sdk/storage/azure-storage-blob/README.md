@@ -89,7 +89,7 @@ The Storage Blobs SDK provides four different clients to interact with the Blob 
 3. **BlobClient** - this client represents interaction with a specific
     blob, although that blob need not exist yet. It provides blob operations to upload, download, delete, 
     create snapshots, and list blobs, as well as specific operations per blob type.
-4. **LeaseClient** - this client represents lease interactions with a ContainerClient or BlobClient.
+4. **BlobLeaseClient** - this client represents lease interactions with a ContainerClient or BlobClient.
     It provides operations to acquire, renew, release, change, and break leases on the resources.
 
 #### Blob Types
