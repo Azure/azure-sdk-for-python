@@ -77,11 +77,11 @@ def collect_pytest_coverage_files(targeted_packages):
         shutil.move(source, dest)
 
 
-def prep_tests(targeted_packages, python_version):
+def prep_tests(targeted_packages):
     logging.info("running test setup for {}".format(targeted_packages))
     run_check_call(
         [
-            python_version,
+            sys.executable,
             dev_setup_script_location,
             "--disabledevelop",
             "-p",
@@ -91,13 +91,13 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def run_tests(targeted_packages, python_version, test_output_location, test_res, parsed_args):
+def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
     err_results = []
 
     clean_coverage(coverage_dir)
 
     # base command array without a targeted package
-    command_array = [python_version, "-m", "pytest"]
+    command_array = [sys.executable, "-m", "pytest"]
     command_array.extend(test_res)
 
     # loop through the packages
@@ -175,12 +175,11 @@ def execute_global_install_and_test(
         extended_pytest_args.extend(["-m", '"{}"'.format(parsed_args.mark_arg)])
 
     if parsed_args.runtype == "setup" or parsed_args.runtype == "all":
-        prep_tests(targeted_packages, parsed_args.python_version)
+        prep_tests(targeted_packages)
 
     if parsed_args.runtype == "execute" or parsed_args.runtype == "all":
         run_tests(
             targeted_packages,
-            parsed_args.python_version,
             parsed_args.test_results,
             extended_pytest_args,
             parsed_args,
@@ -190,13 +189,6 @@ def execute_global_install_and_test(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline"
-    )
-    parser.add_argument(
-        "-p",
-        "--python-version",
-        dest="python_version",
-        default="python",
-        help='The name of the python that should run the build. This is for usage in special cases like the "Special_Python_Distro_Tests" Job in /.azure-pipelines/client.yml. Defaults to "python"',
     )
 
     parser.add_argument(

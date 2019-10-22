@@ -20,20 +20,20 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
-      apt-get update
-      add-apt-repository ppa:deadsnakes/ppa
-      apt-get update
-      apt install python3.8
-      apt-get install python3.8-dev
-      apt-get install python3.8-distutils
+      sudo apt-get update
+      sudo add-apt-repository ppa:deadsnakes/ppa
+      sudo apt-get update
+      sudo apt install python3.8
+      sudo apt-get install python3.8-dev
+      sudo apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH      
       PATH=/usr/lib/python3.8:$PATH
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-      python3.8 get-pip.py
-      apt-get install tox   
-      python3.8 -m pip install tox-monorepo packaging
+      sudo python3.8 get-pip.py
+      sudo apt-get install tox   
+      sudo python3.8 -m pip install tox-monorepo packaging
       cd $(Build.SourcesDirectory)
-      python3.8 -m pip install twine codecov beautifulsoup4
+      sudo python3.8 -m pip install twine codecov beautifulsoup4
     displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}
@@ -74,7 +74,6 @@ steps:
       script: scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
-        -p=python3.8 
         --runtype=execute 
         --disablecov 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
