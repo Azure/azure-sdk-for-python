@@ -159,10 +159,9 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Lists all secrets
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_secrets(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
@@ -184,11 +183,10 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: List all versions of a secret
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_secret_versions(
             self.vault_endpoint,
             name,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
@@ -296,10 +294,9 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Lists deleted secrets
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_secrets(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
         )

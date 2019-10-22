@@ -244,10 +244,9 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: List all the deleted keys
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_keys(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs,
         )
@@ -267,10 +266,9 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: List all keys
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
         )
@@ -291,11 +289,10 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: List all versions of a key
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_key_versions(
             self.vault_endpoint,
             name,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
         )
