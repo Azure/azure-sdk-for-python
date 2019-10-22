@@ -7,7 +7,7 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/azure/storage/file) | [Package (PyPI)](https://pypi.org/project/azure-storage-file/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/azure/storage/file) | [Package (PyPI)](https://pypi.org/project/azure-storage-file/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests)
 
 ## Getting started
 
@@ -92,23 +92,23 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the File Service:
-1. **[FileServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.FileServiceClient)** -
+1. **[FileServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.fileserviceclient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
-2. **[ShareClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.ShareClient)** -
+2. **[ShareClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.shareclient)** -
     this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the directories and files within. It provides operations to create, delete,
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[DirectoryClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.DirectoryClient)** -
+3. **[DirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.directoryclient)** -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[FileClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html#azure.storage.file.FileClient)** -
+4. **[FileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.fileclient)** -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 

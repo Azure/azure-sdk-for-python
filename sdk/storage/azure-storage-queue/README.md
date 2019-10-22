@@ -7,7 +7,7 @@ Common uses of Queue storage include:
 * Creating a backlog of work to process asynchronously
 * Passing messages between different parts of a distributed application
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests)
 
 ## Getting started
 
@@ -94,12 +94,12 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to to interact with the various components of the Queue Service:
-1. **[QueueServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html#azure.storage.queue.QueueServiceClient)** -
+1. **[QueueServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue.queueserviceclient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the queues within. It provides operations to retrieve and configure the account
     properties as well as list, create, and delete queues within the account. To perform operations on a specific queue,
     retrieve a client using the `get_queue_client` method.
-2. **[QueueClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html#azure.storage.queue.QueueClient)** -
+2. **[QueueClient](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue.queueclient)** -
     this client represents interaction with a specific queue (which need not exist yet). It provides operations to
     create, delete, or configure a queue and includes operations to enqueue, receive, peek, delete, and update messages
     within it.

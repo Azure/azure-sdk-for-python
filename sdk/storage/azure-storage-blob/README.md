@@ -9,7 +9,7 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPI)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPI)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
 
 
 ## Getting started
@@ -99,20 +99,20 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the Blob Service:
-1. **[BlobServiceClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.BlobServiceClient)** -
+1. **[BlobServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.blobserviceclient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the containers and blobs within. It provides operations to retrieve and configure the
     account properties as well as list, create, and delete containers within the account. To perform operations on a
     specific container or blob, retrieve a client using the `get_container_client` or `get_blob_client` methods.
-2. **[ContainerClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.ContainerClient)** -
+2. **[ContainerClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient)** -
     this client represents interaction with a specific container (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the blobs within. It provides operations to create, delete, or configure a
     container and includes operations to list, upload, and delete the blobs within it. To perform operations on a
     specific blob within the container, retrieve a client using the `get_blob_client` method.
-3. **[BlobClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.BlobClient)** -
+3. **[BlobClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.blobclient)** -
     this client represents interaction with a specific blob (which need not exist yet). It provides operations to
     upload, download, delete, and create snapshots of a blob, as well as specific operations per blob type.
-4. **[LeaseClient](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html#azure.storage.blob.LeaseClient)** -
+4. **[LeaseClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.leaseclient)** -
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
