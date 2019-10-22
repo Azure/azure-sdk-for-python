@@ -49,4 +49,4 @@ class DefaultAzureCredential(ChainedTokenCredential):
         try:
             return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(message="{}\nPlease visit the python azure identity sdk docs on github to learn what options defaultAzureCredential supports".format(e.message))
+            raise ClientAuthenticationError(message="{}\nPlease visit the Azure identity Python SDK docs at https://aka.ms/python-sdk-identity#defaultazurecredential to learn what options defaultAzureCredential supports".format(e.message))
