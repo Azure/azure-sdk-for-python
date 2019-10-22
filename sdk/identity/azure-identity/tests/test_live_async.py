@@ -23,7 +23,7 @@ async def get_token(credential):
 @pytest.mark.asyncio
 async def test_certificate_credential(live_certificate):
     credential = CertificateCredential(
-        live_certificate["client_id"], live_certificate["tenant_id"], live_certificate["cert_path"]
+        live_certificate["tenant_id"], live_certificate["client_id"], live_certificate["cert_path"]
     )
     await get_token(credential)
 
@@ -31,9 +31,9 @@ async def test_certificate_credential(live_certificate):
 @pytest.mark.asyncio
 async def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
+        live_service_principal["tenant_id"],
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
-        live_service_principal["tenant_id"],
     )
     await get_token(credential)
 

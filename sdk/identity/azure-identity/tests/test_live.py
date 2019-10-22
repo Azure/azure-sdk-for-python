@@ -32,16 +32,16 @@ def get_token(credential):
 
 def test_certificate_credential(live_certificate):
     credential = CertificateCredential(
-        live_certificate["client_id"], live_certificate["tenant_id"], live_certificate["cert_path"]
+        live_certificate["tenant_id"], live_certificate["client_id"], live_certificate["cert_path"]
     )
     get_token(credential)
 
 
 def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
+        live_service_principal["tenant_id"],
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
-        live_service_principal["tenant_id"],
     )
     get_token(credential)
 
@@ -56,7 +56,7 @@ def test_confidential_client_credential(live_service_principal):
         client_id=live_service_principal["client_id"],
         client_credential=live_service_principal["client_secret"],
         authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
-        tenant=live_service_principal["tenant_id"],
+        tenant_id=live_service_principal["tenant_id"],
     )
     get_token(credential)
 
@@ -93,7 +93,7 @@ def test_username_password_auth(live_user_details):
         client_id=live_user_details["client_id"],
         username=live_user_details["username"],
         password=live_user_details["password"],
-        tenant=live_user_details["tenant"],
+        tenant_id=live_user_details["tenant"],
     )
     get_token(credential)
 
