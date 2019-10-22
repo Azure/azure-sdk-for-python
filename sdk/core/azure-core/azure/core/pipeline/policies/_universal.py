@@ -131,7 +131,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         self.use_env = kwargs.pop('user_agent_use_env', True)
 
         if base_user_agent is None:
-            self._user_agent = "azsdk-python-core/{} Python/{} {}".format(
+            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
                 azcore_version,
                 platform.python_version(),
                 platform.platform()
