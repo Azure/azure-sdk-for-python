@@ -52,6 +52,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
             'interface_endpoints': '2019-02-01',
+            'p2s_vpn_server_configurations': '2019-07-01',
             'virtual_wa_ns': '2018-07-01',
         }},
         _PROFILE_TAG + " latest"
@@ -2912,6 +2913,80 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def p2s_vpn_gateways(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2018_08_01.operations.P2sVpnGatewaysOperations>`
+           * 2018-10-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2018_10_01.operations.P2sVpnGatewaysOperations>`
+           * 2018-11-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2018_11_01.operations.P2sVpnGatewaysOperations>`
+           * 2018-12-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2018_12_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-02-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_02_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-04-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_04_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-06-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_06_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-07-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_07_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-08-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_08_01.operations.P2sVpnGatewaysOperations>`
+           * 2019-09-01: :class:`P2sVpnGatewaysOperations<azure.mgmt.network.v2019_09_01.operations.P2sVpnGatewaysOperations>`
+        """
+        api_version = self._get_api_version('p2s_vpn_gateways')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2018-10-01':
+            from .v2018_10_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2018-12-01':
+            from .v2018_12_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-02-01':
+            from .v2019_02_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-06-01':
+            from .v2019_06_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-08-01':
+            from .v2019_08_01.operations import P2sVpnGatewaysOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import P2sVpnGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def p2s_vpn_server_configurations(self):
+        """Instance depends on the API version:
+
+           * 2018-08-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2018_08_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2018-10-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2018_10_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2018-11-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2018_11_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2018-12-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2018_12_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2019-02-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2019_02_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2019-04-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2019_04_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2019-06-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2019_06_01.operations.P2sVpnServerConfigurationsOperations>`
+           * 2019-07-01: :class:`P2sVpnServerConfigurationsOperations<azure.mgmt.network.v2019_07_01.operations.P2sVpnServerConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('p2s_vpn_server_configurations')
+        if api_version == '2018-08-01':
+            from .v2018_08_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2018-10-01':
+            from .v2018_10_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2018-12-01':
+            from .v2018_12_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2019-02-01':
+            from .v2019_02_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2019-06-01':
+            from .v2019_06_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import P2sVpnServerConfigurationsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def packet_captures(self):
         """Instance depends on the API version:
 
@@ -3921,6 +3996,19 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2019_08_01.operations import UsagesOperations as OperationClass
         elif api_version == '2019-09-01':
             from .v2019_09_01.operations import UsagesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def virtual_hub_route_table_v2s(self):
+        """Instance depends on the API version:
+
+           * 2019-09-01: :class:`VirtualHubRouteTableV2sOperations<azure.mgmt.network.v2019_09_01.operations.VirtualHubRouteTableV2sOperations>`
+        """
+        api_version = self._get_api_version('virtual_hub_route_table_v2s')
+        if api_version == '2019-09-01':
+            from .v2019_09_01.operations import VirtualHubRouteTableV2sOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
