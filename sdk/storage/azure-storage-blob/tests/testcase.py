@@ -254,7 +254,7 @@ class StorageTestCase(AzureMgmtTestCase):
                 self.get_settings_value("TENANT_ID")
             )
         else:
-            return mock.MagicMock()
+            return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()

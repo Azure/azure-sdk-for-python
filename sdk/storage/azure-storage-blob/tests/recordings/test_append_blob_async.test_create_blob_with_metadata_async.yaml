@@ -2,148 +2,81 @@ interactions:
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:57:32 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 17:31:55 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainerd180180a?restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 21:57:33 GMT
-      etag: '"0x8D74DCCDAF2C955"'
-      last-modified: Thu, 10 Oct 2019 21:57:33 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Tue, 22 Oct 2019 17:31:55 GMT', etag: '"0x8D75715BC04EE55"',
+      last-modified: 'Tue, 22 Oct 2019 17:31:55 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoraged180180a.blob.core.windows.net
-        - /utcontainerd180180a
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstoragexa52hzu6nlfi.blob.core.windows.net,
+        /utcontainerd180180a, restype=container, '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:57:34 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 17:31:55 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainersourced180180a?restype=container
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 21:57:33 GMT
-      etag: '"0x8D74DCCDAF98140"'
-      last-modified: Thu, 10 Oct 2019 21:57:33 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Tue, 22 Oct 2019 17:31:55 GMT', etag: '"0x8D75715BC0EDB43"',
+      last-modified: 'Tue, 22 Oct 2019 17:31:55 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoraged180180a.blob.core.windows.net
-        - /utcontainersourced180180a
-        - restype=container
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstoragexa52hzu6nlfi.blob.core.windows.net,
+        /utcontainersourced180180a, restype=container, '']
 - request:
     body: null
     headers:
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-blob-type:
-      - AppendBlob
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:57:34 GMT
-      x-ms-meta-hello:
-      - world
-      x-ms-meta-number:
-      - '42'
-      x-ms-version:
-      - '2019-02-02'
+      Content-Length: ['0']
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-blob-type: [AppendBlob]
+      x-ms-date: ['Tue, 22 Oct 2019 17:31:55 GMT']
+      x-ms-meta-hello: [world]
+      x-ms-meta-number: ['42']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainerd180180a/blobd180180a
   response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Thu, 10 Oct 2019 21:57:33 GMT
-      etag: '"0x8D74DCCDB00B162"'
-      last-modified: Thu, 10 Oct 2019 21:57:33 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
-    status:
-      code: 201
-      message: Created
+    body: {string: ''}
+    headers: {content-length: '0', date: 'Tue, 22 Oct 2019 17:31:55 GMT', etag: '"0x8D75715BC1495AE"',
+      last-modified: 'Tue, 22 Oct 2019 17:31:55 GMT', server: Windows-Azure-Blob/1.0
+        Microsoft-HTTPAPI/2.0, x-ms-request-server-encrypted: 'true', x-ms-version: '2019-02-02'}
+    status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoraged180180a.blob.core.windows.net
-        - /utcontainerd180180a/blobd180180a
-        - ''
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstoragexa52hzu6nlfi.blob.core.windows.net,
+        /utcontainerd180180a/blobd180180a, '', '']
 - request:
     body: null
     headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:57:34 GMT
-      x-ms-version:
-      - '2019-02-02'
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 17:31:55 GMT']
+      x-ms-version: ['2019-02-02']
     method: HEAD
     uri: https://blobstoragename.blob.core.windows.net/utcontainerd180180a/blobd180180a
   response:
-    body:
-      string: ''
-    headers:
-      accept-ranges: bytes
-      content-length: '0'
-      content-type: application/octet-stream
-      date: Thu, 10 Oct 2019 21:57:33 GMT
-      etag: '"0x8D74DCCDB00B162"'
-      last-modified: Thu, 10 Oct 2019 21:57:33 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-committed-block-count: '0'
-      x-ms-blob-type: AppendBlob
-      x-ms-creation-time: Thu, 10 Oct 2019 21:57:33 GMT
-      x-ms-lease-state: available
-      x-ms-lease-status: unlocked
-      x-ms-meta-hello: world
-      x-ms-meta-number: '42'
-      x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
-    status:
-      code: 200
-      message: OK
+    body: {string: ''}
+    headers: {accept-ranges: bytes, content-length: '0', content-type: application/octet-stream,
+      date: 'Tue, 22 Oct 2019 17:31:55 GMT', etag: '"0x8D75715BC1495AE"', last-modified: 'Tue,
+        22 Oct 2019 17:31:55 GMT', server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0,
+      x-ms-blob-committed-block-count: '0', x-ms-blob-type: AppendBlob, x-ms-creation-time: 'Tue,
+        22 Oct 2019 17:31:55 GMT', x-ms-lease-state: available, x-ms-lease-status: unlocked,
+      x-ms-meta-hello: world, x-ms-meta-number: '42', x-ms-server-encrypted: 'true',
+      x-ms-version: '2019-02-02'}
+    status: {code: 200, message: OK}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoraged180180a.blob.core.windows.net
-        - /utcontainerd180180a/blobd180180a
-        - ''
-        - ''
+      - !!python/object/new:urllib.parse.SplitResult [https, pyacrstoragexa52hzu6nlfi.blob.core.windows.net,
+        /utcontainerd180180a/blobd180180a, '', '']
 version: 1

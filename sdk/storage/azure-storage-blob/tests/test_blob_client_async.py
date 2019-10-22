@@ -169,7 +169,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertIsNotNone(service)
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertIsNone(service.credential)
-            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_service_custom_domain_async(self, resource_group, location, storage_account, storage_account_key):
@@ -256,7 +256,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
-            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_client_with_complete_blob_url_async(self, resource_group, location, storage_account, storage_account_key):
@@ -268,7 +268,7 @@ class StorageClientTestAsync(AsyncBlobTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.container_name, 'foo')
         self.assertEqual(service.blob_name, 'bar')
-        self.assertEqual(service.account_name, self.account_name)
+        self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_creat_serv_w_connstr_endpoint_protocol_async(self, resource_group, location, storage_account, storage_account_key):

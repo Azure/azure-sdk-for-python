@@ -2,212 +2,123 @@ interactions:
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:19:59 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 18:32:42 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainerb59f1281?restype=container
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      content-length:
-      - '0'
-      date:
-      - Thu, 10 Oct 2019 21:19:59 GMT
-      etag:
-      - '"0x8D74DC79BBBC7F8"'
-      last-modified:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 201
-      message: Created
+      content-length: ['0']
+      date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      etag: ['"0x8D7571E3A16444D"']
+      last-modified: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-version: ['2019-02-02']
+    status: {code: 201, message: Created}
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainersourceb59f1281?restype=container
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      content-length:
-      - '0'
-      date:
-      - Thu, 10 Oct 2019 21:19:59 GMT
-      etag:
-      - '"0x8D74DC79BC95EFE"'
-      last-modified:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 201
-      message: Created
+      content-length: ['0']
+      date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      etag: ['"0x8D7571E3A2848E1"']
+      last-modified: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-version: ['2019-02-02']
+    status: {code: 201, message: Created}
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-blob-type:
-      - AppendBlob
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-blob-type: [AppendBlob]
+      x-ms-date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      x-ms-version: ['2019-02-02']
     method: PUT
     uri: https://blobstoragename.blob.core.windows.net/utcontainerb59f1281/blobb59f1281
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      content-length:
-      - '0'
-      date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      etag:
-      - '"0x8D74DC79BD76BE6"'
-      last-modified:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 201
-      message: Created
+      content-length: ['0']
+      date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      etag: ['"0x8D7571E3A3A2174"']
+      last-modified: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2019-02-02']
+    status: {code: 201, message: Created}
 - request:
     body: null
     headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2019-02-02'
+      Accept: [application/xml]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      x-ms-range: [bytes=0-33554431]
+      x-ms-version: ['2019-02-02']
     method: GET
     uri: https://blobstoragename.blob.core.windows.net/utcontainerb59f1281/blobb59f1281
   response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:79f17c96-601e-001b-7bb0-7f2498000000\nTime:2019-10-10T21:20:00.5381902Z</Message></Error>"
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:f15a11f0-201e-0005-2907-897248000000\nTime:2019-10-22T18:32:43.4850139Z</Message></Error>"}
     headers:
-      content-length:
-      - '249'
-      content-range:
-      - bytes */0
-      content-type:
-      - application/xml
-      date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
+      content-length: ['249']
+      content-range: [bytes */0]
+      content-type: [application/xml]
+      date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-error-code: [InvalidRange]
+      x-ms-version: ['2019-02-02']
+    status: {code: 416, message: The range specified is invalid for the current size
+        of the resource.}
 - request:
     body: null
     headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      x-ms-version:
-      - '2019-02-02'
+      Accept: [application/xml]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [azsdk-python-storage-blob/12.0.0b5 Python/3.7.0 (Windows-10-10.0.18362-SP0)]
+      x-ms-date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      x-ms-version: ['2019-02-02']
     method: GET
     uri: https://blobstoragename.blob.core.windows.net/utcontainerb59f1281/blobb59f1281
   response:
-    body:
-      string: ''
+    body: {string: ''}
     headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '0'
-      content-type:
-      - application/octet-stream
-      date:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      etag:
-      - '"0x8D74DC79BD76BE6"'
-      last-modified:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-committed-block-count:
-      - '0'
-      x-ms-blob-type:
-      - AppendBlob
-      x-ms-creation-time:
-      - Thu, 10 Oct 2019 21:20:00 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
+      accept-ranges: [bytes]
+      content-length: ['0']
+      content-type: [application/octet-stream]
+      date: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      etag: ['"0x8D7571E3A3A2174"']
+      last-modified: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-blob-committed-block-count: ['0']
+      x-ms-blob-type: [AppendBlob]
+      x-ms-creation-time: ['Tue, 22 Oct 2019 18:32:43 GMT']
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-server-encrypted: ['true']
+      x-ms-version: ['2019-02-02']
+    status: {code: 200, message: OK}
 version: 1

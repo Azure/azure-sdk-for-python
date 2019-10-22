@@ -1103,7 +1103,8 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container = await self._create_container()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
+        container = await self._create_container(bsc)
         data = b'hello world'
 
         try:
@@ -1114,12 +1115,12 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
             await container.get_blob_client('blob3').upload_blob(data)
         except:
             pass
-        blobs = await _to_list(container.list_blobs(include='snapshots'))
+        blobs = await self._to_list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
         try:
-            response = await _to_list(await container.delete_blobs(
+            response = await self._to_list(await container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -1132,7 +1133,7 @@ class StorageContainerTestAsync(AsyncBlobTestCase):
             assert parts_list[1].status_code == 404  # There was no snapshot
             assert parts_list[2].status_code == 404  # There was no snapshot
 
-            blobs = await _to_list(container.list_blobs(include='snapshots'))
+            blobs = await self._to_list(container.list_blobs(include='snapshots'))
             assert len(blobs) == 3  # 3 blobs
 
     @GlobalStorageAccountPreparer()

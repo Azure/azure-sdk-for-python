@@ -1416,8 +1416,8 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_user_delegation_sas_for_blob(self):
         pytest.skip("Current Framework Cannot Support OAUTH")
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         token_credential = self.generate_oauth_token()
@@ -1987,8 +1987,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission._str, 'wrdx')
 
     def test_transport_closed_only_once(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         transport = RequestsTransport()
         url = self._get_account_url()
         credential = self._get_shared_key_credential()

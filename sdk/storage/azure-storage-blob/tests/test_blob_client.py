@@ -70,7 +70,7 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.container_name, 'foo')
         self.assertEqual(service.blob_name, 'bar')
-        self.assertEqual(service.account_name, self.account_name)
+        self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
@@ -256,7 +256,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
-            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.account_name, storage_account.name)
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, storage_account, storage_account_key):
