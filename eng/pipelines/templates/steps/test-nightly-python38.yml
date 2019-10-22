@@ -32,19 +32,14 @@ steps:
       cd Python-3.8.0
       mkdir debug
       cd debug
-      ../configure --enable-optimizations --prefix=$HOME
+      ../configure --enable-optimizations --prefix=$HOME/lib/python
       make
       echo $HOME
-      make DESTDIR=/home/vsts/lib/python38 install
+      make install
+      export PATH=~/lib/python:$PATH
       which python3
       which python
-      cd ~/
-      ls
-      echo 'home/python3.8'
-      cd ~/python3.8
-      ls
-      export PATH=~/python3.8/Python-3.8.0/:$PATH
-      which python3
+      python --version
       python --version
       apt-get install python3.8-dev
       apt-get install python3.8-distutils          
