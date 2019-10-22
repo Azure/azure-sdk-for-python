@@ -26,9 +26,11 @@ steps:
       ls
       tar -xf Python-3.8.0.tar.xz
       ls
-      find ~/Python-3.8.0 -type d | xargs chmod 0755
+      find ~/Python-3.8 -type d | xargs chmod 0755
       cd Python-3.8.0
-      ../configure --enable-optimizations --enable-shared --prefix=$HOME
+      mkdir debug
+      cd debug
+      ../configure --enable-optimizations --prefix=$HOME
       make install
       export PATH=~/python3.8/Python-3.8.0/:$PATH
       which python3.8
