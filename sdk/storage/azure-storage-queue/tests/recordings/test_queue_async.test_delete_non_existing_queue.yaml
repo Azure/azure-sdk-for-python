@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:50:09 GMT
+      - Tue, 22 Oct 2019 21:21:32 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -13,11 +13,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:7544e85e-a003-003a-70ed-831777000000\nTime:2019-10-16T06:50:09.3456124Z</Message></Error>"
+        specified queue does not exist.\nRequestId:5d0c1acd-c003-00f9-161e-89622b000000\nTime:2019-10-22T21:21:32.0402868Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Wed, 16 Oct 2019 06:50:08 GMT
+      date: Tue, 22 Oct 2019 21:21:31 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: QueueNotFound
       x-ms-version: '2018-03-28'

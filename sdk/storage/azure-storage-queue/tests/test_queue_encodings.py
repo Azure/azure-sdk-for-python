@@ -6,7 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
+import pytest
+import sys
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue import (
@@ -15,9 +16,8 @@ from azure.storage.queue import (
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,
-    BinaryBase64DecodePolicy,
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy)
+    BinaryBase64DecodePolicy
+)
 from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
 
 from queuetestcase import (
@@ -70,8 +70,8 @@ class StorageQueueEncodingTest(QueueTestCase):
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        assert isinstance(queue._config.message_encode_policy, TextXMLEncodePolicy)
-        assert isinstance(queue._config.message_decode_policy, TextXMLDecodePolicy)
+        assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
+        assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
         self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()          
@@ -131,12 +131,15 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Not applicable on Python 2.7")
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
-        queue = self._get_queue_reference(qsc)
+        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue.create_queue()
+
 
         # Action.
         with self.assertRaises(TypeError) as e:
@@ -144,7 +147,7 @@ class StorageQueueEncodingTest(QueueTestCase):
             queue.send_message(message)
 
         # Asserts
-        self.assertTrue(str(e.exception).startswith('Message content must be text'))
+        self.assertTrue(str(e.exception).startswith('Message content must not be bytes.'))
 
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -175,7 +178,7 @@ class StorageQueueEncodingTest(QueueTestCase):
             account_url=self._account_url(storage_account.name),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
-            message_encode_policy=TextXMLEncodePolicy(),
+            message_encode_policy=None,
             message_decode_policy=BinaryBase64DecodePolicy())
         try:
             queue.create_queue()

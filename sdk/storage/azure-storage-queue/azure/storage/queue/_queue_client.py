@@ -24,7 +24,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy, NoEncodePolicy, NoDecodePolicy
+from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
@@ -106,11 +106,11 @@ class QueueClient(StorageAccountHostsMixin):
         if 'message_encode_policy' in kwargs:
             self._config.message_encode_policy = kwargs['message_encode_policy'] or NoEncodePolicy()
         else:
-            self._config.message_encode_policy = TextXMLEncodePolicy()
+            self._config.message_encode_policy = NoEncodePolicy()
         if 'message_decode_policy' in kwargs:
             self._config.message_decode_policy = kwargs['message_decode_policy'] or NoDecodePolicy()
         else:
-            self._config.message_decode_policy = TextXMLDecodePolicy()
+            self._config.message_decode_policy = NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
     @classmethod

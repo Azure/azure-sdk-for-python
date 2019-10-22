@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:53:54 GMT
+      - Tue, 22 Oct 2019 21:25:33 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:53:54 GMT
+      date: Tue, 22 Oct 2019 21:25:32 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:53:55 GMT
+      - Tue, 22 Oct 2019 21:25:33 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -48,7 +48,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:53:54 GMT
+      date: Tue, 22 Oct 2019 21:25:32 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count: '0'
       x-ms-meta-hello: world
@@ -70,7 +70,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:53:55 GMT
+      - Tue, 22 Oct 2019 21:25:34 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -80,7 +80,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:53:54 GMT
+      date: Tue, 22 Oct 2019 21:25:32 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
