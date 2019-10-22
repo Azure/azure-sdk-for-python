@@ -282,7 +282,7 @@ class KeyVaultKey(object):
 
         :rtype: ~azure.keyvault.keys.KeyType or str
         """
-        return self._key_material.kty
+        return self._key_material.kty  # pylint:disable=no-member
 
     @property
     def key_operations(self):
@@ -291,7 +291,7 @@ class KeyVaultKey(object):
 
         :rtype: list[~azure.keyvault.keys.KeyOperation or str]
         """
-        return self._key_material.key_ops
+        return self._key_material.key_ops  # pylint:disable=no-member
 
 
 class DeletedKey(KeyVaultKey):
