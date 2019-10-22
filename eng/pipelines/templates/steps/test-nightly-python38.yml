@@ -20,6 +20,7 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
+      mkdir ~/python3.8
       cd ~/python3.8
       wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
       tar zxfv Python-3.8.0.tar.xz
