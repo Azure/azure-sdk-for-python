@@ -200,22 +200,22 @@ class KeyVaultKey(object):
 
     .. code-block:: python
 
-        from azure.keyvault.keys.models import Key
+        from azure.keyvault.keys.models import KeyVaultKey
 
         key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
         key_bytes = os.urandom(32)
-        key = Key(key_id, k=key_bytes, kty='oct', key_ops=['unwrapKey', 'wrapKey'])
+        key = KeyVaultKey(key_id, k=key_bytes, kty='oct', key_ops=['unwrapKey', 'wrapKey'])
 
     Providing cryptographic material as a dictionary:
 
     .. code-block:: python
 
-        from azure.keyvault.keys.models import Key
+        from azure.keyvault.keys.models import KeyVaultKey
 
         key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
         key_bytes = os.urandom(32)
         jwk = {'k': key_bytes, 'kty': 'oct', 'key_ops': ['unwrapKey', 'wrapKey']}
-        key = Key(key_id, jwk=jwk)
+        key = KeyVaultKey(key_id, jwk=jwk)
 
     """
 
