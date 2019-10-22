@@ -38,7 +38,7 @@ jobs:
           python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
-          python3 ./scripts/devops_tasks/setup_execute_tests.py -p python "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
+          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
         displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         continueOnError: true
 

@@ -66,6 +66,10 @@ steps:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
   
+  - template: publish-coverage.yml
+    parameters: 
+      RunCoverage: ${{ parameters.RunCoverage }}
+
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:

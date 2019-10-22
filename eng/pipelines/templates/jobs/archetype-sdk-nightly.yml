@@ -119,7 +119,7 @@ jobs:
         PythonVersion: '3.8'
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
