@@ -37,7 +37,7 @@ steps:
       make install
       export PATH=~/bin:$PATH
       export PATH=~/lib:$PATH
-      PATH=~/.local/bin:$PATH
+      export PATH=~/.local/bin:$PATH
       cd /home/vsts/bin
       ls
       which python3
@@ -58,7 +58,7 @@ steps:
   - task: PythonScript@0
     inputs:
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
         --mark_arg="${{ parameters.TestMarkArgument }}" 
@@ -75,10 +75,16 @@ steps:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
   
+  - script: |
+      which tox
+      cd $(Build.SourcesDirectory)
+      tox -e whl -c ../../../eng/tox/tox.ini
+    displayName: 'Verify tox'
+
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
       arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
@@ -87,7 +93,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests (Global)'
     inputs:
-      pythonInterpreter: python3
+      pythonInterpreter: /home/vsts/bin/python3
       scriptPath: scripts/devops_tasks/setup_execute_tests.py
       arguments: >-
         "${{ parameters.BuildTargetingString }}"
