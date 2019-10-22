@@ -8,7 +8,7 @@ Release History
 
 **Bugfixes**
 
-- Minor fixes
+- Minor fixes in ScopeMaps
 
 3.0.0rc6 (2019-10-03)
 +++++++++++++++++++++
