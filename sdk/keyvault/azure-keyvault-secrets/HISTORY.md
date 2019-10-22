@@ -10,6 +10,8 @@ detail the new keyword arguments):
     (optional) `version`
 - Renamed `list_secrets` to `list_properties_of_secrets`
 - Renamed `list_secret_versions` to `list_properties_of_secret_versions`
+- Renamed sync method `delete_secret` to `begin_delete_secret`
+- The sync method `begin_delete_secret` and async `delete_secret` now return pollers that return a `DeletedSecret`
 - Renamed `Secret` to `KeyVaultSecret`
 - `KeyVaultSecret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`

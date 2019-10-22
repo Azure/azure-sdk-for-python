@@ -3,13 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, AsyncIterable, Optional, Dict
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
 
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -237,9 +240,13 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
-        """Delete all versions of a secret. Requires the secrets/delete permission.
+        """Delete all versions of a secret.
 
-        :param str name: Name of the secret
+        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
+
+        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant, we poll
+         on the deletion of the secret. Awaiting this method returns the
+         :class:`~azure.keyvault.secrets.DeletedSecret`
         :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -253,8 +260,17 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Delete a secret
                 :dedent: 8
         """
-        bundle = await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedSecret._from_deleted_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
+            await self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        sd_disabled = deleted_secret.recovery_id is None
+        command = partial(self.get_deleted_secret, name=name, **kwargs)
+
+        delete_secret_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
+        return await async_poller(command, deleted_secret, None, delete_secret_poller)
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
@@ -325,10 +341,13 @@ class SecretClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
-        Requires the secrets/recover permission.
+
+        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
 
         :param str name: Name of the secret
-        :returns: The recovered secret
+        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant, we poll on
+         the recovery of the secret. Awaiting this method returns the recovered
+         :class:`~azure.keyvault.secrets.SecretProperties`
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -340,5 +359,13 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
-        return SecretProperties._from_secret_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_secret = SecretProperties._from_secret_bundle(
+            await self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_secret, name=name, **kwargs)
+
+        recover_secret_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
+        return await async_poller(command, recovered_secret, None, recover_secret_poller)
