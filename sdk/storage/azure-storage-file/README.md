@@ -110,7 +110,7 @@ Create a file share to store your files.
 ```python
 from azure.storage.file import ShareClient
 
-share = ShareClient.from_connection_string("my_connection_string", share="myshare")
+share = ShareClient.from_connection_string("my_connection_string", share_name="myshare")
 share.create_share()
 ```
 
@@ -120,7 +120,7 @@ Upload a file to the share
 ```python
 from azure.storage.file import FileClient
 
-file_client = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
+file_client = FileClient.from_connection_string("my_connection_string", share_name="share", file_path="myfile")
 
 with open("./SampleSource.txt", "rb") as source_file:
     file_client.upload_file(source_file)
@@ -132,7 +132,7 @@ Download a file to the share
 ```python
 from azure.storage.file import FileClient
 
-file_client = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
+file_client = FileClient.from_connection_string("my_connection_string", share_name="share", file_path="myfile")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
@@ -166,7 +166,7 @@ Create a file share to store your files.
 ```python
 from azure.storage.file.aio import ShareClient
 
-share = ShareClient.from_connection_string("my_connection_string", share="myshare")
+share = ShareClient.from_connection_string("my_connection_string", share_name="myshare")
 await share.create_share()
 ```
 
@@ -176,7 +176,7 @@ Upload a file to the share
 ```python
 from azure.storage.file.aio import FileClient
 
-file_client = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
+file_client = FileClient.from_connection_string("my_connection_string", share_name="share", file_path="myfile")
 
 with open("./SampleSource.txt", "rb") as source_file:
     await file_client.upload_file(source_file)
@@ -188,7 +188,7 @@ Download a file to the share
 ```python
 from azure.storage.file.aio import FileClient
 
-file_client = FileClient.from_connection_string("my_connection_string", share="share", file_path="myfile")
+file_client = FileClient.from_connection_string("my_connection_string", share_name="share", file_path="myfile")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()
