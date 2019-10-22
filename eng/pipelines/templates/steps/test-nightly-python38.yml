@@ -23,11 +23,14 @@ steps:
       sudo apt-get update
       sudo add-apt-repository ppa:deadsnakes/ppa
       sudo apt-get update
-      apt install python3.8 --user
-      apt-get install python3.8-dev --user
-      apt-get install python3.8-distutils --user
+      apt install python3.8
+      cd python3.8
+      ../configure --enable-optimizations --enable-shared --prefix=$HOME
+      apt-get install python3.8-dev
+      apt-get install python3.8-distutils
       export PATH=~/.local/bin:$PATH      
-      PATH=/usr/lib/python3.8:$PATH
+      PATH=~/lib/python3.8:$PATH
+      which python3.8
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3.8 get-pip.py 
       python3.8 -m pip install tox tox-monorepo packaging
