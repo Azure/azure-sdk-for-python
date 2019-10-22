@@ -25,9 +25,7 @@ steps:
       mkdir ~/python3.8
       cd ~/python3.8
       wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
-      ls
       tar -xf Python-3.8.0.tar.xz
-      ls
       find ~/python3.8 -type d | xargs chmod 0755
       cd Python-3.8.0
       mkdir debug
@@ -38,18 +36,11 @@ steps:
       export PATH=~/bin:$PATH
       export PATH=~/lib:$PATH
       export PATH=~/.local/bin:$PATH
-      cd /home/vsts/bin
-      ls
-      which python3
-      python3 --version
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3 get-pip.py
-      which pip
       python3 -m pip install setuptools wheel 
       python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
-      which tox
       python3 --version
-      python3 -c "from packaging import *"
       cd $(Build.SourcesDirectory)
     displayName: 'Prep Environment Using Python 3.8'
 
