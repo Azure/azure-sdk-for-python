@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-import asyncio
 from typing import Any, Union, TYPE_CHECKING
 from .._common import EventPosition,\
     EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -22,6 +21,14 @@ class EventHubConsumerClient(EventHubClient):
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        """
+
+
+
+        :param prefetch: The message prefetch count of the consumer. Default is 300.
+        :type prefetch: int
+        """
+
         super(EventHubConsumerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._event_processors = dict()
@@ -35,6 +42,18 @@ class EventHubConsumerClient(EventHubClient):
     ):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
+        :param event_handler: A function
+        :param consumer_group:
+        :param partition_id:
+        :param owner_level:
+        :param prefetch:
+        :param track_last_enqueued_event_properties:
+        :param initial_event_position:
+        :param load_balancing_interval:
+        :param error_handler:
+        :param partition_initialize_handler:
+        :param partition_close_handler:
+        :return:
         """
         async with self._lock:
             if 'all' in self._event_processors:
@@ -75,17 +94,27 @@ class EventHubConsumerClient(EventHubClient):
                     del self._event_processors['all']
 
     async def get_last_enqueued_event_properties(self, partition_id: str):
+        """The latest enqueued event information of a partition.
+        This property will be updated each time an event is received when
+        the client is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
+
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+
+        :rtype: dict or None
+        :raises: ValueError
+        """
         if partition_id in self._event_processors or 'all' in self._event_processors:
             return self._event_processors[partition_id].get_last_enqueued_event_properties(partition_id)
         else:
             raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
-    async def update_checkpoint(self, event):
-        self._partition_manager.update_checkpoint(event)
-
     async def close(self):
         # type: () -> None
-        """Stop retrieving events from event hubs and close the underlying AMQP connection.
+        """Stop retrieving events from event hubs and close the underlying AMQP connection and links.
 
         """
         async with self._lock:
