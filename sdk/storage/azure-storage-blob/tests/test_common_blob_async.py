@@ -2074,17 +2074,14 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncBlobTestCase.await_prepared_test
     async def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
+        container_name = self.get_resource_name('utcontainerasync')
         transport = AioHttpTransport()
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport)
         blob_name = self._get_blob_reference()
-        async with BlobServiceClient(url, credential=credential, transport=transport) as bsc:
+        async with bsc:
             await bsc.get_service_properties()
             assert transport.session is not None
-            async with bsc.get_blob_client(self.container_name, blob_name) as bc:
+            async with bsc.get_blob_client(container_name, blob_name) as bc:
                 assert transport.session is not None
             await bsc.get_service_properties()
             assert transport.session is not None

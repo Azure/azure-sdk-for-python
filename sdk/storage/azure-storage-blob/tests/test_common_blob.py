@@ -1986,15 +1986,16 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrdx')
 
-    def test_transport_closed_only_once(self):
+    @GlobalStorageAccountPreparer()
+    def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
+        container_name = self.get_resource_name('utcontainersync')
         transport = RequestsTransport()
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport)
         blob_name = self._get_blob_reference()
-        with BlobServiceClient(url, credential=credential, transport=transport) as bsc:
+        with bsc:
             bsc.get_service_properties()
             assert transport.session is not None
-            with bsc.get_blob_client(self.container_name, blob_name) as bc:
+            with bsc.get_blob_client(container_name, blob_name) as bc:
                 assert transport.session is not None
             bsc.get_service_properties()
             assert transport.session is not None
