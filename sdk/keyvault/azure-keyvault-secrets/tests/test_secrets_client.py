@@ -7,6 +7,8 @@ from dateutil import parser as date_parse
 import time
 import hashlib
 import os
+import logging
+import json
 
 from devtools_testutils import ResourceGroupPreparer
 from secrets_preparer import VaultClientPreparer
@@ -307,3 +309,73 @@ class SecretClientTests(KeyVaultTestCase):
 
         deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @VaultClientPreparer(client_kwargs={'logging_enable': True})
+    def test_logging_enabled(self, vault_client, **kwargs):
+        class MockHandler(logging.Handler):
+            def __init__(self):
+                super(MockHandler, self).__init__()
+                self.messages = []
+            def reset(self):
+                self.messages = []
+            def emit(self, record):
+                self.messages.append(record)
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        # Configure a console output
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        client.set_secret("secret-name", "secret-value")
+
+        found_body = False
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    body['value'] = 'secret-value'
+                    found_body = True
+                    break
+                except ValueError:
+                    pass
+
+        assert found_body
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @VaultClientPreparer()
+    def test_logging_disabled(self, vault_client, **kwargs):
+        class MockHandler(logging.Handler):
+            def __init__(self):
+                super(MockHandler, self).__init__()
+                self.messages = []
+            def reset(self):
+                self.messages = []
+            def emit(self, record):
+                self.messages.append(record)
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        # Configure a console output
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        client.set_secret("secret-name", "secret-value")
+
+        found_body = False
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    body['value'] = 'secret-value'
+                    found_body = True
+                    break
+                except ValueError:
+                    pass
+
+        assert not found_body
