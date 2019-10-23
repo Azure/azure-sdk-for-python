@@ -30,8 +30,8 @@ class CloseReason(Enum):
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     """
-    An EventProcessor constantly receives events from one or multiple partitions of the Event Hub in the context of a given
-    consumer group.
+    An EventProcessor constantly receives events from one or multiple partitions of the Event Hub
+    in the context of a given consumer group.
 
     """
     def __init__(
@@ -104,6 +104,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",
                                     err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                        raise
                     await asyncio.sleep(self._polling_interval)
             else:
                 checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None

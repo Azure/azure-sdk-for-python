@@ -149,10 +149,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.enabled)
 
         # [END list_keys]
-        # [START list_key_versions]
+        # [START list_properties_of_key_versions]
 
         # get an iterator of all versions of a key
-        key_versions = key_client.list_key_versions("key-name")
+        key_versions = key_client.list_properties_of_key_versions("key-name")
 
         async for key in key_versions:
             print(key.id)
@@ -160,7 +160,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.properties.version)
             print(key.expires_on)
 
-        # [END list_key_versions]
+        # [END list_properties_of_key_versions]
         # [START list_deleted_keys]
 
         # get an iterator of deleted keys (requires soft-delete enabled for the vault)
@@ -212,9 +212,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         created_key = await key_client.create_key("key-name", "RSA")
 
         await key_client.delete_key(created_key.name)
-        await self._poll_until_no_exception(
-            key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-        )
 
         # [START get_deleted_key]
 

@@ -3,14 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
 
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
 from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
-
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -159,10 +161,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
-        """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
+        """Delete all versions of a key and its cryptographic material.
+
+        Requires the keys/delete permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the key to delete.
-        :returns: The deleted key
+        :returns: A coroutine for the deletion of the key. Since deleting a key is not instant,
+         we poll on the deletion of the key. Awaiting this method returns the
+         :class:`~azure.keyvault.keys.DeletedKey`
         :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -176,8 +182,17 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
-        return DeletedKey._from_deleted_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        deleted_key = DeletedKey._from_deleted_key_bundle(
+            await self._client.delete_key(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        )
+        sd_disabled = deleted_key.recovery_id is None
+        command = partial(self.get_deleted_key, name=name, **kwargs)
+
+        delete_key_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
+        return await async_poller(command, deleted_key, None, delete_key_poller)
 
     @distributed_trace_async
     async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
@@ -244,10 +259,9 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: List all the deleted keys
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_deleted_keys(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs,
         )
@@ -267,16 +281,15 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: List all keys
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
             self.vault_endpoint,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
         )
 
     @distributed_trace
-    def list_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
+    def list_properties_of_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
@@ -285,17 +298,16 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
-                :start-after: [START list_key_versions]
-                :end-before: [END list_key_versions]
+                :start-after: [START list_properties_of_key_versions]
+                :end-before: [END list_properties_of_key_versions]
                 :language: python
                 :caption: List all versions of a key
                 :dedent: 8
         """
-        max_results = kwargs.get("max_page_size")
         return self._client.get_key_versions(
             self.vault_endpoint,
             name,
-            maxresults=max_results,
+            maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
         )
@@ -325,12 +337,14 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
-        Attempting to recover an non-deleted key will also return an error.
+        Attempting to recover a non-deleted key will also return an error.
 
-        Requires the keys/recover permission.
+        Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
 
         :param str name: The name of the deleted key
-        :returns: The recovered key
+        :returns: A coroutine for the recovery of the key. Since recovering a key is not instant, we poll on the
+         recovering of the key. Awaiting this method returns the recovered
+         :class:`~azure.keyvault.keys.KeyVaultKey`
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -342,8 +356,16 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
-        return KeyVaultKey._from_key_bundle(bundle)
+        polling_interval = kwargs.pop("_polling_interval", 2)
+        recovered_key = KeyVaultKey._from_key_bundle(
+            await self._client.recover_deleted_key(self.vault_endpoint, name, **kwargs)
+        )
+        command = partial(self.get_key, name=name, **kwargs)
+
+        recover_key_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
+        return await async_poller(command, recovered_key, None, recover_key_poller)
 
     @distributed_trace_async
     async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:

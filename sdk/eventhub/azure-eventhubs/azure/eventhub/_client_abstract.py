@@ -177,8 +177,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """Create an EventHubClient from an EventHub connection string.
-
+        """
         :param conn_str: The connection string of an eventhub
         :type conn_str: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is
@@ -202,25 +201,6 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the consumer. Default is 300.
-        :type prefetch: int
-        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
-         will return as soon as service returns no new events. Default value is the same as prefetch.
-        :type max_batch_size: int
-        :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds, meaning there is no timeout.
-        :type receive_timeout: float
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_connstr]
-                :end-before: [END create_eventhub_client_connstr]
-                :language: python
-                :dedent: 4
-                :caption: Create an EventHubClient from a connection string.
 
         """
         event_hub_path = kwargs.pop("event_hub_path", None)
