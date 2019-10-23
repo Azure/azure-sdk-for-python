@@ -20,7 +20,7 @@ from azure.core.exceptions import (
     DecodeError)
 
 from .parser import _to_utc_datetime
-from .models import StorageErrorCode, UserDelegationKey
+from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 
 
 if TYPE_CHECKING:
@@ -62,7 +62,7 @@ def normalize_headers(headers):
     for key, value in headers.items():
         if key.startswith('x-ms-'):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = value
+        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
     return normalized
 
 
