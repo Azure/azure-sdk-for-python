@@ -24,6 +24,8 @@ properties
 - Renamed `Key` to `KeyVaultKey`
 - `KeyVaultKey` properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `KeyClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 ### New features:
 - Now all `CryptographyClient` returns include `key_id` and `algorithm` properties
@@ -38,8 +40,8 @@ as certain properties of `Key` (such as `version`) have to be accessed
 through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
 for details.
 - `update_key` has been renamed to `update_key_properties`
-- The `vault_url` parameter of `KeyClient` has been renamed to `vault_url`
-- The property `vault_url` has been renamed to `vault_url` in all models
+- The `vault_url` parameter of `KeyClient` has been renamed to `vault_endpoint`
+- The property `vault_url` has been renamed to `vault_endpoint` in all models
 
 ### Fixes and improvements:
 - The `key` argument to `import_key` should be an instance of `azure.keyvault.keys.JsonWebKey`

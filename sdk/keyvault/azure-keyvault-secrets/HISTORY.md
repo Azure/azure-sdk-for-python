@@ -15,6 +15,8 @@ detail the new keyword arguments):
 - Renamed `Secret` to `KeyVaultSecret`
 - `KeyVaultSecret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `SecretClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 
 ## 4.0.0b4 (2019-10-08)
@@ -25,8 +27,8 @@ as certain properties of `Secret` (such as `version`) have to be accessed
 through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
 for details.
 - `update_secret` has been renamed to `update_secret_properties`
-- The `vault_url` parameter of `SecretClient` has been renamed to `vault_url`
-- The property `vault_url` has been renamed to `vault_url` in all models
+- The `vault_url` parameter of `SecretClient` has been renamed to `vault_endpoint`
+- The property `vault_url` has been renamed to `vault_endpoint` in all models
 
 ### Fixes and improvements
 - `list_secrets` and `list_secret_versions` return the correct type

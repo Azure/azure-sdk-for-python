@@ -17,6 +17,8 @@
 - Renamed `expires` property of `CertificateProperties` and `CertificatePolicy` to `expires_on`
 - Renamed `created` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `created_on`
 - Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`
+- The `vault_endpoint` parameter of `CertificateClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 ### New Features
 - `CertificatePolicy` now has a public class method `get_default` allowing users to get the default `CertificatePolicy`
@@ -32,8 +34,8 @@ as certain properties of `Certificate` (such as `version`) have to be accessed
 through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html)
 for details.
 - `update_certificate` has been renamed to `update_certificate_properties`
-- The `vault_url` parameter of `CertificateClient` has been renamed to `vault_url`
-- The property `vault_url` has been renamed to `vault_url` in all models
+- The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
+- The property `vault_url` has been renamed to `vault_endpoint` in all models
 
 
 ## 4.0.0b3 (2019-09-11)
