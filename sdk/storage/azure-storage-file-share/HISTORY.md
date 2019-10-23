@@ -2,6 +2,11 @@
 
 ## Version 12.0.0b5:
 
+**Important: This package has been renamed**
+
+Going forward, to use this SDK, please install `azure-storage-file-share`.
+The namespace within the package has also been renamed to `azure.storage.fileshare`.
+
 **Breaking changes**
 
 - `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`.

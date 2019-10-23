@@ -1,5 +1,5 @@
-# Azure Storage Files client library for Python
-Azure File storage offers fully managed file shares in the cloud that are accessible via the industry standard [Server Message Block (SMB) protocol](https://docs.microsoft.com/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview). Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
+# Azure Storage File Share client library for Python
+Azure File Share storage offers fully managed file shares in the cloud that are accessible via the industry standard [Server Message Block (SMB) protocol](https://docs.microsoft.com/windows/desktop/FileIO/microsoft-smb-protocol-and-cifs-protocol-overview). Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
 
 Azure file shares can be used to:
 
@@ -7,7 +7,7 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/azure/storage/file) | [Package (PyPI)](https://pypi.org/project/azure-storage-file/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests)
 
 ## Getting started
 
@@ -17,10 +17,10 @@ Azure file shares can be used to:
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
 ### Install the package
-Install the Azure Storage Files client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Storage File Share client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-file --pre
+pip install azure-storage-file-share --pre
 ```
 
 ### Create a storage account
@@ -39,25 +39,25 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 ### Create the client
-The Azure Storage Files client library for Python allows you to interact with four types of resources: the storage
+The Azure Storage File Share client library for Python allows you to interact with four types of resources: the storage
 account itself, file shares, directories, and files. Interaction with these resources starts with an instance of a
 [client](#clients). To create a client object, you will need the storage account's file service endpoint URL and a
 credential that allows you to access the storage account:
 
 ```python
-from azure.storage.file import FileServiceClient
+from azure.storage.fileshare import ShareServiceClient
 
-service = FileServiceClient(account_url="https://<my-storage-account-name>.file.core.windows.net/", credential=credential)
+service = ShareServiceClient(account_url="https://<my-storage-account-name>.file.core.windows.net/", credential=credential)
 ```
 
 #### Looking up the endpoint URL
-You can find the storage account's file service endpoint URL using the
+You can find the storage account's service endpoint URL using the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
-# Get the file service endpoint for the storage account
+# Get the service endpoint for the storage account
 az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.file"
 ```
 
@@ -75,47 +75,47 @@ connection string instead of providing the account URL and credential separately
 connection string to the client's `from_connection_string` class method:
 
 ```python
-from azure.storage.file import FileServiceClient
+from azure.storage.fileshare import ShareServiceClient
 
-service = FileServiceClient.from_connection_string(conn_str="my_connection_string")
+service = ShareServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
 
 ## Key concepts
-The following components make up the Azure File Service:
+The following components make up the Azure File Share Service:
 * The storage account itself
 * A file share within the storage account
 * An optional hierarchy of directories within the file share
 * A file within the file share, which may be up to 1 TiB in size
 
-The Azure Storage Files client library for Python allows you to interact with each of these components through the
+The Azure Storage File Share client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients
-Four different clients are provided to to interact with the various components of the File Service:
-1. **[FileServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.fileserviceclient)** -
+Four different clients are provided to to interact with the various components of the File Share Service:
+1. **[ShareServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.shareserviceclient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
-2. **[ShareClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.shareclient)** -
+2. **[ShareClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.shareclient)** -
     this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the directories and files within. It provides operations to create, delete,
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[DirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.directoryclient)** -
+3. **[DirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.directoryclient)** -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[FileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file/azure.storage.file.fileclient)** -
+4. **[FileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.fileclient)** -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
 For details on path naming restrictions, see [Naming and Referencing Shares, Directories, Files, and Metadata](https://docs.microsoft.com/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata).
 
 ## Examples
-The following sections provide several code snippets covering some of the most common Storage File tasks, including:
+The following sections provide several code snippets covering some of the most common Storage File Share tasks, including:
 
 * [Creating a file share](#creating-a-file-share)
 * [Uploading a file](#uploading-a-file)
@@ -126,7 +126,7 @@ The following sections provide several code snippets covering some of the most c
 Create a file share to store your files
 
 ```python
-from azure.storage.file import ShareClient
+from azure.storage.fileshare import ShareClient
 
 share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
 share.create_share()
@@ -135,7 +135,7 @@ share.create_share()
 Use the async client to create a file share
 
 ```python
-from azure.storage.file.aio import ShareClient
+from azure.storage.fileshare.aio import ShareClient
 
 share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
 await share.create_share()
@@ -145,7 +145,7 @@ await share.create_share()
 Upload a file to the share
 
 ```python
-from azure.storage.file import FileClient
+from azure.storage.fileshare import FileClient
 
 file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
@@ -156,7 +156,7 @@ with open("./SampleSource.txt", "rb") as source_file:
 Upload a file asynchronously
 
 ```python
-from azure.storage.file.aio import FileClient
+from azure.storage.fileshare.aio import FileClient
 
 file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
@@ -168,7 +168,7 @@ with open("./SampleSource.txt", "rb") as source_file:
 Download a file from the share
 
 ```python
-from azure.storage.file import FileClient
+from azure.storage.fileshare import FileClient
 
 file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
@@ -180,7 +180,7 @@ with open("DEST_FILE", "wb") as file_handle:
 Download a file asynchronously
 
 ```python
-from azure.storage.file.aio import FileClient
+from azure.storage.fileshare.aio import FileClient
 
 file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
@@ -193,7 +193,7 @@ with open("DEST_FILE", "wb") as file_handle:
 List all directories and files under a parent directory
 
 ```python
-from azure.storage.file import DirectoryClient
+from azure.storage.fileshare import DirectoryClient
 
 parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
@@ -204,7 +204,7 @@ print(my_list)
 List contents of a directory asynchronously
 
 ```python
-from azure.storage.file.aio import DirectoryClient
+from azure.storage.fileshare.aio import DirectoryClient
 
 parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
@@ -222,42 +222,42 @@ All File service operations will throw a `StorageErrorException` on failure with
 
 ### More sample code
 
-Get started with our [File samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests).
+Get started with our [File Share samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests).
 
-Several Storage File Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage File:
+Several Storage File Share Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage File Share:
 
-* [`test_file_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_hello_world.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_hello_world_async.py)) - Examples found in this article:
+* [`test_file_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_hello_world.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_hello_world_async.py)) - Examples found in this article:
     * Client creation
     * Create a file share
     * Upload a file
 
-* [`test_file_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_authentication.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_authentication_async.py)) - Examples for authenticating and creating the client:
+* [`test_file_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_authentication.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
 
-* [`test_file_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_service.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_service_async.py)) - Examples for interacting with the file service:
+* [`test_file_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_service.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_service_async.py)) - Examples for interacting with the file service:
     * Get and set service properties
     * Create, list, and delete shares
     * Get a share client
 
-* [`test_file_samples_share.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_share.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_share_async.py)) - Examples for interacting with file shares:
+* [`test_file_samples_share.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_share.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_share_async.py)) - Examples for interacting with file shares:
     * Create a share snapshot
     * Set share quota and metadata
     * List directories and files
     * Get the directory or file client to interact with a specific entity
 
-* [`test_file_samples_directory.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_directory.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_directory_async.py)) - Examples for interacting with directories:
+* [`test_file_samples_directory.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_directory.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_directory_async.py)) - Examples for interacting with directories:
     * Create a directory and add files
     * Create and delete subdirectories
     * Get the subdirectory client
 
-* [`test_file_samples_file.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_file.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file/tests/test_file_samples_file_async.py)) - Examples for interacting with files:
+* [`test_file_samples_file.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_file.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/tests/test_file_samples_file_async.py)) - Examples for interacting with files:
     * Create, upload, download, and delete files
     * Copy a file from a URL
 
 ### Additional documentation
-For more extensive documentation on Azure File storage, see the [Azure File storage documentation](https://docs.microsoft.com/en-us/azure/storage/files/) on docs.microsoft.com.
+For more extensive documentation on Azure File Share storage, see the [Azure File Share storage documentation](https://docs.microsoft.com/en-us/azure/storage/files/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

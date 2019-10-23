@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-storage-file"
-PACKAGE_PPRINT_NAME = "Azure File Storage"
+PACKAGE_NAME = "azure-storage-file-share"
+PACKAGE_PPRINT_NAME = "Azure File Share Storage"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -76,8 +76,6 @@ setup(
         'azure',
         'azure.storage',
         'tests',
-        'tests.file',
-        'tests.common'
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.0.0b5",
