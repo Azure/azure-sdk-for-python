@@ -13,18 +13,11 @@ DESCRIPTION:
 USAGE: python read_only_sample.py
 """
 
-import os
-import sys
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
-from util import print_configuration_setting
+from util import print_configuration_setting, get_connection_string
 
 def main():
-    try:
-        CONNECTION_STRING = os.environ['AZURE_APPCONFIG_CONNECTION_STRING']
-
-    except KeyError:
-        print("AZURE_APPCONFIG_CONNECTION_STRING must be set.")
-        sys.exit(1)
+    CONNECTION_STRING = get_connection_string()
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)

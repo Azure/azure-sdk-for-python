@@ -13,20 +13,13 @@ DESCRIPTION:
 USAGE: python read_only_async_sample.py
 """
 
-import os
-import sys
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting
+from util import print_configuration_setting, get_connection_string
 
 async def main():
-    try:
-        CONNECTION_STRING = os.environ['AZURE_APPCONFIG_CONNECTION_STRING']
-
-    except KeyError:
-        print("AZURE_APPCONFIG_CONNECTION_STRING must be set.")
-        sys.exit(1)
+    CONNECTION_STRING = get_connection_string()
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
