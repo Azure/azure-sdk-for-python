@@ -182,6 +182,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = operation.result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
 
+    @distributed_trace_async
     async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
@@ -254,6 +255,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = operation.result
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
+    @distributed_trace_async
     async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.

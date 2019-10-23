@@ -149,6 +149,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         return self._internal_key
 
+    @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
         # pylint:disable=line-too-long
