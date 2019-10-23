@@ -4758,6 +4758,215 @@ class WebAppsOperations(object):
             return client_raw_response
     delete_function.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}'}
 
+    def create_or_update_function_secret(
+            self, resource_group_name, name, function_name, key_name, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
+        """Add or update a function secret.
+
+        Add or update a function secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: The name of the function.
+        :type function_name: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param name1: Key name
+        :type name1: str
+        :param value: Key value
+        :type value: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        key = models.KeyInfo(name=name1, value=value)
+
+        # Construct URL
+        url = self.create_or_update_function_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key, 'KeyInfo')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyInfo', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('KeyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update_function_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/keys/{keyName}'}
+
+    def delete_function_secret(
+            self, resource_group_name, name, function_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Delete a function secret.
+
+        Delete a function secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: The name of the function.
+        :type function_name: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete_function_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204, 404]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_function_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/keys/{keyName}'}
+
+    def list_function_keys(
+            self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
+        """Get function keys for a function in a web site, or a deployment slot.
+
+        Get function keys for a function in a web site, or a deployment slot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: Function name.
+        :type function_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_function_keys.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('StringDictionary', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_function_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/listkeys'}
+
     def list_function_secrets(
             self, resource_group_name, name, function_name, custom_headers=None, raw=False, **operation_config):
         """Get function secrets for a function in a web site, or a deployment
@@ -4825,6 +5034,322 @@ class WebAppsOperations(object):
 
         return deserialized
     list_function_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}/listsecrets'}
+
+    def list_host_keys(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Get host secrets for a function app.
+
+        Get host secrets for a function app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: HostKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostKeys or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_host_keys.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('HostKeys', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_host_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/listkeys'}
+
+    def list_sync_status(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """This is to allow calling via powershell and ARM template.
+
+        This is to allow calling via powershell and ARM template.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_sync_status.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    list_sync_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/listsyncstatus'}
+
+    def sync_functions(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Syncs function trigger metadata to the management database.
+
+        Syncs function trigger metadata to the management database.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.sync_functions.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    sync_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/sync'}
+
+    def create_or_update_host_secret(
+            self, resource_group_name, name, key_type, key_name, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
+        """Add or update a host level secret.
+
+        Add or update a host level secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param key_type: The type of host key.
+        :type key_type: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param name1: Key name
+        :type name1: str
+        :param value: Key value
+        :type value: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        key = models.KeyInfo(name=name1, value=value)
+
+        # Construct URL
+        url = self.create_or_update_host_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'keyType': self._serialize.url("key_type", key_type, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key, 'KeyInfo')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyInfo', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('KeyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update_host_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/{keyType}/{keyName}'}
+
+    def delete_host_secret(
+            self, resource_group_name, name, key_type, key_name, custom_headers=None, raw=False, **operation_config):
+        """Delete a host level secret.
+
+        Delete a host level secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param key_type: The type of host key.
+        :type key_type: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.delete_host_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'keyType': self._serialize.url("key_type", key_type, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204, 404]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_host_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/host/default/{keyType}/{keyName}'}
 
     def list_host_name_bindings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -14932,8 +15457,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -15079,8 +15603,7 @@ class WebAppsOperations(object):
         :type name: str
         :param function_name: Function name.
         :type function_name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -15200,8 +15723,7 @@ class WebAppsOperations(object):
         :type name: str
         :param function_name: Function name.
         :type function_name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param function_envelope: Function details.
         :type function_envelope:
@@ -15262,8 +15784,7 @@ class WebAppsOperations(object):
         :type name: str
         :param function_name: Function name.
         :type function_name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -15312,6 +15833,224 @@ class WebAppsOperations(object):
             return client_raw_response
     delete_instance_function_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}'}
 
+    def create_or_update_function_secret_slot(
+            self, resource_group_name, name, function_name, key_name, slot, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
+        """Add or update a function secret.
+
+        Add or update a function secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: The name of the function.
+        :type function_name: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param name1: Key name
+        :type name1: str
+        :param value: Key value
+        :type value: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        key = models.KeyInfo(name=name1, value=value)
+
+        # Construct URL
+        url = self.create_or_update_function_secret_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key, 'KeyInfo')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyInfo', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('KeyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update_function_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/keys/{keyName}'}
+
+    def delete_function_secret_slot(
+            self, resource_group_name, name, function_name, key_name, slot, custom_headers=None, raw=False, **operation_config):
+        """Delete a function secret.
+
+        Delete a function secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: The name of the function.
+        :type function_name: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete_function_secret_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204, 404]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_function_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/keys/{keyName}'}
+
+    def list_function_keys_slot(
+            self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
+        """Get function keys for a function in a web site, or a deployment slot.
+
+        Get function keys for a function in a web site, or a deployment slot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: Function name.
+        :type function_name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_function_keys_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('StringDictionary', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_function_keys_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/listkeys'}
+
     def list_function_secrets_slot(
             self, resource_group_name, name, function_name, slot, custom_headers=None, raw=False, **operation_config):
         """Get function secrets for a function in a web site, or a deployment
@@ -15327,8 +16066,7 @@ class WebAppsOperations(object):
         :type name: str
         :param function_name: Function name.
         :type function_name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -15383,6 +16121,336 @@ class WebAppsOperations(object):
 
         return deserialized
     list_function_secrets_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}/listsecrets'}
+
+    def list_host_keys_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
+        """Get host secrets for a function app.
+
+        Get host secrets for a function app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: HostKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.HostKeys or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_host_keys_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('HostKeys', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_host_keys_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/listkeys'}
+
+    def list_sync_status_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
+        """This is to allow calling via powershell and ARM template.
+
+        This is to allow calling via powershell and ARM template.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_sync_status_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    list_sync_status_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/listsyncstatus'}
+
+    def sync_functions_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
+        """Syncs function trigger metadata to the management database.
+
+        Syncs function trigger metadata to the management database.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.sync_functions_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    sync_functions_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/sync'}
+
+    def create_or_update_host_secret_slot(
+            self, resource_group_name, name, key_type, key_name, slot, name1=None, value=None, custom_headers=None, raw=False, **operation_config):
+        """Add or update a host level secret.
+
+        Add or update a host level secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param key_type: The type of host key.
+        :type key_type: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param name1: Key name
+        :type name1: str
+        :param value: Key value
+        :type value: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.KeyInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        key = models.KeyInfo(name=name1, value=value)
+
+        # Construct URL
+        url = self.create_or_update_host_secret_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'keyType': self._serialize.url("key_type", key_type, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key, 'KeyInfo')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyInfo', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('KeyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update_host_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/{keyType}/{keyName}'}
+
+    def delete_host_secret_slot(
+            self, resource_group_name, name, key_type, key_name, slot, custom_headers=None, raw=False, **operation_config):
+        """Delete a host level secret.
+
+        Delete a host level secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param key_type: The type of host key.
+        :type key_type: str
+        :param key_name: The name of the key.
+        :type key_name: str
+        :param slot: Name of the deployment slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.delete_host_secret_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'keyType': self._serialize.url("key_type", key_type, 'str'),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204, 404]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_host_secret_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/host/default/{keyType}/{keyName}'}
 
     def list_host_name_bindings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
@@ -17543,8 +18611,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Name of the app.
         :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will restore a backup of the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -22218,17 +23285,16 @@ class WebAppsOperations(object):
 
     def sync_function_triggers_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the scale controller.
+        """Syncs function trigger metadata to the management database.
 
-        Syncs function trigger metadata to the scale controller.
+        Syncs function trigger metadata to the management database.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
         :param name: Name of the app.
         :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will restore a backup of the production slot.
+        :param slot: Name of the deployment slot.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -24524,9 +25590,9 @@ class WebAppsOperations(object):
 
     def sync_function_triggers(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Syncs function trigger metadata to the scale controller.
+        """Syncs function trigger metadata to the management database.
 
-        Syncs function trigger metadata to the scale controller.
+        Syncs function trigger metadata to the management database.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

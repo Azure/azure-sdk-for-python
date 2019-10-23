@@ -5015,7 +5015,7 @@ class FileSystemHttpLogsConfig(Model):
 
 
 class FunctionEnvelope(ProxyOnlyResource):
-    """Web Job Information.
+    """Function information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -5036,6 +5036,8 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type script_href: str
     :param config_href: Config URI.
     :type config_href: str
+    :param test_data_href: Test data URI.
+    :type test_data_href: str
     :param secrets_file_href: Secrets file URI.
     :type secrets_file_href: str
     :param href: Function URI.
@@ -5046,6 +5048,12 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
     :type test_data: str
+    :param invoke_url_template: The invocation URL
+    :type invoke_url_template: str
+    :param language: The function language
+    :type language: str
+    :param is_disabled: Value indicating whether the function is disabled
+    :type is_disabled: bool
     """
 
     _validation = {
@@ -5063,11 +5071,15 @@ class FunctionEnvelope(ProxyOnlyResource):
         'script_root_path_href': {'key': 'properties.script_root_path_href', 'type': 'str'},
         'script_href': {'key': 'properties.script_href', 'type': 'str'},
         'config_href': {'key': 'properties.config_href', 'type': 'str'},
+        'test_data_href': {'key': 'properties.test_data_href', 'type': 'str'},
         'secrets_file_href': {'key': 'properties.secrets_file_href', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'config': {'key': 'properties.config', 'type': 'object'},
         'files': {'key': 'properties.files', 'type': '{str}'},
         'test_data': {'key': 'properties.test_data', 'type': 'str'},
+        'invoke_url_template': {'key': 'properties.invoke_url_template', 'type': 'str'},
+        'language': {'key': 'properties.language', 'type': 'str'},
+        'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -5076,11 +5088,15 @@ class FunctionEnvelope(ProxyOnlyResource):
         self.script_root_path_href = kwargs.get('script_root_path_href', None)
         self.script_href = kwargs.get('script_href', None)
         self.config_href = kwargs.get('config_href', None)
+        self.test_data_href = kwargs.get('test_data_href', None)
         self.secrets_file_href = kwargs.get('secrets_file_href', None)
         self.href = kwargs.get('href', None)
         self.config = kwargs.get('config', None)
         self.files = kwargs.get('files', None)
         self.test_data = kwargs.get('test_data', None)
+        self.invoke_url_template = kwargs.get('invoke_url_template', None)
+        self.language = kwargs.get('language', None)
+        self.is_disabled = kwargs.get('is_disabled', None)
 
 
 class FunctionSecrets(ProxyOnlyResource):
@@ -5327,6 +5343,30 @@ class HostingEnvironmentProfile(Model):
         self.id = kwargs.get('id', None)
         self.name = None
         self.type = None
+
+
+class HostKeys(Model):
+    """Functions host level keys.
+
+    :param master_key: Secret key.
+    :type master_key: str
+    :param function_keys: Host level function keys.
+    :type function_keys: dict[str, str]
+    :param system_keys: System keys.
+    :type system_keys: dict[str, str]
+    """
+
+    _attribute_map = {
+        'master_key': {'key': 'masterKey', 'type': 'str'},
+        'function_keys': {'key': 'functionKeys', 'type': '{str}'},
+        'system_keys': {'key': 'systemKeys', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HostKeys, self).__init__(**kwargs)
+        self.master_key = kwargs.get('master_key', None)
+        self.function_keys = kwargs.get('function_keys', None)
+        self.system_keys = kwargs.get('system_keys', None)
 
 
 class HostName(Model):
@@ -5792,6 +5832,26 @@ class IpSecurityRestriction(Model):
         self.priority = kwargs.get('priority', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
+
+
+class KeyInfo(Model):
+    """Function key info.
+
+    :param name: Key name
+    :type name: str
+    :param value: Key value
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
 
 
 class LocalizableString(Model):

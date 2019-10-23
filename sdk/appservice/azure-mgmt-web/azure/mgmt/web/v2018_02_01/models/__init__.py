@@ -107,6 +107,7 @@ try:
     from ._models_py3 import HostingEnvironmentDeploymentInfo
     from ._models_py3 import HostingEnvironmentDiagnostics
     from ._models_py3 import HostingEnvironmentProfile
+    from ._models_py3 import HostKeys
     from ._models_py3 import HostName
     from ._models_py3 import HostNameBinding
     from ._models_py3 import HostNameSslState
@@ -117,6 +118,7 @@ try:
     from ._models_py3 import Identifier
     from ._models_py3 import InboundEnvironmentEndpoint
     from ._models_py3 import IpSecurityRestriction
+    from ._models_py3 import KeyInfo
     from ._models_py3 import LocalizableString
     from ._models_py3 import LogSpecification
     from ._models_py3 import ManagedServiceIdentity
@@ -336,6 +338,7 @@ except (SyntaxError, ImportError):
     from ._models import HostingEnvironmentDeploymentInfo
     from ._models import HostingEnvironmentDiagnostics
     from ._models import HostingEnvironmentProfile
+    from ._models import HostKeys
     from ._models import HostName
     from ._models import HostNameBinding
     from ._models import HostNameSslState
@@ -346,6 +349,7 @@ except (SyntaxError, ImportError):
     from ._models import Identifier
     from ._models import InboundEnvironmentEndpoint
     from ._models import IpSecurityRestriction
+    from ._models import KeyInfo
     from ._models import LocalizableString
     from ._models import LogSpecification
     from ._models import ManagedServiceIdentity
@@ -687,6 +691,7 @@ __all__ = [
     'HostingEnvironmentDeploymentInfo',
     'HostingEnvironmentDiagnostics',
     'HostingEnvironmentProfile',
+    'HostKeys',
     'HostName',
     'HostNameBinding',
     'HostNameSslState',
@@ -697,6 +702,7 @@ __all__ = [
     'Identifier',
     'InboundEnvironmentEndpoint',
     'IpSecurityRestriction',
+    'KeyInfo',
     'LocalizableString',
     'LogSpecification',
     'ManagedServiceIdentity',
