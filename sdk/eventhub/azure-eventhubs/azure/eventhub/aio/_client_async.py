@@ -33,14 +33,6 @@ class EventHubClient(EventHubClientAbstract):
     The EventHubClient class defines a high level interface for asynchronously
     sending events to and receiving events from the Azure Event Hubs service.
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-            :start-after: [START create_eventhub_client_async]
-            :end-before: [END create_eventhub_client_async]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the Event Hub client async.
-
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -233,14 +225,6 @@ class EventHubClient(EventHubClientAbstract):
         :type track_last_enqueued_event_properties: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.consumer_async.EventHubConsumer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_receiver]
-                :end-before: [END create_eventhub_client_async_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
         owner_level = kwargs.get("owner_level")

@@ -14,25 +14,26 @@ class PartitionManager(ABC):
     """
 
     @abstractmethod
-    async def list_ownership(self, namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         """
         Retrieves a complete ownership list from the chosen storage service.
 
+        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
+         The format is like
         :param eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :type eventhub_name: str
         :param consumer_group_name: The name of the consumer group the ownership are associated with.
-        :type consumer_group_name: str
         :return: Iterable of dictionaries containing the following partition ownership information:
-                eventhub_name
-                consumer_group_name
-                owner_id
-                partition_id
-                owner_level
-                offset
-                sequence_number
-                last_modified_time
-                etag
+                * fully_qualified_namespace
+                * eventhub_name
+                * consumer_group_name
+                * owner_id
+                * partition_id
+                * owner_level
+                * offset
+                * sequence_number
+                * last_modified_time
+                * etag
         """
 
     @abstractmethod
@@ -55,7 +56,7 @@ class PartitionManager(ABC):
         """
 
     @abstractmethod
-    async def update_checkpoint(self, namespace, eventhub_name, consumer_group_name, partition_id,
+    async def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
                                 offset, sequence_number) -> None:
         """
         Updates the checkpoint using the given information for the associated partition and

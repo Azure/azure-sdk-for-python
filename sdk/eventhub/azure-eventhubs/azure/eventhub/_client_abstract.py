@@ -177,8 +177,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """Create an EventHubClient from an EventHub connection string.
-
+        """
         :param conn_str: The connection string of an eventhub
         :type conn_str: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is

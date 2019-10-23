@@ -18,18 +18,18 @@ log = logging.getLogger(__name__)
 
 
 class EventHubProducerClient(EventHubClient):
-    """
-    The EventHubClient class defines a high level interface for asynchronously
-    sending events to and receiving events from the Azure Event Hubs service.
+    """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-            :start-after: [START create_eventhub_client_async]
-            :end-before: [END create_eventhub_client_async]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the Event Hub client async.
+        .. code-block:: python
 
+            async def send():
+                producer_client = EventHubProducerClient.from_connection_string(CONNECTION_STRING)
+                async with producer_client:
+                    for i in range(100):
+                        await producer_client.send(EventData("test"), partition_id="0")
+                        await producer_client.send(EventData("test"), partition_key="some pk")
+                        await producer_client.send(EventData("test"))
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -61,9 +61,6 @@ class EventHubProducerClient(EventHubClient):
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
         """
         super(EventHubProducerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._producers = None  # type: List[EventHubProducer]
@@ -72,13 +69,35 @@ class EventHubProducerClient(EventHubClient):
 
     async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
+        """Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        :param event_data: The event(s) to be sent. It can be an EventData object, an iterable of EventData objects
+            or an EventDataBatch, which contains some EventData objects. EventDataBatch is highly recommended to group
+            as many EventData objects as possible in a single send call. This will maximize the send throughput.
+            A send operation will send all EventData objects to one partition.
+            Multiple send operations will round-robin send to partitions alternately.
+            Round-robin is the recommended and the default behavior of send
+            unless you set partition_id or partition_key.
+        :param partition_id: event_data will be sent to this partition. This is not recommended because it may
+         cause unbalanced number of event data across partitions.
+        :param partition_key: With the given partition_key, event_data will land to
+         a particular partition but unknown until the send completes. Two send operations with the same partition_key
+         will go to the same partition even though which the partition is unknown while before send.
+        :param timeout: The maximum wait time to send the event data.
+         Default value is 60 seconds. If set to 0, there will be no timeout.
+
+        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
+                ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
+        :return: None
+        :rtype: None
+        """
 
         if self._producers is None:
             async with self._producers_lock:
                 if self._producers is None:
                     num_of_producers = len(await self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
-                    self._producers_locks = [asyncio.Lock] * num_of_producers
+                    self._producers_locks = [asyncio.Lock()] * num_of_producers
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:
