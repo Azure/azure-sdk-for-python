@@ -354,7 +354,7 @@ class BlobProperties(DictMixin):
 
     :ivar str name:
         The name of the blob.
-    :ivar container:
+    :ivar str container:
         The container in which the blob resides.
     :ivar str snapshot:
         Datetime value that uniquely identifies the blob snapshot.
@@ -835,14 +835,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
         self.start = start

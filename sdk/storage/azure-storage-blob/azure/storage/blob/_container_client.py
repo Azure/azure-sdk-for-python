@@ -280,7 +280,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -342,7 +342,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -446,6 +446,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
+        :rtype: dict[str, str or datetime]
 
         .. admonition:: Example:
 
@@ -530,10 +531,9 @@ class ContainerClient(StorageAccountHostsMixin):
         :type signed_identifiers: dict[str, ~azure.storage.blob.AccessPolicy]
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
-        :keyword lease:
+        :keyword ~azure.storage.blob.LeaseClient or str lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -734,7 +734,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
@@ -836,7 +836,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -955,12 +955,12 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: An iterator of responses, one for each blob in order
-        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
@@ -1051,7 +1051,7 @@ class ContainerClient(StorageAccountHostsMixin):
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :return: An iterator of responses, one for each blob in order
-        :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+        :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
