@@ -29,9 +29,9 @@ from testcase import (
 )
 
 if sys.version_info >= (3,):
-    from urllib.parse import parse_qs, quote
+    from urllib.parse import parse_qs, quote, urlparse
 else:
-    from urlparse import parse_qs
+    from urlparse import parse_qs, urlparse
     from urllib2 import quote
 
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
@@ -131,7 +131,15 @@ class StorageLoggingTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # parse out the signed signature
-        token_components = parse_qs(self.source_blob_url)
+        query_parameters = urlparse(self.source_blob_url).query
+        token_components = parse_qs(query_parameters)
+        if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
+            pytest.fail("Blob URL {} doesn't contain {}, parsed query params: {}".format(
+                self.source_blob_url,
+                QueryStringConstants.SIGNED_SIGNATURE,
+                list(token_components.keys())
+            ))
+
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act
