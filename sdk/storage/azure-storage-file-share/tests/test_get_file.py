@@ -13,7 +13,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.fileshare import (
-    FileClient,
+    ShareFileClient,
     ShareServiceClient,
     FileProperties
 )
@@ -60,7 +60,7 @@ class StorageGetFileTest(FileTestCase):
 
         if not self.is_playback():
             byte_file = self.directory_name + '/' + self.byte_file
-            file_client = FileClient(
+            file_client = ShareFileClient(
                 self.get_file_url(),
                 share_name=self.share_name,
                 file_path=byte_file,
@@ -108,7 +108,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
                 self.get_file_url(),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
@@ -130,7 +130,7 @@ class StorageGetFileTest(FileTestCase):
         binary_data = base64.b64decode(base64_data)
 
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
                 self.get_file_url(),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
@@ -150,7 +150,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = b''
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
                 self.get_file_url(),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
@@ -172,7 +172,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -192,7 +192,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -221,7 +221,7 @@ class StorageGetFileTest(FileTestCase):
     @record
     def test_get_file_to_bytes_non_parallel(self):
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -252,7 +252,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -285,7 +285,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -308,7 +308,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -332,7 +332,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -365,7 +365,7 @@ class StorageGetFileTest(FileTestCase):
     @record
     def test_get_file_to_stream_non_parallel(self):
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -400,7 +400,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -440,14 +440,14 @@ class StorageGetFileTest(FileTestCase):
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = share_client.create_snapshot()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -475,14 +475,14 @@ class StorageGetFileTest(FileTestCase):
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = share_client.create_snapshot()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -519,14 +519,14 @@ class StorageGetFileTest(FileTestCase):
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = share_client.create_snapshot()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -562,7 +562,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -574,7 +574,7 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -611,7 +611,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -636,7 +636,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -661,7 +661,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = b''
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -684,7 +684,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -724,7 +724,7 @@ class StorageGetFileTest(FileTestCase):
     @record
     def test_ranged_get_file_to_path_small(self):
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -745,7 +745,7 @@ class StorageGetFileTest(FileTestCase):
     @record
     def test_ranged_get_file_to_path_non_parallel(self):
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -773,7 +773,7 @@ class StorageGetFileTest(FileTestCase):
         file_size = self.MAX_SINGLE_GET_SIZE + 1
         file_data = self.get_random_bytes(file_size)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -802,7 +802,7 @@ class StorageGetFileTest(FileTestCase):
         file_size = 1024
         file_data = self.get_random_bytes(file_size)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -832,7 +832,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         text_file = self.get_resource_name('textfile')
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
@@ -855,7 +855,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         text_file = self.get_resource_name('textfile')
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
@@ -888,7 +888,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         text_file = self._get_file_reference()
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
@@ -921,7 +921,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_data = self.get_random_text_data(1024)
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -954,7 +954,7 @@ class StorageGetFileTest(FileTestCase):
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -975,7 +975,7 @@ class StorageGetFileTest(FileTestCase):
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -1005,7 +1005,7 @@ class StorageGetFileTest(FileTestCase):
     @record
     def test_get_file_non_seekable(self):
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1030,7 +1030,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1053,14 +1053,14 @@ class StorageGetFileTest(FileTestCase):
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = share_client.create_snapshot()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1089,14 +1089,14 @@ class StorageGetFileTest(FileTestCase):
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = share_client.create_snapshot()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1117,7 +1117,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -1152,7 +1152,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE + self.MAX_CHUNK_GET_SIZE)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
@@ -1185,7 +1185,7 @@ class StorageGetFileTest(FileTestCase):
             return
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1204,7 +1204,7 @@ class StorageGetFileTest(FileTestCase):
         if TestMode.need_recording_file(self.test_mode):
             return
 
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1232,7 +1232,7 @@ class StorageGetFileTest(FileTestCase):
     def test_get_file_server_encryption(self):
 
         #Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
@@ -1253,7 +1253,7 @@ class StorageGetFileTest(FileTestCase):
     def test_get_file_properties_server_encryption(self):
 
         # Arrange
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,

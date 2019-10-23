@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
-from ._file_client import FileClient
+from ._file_client import ShareFileClient
 from ._directory_client import ShareDirectoryClient
 from ._share_client import ShareClient
 from ._share_service_client import ShareServiceClient
@@ -37,7 +37,7 @@ __version__ = VERSION
 
 
 __all__ = [
-    'FileClient',
+    'ShareFileClient',
     'ShareDirectoryClient',
     'ShareClient',
     'ShareServiceClient',

@@ -108,7 +108,7 @@ Four different clients are provided to to interact with the various components o
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[FileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.fileclient)** -
+4. **[ShareFileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.sharefileclient)** -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
@@ -145,9 +145,9 @@ await share.create_share()
 Upload a file to the share
 
 ```python
-from azure.storage.fileshare import FileClient
+from azure.storage.fileshare import ShareFileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     file_client.upload_file(source_file)
@@ -156,9 +156,9 @@ with open("./SampleSource.txt", "rb") as source_file:
 Upload a file asynchronously
 
 ```python
-from azure.storage.fileshare.aio import FileClient
+from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     await file_client.upload_file(source_file)
@@ -168,9 +168,9 @@ with open("./SampleSource.txt", "rb") as source_file:
 Download a file from the share
 
 ```python
-from azure.storage.fileshare import FileClient
+from azure.storage.fileshare import ShareFileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
@@ -180,9 +180,9 @@ with open("DEST_FILE", "wb") as file_handle:
 Download a file asynchronously
 
 ```python
-from azure.storage.fileshare.aio import FileClient
+from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()

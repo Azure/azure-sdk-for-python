@@ -4,14 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._file_client_async import FileClient
+from ._file_client_async import ShareFileClient
 from ._directory_client_async import ShareDirectoryClient
 from ._share_client_async import ShareClient
 from ._share_service_client_async import ShareServiceClient
 
 
 __all__ = [
-    'FileClient',
+    'ShareFileClient',
     'ShareDirectoryClient',
     'ShareClient',
     'ShareServiceClient',

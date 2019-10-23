@@ -91,7 +91,7 @@ def _upload_file_helper(
         process_storage_error(error)
 
 
-class FileClient(StorageAccountHostsMixin):
+class ShareFileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:
@@ -170,7 +170,7 @@ class FileClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
+        super(ShareFileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     @classmethod
@@ -180,7 +180,7 @@ class FileClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> FileClient
+        # type: (...) -> ShareFileClient
         """A client to interact with a specific file, although that file may not yet exist.
 
         :param str file_url: The full URI to the file.
@@ -232,8 +232,8 @@ class FileClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> FileClient
-        """Create FileClient from a Connection String.
+        # type: (...) -> ShareFileClient
+        """Create ShareFileClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.

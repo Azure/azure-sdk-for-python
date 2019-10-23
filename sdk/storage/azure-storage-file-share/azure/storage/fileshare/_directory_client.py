@@ -30,7 +30,7 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
-from ._file_client import FileClient
+from ._file_client import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
@@ -206,7 +206,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             account_url, share_name=share_name, directory_path=directory_path, credential=credential, **kwargs)
 
     def get_file_client(self, file_name, **kwargs):
-        # type: (str, Any) -> FileClient
+        # type: (str, Any) -> ShareFileClient
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -214,7 +214,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :param file_name:
             The name of the file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.FileClient
+        :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         if self.directory_path:
             file_name = self.directory_path.rstrip('/') + "/" + file_name
@@ -223,7 +223,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return FileClient(
+        return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, napshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
@@ -622,8 +622,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             length=None, # type: Optional[int]
             **kwargs # type: Any
         ):
-        # type: (...) -> FileClient
-        """Creates a new file in the directory and returns a FileClient
+        # type: (...) -> ShareFileClient
+        """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
         :param str file_name:
@@ -650,8 +650,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :keyword str encoding:
             Defaults to UTF-8.
-        :returns: FileClient
-        :rtype: ~azure.storage.file.FileClient
+        :returns: ShareFileClient
+        :rtype: ~azure.storage.fileshare.ShareFileClient
 
         .. admonition:: Example:
 

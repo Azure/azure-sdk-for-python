@@ -21,7 +21,7 @@ from azure.storage.fileshare import (
     ShareSasPermissions,
     ShareServiceClient,
     ShareDirectoryClient,
-    FileClient,
+    ShareFileClient,
     ShareClient,
     generate_share_sas)
 
@@ -737,7 +737,7 @@ class StorageShareTest(FileTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
         )
-        sas_client = FileClient(
+        sas_client = ShareFileClient(
             self.get_file_url(),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,

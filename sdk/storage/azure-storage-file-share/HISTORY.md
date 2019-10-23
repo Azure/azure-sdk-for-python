@@ -9,6 +9,7 @@ Additionally:
 - The namespace within the package has also been renamed to `azure.storage.fileshare`.
 - `FileServiceClient` has been renamed to `ShareServiceClient`.
 - `DirectoryClient` has been renamed to `ShareDirectoryClient`.
+- `FileClient` has been renamed to `ShareFileClient`.
 
 **Breaking changes**
 

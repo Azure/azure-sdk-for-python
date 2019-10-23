@@ -28,7 +28,7 @@ from azure.storage.fileshare import (
     StorageErrorCode
 )
 from azure.storage.fileshare.aio import (
-    FileClient,
+    ShareFileClient,
     ShareServiceClient,
 )
 from filetestcase import (
@@ -255,7 +255,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_make_file_url_with_sas(self):
         # Arrange
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name="vhds",
             file_path="vhd_dir/my.vhd",
@@ -278,7 +278,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         await self._setup_share()
         file_name = self._get_file_reference()
-        async with FileClient(
+        async with ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -303,7 +303,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         metadata = {'hello': 'world', 'number': '42'}
         file_name = self._get_file_reference()
-        async with FileClient(
+        async with ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -384,7 +384,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_file_not_exists_async(self):
         # Arrange
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path="missingdir/" + file_name,
@@ -409,7 +409,7 @@ class StorageFileAsyncTest(FileTestCase):
         await file_client.delete_file()
 
         # Act
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -434,7 +434,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_client = await self._create_file()
 
         # Act
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -554,7 +554,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         file_props = await file_client.get_file_properties()
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -582,7 +582,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -608,7 +608,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_get_file_properties_with_non_existing_file_async(self):
         # Arrange
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -682,7 +682,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_delete_file_with_non_existing_file_async(self):
         # Arrange
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -887,7 +887,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -911,7 +911,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -943,7 +943,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -952,7 +952,7 @@ class StorageFileAsyncTest(FileTestCase):
         
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -978,7 +978,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -991,7 +991,7 @@ class StorageFileAsyncTest(FileTestCase):
         
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
-        snapshot_client = FileClient(
+        snapshot_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -1020,7 +1020,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_copy_file_with_existing_file_async(self):
         # Arrange
         source_client = await self._create_file()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path='file1copy',
@@ -1051,7 +1051,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         target_file_name = 'targetfile'
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=target_file_name,
@@ -1086,7 +1086,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         target_file_name = 'targetfile'
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=target_file_name,
@@ -1125,7 +1125,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Act
         target_file_name = 'targetfile'
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=target_file_name,
@@ -1152,7 +1152,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         # Act
         target_file_name = 'targetfile'
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=target_file_name,
@@ -1175,7 +1175,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = '啊齄丂狛狜'
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1199,7 +1199,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Arrange
         file_name = self._get_file_reference()
         await self._setup_share()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1246,7 +1246,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
 
         file_name = self._get_file_reference()
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1274,7 +1274,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         file_name = self._get_file_reference()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1309,7 +1309,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         index = 1024
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1341,7 +1341,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         index = 512
         count = 1024
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1373,7 +1373,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1406,7 +1406,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1450,7 +1450,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1484,7 +1484,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1516,7 +1516,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1558,7 +1558,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1589,7 +1589,7 @@ class StorageFileAsyncTest(FileTestCase):
         data = self.get_random_bytes(LARGE_FILE_SIZE)
         with open(INPUT_FILE_PATH, 'wb') as stream:
             stream.write(data)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1627,7 +1627,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1651,7 +1651,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1679,7 +1679,7 @@ class StorageFileAsyncTest(FileTestCase):
         await self._setup_share()
         data = self.get_random_text_data(LARGE_FILE_SIZE)
         encoded_data = data.encode('utf-8')
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1702,7 +1702,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         await self._setup_share()
         data = self.get_random_bytes(512)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1728,7 +1728,7 @@ class StorageFileAsyncTest(FileTestCase):
         file_name = self._get_file_reference()
         await self._setup_share()
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_name,
@@ -1763,7 +1763,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
 
         # Act
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -1803,7 +1803,7 @@ class StorageFileAsyncTest(FileTestCase):
             policy_id='testid')
 
         # Act
-        sas_file = FileClient.from_file_url(
+        sas_file = ShareFileClient.from_file_url(
             file_client.url,
             credential=token)
 
@@ -1834,7 +1834,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
 
         # Act
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -1868,7 +1868,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
 
         # Act
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -1906,7 +1906,7 @@ class StorageFileAsyncTest(FileTestCase):
         )
 
         # Act
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client.file_name,
@@ -1942,7 +1942,7 @@ class StorageFileAsyncTest(FileTestCase):
             permission=FileSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,
@@ -1978,7 +1978,7 @@ class StorageFileAsyncTest(FileTestCase):
             permission=FileSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        file_client = FileClient(
+        file_client = ShareFileClient(
             self.get_file_url(),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,

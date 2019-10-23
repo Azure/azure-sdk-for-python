@@ -236,7 +236,7 @@ def generate_account_sas(
     """Generates a shared access signature for the file service.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, ShareDirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or ShareFileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
@@ -311,7 +311,7 @@ def generate_share_sas(
     """Generates a shared access signature for a share.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, ShareDirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or ShareFileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
@@ -403,7 +403,7 @@ def generate_file_sas(
     """Generates a shared access signature for a file.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, ShareDirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or ShareFileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.

@@ -27,7 +27,7 @@ from .._generated.models import (
 from .._deserialize import deserialize_share_properties, deserialize_permission
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
-from ._file_client_async import FileClient
+from ._file_client_async import ShareFileClient
 
 if TYPE_CHECKING:
     from .._models import ShareProperties, AccessPolicy
@@ -113,21 +113,21 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
-        # type: (str) -> FileClient
+        # type: (str) -> ShareFileClient
         """Get a client to interact with the specified file.
         The file need not already exist.
 
         :param str file_path:
             Path to the specified file.
         :returns: A File Client.
-        :rtype: ~azure.storage.file.aio.file_client_async.FileClient
+        :rtype: ~azure.storage.fileshare.aio.file_client_async.ShareFileClient
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
 
-        return FileClient(
+        return ShareFileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)

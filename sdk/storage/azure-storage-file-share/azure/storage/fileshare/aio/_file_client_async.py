@@ -26,7 +26,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
-from .._file_client import FileClient as FileClientBase
+from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
 from ._download_async import StorageStreamDownloader
 
@@ -85,7 +85,7 @@ async def _upload_file_helper(
         process_storage_error(error)
 
 
-class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
+class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     """A client to interact with a specific file, although that file may not yet exist.
 
     :ivar str url:
@@ -137,7 +137,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         # type: (...) -> None
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(FileClient, self).__init__(
+        super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, loop=loop, **kwargs
         )

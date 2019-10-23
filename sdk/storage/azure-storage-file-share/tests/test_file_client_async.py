@@ -13,7 +13,7 @@ from azure.storage.fileshare.aio import (
     ShareServiceClient,
     ShareClient,
     ShareDirectoryClient,
-    FileClient)
+    ShareFileClient)
 
 from filetestcase import (
     TestMode,
@@ -27,7 +27,7 @@ SERVICES = {
     ShareServiceClient: 'file',
     ShareClient: 'file',
     ShareDirectoryClient: 'file',
-    FileClient: 'file',
+    ShareFileClient: 'file',
 }
 
 _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
