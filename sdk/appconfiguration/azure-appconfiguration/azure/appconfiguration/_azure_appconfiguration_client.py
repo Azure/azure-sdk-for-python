@@ -190,8 +190,7 @@ class AzureAppConfigurationClient:
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :param `azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
@@ -298,8 +297,7 @@ class AzureAppConfigurationClient:
         :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :param `azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -367,7 +365,7 @@ class AzureAppConfigurationClient:
         :param label: label used to identify the ConfigurationSetting
         :type label: str
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :keyword MatchConditions match_condition: the match condition to use upon the etag
+        :keyword `azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
@@ -383,7 +381,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        etag = kwargs.pop("etag", "*")
+        etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
