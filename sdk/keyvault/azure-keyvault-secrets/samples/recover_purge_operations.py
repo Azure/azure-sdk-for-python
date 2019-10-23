@@ -18,15 +18,15 @@ from azure.core.exceptions import HttpResponseError
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault
-# has to be soft-delete enabled to perform the following operations. See for more information about soft delete:
-# # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
+# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a secret (set_secret)
 #
-# 2. Delete a secret (delete_secret)
+# 2. Delete a secret (begin_delete_secret)
 #
-# 3. Recover a deleted secret (recover_deleted_secret)
+# 3. Recover a deleted secret (begin_recover_deleted_secret)
 #
 # 4. Purge a deleted secret (purge_deleted_secret)
 # ----------------------------------------------------------------------------------------------------------
@@ -49,23 +49,21 @@ try:
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Secret")
-    secret = client.delete_secret(bank_secret.name)
-    time.sleep(20)
+    secret = client.begin_delete_secret(bank_secret.name).result()
     print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
     # We accidentally deleted the bank account secret. Let's recover it.
     # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
-    print("\n.. Recover Deleted  Secret")
-    recovered_secret = client.recover_deleted_secret(bank_secret.name)
+    print("\n.. Recover Deleted Secret")
+    recovered_secret = client.begin_recover_deleted_secret(bank_secret.name).result()
     print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
     # Let's delete storage account now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
-    client.delete_secret(storage_secret.name)
-
-    # To ensure secret is deleted on the server side.
-    print("\nDeleting Storage Secret...")
-    time.sleep(20)
+    # Calling result() on the method will immediately return the `DeletedSecret`, but calling wait() blocks
+    # until the secret is deleted server-side so it can be purged.
+    print("\n.. Deleting secret...")
+    client.begin_delete_secret(storage_secret.name).wait()
 
     # To ensure permanent deletion, we might need to purge the secret.
     print("\n.. Purge Deleted Secret")
@@ -74,7 +72,7 @@ try:
 
 except HttpResponseError as e:
     if "(NotSupported)" in e.message:
-        print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+        print("\n{0} Please enable soft-delete on Key Vault to perform this operation.".format(e.message))
     else:
         print("\nrun_sample has caught an error. {0}".format(e.message))
 

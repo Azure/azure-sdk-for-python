@@ -30,7 +30,7 @@ class TestFileServiceSamples(FileTestCase):
 
         # [START set_service_properties]
         # Create service properties
-        from azure.storage.file.aio import Metrics, CorsRule, RetentionPolicy
+        from azure.storage.file import Metrics, CorsRule, RetentionPolicy
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -104,7 +104,7 @@ class TestFileServiceSamples(FileTestCase):
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
-        share = await file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare")
         # [END get_share_client]
 
     def test_get_share_client(self):

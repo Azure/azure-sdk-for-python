@@ -98,7 +98,7 @@ class StorageBlobRetryTest(StorageTestCase):
         blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
     @record
@@ -130,7 +130,7 @@ class StorageBlobRetryTest(StorageTestCase):
         blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
     @record

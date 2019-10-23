@@ -121,10 +121,12 @@ class SecretClientTests(KeyVaultTestCase):
         updated = _update_secret(created)
 
         # delete secret
-        deleted = client.delete_secret(updated.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        deleted = client.begin_delete_secret(updated.name, _polling_interval=polling_interval).result()
         self.assertIsNotNone(deleted)
-
-        self._poll_until_exception(functools.partial(client.get_secret, updated.name), ResourceNotFoundError)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -169,7 +171,7 @@ class SecretClientTests(KeyVaultTestCase):
                 secret = client.set_secret(secret_name, secret_value)
                 expected[secret.id] = secret
 
-        result = client.list_secret_versions(secret_name, max_page_size=max_page_size)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_page_size)
 
         # validate list secret versions with attributes
         for secret in result:
@@ -194,12 +196,12 @@ class SecretClientTests(KeyVaultTestCase):
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for secret_name in expected.keys():
-            client.delete_secret(secret_name)
-        for secret_name in expected.keys():
-            self._poll_until_no_exception(
-                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
-            )
+            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
 
         # validate list deleted secrets with attributes
         for deleted_secret in client.list_deleted_secrets():
@@ -225,7 +227,11 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        client.delete_secret(created_bundle.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        client.begin_delete_secret(created_bundle.name, _polling_interval=polling_interval).wait()
 
         # restore secret
         restored = client.restore_secret_backup(secret_backup)
@@ -245,13 +251,14 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+
         # delete all secrets
         for secret_name in secrets.keys():
-            client.delete_secret(secret_name)
-        for secret_name in secrets.keys():
-            self._poll_until_no_exception(
-                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
-            )
+            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
@@ -259,13 +266,11 @@ class SecretClientTests(KeyVaultTestCase):
 
         # recover select secrets
         for secret_name in secrets.keys():
-            client.recover_deleted_secret(secret_name)
+            client.begin_recover_deleted_secret(secret_name, _polling_interval=polling_interval).wait()
 
         # validate the recovered secrets exist
         for secret_name in secrets.keys():
-            secret = self._poll_until_no_exception(
-                functools.partial(client.get_secret, secret_name), ResourceNotFoundError
-            )
+            secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -283,12 +288,12 @@ class SecretClientTests(KeyVaultTestCase):
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for secret_name in secrets.keys():
-            client.delete_secret(secret_name)
-        for secret_name in secrets.keys():
-            self._poll_until_no_exception(
-                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
-            )
+            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]

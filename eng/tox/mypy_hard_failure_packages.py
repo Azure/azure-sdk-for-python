@@ -5,4 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-MYPY_HARD_FAILURE_OPTED = []
+MYPY_HARD_FAILURE_OPTED = [
+  "azure-core"
+]

@@ -8,11 +8,11 @@ import pytest
 import asyncio
 
 from io import BytesIO, IOBase, UnsupportedOperation
+from azure.storage.blob._shared.policies_async import ExponentialRetry
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    ExponentialRetry
 )
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from testcase import (
@@ -101,7 +101,7 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     def test_retry_put_block_with_seekable_stream_async(self):
@@ -140,7 +140,7 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
 
         # Assert
-        content = await (await blob.download_blob()).content_as_bytes()
+        content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
     def test_retry_put_block_with_non_seekable_stream_async(self):

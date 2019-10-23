@@ -40,7 +40,7 @@ class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START async_redirect_policy]
             :end-before: [END async_redirect_policy]
             :language: python

@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
@@ -80,6 +80,8 @@ class KeyVaultClientBase(object):
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport, **Any) -> Pipeline
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -88,7 +90,8 @@ class KeyVaultClientBase(object):
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:

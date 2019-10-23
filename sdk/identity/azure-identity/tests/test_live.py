@@ -10,8 +10,8 @@ ARM_SCOPE = "https://management.azure.com/.default"
 
 def test_certificate_credential(live_certificate_settings):
     credential = CertificateCredential(
-        live_certificate_settings["client_id"],
         live_certificate_settings["tenant_id"],
+        live_certificate_settings["client_id"],
         live_certificate_settings["cert_path"],
     )
     token = credential.get_token(ARM_SCOPE)
@@ -22,9 +22,9 @@ def test_certificate_credential(live_certificate_settings):
 
 def test_client_secret_credential(live_identity_settings):
     credential = ClientSecretCredential(
+        live_identity_settings["tenant_id"],
         live_identity_settings["client_id"],
         live_identity_settings["client_secret"],
-        live_identity_settings["tenant_id"],
     )
     token = credential.get_token(ARM_SCOPE)
     assert token
@@ -45,7 +45,7 @@ def test_confidential_client_credential(live_identity_settings):
         client_id=live_identity_settings["client_id"],
         client_credential=live_identity_settings["client_secret"],
         authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
-        tenant=live_identity_settings["tenant_id"],
+        tenant_id=live_identity_settings["tenant_id"],
     )
     token = credential.get_token(ARM_SCOPE)
     assert token

@@ -74,7 +74,7 @@ class RetryPolicy(HTTPPolicy):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
+        .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START retry_policy]
             :end-before: [END retry_policy]
             :language: python
