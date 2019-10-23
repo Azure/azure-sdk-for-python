@@ -7,6 +7,8 @@ import functools
 import codecs
 import hashlib
 import os
+import logging
+import json
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -367,3 +369,75 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # purge them
         for key_name in keys.keys():
             await client.purge_deleted_key(key_name)
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        class MockHandler(logging.Handler):
+            def __init__(self):
+                super(MockHandler, self).__init__()
+                self.messages = []
+            def reset(self):
+                self.messages = []
+            def emit(self, record):
+                self.messages.append(record)
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+        mock_handler = MockHandler()
+
+        # Configure a console output
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_rsa_key("rsa-key-name", size=2048)
+
+        found_body = False
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    body['kty'] = 'RSA'
+                    found_body = True
+                    break
+                except ValueError:
+                    pass
+
+        assert found_body
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        class MockHandler(logging.Handler):
+            def __init__(self):
+                super(MockHandler, self).__init__()
+                self.messages = []
+            def reset(self):
+                self.messages = []
+            def emit(self, record):
+                self.messages.append(record)
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+        mock_handler = MockHandler()
+
+        # Configure a console output
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_rsa_key("rsa-key-name", size=2048)
+
+        found_body = False
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    body['kty'] = 'RSA'
+                    found_body = True
+                    break
+                except ValueError:
+                    pass
+
+        assert not found_body
