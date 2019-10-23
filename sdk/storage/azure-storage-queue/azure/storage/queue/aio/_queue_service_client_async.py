@@ -110,7 +110,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         self._loop = loop
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs): # type: ignore
+    async def get_service_stats(self, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
@@ -133,7 +133,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: ~azure.storage.queue.StorageServiceStats
+        :rtype: Dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -150,7 +150,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.StorageServiceProperties
+        :returns: An object containing queue service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 

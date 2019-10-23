@@ -27,9 +27,8 @@ class QueueAnalyticsLogging(GeneratedLogging):
     :keyword bool delete: Required. Indicates whether all delete requests should be logged.
     :keyword bool read: Required. Indicates whether all read requests should be logged.
     :keyword bool write: Required. Indicates whether all write requests should be logged.
-    :keyword retention_policy: Required.
+    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
-    :type retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -49,9 +48,8 @@ class Metrics(GeneratedMetrics):
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
     :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :keyword retention_policy: Required.
+    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
-    :type retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -152,14 +150,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
 
     def __init__(self, permission=None, expiry=None, start=None):
@@ -253,12 +251,10 @@ class QueueProperties(DictMixin):
     """Queue Properties.
 
     :ivar str name: The name of the queue.
-    :keyword metadata:
+    :keyword dict(str,str) metadata:
         A dict containing name-value pairs associated with the queue as metadata.
         This var is set to None unless the include=metadata param was included
         for the list queues operation. If this parameter was specified but the
-        queue has no metadata, metadata will be set to an empty dictionary.
-    :type metadata: dict(str, str)
     """
 
     def __init__(self, **kwargs):

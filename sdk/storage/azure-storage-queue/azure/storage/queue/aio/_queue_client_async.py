@@ -125,17 +125,15 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         If a queue with the same name already exists, the operation fails with
         a `ResourceExistsError`.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The server timeout, expressed in seconds.
         :return: None or the result of cls(response)
         :rtype: None
-        :raises:
-            ~azure.storage.queue.StorageErrorException
+        :raises: StorageErrorException
 
         .. admonition:: Example:
 
