@@ -239,7 +239,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param share_name: The share. This can either be the name of the share,
             or an instance of ShareProperties
-        :type share_name: str or ~azure.storage.file.ShareProperties
+        :type share_name: str or ~azure.storage.fileshare.ShareProperties
         :param str file_path:
             The file path.
         :param str snapshot:
@@ -286,7 +286,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or ~datetime.datetime
@@ -304,7 +304,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
@@ -382,7 +382,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or ~azure.storage.file.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or ~datetime.datetime
@@ -403,7 +403,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -527,7 +527,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.file.FileProperties
+        :type copy_id: str or ~azure.storage.fileshare.FileProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -637,7 +637,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.FileProperties
+        :rtype: ~azure.storage.fileshare.FileProperties
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -666,7 +666,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
-        :param ~azure.storage.file.ContentSettings content_settings:
+        :param ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -674,7 +674,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or ~datetime.datetime
@@ -996,7 +996,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.HandleItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.HandleItem]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -1016,7 +1016,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param handle:
             A specific handle to close.
-        :type handle: str or ~azure.storage.file.Handle
+        :type handle: str or ~azure.storage.fileshare.Handle
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:

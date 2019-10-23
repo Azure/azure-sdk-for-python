@@ -224,7 +224,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.DirectoryProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.DirectoryProperties]
 
         .. admonition:: Example:
 
@@ -257,7 +257,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -278,7 +278,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :param handle:
             A specific handle to close.
-        :type handle: str or ~azure.storage.file.Handle
+        :type handle: str or ~azure.storage.fileshare.Handle
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
@@ -356,7 +356,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryProperties
-        :rtype: ~azure.storage.file.DirectoryProperties
+        :rtype: ~azure.storage.fileshare.DirectoryProperties
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -414,7 +414,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -531,7 +531,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage

@@ -287,7 +287,7 @@ def generate_account_sas(
     """
     sas = SharedAccessSignature(account_name, account_key)
     return sas.generate_account(
-        services=Services(file=True),
+        services=Services(fileshare=True),
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,

@@ -167,7 +167,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -185,7 +185,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
@@ -224,7 +224,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             )
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         try:
-            return await self._client.file.create(  # type: ignore
+            return await self._client.fileshare.create(  # type: ignore
                 file_content_length=size,
                 metadata=metadata,
                 file_attributes=_str(file_attributes),
@@ -264,7 +264,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -285,7 +285,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.ContentSettings content_settings:
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
@@ -408,7 +408,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.file.FileProperties
+        :type copy_id: str or ~azure.storage.fileshare.FileProperties
         :rtype: None
         """
         timeout = kwargs.pop('timeout', None)
@@ -521,7 +521,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
-        :rtype: ~azure.storage.file.FileProperties
+        :rtype: ~azure.storage.fileshare.FileProperties
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -548,13 +548,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
-        :param ~azure.storage.file.ContentSettings content_settings:
+        :param ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
         :type file_creation_time: str or datetime
@@ -849,7 +849,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.HandleItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop("results_per_page", None)
@@ -869,7 +869,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param handle:
             A specific handle to close.
-        :type handle: str or ~azure.storage.file.Handle
+        :type handle: str or ~azure.storage.fileshare.Handle
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:

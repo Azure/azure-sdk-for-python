@@ -333,17 +333,17 @@ class Services(object):
         Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
         Access for the `~azure.storage.queue.QueueServiceClient`
-    :param bool file:
+    :param bool fileshare:
         Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
-    def __init__(self, blob=False, queue=False, file=False):
+    def __init__(self, blob=False, queue=False, fileshare=False):
         self.blob = blob
         self.queue = queue
-        self.file = file
+        self.fileshare = fileshare
         self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
-                ('f' if self.file else ''))
+                ('f' if self.fileshare else ''))
 
     def __str__(self):
         return self._str

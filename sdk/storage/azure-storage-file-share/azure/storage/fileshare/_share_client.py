@@ -371,7 +371,7 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: The share properties.
-        :rtype: ~azure.storage.file.ShareProperties
+        :rtype: ~azure.storage.fileshare.ShareProperties
 
         .. admonition:: Example:
 
@@ -500,7 +500,7 @@ class ShareClient(StorageAccountHostsMixin):
             A dictionary of access policies to associate with the share. The
             dictionary may contain up to 5 elements. An empty dictionary
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, :class:`~azure.storage.file.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`~azure.storage.fileshare.AccessPolicy`)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).

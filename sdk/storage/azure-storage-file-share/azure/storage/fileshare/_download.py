@@ -214,7 +214,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         The full path of the file.
     :ivar str share:
         The name of the share where the file is.
-    :ivar ~azure.storage.file.FileProperties properties:
+    :ivar ~azure.storage.fileshare.FileProperties properties:
         The properties of the file being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:

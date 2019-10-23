@@ -50,7 +50,7 @@ class TestShareSamples(FileTestCase):
     @record
     def test_create_share_snapshot(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesnapshot")
 
         # [START create_share]
@@ -68,7 +68,7 @@ class TestShareSamples(FileTestCase):
     @record
     def test_set_share_quota_and_metadata(self):
         # [START create_share_client_from_conn_string]
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "fileshare")
         # [END create_share_client_from_conn_string]
 
@@ -97,7 +97,7 @@ class TestShareSamples(FileTestCase):
     @record
     def test_list_directories_and_files(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "listshare")
 
         # Create the share
@@ -123,7 +123,7 @@ class TestShareSamples(FileTestCase):
     @record
     def test_get_directory_or_file_client(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "testfiles")
 
         # Get the directory client to interact with a specific directory

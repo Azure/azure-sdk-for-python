@@ -53,7 +53,7 @@ class TestFileSamples(FileTestCase):
     @record
     def test_file_operations(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesshare")
 
         # Create the share
@@ -95,7 +95,7 @@ class TestFileSamples(FileTestCase):
     @record
     def test_copy_from_url(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesfromurl")
 
         # Create the share

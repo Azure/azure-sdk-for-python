@@ -56,7 +56,7 @@ class TestHelloWorldSamples(FileTestCase):
     @record
     def test_create_file_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name="myshare")
 
         # Create the share
@@ -75,7 +75,7 @@ class TestHelloWorldSamples(FileTestCase):
     @record
     def test_upload_file_to_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name="share")
 
         # Create the share
@@ -84,7 +84,7 @@ class TestHelloWorldSamples(FileTestCase):
         try:
             # Instantiate the ShareFileClient from a connection string
             # [START create_file_client]
-            from azure.storage.file import ShareFileClient
+            from azure.storage.fileshare import ShareFileClient
             file = ShareFileClient.from_connection_string(self.connection_string, share_name="share", file_path="myfile")
             # [END create_file_client]
 

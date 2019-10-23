@@ -37,7 +37,7 @@ class Metrics(GeneratedMetrics):
         statistics for called API operations.
     :ivar retention_policy: Required. Determines how long the associated data should
         persist.
-    :vartype retention_policy: ~azure.storage.file.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.fileshare.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -252,7 +252,7 @@ class SharePropertiesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.ShareProperties)
+    :vartype current_page: list(~azure.storage.fileshare.ShareProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only shares whose names
@@ -357,7 +357,7 @@ class HandlesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.Handle)
+    :vartype current_page: list(~azure.storage.fileshare.Handle)
 
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
@@ -523,10 +523,10 @@ class FileProperties(DictMixin):
         Whether encryption is enabled.
     :ivar copy:
         The copy properties.
-    :vartype copy: ~azure.storage.file.CopyProperties
+    :vartype copy: ~azure.storage.fileshare.CopyProperties
     :ivar content_settings:
         The content settings for the file.
-    :vartype content_settings: ~azure.storage.file.ContentSettings
+    :vartype content_settings: ~azure.storage.fileshare.ContentSettings
     """
 
     def __init__(self, **kwargs):
