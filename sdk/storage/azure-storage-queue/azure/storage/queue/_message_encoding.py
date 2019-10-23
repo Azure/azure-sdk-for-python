@@ -137,7 +137,9 @@ class NoEncodePolicy(MessageEncodePolicy):
 
     def encode(self, content):
         if isinstance(content, six.binary_type) and sys.version_info > (3,):
-            raise TypeError("Message content must not be bytes.")
+            raise TypeError(
+                "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
+            )
         return content
 
 
