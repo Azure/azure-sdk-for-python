@@ -26,6 +26,11 @@ the Azure CLI's client ID will be used.
   described in
   [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
 
+### Dependency changes
+- Adopted [`msal_extensions`](https://pypi.org/project/msal-extensions/) 0.1.2
+- Constrained [`msal`](https://pypi.org/project/msal/) requirement to >=0.4.1,
+<1.0.0
+
 
 ## 1.0.0b4 (2019-10-07)
 ### New features:
