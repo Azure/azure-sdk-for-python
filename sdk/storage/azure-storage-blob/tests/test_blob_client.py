@@ -406,6 +406,7 @@ class StorageClientTest(StorageTestCase):
 
     def test_client_request_id_echo(self):
         # client request id is different for every request, so it will never match the recorded one
+        pytest.skip("Issue tracked here: https://github.com/Azure/azure-sdk-for-python/issues/8098")
         if TestMode.need_recording_file(self.test_mode):
             return
 
