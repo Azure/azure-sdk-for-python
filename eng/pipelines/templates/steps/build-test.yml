@@ -26,13 +26,6 @@ steps:
     parameters:
       OSName: ${{ parameters.OSName }}
 
-  - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
-    parameters:
-      TargetFolder: $(Build.SourcesDirectory)
-      RootFolder: $(Build.SourcesDirectory)
-      BuildSHA: $(Build.SourceVersion)
-      RepoId: 'Azure/azure-sdk-for-python'
-
   - script: |
       pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
     displayName: 'Prep Environment'
