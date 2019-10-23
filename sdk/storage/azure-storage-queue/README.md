@@ -101,12 +101,11 @@ Two different clients are provided to to interact with the various components of
     retrieve a client using the `get_queue_client` method.
 2. **[QueueClient](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue.queueclient)** -
     this client represents interaction with a specific queue (which need not exist yet). It provides operations to
-    create, delete, or configure a queue and includes operations to enqueue, receive, peek, delete, and update messages
+    create, delete, or configure a queue and includes operations to send, receive, peek, delete, and update messages
     within it.
 
 ### Messages
-Once you've initialized a `QueueClient`, you can use the following operations to work with the messages in the queue:
-* **Enqueue** - Adds a message to the queue and optionally sets a visibility timeout for the message.
+* **Send** - Adds a message to the queue and optionally sets a visibility timeout for the message.
 * **Receive** - Retrieves a message from the queue and makes it invisible to other consumers.
 * **Peek** - Retrieves a message from the front of the queue, without changing the message visibility.
 * **Update** - Updates the visibility timeout of a message and/or the message contents.
@@ -119,7 +118,7 @@ Once you've initialized a `QueueClient`, you can use the following operations to
 The following sections provide several code snippets covering some of the most common Storage Queue tasks, including:
 
 * [Creating a queue](#creating-a-queue)
-* [Enqueuing messages](#enqueuing-messages)
+* [Sending messages](#sending-messages)
 * [Receiving messages](#receiving-messages)
 
 ### Creating a queue
@@ -128,7 +127,7 @@ Create a queue in your storage account
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 queue.create_queue()
 ```
 
@@ -136,31 +135,31 @@ Use the async client to create a queue
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 await queue.create_queue()
 ```
 
-### Enqueuing messages
-Enqueue messages in your queue
+### Sending messages
+Send messages to your queue
 
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
-queue.enqueue_message("I'm using queues!")
-queue.enqueue_message("This is my second message")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue.send_message("I'm using queues!")
+queue.send_message("This is my second message")
 ```
 
-Enqueue messages asynchronously
+Send messages asynchronously
 
 ```python
 import asyncio
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 await asyncio.gather(
-    queue.enqueue_message("I'm using queues!"),
-    queue.enqueue_message("This is my second message")
+    queue.send_message("I'm using queues!"),
+    queue.send_message("This is my second message")
 )
 ```
 
@@ -170,7 +169,7 @@ Receive and process messages from your queue
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 response = queue.receive_messages()
 
 for message in response:
@@ -187,7 +186,7 @@ Receive and process messages in batches
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 response = queue.receive_messages(messages_per_page=10)
 
 for message_batch in response.by_page():
@@ -201,7 +200,7 @@ Receive and process messages asynchronously
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="my_queue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
 response = queue.receive_messages()
 
 async for message in response:

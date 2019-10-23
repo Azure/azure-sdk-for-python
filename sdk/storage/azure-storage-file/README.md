@@ -51,7 +51,7 @@ service = FileServiceClient(account_url="https://<my-storage-account-name>.file.
 ```
 
 #### Looking up the endpoint URL
-You can find the storage account's file service endpoint URL using the 
+You can find the storage account's file service endpoint URL using the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
@@ -128,7 +128,7 @@ Create a file share to store your files
 ```python
 from azure.storage.file import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share="my_share")
+share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
 share.create_share()
 ```
 
@@ -137,7 +137,7 @@ Use the async client to create a file share
 ```python
 from azure.storage.file.aio import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share="my_share")
+share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
 await share.create_share()
 ```
 
@@ -147,7 +147,7 @@ Upload a file to the share
 ```python
 from azure.storage.file import FileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share="my_share", file_path="my_file")
+file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     file_client.upload_file(source_file)
@@ -158,12 +158,11 @@ Upload a file asynchronously
 ```python
 from azure.storage.file.aio import FileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share="my_share", file_path="my_file")
+file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     await file_client.upload_file(source_file)
 ```
-
 
 ### Downloading a file
 Download a file from the share
@@ -171,11 +170,11 @@ Download a file from the share
 ```python
 from azure.storage.file import FileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share="my_share", file_path="my_file")
+file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
-    data.download_to_stream(file_handle)
+    data.readinto(file_handle)
 ```
 
 Download a file asynchronously
@@ -183,21 +182,20 @@ Download a file asynchronously
 ```python
 from azure.storage.file.aio import FileClient
 
-file_client = FileClient.from_connection_string(conn_str="my_connection_string", share="my_share", file_path="my_file")
+file_client = FileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()
-    await data.download_to_stream(file_handle)
+    await data.readinto(file_handle)
 ```
 
 ### Listing contents of a directory
-List all the directories and files under the directory
+List all directories and files under a parent directory
 
 ```python
 from azure.storage.file import DirectoryClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share="my_share")
-parent_dir = share.get_directory_client(directory_path="parent_dir")
+parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
 my_list = list(parent_dir.list_directories_and_files())
 print(my_list)
@@ -206,10 +204,9 @@ print(my_list)
 List contents of a directory asynchronously
 
 ```python
-from azure.storage.file.aio import ShareClient
+from azure.storage.file.aio import DirectoryClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share="my_share")
-parent_dir = share.get_directory_client(directory_path="parent_dir")
+parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
 my_files = []
 async for item in parent_dir.list_directories_and_files():

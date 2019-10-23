@@ -816,7 +816,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -933,7 +933,7 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
