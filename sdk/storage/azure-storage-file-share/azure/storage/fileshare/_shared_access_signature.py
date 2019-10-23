@@ -236,15 +236,15 @@ def generate_account_sas(
     """Generates a shared access signature for the file service.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, DirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or FileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
         The access key to generate the shared access signature.
-    :param ~azure.storage.file.ResourceTypes resource_types:
+    :param ~azure.storage.fileshare.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
-    :param ~azure.storage.file.AccountSasPermissions permission:
+    :param ~azure.storage.fileshare.AccountSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
@@ -311,7 +311,7 @@ def generate_share_sas(
     """Generates a shared access signature for a share.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, DirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or FileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
@@ -319,7 +319,7 @@ def generate_share_sas(
         The name of the share.
     :param str account_key:
         The access key to generate the shared access signature.
-    :param ~azure.storage.file.ShareSasPermissions permission:
+    :param ~azure.storage.fileshare.ShareSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Permissions must be ordered read, create, write, delete, list.
@@ -344,7 +344,7 @@ def generate_share_sas(
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
-        :func:`~azure.storage.file.ShareClient.set_share_access_policy`.
+        :func:`~azure.storage.fileshare.ShareClient.set_share_access_policy`.
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -403,7 +403,7 @@ def generate_file_sas(
     """Generates a shared access signature for a file.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
-    ShareClient, DirectoryClient, or FileClient.
+    ShareClient, ShareDirectoryClient, or FileClient.
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
@@ -414,7 +414,7 @@ def generate_file_sas(
     :type file_path: List[str]
     :param str account_key:
         The access key to generate the shared access signature.
-    :param ~azure.storage.file.FileSasPermissions permission:
+    :param ~azure.storage.fileshare.FileSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Permissions must be ordered read, write, delete, list.

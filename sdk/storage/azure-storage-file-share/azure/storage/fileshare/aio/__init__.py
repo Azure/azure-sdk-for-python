@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 
 from ._file_client_async import FileClient
-from ._directory_client_async import DirectoryClient
+from ._directory_client_async import ShareDirectoryClient
 from ._share_client_async import ShareClient
 from ._share_service_client_async import ShareServiceClient
 
 
 __all__ = [
     'FileClient',
-    'DirectoryClient',
+    'ShareDirectoryClient',
     'ShareClient',
     'ShareServiceClient',
 ]

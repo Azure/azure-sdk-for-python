@@ -25,7 +25,7 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
-from .._directory_client import DirectoryClient as DirectoryClientBase
+from .._directory_client import ShareDirectoryClient as ShareDirectoryClientBase
 from ._file_client_async import FileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .._generated.models import HandleItem
 
 
-class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
+class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBase):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -88,7 +88,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(DirectoryClient, self).__init__(
+        super(ShareDirectoryClient, self).__init__(
             account_url,
             share_name=share_name,
             directory_path=directory_path,
@@ -123,7 +123,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
-        # type: (str, Any) -> DirectoryClient
+        # type: (str, Any) -> ShareDirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -131,7 +131,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.aio.DirectoryClient
+        :rtype: ~azure.storage.fileshare.aio.ShareDirectoryClient
 
         .. admonition:: Example:
 
@@ -148,7 +148,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return DirectoryClient(
+        return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
@@ -455,7 +455,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             self, directory_name,  # type: str
             **kwargs
         ):
-        # type: (...) -> DirectoryClient
+        # type: (...) -> ShareDirectoryClient
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -466,8 +466,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DirectoryClient
-        :rtype: ~azure.storage.file.aio.DirectoryClient
+        :returns: ShareDirectoryClient
+        :rtype: ~azure.storage.fileshare.aio.ShareDirectoryClient
 
         .. admonition:: Example:
 

@@ -26,7 +26,7 @@ from .._generated.models import (
     DeleteSnapshotsOptionType)
 from .._deserialize import deserialize_share_properties, deserialize_permission
 from .._share_client import ShareClient as ShareClientBase
-from ._directory_client_async import DirectoryClient
+from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import FileClient
 
 if TYPE_CHECKING:
@@ -93,21 +93,21 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         self._loop = loop
 
     def get_directory_client(self, directory_path=None):
-        # type: (Optional[str]) -> DirectoryClient
+        # type: (Optional[str]) -> ShareDirectoryClient
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
         :param str directory_path:
             Path to the specified directory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
+        :rtype: ~azure.storage.fileshare.aio.directory_client_async.ShareDirectoryClient
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
 
-        return DirectoryClient(
+        return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, loop=self._loop)
@@ -537,7 +537,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
     @distributed_trace_async
     async def create_directory(self, directory_name, **kwargs):
-        # type: (str, Any) -> DirectoryClient
+        # type: (str, Any) -> ShareDirectoryClient
         """Creates a directory in the share and returns a client to interact
         with the directory.
 
@@ -548,8 +548,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DirectoryClient
-        :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
+        :returns: ShareDirectoryClient
+        :rtype: ~azure.storage.fileshare.aio.directory_client_async.ShareDirectoryClient
         """
         directory = self.get_directory_client(directory_name)
         kwargs.setdefault('merge_span', True)

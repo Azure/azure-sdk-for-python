@@ -15,7 +15,7 @@ from azure.core.exceptions import (
 
 from azure.storage.fileshare import (
     ShareServiceClient,
-    DirectoryClient,
+    ShareDirectoryClient,
     FileClient,
     ShareClient
 )

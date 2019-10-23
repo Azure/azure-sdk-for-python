@@ -103,7 +103,7 @@ Four different clients are provided to to interact with the various components o
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[DirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.directoryclient)** -
+3. **[ShareDirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.sharedirectoryclient)** -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
@@ -193,9 +193,9 @@ with open("DEST_FILE", "wb") as file_handle:
 List all directories and files under a parent directory
 
 ```python
-from azure.storage.fileshare import DirectoryClient
+from azure.storage.fileshare import ShareDirectoryClient
 
-parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
 my_list = list(parent_dir.list_directories_and_files())
 print(my_list)
@@ -204,9 +204,9 @@ print(my_list)
 List contents of a directory asynchronously
 
 ```python
-from azure.storage.fileshare.aio import DirectoryClient
+from azure.storage.fileshare.aio import ShareDirectoryClient
 
-parent_dir = DirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
 
 my_files = []
 async for item in parent_dir.list_directories_and_files():

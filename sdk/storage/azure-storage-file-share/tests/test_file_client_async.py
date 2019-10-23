@@ -12,7 +12,7 @@ from azure.storage.fileshare import VERSION
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
     ShareClient,
-    DirectoryClient,
+    ShareDirectoryClient,
     FileClient)
 
 from filetestcase import (
@@ -26,7 +26,7 @@ from filetestcase import (
 SERVICES = {
     ShareServiceClient: 'file',
     ShareClient: 'file',
-    DirectoryClient: 'file',
+    ShareDirectoryClient: 'file',
     FileClient: 'file',
 }
 

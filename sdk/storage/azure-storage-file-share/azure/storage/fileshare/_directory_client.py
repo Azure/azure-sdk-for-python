@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from ._generated.models import HandleItem
 
 
-class DirectoryClient(StorageAccountHostsMixin):
+class ShareDirectoryClient(StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
@@ -118,7 +118,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(DirectoryClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
+        super(ShareDirectoryClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     @classmethod
@@ -127,7 +127,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             credential=None, # type: Optional[Any]
             **kwargs # type: Optional[Any]
         ):
-        # type: (...) -> DirectoryClient
+        # type: (...) -> ShareDirectoryClient
         """
         :param str directory_url:
             The full URI to the directory.
@@ -184,8 +184,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):
-        # type: (...) -> DirectoryClient
-        """Create DirectoryClient from a Connection String.
+        # type: (...) -> ShareDirectoryClient
+        """Create ShareDirectoryClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -229,7 +229,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
-        # type: (str, Any) -> DirectoryClient
+        # type: (str, Any) -> ShareDirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -237,7 +237,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :param str directory_name:
             The name of the subdirectory.
         :returns: A Directory Client.
-        :rtype: ~azure.storage.file.DirectoryClient
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
 
         .. admonition:: Example:
 
@@ -254,7 +254,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        return DirectoryClient(
+        return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode, **kwargs)
@@ -559,7 +559,7 @@ class DirectoryClient(StorageAccountHostsMixin):
     def create_subdirectory(
             self, directory_name,  # type: str
             **kwargs):
-        # type: (...) -> DirectoryClient
+        # type: (...) -> ShareDirectoryClient
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.
 
@@ -570,8 +570,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DirectoryClient
-        :rtype: ~azure.storage.file.DirectoryClient
+        :returns: ShareDirectoryClient
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
 
         .. admonition:: Example:
 

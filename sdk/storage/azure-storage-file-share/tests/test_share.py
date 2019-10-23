@@ -20,7 +20,7 @@ from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
     ShareServiceClient,
-    DirectoryClient,
+    ShareDirectoryClient,
     FileClient,
     ShareClient,
     generate_share_sas)
