@@ -11,7 +11,7 @@ from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
 from ._blob_service_client import BlobServiceClient
-from ._lease import LeaseClient
+from ._lease import BlobLeaseClient
 from ._download import StorageStreamDownloader
 from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
@@ -171,7 +171,7 @@ __all__ = [
     'ContainerClient',
     'BlobClient',
     'BlobType',
-    'LeaseClient',
+    'BlobLeaseClient',
     'StorageErrorCode',
     'UserDelegationKey',
     'ExponentialRetry',
