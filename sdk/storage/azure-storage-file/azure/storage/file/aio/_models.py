@@ -38,7 +38,7 @@ class SharePropertiesPaged(AsyncPageIterator):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(SharePropertiesPaged, self).__init__(
@@ -79,7 +79,7 @@ class HandlesPaged(AsyncPageIterator):
 
     :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
+    :ivar str marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -88,7 +88,7 @@ class HandlesPaged(AsyncPageIterator):
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
     def __init__(self, command, results_per_page=None, continuation_token=None):
         super(HandlesPaged, self).__init__(
@@ -140,7 +140,7 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(DirectoryPropertiesPaged, self).__init__(

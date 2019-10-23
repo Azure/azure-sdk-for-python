@@ -23,13 +23,12 @@ class QueueAnalyticsLogging(GeneratedLogging):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar str version: Required. The version of Storage Analytics to configure.
-    :ivar bool delete: Required. Indicates whether all delete requests should be logged.
-    :ivar bool read: Required. Indicates whether all read requests should be logged.
-    :ivar bool write: Required. Indicates whether all write requests should be logged.
-    :ivar retention_policy: Required.
+    :keyword str version: Required. The version of Storage Analytics to configure.
+    :keyword bool delete: Required. Indicates whether all delete requests should be logged.
+    :keyword bool read: Required. Indicates whether all read requests should be logged.
+    :keyword bool write: Required. Indicates whether all write requests should be logged.
+    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
-    :vartype retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -45,13 +44,12 @@ class Metrics(GeneratedMetrics):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar str version: The version of Storage Analytics to configure.
-    :ivar bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :ivar bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword str version: The version of Storage Analytics to configure.
+    :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
+    :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :ivar retention_policy: Required.
+    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
-    :vartype retention_policy: ~azure.storage.queue.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -98,14 +96,14 @@ class CorsRule(GeneratedCorsRule):
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :param int max_age_in_seconds:
+    :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         pre-flight response.
-    :param list(str) exposed_headers:
+    :keyword list(str) exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :param list(str) allowed_headers:
+    :keyword list(str) allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
@@ -152,14 +150,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
 
     def __init__(self, permission=None, expiry=None, start=None):
@@ -169,7 +167,7 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class QueueMessage(DictMixin):
-    """Queue message class.
+    """Represents a queue message.
 
     :ivar str id:
         A GUID value assigned to the message by the Queue service that
@@ -221,10 +219,6 @@ class QueueMessage(DictMixin):
 class MessagesPaged(PageIterator):
     """An iterable of Queue Messages.
 
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.QueueMessage)
-
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
@@ -257,12 +251,10 @@ class QueueProperties(DictMixin):
     """Queue Properties.
 
     :ivar str name: The name of the queue.
-    :ivar metadata:
+    :keyword dict(str,str) metadata:
         A dict containing name-value pairs associated with the queue as metadata.
         This var is set to None unless the include=metadata param was included
         for the list queues operation. If this parameter was specified but the
-        queue has no metadata, metadata will be set to an empty dictionary.
-    :vartype metadata: dict(str, str)
     """
 
     def __init__(self, **kwargs):
@@ -288,9 +280,6 @@ class QueuePropertiesPaged(PageIterator):
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.QueueProperties)
-
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
@@ -361,6 +350,17 @@ class QueueSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create a QueueSasPermissions from a string.
+
+        To specify read, add, update, or process permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        update permissions, you would provide a string "ru".
+
+        :param str permission: The string which dictates the
+            read, add, update, or process permissions.
+        :return: A QueueSasPermissions object
+        :rtype: ~azure.storage.queue.QueueSasPermissions
+        """
         p_read = 'r' in permission
         p_add = 'a' in permission
         p_update = 'u' in permission
