@@ -73,8 +73,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._running = False
 
         # Each partition consumer is working in its own thread
-        self._threads = {}  # type: Dict[str, threading.Thread]
-        self._stop_flag = {}  # type: Dict[str, bool]
+        self._working_threads = {}  # type: Dict[str, threading.Thread]
+        self._threads_stop_flags = {}  # type: Dict[str, bool]
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -100,10 +100,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
                         if claimed_ownership_list:
                             claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
-                            to_cancel_list = self._tasks.keys() - claimed_partition_ids
+                            to_cancel_list = self._working_threads.keys() - claimed_partition_ids
                             self._create_tasks_for_claimed_ownership(claimed_ownership_list, checkpoints)
                         else:
-                            to_cancel_list = set(self._tasks.keys())
+                            to_cancel_list = set(self._working_threads.keys())
                             log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
                         if to_cancel_list:
                             self._cancel_tasks_for_partitions(to_cancel_list)
@@ -137,7 +137,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                             }
                         )
                 self._create_tasks_for_claimed_ownership(ownership, checkpoints)
-                while self._tasks:  # keep it running. No load balancing.
+                while self._working_threads:  # keep it running. No load balancing.
                     time.sleep(self._polling_interval)
 
     def stop(self):
@@ -153,35 +153,37 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
         """
         self._running = False
-        for partition_id, thread in self._threads.items():
-            self._stop_flag[partition_id] = True
+        for partition_id, thread in self._working_threads.items():
+            self._threads_stop_flags[partition_id] = True
             thread.join()
-            del self._stop_flag[partition_id]
 
-        log.info("EventProcessor %r has been cancelled", self._id)
+        self._working_threads.clear()
+        self._threads_stop_flags.clear()
+
+        log.info("EventProcessor %r has been stopped", self._id)
 
     def get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._tasks and partition_id in self._last_enqueued_event_properties:
+        if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
             return self._last_enqueued_event_properties[partition_id]
         else:
             raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         for partition_id in to_cancel_partitions:
-            if partition_id in self._threads:
-                thread = self._threads.pop(partition_id)
-                self._stop_flag[partition_id] = True
+            if partition_id in self._working_threads:
+                thread = self._working_threads.pop(partition_id)
+                self._threads_stop_flags[partition_id] = True
                 thread.join()
-                del self._stop_flag[partition_id]
+                del self._threads_stop_flags[partition_id]
 
     def _create_tasks_for_claimed_ownership(self, to_claim_ownership_list, checkpoints=None):
         for ownership in to_claim_ownership_list:
             partition_id = ownership["partition_id"]
             checkpoint = checkpoints.get(partition_id) if checkpoints else None
-            if partition_id not in self._threads or not self._threads[partition_id].is_alive():
-                self._threads[partition_id] = threading.Thread(target=self._receive, args=(ownership, checkpoint))
-                self._stop_flag[partition_id] = False
-                self._threads[partition_id].start()
+            if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
+                self._working_threads[partition_id] = threading.Thread(target=self._receive, args=(ownership, checkpoint))
+                self._threads_stop_flags[partition_id] = False
+                self._working_threads[partition_id].start()
                 log.info("Working thread started, ownership %r, checkpoint %r", ownership, checkpoint)
 
     @contextmanager
@@ -280,7 +282,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         " has an error during running initialize(). The exception is %r.",
                         owner_id, eventhub_name, partition_id, consumer_group_name, err
                     )
-            while not self._stop_flag[partition_id]:
+            while not self._threads_stop_flags[partition_id]:
                 try:
                     events = partition_consumer.receive()
                     self._last_enqueued_event_properties[partition_id] = \
@@ -299,5 +301,5 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             else:
                 close(CloseReason.OWNERSHIP_LOST)
             partition_consumer.close()
-            if partition_id in self._tasks:
-                del self._tasks[partition_id]
+            if partition_id in self._working_threads:
+                del self._working_threads[partition_id]
