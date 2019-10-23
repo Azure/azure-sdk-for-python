@@ -283,6 +283,7 @@ class CorsRule(GeneratedCorsRule):
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
+
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
