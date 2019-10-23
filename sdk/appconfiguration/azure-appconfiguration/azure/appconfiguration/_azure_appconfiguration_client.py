@@ -357,8 +357,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def delete_configuration_setting(
-        self, key, label=None, etag=None, match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
+        self, key, label=None, **kwargs
+    ):  # type: (str, str, dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -366,10 +366,8 @@ class AzureAppConfigurationClient:
         :type key: str
         :param label: label used to identify the ConfigurationSetting
         :type label: str
-        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str or None
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :keyword MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
@@ -385,6 +383,8 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+        etag = kwargs.pop("etag", "*")
+        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
             401: ClientAuthenticationError,
