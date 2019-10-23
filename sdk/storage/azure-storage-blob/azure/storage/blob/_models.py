@@ -125,10 +125,9 @@ class BlobAnalyticsLogging(GeneratedLogging):
         Indicates whether all read requests should be logged. The default value is `False`.
     :keyword bool write:
         Indicates whether all write requests should be logged. The default value is `False`.
-    :keyword retention_policy:
+    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -150,10 +149,9 @@ class Metrics(GeneratedMetrics):
         The default value is `False`.
     :keyword bool include_apis:
         Indicates whether metrics should generate summary statistics for called API operations.
-    :keyword retention_policy:
+    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):

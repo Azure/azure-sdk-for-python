@@ -169,7 +169,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -294,7 +294,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
@@ -341,7 +341,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -387,7 +387,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             If specified, get_container_access_policy only succeeds if the
             container's lease is active and matches this ID.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
@@ -438,7 +438,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -627,7 +627,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -729,7 +729,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -868,7 +868,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -925,7 +925,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
