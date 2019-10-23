@@ -11,19 +11,24 @@ import asyncio
 import pytest
 import requests
 from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.aio import (
+from azure.storage.file import (
     AccessPolicy,
     ShareSasPermissions,
+    generate_share_sas,
+)
+from azure.storage.file.aio import (
     FileServiceClient,
     DirectoryClient,
     FileClient,
-    ShareClient)
+    ShareClient
+)
 from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
@@ -132,7 +137,7 @@ class StorageShareTest(FileTestCase):
         share_props = await share.get_share_properties()
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -180,7 +185,7 @@ class StorageShareTest(FileTestCase):
 
         snapshot_client = ShareClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             snapshot=snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY
         )
@@ -231,7 +236,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -410,7 +415,7 @@ class StorageShareTest(FileTestCase):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
-        await share.create_share(metadata)
+        await share.create_share(metadata=metadata)
 
         # Act
         shares = []
@@ -489,7 +494,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
 
         # Assert
         self.assertTrue(created)
@@ -507,7 +512,7 @@ class StorageShareTest(FileTestCase):
 
         # Act
         client = self._get_share_reference()
-        created = await client.create_share(metadata)
+        created = await client.create_share(metadata=metadata)
         snapshot = await client.create_snapshot()
         snapshot_client = self.fsc.get_share_client(client.share_name, snapshot=snapshot)
 
@@ -625,7 +630,7 @@ class StorageShareTest(FileTestCase):
         await share.create_share()
 
         # Act
-        resp = await share.set_share_access_policy()
+        resp = await share.set_share_access_policy(signed_identifiers=dict())
 
         # Assert
         acl = await share.get_share_access_policy()
@@ -871,13 +876,16 @@ class StorageShareTest(FileTestCase):
         dir1 = await share.create_directory(dir_name)
         await dir1.upload_file(file_name, data)
 
-        token = share.generate_shared_access_signature(
+        token = generate_share_sas(
+            share.account_name,
+            share.share_name,
+            share.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
         )
         sas_client = FileClient(
             self.get_file_url(),
-            share=share.share_name,
+            share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
         )
@@ -908,12 +916,33 @@ class StorageShareTest(FileTestCase):
         permission_key2 = await share_client.create_permission_for_share(server_returned_permission)
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
-        self.assertEquals(permission_key, permission_key2)
+        self.assertEqual(permission_key, permission_key2)
 
     @record
     def test_create_permission_for_share_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_permission_for_share())
+
+    async def _test_transport_closed_only_once_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        transport = AioHttpTransport()
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
+        prefix = TEST_SHARE_PREFIX
+        share_name = self.get_resource_name(prefix)
+        async with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+            await fsc.get_service_properties()
+            assert transport.session is not None
+            async with fsc.get_share_client(share_name) as fc:
+                assert transport.session is not None
+            await fsc.get_service_properties()
+            assert transport.session is not None
+
+    @record
+    def test_transport_closed_only_once_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_transport_closed_only_once_async())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

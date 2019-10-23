@@ -17,14 +17,12 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob import LocationMode
+from azure.storage.blob._shared.policies_async import LinearRetry, ExponentialRetry
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LocationMode,
-    LinearRetry,
-    ExponentialRetry,
-    NoRetry
 )
 
 from testcase import (
@@ -177,7 +175,7 @@ class StorageRetryTestAsync(StorageTestCase):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=NoRetry(), transport=AiohttpTestTransport())
+            BlobServiceClient, self.settings, retry_total=0, transport=AiohttpTestTransport())
 
 
         # Force the create call to 'timeout' with a 408

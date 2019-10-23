@@ -11,11 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:26 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 06 Sep 2019 21:52:24 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,24 +49,24 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:26 GMT
+      - Wed, 16 Oct 2019 06:48:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorageb3920bee.queue.core.windows.net/pythonqueueb3920bee/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4f9a739e-5364-41b5-962b-3067316c41ae</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:52:25 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:52:25
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAeBmkXv1k1QE=</PopReceipt><TimeNextVisible>Fri,
-        06 Sep 2019 21:52:25 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2aacf34a-8ec7-463f-8b43-b3aca9babc0b</MessageId><InsertionTime>Wed,
+        16 Oct 2019 06:48:30 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA/gDjuO2D1QE=</PopReceipt><TimeNextVisible>Wed,
+        16 Oct 2019 06:48:30 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:25 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -94,24 +92,24 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:27 GMT
+      - Wed, 16 Oct 2019 06:48:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorageb3920bee.queue.core.windows.net/pythonqueueb3920bee/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>5efed3da-41ce-4dd2-8605-fe4ee07df00f</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:52:25 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:52:25
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAWImxXv1k1QE=</PopReceipt><TimeNextVisible>Fri,
-        06 Sep 2019 21:52:25 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>656aea3e-df0e-4d47-a8ce-fbc7547ab182</MessageId><InsertionTime>Wed,
+        16 Oct 2019 06:48:31 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:48:31
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA00nwuO2D1QE=</PopReceipt><TimeNextVisible>Wed,
+        16 Oct 2019 06:48:31 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:25 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -137,24 +135,24 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:27 GMT
+      - Wed, 16 Oct 2019 06:48:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorageb3920bee.queue.core.windows.net/pythonqueueb3920bee/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4ade21f2-60f8-414b-8b6a-950da5fdca7b</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:52:25 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:52:25
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAXMS7Xv1k1QE=</PopReceipt><TimeNextVisible>Fri,
-        06 Sep 2019 21:52:25 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>bc9a0ead-4e0c-4333-b27e-3b5fcb630eec</MessageId><InsertionTime>Wed,
+        16 Oct 2019 06:48:31 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:48:31
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAd/L+uO2D1QE=</PopReceipt><TimeNextVisible>Wed,
+        16 Oct 2019 06:48:31 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:25 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -180,24 +178,24 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:27 GMT
+      - Wed, 16 Oct 2019 06:48:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorageb3920bee.queue.core.windows.net/pythonqueueb3920bee/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>ed0f346f-9769-4f47-90f0-789ecd09de09</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:52:25 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:52:25
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAxXDIXv1k1QE=</PopReceipt><TimeNextVisible>Fri,
-        06 Sep 2019 21:52:25 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7b9567a3-1d63-4ba7-a74d-c7ca57250b5a</MessageId><InsertionTime>Wed,
+        16 Oct 2019 06:48:31 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:48:31
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAzi8Sue2D1QE=</PopReceipt><TimeNextVisible>Wed,
+        16 Oct 2019 06:48:31 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:25 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -217,19 +215,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:27 GMT
+      - Wed, 16 Oct 2019 06:48:31 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorageb3920bee.queue.core.windows.net/pythonqueueb3920bee/messages?peekonly=true
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4f9a739e-5364-41b5-962b-3067316c41ae</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:52:25 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:52:25
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2aacf34a-8ec7-463f-8b43-b3aca9babc0b</MessageId><InsertionTime>Wed,
+        16 Oct 2019 06:48:30 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:48:30
         GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
@@ -237,7 +233,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:25 GMT
+      - Wed, 16 Oct 2019 06:48:30 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

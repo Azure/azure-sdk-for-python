@@ -77,7 +77,8 @@ class TestFileSamples(FileTestCase):
             # Download the file
             # [START download_file]
             with open(DEST_FILE, "wb") as data:
-                data.writelines(file2.download_file())
+                stream = await file2.download_file()
+                data.write(await stream.readall())
             # [END download_file]
 
             # Delete the files

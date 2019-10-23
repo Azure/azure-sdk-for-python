@@ -91,7 +91,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(b"".join(list(actual_data.chunks())), expected_data)
 
     # --Test cases for block blobs --------------------------------------------
 
