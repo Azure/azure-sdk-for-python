@@ -400,7 +400,7 @@ class DirectoryProperties(DictMixin):
     :keyword dict metadata: A dict with name_value pairs to associate with the
         directory as metadata.
     :ivar change_time: Change time for the file.
-    :type change_time: str or ~datetime.datetime
+    :vartype change_time: str or ~datetime.datetime
     :ivar creation_time: Creation time for the file.
     :type creation_time: str or ~datetime.datetime
     :ivar last_write_time: Last write time for the file.

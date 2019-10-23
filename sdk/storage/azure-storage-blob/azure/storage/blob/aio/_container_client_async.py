@@ -598,6 +598,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param name: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
         :type name: str or ~azure.storage.blob.BlobProperties
+        :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:

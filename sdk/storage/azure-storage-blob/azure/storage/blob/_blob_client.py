@@ -1275,7 +1275,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         operation is complete. The final blob will be committed when the copy completes.
 
         :param str source_url:
-            A URL of up to 2 KB in length that specifies an Azure file or blob.
+            A URL of up to 2 KB in length that specifies a file or blob.
             The value should be URL-encoded as it would appear in a request URI.
             If the source is in another account, the source must either be public
             or must be authenticated via a shared access signature. If the source
@@ -2209,7 +2209,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
@@ -2472,12 +2472,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int offset:
             Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length  must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the end offset must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
