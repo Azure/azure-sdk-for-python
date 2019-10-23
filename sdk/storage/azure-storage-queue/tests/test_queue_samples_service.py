@@ -23,10 +23,10 @@ class TestQueueServiceSamples(QueueTestCase):
 
         # [START set_queue_service_properties]
         # Create service properties
-        from azure.storage.queue import Logging, Metrics, CorsRule, RetentionPolicy
+        from azure.storage.queue import QueueAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
-        logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
