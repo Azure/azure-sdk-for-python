@@ -67,16 +67,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
-        use the `from_blob_url` classmethod.
-    :param container_name: The container for the blob.
+        use the :func:`from_blob_url` classmethod.
+    :param container_name: The container name for the blob.
     :type container_name: str
-    :param blob_name: The mame of the blob with which to interact.
+    :param blob_name: The name of the blob with which to interact. If specified, this value will override
+        a blob value specified in the blob URL.
     :type blob_name: str
     :param str snapshot:
-        The optional blob snapshot on which to operate.
+        The optional blob snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -146,33 +148,35 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
-        :param bool overwrite: Whether the blob to be uploaded should overwrite the current data.
-            If True, upload_blob will silently overwrite the existing data. If set to False, the
-            operation will fail with ResourceExistsError. The exception to the above is with Append
-            blob types. In this case, if data already exists, an error will not be raised and
-            the data will be appended to the existing blob. If you set overwrite=True, then the existing
-            blob will be deleted, and a new one created.
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
+            If True, upload_blob will overwrite the existing data. If set to False, the
+            operation will fail with ResourceExistsError. The exception to the above is with Append
+            blob types: if set to False and the data already exists, an error will not be raised
+            and the data will be appended to the existing blob. If set overwrite=True, then the existing
+            append blob will be deleted, and a new one created. Defaults to False.
         :keyword ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set blob properties.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
+            the wire if using http instead of https, as https (the default), will
             already validate. Note that this MD5 hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
+            will not be used because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-        :keyword ~azure.storage.blob.aio.lease_async.LeaseClient lease:
-            If specified, upload_blob only succeeds if the
-            blob's lease is active and matches this ID.
-            Required if the blob has an active lease.
+        :keyword lease:
+            Required if the blob has an active lease. If specified, upload_blob only succeeds if the
+            blob's lease is active and matches this ID. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -256,15 +260,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
+            the wire if using http instead of https, as https (the default), will
             already validate. Note that this MD5 hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
+            will not be used because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
-            If specified, download_blob only succeeds if the blob's lease is active
-            and matches this ID. Required if the blob has an active lease.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+            Required if the blob has an active lease. If specified, download_blob only
+            succeeds if the blob's lease is active and matches this ID. Value can be a
+            LeaseClient object or the lease ID as a string.
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -296,7 +301,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A iterable data generator (stream)
-        :rtype: ~azure.storage.blob._blob_utils.StorageStreamDownloader
+        :rtype: ~azure.storage.blob._download_async.StorageStreamDownloader
 
         .. admonition:: Example:
 
@@ -322,23 +327,24 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         The blob is later deleted during garbage collection.
         Note that in order to delete a blob, you must delete all of its
-        snapshots. You can delete both at the same time with the Delete
-        Blob operation.
+        snapshots. You can delete both at the same time with the delete_blob()
+        operation.
 
         If a delete retention policy is enabled for the service, then this operation soft deletes the blob
         and retains the blob for a specified number of days.
         After the specified number of days, the blob's data is removed from the service during garbage collection.
-        Soft deleted blob is accessible through List Blobs API specifying `include='deleted'` option.
-        Soft-deleted blob can be restored using Undelete API.
+        Soft deleted blob is accessible through :func:`~ContainerClient.list_blobs()` specifying `include=['deleted']`
+        option. Soft-deleted blob can be restored using :func:`undelete` operation.
 
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+            Required if the blob has an active lease. If specified, delete_blob only
+            succeeds if the blob's lease is active and matches this ID. Value can be a
+            LeaseClient object or the lease ID as a string.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -410,7 +416,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -479,11 +485,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         If one property is set for the content_settings, all properties will be overridden.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set blob properties.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -525,7 +532,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -570,26 +577,26 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Creates a new Page Blob of the specified size.
 
         :param int size:
-            This header specifies the maximum size
-            for the page blob, up to 1 TB. The page blob size must be aligned
-            to a 512-byte boundary.
+            This specifies the maximum size for the page blob, up to 1 TB.
+            The page blob size must be aligned to a 512-byte boundary.
         :param ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set properties on the blob.
-        :param int sequence_number:
-            Only for Page blobs. The sequence number is a user-controlled value that you can use to
-            track requests. The value of the sequence number must be between 0
-            and 2^63 - 1.The default value is 0.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
         :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :type metadata: dict(str, str)
+        :keyword int sequence_number:
+            Only for Page blobs. The sequence number is a user-controlled value that you can use to
+            track requests. The value of the sequence number must be between 0
+            and 2^63 - 1.The default value is 0.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -634,14 +641,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Creates a new Append Blob.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set properties on the blob.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -714,7 +722,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -841,11 +849,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
-        :type destination_lease: ~azure.storage.blob.aio.lease_async..LeaseClient or str
+        :type destination_lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword source_lease:
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
-        :type source_lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type source_lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
@@ -860,7 +868,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: Dict[str, Union[str, datetime]]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -949,7 +957,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A LeaseClient object.
-        :rtype: ~azure.storage.blob.aio.lease_async.LeaseClient
+        :rtype: ~azure.storage.blob.aio.LeaseClient
 
         .. admonition:: Example:
 
@@ -987,7 +995,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1022,15 +1030,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
+            the wire if using http instead of https, as https (the default), will
             already validate. Note that this MD5 hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
+            will not be used because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
@@ -1069,18 +1077,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
              block. Prior to encoding, the string must be less than or equal to 64
              bytes in size. For a given blob, the length of the value specified for
              the block_id parameter must be the same size for each block.
-        :param source_url: The URL.
-        :param source_offset:
+        :param str source_url: The URL.
+        :param int source_offset:
             Start of byte range to use for the block.
             Must be set if source length is provided.
-        :param source_length: The size of the block in bytes.
+        :param int source_length: The size of the block in bytes.
         :param bytearray source_content_md5:
             Specify the md5 calculated for the range of
             bytes that must be read from the copy source.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1115,7 +1123,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
@@ -1147,19 +1155,20 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param list block_list:
             List of Blockblobs.
         :param ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set blob properties.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
+            bitflips on the wire if using http instead of https, as https (the default),
             will already validate. Note that this MD5 hash is not stored with the
             blob.
         :keyword ~datetime.datetime if_modified_since:
@@ -1219,7 +1228,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1246,21 +1255,27 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         of a page blob.
 
         :param int offset:
-            Start of byte range to use for downloading a section of the blob.
-            Must be set if length is provided.
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length  must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
         :param int length:
             Number of bytes to use for getting valid page ranges.
             If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length  must be a modulus of
+            must be a modulus of 512 and the length must be a modulus of
             512.
         :param str previous_snapshot_diff:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1280,10 +1295,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
@@ -1322,7 +1333,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1361,11 +1372,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         then all pages above the specified value are cleared.
 
         :param int size:
-            Size to resize blob to.
+            Size used to resize blob. Maximum size for a page blob is up to 1 TB.
+            The page blob size must be aligned to a 512-byte boundary.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1411,25 +1423,24 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param bytes page:
             Content of the page.
         :param int offset:
-            Start of byte range to use for downloading a section of the blob.
-            Must be set if length is provided.
+            Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length  must be a modulus of
             512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length must be a modulus of
+            must be a modulus of 512 and the end offset must be a modulus of
             512.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
+            bitflips on the wire if using http instead of https, as https (the default),
             will already validate. Note that this MD5 hash is not stored with the
             blob.
         :keyword int if_sequence_number_lte:
@@ -1489,14 +1500,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                                     ):
         # type: (...) -> Dict[str, Any]
         """
-        Updates a range of pages to a page blob where the contents are read from a URL.
+        The Upload Pages operation writes a range of pages to a page blob where
+        the contents are read from a URL.
 
         :param str source_url:
             The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
             shared access signature attached.
         :param int offset:
-            Start of byte range to use for downloading a section of the blob.
-            Must be set if length is provided.
+            Start of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
@@ -1524,8 +1538,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword :class:`MatchConditions` source_match_condition:
             The source match condition to use upon the etag.
-        :keyword str lease:
-            Required if the blob has an active lease.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -1579,19 +1595,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Clears a range of pages.
 
         :param int offset:
-            Start of byte range to use for downloading a section of the blob.
-            Must be set if length is provided.
+            Start of byte range to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512.
+            must be a modulus of 512 and the length  must be a modulus of
+            512.
         :param int length:
             Number of bytes to use for writing to a section of the blob.
             Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length must be a modulus of
+            must be a modulus of 512 and the end offset must be a modulus of
             512.
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -1618,10 +1634,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword :class:`MatchConditions` match_condition:
             The match condition to use upon the etag.
-        :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
-            A page blob tier value to set the blob to. The tier correlates to the size of the
-            blob and number of allowed IOPS. This is only applicable to page blobs on
-            premium storage accounts.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1650,7 +1667,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
+            bitflips on the wire if using http instead of https, as https (the default),
             will already validate. Note that this MD5 hash is not stored with the
             blob.
         :keyword int maxsize_condition:
@@ -1668,7 +1685,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1724,7 +1741,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
         :param int source_length:
             This indicates the end of the range of bytes that has to be taken from the copy source.
-        :param bytearray source_content_md5:
+        :keyword bytearray source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
@@ -1739,7 +1756,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             is not, the request will fail with the
             AppendPositionConditionNotMet error
             (HTTP status code 412 - Precondition Failed).
-        :keyword ~azure.storage.blob.lease.LeaseClient or str lease:
+        :keyword ~azure.storage.blob.aio.LeaseClient or str lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :keyword ~datetime.datetime if_modified_since:
@@ -1777,7 +1794,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :keyword :class:`MatchConditions` source_match_condition:
             The source match condition to use upon the etag.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
-
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,

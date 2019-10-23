@@ -54,17 +54,17 @@ if TYPE_CHECKING:
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
-    """A async client to interact with a specific Queue.
+    """A client to interact with a specific Queue.
 
     :ivar str url:
-        The full endpoint URL to the Queue, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        The full endpoint URL to the account, including SAS token if used. This could be
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -76,12 +76,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the storage account. In order to create a client given the full URI to the queue,
-        use the from_queue_url classmethod.
+        use the :func:`from_queue_url` classmethod.
     :param queue_name: The name of the queue.
     :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     .. admonition:: Example:
@@ -122,7 +122,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         # type: (Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
-        If a queue with the same name already exists, the operation fails.
+        If a queue with the same name already exists, the operation fails with
+        a `ResourceExistsError`.
 
         :keyword metadata:
             A dict containing name-value pairs to associate with the queue as
@@ -134,7 +135,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-            ~azure.storage.queue._generated.models._models.StorageErrorException
+            ~azure.storage.queue.StorageErrorException
 
         .. admonition:: Example:
 
@@ -197,7 +198,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Properties for the specified container within a container object.
+        :return: User-defined metadata for the queue.
         :rtype: ~azure.storage.queue.QueueProperties
 
         .. admonition:: Example:
@@ -258,7 +259,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
-        :param int timeout:
+        :keyword int timeout:
             The server timeout, expressed in seconds.
         :return: A dictionary of access policies associated with the queue.
         :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
@@ -290,8 +291,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :class:`HttpResponseError` until the access policy becomes active.
 
         :param signed_identifiers:
-            A list of SignedIdentifier access policies to associate with the queue.
-            The list may contain up to 5 elements. An empty list
+            SignedIdentifier access policies to associate with the queue.
+            This may contain up to 5 elements. An empty dict
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
@@ -489,8 +490,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to update.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
@@ -579,7 +581,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         is set to 1. If it is not deleted and is subsequently retrieved again, the
         dequeue_count property is incremented. The client may use this value to
         determine how many times a message has been retrieved. Note that a call
-        to peek_messages does not increment the value of DequeueCount, but returns
+        to peek_messages does not increment the value of dequeue_count, but returns
         this value for the client to read.
 
         If the key-encryption-key or resolver field is set on the local service object,
@@ -663,8 +665,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         pop_receipt returned from the :func:`~receive_messages` or :func:`~update_message`
         operation.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to delete.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.

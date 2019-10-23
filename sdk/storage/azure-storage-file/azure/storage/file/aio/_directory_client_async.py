@@ -39,17 +39,17 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
-    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.s
+    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -60,8 +60,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The URI to the storage account. In order to create a client given the full URI to the
-        directory, use the from_directory_url classmethod.
+        The URI to the storage account. In order to create a client given the full URI to the directory,
+        use the :func:`from_directory_url` classmethod.
     :param share_name:
         The name of the share for the directory.
     :type share_name: str
@@ -69,7 +69,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
     :param str snapshot:
-        An optional share snapshot on which to operate.
+        An optional share snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
@@ -224,7 +225,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.DirectoryProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.file.DirectoryProperties and
+            ~azure.storage.file.FileProperties]
 
         .. admonition:: Example:
 
@@ -408,18 +410,16 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.
 
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_creation_time: str or datetime
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_last_write_time: str or datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
@@ -432,6 +432,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -532,7 +534,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash

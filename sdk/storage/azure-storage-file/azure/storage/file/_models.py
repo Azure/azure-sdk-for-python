@@ -30,14 +30,14 @@ class Metrics(GeneratedMetrics):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar str version: The version of Storage Analytics to configure.
-    :ivar bool enabled: Required. Indicates whether metrics are enabled for the
+    :keyword str version: The version of Storage Analytics to configure.
+    :keyword bool enabled: Required. Indicates whether metrics are enabled for the
         File service.
-    :ivar bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :ivar retention_policy: Required. Determines how long the associated data should
+    :keyword retention_policy: Determines how long the associated data should
         persist.
-    :vartype retention_policy: ~azure.storage.file.RetentionPolicy
+    :type retention_policy: ~azure.storage.file.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -84,15 +84,15 @@ class CorsRule(GeneratedCorsRule):
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :param list(str) allowed_headers:
+    :keyword list(str) allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
-    :param list(str) exposed_headers:
+    :keyword list(str) exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :param int max_age_in_seconds:
+    :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         preflight response.
     """
@@ -125,12 +125,14 @@ class AccessPolicy(GenAccessPolicy):
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
 
-    :param str permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: str or ~azure.storage.file.FileSasPermissions or
+        ~azure.storage.file.ShareSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -301,26 +303,26 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param handle_id: Required. XSMB service handle ID
+    :keyword handle_id: Required. XSMB service handle ID
     :type handle_id: str
-    :param path: Required. File or directory name including full path starting
+    :keyword path: Required. File or directory name including full path starting
      from share root
     :type path: str
-    :param file_id: Required. FileId uniquely identifies the file or
+    :keyword file_id: Required. FileId uniquely identifies the file or
      directory.
     :type file_id: str
-    :param parent_id: ParentId uniquely identifies the parent directory of the
+    :keyword parent_id: ParentId uniquely identifies the parent directory of the
      object.
     :type parent_id: str
-    :param session_id: Required. SMB session ID in context of which the file
+    :keyword session_id: Required. SMB session ID in context of which the file
      handle was opened
     :type session_id: str
-    :param client_ip: Required. Client IP that opened the handle
+    :keyword client_ip: Required. Client IP that opened the handle
     :type client_ip: str
-    :param open_time: Required. Time when the session that previously opened
+    :keyword open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
     :type open_time: ~datetime.datetime
-    :param last_reconnect_time: Time handle was last connected to (UTC)
+    :keyword last_reconnect_time: Time handle was last connected to (UTC)
     :type last_reconnect_time: ~datetime.datetime
     """
 
@@ -404,8 +406,26 @@ class DirectoryProperties(DictMixin):
         conditionally.
     :ivar bool server_encrypted:
         Whether encryption is enabled.
-    :ivar dict metadata: A dict with name_value pairs to associate with the
+    :keyword dict metadata: A dict with name_value pairs to associate with the
         directory as metadata.
+    :ivar change_time: Change time for the file.
+    :type change_time: str or ~datetime.datetime
+    :ivar creation_time: Creation time for the file.
+    :type creation_time: str or ~datetime.datetime
+    :ivar last_write_time: Last write time for the file.
+    :type last_write_time: str or ~datetime.datetime
+    :ivar file_attributes:
+        The file system attributes for files and directories.
+    :vartype file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+    :ivar permission_key: Key of the permission to be set for the
+        directory/file.
+    :vartype permission_key: str
+    :ivar file_id: Required. FileId uniquely identifies the file or
+     directory.
+    :vartype file_id: str
+    :ivar parent_id: ParentId uniquely identifies the parent directory of the
+     object.
+    :vartype parent_id: str
     """
 
     def __init__(self, **kwargs):
@@ -660,6 +680,17 @@ class FileSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create a FileSasPermissions from a string.
+
+        To specify read, create, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        create permissions, you would provide a string "rc".
+
+        :param str permission: The string which dictates the read, create,
+            write, or delete permissions
+        :return: A FileSasPermissions object
+        :rtype: ~azure.storage.file.FileSasPermissions
+        """
         p_read = 'r' in permission
         p_create = 'c' in permission
         p_write = 'w' in permission
@@ -706,6 +737,17 @@ class ShareSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create a ShareSasPermissions from a string.
+
+        To specify read, write, delete, or list permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, write,
+            delete, or list permissions
+        :return: A ShareSasPermissions object
+        :rtype: ~azure.storage.file.ShareSasPermissions
+        """
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -771,6 +813,15 @@ class NTFSAttributes(object):
 
     @classmethod
     def from_string(cls, string):
+        """Create a NTFSAttributes from a string.
+
+        To specify permissions you can pass in a string with the
+        desired permissions, e.g. "ReadOnly|Hidden|System"
+
+        :param str string: The string which dictates the permissions.
+        :return: A NTFSAttributes object
+        :rtype: ~azure.storage.file.NTFSAttributes
+        """
         read_only = "ReadOnly" in string
         hidden = "Hidden" in string
         system = "System" in string

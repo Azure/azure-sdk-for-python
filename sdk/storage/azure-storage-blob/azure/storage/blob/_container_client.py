@@ -84,13 +84,13 @@ class ContainerClient(StorageAccountHostsMixin):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the container,
-        use the from_container_url classmethod.
+        use the :func:`from_container_url` classmethod.
     :param container_name:
-        The container for the blob.
+        The name of the container for the blob.
     :type container_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -146,7 +146,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         """
@@ -189,12 +189,12 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str conn_str:
             A connection string to an Azure Storage account.
         :param container_name:
-            The container for the blob.
+            The container name for the blob.
         :type container_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
@@ -225,7 +225,7 @@ class ContainerClient(StorageAccountHostsMixin):
             container as metadata. Example:{'Category':'test'}
         :type metadata: dict[str, str]
         :param ~azure.storage.blob.PublicAccess public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -260,10 +260,11 @@ class ContainerClient(StorageAccountHostsMixin):
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :keyword ~azure.storage.blob.LeaseClient lease:
+        :keyword lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -385,9 +386,10 @@ class ContainerClient(StorageAccountHostsMixin):
         """Returns all user-defined metadata and system properties for the specified
         container. The data returned does not include the container's list of blobs.
 
-        :keyword ~azure.storage.blob.LeaseClient lease:
+        :keyword lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
@@ -431,9 +433,10 @@ class ContainerClient(StorageAccountHostsMixin):
             A dict containing name-value pairs to associate with the container as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str lease:
+        :keyword lease:
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -476,13 +479,14 @@ class ContainerClient(StorageAccountHostsMixin):
         """Gets the permissions for the specified container.
         The permissions indicate whether container data may be accessed publicly.
 
-        :keyword str lease:
+        :keyword lease:
             If specified, get_container_access_policy only succeeds if the
             container's lease is active and matches this ID.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
-        :rtype: dict[str, str]
+        :rtype: dict[str, Any]
 
         .. admonition:: Example:
 
@@ -525,7 +529,7 @@ class ContainerClient(StorageAccountHostsMixin):
             will clear the access policies set on the service.
         :type signed_identifiers: dict[str, ~azure.storage.blob.AccessPolicy]
         :param ~azure.storage.blob.PublicAccess public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :keyword lease:
             Required if the container has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -693,21 +697,20 @@ class ContainerClient(StorageAccountHostsMixin):
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword str encoding:
-            Defaults to UTF-8.
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
-            If True, upload_blob will silently overwrite the existing data. If set to False, the
+            If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
-            blob types. In this case, if data already exists, an error will not be raised and
-            the data will be appended to the existing blob. If you set overwrite=True, then the existing
-            blob will be deleted, and a new one created.
+            blob types: if set to False and the data already exists, an error will not be raised
+            and the data will be appended to the existing blob. If set overwrite=True, then the existing
+            append blob will be deleted, and a new one created. Defaults to False.
         :keyword ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set blob properties.
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
             that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
+            the wire if using http instead of https, as https (the default), will
             already validate. Note that this MD5 hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
@@ -758,6 +761,8 @@ class ContainerClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encoding:
+            Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -796,17 +801,17 @@ class ContainerClient(StorageAccountHostsMixin):
 
         The blob is later deleted during garbage collection.
         Note that in order to delete a blob, you must delete all of its
-        snapshots. You can delete both at the same time with the Delete
-        Blob operation.
+        snapshots. You can delete both at the same time with the delete_blob
+        operation.
 
         If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
-        Soft deleted blob or snapshot is accessible through List Blobs API specifying `include="deleted"` option.
-        Soft-deleted blob or snapshot can be restored using Undelete API.
+        Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
+        option. Soft-deleted blob or snapshot can be restored using :func:`~BlobClient.undelete()`
 
         :param blob: The blob with which to interact. If specified, this value will override
-         a blob value specified in the blob URL.
+            a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.BlobProperties
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
@@ -912,25 +917,24 @@ class ContainerClient(StorageAccountHostsMixin):
         # type: (...) -> Iterator[HttpResponse]
         """Marks the specified blobs or snapshots for deletion.
 
-        The blob is later deleted during garbage collection.
-        Note that in order to delete a blob, you must delete all of its
-        snapshots. You can delete both at the same time with the Delete
-        Blob operation.
+        The blobs are later deleted during garbage collection.
+        Note that in order to delete blobs, you must delete all of their
+        snapshots. You can delete both at the same time with the delete_blobs operation.
 
-        If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
-        and retains the blob or snapshot for specified number of days.
-        After specified number of days, blob's data is removed from the service during garbage collection.
-        Soft deleted blob or snapshot is accessible through List Blobs API specifying `include="deleted"` option.
-        Soft-deleted blob or snapshot can be restored using Undelete API.
+        If a delete retention policy is enabled for the service, then this operation soft deletes the blobs or snapshots
+        and retains the blobs or snapshots for specified number of days.
+        After specified number of days, blobs' data is removed from the service during garbage collection.
+        Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
+        Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
-        :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
+        :param blobs: The blob names with which to interact.
+        :type blobs: str
         :keyword str delete_snapshots:
-            Required if the blob has associated snapshots. Values include:
+            Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a Lease object
+            Required if a blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
@@ -1027,8 +1031,6 @@ class ContainerClient(StorageAccountHostsMixin):
         A block blob's tier determines Hot/Cool/Archive storage type.
         This operation does not update the blob's ETag.
 
-        :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param standard_blob_tier:
             Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
@@ -1037,6 +1039,8 @@ class ContainerClient(StorageAccountHostsMixin):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
+        :param blobs: The blobs with which to interact.
+        :type blobs: str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -1085,13 +1089,13 @@ class ContainerClient(StorageAccountHostsMixin):
         # type: (...) -> Iterator[HttpResponse]
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
-        :param blobs: The blobs with which to interact.
-        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1145,7 +1149,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The blob with which to interact.
         :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
-            The optional blob snapshot on which to operate.
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`~BlobClient.create_snapshot()`.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 

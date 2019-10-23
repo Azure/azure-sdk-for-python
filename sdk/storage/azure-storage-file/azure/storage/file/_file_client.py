@@ -96,13 +96,13 @@ class FileClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the File, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -114,7 +114,7 @@ class FileClient(StorageAccountHostsMixin):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
-        file, use the from_file_url classmethod.
+        file, use the :func:`from_file_url` classmethod.
     :param share_name:
         The name of the share for the file.
     :type share_name: str
@@ -122,7 +122,8 @@ class FileClient(StorageAccountHostsMixin):
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
     :param str snapshot:
-        An optional file snapshot on which to operate.
+        An optional file snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
@@ -185,7 +186,8 @@ class FileClient(StorageAccountHostsMixin):
 
         :param str file_url: The full URI to the file.
         :param str snapshot:
-            An optional file snapshot on which to operate.
+            An optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
@@ -237,13 +239,13 @@ class FileClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param share_name: The share. This can either be the name of the share,
-            or an instance of ShareProperties
-        :type share_name: str or ~azure.storage.file.ShareProperties
+        :param share_name: The name of the share.
+        :type share_name: str
         :param str file_path:
             The file path.
         :param str snapshot:
-            An optional file snapshot on which to operate.
+            An optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
@@ -305,7 +307,8 @@ class FileClient(StorageAccountHostsMixin):
             x-ms-file-permission-key should be specified.
         :type permission_key: str
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
@@ -404,7 +407,8 @@ class FileClient(StorageAccountHostsMixin):
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -637,6 +641,7 @@ class FileClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: FileProperties
         :rtype: ~azure.storage.file.FileProperties
         """
         timeout = kwargs.pop('timeout', None)
@@ -667,19 +672,18 @@ class FileClient(StorageAccountHostsMixin):
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
@@ -692,6 +696,8 @@ class FileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -845,7 +851,7 @@ class FileClient(StorageAccountHostsMixin):
                               **kwargs
                               ):
         # type: (str, int, int, int, **Any) -> Dict[str, Any]
-        '''
+        """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
         :param int offset:
@@ -868,7 +874,7 @@ class FileClient(StorageAccountHostsMixin):
             The service will read the same number of bytes as the destination range (length-offset).
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        '''
+        """
         options = self._upload_range_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -931,10 +937,10 @@ class FileClient(StorageAccountHostsMixin):
         that range.
 
         :param int offset:
-            Number of bytes to use for clearing a section of the file.
+            Start of byte range to use for clearing a section of the file.
             The range can be up to 4 MB in size.
         :param int length:
-            End of byte range to use for clearing a section of the file.
+            Number of bytes to use for clearing a section of the file.
             The range can be up to 4 MB in size.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

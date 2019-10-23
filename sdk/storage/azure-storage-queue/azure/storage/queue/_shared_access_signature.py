@@ -4,12 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, TYPE_CHECKING
+)
+
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
 from azure.storage.queue._shared.models import Services
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.queue import (
+        ResourceTypes,
+        AccountSasPermissions,
+        QueueSasPermissions
+    )
 
 class QueueSharedAccessSignature(SharedAccessSignature):
     '''

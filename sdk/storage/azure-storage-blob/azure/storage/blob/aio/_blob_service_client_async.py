@@ -78,7 +78,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -324,9 +324,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
-            Specifies that container metadata be returned in the response.
+            Specifies that container metadata to be returned in the response.
             The default value is `False`.
-        :param int results_per_page:
+        :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
@@ -379,7 +379,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             container as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -417,10 +417,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
+        :type lease: ~azure.storage.blob.aio.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -466,7 +467,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The container need not already exist.
 
         :param container:
-            The container that the blob is in.
+            The container. This can either be the name of the container,
+            or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
@@ -506,11 +508,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The blob need not already exist.
 
         :param container:
-            The container that the blob is in.
-        :type container: str or ~azure.storage.ContainerProperties
+            The container that the blob is in. This can either be the name of the container,
+            or an instance of ContainerProperties.
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :param blob:
-            The blob with which to interact.
-        :type blob: str or ~azure.storage.BlobProperties
+            The blob with which to interact. This can either be the name of the blob,
+            or an instance of BlobProperties.
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by

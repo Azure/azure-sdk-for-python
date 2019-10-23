@@ -40,13 +40,13 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the file service endpoint, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -168,7 +168,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> None
         """Sets the properties of a storage account's File service, including
-        Azure Storage Analytics. If an element (e.g. Logging) is left as None, the
+        Azure Storage Analytics. If an element (e.g. hour_metrics) is left as None, the
         existing settings on the service for that functionality are preserved.
 
         :param hour_metrics:
@@ -340,7 +340,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             or an instance of ShareProperties.
         :type share: str or ~azure.storage.file.ShareProperties
         :param str snapshot:
-            An optional share snapshot on which to operate.
+            An optional share snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
         :returns: A ShareClient.
         :rtype: ~azure.storage.file.ShareClient
 

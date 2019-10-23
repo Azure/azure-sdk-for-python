@@ -90,13 +90,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     :ivar str url:
         The full endpoint URL to the File, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -108,7 +108,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
-        file, use the from_file_url classmethod.
+        file, use the :func:`from_file_url` classmethod.
     :param share_name:
         The name of the share for the file.
     :type share_name: str
@@ -116,7 +116,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         The file path to the file with which to interact. If specified, this value will override
         a file value specified in the file URL.
     :param str snapshot:
-        An optional file snapshot on which to operate.
+        An optional file snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
@@ -170,10 +171,10 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -186,7 +187,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             x-ms-file-permission-key should be specified.
         :type permission_key: str
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
@@ -264,13 +266,13 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
+        :type file_attributes: str or ~azure.storage.file.NTFSAttributes
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or datetime
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or datetime
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -286,7 +288,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -409,6 +412,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
         :type copy_id: str or ~azure.storage.file.FileProperties
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :rtype: None
         """
         timeout = kwargs.pop('timeout', None)
@@ -549,18 +554,19 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
-            Default value: Now.
-        :type file_creation_time: str or datetime
+            Default value: Preserve.
+        :type file_creation_time: str or ~datetime.datetime
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
-        :type file_last_write_time: str or datetime
+            Default value: Preserve.
+        :type file_last_write_time: str or ~datetime.datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -695,7 +701,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                                     **kwargs
                                     ):
         # type: (str, int, int, int, **Any) -> Dict[str, Any]
-        '''
+        """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
         :param int offset:
@@ -718,8 +724,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The service will read the same number of bytes as the destination range (length-offset).
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        '''
-
+        """
         options = self._upload_range_from_url_options(
             source_url=source_url,
             offset=offset,

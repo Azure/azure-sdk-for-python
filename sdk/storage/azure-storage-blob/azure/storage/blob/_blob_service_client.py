@@ -80,7 +80,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -140,7 +140,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
@@ -369,7 +369,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
-            Specifies that container metadata be returned in the response.
+            Specifies that container metadata to be returned in the response.
             The default value is `False`.
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
@@ -424,7 +424,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             container as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -462,10 +462,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param ~azure.storage.blob.LeaseClient lease:
+        :param lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
+        :type lease: ~azure.storage.blob.LeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.

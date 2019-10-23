@@ -43,17 +43,17 @@ class DirectoryClient(StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
-    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.s
+    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -65,7 +65,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the directory,
-        use the from_directory_url classmethod.
+        use the :func:`from_directory_url` classmethod.
     :param share_name:
         The name of the share for the directory.
     :type share_name: str
@@ -73,7 +73,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         The directory path for the directory with which to interact.
         If specified, this value will override a directory value specified in the directory URL.
     :param str snapshot:
-        An optional share snapshot on which to operate.
+        An optional share snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
@@ -128,11 +129,13 @@ class DirectoryClient(StorageAccountHostsMixin):
             **kwargs # type: Optional[Any]
         ):
         # type: (...) -> DirectoryClient
-        """
+        """Create a DirectoryClient from a directory url.
+
         :param str directory_url:
             The full URI to the directory.
         :param str snapshot:
-            An optional share snapshot on which to operate.
+            An optional share snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
@@ -189,8 +192,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param share_name: The share. This can either be the name of the share,
-            or an instance of ShareProperties
+        :param share_name: The name of the share.
         :type share_name: str
         :param str directory_path:
             The directory path.
@@ -330,7 +332,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.DirectoryProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.DirectoryProperties and
+            ~azure.storage.file.FileProperties]
 
         .. admonition:: Example:
 
@@ -461,6 +464,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: DirectoryProperties
         :rtype: ~azure.storage.file.DirectoryProperties
         """
         timeout = kwargs.pop('timeout', None)
@@ -519,10 +523,10 @@ class DirectoryClient(StorageAccountHostsMixin):
             Here is an example for when the var type is str: 'Temporary|Archive'
         :type file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
         :param file_creation_time: Creation time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_creation_time: str or datetime
         :param file_last_write_time: Last write time for the file
-            Default value: Now.
+            Default value: Preserve.
         :type file_last_write_time: str or datetime
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
@@ -636,7 +640,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
-            ContentSettings object used to set file properties.
+            ContentSettings object used to set file properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each range of the file. The storage
             service checks the hash of the content that has arrived with the hash
