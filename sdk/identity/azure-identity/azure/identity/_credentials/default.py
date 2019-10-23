@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ClientAuthenticationError
-
 import os
+
+from azure.core.exceptions import ClientAuthenticationError
 
 from .._constants import EnvironmentVariables
 from .chained import ChainedTokenCredential
@@ -49,4 +49,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         try:
             return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(message="{}\nPlease visit the Azure identity Python SDK docs at https://aka.ms/python-sdk-identity#defaultazurecredential to learn what options defaultAzureCredential supports".format(e.message))
+            raise ClientAuthenticationError(message="""
+{}\n\nPlease visit the Azure identity Python SDK docs at 
+https://aka.ms/python-sdk-identity#defaultazurecredential 
+to learn what options DefaultAzureCredential supports"""
+                .format(e.message))
