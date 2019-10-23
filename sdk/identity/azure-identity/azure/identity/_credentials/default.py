@@ -45,7 +45,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def get_token(self, *scopes, **kwargs):
         try:
             return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
         except ClientAuthenticationError as e:
