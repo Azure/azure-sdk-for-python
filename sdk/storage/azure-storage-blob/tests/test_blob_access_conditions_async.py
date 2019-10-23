@@ -31,7 +31,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient,
+    BlobLeaseClient,
 )
 from testcase import (
     StorageTestCase,
@@ -1632,7 +1632,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1677,7 +1677,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1721,7 +1721,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1763,7 +1763,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record

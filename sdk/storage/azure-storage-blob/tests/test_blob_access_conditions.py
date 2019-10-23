@@ -18,7 +18,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient,
+    BlobLeaseClient,
     StorageErrorCode,
     BlobBlock,
     BlobType,
@@ -1312,7 +1312,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1349,7 +1349,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1385,7 +1385,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1419,7 +1419,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, LeaseClient)
+        self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record

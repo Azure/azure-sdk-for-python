@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from ._shared.models import UserDelegationKey
-    from ._lease import LeaseClient
+    from ._lease import BlobLeaseClient
     from ._models import (
         BlobProperties,
         ContainerProperties,
@@ -451,7 +451,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -468,7 +468,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.

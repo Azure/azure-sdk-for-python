@@ -36,7 +36,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient,
+    BlobLeaseClient,
 )
 
 from testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -83,7 +83,7 @@ class StorageContainerTestAsync(StorageTestCase):
                     loop.run_until_complete(container.delete_container())
                 except HttpResponseError:
                     try:
-                        lease = LeaseClient(container)
+                        lease = BlobLeaseClient(container)
                         loop.run_until_complete(lease.break_lease(0))
                         loop.run_until_complete(container.delete_container())
                     except:

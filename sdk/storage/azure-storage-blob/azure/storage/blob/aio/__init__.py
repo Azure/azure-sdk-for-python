@@ -11,7 +11,7 @@ from .._shared.policies_async import ExponentialRetry, LinearRetry
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._blob_service_client_async import BlobServiceClient
-from ._lease_async import LeaseClient
+from ._lease_async import BlobLeaseClient
 
 
 async def upload_blob_to_url(
@@ -129,7 +129,7 @@ __all__ = [
     'BlobServiceClient',
     'ContainerClient',
     'BlobClient',
-    'LeaseClient',
+    'BlobLeaseClient',
     'ExponentialRetry',
     'LinearRetry'
 ]

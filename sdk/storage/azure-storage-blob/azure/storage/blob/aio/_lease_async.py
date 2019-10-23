@@ -16,7 +16,7 @@ from .._generated.models import (
     StorageErrorException,
     LeaseAccessConditions)
 from .._serialize import get_modify_conditions
-from .._lease import LeaseClient as LeaseClientBase
+from .._lease import BlobLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     ContainerClient = TypeVar("ContainerClient")
 
 
-class LeaseClient(LeaseClientBase):
-    """Creates a new LeaseClient.
+class BlobLeaseClient(LeaseClientBase):
+    """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
 

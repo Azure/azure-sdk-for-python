@@ -42,7 +42,7 @@ from ._models import ( # pylint: disable=unused-import
     BlobPropertiesPaged,
     BlobType,
     BlobPrefix)
-from ._lease import LeaseClient, get_access_conditions
+from ._lease import BlobLeaseClient, get_access_conditions
 from ._blob_client import BlobClient
 
 if TYPE_CHECKING:
@@ -264,7 +264,7 @@ class ContainerClient(StorageAccountHostsMixin):
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -313,7 +313,7 @@ class ContainerClient(StorageAccountHostsMixin):
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
             **kwargs):
-        # type: (...) -> LeaseClient
+        # type: (...) -> BlobLeaseClient
         """
         Requests a new lease. If the container does not have an active lease,
         the Blob service creates a lease on the container and returns a new
@@ -346,8 +346,8 @@ class ContainerClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A LeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.blob.LeaseClient
+        :returns: A BlobLeaseClient object, that can be run in a context manager.
+        :rtype: ~azure.storage.blob.BlobLeaseClient
 
         .. admonition:: Example:
 
@@ -358,7 +358,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Acquiring a lease on the container.
         """
-        lease = LeaseClient(self, lease_id=lease_id) # type: ignore
+        lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
@@ -389,7 +389,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword lease:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified container within a container object.
@@ -436,7 +436,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword lease:
             If specified, set_container_metadata only succeeds if the
             container's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -483,7 +483,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword lease:
             If specified, get_container_access_policy only succeeds if the
             container's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Access policy information in a dict.
@@ -532,9 +532,9 @@ class ContainerClient(StorageAccountHostsMixin):
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
         :keyword lease:
-            Required if the container has an active lease. Value can be a LeaseClient object
+            Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A datetime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -717,9 +717,9 @@ class ContainerClient(StorageAccountHostsMixin):
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
-            Required if the container has an active lease. Value can be a LeaseClient object
+            Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -819,9 +819,9 @@ class ContainerClient(StorageAccountHostsMixin):
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a Lease object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -935,9 +935,9 @@ class ContainerClient(StorageAccountHostsMixin):
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
         :keyword lease:
-            Required if a blob has an active lease. Value can be a Lease object
+            Required if a blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1045,9 +1045,9 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
@@ -1102,9 +1102,9 @@ class ContainerClient(StorageAccountHostsMixin):
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :keyword lease:
-            Required if the blob has an active lease. Value can be a LeaseClient object
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.LeaseClient or str
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
