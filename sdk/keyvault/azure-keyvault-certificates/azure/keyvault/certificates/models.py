@@ -232,7 +232,7 @@ class CertificateProperties(object):
     @property
     def vault_url(self):
         # type: () -> str
-        """The name of the vault that the certificate is created in.
+        """URL of the vault containing the certificate
 
         :rtype: str
         """
@@ -1132,7 +1132,7 @@ class IssuerProperties(object):
     @property
     def vault_url(self):
         # type: () -> str
-        """The name of the vault with this issuer.
+        """URL of the vault containing the issuer
 
         :rtype: str
         """
