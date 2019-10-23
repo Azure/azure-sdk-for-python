@@ -224,7 +224,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             )
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         try:
-            return await self._client.fileshare.create(  # type: ignore
+            return await self._client.file.create(  # type: ignore
                 file_content_length=size,
                 metadata=metadata,
                 file_attributes=_str(file_attributes),

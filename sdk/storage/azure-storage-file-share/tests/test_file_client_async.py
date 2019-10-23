@@ -275,7 +275,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file-share/{} Python/{} ({})".format(
+                "azsdk-python-storage-file/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -296,7 +296,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-file/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -307,7 +307,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-file/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -326,7 +326,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file-share/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-file/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
