@@ -196,6 +196,38 @@ class AutomaticOSUpgradeProperties(Model):
         self.automatic_os_upgrade_supported = automatic_os_upgrade_supported
 
 
+class AutomaticRepairsPolicy(Model):
+    """Specifies the configuration parameters for automatic repairs on the virtual
+    machine scale set.
+
+    :param enabled: Specifies whether automatic repairs should be enabled on
+     the virtual machine scale set. The default value is false.
+    :type enabled: bool
+    :param grace_period: The amount of time for which automatic repairs are
+     suspended due to a state change on VM. The grace time starts after the
+     state change has completed. This helps avoid premature or accidental
+     repairs. The time duration should be specified in ISO 8601 format. The
+     default value is 5 minutes (PT5M).
+    :type grace_period: str
+    :param max_instance_repairs_percent: The percentage (capacity of scaleset)
+     of virtual machines that will be simultaneously repaired. The default
+     value is 20%.
+    :type max_instance_repairs_percent: int
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'grace_period': {'key': 'gracePeriod', 'type': 'str'},
+        'max_instance_repairs_percent': {'key': 'maxInstanceRepairsPercent', 'type': 'int'},
+    }
+
+    def __init__(self, *, enabled: bool=None, grace_period: str=None, max_instance_repairs_percent: int=None, **kwargs) -> None:
+        super(AutomaticRepairsPolicy, self).__init__(**kwargs)
+        self.enabled = enabled
+        self.grace_period = grace_period
+        self.max_instance_repairs_percent = max_instance_repairs_percent
+
+
 class Resource(Model):
     """The Resource model definition.
 
@@ -3619,6 +3651,9 @@ class VirtualMachineScaleSet(Resource):
     :type plan: ~azure.mgmt.compute.v2018_10_01.models.Plan
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: ~azure.mgmt.compute.v2018_10_01.models.UpgradePolicy
+    :param automatic_repairs_policy: Policy for automatic repairs.
+    :type automatic_repairs_policy:
+     ~azure.mgmt.compute.v2018_10_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
      ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetVMProfile
@@ -3676,6 +3711,7 @@ class VirtualMachineScaleSet(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
+        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
@@ -3689,11 +3725,12 @@ class VirtualMachineScaleSet(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
         self.upgrade_policy = upgrade_policy
+        self.automatic_repairs_policy = automatic_repairs_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
         self.overprovision = overprovision
@@ -4609,12 +4646,20 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :type plan: ~azure.mgmt.compute.v2018_10_01.models.Plan
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: ~azure.mgmt.compute.v2018_10_01.models.UpgradePolicy
+    :param automatic_repairs_policy: Policy for automatic repairs.
+    :type automatic_repairs_policy:
+     ~azure.mgmt.compute.v2018_10_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
      ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetUpdateVMProfile
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
@@ -4629,19 +4674,23 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
+        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, identity=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
         self.upgrade_policy = upgrade_policy
+        self.automatic_repairs_policy = automatic_repairs_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.overprovision = overprovision
+        self.do_not_run_extensions_on_overprovisioned_vms = do_not_run_extensions_on_overprovisioned_vms
         self.single_placement_group = single_placement_group
         self.identity = identity
 

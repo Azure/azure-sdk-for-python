@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
+import os
+
 from devtools_testutils import ResourceGroupPreparer
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
@@ -10,7 +13,10 @@ from keys_test_case import KeyVaultTestCase
 class TestCryptoExamples(KeyVaultTestCase):
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer()
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_encrypt_decrypt(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -35,13 +41,13 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-        print(result.decrypted_bytes)
+        print(result.plaintext)
 
         # [END decrypt]
 
         pass
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_wrap_unwrap(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -67,11 +73,11 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
-        unwrapped_bytes = result.unwrapped_bytes
+        key = result.key
 
         # [END unwrap]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_sign_verify(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -101,6 +107,6 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
-        assert verified.result is True
+        assert verified.is_valid
 
         # [END verify]

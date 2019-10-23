@@ -19,8 +19,6 @@ from azure.storage.queue import (
     BinaryBase64DecodePolicy,
     TextXMLEncodePolicy,
     TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
 )
 
 from azure.storage.queue.aio import (
@@ -71,7 +69,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
             pass
 
         # Action.
-        await queue.enqueue_message(message)
+        await queue.send_message(message)
 
         # Asserts
         dequeued = None
@@ -115,7 +113,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
 
         # Asserts
         with self.assertRaises(HttpResponseError):
-            await queue.enqueue_message(message)
+            await queue.send_message(message)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -124,8 +122,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
             message_decode_policy=TextBase64DecodePolicy(),
@@ -143,8 +141,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
@@ -166,7 +164,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = b'xyz'
-            await queue.enqueue_message(message)
+            await queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
@@ -178,8 +176,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport()) 
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
@@ -188,7 +186,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Action.
         with self.assertRaises(TypeError) as e:
             message = u'xyz'
-            await queue.enqueue_message(message)
+            await queue.send_message(message)
 
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
@@ -200,8 +198,8 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=self._account_url(storage_account.name),
-            queue=self.get_resource_name(TEST_QUEUE_PREFIX),
+            account_url=self._account_url(storage_account.name),
+            queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextXMLEncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
@@ -211,7 +209,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         except ResourceExistsError:
             pass
         message = u'xyz'
-        await queue.enqueue_message(message)
+        await queue.send_message(message)
 
         # Action.
         with self.assertRaises(DecodeError) as e:

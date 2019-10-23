@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from ._models import DecryptResult, EncryptResult, SignResult, UnwrapKeyResult, VerifyResult, WrapKeyResult
-from .client import CryptographyClient
+from ._models import DecryptResult, EncryptResult, SignResult, WrapResult, VerifyResult, UnwrapResult
+from ._client import CryptographyClient
+from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
 
 __all__ = [
@@ -15,7 +15,7 @@ __all__ = [
     "KeyWrapAlgorithm",
     "SignatureAlgorithm",
     "SignResult",
-    "UnwrapKeyResult",
+    "WrapResult",
     "VerifyResult",
-    "WrapKeyResult",
+    "UnwrapResult",
 ]

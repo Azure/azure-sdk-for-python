@@ -19,15 +19,15 @@ from azure.core.exceptions import HttpResponseError
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault. The vault has to be
-# soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
-# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create key (create_key)
 #
 # 2. List keys from the Key Vault (list_keys)
 #
-# 3. List key versions from the Key Vault (list_key_versions)
+# 3. List key versions from the Key Vault (list_properties_of_key_versions)
 #
 # 4. List deleted keys from the Key Vault (list_deleted_keys). The vault has to be soft-delete enabled to perform this
 # operation.
@@ -70,15 +70,14 @@ try:
 
     # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.
     print("\n.. List versions of a key using its name")
-    key_versions = client.list_key_versions(rsa_key.name)
+    key_versions = client.list_properties_of_key_versions(rsa_key.name)
     for key in key_versions:
         print("Key '{0}' has version: '{1}'".format(key.name, key.version))
 
     # Both the rsa key and ec key are not needed anymore. Let's delete those keys.
     print("\n.. Delete the created keys...")
     for key_name in (ec_key.name, rsa_key.name):
-        client.delete_key(key_name)
-    time.sleep(10)
+        client.begin_delete_key(key_name).wait()
 
     # You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted keys from the Key Vault (requires soft-delete)")

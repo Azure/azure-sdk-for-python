@@ -64,7 +64,11 @@ class TestFileAuthSamples(FileTestCase):
 
         # Create a SAS token to use to authenticate a new client
         # [START generate_sas_token]
-        sas_token = file_service_client.generate_shared_access_signature(
+        from azure.storage.file import generate_account_sas
+
+        sas_token = generate_account_sas(
+            file_service_client.account_name,
+            file_service_client.credential.account_key,
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)

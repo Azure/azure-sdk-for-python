@@ -48,7 +48,7 @@ class FakeTokenCredential(object):
 class QueueTestCase(AzureMgmtTestCase):
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
-    
+
     def _account_url (self, name):
         return 'https://{}.queue.core.windows.net'.format(name)
 
@@ -163,9 +163,9 @@ class QueueTestCase(AzureMgmtTestCase):
         from azure.identity import ClientSecretCredential
 
         return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
         )
 
     def generate_fake_token(self):

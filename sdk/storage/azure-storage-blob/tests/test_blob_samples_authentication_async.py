@@ -106,11 +106,8 @@ class TestAuthSamplesAsync(StorageTestCase):
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
-        )
+        token_credential = ClientSecretCredential(self.active_directory_tenant_id, self.active_directory_application_id,
+                                                  self.active_directory_application_secret)
 
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob.aio import BlobServiceClient
@@ -140,10 +137,12 @@ class TestAuthSamplesAsync(StorageTestCase):
         # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client
         from datetime import datetime, timedelta
-        from azure.storage.blob import ResourceTypes, AccountSasPermissions
+        from azure.storage.blob import ResourceTypes, AccountSasPermissions, generate_account_sas
 
-        sas_token = blob_service_client.generate_shared_access_signature(
-            resource_types=ResourceTypes.OBJECT,
+        sas_token = generate_account_sas(
+            blob_service_client.account_name,
+            account_key=blob_service_client.credential.account_key,
+            resource_types=ResourceTypes(object=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )

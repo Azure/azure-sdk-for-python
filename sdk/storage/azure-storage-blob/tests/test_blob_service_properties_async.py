@@ -22,7 +22,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.storage.blob import (
-    Logging,
+    BlobAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy,
@@ -60,7 +60,7 @@ class ServicePropertiesTestAsync(StorageTestCase):
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)
 
-        self._assert_logging_equal(prop.logging, Logging())
+        self._assert_logging_equal(prop.logging, BlobAnalyticsLogging())
         self._assert_metrics_equal(prop.hour_metrics, Metrics())
         self._assert_metrics_equal(prop.minute_metrics, Metrics())
         self._assert_cors_equal(prop.cors, list())
@@ -138,7 +138,7 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
         # Act
         resp = await self.bsc.set_service_properties(
-            logging=Logging(),
+            analytics_logging=BlobAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list(),
@@ -362,10 +362,10 @@ class ServicePropertiesTestAsync(StorageTestCase):
 
     async def _test_set_logging_async(self):
         # Arrange
-        logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        await self.bsc.set_service_properties(logging=logging)
+        await self.bsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = await self.bsc.get_service_properties()

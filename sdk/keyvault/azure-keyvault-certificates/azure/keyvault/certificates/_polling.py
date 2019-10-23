@@ -48,7 +48,7 @@ class CreateCertificatePoller(PollingMethod):
         return self._pending_certificate_op.status.lower() != "inprogress"
 
     def resource(self):
-        # type: () -> Union[Certificate, CertificateOperation]
+        # type: () -> Union[KeyVaultCertificate, CertificateOperation]
         return self._resource
 
     def status(self):

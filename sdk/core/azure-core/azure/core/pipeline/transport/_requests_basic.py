@@ -159,7 +159,7 @@ class RequestsTransport(HttpTransport):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_sync.py
+        .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START requests]
             :end-before: [END requests]
             :language: python

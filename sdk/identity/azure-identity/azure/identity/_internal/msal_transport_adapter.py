@@ -12,6 +12,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
+    HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     RetryPolicy,
@@ -87,7 +88,8 @@ class MsalTransportAdapter(object):
             ContentDecodePolicy(),
             config.retry_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
         ]
         if not transport:
             transport = RequestsTransport(**kwargs)

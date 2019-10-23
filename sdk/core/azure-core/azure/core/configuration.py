@@ -48,7 +48,7 @@ class Configuration(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_config.py
+        .. literalinclude:: ../samples/test_example_config.py
             :start-after: [START configuration]
             :end-before: [END configuration]
             :language: python
@@ -99,7 +99,7 @@ class ConnectionConfiguration(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_config.py
+        .. literalinclude:: ../samples/test_example_config.py
             :start-after: [START connection_configuration]
             :end-before: [END connection_configuration]
             :language: python

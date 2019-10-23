@@ -26,7 +26,7 @@ class TestQueueAuthSamples(QueueTestCase):
     active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
     active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_connection_string(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate a QueueServiceClient using a connection string
@@ -40,7 +40,7 @@ class TestQueueAuthSamples(QueueTestCase):
 
         assert properties is not None
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_shared_key(self, resource_group, location, storage_account, storage_account_key):
 
@@ -54,7 +54,7 @@ class TestQueueAuthSamples(QueueTestCase):
 
         assert properties is not None
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_active_directory(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
@@ -64,9 +64,9 @@ class TestQueueAuthSamples(QueueTestCase):
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
         token_credential = ClientSecretCredential(
+            self.active_directory_tenant_id,
             self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
+            self.active_directory_application_secret
         )
 
         # Instantiate a QueueServiceClient using a token credential
@@ -79,7 +79,7 @@ class TestQueueAuthSamples(QueueTestCase):
 
         assert properties is not None
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -91,7 +91,11 @@ class TestQueueAuthSamples(QueueTestCase):
         queue_service = QueueServiceClient.from_connection_string(connection_string)
 
         # Create a SAS token to use for authentication of a client
-        sas_token = queue_service.generate_shared_access_signature(
+        from azure.storage.queue import generate_account_sas
+
+        sas_token = generate_account_sas(
+            queue_service.account_name,
+            queue_service.credential.account_key,
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)

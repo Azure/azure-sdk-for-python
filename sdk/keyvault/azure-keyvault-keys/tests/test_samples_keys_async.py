@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
+import os
+
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
@@ -28,7 +31,11 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, vault_client, **kwargs):
@@ -118,7 +125,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_key]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, vault_client, **kwargs):
@@ -142,10 +149,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.enabled)
 
         # [END list_keys]
-        # [START list_key_versions]
+        # [START list_properties_of_key_versions]
 
         # get an iterator of all versions of a key
-        key_versions = key_client.list_key_versions("key-name")
+        key_versions = key_client.list_properties_of_key_versions("key-name")
 
         async for key in key_versions:
             print(key.id)
@@ -153,7 +160,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.properties.version)
             print(key.expires_on)
 
-        # [END list_key_versions]
+        # [END list_properties_of_key_versions]
         # [START list_deleted_keys]
 
         # get an iterator of deleted keys (requires soft-delete enabled for the vault)
@@ -168,7 +175,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END list_deleted_keys]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_backup_restore(self, vault_client, **kwargs):
@@ -197,7 +204,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END restore_key_backup]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_recover(self, vault_client, **kwargs):
@@ -205,9 +212,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         created_key = await key_client.create_key("key-name", "RSA")
 
         await key_client.delete_key(created_key.name)
-        await self._poll_until_no_exception(
-            key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-        )
 
         # [START get_deleted_key]
 

@@ -4,6 +4,8 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -31,7 +33,11 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
@@ -112,7 +118,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_key]
 
         # delete a key
-        deleted_key = key_client.delete_key("key-name")
+        deleted_key_poller = key_client.begin_delete_key("key-name")
+        deleted_key = deleted_key_poller.result()
 
         print(deleted_key.name)
 
@@ -122,9 +129,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
 
+        # if you want to block until deletion is complete, call wait() on the poller
+        deleted_key_poller.wait()
+
         # [END delete_key]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -145,16 +155,16 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_keys]
 
-        # [START list_key_versions]
+        # [START list_properties_of_key_versions]
 
         # get an iterator of a key's versions
-        key_versions = key_client.list_key_versions("key-name")
+        key_versions = key_client.list_properties_of_key_versions("key-name")
 
         for key in key_versions:
             print(key.id)
             print(key.name)
 
-        # [END list_key_versions]
+        # [END list_properties_of_key_versions]
 
         # [START list_deleted_keys]
 
@@ -170,7 +180,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_keys]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -186,7 +196,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        key_client.delete_key(key_name)
+        key_client.begin_delete_key(key_name).wait()
 
         # [START restore_key_backup]
 
@@ -197,15 +207,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END restore_key_backup]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        key_client.delete_key(created_key.name)
-        self._poll_until_no_exception(
-            functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-        )
+        key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)
@@ -222,8 +229,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
-        recovered_key = key_client.recover_deleted_key("key-name")
+        recovered_key_poller = key_client.begin_recover_deleted_key("key-name")
+        recovered_key = recovered_key_poller.result()
         print(recovered_key.id)
         print(recovered_key.name)
+
+        # if you want to block until key is recovered server-side, call wait() on the poller
+        recovered_key_poller.wait()
 
         # [END recover_deleted_key]

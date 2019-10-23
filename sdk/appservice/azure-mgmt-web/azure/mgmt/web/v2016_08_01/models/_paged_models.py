@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SitePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Site <azure.mgmt.web.models.Site>` object
+    A paging container for iterating over a list of :class:`Site <azure.mgmt.web.v2016_08_01.models.Site>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class SitePaged(Paged):
         super(SitePaged, self).__init__(*args, **kwargs)
 class BackupItemPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`BackupItem <azure.mgmt.web.models.BackupItem>` object
+    A paging container for iterating over a list of :class:`BackupItem <azure.mgmt.web.v2016_08_01.models.BackupItem>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class BackupItemPaged(Paged):
         super(BackupItemPaged, self).__init__(*args, **kwargs)
 class SiteConfigResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SiteConfigResource <azure.mgmt.web.models.SiteConfigResource>` object
+    A paging container for iterating over a list of :class:`SiteConfigResource <azure.mgmt.web.v2016_08_01.models.SiteConfigResource>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class SiteConfigResourcePaged(Paged):
         super(SiteConfigResourcePaged, self).__init__(*args, **kwargs)
 class SiteConfigurationSnapshotInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SiteConfigurationSnapshotInfo <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` object
+    A paging container for iterating over a list of :class:`SiteConfigurationSnapshotInfo <azure.mgmt.web.v2016_08_01.models.SiteConfigurationSnapshotInfo>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class SiteConfigurationSnapshotInfoPaged(Paged):
         super(SiteConfigurationSnapshotInfoPaged, self).__init__(*args, **kwargs)
 class ContinuousWebJobPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ContinuousWebJob <azure.mgmt.web.models.ContinuousWebJob>` object
+    A paging container for iterating over a list of :class:`ContinuousWebJob <azure.mgmt.web.v2016_08_01.models.ContinuousWebJob>` object
     """
 
     _attribute_map = {
@@ -79,7 +79,7 @@ class ContinuousWebJobPaged(Paged):
         super(ContinuousWebJobPaged, self).__init__(*args, **kwargs)
 class DeploymentPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Deployment <azure.mgmt.web.models.Deployment>` object
+    A paging container for iterating over a list of :class:`Deployment <azure.mgmt.web.v2016_08_01.models.Deployment>` object
     """
 
     _attribute_map = {
@@ -92,7 +92,7 @@ class DeploymentPaged(Paged):
         super(DeploymentPaged, self).__init__(*args, **kwargs)
 class IdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Identifier <azure.mgmt.web.models.Identifier>` object
+    A paging container for iterating over a list of :class:`Identifier <azure.mgmt.web.v2016_08_01.models.Identifier>` object
     """
 
     _attribute_map = {
@@ -105,7 +105,7 @@ class IdentifierPaged(Paged):
         super(IdentifierPaged, self).__init__(*args, **kwargs)
 class FunctionEnvelopePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`FunctionEnvelope <azure.mgmt.web.models.FunctionEnvelope>` object
+    A paging container for iterating over a list of :class:`FunctionEnvelope <azure.mgmt.web.v2016_08_01.models.FunctionEnvelope>` object
     """
 
     _attribute_map = {
@@ -118,7 +118,7 @@ class FunctionEnvelopePaged(Paged):
         super(FunctionEnvelopePaged, self).__init__(*args, **kwargs)
 class HostNameBindingPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`HostNameBinding <azure.mgmt.web.models.HostNameBinding>` object
+    A paging container for iterating over a list of :class:`HostNameBinding <azure.mgmt.web.v2016_08_01.models.HostNameBinding>` object
     """
 
     _attribute_map = {
@@ -131,7 +131,7 @@ class HostNameBindingPaged(Paged):
         super(HostNameBindingPaged, self).__init__(*args, **kwargs)
 class SiteInstancePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SiteInstance <azure.mgmt.web.models.SiteInstance>` object
+    A paging container for iterating over a list of :class:`SiteInstance <azure.mgmt.web.v2016_08_01.models.SiteInstance>` object
     """
 
     _attribute_map = {
@@ -144,7 +144,7 @@ class SiteInstancePaged(Paged):
         super(SiteInstancePaged, self).__init__(*args, **kwargs)
 class ProcessInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` object
+    A paging container for iterating over a list of :class:`ProcessInfo <azure.mgmt.web.v2016_08_01.models.ProcessInfo>` object
     """
 
     _attribute_map = {
@@ -157,7 +157,7 @@ class ProcessInfoPaged(Paged):
         super(ProcessInfoPaged, self).__init__(*args, **kwargs)
 class ProcessModuleInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ProcessModuleInfo <azure.mgmt.web.models.ProcessModuleInfo>` object
+    A paging container for iterating over a list of :class:`ProcessModuleInfo <azure.mgmt.web.v2016_08_01.models.ProcessModuleInfo>` object
     """
 
     _attribute_map = {
@@ -170,7 +170,7 @@ class ProcessModuleInfoPaged(Paged):
         super(ProcessModuleInfoPaged, self).__init__(*args, **kwargs)
 class ProcessThreadInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ProcessThreadInfo <azure.mgmt.web.models.ProcessThreadInfo>` object
+    A paging container for iterating over a list of :class:`ProcessThreadInfo <azure.mgmt.web.v2016_08_01.models.ProcessThreadInfo>` object
     """
 
     _attribute_map = {
@@ -183,7 +183,7 @@ class ProcessThreadInfoPaged(Paged):
         super(ProcessThreadInfoPaged, self).__init__(*args, **kwargs)
 class ResourceMetricDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.models.ResourceMetricDefinition>` object
+    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.v2016_08_01.models.ResourceMetricDefinition>` object
     """
 
     _attribute_map = {
@@ -196,7 +196,7 @@ class ResourceMetricDefinitionPaged(Paged):
         super(ResourceMetricDefinitionPaged, self).__init__(*args, **kwargs)
 class ResourceMetricPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceMetric <azure.mgmt.web.models.ResourceMetric>` object
+    A paging container for iterating over a list of :class:`ResourceMetric <azure.mgmt.web.v2016_08_01.models.ResourceMetric>` object
     """
 
     _attribute_map = {
@@ -209,7 +209,7 @@ class ResourceMetricPaged(Paged):
         super(ResourceMetricPaged, self).__init__(*args, **kwargs)
 class PerfMonResponsePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PerfMonResponse <azure.mgmt.web.models.PerfMonResponse>` object
+    A paging container for iterating over a list of :class:`PerfMonResponse <azure.mgmt.web.v2016_08_01.models.PerfMonResponse>` object
     """
 
     _attribute_map = {
@@ -222,7 +222,7 @@ class PerfMonResponsePaged(Paged):
         super(PerfMonResponsePaged, self).__init__(*args, **kwargs)
 class PublicCertificatePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PublicCertificate <azure.mgmt.web.models.PublicCertificate>` object
+    A paging container for iterating over a list of :class:`PublicCertificate <azure.mgmt.web.v2016_08_01.models.PublicCertificate>` object
     """
 
     _attribute_map = {
@@ -235,7 +235,7 @@ class PublicCertificatePaged(Paged):
         super(PublicCertificatePaged, self).__init__(*args, **kwargs)
 class SiteExtensionInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SiteExtensionInfo <azure.mgmt.web.models.SiteExtensionInfo>` object
+    A paging container for iterating over a list of :class:`SiteExtensionInfo <azure.mgmt.web.v2016_08_01.models.SiteExtensionInfo>` object
     """
 
     _attribute_map = {
@@ -248,7 +248,7 @@ class SiteExtensionInfoPaged(Paged):
         super(SiteExtensionInfoPaged, self).__init__(*args, **kwargs)
 class SlotDifferencePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SlotDifference <azure.mgmt.web.models.SlotDifference>` object
+    A paging container for iterating over a list of :class:`SlotDifference <azure.mgmt.web.v2016_08_01.models.SlotDifference>` object
     """
 
     _attribute_map = {
@@ -261,7 +261,7 @@ class SlotDifferencePaged(Paged):
         super(SlotDifferencePaged, self).__init__(*args, **kwargs)
 class SnapshotPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.web.models.Snapshot>` object
+    A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.web.v2016_08_01.models.Snapshot>` object
     """
 
     _attribute_map = {
@@ -274,7 +274,7 @@ class SnapshotPaged(Paged):
         super(SnapshotPaged, self).__init__(*args, **kwargs)
 class TriggeredWebJobPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`TriggeredWebJob <azure.mgmt.web.models.TriggeredWebJob>` object
+    A paging container for iterating over a list of :class:`TriggeredWebJob <azure.mgmt.web.v2016_08_01.models.TriggeredWebJob>` object
     """
 
     _attribute_map = {
@@ -287,7 +287,7 @@ class TriggeredWebJobPaged(Paged):
         super(TriggeredWebJobPaged, self).__init__(*args, **kwargs)
 class TriggeredJobHistoryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`TriggeredJobHistory <azure.mgmt.web.models.TriggeredJobHistory>` object
+    A paging container for iterating over a list of :class:`TriggeredJobHistory <azure.mgmt.web.v2016_08_01.models.TriggeredJobHistory>` object
     """
 
     _attribute_map = {
@@ -300,7 +300,7 @@ class TriggeredJobHistoryPaged(Paged):
         super(TriggeredJobHistoryPaged, self).__init__(*args, **kwargs)
 class CsmUsageQuotaPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CsmUsageQuota <azure.mgmt.web.models.CsmUsageQuota>` object
+    A paging container for iterating over a list of :class:`CsmUsageQuota <azure.mgmt.web.v2016_08_01.models.CsmUsageQuota>` object
     """
 
     _attribute_map = {
@@ -313,7 +313,7 @@ class CsmUsageQuotaPaged(Paged):
         super(CsmUsageQuotaPaged, self).__init__(*args, **kwargs)
 class WebJobPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`WebJob <azure.mgmt.web.models.WebJob>` object
+    A paging container for iterating over a list of :class:`WebJob <azure.mgmt.web.v2016_08_01.models.WebJob>` object
     """
 
     _attribute_map = {

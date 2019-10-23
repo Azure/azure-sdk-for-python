@@ -63,8 +63,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors\
-        \ /><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
     headers:
       Content-Type:
       - application/xml
@@ -147,8 +147,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors\
-        \ /><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
     headers:
       Content-Type:
       - application/xml
@@ -164,6 +164,90 @@ interactions:
       - c67d583c-801e-0054-4ee2-228e8a000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><Logging><Version>1.0</Version><Delete>false</Delete><Read>false</Read><Write>false</Write><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+      /><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '585'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 19134036-f033-11e9-a231-b831b58100e8
+      x-ms-date:
+      - Wed, 16 Oct 2019 16:36:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 16 Oct 2019 16:36:26 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - aa29e103-401e-000d-773f-848b0c000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 194772b8-f033-11e9-9f32-b831b58100e8
+      x-ms-date:
+      - Wed, 16 Oct 2019 16:36:26 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument></StaticWebsite><DefaultServiceVersion>2014-02-14</DefaultServiceVersion></StorageServiceProperties>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 16 Oct 2019 16:36:26 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - aa29e120-401e-000d-0d3f-848b0c000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 200
       message: OK

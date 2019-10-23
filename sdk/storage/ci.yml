@@ -48,3 +48,9 @@ stages:
       safeName: azurestoragefile
     - name: azure_storage_queue
       safeName: azurestoragequeue
+    - name: azure_mgmt_storage
+      safeName: azuremgmtstorage
+    - name: azure_mgmt_storagecache
+      safeName: azuremgmtstoragecache
+    - name: azure_mgmt_storagesync
+      safeName: azuremgmtstoragesync

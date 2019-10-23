@@ -17,7 +17,6 @@ import isodate
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import raise_with_traceback
-from azure.core.pipeline import Pipeline
 
 
 _LOGGER = logging.getLogger(__name__)

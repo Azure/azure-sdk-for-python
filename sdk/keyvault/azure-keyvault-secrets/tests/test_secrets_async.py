@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import hashlib
+import os
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -14,6 +16,10 @@ from dateutil import parser as date_parse
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
@@ -49,7 +55,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
@@ -111,12 +117,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         updated = await _update_secret(created)
 
         # delete secret
-        deleted = await client.delete_secret(updated.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        deleted = await client.delete_secret(updated.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted)
 
-        await self._poll_until_exception(client.get_secret, updated.name, expected_exception=ResourceNotFoundError)
-
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_list(self, vault_client, **kwargs):
@@ -136,10 +144,10 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_properties_of_secrets(max_results=max_secrets)
+        result = client.list_properties_of_secrets(max_page_size=max_secrets)
         await self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
@@ -153,14 +161,13 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = await client.set_secret(secret_name, secret_value)
-
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         # delete them
         for secret_name in expected.keys():
-            await client.delete_secret(secret_name)
-        for secret_name in expected.keys():
-            await self._poll_until_no_exception(
-                client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
-            )
+            await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
         # validate list deleted secrets with attributes
         async for deleted_secret in client.list_deleted_secrets():
@@ -170,7 +177,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
@@ -190,7 +197,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret.id] = secret
 
         # list secret versions
-        result = client.list_secret_versions(secret_name)
+        result = client.list_properties_of_secret_versions(secret_name)
 
         # validate list secret versions with attributes
         async for secret in result:
@@ -200,7 +207,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -217,14 +224,18 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        await client.delete_secret(created_bundle.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        await client.delete_secret(created_bundle.name, _polling_interval=polling_interval)
 
         # restore secret
         restored = await client.restore_secret_backup(secret_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -240,11 +251,12 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for secret_name in secrets.keys():
-            await client.delete_secret(secret_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
+            await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
@@ -252,14 +264,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # recover select secrets
         for secret_name in secrets.keys():
-            await client.recover_deleted_secret(secret_name)
+            await client.recover_deleted_secret(secret_name, _polling_interval=polling_interval)
 
         # validate the recovered secrets exist
         await self._poll_until_no_exception(
             client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
         )
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):
@@ -275,11 +287,12 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for secret_name in secrets.keys():
-            await client.delete_secret(secret_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
+            await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
