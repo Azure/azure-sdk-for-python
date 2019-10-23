@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .hybrid_compute_management_client import HybridComputeManagementClient
-from .version import VERSION
+from ._configuration import HybridComputeManagementClientConfiguration
+from ._hybrid_compute_management_client import HybridComputeManagementClient
+__all__ = ['HybridComputeManagementClient', 'HybridComputeManagementClientConfiguration']
 
-__all__ = ['HybridComputeManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

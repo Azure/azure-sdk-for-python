@@ -10,56 +10,56 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_value_py3 import OperationValue
-    from .os_profile_py3 import OSProfile
-    from .error_detail_py3 import ErrorDetail
-    from .machine_extension_instance_view_status_py3 import MachineExtensionInstanceViewStatus
-    from .machine_extension_instance_view_py3 import MachineExtensionInstanceView
-    from .machine_py3 import Machine
-    from .machine_update_py3 import MachineUpdate
-    from .machine_reconnect_py3 import MachineReconnect
-    from .resource_py3 import Resource
-    from .update_resource_py3 import UpdateResource
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .machine_extension_py3 import MachineExtension
-    from .machine_extension_update_py3 import MachineExtensionUpdate
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Machine
+    from ._models_py3 import MachineExtension
+    from ._models_py3 import MachineExtensionInstanceView
+    from ._models_py3 import MachineExtensionInstanceViewStatus
+    from ._models_py3 import MachineExtensionUpdate
+    from ._models_py3 import MachineReconnect
+    from ._models_py3 import MachineUpdate
+    from ._models_py3 import OperationValue
+    from ._models_py3 import OSProfile
+    from ._models_py3 import Resource
+    from ._models_py3 import UpdateResource
 except (SyntaxError, ImportError):
-    from .operation_value import OperationValue
-    from .os_profile import OSProfile
-    from .error_detail import ErrorDetail
-    from .machine_extension_instance_view_status import MachineExtensionInstanceViewStatus
-    from .machine_extension_instance_view import MachineExtensionInstanceView
-    from .machine import Machine
-    from .machine_update import MachineUpdate
-    from .machine_reconnect import MachineReconnect
-    from .resource import Resource
-    from .update_resource import UpdateResource
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .machine_extension import MachineExtension
-    from .machine_extension_update import MachineExtensionUpdate
-from .machine_paged import MachinePaged
-from .machine_extension_paged import MachineExtensionPaged
-from .operation_value_paged import OperationValuePaged
-from .hybrid_compute_management_client_enums import (
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Machine
+    from ._models import MachineExtension
+    from ._models import MachineExtensionInstanceView
+    from ._models import MachineExtensionInstanceViewStatus
+    from ._models import MachineExtensionUpdate
+    from ._models import MachineReconnect
+    from ._models import MachineUpdate
+    from ._models import OperationValue
+    from ._models import OSProfile
+    from ._models import Resource
+    from ._models import UpdateResource
+from ._paged_models import MachineExtensionPaged
+from ._paged_models import MachinePaged
+from ._paged_models import OperationValuePaged
+from ._hybrid_compute_management_client_enums import (
     StatusTypes,
     StatusLevelTypes,
     InstanceViewTypes,
 )
 
 __all__ = [
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
+    'Machine',
+    'MachineExtension',
+    'MachineExtensionInstanceView',
+    'MachineExtensionInstanceViewStatus',
+    'MachineExtensionUpdate',
+    'MachineReconnect',
+    'MachineUpdate',
     'OperationValue',
     'OSProfile',
-    'ErrorDetail',
-    'MachineExtensionInstanceViewStatus',
-    'MachineExtensionInstanceView',
-    'Machine',
-    'MachineUpdate',
-    'MachineReconnect',
     'Resource',
     'UpdateResource',
-    'ErrorResponse', 'ErrorResponseException',
-    'MachineExtension',
-    'MachineExtensionUpdate',
     'MachinePaged',
     'MachineExtensionPaged',
     'OperationValuePaged',
