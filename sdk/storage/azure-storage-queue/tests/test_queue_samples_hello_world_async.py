@@ -47,10 +47,10 @@ class TestQueueHelloWorldSamplesAsync(AsyncQueueTestCase):
         # [END async_create_queue]
 
         try:
-            # Enqueue messages
+            # Send messages
             await asyncio.gather(
-                queue.enqueue_message(u"I'm using queues!"),
-                queue.enqueue_message(u"This is my second message"))
+                queue.send_message(u"I'm using queues!"),
+                queue.send_message(u"This is my second message"))
 
             # Receive the messages
             response = queue.receive_messages(messages_per_page=2)

@@ -5,11 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:54:35 GMT
+      - Wed, 16 Oct 2019 06:50:21 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -17,11 +15,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:5b51bcc3-0003-00c3-5efd-64dc82000000\nTime:2019-09-06T21:54:33.6924767Z</Message></Error>"
+        specified queue does not exist.\nRequestId:5eb916b7-3003-00a7-53ed-830880000000\nTime:2019-10-16T06:50:21.3720122Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Fri, 06 Sep 2019 21:54:33 GMT
+      date: Wed, 16 Oct 2019 06:50:21 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: QueueNotFound
       x-ms-version: '2018-03-28'

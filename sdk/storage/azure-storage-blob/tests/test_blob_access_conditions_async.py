@@ -8,24 +8,30 @@
 import pytest
 import asyncio
 
-import datetime
+from datetime import datetime, timedelta
 import os
 import unittest
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+
+from azure.storage.blob import (
+    StorageErrorCode,
+    BlobBlock,
+    BlobType,
+    ContentSettings,
+    BlobProperties,
+    ContainerSasPermissions,
+    AccessPolicy,
+)
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
     LeaseClient,
-    StorageErrorCode,
-    BlobBlock,
-    BlobType,
-    ContentSettings,
-    BlobProperties
 )
 from testcase import (
     StorageTestCase,
@@ -101,8 +107,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_metadata_with_if_modified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
@@ -120,8 +126,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_metadata_with_if_modified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -139,10 +145,14 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_if_modified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
-        await container.set_container_access_policy(if_modified_since=test_datetime)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
 
         # Assert
         acl = await container.get_container_access_policy()
@@ -156,11 +166,15 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_if_modified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
         with self.assertRaises(ResourceModifiedError) as e:
-            await container.set_container_access_policy(if_modified_since=test_datetime)
+            await container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -173,10 +187,14 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_if_unmodified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
-        await container.set_container_access_policy(if_unmodified_since=test_datetime)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
 
         # Assert
         acl = await container.get_container_access_policy()
@@ -190,11 +208,15 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_set_container_acl_with_if_unmodified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
         with self.assertRaises(ResourceModifiedError) as e:
-            await container.set_container_access_policy(if_unmodified_since=test_datetime)
+            await container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -207,8 +229,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_lease_container_acquire_with_if_modified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         lease = await container.acquire_lease(if_modified_since=test_datetime)
@@ -224,8 +246,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_lease_container_acquire_with_if_modified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -242,8 +264,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_lease_container_acquire_with_if_unmodified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         lease = await container.acquire_lease(if_unmodified_since=test_datetime)
@@ -259,8 +281,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_lease_container_acquire_with_if_unmodified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -277,8 +299,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_delete_container_with_if_modified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         deleted = await container.delete_container(if_modified_since=test_datetime)
 
@@ -295,8 +317,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_delete_container_with_if_modified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             await container.delete_container(if_modified_since=test_datetime)
@@ -312,8 +334,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_delete_container_with_if_unmodified_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         await container.delete_container(if_unmodified_since=test_datetime)
 
@@ -329,8 +351,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_delete_container_with_if_unmodified_fail_async(self):
         # Arrange
         container = await self._create_container(self.container_name)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             await container.delete_container(if_unmodified_since=test_datetime)
@@ -347,8 +369,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         resp = await blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
@@ -366,8 +388,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -386,8 +408,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         resp = await blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
@@ -405,8 +427,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -428,7 +450,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        resp = await blob.upload_blob(data, length=len(data), if_match=etag)
+        resp = await blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -446,7 +468,9 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_blob(data, length=len(data), if_match='0x111111111111111', overwrite=True)
+            await blob.upload_blob(
+                data, length=len(data), etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified, overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -463,7 +487,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             self.container_name, 'blob1', data)
 
         # Act
-        resp = await blob.upload_blob(data, length=len(data), if_none_match='0x111111111111111')
+        resp = await blob.upload_blob(data, length=len(data), etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertIsNotNone(resp.get('etag'))
@@ -482,7 +506,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_blob(data, length=len(data), if_none_match=etag, overwrite=True)
+            await blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfModified, overwrite=True)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -496,12 +520,12 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         content = await blob.download_blob(if_modified_since=test_datetime)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -515,8 +539,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -534,12 +558,12 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         content = await blob.download_blob(if_unmodified_since=test_datetime)
-        content = await content.content_as_bytes()
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -553,8 +577,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -575,8 +599,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        content = await blob.download_blob(if_match=etag)
-        content = await content.content_as_bytes()
+        content = await blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -593,7 +617,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.download_blob(if_match='0x111111111111111')
+            await blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -609,8 +633,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        content = await blob.download_blob(if_none_match='0x111111111111111')
-        content = await content.content_as_bytes()
+        content = await blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        content = await content.readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
@@ -628,7 +652,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.download_blob(if_none_match=etag)
+            await blob.download_blob(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -642,8 +666,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -665,8 +689,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -687,8 +711,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -710,8 +734,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -739,7 +763,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline')
-        await blob.set_http_headers(content_settings, if_match=etag)
+        await blob.set_http_headers(content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         properties = await blob.get_blob_properties()
@@ -762,7 +786,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
                 content_language='spanish',
                 content_disposition='inline')
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.set_http_headers(content_settings, if_match='0x111111111111111')
+            await blob.set_http_headers(content_settings, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -782,7 +806,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.set_http_headers(content_settings, if_none_match='0x111111111111111')
+        await blob.set_http_headers(content_settings, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         properties = await blob.get_blob_properties()
@@ -806,7 +830,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
-            await blob.set_http_headers(content_settings, if_none_match=etag)
+            await blob.set_http_headers(content_settings, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -820,8 +844,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         properties = await blob.get_blob_properties(if_modified_since=test_datetime)
@@ -841,8 +865,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -860,8 +884,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         properties = await blob.get_blob_properties(if_unmodified_since=test_datetime)
@@ -881,8 +905,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -904,7 +928,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        properties = await blob.get_blob_properties(if_match=etag)
+        properties = await blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertIsNotNone(properties)
@@ -925,7 +949,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.get_blob_properties(if_match='0x111111111111111')
+            await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -942,7 +966,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        properties = await blob.get_blob_properties(if_none_match='0x111111111111111')
+        properties = await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertIsNotNone(properties)
@@ -964,7 +988,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.get_blob_properties(if_none_match=etag)
+            await blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -978,8 +1002,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -997,8 +1021,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1017,8 +1041,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1036,8 +1060,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1060,7 +1084,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        md = (await blob.get_blob_properties(if_match=etag)).metadata
+        md = (await blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified)).metadata
 
         # Assert
         self.assertIsNotNone(md)
@@ -1078,7 +1102,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.get_blob_properties(if_match='0x111111111111111')
+            await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1095,7 +1119,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        md = (await blob.get_blob_properties(if_none_match='0x111111111111111')).metadata
+        md = (await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified)).metadata
 
         # Assert
         self.assertIsNotNone(md)
@@ -1114,7 +1138,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.get_blob_properties(if_none_match=etag)
+            await blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1128,8 +1152,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1149,8 +1173,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1170,8 +1194,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1191,8 +1215,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1217,7 +1241,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
-        await blob.set_blob_metadata(metadata, if_match=etag)
+        await blob.set_blob_metadata(metadata, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         md = (await blob.get_blob_properties()).metadata
@@ -1237,7 +1261,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.set_blob_metadata(metadata, if_match='0x111111111111111')
+            await blob.set_blob_metadata(metadata, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1255,7 +1279,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         metadata = {'hello': 'world', 'number': '42'}
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.set_blob_metadata(metadata, if_none_match='0x111111111111111')
+        await blob.set_blob_metadata(metadata, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         md = (await blob.get_blob_properties()).metadata
@@ -1276,7 +1300,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
-            await blob.set_blob_metadata(metadata, if_none_match=etag)
+            await blob.set_blob_metadata(metadata, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1288,8 +1312,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
     async def _test_delete_blob_with_if_modified_async(self):
         # Arrange
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
 
@@ -1307,8 +1331,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
     async def _test_delete_blob_with_if_modified_fail_async(self):
         # Arrange
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
 
@@ -1327,8 +1351,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
     async def _test_delete_blob_with_if_unmodified_async(self):
         # Arrange
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
 
@@ -1346,8 +1370,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
     async def _test_delete_blob_with_if_unmodified_fail_async(self):
         # Arrange
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
 
@@ -1373,7 +1397,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
 
-        resp = await blob.delete_blob(if_match=etag)
+        resp = await blob.delete_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertIsNone(resp)
@@ -1391,7 +1415,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.delete_blob(if_match='0x111111111111111')
+            await blob.delete_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1408,7 +1432,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        resp = await blob.delete_blob(if_none_match='0x111111111111111')
+        resp = await blob.delete_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertIsNone(resp)
@@ -1427,7 +1451,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.delete_blob(if_none_match=etag)
+            await blob.delete_blob(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1441,8 +1465,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1461,8 +1485,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1481,8 +1505,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1501,8 +1525,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1525,7 +1549,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        resp = await blob.create_snapshot(if_match=etag)
+        resp = await blob.create_snapshot(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -1544,7 +1568,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.create_snapshot(if_match='0x111111111111111')
+            await blob.create_snapshot(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1561,7 +1585,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        resp = await blob.create_snapshot(if_none_match='0x111111111111111')
+        resp = await blob.create_snapshot(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -1581,7 +1605,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.create_snapshot(if_none_match=etag)
+            await blob.create_snapshot(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1596,8 +1620,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1620,8 +1644,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1641,8 +1665,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1665,8 +1689,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
@@ -1692,7 +1716,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         lease = await blob.acquire_lease(
             lease_id=test_lease_id,
-            if_match=etag)
+            etag=etag, match_condition=MatchConditions.IfNotModified)
 
         await lease.break_lease()
 
@@ -1713,7 +1737,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.acquire_lease(if_match='0x111111111111111')
+            await blob.acquire_lease(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1733,7 +1757,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         lease = await blob.acquire_lease(
             lease_id=test_lease_id,
-            if_none_match='0x111111111111111')
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified)
 
         await lease.break_lease()
 
@@ -1755,7 +1780,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.acquire_lease(if_none_match=etag)
+            await blob.acquire_lease(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1773,8 +1798,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1782,7 +1807,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1798,8 +1823,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1823,8 +1848,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1832,7 +1857,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1848,8 +1873,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -1877,11 +1902,11 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        await blob.commit_block_list(block_list, if_match=etag)
+        await blob.commit_block_list(block_list, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1902,7 +1927,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         with self.assertRaises(ResourceModifiedError) as e:
             await blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
-                if_match='0x111111111111111')
+                etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1923,11 +1948,11 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        await blob.commit_block_list(block_list, if_none_match='0x111111111111111')
+        await blob.commit_block_list(block_list, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
     @record
@@ -1948,7 +1973,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-            await blob.commit_block_list(block_list, if_none_match=etag)
+            await blob.commit_block_list(block_list, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -1962,8 +1987,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -1981,8 +2006,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2002,8 +2027,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2021,8 +2046,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2047,7 +2072,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        await blob.upload_page(data, offset=0, length=512, if_match=etag)
+        await blob.upload_page(data, offset=0, length=512, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
 
@@ -2065,7 +2090,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, offset=0, length=512, if_match='0x111111111111111')
+            await blob.upload_page(data, offset=0, length=512, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2083,7 +2108,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.upload_page(data, offset=0, length=512, if_none_match='0x111111111111111')
+        await blob.upload_page(data, offset=0, length=512, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
 
@@ -2102,7 +2127,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.upload_page(data, offset=0, length=512, if_none_match=etag)
+            await blob.upload_page(data, offset=0, length=512, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2117,8 +2142,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2139,8 +2164,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2160,8 +2185,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2182,8 +2207,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2207,7 +2232,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         etag = (await blob.get_blob_properties()).etag
 
         # Act
-        ranges = await blob.get_page_ranges(if_match=etag)
+        ranges = await blob.get_page_ranges(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(len(ranges[0]), 2)
@@ -2228,7 +2253,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.get_page_ranges(if_match='0x111111111111111')
+            await blob.get_page_ranges(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2246,7 +2271,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
-        ranges = await blob.get_page_ranges(if_none_match='0x111111111111111')
+        ranges = await blob.get_page_ranges(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(len(ranges[0]), 2)
@@ -2269,7 +2294,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            await blob.get_page_ranges(if_none_match=etag)
+            await blob.get_page_ranges(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2282,8 +2307,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_append_block_with_if_modified_async(self):
         # Arrange
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = await blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
@@ -2291,7 +2316,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2302,8 +2327,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_append_block_with_if_modified_fail_async(self):
         # Arrange
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2320,8 +2345,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_append_block_with_if_unmodified_async(self):
         # Arrange
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1')
-        test_datetime = (datetime.datetime.utcnow() +
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() +
+                         timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = await blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
@@ -2329,7 +2354,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2340,8 +2365,8 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
     async def _test_append_block_with_if_unmodified_fail_async(self):
         # Arrange
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1')
-        test_datetime = (datetime.datetime.utcnow() -
-                         datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2362,12 +2387,12 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         for i in range(5):
             etag = (await blob.get_blob_properties()).etag
-            resp = await blob.append_block(u'block {0}'.format(i), if_match=etag)
+            resp = await blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfNotModified)
             self.assertIsNotNone(resp)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2382,7 +2407,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(HttpResponseError) as e:
             for i in range(5):
-                resp = await blob.append_block(u'block {0}'.format(i), if_match='0x111111111111111')
+                resp = await blob.append_block(u'block {0}'.format(i), etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         #self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2398,12 +2423,12 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         for i in range(5):
-            resp = await blob.append_block(u'block {0}'.format(i), if_none_match='0x8D2C9167D53FC2C')
+            resp = await blob.append_block(u'block {0}'.format(i), etag='0x8D2C9167D53FC2C', match_condition=MatchConditions.IfModified)
             self.assertIsNotNone(resp)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
@@ -2419,7 +2444,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = (await blob.get_blob_properties()).etag
-                resp = await blob.append_block(u'block {0}'.format(i), if_none_match=etag)
+                resp = await blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -2433,7 +2458,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2441,7 +2466,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2453,7 +2478,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -2471,7 +2496,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2479,7 +2504,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2491,7 +2516,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
@@ -2513,11 +2538,11 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_match=test_etag)
+        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2534,7 +2559,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_match=test_etag)
+            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
@@ -2551,11 +2576,11 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_none_match=test_etag)
+        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         content = await blob.download_blob()
-        content = await content.content_as_bytes()
+        content = await content.readall()
         self.assertEqual(data, content)
 
     @record
@@ -2572,7 +2597,7 @@ class StorageBlobAccessConditionsTestAsync(StorageTestCase):
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_none_match=test_etag)
+            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 

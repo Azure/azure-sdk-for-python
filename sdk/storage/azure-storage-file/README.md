@@ -136,7 +136,7 @@ file_client = FileClient.from_connection_string("my_connection_string", share="s
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
-    data.download_to_stream(file_handle)
+    data.readinto(file_handle)
 ```
 
 ### List contents of a directory.
@@ -192,7 +192,7 @@ file_client = FileClient.from_connection_string("my_connection_string", share="s
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()
-    await data.download_to_stream(file_handle)
+    await data.readinto(file_handle)
 ```
 
 ### List contents of a directory asynchronously
