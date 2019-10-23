@@ -41,7 +41,7 @@ class ShareClient(StorageAccountHostsMixin):
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
-    those entities can also be retrieved using the `get_directory_client` and `get_file_client` functions.
+    those entities can also be retrieved using the :func:`get_directory_client` and :func:`get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the Share, including snapshot and SAS token if used. This could be
@@ -244,9 +244,8 @@ class ShareClient(StorageAccountHostsMixin):
         """Creates a new Share under the account. If a share with the
         same name already exists, the operation fails.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the share as metadata.
-        :type metadata: dict(str, str)
         :keyword int quota:
             The quota to be allotted.
         :keyword int timeout:
@@ -296,9 +295,8 @@ class ShareClient(StorageAccountHostsMixin):
         is taken, with a DateTime value appended to indicate the time at which the
         snapshot was taken.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the share as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
@@ -615,7 +613,7 @@ class ShareClient(StorageAccountHostsMixin):
             File permission, a Portable SDDL
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: a file permission key
+        :returns: A file permission key
         :rtype: str
         """
         timeout = kwargs.pop('timeout', None)
@@ -639,7 +637,7 @@ class ShareClient(StorageAccountHostsMixin):
             Key of the file permission to retrieve
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: a file permission (a portable SDDL)
+        :returns: A file permission (a portable SDDL)
         :rtype: str
         """
         timeout = kwargs.pop('timeout', None)

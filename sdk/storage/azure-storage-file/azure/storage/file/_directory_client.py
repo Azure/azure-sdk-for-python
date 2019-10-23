@@ -43,7 +43,7 @@ class DirectoryClient(StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
 
     For operations relating to a specific subdirectory or file in this share, the clients for those
-    entities can also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
+    entities can also be retrieved using the :func:`get_subdirectory_client` and :func:`get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the Directory, including SAS token if used. This could be
@@ -266,9 +266,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         # type: (Any) -> Dict[str, Any]
         """Creates a new directory under the directory referenced by the client.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Directory-updated property dict (Etag and last modified).
@@ -332,8 +331,7 @@ class DirectoryClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.DirectoryProperties and
-            ~azure.storage.file.FileProperties]
+        :rtype: ~azure.core.paging.ItemPaged[DirectoryProperties and FileProperties]
 
         .. admonition:: Example:
 
@@ -569,9 +567,8 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         :param str directory_name:
             The name of the subdirectory.
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the subdirectory as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: DirectoryClient
@@ -636,9 +633,8 @@ class DirectoryClient(StorageAccountHostsMixin):
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.

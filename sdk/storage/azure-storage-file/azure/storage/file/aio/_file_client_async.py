@@ -189,9 +189,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -284,9 +283,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
         :keyword ~azure.storage.file.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -372,9 +370,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)

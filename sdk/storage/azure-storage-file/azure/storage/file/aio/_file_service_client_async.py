@@ -37,7 +37,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete shares within the account.
     For operations relating to a specific share, a client for that entity
-    can also be retrieved using the `get_share_client` function.
+    can also be retrieved using the :func:`get_share_client` function.
 
     :ivar str url:
         The full endpoint URL to the file service endpoint, including SAS token if used. This could be
@@ -101,7 +101,9 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
+        :returns: An object containing file service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -226,10 +228,9 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
-        :type metadata: dict(str, str)
         :keyword int quota:
             Quota in bytes.
         :keyword int timeout:

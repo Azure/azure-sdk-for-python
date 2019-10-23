@@ -35,9 +35,8 @@ class Metrics(GeneratedMetrics):
         File service.
     :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :keyword retention_policy: Determines how long the associated data should
+    :keyword ~azure.storage.file.RetentionPolicy retention_policy: Determines how long the associated data should
         persist.
-    :type retention_policy: ~azure.storage.file.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -210,7 +209,7 @@ class ShareProperties(DictMixin):
 
     :ivar str name:
         The name of the share.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the share was modified.
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
@@ -303,27 +302,19 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword handle_id: Required. XSMB service handle ID
-    :type handle_id: str
-    :keyword path: Required. File or directory name including full path starting
+    :keyword str handle_id: Required. XSMB service handle ID
+    :keyword str path: Required. File or directory name including full path starting
      from share root
-    :type path: str
-    :keyword file_id: Required. FileId uniquely identifies the file or
+    :keyword str file_id: Required. FileId uniquely identifies the file or
      directory.
-    :type file_id: str
-    :keyword parent_id: ParentId uniquely identifies the parent directory of the
+    :keyword str parent_id: ParentId uniquely identifies the parent directory of the
      object.
-    :type parent_id: str
-    :keyword session_id: Required. SMB session ID in context of which the file
+    :keyword str session_id: Required. SMB session ID in context of which the file
      handle was opened
-    :type session_id: str
-    :keyword client_ip: Required. Client IP that opened the handle
-    :type client_ip: str
-    :keyword open_time: Required. Time when the session that previously opened
+    :keyword str client_ip: Required. Client IP that opened the handle
+    :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
-    :type open_time: ~datetime.datetime
-    :keyword last_reconnect_time: Time handle was last connected to (UTC)
-    :type last_reconnect_time: ~datetime.datetime
+    :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to (UTC)
     """
 
     def __init__(self, **kwargs):
@@ -399,7 +390,7 @@ class DirectoryProperties(DictMixin):
 
     :ivar str name:
         The name of the directory.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the directory was modified.
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
@@ -530,7 +521,7 @@ class FileProperties(DictMixin):
         file as metadata.
     :ivar str file_type:
         Type of the file.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file was modified.
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
