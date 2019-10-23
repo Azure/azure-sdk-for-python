@@ -22,10 +22,9 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_web(self, resource_group):
+    def test_appservice(self, resource_group):
 
         SERVERFARM_NAME = "myapimrndxyz"
-        CONFIG: [{"name":"Create Or Update App Service plan"}]
         BODY = {
           "kind": "app",
           "location": "East US",
