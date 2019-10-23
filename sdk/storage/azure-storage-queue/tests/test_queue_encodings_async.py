@@ -16,9 +16,7 @@ from azure.storage.queue import (
     TextBase64EncodePolicy,
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,
-    BinaryBase64DecodePolicy,
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
+    BinaryBase64DecodePolicy
 )
 
 from azure.storage.queue.aio import (
@@ -160,14 +158,13 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = self._get_queue_reference(qsc)
-
         # Action.
         with self.assertRaises(TypeError) as e:
             message = b'xyz'
             await queue.send_message(message)
 
-        # Asserts
-        self.assertTrue(str(e.exception).startswith('Message content must be text'))
+            # Asserts
+            self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -201,7 +198,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
             account_url=self._account_url(storage_account.name),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
-            message_encode_policy=TextXMLEncodePolicy(),
+            message_encode_policy=None,
             message_decode_policy=BinaryBase64DecodePolicy(),
             transport=AiohttpTestTransport())
         try:
