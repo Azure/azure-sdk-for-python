@@ -383,6 +383,61 @@ class StorageClientTestAsync(StorageTestCase):
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
+    def test_create_service_with_custom_account_endpoint_path(self):
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        for service_type in SERVICES.items():
+            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};BlobEndpoint={};'.format(
+                self.account_name, self.account_key, custom_account_url)
+
+            # Act
+            service = service_type[0].from_connection_string(
+                conn_string, container_name="foo", blob_name="bar")
+
+            # Assert
+            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        
+        service = BlobServiceClient(account_url=custom_account_url)
+        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/' + self.sas_token)
+
+        service = ContainerClient(account_url=custom_account_url, container_name="foo")
+        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo' + self.sas_token)
+
+        service = ContainerClient.from_container_url("http://local-machine:11002/custom/account/path/foo?query=value")
+        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo')
+
+        service = BlobClient(account_url=custom_account_url, container_name="foo", blob_name="bar", snapshot="baz")
+        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.blob_name, "bar")
+        self.assertEqual(service.snapshot, "baz")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(
+            service.url, 'http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&' + self.sas_token[1:])
+
+        service = BlobClient.from_blob_url("http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&query=value")
+        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.blob_name, "bar")
+        self.assertEqual(service.snapshot, "baz")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz')
+
     async def _test_request_callback_signed_header_async(self):
         # Arrange
         service = BlobServiceClient(self._get_account_url(), credential=self.account_key, transport=AiohttpTestTransport())
