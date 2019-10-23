@@ -68,8 +68,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../tests/test_file_samples_authentication.py
-            :start-after: [START create_file_service_client]
-            :end-before: [END create_file_service_client]
+            :start-after: [START create_share_service_client]
+            :end-before: [END create_share_service_client]
             :language: python
             :dedent: 8
             :caption: Create the share service client with url and credential.
@@ -123,8 +123,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../tests/test_file_samples_authentication.py
-                :start-after: [START create_file_service_client_from_conn_string]
-                :end-before: [END create_file_service_client_from_conn_string]
+                :start-after: [START create_share_service_client_from_conn_string]
+                :end-before: [END create_share_service_client_from_conn_string]
                 :language: python
                 :dedent: 8
                 :caption: Create the share service client with connection string.

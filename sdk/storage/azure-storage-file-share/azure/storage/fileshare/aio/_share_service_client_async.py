@@ -21,7 +21,7 @@ from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureFileStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties
 from .._generated.version import VERSION
-from .._file_service_client import ShareServiceClient as ShareServiceClientBase
+from .._share_service_client import ShareServiceClient as ShareServiceClientBase
 from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
 
@@ -71,8 +71,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
     .. admonition:: Example:
 
         .. literalinclude:: ../tests/test_file_samples_authentication_async.py
-            :start-after: [START create_file_service_client]
-            :end-before: [END create_file_service_client]
+            :start-after: [START create_share_service_client]
+            :end-before: [END create_share_service_client]
             :language: python
             :dedent: 8
             :caption: Create the share service client with url and credential.

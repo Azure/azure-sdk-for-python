@@ -32,10 +32,10 @@ class TestFileAuthSamples(FileTestCase):
     @record
     def test_auth_connection_string(self):
         # Instantiate the ShareServiceClient from a connection string
-        # [START create_file_service_client_from_conn_string]
+        # [START create_share_service_client_from_conn_string]
         from azure.storage.fileshare import ShareServiceClient
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
-        # [END create_file_service_client_from_conn_string]
+        # [END create_share_service_client_from_conn_string]
 
         # Get queue service properties
         properties = file_service.get_service_properties()
@@ -44,10 +44,10 @@ class TestFileAuthSamples(FileTestCase):
     @record
     def test_auth_shared_key(self):
         # Instantiate a ShareServiceClient using a shared access key
-        # [START create_file_service_client]
+        # [START create_share_service_client]
         from azure.storage.fileshare import ShareServiceClient
         file_service_client = ShareServiceClient(account_url=self.url, credential=self.shared_access_key)
-        # [END create_file_service_client]
+        # [END create_share_service_client]
 
         # Get account information for the File Share Service
         account_info = file_service_client.get_service_properties()

@@ -8,7 +8,7 @@ from ._version import VERSION
 from ._file_client import FileClient
 from ._directory_client import DirectoryClient
 from ._share_client import ShareClient
-from ._file_service_client import ShareServiceClient
+from ._share_service_client import ShareServiceClient
 from ._shared_access_signature import generate_account_sas, generate_share_sas, generate_file_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import (
