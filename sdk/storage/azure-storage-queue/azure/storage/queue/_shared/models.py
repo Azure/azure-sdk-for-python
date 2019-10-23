@@ -267,6 +267,7 @@ class AccountSasPermissions(object):
     specific resource (resource-specific). Another is to grant access to the
     entire service for a specific account and allow certain operations based on
     perms found here.
+
     :param bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
@@ -325,7 +326,6 @@ class AccountSasPermissions(object):
         parsed._str = permission # pylint: disable = protected-access
         return parsed
 
-
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
@@ -333,17 +333,17 @@ class Services(object):
         Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
         Access for the `~azure.storage.queue.QueueServiceClient`
-    :param bool file:
-        Access for the `~azure.storage.file.FileServiceClient`
+    :param bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
-    def __init__(self, blob=False, queue=False, file=False):
+    def __init__(self, blob=False, queue=False, fileshare=False):
         self.blob = blob
         self.queue = queue
-        self.file = file
+        self.fileshare = fileshare
         self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
-                ('f' if self.file else ''))
+                ('f' if self.fileshare else ''))
 
     def __str__(self):
         return self._str
