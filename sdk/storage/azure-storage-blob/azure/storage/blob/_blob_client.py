@@ -403,7 +403,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
-            blob's lease is active and matches this ID. Value can be a LeaseClient object
+            blob's lease is active and matches this ID. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
@@ -540,7 +540,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
-            LeaseClient object or the lease ID as a string.
+            BlobLeaseClient object or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -636,7 +636,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword lease:
             Required if the blob has an active lease. If specified, delete_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
-            LeaseClient object or the lease ID as a string.
+            BlobLeaseClient object or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
