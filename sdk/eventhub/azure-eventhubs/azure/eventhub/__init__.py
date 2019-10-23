@@ -13,6 +13,9 @@ from ._client import EventHubClient
 from ._producer import EventHubProducer
 from ._consumer import EventHubConsumer
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._eventprocessor.partition_manager import PartitionManager
+from ._eventprocessor.local_partition_manager import InMemoryPartitionManager, FileBasedPartitionManager
+from ._eventprocessor.event_processor import OwnershipLostError
 
 TransportType = constants.TransportType
 
@@ -32,4 +35,8 @@ __all__ = [
     "TransportType",
     "EventHubSharedKeyCredential",
     "EventHubSASTokenCredential",
+    "PartitionManager",
+    "InMemoryPartitionManager",
+    "FileBasedPartitionManager",
+    "OwnershipLostError",
 ]
