@@ -8,7 +8,7 @@
 
 import unittest
 
-import 
+import azure.mgmt.web
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
