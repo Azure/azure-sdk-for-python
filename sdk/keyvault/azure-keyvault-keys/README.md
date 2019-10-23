@@ -294,6 +294,8 @@ can configure logging to print debugging information to stdout or write it
 to a file:
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
 import sys
 import logging
 
@@ -305,12 +307,10 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-# Configure a file output
-file_handler = logging.FileHandler(filename)
-logger.addHandler(file_handler)
+credential = DefaultAzureCredential()
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = KeyClient(vault_endpoint=url, credential=credential, logging_enable=True)
+client = KeyClient(vault_endpoint=<your-vault-url>, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:
