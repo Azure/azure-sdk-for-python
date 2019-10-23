@@ -18,7 +18,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtWebSiteTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            .WebSiteManagementClient
+            azure.mgmt.web.WebSiteManagementClient
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
