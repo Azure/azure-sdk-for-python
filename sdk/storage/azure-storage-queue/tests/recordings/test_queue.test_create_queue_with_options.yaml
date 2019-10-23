@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:48:07 GMT
+      - Tue, 22 Oct 2019 21:19:35 GMT
       x-ms-meta:
       - '{''val1'': ''test'', ''val2'': ''blah''}'
       x-ms-meta-val1:
@@ -31,7 +31,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Oct 2019 06:48:07 GMT
+      - Tue, 22 Oct 2019 21:19:34 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:48:08 GMT
+      - Tue, 22 Oct 2019 21:19:35 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -65,7 +65,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Oct 2019 06:48:07 GMT
+      - Tue, 22 Oct 2019 21:19:34 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count:
