@@ -146,8 +146,8 @@ class StorageQueueEncodingTest(QueueTestCase):
             message = b'xyz'
             queue.send_message(message)
 
-        # Asserts
-        self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
+            # Asserts
+            self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
 
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
