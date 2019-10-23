@@ -17,12 +17,8 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, Reso
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+from azure.storage.blob import (
     PublicAccess,
-    LeaseClient,
     AccessPolicy,
     StorageErrorCode,
     BlobBlock,
@@ -31,7 +27,16 @@ from azure.storage.blob.aio import (
     BlobProperties,
     ContainerSasPermissions,
     StandardBlobTier,
-    PremiumPageBlobTier
+    PremiumPageBlobTier,
+    generate_container_sas,
+    PartialBatchErrorException
+)
+
+from azure.storage.blob.aio import (
+    BlobServiceClient,
+    ContainerClient,
+    BlobClient,
+    BlobLeaseClient,
 )
 
 from testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -78,7 +83,7 @@ class StorageContainerTestAsync(StorageTestCase):
                     loop.run_until_complete(container.delete_container())
                 except HttpResponseError:
                     try:
-                        lease = LeaseClient(container)
+                        lease = BlobLeaseClient(container)
                         loop.run_until_complete(lease.break_lease(0))
                         loop.run_until_complete(container.delete_container())
                     except:
@@ -305,7 +310,11 @@ class StorageContainerTestAsync(StorageTestCase):
     async def _test_list_containers_with_public_access(self):
         # Arrange
         container = await self._create_container()
-        resp = await container.set_container_access_policy(public_access=PublicAccess.Blob)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        resp = await container.set_container_access_policy(signed_identifier, public_access=PublicAccess.Blob)
 
         # Act
         containers = []
@@ -536,7 +545,11 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        response = await container.set_container_access_policy()
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        response = await container.set_container_access_policy(signed_identifier)
 
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
@@ -544,7 +557,7 @@ class StorageContainerTestAsync(StorageTestCase):
         # Assert
         acl = await container.get_container_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        self.assertEqual(len(acl.get('signed_identifiers')), 1)
         self.assertIsNone(acl.get('public_access'))
 
     @record
@@ -580,7 +593,11 @@ class StorageContainerTestAsync(StorageTestCase):
         lease_id = await container.acquire_lease()
 
         # Act
-        await container.set_container_access_policy(lease=lease_id)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifier, lease=lease_id)
 
         # Assert
         acl = await container.get_container_access_policy()
@@ -597,7 +614,11 @@ class StorageContainerTestAsync(StorageTestCase):
         container = await self._create_container()
 
         # Act
-        await container.set_container_access_policy(public_access='container')
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        await container.set_container_access_policy(signed_identifier, public_access='container')
 
         # Assert
         acl = await container.get_container_access_policy()
@@ -1230,6 +1251,37 @@ class StorageContainerTestAsync(StorageTestCase):
         assert response[2].status_code == 202
 
     @record
+    def test_delete_blobs_simple_no_raise_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_simple())
+
+    async def _test_delete_blobs_simple_no_raise(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            await container.get_blob_client('blob1').upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = await _to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @record
     def test_delete_blobs_snapshot(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blobs_snapshot())
@@ -1251,19 +1303,22 @@ class StorageContainerTestAsync(StorageTestCase):
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
-        response = await _to_list(await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            delete_snapshots='only'
-        ))
-        assert len(response) == 3
-        assert response[0].status_code == 202
-        assert response[1].status_code == 404  # There was no snapshot
-        assert response[2].status_code == 404  # There was no snapshot
+        try:
+            response = await _to_list(await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                delete_snapshots='only'
+            ))
+        except PartialBatchErrorException as err:
+            parts_list = err.parts
+            assert len(parts_list) == 3
+            assert parts_list[0].status_code == 202
+            assert parts_list[1].status_code == 404  # There was no snapshot
+            assert parts_list[2].status_code == 404  # There was no snapshot
 
-        blobs = await _to_list(container.list_blobs(include='snapshots'))
-        assert len(blobs) == 3  # 3 blobs
+            blobs = await _to_list(container.list_blobs(include='snapshots'))
+            assert len(blobs) == 3  # 3 blobs
 
     @record
     def test_standard_blob_tier_set_tier_api_batch(self):
@@ -1458,7 +1513,10 @@ class StorageContainerTestAsync(StorageTestCase):
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data)
 
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
         )
@@ -1499,7 +1557,7 @@ class StorageContainerTestAsync(StorageTestCase):
             await blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = await (await blob.download_blob()).content_as_bytes()
+            blob_data = await (await blob.download_blob()).readall()
             self.assertIsNotNone(blob)
             self.assertEqual(blob_data.decode('utf-8'), blob_content)
 

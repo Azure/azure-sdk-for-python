@@ -29,14 +29,14 @@ from azure.storage.blob._shared.encryption import (
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
 )
-from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
+from azure.storage.blob import BlobType
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    BlobType
 )
 from encryption_test_helper import (
     KeyWrapper,
@@ -88,6 +88,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
             max_page_size=4 * 1024,
+            max_single_get_size=4 * 1024,
             transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
@@ -309,7 +310,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Act
         content = await blob.download_blob()
         data = b""
-        async for d in content:
+        async for d in content.chunks():
             data += d
 
         # Assert
@@ -900,7 +901,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Act
         content = await blob.download_blob()
         iter_blob = b""
-        async for data in content:
+        async for data in content.chunks():
             iter_blob += data
         bytes_blob = await (await blob.download_blob()).content_as_bytes()
         stream_blob = BytesIO()

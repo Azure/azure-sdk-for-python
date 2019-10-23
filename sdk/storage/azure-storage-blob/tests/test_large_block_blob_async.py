@@ -15,11 +15,12 @@ import unittest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob import ContentSettings
+
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    ContentSettings
+    BlobClient
 )
 
 if os.sys.version_info >= (3,):
@@ -110,7 +111,7 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = await blob.download_blob()
         actual_bytes = b""
-        async for data in actual_data:
+        async for data in actual_data.chunks():
             actual_bytes += data
         self.assertEqual(actual_bytes, expected_data)
 
