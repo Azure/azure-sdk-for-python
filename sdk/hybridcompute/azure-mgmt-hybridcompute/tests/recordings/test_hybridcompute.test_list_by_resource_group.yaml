@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines?api-version=2019-08-02-preview
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/TestMachine1","name":"TestMachine1","location":"westus2","tags":{"type":"hybrid"},"identity":{"type":"SystemAssigned","principalId":"8260d444-7658-40ec-9332-8655b769cb2d","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":null,"status":null,"lastStatusChange":null,"errorDetails":null,"displayName":null,"machineFqdn":null,"osName":null,"osVersion":null,"osProfile":{"computerName":null},"vmId":"2341fe77-2ca4-41f4-ae4c-f4e2ac08461d","physicalLocation":"","clientPublicKey":"MIIBCgKCAQEAytvDVitrZt/mrfZDCbOXDiaw3zaNzuWJJ698yDGJYudbv4ybFkyZp/5hZ6T/9WWPeTx1/nWnmzLopMgB7lzMNNtUXenmE7gQqnRQ8B9KF5qZI1LWq7qNhnHjOQzntPIPqbv4+Cm8AIVy0K1liR6fAGRVCtgbf3YqTOU1fdG60ldJ/tdiAAEaFf2bFAczS78Mv0cgfaWMUppPiR3UNAjWUhAUS92KkjHPvhi/My2uecgsPlB7Sp6jXzt80ns0hYdKdnWqVDhRvM/kAYDQrMwksTQiuvZg4eKKQrPyXxe41lM5EfT6agAEnN91oid6hu1TCeem5r4HdY5Dgqh+boiKdwIDAQAB"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/TestMachine2","name":"TestMachine2","location":"westus2","tags":{},"identity":{"type":"SystemAssigned","principalId":"7dbad483-4919-4856-8f19-5e10f2504860","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":null,"status":null,"lastStatusChange":null,"errorDetails":null,"displayName":null,"machineFqdn":null,"osName":null,"osVersion":null,"osProfile":{"computerName":null},"vmId":"27db2631-3b59-4a69-8b76-f96f2b9d79b3","physicalLocation":"","clientPublicKey":"MIIBCgKCAQEAy1wFJ8ITwDEy18C/DpzgT7URZSEButh0qYXk7DyrfqkNve0+ERsUxFcXq5IbNyz+ZnEQAZQPhmDWzeUXF85yEWbB5KwXrs/nv2P3qsp1X3b86XnrUsrs6/rH6VEcHv9VAhLA1jyprzcbWZeT5vLDcifOrv4mcTSMDRxDAiQWFwZ7Rv4AkCZu4dZ43LORuGdgTGshTVAy/IlFOyCzBbH99qCQCbxjVFLXSEnP0ACCQeLNGxlHJ6lM6K5uS6fIM8dH+AdITKkpVrWfoumfQ9x+xQar7jqfH/rds/lEBO5MDUYbdk/ynOaCJ8G9DR2AjNmy7MsqEaVgHFo1DCxPeu3TDwIDAQAB"}}],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2160'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 04 Sep 2019 21:16:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
