@@ -39,6 +39,16 @@ class QueueAnalyticsLogging(GeneratedLogging):
         self.write = kwargs.get('write', False)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            version=generated.version,
+            delete=generated.delete,
+            read=generated.read,
+            write=generated.write,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates.
@@ -60,6 +70,15 @@ class Metrics(GeneratedMetrics):
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
 
 class RetentionPolicy(GeneratedRetentionPolicy):
     """The retention policy which determines how long the associated data should
@@ -79,6 +98,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
 
 
 class CorsRule(GeneratedCorsRule):
@@ -117,6 +143,16 @@ class CorsRule(GeneratedCorsRule):
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
         self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
+        )
 
 
 class AccessPolicy(GenAccessPolicy):
