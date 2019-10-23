@@ -111,14 +111,14 @@ Create a queue in your storage account.
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 queue.create_queue()
 ```
 Create a queue asynchronously.
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 await queue.create_queue()
 ```
 ### Send messages
@@ -127,7 +127,7 @@ Send a message in your queue.
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 queue.send_message("I'm using queues!")
 queue.send_message("This is my second message")
 ```
@@ -135,7 +135,7 @@ Send messages with an async client
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 await asyncio.gather(
     queue.send_message("I'm using queues!"),
     queue.send_message("This is my second message"))
@@ -147,7 +147,7 @@ Receive messages from your queue.
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 response = queue.receive_messages()
 
 for message in response:
@@ -160,7 +160,7 @@ for message in response:
 ```
 Receive messages by batch.
 ```python
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 response = queue.receive_messages(messages_per_page=10)
 
 for message_batch in response.by_page():
@@ -172,7 +172,7 @@ Receive messages asynchronously:
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="myqueue")
 response = queue.receive_messages()
 
 async for message in response:
