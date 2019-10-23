@@ -925,10 +925,6 @@ class ContainerClient(StorageAccountHostsMixin):
 
         :param blobs: The blobs with which to interact.
         :type blobs: str or ~azure.storage.blob.BlobProperties
-        :keyword str delete_snapshots:
-            Required if the blob has associated snapshots. Values include:
-             - "only": Deletes only the blobs snapshots.
-             - "include": Deletes the blob along with all snapshots.
         :keyword lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
