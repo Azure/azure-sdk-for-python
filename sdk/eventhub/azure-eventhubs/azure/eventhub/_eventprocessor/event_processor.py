@@ -15,7 +15,6 @@ from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition, EventHubError, EventData
-# from ..consumer_client_async import EventHubConsumerClient
 from .partition_context import PartitionContext
 from .partition_manager import PartitionManager, OwnershipLostError
 from .ownership_manager import OwnershipManager
