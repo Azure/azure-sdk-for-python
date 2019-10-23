@@ -402,9 +402,9 @@ class DirectoryProperties(DictMixin):
     :ivar change_time: Change time for the file.
     :vartype change_time: str or ~datetime.datetime
     :ivar creation_time: Creation time for the file.
-    :type creation_time: str or ~datetime.datetime
+    :vartype creation_time: str or ~datetime.datetime
     :ivar last_write_time: Last write time for the file.
-    :type last_write_time: str or ~datetime.datetime
+    :vartype last_write_time: str or ~datetime.datetime
     :ivar file_attributes:
         The file system attributes for files and directories.
     :vartype file_attributes: str or :class:`~azure.storage.file.NTFSAttributes`
