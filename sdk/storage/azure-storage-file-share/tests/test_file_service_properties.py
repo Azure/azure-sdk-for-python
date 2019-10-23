@@ -9,8 +9,8 @@ import unittest
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.storage.file import (
-    FileServiceClient,
+from azure.storage.fileshare import (
+    ShareServiceClient,
     Metrics,
     CorsRule,
     RetentionPolicy,
@@ -32,7 +32,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential)
+        self.fsc = ShareServiceClient(url, credential=credential)
 
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):

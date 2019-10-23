@@ -30,8 +30,8 @@ if TYPE_CHECKING:
     from ._models import Metrics, CorsRule, ShareProperties
 
 
-class FileServiceClient(StorageAccountHostsMixin):
-    """A client to interact with the File Service at the account level.
+class ShareServiceClient(StorageAccountHostsMixin):
+    """A client to interact with the File Share Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
     as well as list, create and delete shares within the account.
@@ -39,7 +39,7 @@ class FileServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_share_client` function.
 
     :ivar str url:
-        The full endpoint URL to the file service endpoint, including SAS token if used. This could be
+        The full endpoint URL to the file share service endpoint, including SAS token if used. This could be
         either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
@@ -57,7 +57,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         The location mode that the client is currently using. By default
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
-        The URL to the file storage account. Any other entities included
+        The URL to the file share storage account. Any other entities included
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
         authenticated with a SAS token.
     :param credential:
@@ -72,7 +72,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             :end-before: [END create_file_service_client]
             :language: python
             :dedent: 8
-            :caption: Create the file service client with url and credential.
+            :caption: Create the share service client with url and credential.
     """
     def __init__(
             self, account_url,  # type: str
@@ -89,14 +89,14 @@ class FileServiceClient(StorageAccountHostsMixin):
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
         if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
+            raise ValueError("Token credentials not supported by the File Share service.")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(FileServiceClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
+        super(ShareServiceClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -110,8 +110,8 @@ class FileServiceClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             credential=None, # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> FileServiceClient
-        """Create FileServiceClient from a Connection String.
+        ):  # type: (...) -> ShareServiceClient
+        """Create ShareServiceClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -127,7 +127,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END create_file_service_client_from_conn_string]
                 :language: python
                 :dedent: 8
-                :caption: Create the file service client with connection string.
+                :caption: Create the share service client with connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:
@@ -137,12 +137,12 @@ class FileServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_service_properties(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
-        """Gets the properties of a storage account's File service, including
+        """Gets the properties of a storage account's File Share service, including
         Azure Storage Analytics.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file._generated.models.StorageServiceProperties
+        :rtype: ~azure.storage.fileshare._generated.models.StorageServiceProperties
 
         .. admonition:: Example:
 
@@ -151,7 +151,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END get_service_properties]
                 :language: python
                 :dedent: 8
-                :caption: Get file service properties.
+                :caption: Get file share service properties.
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -167,23 +167,23 @@ class FileServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> None
-        """Sets the properties of a storage account's File service, including
+        """Sets the properties of a storage account's File Share service, including
         Azure Storage Analytics. If an element (e.g. Logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
         :param hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for files.
-        :type hour_metrics: ~azure.storage.file.Metrics
+        :type hour_metrics: ~azure.storage.fileshare.Metrics
         :param minute_metrics:
             The minute metrics settings provide request statistics
             for each minute for files.
-        :type minute_metrics: ~azure.storage.file.Metrics
+        :type minute_metrics: ~azure.storage.fileshare.Metrics
         :param cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.file.CorsRule`)
+        :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -195,7 +195,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END set_service_properties]
                 :language: python
                 :dedent: 8
-                :caption: Sets file service properties.
+                :caption: Sets file share service properties.
         """
         timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
@@ -230,7 +230,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.ShareProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.ShareProperties]
 
         .. admonition:: Example:
 
@@ -239,7 +239,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END fsc_list_shares]
                 :language: python
                 :dedent: 12
-                :caption: List shares in the file service.
+                :caption: List shares in the file share service.
         """
         timeout = kwargs.pop('timeout', None)
         include = []
@@ -276,7 +276,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             Quota in bytes.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.ShareClient
+        :rtype: ~azure.storage.fileshare.ShareClient
 
         .. admonition:: Example:
 
@@ -285,7 +285,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END fsc_create_shares]
                 :language: python
                 :dedent: 8
-                :caption: Create a share in the file service.
+                :caption: Create a share in the file share service.
         """
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
@@ -308,7 +308,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param share_name:
             The share to delete. This can either be the name of the share,
             or an instance of ShareProperties.
-        :type share_name: str or ~azure.storage.file.ShareProperties
+        :type share_name: str or ~azure.storage.fileshare.ShareProperties
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
         :keyword int timeout:
@@ -322,7 +322,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :end-before: [END fsc_delete_shares]
                 :language: python
                 :dedent: 12
-                :caption: Delete a share in the file service.
+                :caption: Delete a share in the file share service.
         """
         timeout = kwargs.pop('timeout', None)
         share = self.get_share_client(share_name)
@@ -338,11 +338,11 @@ class FileServiceClient(StorageAccountHostsMixin):
         :param share:
             The share. This can either be the name of the share,
             or an instance of ShareProperties.
-        :type share: str or ~azure.storage.file.ShareProperties
+        :type share: str or ~azure.storage.fileshare.ShareProperties
         :param str snapshot:
             An optional share snapshot on which to operate.
         :returns: A ShareClient.
-        :rtype: ~azure.storage.file.ShareClient
+        :rtype: ~azure.storage.fileshare.ShareClient
 
         .. admonition:: Example:
 

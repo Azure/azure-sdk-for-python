@@ -7,9 +7,9 @@ import unittest
 import platform
 
 from azure.core.exceptions import AzureError
-from azure.storage.file import (
+from azure.storage.fileshare import (
     VERSION,
-    FileServiceClient,
+    ShareServiceClient,
     ShareClient,
     DirectoryClient,
     FileClient)
@@ -23,7 +23,7 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 SERVICES = {
-    FileServiceClient: 'file',
+    ShareServiceClient: 'file',
     ShareClient: 'file',
     DirectoryClient: 'file',
     FileClient: 'file',
@@ -251,7 +251,7 @@ class StorageFileClientTest(FileTestCase):
 
         # Arrange
         request_id_header_name = 'x-ms-client-request-id'
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+        service = ShareServiceClient(self.get_file_url(), credential=self.account_key)
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -272,7 +272,7 @@ class StorageFileClientTest(FileTestCase):
 
     @record
     def test_user_agent_default(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+        service = ShareServiceClient(self.get_file_url(), credential=self.account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -288,14 +288,14 @@ class StorageFileClientTest(FileTestCase):
     @record
     def test_user_agent_custom(self):
         custom_app = "TestApp/v1.0"
-        service = FileServiceClient(
+        service = ShareServiceClient(
             self.get_file_url(), credential=self.account_key, user_agent=custom_app)
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -306,7 +306,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -315,13 +315,13 @@ class StorageFileClientTest(FileTestCase):
 
     @record
     def test_user_agent_append(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+        service = ShareServiceClient(self.get_file_url(), credential=self.account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-file-share/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))

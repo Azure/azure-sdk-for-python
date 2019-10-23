@@ -334,7 +334,7 @@ class Services(object):
     :param bool queue:
         Access for the `~azure.storage.queue.QueueServiceClient`
     :param bool file:
-        Access for the `~azure.storage.file.FileServiceClient`
+        Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
     def __init__(self, blob=False, queue=False, file=False):

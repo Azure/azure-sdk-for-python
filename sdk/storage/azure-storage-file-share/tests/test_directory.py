@@ -10,8 +10,8 @@ from datetime import timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
-from azure.storage.file import (
-    FileServiceClient,
+from azure.storage.fileshare import (
+    ShareServiceClient,
     StorageErrorCode,
 )
 from filetestcase import (
@@ -31,7 +31,7 @@ class StorageDirectoryTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential)
+        self.fsc = ShareServiceClient(url, credential=credential)
         self.share_name = self.get_resource_name('utshare')
 
         if not self.is_playback():

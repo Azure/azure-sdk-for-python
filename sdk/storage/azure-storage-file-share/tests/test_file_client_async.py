@@ -8,9 +8,9 @@ import platform
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file import VERSION
-from azure.storage.file.aio import (
-    FileServiceClient,
+from azure.storage.fileshare import VERSION
+from azure.storage.fileshare.aio import (
+    ShareServiceClient,
     ShareClient,
     DirectoryClient,
     FileClient)
@@ -24,7 +24,7 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 SERVICES = {
-    FileServiceClient: 'file',
+    ShareServiceClient: 'file',
     ShareClient: 'file',
     DirectoryClient: 'file',
     FileClient: 'file',
@@ -269,13 +269,13 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
     async def _test_user_agent_default_async(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file/{} Python/{} ({})".format(
+                "azsdk-python-storage-file-share/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -289,14 +289,14 @@ class StorageFileClientTest(FileTestCase):
 
     async def _test_user_agent_custom_async(self):
         custom_app = "TestApp/v1.0"
-        service = FileServiceClient(
+        service = ShareServiceClient(
             self.get_file_url(), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -307,7 +307,7 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-file-share/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -320,13 +320,13 @@ class StorageFileClientTest(FileTestCase):
         loop.run_until_complete(self._test_user_agent_custom_async())
 
     async def _test_user_agent_append_async(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-file-share/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))

@@ -5,7 +5,9 @@
 **Important: This package has been renamed**
 
 Going forward, to use this SDK, please install `azure-storage-file-share`.
-The namespace within the package has also been renamed to `azure.storage.fileshare`.
+Additionally:
+- The namespace within the package has also been renamed to `azure.storage.fileshare`.
+- `FileServiceClient` has been renamed to `ShareServiceClient`
 
 **Breaking changes**
 

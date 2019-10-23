@@ -11,12 +11,12 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file import (
+from azure.storage.fileshare import (
     Metrics,
     CorsRule,
     RetentionPolicy,
 )
-from azure.storage.file.aio import FileServiceClient
+from azure.storage.fileshare.aio import ShareServiceClient
 
 from filetestcase import (
     FileTestCase,
@@ -44,7 +44,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):

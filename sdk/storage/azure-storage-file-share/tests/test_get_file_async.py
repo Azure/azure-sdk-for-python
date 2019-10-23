@@ -14,10 +14,10 @@ import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
-from azure.storage.file import FileProperties
-from azure.storage.file.aio import (
+from azure.storage.fileshare import FileProperties
+from azure.storage.fileshare.aio import (
     FileClient,
-    FileServiceClient,
+    ShareServiceClient,
 )
 from filetestcase import (
     FileTestCase,
@@ -55,7 +55,7 @@ class StorageGetFileTest(FileTestCase):
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
 
-        self.fsc = FileServiceClient(
+        self.fsc = ShareServiceClient(
             url, credential=credential,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,

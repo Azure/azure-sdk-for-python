@@ -16,16 +16,16 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file import (
+from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
-    FileServiceClient,
+    ShareServiceClient,
     DirectoryClient,
     FileClient,
     ShareClient,
     generate_share_sas)
 
-from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
+from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
     TestMode,
@@ -45,7 +45,7 @@ class StorageShareTest(FileTestCase):
 
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def tearDown(self):
@@ -779,7 +779,7 @@ class StorageShareTest(FileTestCase):
         credential = self.get_shared_key_credential()
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+        with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
             fsc.get_service_properties()
             assert transport.session is not None
             with fsc.get_share_client(share_name) as fc:

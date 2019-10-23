@@ -16,7 +16,7 @@ import requests
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from azure.storage.file import (
+from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
     NTFSAttributes,
@@ -27,9 +27,9 @@ from azure.storage.file import (
     AccountSasPermissions,
     StorageErrorCode
 )
-from azure.storage.file.aio import (
+from azure.storage.fileshare.aio import (
     FileClient,
-    FileServiceClient,
+    ShareServiceClient,
 )
 from filetestcase import (
     FileTestCase,
@@ -69,7 +69,7 @@ class StorageFileAsyncTest(FileTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.fsc.__aenter__())
         self.share_name = self.get_resource_name('utshare')
@@ -77,7 +77,7 @@ class StorageFileAsyncTest(FileTestCase):
 
         remote_url = self.get_remote_file_url()
         remote_credential = self.get_remote_shared_key_credential()
-        self.fsc2 = FileServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
+        self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
         self.remote_share_name = None
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.fsc2.__aenter__())
@@ -118,7 +118,7 @@ class StorageFileAsyncTest(FileTestCase):
 
     async def _setup_share(self, remote=False):
         share_name = self.remote_share_name if remote else self.share_name
-        async with FileServiceClient(
+        async with ShareServiceClient(
                 self.get_file_url(),
                 credential=self.get_shared_key_credential(),
                 max_range_size=4 * 1024) as fsc:
@@ -236,7 +236,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def _test_make_file_url_with_protocol(self):
         # Arrange
         url = self.get_file_url().replace('https', 'http')
-        fsc = FileServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
+        fsc = ShareServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
         share = fsc.get_share_client("vhds")
         file_client = share.get_file_client("vhd_dir/my.vhd")
 

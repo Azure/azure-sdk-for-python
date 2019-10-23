@@ -45,9 +45,9 @@ class TestHelloWorldSamples(FileTestCase):
     #--Begin File Samples-----------------------------------------------------------------
 
     async def _test_create_client_with_connection_string(self):
-        # Instantiate the FileServiceClient from a connection string
-        from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare.aio import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Get queue service properties
         properties = await file_service.get_service_properties()
@@ -61,7 +61,7 @@ class TestHelloWorldSamples(FileTestCase):
 
     async def _test_create_file_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name="myshare")
 
         # Create the share
@@ -85,7 +85,7 @@ class TestHelloWorldSamples(FileTestCase):
 
     async def _test_upload_file_to_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name='share')
 
         # Create the share

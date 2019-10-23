@@ -235,7 +235,7 @@ def generate_account_sas(
     # type: (...) -> str
     """Generates a shared access signature for the file service.
 
-    Use the returned signature with the credential parameter of any FileServiceClient,
+    Use the returned signature with the credential parameter of any ShareServiceClient,
     ShareClient, DirectoryClient, or FileClient.
 
     :param str account_name:
@@ -310,7 +310,7 @@ def generate_share_sas(
     ):  # type: (...) -> str
     """Generates a shared access signature for a share.
 
-    Use the returned signature with the credential parameter of any FileServiceClient,
+    Use the returned signature with the credential parameter of any ShareServiceClient,
     ShareClient, DirectoryClient, or FileClient.
 
     :param str account_name:
@@ -402,7 +402,7 @@ def generate_file_sas(
     # type: (...) -> str
     """Generates a shared access signature for a file.
 
-    Use the returned signature with the credential parameter of any FileServiceClient,
+    Use the returned signature with the credential parameter of any ShareServiceClient,
     ShareClient, DirectoryClient, or FileClient.
 
     :param str account_name:

@@ -15,11 +15,11 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 
-from azure.storage.file import (
+from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
     FileClient,
-    FileServiceClient,
+    ShareServiceClient,
     ContentSettings,
     FileSasPermissions,
     AccessPolicy,
@@ -54,7 +54,7 @@ class StorageFileTest(FileTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = FileServiceClient(url, credential=credential, max_range_size=4 * 1024)
+        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
         self.share_name = self.get_resource_name('utshare')
         if not self.is_playback():
             self.fsc.create_share(self.share_name)
@@ -63,7 +63,7 @@ class StorageFileTest(FileTestCase):
 
         remote_url = self.get_remote_file_url()
         remote_credential = self.get_remote_shared_key_credential()
-        self.fsc2 = FileServiceClient(remote_url, credential=remote_credential)
+        self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
         self.remote_share_name = None
 
     def tearDown(self):
@@ -194,7 +194,7 @@ class StorageFileTest(FileTestCase):
     def test_make_file_url_with_protocol(self):
         # Arrange
         url = self.get_file_url().replace('https', 'http')
-        fsc = FileServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
+        fsc = ShareServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
         share = fsc.get_share_client("vhds")
         file_client = share.get_file_client("vhd_dir/my.vhd")
 

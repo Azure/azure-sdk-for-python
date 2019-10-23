@@ -18,18 +18,18 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file import (
+from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
     generate_share_sas,
 )
-from azure.storage.file.aio import (
-    FileServiceClient,
+from azure.storage.fileshare.aio import (
+    ShareServiceClient,
     DirectoryClient,
     FileClient,
     ShareClient
 )
-from azure.storage.file._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
+from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from filetestcase import (
     FileTestCase,
     TestMode,
@@ -61,7 +61,7 @@ class StorageShareTest(FileTestCase):
 
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.fsc.__aenter__())
         self.test_shares = []
@@ -931,7 +931,7 @@ class StorageShareTest(FileTestCase):
         credential = self.get_shared_key_credential()
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        async with FileServiceClient(url, credential=credential, transport=transport) as fsc:
+        async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
             await fsc.get_service_properties()
             assert transport.session is not None
             async with fsc.get_share_client(share_name) as fc:

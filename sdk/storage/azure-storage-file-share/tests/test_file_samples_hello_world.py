@@ -45,9 +45,9 @@ class TestHelloWorldSamples(FileTestCase):
 
     @record
     def test_create_client_with_connection_string(self):
-        # Instantiate the FileServiceClient from a connection string
-        from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Get queue service properties
         properties = file_service.get_service_properties()

@@ -12,8 +12,8 @@ from datetime import timedelta
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file import StorageErrorCode
-from azure.storage.file.aio import FileServiceClient
+from azure.storage.fileshare import StorageErrorCode
+from azure.storage.fileshare.aio import ShareServiceClient
 
 from filetestcase import (
     FileTestCase,
@@ -42,7 +42,7 @@ class StorageDirectoryTest(FileTestCase):
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
 
     def tearDown(self):

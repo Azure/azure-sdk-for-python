@@ -13,8 +13,8 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file import (
-    FileServiceClient,
+from azure.storage.fileshare import (
+    ShareServiceClient,
     DirectoryClient,
     FileClient,
     ShareClient
@@ -37,7 +37,7 @@ class StorageHandleTest(FileTestCase):
         super(StorageHandleTest, self).setUp()
         file_url = self.get_file_url()
         credentials = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def tearDown(self):
