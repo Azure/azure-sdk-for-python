@@ -27,7 +27,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Update an existing secret (set_secret)
 #
-# 4. Delete a secret (delete_secret)
+# 4. Delete a secret (begin_delete_secret)
 #
 # ----------------------------------------------------------------------------------------------------------
 def run_sample():
@@ -72,9 +72,8 @@ def run_sample():
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete Secret")
-        deleted_secret = client.delete_secret(secret.name)
-        print("Deleting Secret..")
+        print("\n.. Deleting Secret...")
+        deleted_secret = client.begin_delete_secret(secret.name).result()
         print("Secret with name '{0}' was deleted.".format(deleted_secret.name))
 
     except HttpResponseError as e:

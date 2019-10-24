@@ -61,11 +61,8 @@ class TestQueueAuthSamplesAsync(AsyncQueueTestCase):
         # [START async_create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_application_id,
-            self.active_directory_application_secret,
-            self.active_directory_tenant_id
-        )
+        token_credential = ClientSecretCredential(self.active_directory_tenant_id, self.active_directory_application_id,
+                                                  self.active_directory_application_secret)
 
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue.aio import QueueServiceClient
@@ -87,7 +84,11 @@ class TestQueueAuthSamplesAsync(AsyncQueueTestCase):
         queue_service = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Create a SAS token to use for authentication of a client
-        sas_token = queue_service.generate_shared_access_signature(
+        from azure.storage.queue import generate_account_sas
+
+        sas_token = generate_account_sas(
+            queue_service.account_name,
+            queue_service.credential.account_key,
             resource_types="object",
             permission="read",
             expiry=datetime.utcnow() + timedelta(hours=1)

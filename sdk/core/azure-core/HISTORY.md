@@ -10,6 +10,7 @@
 - Tracing: DistributedTracingPolicy now accepts kwargs network_span_namer to change network span name  #7773
 - Tracing: Implementation of AbstractSpan can now use the mixin HttpSpanMixin to get HTTP span update automatically  #7773
 - Tracing: AbstractSpan contract "change_context" introduced  #7773
+- Introduce new policy HttpLoggingPolicy  #7988
 
 ### Bug fixes
 

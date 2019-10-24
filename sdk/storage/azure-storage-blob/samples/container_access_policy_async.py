@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: container_access_policy.py
+FILE: container_access_policy_async.py
 
 DESCRIPTION:
     This example shows how to set the container access policy when creating the container
@@ -15,7 +15,7 @@ DESCRIPTION:
     created. This sample expects that the `AZURE_STORAGE_CONNECTION_STRING` environment
     variable is set. It SHOULD NOT be hardcoded in any code derived from this sample.
 
-USAGE: python container_access_policy.py
+USAGE: python container_access_policy_async.py
 
 EXAMPLE OUTPUT:
 

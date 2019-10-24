@@ -19,9 +19,9 @@ from azure.core.exceptions import HttpResponseError
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic recover and purge operations on a vault(key) resource for Azure Key Vault. The vault
-# has to be soft-delete enabled to perform the following operations. See for more information about soft delete:
-# # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
+# Sample - demonstrates the basic list operations on a vault(key) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a key (create_key)
 #
@@ -51,16 +51,12 @@ async def run_sample():
             deleted_key = await client.delete_key(key_name)
             print("Deleted key '{0}'".format(deleted_key.name))
 
-        await asyncio.sleep(20)
-
         print("\n.. Recover a deleted key")
         recovered_key = await client.recover_deleted_key(rsa_key.name)
         print("Recovered key '{0}'".format(recovered_key.name))
 
         # deleting the recovered key so it doesn't outlast this script
-        await asyncio.sleep(20)
         await client.delete_key(recovered_key.name)
-        await asyncio.sleep(20)
 
         print("\n.. Purge keys")
         for key_name in (ec_key.name, rsa_key.name):
