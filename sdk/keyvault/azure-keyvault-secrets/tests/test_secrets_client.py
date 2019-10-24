@@ -23,7 +23,7 @@ class SecretClientTests(KeyVaultTestCase):
 
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
-        self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
+        self.assertEqual(s1.vault_url, s2.vault_url)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -66,7 +66,7 @@ class SecretClientTests(KeyVaultTestCase):
 
         # create secret
         created = client.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
 
         # set secret with optional arguments
         expires = date_parse.parse("2050-02-02T08:00:00.000Z")
@@ -83,7 +83,7 @@ class SecretClientTests(KeyVaultTestCase):
             expires_on=expires,
             tags=tags,
         )
-        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
         self.assertEqual(content_type, created.properties.content_type)
         self.assertEqual(enabled, created.properties.enabled)
         self.assertEqual(not_before, created.properties.not_before)

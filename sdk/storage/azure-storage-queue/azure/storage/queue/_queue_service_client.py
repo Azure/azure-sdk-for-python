@@ -22,7 +22,12 @@ from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties, StorageErrorException
 
-from ._models import QueuePropertiesPaged
+from ._models import (
+    QueuePropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
+
 from ._queue_client import QueueClient
 
 if TYPE_CHECKING:
@@ -33,7 +38,7 @@ if TYPE_CHECKING:
         QueueProperties,
         QueueAnalyticsLogging,
         Metrics,
-        CorsRule
+        CorsRule,
     )
 
 
@@ -176,8 +181,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -204,7 +210,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
