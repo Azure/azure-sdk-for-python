@@ -2,7 +2,7 @@
 
 ## Version 12.0.0b5:
 
-**Important: This package has been renamed**
+**Important: This package was previously named azure-storage-file**
 
 Going forward, to use this SDK, please install `azure-storage-file-share`.
 Additionally:
@@ -11,25 +11,25 @@ Additionally:
 - `DirectoryClient` has been renamed to `ShareDirectoryClient`.
 - `FileClient` has been renamed to `ShareFileClient`.
 
-**Breaking changes**
+**Additional Breaking changes**
 
 - `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`.
 To use a share_url, the method `from_share_url` must be used.
-- `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
+- `ShareDirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
 To use a directory_url, the method `from_directory_url` must be used.
-- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and
+- `ShareFileClient` now accepts only `account_url` with mandatory string params `share_name` and
 `file_path`. To use a file_url, the method `from_file_url` must be used.
 - `file_permission_key` parameter has been renamed to `permission_key`
 - `set_share_access_policy` has required parameter `signed_identifiers`.
-- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
-- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- Removed types that were accidentally exposed from two modules. Only `ShareServiceClient`, `ShareClient`, `ShareDirectoryClient` and `ShareFileClient` should be imported from azure.storage.fileshare.aio
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
   - `max_concurrency`
   - `validate_content`
   - `timeout` etc.
-- Client and model files have been made internal. Users should import from the top level modules `azure.storage.file` and `azure.storage.file.aio` only.
-- The `generate_shared_access_signature` methods on each of `FileServiceClient`, `ShareClient` and `FileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
+- Client and model files have been made internal. Users should import from the top level modules `azure.storage.fileshare` and `azure.storage.fileshare.aio` only.
+- The `generate_shared_access_signature` methods on each of `ShareServiceClient`, `ShareClient` and `ShareFileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
 - `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
 the following APIs:
   - download_file
@@ -47,7 +47,7 @@ the following APIs:
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
-- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
+- `ShareFileClient.close_handles` and `ShareDirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
 
 **New features**
 
