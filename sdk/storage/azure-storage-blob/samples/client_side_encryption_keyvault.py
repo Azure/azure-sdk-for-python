@@ -15,8 +15,8 @@ DESCRIPTION:
     (kek) from within Azure KeyVault. This sample requires a service principal be set
     configured with access to KeyVault, and that the vault contains a 256-bit base64-
     encoded secret named "symmetric-key". Additionally, a number of environment
-    variabled must be set. Since these often contain sensitive information, they
-    SHOULD NOT be replaced with hardcoded values in any code derived from this sample.
+    variables, listed below, must be set. Since these often contain sensitive information,
+    they SHOULD NOT be replaced with hardcoded values in any code derived from this sample.
 
 USAGE: python client_side_encryption_keyvault.py
 """
@@ -26,17 +26,15 @@ import os
 import sys
 import uuid
 
-from azure.common import AzureException
-
 from azure.identity import ClientSecretCredential
 
 from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
-from azure.keyvault.keys import KeyVaultKey
+from azure.keyvault.keys import KeyVaultKey, KeyType
 from azure.keyvault.secrets import SecretClient
 
 from azure.storage.blob import BlobServiceClient, BlobType
 
-# Environment variable keys whic must be set to run this sample
+# Environment variable keys which must be set to run this sample
 STORAGE_URL = 'AZURE_STORAGE_URL'
 KEYVAULT_URL = 'AZURE_KEYVAULT_URL'
 CLIENT_ID = 'AZURE_CLIENT_ID'
@@ -59,17 +57,16 @@ class KeyWrapper:
 
     def __init__(self, kek, credential):
         self.kek = kek
-        self.kid = kek._properties._id
+        self.kid = kek.id
         self.algorithm = KeyWrapAlgorithm.aes_256
+        self.client = CryptographyClient(kek, credential)
 
     def wrap_key(self, key):
-        crypto_client = CryptographyClient(self.kek, credential)
-        wrapped = crypto_client.wrap_key(key=key, algorithm=self.algorithm)
+        wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
     def unwrap_key(self, key, algorithm):
-        crypto_client = CryptographyClient(self.kek, credential)
-        unwrapped = crypto_client.unwrap_key(encrypted_key=key, algorithm=algorithm)
+        unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=algorithm)
         return unwrapped.key
 
     def get_key_wrap_algorithm(self):
@@ -95,7 +92,7 @@ secret_client = SecretClient(keyvault_url, credential=credential)
 # the secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')
 key_bytes = base64.urlsafe_b64decode(secret.value)
-kvk = KeyVaultKey(key_id=secret.id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty='oct')
+kvk = KeyVaultKey(key_id=secret.id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct)
 kek = KeyWrapper(kvk, credential)
 
 storage_client = BlobServiceClient(storage_url, credential=credential)
@@ -103,8 +100,6 @@ container_name = make_resource_name('container')
 blob_name = make_resource_name('blob')
 
 container_client = storage_client.get_container_client(container_name)
-# if kek is used, error: "wrap_key" is missing or invalid
-# if crypto_client is used, error: "get_kid" is missing or invalid
 container_client.key_encryption_key = kek
 container_client.create_container()
 container_client.upload_blob(blob_name, 'This is my blob.')
