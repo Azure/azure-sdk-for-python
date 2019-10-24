@@ -19,6 +19,8 @@ from .. import models
 class ConfigurationsOperations(object):
     """ConfigurationsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -54,8 +56,7 @@ class ConfigurationsOperations(object):
          ~azure.mgmt.advisor.models.ConfigDataPaged[~azure.mgmt.advisor.models.ConfigData]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -84,6 +85,11 @@ class ConfigurationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -94,12 +100,10 @@ class ConfigurationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
@@ -159,7 +163,6 @@ class ConfigurationsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 400:
             deserialized = self._deserialize('ARMErrorResponseBody', response)
 
@@ -186,8 +189,7 @@ class ConfigurationsOperations(object):
          ~azure.mgmt.advisor.models.ConfigDataPaged[~azure.mgmt.advisor.models.ConfigData]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -217,6 +219,11 @@ class ConfigurationsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -227,12 +234,10 @@ class ConfigurationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ConfigDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
@@ -292,7 +297,6 @@ class ConfigurationsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 400:
             deserialized = self._deserialize('ARMErrorResponseBody', response)
 

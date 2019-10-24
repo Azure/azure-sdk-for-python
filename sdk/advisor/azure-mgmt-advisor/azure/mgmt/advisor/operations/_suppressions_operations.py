@@ -19,6 +19,8 @@ from .. import models
 class SuppressionsOperations(object):
     """SuppressionsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -91,7 +93,6 @@ class SuppressionsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SuppressionContract', response)
 
@@ -169,7 +170,6 @@ class SuppressionsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SuppressionContract', response)
 
@@ -260,8 +260,7 @@ class SuppressionsOperations(object):
          ~azure.mgmt.advisor.models.SuppressionContractPaged[~azure.mgmt.advisor.models.SuppressionContract]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -294,6 +293,11 @@ class SuppressionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -304,12 +308,10 @@ class SuppressionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SuppressionContractPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SuppressionContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SuppressionContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/suppressions'}
