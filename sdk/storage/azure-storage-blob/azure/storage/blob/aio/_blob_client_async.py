@@ -47,24 +47,6 @@ if TYPE_CHECKING:
 class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
         use the :func:`from_blob_url` classmethod.
@@ -81,6 +63,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
 
     .. admonition:: Example:
 

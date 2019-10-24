@@ -45,24 +45,6 @@ class DirectoryClient(StorageAccountHostsMixin):
     For operations relating to a specific subdirectory or file in this share, the clients for those
     entities can also be retrieved using the :func:`get_subdirectory_client` and :func:`get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the directory,
         use the :func:`from_directory_url` classmethod.
@@ -79,6 +61,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     """
     def __init__( # type: ignore
             self, account_url,  # type: str

@@ -94,24 +94,6 @@ def _upload_file_helper(
 class FileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the File, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
         file, use the :func:`from_file_url` classmethod.
@@ -128,6 +110,8 @@ class FileClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     """
     def __init__( # type: ignore
             self, account_url,  # type: str
