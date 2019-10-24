@@ -8,8 +8,8 @@
 
 class AuthSamples(object):
     oauth_url = "{}://{}.blob.core.windows.net".format(
-        os.getenv(PROTOCOL),
-        os.getenv(OAUTH_STORAGE_ACCOUNT_NAME)
+        os.getenv("PROTOCOL"),
+        os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
     def auth_default_azure_credential(self):
