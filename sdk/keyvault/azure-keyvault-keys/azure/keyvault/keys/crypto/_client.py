@@ -64,7 +64,7 @@ class CryptographyClient(KeyVaultClientBase):
         from azure.keyvault.keys import KeyClient
 
         credential = DefaultAzureCredential()
-        key_client = KeyClient(vault_endpoint=<your vault url>, credential=credential)
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
         crypto_client = key_client.get_cryptography_client("mykey")
 
     """
@@ -92,7 +92,7 @@ class CryptographyClient(KeyVaultClientBase):
         self._internal_key = None  # type: Optional[_Key]
 
         super(CryptographyClient, self).__init__(
-            vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs
+            vault_url=self._key_id.vault_url, credential=credential, **kwargs
         )
 
     @property
@@ -118,7 +118,7 @@ class CryptographyClient(KeyVaultClientBase):
         if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = self._client.get_key(
-                    self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, **kwargs
+                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
                 self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
@@ -184,7 +184,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
             result = self._client.encrypt(
-                vault_base_url=self._key_id.vault_endpoint,
+                vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,
@@ -217,7 +217,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
         result = self._client.decrypt(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -258,7 +258,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
             result = self._client.wrap_key(
-                self._key_id.vault_endpoint,
+                self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
                 algorithm=algorithm,
@@ -296,7 +296,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.unwrap_key(encrypted_key, **kwargs)
         else:
             result = self._client.unwrap_key(
-                vault_base_url=self._key_id.vault_endpoint,
+                vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,
@@ -336,7 +336,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.sign(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -375,7 +375,7 @@ class CryptographyClient(KeyVaultClientBase):
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
             result = self._client.verify(
-                vault_base_url=self._key_id.vault_endpoint,
+                vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,
