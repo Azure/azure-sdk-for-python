@@ -40,7 +40,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
           authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
-    :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes timeout.
+    :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
 
     """
 
