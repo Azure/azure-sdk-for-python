@@ -6,30 +6,24 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from queuetestcase import (QueueTestCase)
+import os
 
+class QueueHelloWorldSamples(object):
 
-class TestQueueHelloWorldSamples(QueueTestCase):
+    connection_string = os.getenv("CONNECTION_STRING")
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_create_client_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
+    def create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Get queue service properties
         properties = queue_service.get_service_properties()
 
-        assert properties is not None
-
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    def test_queue_and_messages_example(self, resource_group, location, storage_account, storage_account_key):
+    def queue_and_messages_example(self):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "myqueue")
+        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="my_queue")
 
         # Create the queue
         # [START create_queue]
