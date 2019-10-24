@@ -26,13 +26,13 @@ class AzureFileStorage(object):
 
 
     :ivar service: Service operations
-    :vartype service: azure.storage.file.operations.ServiceOperations
+    :vartype service: azure.storage.fileshare._generated.operations.ServiceOperations
     :ivar share: Share operations
-    :vartype share: azure.storage.file.operations.ShareOperations
+    :vartype share: azure.storage.fileshare._generated.operations.ShareOperations
     :ivar directory: Directory operations
-    :vartype directory: azure.storage.file.operations.DirectoryOperations
+    :vartype directory: azure.storage.fileshare._generated.operations.DirectoryOperations
     :ivar file: File operations
-    :vartype file: azure.storage.file.operations.FileOperations
+    :vartype file: azure.storage.fileshare._generated.operations.FileOperations
 
     :param version: Specifies the version of the operation to use for this
      request.

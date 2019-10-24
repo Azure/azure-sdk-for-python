@@ -56,7 +56,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
             this parameter should only be present if file_name is provided.
         :param str file_name:
             Name of file.
-        :param ~azure.storage.file.FileSasPermissions permission:
+        :param ~azure.storage.fileshare.FileSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, create, write, delete, list.

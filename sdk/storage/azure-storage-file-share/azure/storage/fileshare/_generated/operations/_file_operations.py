@@ -78,13 +78,13 @@ class FileOperations(object):
          x-ms-file-permission-key should be specified.
         :type file_permission_key: str
         :param file_http_headers: Additional parameters for the operation
-        :type file_http_headers: ~azure.storage.file.models.FileHTTPHeaders
+        :type file_http_headers: ~azure.storage.fileshare._generated.models.FileHTTPHeaders
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         file_content_type = None
@@ -195,7 +195,7 @@ class FileOperations(object):
         :return: object or the result of cls(response)
         :rtype: Generator
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -324,7 +324,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -402,7 +402,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -474,13 +474,13 @@ class FileOperations(object):
          x-ms-file-permission-key should be specified.
         :type file_permission_key: str
         :param file_http_headers: Additional parameters for the operation
-        :type file_http_headers: ~azure.storage.file.models.FileHTTPHeaders
+        :type file_http_headers: ~azure.storage.fileshare._generated.models.FileHTTPHeaders
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         file_content_type = None
@@ -587,7 +587,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "metadata"
@@ -652,7 +652,7 @@ class FileOperations(object):
          that indicates the range to clear, up to maximum file size. Possible
          values include: 'update', 'clear'
         :type file_range_write: str or
-         ~azure.storage.file.models.FileRangeWriteType
+         ~azure.storage.fileshare._generated.models.FileRangeWriteType
         :param content_length: Specifies the number of bytes being transmitted
          in the request body. When the x-ms-write header is set to clear, the
          value of this header must be set to zero.
@@ -676,7 +676,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "range"
@@ -762,13 +762,13 @@ class FileOperations(object):
         :param source_modified_access_conditions: Additional parameters for
          the operation
         :type source_modified_access_conditions:
-         ~azure.storage.file.models.SourceModifiedAccessConditions
+         ~azure.storage.fileshare._generated.models.SourceModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         source_if_match_crc64 = None
@@ -849,9 +849,9 @@ class FileOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: list or the result of cls(response)
-        :rtype: list[~azure.storage.file.models.Range]
+        :rtype: list[~azure.storage.fileshare._generated.models.Range]
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "rangelist"
@@ -933,7 +933,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -995,7 +995,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "copy"
@@ -1063,9 +1063,9 @@ class FileOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: ListHandlesResponse or the result of cls(response)
-        :rtype: ~azure.storage.file.models.ListHandlesResponse
+        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "listhandles"
@@ -1147,7 +1147,7 @@ class FileOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "forceclosehandles"
