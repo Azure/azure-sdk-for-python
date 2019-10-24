@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.1.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group RecommendationMetadataOperations
+
 2.0.1 (2018-10-16)
 ++++++++++++++++++
 
