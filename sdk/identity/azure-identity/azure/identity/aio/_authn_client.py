@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import AioHttpTransport
 
 from .._authn_client import AuthnClientBase
+from .._constants import KnownAuthorities
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Iterable, Mapping, Optional
@@ -96,14 +97,17 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
             raise ClientAuthenticationError(message=message)
 
         for account in accounts:
-            # try each refresh token that might work, return the first access token acquired
-            for token in self.get_refresh_tokens(scopes, account):
-                # currently we only support login.microsoftonline.com, which has an alias login.windows.net
-                # TODO: this must change to support sovereign clouds
-                environment = account.get("environment")
-                if not environment or (environment not in self._auth_url and environment != "login.windows.net"):
+            # ensure the account is associated with the token authority we expect to use
+            # ('environment' is an authority e.g. 'login.microsoftonline.com')
+            environment = account.get("environment")
+            if not environment or environment not in self._auth_url:
+                # doubtful this account can get the access token we want but public cloud's a special case
+                # because its authority has an alias: for our purposes login.windows.net = login.microsoftonline.com
+                if not (environment == "login.windows.net" and KnownAuthorities.AZURE_PUBLIC_CLOUD in self._auth_url):
                     continue
 
+            # try each refresh token, returning the first access token acquired
+            for token in self.get_refresh_tokens(scopes, account):
                 request = self.get_refresh_token_grant_request(token, scopes)
                 request_time = int(time.time())
                 response = await self._pipeline.run(request, stream=False)

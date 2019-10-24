@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from azure.identity._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
+from ._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
 
 try:
     ABC = abc.ABC
@@ -243,14 +243,17 @@ class AuthnClient(AuthnClientBase):
             raise ClientAuthenticationError(message=message)
 
         for account in accounts:
-            # try each refresh token that might work, return the first access token acquired
-            for token in self.get_refresh_tokens(scopes, account):
-                # currently we only support login.microsoftonline.com, which has an alias login.windows.net
-                # TODO: this must change to support sovereign clouds
-                environment = account.get("environment")
-                if not environment or (environment not in self._auth_url and environment != "login.windows.net"):
+            # ensure the account is associated with the token authority we expect to use
+            # ('environment' is an authority e.g. 'login.microsoftonline.com')
+            environment = account.get("environment")
+            if not environment or environment not in self._auth_url:
+                # doubtful this account can get the access token we want but public cloud's a special case
+                # because its authority has an alias: for our purposes login.windows.net = login.microsoftonline.com
+                if not (environment == "login.windows.net" and KnownAuthorities.AZURE_PUBLIC_CLOUD in self._auth_url):
                     continue
 
+            # try each refresh token, returning the first access token acquired
+            for token in self.get_refresh_tokens(scopes, account):
                 request = self.get_refresh_token_grant_request(token, scopes)
                 request_time = int(time.time())
                 response = self._pipeline.run(request, stream=False)
