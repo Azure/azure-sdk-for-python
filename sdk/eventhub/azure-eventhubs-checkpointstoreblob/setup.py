@@ -67,6 +67,7 @@ setup(
     install_requires=[
         'azure-storage-blob<=12.0.0,>=12.0.0b4',
         'azure-eventhub<6.0.0,>=5.0.0b4',
+        'aiohttp<4.0,>=3.0',
     ],
     extras_require={
 

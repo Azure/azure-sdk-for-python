@@ -12,13 +12,14 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 logging.basicConfig(level=logging.INFO)
 
 
-async def do_operation(event):
+def do_operation(event):
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
     print(event)
 
 
-async def process_events(events, partition_context):
+def process_events(partition_context, events):
     if events:
+        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
         for event in events:
             do_operation(event)
         partition_context.update_checkpoint(events[-1])
