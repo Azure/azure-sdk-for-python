@@ -7,34 +7,24 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-from azure.core.exceptions import ResourceExistsError
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+import os
 
-from asyncqueuetestcase import (
-    AsyncQueueTestCase
-)
+class QueueMessageSamplesAsync(object):
 
+    connection_string = os.getenv("CONNECTION_STRING")
 
-class TestMessageQueueSamples(AsyncQueueTestCase):
-
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_set_access_policy(self, resource_group, location, storage_account, storage_account_key):
-        connection_string = self.connection_string(storage_account, storage_account_key)
-        storage_url = self._account_url(storage_account.name)
+    async def set_access_policy(self):
         # [START async_create_queue_client_from_connection_string]
         from azure.storage.queue.aio import QueueClient
-        queue_client = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncqueuetest")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
         # [END async_create_queue_client_from_connection_string]
 
         # Create the queue
-        try:
-            await queue_client.create_queue()
-        except ResourceExistsError:
-            pass
-        await queue_client.send_message(u"hello world")
+        await queue.create_queue()
+
+        # Send a message
+        await queue.send_message(u"hello world")
 
         try:
             # [START async_set_access_policy]
@@ -47,44 +37,38 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy
-            await queue_client.set_queue_access_policy(identifiers)
+            await queue.set_queue_access_policy(identifiers)
             # [END async_set_access_policy]
 
             # Use the access policy to generate a SAS token
             from azure.storage.queue import generate_queue_sas
-
             sas_token = generate_queue_sas(
-                queue_client.account_name,
-                queue_client.queue_name,
-                queue_client.credential.account_key,
+                queue.account_name,
+                queue.queue_name,
+                queue.credential.account_key,
                 policy_id='my-access-policy-id'
             )
             # [END async_set_access_policy]
 
             # Authenticate with the sas token
             # [START async_create_queue_client]
-            from azure.storage.queue.aio import QueueClient
-            q = QueueClient.from_queue_url(
-                queue_url=queue_client.url,
+            token_auth_queue = QueueClient.from_queue_url(
+                queue_url=queue.url,
                 credential=sas_token
             )
             # [END async_create_queue_client]
 
             # Use the newly authenticated client to receive messages
-            my_messages = q.receive_messages()
+            my_messages = token_auth_queue.receive_messages()
 
         finally:
             # Delete the queue
-            await queue_client.delete_queue()
+            await queue.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
-
+    async def queue_metadata(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncmetaqueue")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
 
         # Create the queue
         await queue.create_queue()
@@ -96,22 +80,17 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # [END async_set_queue_metadata]
 
             # [START async_get_queue_properties]
-            response = await queue.get_queue_properties()
+            properties = await queue.get_queue_properties()
             # [END async_get_queue_properties]
-            assert response.metadata == metadata
 
         finally:
             # Delete the queue
             await queue.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_send_and_receive_messages(self, resource_group, location, storage_account, storage_account_key):
-
+    async def send_and_receive_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncmessagequeue")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
 
         # Create the queue
         await queue.create_queue()
@@ -123,7 +102,8 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                 queue.send_message(u"message2", visibility_timeout=30),  # wait 30s before becoming visible
                 queue.send_message(u"message3"),
                 queue.send_message(u"message4"),
-                queue.send_message(u"message5"))
+                queue.send_message(u"message5")
+            )
             # [END async_send_messages]
 
             # [START async_receive_messages]
@@ -150,14 +130,10 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_delete_and_clear_messages(self, resource_group, location, storage_account, storage_account_key):
-
+    async def delete_and_clear_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncdelqueue")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
 
         # Create the queue
         await queue.create_queue()
@@ -169,16 +145,17 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                 queue.send_message(u"message2"),
                 queue.send_message(u"message3"),
                 queue.send_message(u"message4"),
-                queue.send_message(u"message5"))
+                queue.send_message(u"message5")
+            )
 
             # [START async_delete_message]
             # Get the message at the front of the queue
             messages = queue.receive_messages()
             async for msg in messages:
-
                 # Delete the specified message
                 await queue.delete_message(msg)
             # [END async_delete_message]
+                break
 
             # [START async_clear_messages]
             await queue.clear_messages()
@@ -188,13 +165,10 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
+    async def peek_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncpeekqueue")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
 
         # Create the queue
         await queue.create_queue()
@@ -206,7 +180,8 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                 queue.send_message(u"message2"),
                 queue.send_message(u"message3"),
                 queue.send_message(u"message4"),
-                queue.send_message(u"message5"))
+                queue.send_message(u"message5")
+            )
 
             # [START async_peek_message]
             # Peek at one message at the front of the queue
@@ -224,14 +199,10 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
             # Delete the queue
             await queue.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_update_message(self, resource_group, location, storage_account, storage_account_key):
-
+    async def update_message(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "asyncupdatequeue")
+        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
 
         # Create the queue
         await queue.create_queue()
@@ -251,7 +222,6 @@ class TestMessageQueueSamples(AsyncQueueTestCase):
                     visibility_timeout=0,
                     content=u"updated")
             # [END async_update_message]
-                assert message.content == "updated"
                 break
 
         finally:
