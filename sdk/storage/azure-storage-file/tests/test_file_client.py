@@ -44,6 +44,7 @@ class StorageFileClientTest(FileTestCase):
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, self.account_name)
         self.assertEqual(service.credential.account_name, self.account_name)
         self.assertEqual(service.credential.account_key, self.account_key)
         self.assertTrue(service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
@@ -59,7 +60,7 @@ class StorageFileClientTest(FileTestCase):
             # Act
             service = client(
                 self.get_file_url(), credential=self.account_key,
-                share='foo', directory_path='bar', file_path='baz')
+                share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, url)
@@ -72,11 +73,12 @@ class StorageFileClientTest(FileTestCase):
             # Act
             service = service_type(
                 self.get_file_url(), credential=self.sas_token,
-                share='foo', directory_path='bar', file_path='baz')
+                share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.endswith(self.sas_token))
 
     def test_create_service_with_token(self):
@@ -85,7 +87,7 @@ class StorageFileClientTest(FileTestCase):
             # token credential is not available for FileService
             with self.assertRaises(ValueError):
                 service_type(self.get_file_url(), credential=self.token_credential,
-                             share='foo', directory_path='bar', file_path='baz')
+                             share_name='foo', directory_path='bar', file_path='baz')
 
     def test_create_service_china(self):
         # Arrange
@@ -94,10 +96,11 @@ class StorageFileClientTest(FileTestCase):
             # Act
             service = service_type[0](
                 url, credential=self.account_key,
-                share='foo', directory_path='bar', file_path='baz')
+                share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(
@@ -111,7 +114,7 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key, share='foo', directory_path='bar', file_path='baz')
+                url, credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
@@ -125,19 +128,11 @@ class StorageFileClientTest(FileTestCase):
             # Passing an empty key to create account should fail.
             with self.assertRaises(ValueError) as e:
                 service_type(
-                    self.get_file_url(), share='foo', directory_path='bar', file_path='baz')
+                    self.get_file_url(), share_name='foo', directory_path='bar', file_path='baz')
 
             self.assertEqual(
                 str(e.exception),
                 'You need to provide either an account key or SAS token when creating a storage service.')
-
-    def test_create_service_missing_arguments(self):
-        # Arrange
-
-        for service_type in SERVICES:
-            # Act
-            with self.assertRaises(ValueError):
-                service_type(None)
 
     def test_create_service_with_socket_timeout(self):
         # Arrange
@@ -146,10 +141,10 @@ class StorageFileClientTest(FileTestCase):
             # Act
             default_service = service_type[0](
                 self.get_file_url(), credential=self.account_key,
-                share='foo', directory_path='bar', file_path='baz')
+                share_name='foo', directory_path='bar', file_path='baz')
             service = service_type[0](
                 self.get_file_url(), credential=self.account_key, connection_timeout=22,
-                share='foo', directory_path='bar', file_path='baz')
+                share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -165,7 +160,7 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
@@ -178,11 +173,12 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.endswith(self.sas_token))
 
     def test_create_service_with_connection_string_endpoint_protocol(self):
@@ -193,10 +189,11 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
@@ -212,7 +209,7 @@ class StorageFileClientTest(FileTestCase):
             # Act
             with self.assertRaises(ValueError):
                 service_type[0].from_connection_string(
-                    conn_string, share='foo', directory_path='bar', file_path='baz')
+                    conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
         for service_type in SERVICES.items():
@@ -225,7 +222,7 @@ class StorageFileClientTest(FileTestCase):
             # Fails if primary excluded
             with self.assertRaises(ValueError):
                 service_type[0].from_connection_string(
-                    conn_string, share='foo', directory_path='bar', file_path='baz')
+                    conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
         for service_type in SERVICES.items():
@@ -237,10 +234,11 @@ class StorageFileClientTest(FileTestCase):
 
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share='foo', directory_path='bar', file_path='baz')
+                conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')

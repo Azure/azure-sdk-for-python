@@ -8,6 +8,7 @@ from enum import Enum
 class KeyWrapAlgorithm(str, Enum):
     """Key wrapping algorithms"""
 
+    aes_256 = "A256KW"
     rsa_oaep = "RSA-OAEP"
     rsa_oaep_256 = "RSA-OAEP-256"
     rsa1_5 = "RSA1_5"

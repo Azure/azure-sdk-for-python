@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import uuid
 import os
 from .key import Key
@@ -55,6 +54,13 @@ class SymmetricKey(Key):
             raise ValueError("The key size must be 128, 192, 256, 384 or 512 bits of data")
 
         self._key = key_bytes
+
+    def is_private_key(self):
+        return True
+
+    @classmethod
+    def from_jwk(cls, jwk):
+        return cls(kid=jwk.kid, key_bytes=jwk.k)
 
     @property
     def kid(self):
@@ -114,12 +120,12 @@ class SymmetricKey(Key):
     def wrap_key(self, key, **kwargs):
         algorithm = self._get_algorithm("wrapKey", **kwargs)
         encryptor = algorithm.create_encryptor(key=self._key)
-        return encryptor.transform(key, **kwargs)
+        return encryptor.transform(key)
 
     def unwrap_key(self, encrypted_key, **kwargs):
-        algorithm = self._get_algorithm("decrypt", **kwargs)
+        algorithm = self._get_algorithm("unwrapKey", **kwargs)
         decryptor = algorithm.create_decryptor(key=self._key)
-        return decryptor.transform(encrypted_key, **kwargs)
+        return decryptor.transform(encrypted_key)
 
     def sign(self, digest, **kwargs):
         raise NotImplementedError()

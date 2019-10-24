@@ -15,7 +15,9 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     ContainerSasPermissions,
-    BlobSasPermissions
+    BlobSasPermissions,
+    generate_blob_sas,
+    generate_container_sas
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
@@ -27,9 +29,9 @@ from testcase import (
 )
 
 if sys.version_info >= (3,):
-    from urllib.parse import parse_qs, quote
+    from urllib.parse import parse_qs, quote, urlparse
 else:
-    from urlparse import parse_qs
+    from urlparse import parse_qs, urlparse
     from urllib2 import quote
 
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
@@ -55,7 +57,12 @@ class StorageLoggingTest(StorageTestCase):
             source_blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = source_blob.generate_shared_access_signature(
+        sas_token = generate_blob_sas(
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            snapshot=source_blob.snapshot,
+            account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -90,7 +97,10 @@ class StorageLoggingTest(StorageTestCase):
 
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -121,7 +131,15 @@ class StorageLoggingTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # parse out the signed signature
-        token_components = parse_qs(self.source_blob_url)
+        query_parameters = urlparse(self.source_blob_url).query
+        token_components = parse_qs(query_parameters)
+        if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
+            pytest.fail("Blob URL {} doesn't contain {}, parsed query params: {}".format(
+                self.source_blob_url,
+                QueryStringConstants.SIGNED_SIGNATURE,
+                list(token_components.keys())
+            ))
+
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act

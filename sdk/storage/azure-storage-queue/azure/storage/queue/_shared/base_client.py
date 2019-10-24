@@ -28,13 +28,14 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
@@ -53,7 +54,7 @@ from .policies import (
     ExponentialRetry,
 )
 from .._generated.models import StorageErrorException
-from .response_handlers import process_storage_error
+from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):
+class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -80,11 +81,14 @@ class StorageAccountHostsMixin(object):
         if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
+        self.account_name = account[0]
         secondary_hostname = None
+
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
+            self.account_name = self.credential.account_name
             secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
 
         if not self._hosts:
@@ -174,6 +178,7 @@ class StorageAccountHostsMixin(object):
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
+            config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
@@ -184,15 +189,19 @@ class StorageAccountHostsMixin(object):
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
         ]
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs  # type: HttpRequest
+        self, *reqs,  # type: HttpRequest
+        **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
@@ -209,16 +218,49 @@ class StorageAccountHostsMixin(object):
         )
 
         pipeline_response = self._pipeline.run(
-            request,
+            request, **kwargs
         )
         response = pipeline_response.http_response
 
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            return response.parts()
+            parts = response.parts()
+            if raise_on_any_failure:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
+                    error = PartialBatchErrorException(
+                        message="There is a partial failure in the batch operation.",
+                        response=response, parts=parts
+                    )
+                    raise error
+                return iter(parts)
+            return parts
         except StorageErrorException as error:
             process_storage_error(error)
+
+class TransportWrapper(HttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+    def __init__(self, transport):
+        self._transport = transport
+
+    def send(self, request, **kwargs):
+        return self._transport.send(request, **kwargs)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
+        pass
 
 
 def format_shared_key_credential(account, credential):

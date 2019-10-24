@@ -18,6 +18,7 @@ from datetime import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.mgmt.storage.models import Endpoints
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -31,6 +32,8 @@ from azure.storage.queue import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_queue_sas
 )
 
 from queuetestcase import (
@@ -227,7 +230,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         props = queue_client.get_queue_properties()
 
         # Asserts
@@ -267,16 +270,16 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        message = queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        message = queue_client.send_message(u'message4')
 
         # Asserts
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
@@ -288,15 +291,15 @@ class StorageQueueTest(QueueTestCase):
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
         # There should be no upper bound on a queue message's time to live
-        queue_client.enqueue_message(u'message1', time_to_live=1024*1024*1024)
+        queue_client.send_message(u'message1', time_to_live=1024*1024*1024)
 
         # Act
         messages = queue_client.peek_messages()
 
         # Assert
         self.assertGreaterEqual(
-            messages[0].expiration_time,
-            messages[0].insertion_time + timedelta(seconds=1024 * 1024 * 1024 - 3600))
+            messages[0].expires_on,
+            messages[0].inserted_on + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -305,13 +308,13 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1', time_to_live=-1)
+        queue_client.send_message(u'message1', time_to_live=-1)
 
         # Act
         messages = queue_client.peek_messages()
 
         # Assert
-        self.assertEqual(messages[0].expiration_time.year, date.max.year)
+        self.assertEqual(messages[0].expires_on.year, date.max.year)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -320,10 +323,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         message = next(queue_client.receive_messages())
 
         # Asserts
@@ -334,9 +337,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
 
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -345,10 +348,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         pager = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
         result = list(pager)
 
@@ -362,9 +365,9 @@ class StorageQueueTest(QueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertNotEqual('', message.pop_receipt)
             self.assertEqual(1, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertNotEqual('', message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -373,10 +376,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         result = queue_client.peek_messages()
 
         # Asserts
@@ -388,9 +391,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertNotEqual('', message.content)
         self.assertIsNone(message.pop_receipt)
         self.assertEqual(0, message.dequeue_count)
-        self.assertNotEqual('', message.insertion_time)
-        self.assertNotEqual('', message.expiration_time)
-        self.assertIsNone(message.time_next_visible)
+        self.assertNotEqual('', message.inserted_on)
+        self.assertNotEqual('', message.expires_on)
+        self.assertIsNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -399,10 +402,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         result = queue_client.peek_messages(max_messages=4)
 
         # Asserts
@@ -414,9 +417,9 @@ class StorageQueueTest(QueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertIsNone(message.pop_receipt)
             self.assertEqual(0, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertIsNone(message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertIsNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -425,10 +428,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         queue_client.clear_messages()
         result = queue_client.peek_messages()
 
@@ -443,10 +446,10 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        queue_client.enqueue_message(u'message2')
-        queue_client.enqueue_message(u'message3')
-        queue_client.enqueue_message(u'message4')
+        queue_client.send_message(u'message1')
+        queue_client.send_message(u'message2')
+        queue_client.send_message(u'message3')
+        queue_client.send_message(u'message4')
         message = next(queue_client.receive_messages())
         queue_client.delete_message(message)
 
@@ -464,7 +467,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         messages = queue_client.receive_messages()
         list_result1 = next(messages)
         message = queue_client.update_message(
@@ -477,8 +480,8 @@ class StorageQueueTest(QueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -488,9 +491,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -499,7 +502,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
 
         messages = queue_client.receive_messages()
         list_result1 = next(messages)
@@ -514,8 +517,8 @@ class StorageQueueTest(QueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -525,9 +528,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'new text', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -540,9 +543,11 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        token = qsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
+        queue_client.send_message(u'message1')
+        token = generate_account_sas(
+            qsc.account_name,
+            qsc.credential.account_key,
+            ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
@@ -598,15 +603,18 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -631,17 +639,20 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
-        result = service.enqueue_message(u'addedmessage')
+        result = service.send_message(u'addedmessage')
 
         # Assert
         result = next(queue_client.receive_messages())
@@ -658,8 +669,11 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
@@ -667,7 +681,7 @@ class StorageQueueTest(QueueTestCase):
         result = next(messages)
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -693,14 +707,17 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
+        queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -731,14 +748,17 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
         resp = queue_client.set_queue_access_policy(identifiers)
 
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
 
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             policy_id='testid'
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -806,7 +826,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
 
         # Act
-        resp = queue_client.set_queue_access_policy()
+        resp = queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         self.assertIsNone(resp)
@@ -898,7 +918,7 @@ class StorageQueueTest(QueueTestCase):
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
-            queue_client.set_queue_access_policy()
+            queue_client.set_queue_access_policy(signed_identifiers=dict())
 
             # Assert
 
@@ -924,7 +944,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1㚈')
+        queue_client.send_message(u'message1㚈')
         message = next(queue_client.receive_messages())
 
         # Asserts
@@ -933,9 +953,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1㚈', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -945,7 +965,7 @@ class StorageQueueTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
         queue_client = self._get_queue_reference(qsc)         
         queue_client.create_queue()
-        queue_client.enqueue_message(u'message1')
+        queue_client.send_message(u'message1')
         messages = queue_client.receive_messages()
 
         list_result1 = next(messages)
@@ -959,10 +979,25 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'啊齄丂狛狜', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(2, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            return
+        transport = RequestsTransport()
+        prefix = TEST_QUEUE_PREFIX
+        queue_name = self.get_resource_name(prefix)
+        with QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport) as qsc:
+            qsc.get_service_properties()
+            assert transport.session is not None
+            with qsc.get_queue_client(queue_name) as qc:
+                assert transport.session is not None
+            qsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

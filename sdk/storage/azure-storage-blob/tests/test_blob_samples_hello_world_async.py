@@ -103,7 +103,7 @@ class TestBlobSamplesAsync(StorageTestCase):
             # [START download_a_blob]
             with open(DEST_FILE, "wb") as my_blob:
                 stream = await blob_client.download_blob()
-                data = await stream.content_as_bytes()
+                data = await stream.readall()
                 my_blob.write(data)
             # [END download_a_blob]
 
@@ -144,7 +144,7 @@ class TestBlobSamplesAsync(StorageTestCase):
             # Download Page Blob
             with open(DEST_FILE, "wb") as my_blob:
                 stream = await blob_client.download_blob()
-                data = await stream.content_as_bytes()
+                data = await stream.readall()
                 my_blob.write(data)
 
             # Delete Page Blob
@@ -183,7 +183,7 @@ class TestBlobSamplesAsync(StorageTestCase):
             # Download append blob
             with open(DEST_FILE, "wb") as my_blob:
                 stream = await blob_client.download_blob()
-                data = await stream.content_as_bytes()
+                data = await stream.readall()
                 my_blob.write(data)
 
             # Delete append blob
