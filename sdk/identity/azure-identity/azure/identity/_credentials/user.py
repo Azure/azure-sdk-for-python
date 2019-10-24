@@ -123,8 +123,8 @@ class SharedTokenCacheCredential(object):
           defines authorities for other clouds.
     """
 
-    def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, **Any) -> None
+    def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
+        # type: (Optional[str], **Any) -> None
 
         self._username = username
 
@@ -161,11 +161,7 @@ class SharedTokenCacheCredential(object):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = self._client.obtain_token_by_refresh_token(scopes, self._username)
-        if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
-
-        return token
+        return self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
     def supported():
