@@ -288,28 +288,27 @@ class CheckOCIDriverTaskOutput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar installed_driver: Information about the installed driver if found
+    :param installed_driver: Information about the installed driver if found
      and valid.
-    :vartype installed_driver: dict[str,
-     list[~azure.mgmt.datamigration.models.OracleOCIDriverInfo]]
+    :type installed_driver:
+     ~azure.mgmt.datamigration.models.OracleOCIDriverInfo
     :ivar validation_errors: Validation errors
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
     """
 
     _validation = {
-        'installed_driver': {'readonly': True},
         'validation_errors': {'readonly': True},
     }
 
     _attribute_map = {
-        'installed_driver': {'key': 'installedDriver', 'type': '{[OracleOCIDriverInfo]}'},
+        'installed_driver': {'key': 'installedDriver', 'type': 'OracleOCIDriverInfo'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 
     def __init__(self, **kwargs):
         super(CheckOCIDriverTaskOutput, self).__init__(**kwargs)
-        self.installed_driver = None
+        self.installed_driver = kwargs.get('installed_driver', None)
         self.validation_errors = None
 
 
@@ -318,7 +317,8 @@ class ProjectTaskProperties(Model):
     by current client, this object is returned.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GetTdeCertificatesSqlTaskProperties,
+    sub-classes are: MigrateSsisTaskProperties,
+    GetTdeCertificatesSqlTaskProperties,
     ValidateOracleAzureDbForPostgreSqlSyncTaskProperties,
     ValidateMongoDbTaskProperties,
     ValidateMigrationInputSqlServerSqlMISyncTaskProperties,
@@ -384,7 +384,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.Sql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
+        'task_type': {'Migrate.Ssis': 'MigrateSsisTaskProperties', 'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.AzureDbForPostgreSql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
     }
 
     def __init__(self, **kwargs):
@@ -1050,6 +1050,9 @@ class ConnectToSourceSqlServerTaskInput(Model):
      'MigrationFromSqlServerToAzureMI', 'MigrationFromMySQLToAzureDBForMySQL'
     :type check_permissions_group: str or
      ~azure.mgmt.datamigration.models.ServerLevelPermissionsGroup
+    :param collect_databases: Flag for whether to collect databases from
+     source server. Default value: True .
+    :type collect_databases: bool
     :param collect_logins: Flag for whether to collect logins from source
      server. Default value: False .
     :type collect_logins: bool
@@ -1059,6 +1062,9 @@ class ConnectToSourceSqlServerTaskInput(Model):
     :param collect_tde_certificate_info: Flag for whether to collect TDE
      Certificate names from source server. Default value: False .
     :type collect_tde_certificate_info: bool
+    :param validate_ssis_catalog_only: Flag for whether to validate SSIS
+     catalog is reachable on the source server. Default value: False .
+    :type validate_ssis_catalog_only: bool
     """
 
     _validation = {
@@ -1068,18 +1074,22 @@ class ConnectToSourceSqlServerTaskInput(Model):
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
         'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'ServerLevelPermissionsGroup'},
+        'collect_databases': {'key': 'collectDatabases', 'type': 'bool'},
         'collect_logins': {'key': 'collectLogins', 'type': 'bool'},
         'collect_agent_jobs': {'key': 'collectAgentJobs', 'type': 'bool'},
         'collect_tde_certificate_info': {'key': 'collectTdeCertificateInfo', 'type': 'bool'},
+        'validate_ssis_catalog_only': {'key': 'validateSsisCatalogOnly', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(ConnectToSourceSqlServerTaskInput, self).__init__(**kwargs)
         self.source_connection_info = kwargs.get('source_connection_info', None)
         self.check_permissions_group = kwargs.get('check_permissions_group', None)
+        self.collect_databases = kwargs.get('collect_databases', True)
         self.collect_logins = kwargs.get('collect_logins', False)
         self.collect_agent_jobs = kwargs.get('collect_agent_jobs', False)
         self.collect_tde_certificate_info = kwargs.get('collect_tde_certificate_info', False)
+        self.validate_ssis_catalog_only = kwargs.get('validate_ssis_catalog_only', False)
 
 
 class ConnectToSourceSqlServerTaskOutput(Model):
@@ -2105,6 +2115,15 @@ class ConnectToTargetSqlMITaskInput(Model):
      SQL Server
     :type target_connection_info:
      ~azure.mgmt.datamigration.models.SqlConnectionInfo
+    :param collect_logins: Flag for whether to collect logins from target SQL
+     MI server. Default value: True .
+    :type collect_logins: bool
+    :param collect_agent_jobs: Flag for whether to collect agent jobs from
+     target SQL MI server. Default value: True .
+    :type collect_agent_jobs: bool
+    :param validate_ssis_catalog_only: Flag for whether to validate SSIS
+     catalog is reachable on the target SQL MI server. Default value: False .
+    :type validate_ssis_catalog_only: bool
     """
 
     _validation = {
@@ -2113,11 +2132,17 @@ class ConnectToTargetSqlMITaskInput(Model):
 
     _attribute_map = {
         'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'SqlConnectionInfo'},
+        'collect_logins': {'key': 'collectLogins', 'type': 'bool'},
+        'collect_agent_jobs': {'key': 'collectAgentJobs', 'type': 'bool'},
+        'validate_ssis_catalog_only': {'key': 'validateSsisCatalogOnly', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(ConnectToTargetSqlMITaskInput, self).__init__(**kwargs)
         self.target_connection_info = kwargs.get('target_connection_info', None)
+        self.collect_logins = kwargs.get('collect_logins', True)
+        self.collect_agent_jobs = kwargs.get('collect_agent_jobs', True)
+        self.validate_ssis_catalog_only = kwargs.get('validate_ssis_catalog_only', False)
 
 
 class ConnectToTargetSqlMITaskOutput(Model):
@@ -4585,13 +4610,16 @@ class MigrateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties)
         super(MigrateOracleAzureDbForPostgreSqlSyncTaskProperties, self).__init__(**kwargs)
         self.input = kwargs.get('input', None)
         self.output = None
-        self.task_type = 'Migrate.Oracle.Sql.Sync'
+        self.task_type = 'Migrate.Oracle.AzureDbForPostgreSql.Sync'
 
 
 class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
     """Database specific information for Oracle to Azure Database for PostgreSQL
     migration task inputs.
 
+    :param case_manipulation: How to handle object name casing: either
+     Preserve or ToLower
+    :type case_manipulation: str
     :param name: Name of the migration pipeline
     :type name: str
     :param schema_name: Name of the source schema
@@ -4613,6 +4641,7 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
     """
 
     _attribute_map = {
+        'case_manipulation': {'key': 'caseManipulation', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'schema_name': {'key': 'schemaName', 'type': 'str'},
         'table_map': {'key': 'tableMap', 'type': '{str}'},
@@ -4624,6 +4653,7 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(Model):
 
     def __init__(self, **kwargs):
         super(MigrateOracleAzureDbPostgreSqlSyncDatabaseInput, self).__init__(**kwargs)
+        self.case_manipulation = kwargs.get('case_manipulation', None)
         self.name = kwargs.get('name', None)
         self.schema_name = kwargs.get('schema_name', None)
         self.table_map = kwargs.get('table_map', None)
@@ -7504,6 +7534,10 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
      required to be provided in selectedDatabases. Possible values include:
      'CreateBackup', 'ExistingBackup'
     :type backup_mode: str or ~azure.mgmt.datamigration.models.BackupMode
+    :param aad_domain_name: Azure Active Directory domain name in the format
+     of 'contoso.com' for federated Azure AD or 'contoso.onmicrosoft.com' for
+     managed domain, required if and only if Windows logins are selected
+    :type aad_domain_name: str
     """
 
     _validation = {
@@ -7522,6 +7556,7 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
         'backup_mode': {'key': 'backupMode', 'type': 'str'},
+        'aad_domain_name': {'key': 'aadDomainName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -7532,6 +7567,7 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         self.backup_file_share = kwargs.get('backup_file_share', None)
         self.backup_blob_share = kwargs.get('backup_blob_share', None)
         self.backup_mode = kwargs.get('backup_mode', None)
+        self.aad_domain_name = kwargs.get('aad_domain_name', None)
 
 
 class MigrateSqlServerSqlMITaskOutput(Model):
@@ -8017,6 +8053,292 @@ class MigrateSqlServerSqlServerDatabaseInput(Model):
         self.database_files = kwargs.get('database_files', None)
 
 
+class MigrateSsisTaskInput(SqlMigrationTaskInput):
+    """Input for task that migrates SSIS packages from SQL Server to Azure SQL
+    Database Managed Instance.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_connection_info: Required. Information for connecting to
+     source
+    :type source_connection_info:
+     ~azure.mgmt.datamigration.models.SqlConnectionInfo
+    :param target_connection_info: Required. Information for connecting to
+     target
+    :type target_connection_info:
+     ~azure.mgmt.datamigration.models.SqlConnectionInfo
+    :param ssis_migration_info: Required. SSIS package migration information.
+    :type ssis_migration_info:
+     ~azure.mgmt.datamigration.models.SsisMigrationInfo
+    """
+
+    _validation = {
+        'source_connection_info': {'required': True},
+        'target_connection_info': {'required': True},
+        'ssis_migration_info': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
+        'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'SqlConnectionInfo'},
+        'ssis_migration_info': {'key': 'ssisMigrationInfo', 'type': 'SsisMigrationInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MigrateSsisTaskInput, self).__init__(**kwargs)
+        self.ssis_migration_info = kwargs.get('ssis_migration_info', None)
+
+
+class MigrateSsisTaskOutput(Model):
+    """Output for task that migrates SSIS packages from SQL Server to Azure SQL
+    Database Managed Instance.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MigrateSsisTaskOutputProjectLevel,
+    MigrateSsisTaskOutputMigrationLevel
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Result identifier
+    :vartype id: str
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'result_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'result_type': {'SsisProjectLevelOutput': 'MigrateSsisTaskOutputProjectLevel', 'MigrationLevelOutput': 'MigrateSsisTaskOutputMigrationLevel'}
+    }
+
+    def __init__(self, **kwargs):
+        super(MigrateSsisTaskOutput, self).__init__(**kwargs)
+        self.id = None
+        self.result_type = None
+
+
+class MigrateSsisTaskOutputMigrationLevel(MigrateSsisTaskOutput):
+    """MigrateSsisTaskOutputMigrationLevel.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Result identifier
+    :vartype id: str
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
+    :ivar started_on: Migration start time
+    :vartype started_on: datetime
+    :ivar ended_on: Migration end time
+    :vartype ended_on: datetime
+    :ivar status: Current status of migration. Possible values include:
+     'Default', 'Connecting', 'SourceAndTargetSelected', 'SelectLogins',
+     'Configured', 'Running', 'Error', 'Stopped', 'Completed',
+     'CompletedWithWarnings'
+    :vartype status: str or ~azure.mgmt.datamigration.models.MigrationStatus
+    :ivar message: Migration progress message
+    :vartype message: str
+    :ivar source_server_version: Source server version
+    :vartype source_server_version: str
+    :ivar source_server_brand_version: Source server brand version
+    :vartype source_server_brand_version: str
+    :ivar target_server_version: Target server version
+    :vartype target_server_version: str
+    :ivar target_server_brand_version: Target server brand version
+    :vartype target_server_brand_version: str
+    :ivar exceptions_and_warnings: Migration exceptions and warnings.
+    :vartype exceptions_and_warnings:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    :ivar stage: Stage of SSIS migration. Possible values include: 'None',
+     'Initialize', 'InProgress', 'Completed'
+    :vartype stage: str or ~azure.mgmt.datamigration.models.SsisMigrationStage
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'result_type': {'required': True},
+        'started_on': {'readonly': True},
+        'ended_on': {'readonly': True},
+        'status': {'readonly': True},
+        'message': {'readonly': True},
+        'source_server_version': {'readonly': True},
+        'source_server_brand_version': {'readonly': True},
+        'target_server_version': {'readonly': True},
+        'target_server_brand_version': {'readonly': True},
+        'exceptions_and_warnings': {'readonly': True},
+        'stage': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
+        'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
+        'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
+        'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
+        'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
+        'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
+        'exceptions_and_warnings': {'key': 'exceptionsAndWarnings', 'type': '[ReportableException]'},
+        'stage': {'key': 'stage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MigrateSsisTaskOutputMigrationLevel, self).__init__(**kwargs)
+        self.started_on = None
+        self.ended_on = None
+        self.status = None
+        self.message = None
+        self.source_server_version = None
+        self.source_server_brand_version = None
+        self.target_server_version = None
+        self.target_server_brand_version = None
+        self.exceptions_and_warnings = None
+        self.stage = None
+        self.result_type = 'MigrationLevelOutput'
+
+
+class MigrateSsisTaskOutputProjectLevel(MigrateSsisTaskOutput):
+    """MigrateSsisTaskOutputProjectLevel.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Result identifier
+    :vartype id: str
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
+    :ivar folder_name: Name of the folder
+    :vartype folder_name: str
+    :ivar project_name: Name of the project
+    :vartype project_name: str
+    :ivar state: Current state of migration. Possible values include: 'None',
+     'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'
+    :vartype state: str or ~azure.mgmt.datamigration.models.MigrationState
+    :ivar stage: Stage of SSIS migration. Possible values include: 'None',
+     'Initialize', 'InProgress', 'Completed'
+    :vartype stage: str or ~azure.mgmt.datamigration.models.SsisMigrationStage
+    :ivar started_on: Migration start time
+    :vartype started_on: datetime
+    :ivar ended_on: Migration end time
+    :vartype ended_on: datetime
+    :ivar message: Migration progress message
+    :vartype message: str
+    :ivar exceptions_and_warnings: Migration exceptions and warnings
+    :vartype exceptions_and_warnings:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'result_type': {'required': True},
+        'folder_name': {'readonly': True},
+        'project_name': {'readonly': True},
+        'state': {'readonly': True},
+        'stage': {'readonly': True},
+        'started_on': {'readonly': True},
+        'ended_on': {'readonly': True},
+        'message': {'readonly': True},
+        'exceptions_and_warnings': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
+        'folder_name': {'key': 'folderName', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'stage': {'key': 'stage', 'type': 'str'},
+        'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
+        'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
+        'message': {'key': 'message', 'type': 'str'},
+        'exceptions_and_warnings': {'key': 'exceptionsAndWarnings', 'type': '[ReportableException]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MigrateSsisTaskOutputProjectLevel, self).__init__(**kwargs)
+        self.folder_name = None
+        self.project_name = None
+        self.state = None
+        self.stage = None
+        self.started_on = None
+        self.ended_on = None
+        self.message = None
+        self.exceptions_and_warnings = None
+        self.result_type = 'SsisProjectLevelOutput'
+
+
+class MigrateSsisTaskProperties(ProjectTaskProperties):
+    """Properties for task that migrates SSIS packages from SQL Server databases
+    to Azure SQL Database Managed Instance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar errors: Array of errors. This is ignored if submitted.
+    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :ivar state: The state of the task. This is ignored if submitted. Possible
+     values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
+     'Failed', 'FailedInputValidation', 'Faulted'
+    :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
+    :param client_data: Key value pairs of client data to attach meta data
+     information to task
+    :type client_data: dict[str, str]
+    :param task_type: Required. Constant filled by server.
+    :type task_type: str
+    :param input: Task input
+    :type input: ~azure.mgmt.datamigration.models.MigrateSsisTaskInput
+    :ivar output: Task output. This is ignored if submitted.
+    :vartype output:
+     list[~azure.mgmt.datamigration.models.MigrateSsisTaskOutput]
+    """
+
+    _validation = {
+        'errors': {'readonly': True},
+        'state': {'readonly': True},
+        'commands': {'readonly': True},
+        'task_type': {'required': True},
+        'output': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'errors': {'key': 'errors', 'type': '[ODataError]'},
+        'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
+        'client_data': {'key': 'clientData', 'type': '{str}'},
+        'task_type': {'key': 'taskType', 'type': 'str'},
+        'input': {'key': 'input', 'type': 'MigrateSsisTaskInput'},
+        'output': {'key': 'output', 'type': '[MigrateSsisTaskOutput]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MigrateSsisTaskProperties, self).__init__(**kwargs)
+        self.input = kwargs.get('input', None)
+        self.output = None
+        self.task_type = 'Migrate.Ssis'
+
+
 class MigrateSyncCompleteCommandInput(Model):
     """Input for command that completes sync migration for a database.
 
@@ -8124,27 +8446,27 @@ class MigrationEligibilityInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar is_eligibile_for_migration: Whether object is eligible for migration
+    :ivar is_eligible_for_migration: Whether object is eligible for migration
      or not.
-    :vartype is_eligibile_for_migration: bool
+    :vartype is_eligible_for_migration: bool
     :ivar validation_messages: Information about eligibility failure for the
      server object.
     :vartype validation_messages: list[str]
     """
 
     _validation = {
-        'is_eligibile_for_migration': {'readonly': True},
+        'is_eligible_for_migration': {'readonly': True},
         'validation_messages': {'readonly': True},
     }
 
     _attribute_map = {
-        'is_eligibile_for_migration': {'key': 'isEligibileForMigration', 'type': 'bool'},
+        'is_eligible_for_migration': {'key': 'isEligibleForMigration', 'type': 'bool'},
         'validation_messages': {'key': 'validationMessages', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(MigrationEligibilityInfo, self).__init__(**kwargs)
-        self.is_eligibile_for_migration = None
+        self.is_eligible_for_migration = None
         self.validation_messages = None
 
 
@@ -10791,6 +11113,36 @@ class SqlConnectionInfo(ConnectionInfo):
         self.trust_server_certificate = kwargs.get('trust_server_certificate', False)
         self.platform = kwargs.get('platform', None)
         self.type = 'SqlConnectionInfo'
+
+
+class SsisMigrationInfo(Model):
+    """SSIS migration info with SSIS store type, overwrite policy.
+
+    :param ssis_store_type: The SSIS store type of source, only SSIS catalog
+     is supported now in DMS. Possible values include: 'SsisCatalog'
+    :type ssis_store_type: str or
+     ~azure.mgmt.datamigration.models.SsisStoreType
+    :param project_overwrite_option: The overwrite option for the SSIS project
+     migration. Possible values include: 'Ignore', 'Overwrite'
+    :type project_overwrite_option: str or
+     ~azure.mgmt.datamigration.models.SsisMigrationOverwriteOption
+    :param environment_overwrite_option: The overwrite option for the SSIS
+     environment migration. Possible values include: 'Ignore', 'Overwrite'
+    :type environment_overwrite_option: str or
+     ~azure.mgmt.datamigration.models.SsisMigrationOverwriteOption
+    """
+
+    _attribute_map = {
+        'ssis_store_type': {'key': 'ssisStoreType', 'type': 'str'},
+        'project_overwrite_option': {'key': 'projectOverwriteOption', 'type': 'str'},
+        'environment_overwrite_option': {'key': 'environmentOverwriteOption', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SsisMigrationInfo, self).__init__(**kwargs)
+        self.ssis_store_type = kwargs.get('ssis_store_type', None)
+        self.project_overwrite_option = kwargs.get('project_overwrite_option', None)
+        self.environment_overwrite_option = kwargs.get('environment_overwrite_option', None)
 
 
 class StartMigrationScenarioServerRoleResult(Model):
