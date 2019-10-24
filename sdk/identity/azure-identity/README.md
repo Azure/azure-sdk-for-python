@@ -9,7 +9,7 @@ This library is in preview and currently supports:
 
   [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity/azure/identity)
   | [Package (PyPI)](https://pypi.org/project/azure-identity/)
-  | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html)
+  | [API reference documentation][ref_docs]
   | [Azure Active Directory documentation](https://docs.microsoft.com/en-us/azure/active-directory/)
 
 # Getting started
@@ -63,13 +63,13 @@ in the types of identities they can authenticate as, and in their configuration:
 |credential class|identity|configuration
 |-|-|-
 |[`DefaultAzureCredential`](#defaultazurecredential)|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
-|`ManagedIdentityCredential`|managed identity|none
-|`EnvironmentCredential`|service principal, user|[environment variables](#environment-variables)
-|`ClientSecretCredential`|service principal|constructor parameters
-|`CertificateCredential`|service principal|constructor parameters
-|[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.credentials.DeviceCodeCredential)|user|constructor parameters
-|[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential)|user|constructor parameters
-|[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.credentials.UsernamePasswordCredential)|user|constructor parameters
+|[`ManagedIdentityCredential`][managed_id_cred_ref]|managed identity|none
+|[`EnvironmentCredential`][environment_cred_ref]|service principal, user|[environment variables](#environment-variables)
+|[`ClientSecretCredential`][client_secret_cred_ref]|service principal|constructor parameters
+|[`CertificateCredential`][cert_cred_ref]|service principal|constructor parameters
+|[`DeviceCodeCredential`][device_code_cred_ref]|user|constructor parameters
+|[`InteractiveBrowserCredential`][interactive_cred_ref]|user|constructor parameters
+|[`UsernamePasswordCredential`][userpass_cred_ref]|user|constructor parameters
 
 Credentials can be chained together and tried in turn until one succeeds; see
 [chaining credentials](#chaining-credentials) for details.
@@ -79,11 +79,11 @@ the `azure.identity.aio` namespace, supported on Python 3.5.3+. See the
 [async credentials](#async-credentials) example for details. Async user
 credentials will be part of a future release.
 
-## DefaultAzureCredential
-`DefaultAzureCredential` is appropriate for most applications intended to run
-in Azure. It can authenticate as a service principal, managed identity, or user,
-and  can be configured for local development and production environments without
-code changes.
+## `DefaultAzureCredential`
+[`DefaultAzureCredential`][default_cred_ref] is appropriate for most
+applications intended to run in Azure. It can authenticate as a service
+principal, managed identity, or user, and  can be configured for local
+development and production environments without code changes.
 
 To authenticate as a service principal, provide configuration in
 [environment variables](#environment-variables) as described in the next section.
@@ -94,15 +94,16 @@ possible on a supported platform. See Azure Active Directory's
 for more information.
 
 ### Single sign-on
-During local development on Windows, `DefaultAzureCredential` can authenticate
-using a single sign-on shared with Microsoft applications, for example Visual
-Studio 2019. This may require additional configuration when multiple identities
-have signed in. In that case, set the environment variable `AZURE_USERNAME`
-with the desired identity's username (typically an email address).
+During local development on Windows, [`DefaultAzureCredential`][default_cred_ref]
+can authenticate using a single sign-on shared with Microsoft applications, for
+example Visual Studio 2019. This may require additional configuration when
+multiple identities have signed in. In that case, set the environment variable
+`AZURE_USERNAME` with the desired identity's username (typically an email
+address).
 
 ## Environment variables
-
-`DefaultAzureCredential` and `EnvironmentCredential` can be configured with
+[`DefaultAzureCredential`][default_cred_ref] and
+[`EnvironmentCredential`][environment_cred_ref] can be configured with
 environment variables. Each type of authentication requires values for specific
 variables:
 
@@ -135,7 +136,8 @@ client secret and certificate are both present, the client secret will be used.
 # Examples
 ## Authenticating with `DefaultAzureCredential`
 This example demonstrates authenticating the `BlobServiceClient` from the
-[`azure-storage-blob`][azure_storage_blob] library using `DefaultAzureCredential`.
+[`azure-storage-blob`][azure_storage_blob] library using
+[`DefaultAzureCredential`][default_cred_ref].
 
 ```py
 from azure.identity import DefaultAzureCredential
@@ -151,7 +153,7 @@ client = BlobServiceClient(account_url, credential=credential)
 ## Authenticating a service principal with a client secret:
 This example demonstrates authenticating the `KeyClient` from the
 [`azure-keyvault-keys`][azure_keyvault_keys] library using
-`ClientSecretCredential`.
+[`ClientSecretCredential`][client_secret_cred_ref].
 
 ```py
 from azure.identity import ClientSecretCredential
@@ -165,7 +167,7 @@ client = KeyClient("https://my-vault.vault.azure.net", credential)
 ## Authenticating a service principal with a certificate:
 This example demonstrates authenticating the `SecretClient` from the
 [`azure-keyvault-secrets`][azure_keyvault_secrets] library using
-`CertificateCredential`.
+[`CertificateCredential`][cert_cred_ref].
 
 ```py
 from azure.identity import CertificateCredential
@@ -179,12 +181,12 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
 ## Chaining credentials:
-`ChainedTokenCredential` links multiple credential instances to be tried
-sequentially when authenticating. The following example demonstrates creating a
-credential which will attempt to authenticate using managed identity, and fall
-back to a service principal if a managed identity is unavailable. This example
-uses the `EventHubClient` from the [`azure-eventhubs`][azure_eventhubs] client
-library.
+[`ChainedTokenCredential`][chain_cred_ref] links multiple credential instances
+to be tried sequentially when authenticating. The following example demonstrates
+creating a credential which will attempt to authenticate using managed identity,
+and fall back to a service principal if a managed identity is unavailable. This
+example uses the `EventHubClient` from the [`azure-eventhubs`][azure_eventhubs]
+client library.
 
 ```py
 from azure.eventhub import EventHubClient
@@ -227,18 +229,21 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 ## General
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail
 to authenticate. `ClientAuthenticationError` has a `message` attribute which
-describes why authentication failed. When raised by `ChainedTokenCredential`,
+describes why authentication failed. When raised by
+[`DefaultAzureCredential`](#defaultazurecredential) or `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
 For more details on handling Azure Active Directory errors please refer to the
 Azure Active Directory
 [error code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes).
 
+
 # Next steps
 ## Client library support
 This is an incomplete list of client libraries accepting Azure Identity
 credentials. You can learn more about these libraries, and find additional
 documentation of them, at the links below.
+- [azure-appconfiguration](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration)
 - [azure-eventhubs][azure_eventhubs]
 - [azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)
 - [azure-keyvault-keys][azure_keyvault_keys]
@@ -249,6 +254,7 @@ documentation of them, at the links below.
 ## Provide Feedback
 If you encounter bugs or have suggestions, please
 [open an issue](https://github.com/Azure/azure-sdk-for-python/issues).
+
 
 # Contributing
 This project welcomes contributions and suggestions. Most contributions require
@@ -272,5 +278,16 @@ additional questions or comments.
 [azure_keyvault_keys]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+
+[ref_docs]: https://aka.ms/azsdk-python-identity-docs
+[cert_cred_ref]: https://aka.ms/azsdk-python-identity-cert-cred-ref
+[chain_cred_ref]: https://aka.ms/azsdk-python-identity-chain-cred-ref
+[client_secret_cred_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-ref
+[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
+[device_code_cred_ref]: https://aka.ms/azsdk-python-identity-device-code-cred-ref
+[environment_cred_ref]: https://aka.ms/azsdk-python-identity-environment-cred-ref
+[interactive_cred_ref]: https://aka.ms/azsdk-python-identity-interactive-cred-ref
+[managed_id_cred_ref]: https://aka.ms/azsdk-python-identity-managed-id-cred-ref
+[userpass_cred_ref]: https://aka.ms/azsdk-python-identity-userpass-cred-ref
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2FREADME.png)
