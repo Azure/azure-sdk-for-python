@@ -5,6 +5,8 @@
 import asyncio
 import hashlib
 import os
+import logging
+import json
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -13,6 +15,15 @@ from secrets_async_test_case import AsyncKeyVaultTestCase
 
 
 from dateutil import parser as date_parse
+
+
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
@@ -301,3 +312,50 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # purge secrets
         for secret_name in secrets.keys():
             await client.purge_deleted_secret(secret_name)
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.set_secret("secret-name", "secret-value")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    if body['value'] == 'secret-value':
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
+
+        assert False, "Expected request body wasn't logged"
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.set_secret("secret-name", "secret-value")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    assert body["value"] != "secret-value", "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
