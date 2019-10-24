@@ -194,7 +194,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
-        :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
+        :rtype: dict
 
         .. admonition:: Example:
 
@@ -207,8 +207,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return {
+                'geo_replication': {
+                    'status': stats.geo_replication.status,
+                    'last_sync_time': stats.geo_replication.last_sync_time,
+                }
+            }
         except StorageErrorException as error:
             process_storage_error(error)
 
