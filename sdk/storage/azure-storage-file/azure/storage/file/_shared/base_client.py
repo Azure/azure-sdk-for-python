@@ -81,7 +81,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
-        self.account_name = account[0]
+        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
         self.credential = format_shared_key_credential(account, credential)

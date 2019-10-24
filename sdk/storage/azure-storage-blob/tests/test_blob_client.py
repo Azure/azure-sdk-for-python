@@ -277,7 +277,7 @@ class StorageClientTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, "www.mydomain.com")
+        self.assertEqual(service.account_name, None)
         self.assertIsNone(service.credential)
         self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
         with self.assertRaises(ValueError):
@@ -385,27 +385,27 @@ class StorageClientTest(StorageTestCase):
             self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         
         service = BlobServiceClient(account_url=custom_account_url)
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
 
         service = ContainerClient(account_url=custom_account_url, container_name="foo")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.container_name, "foo")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
 
         service = ContainerClient.from_container_url("http://local-machine:11002/custom/account/path/foo?query=value")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.container_name, "foo")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo')
 
         service = BlobClient(account_url=custom_account_url, container_name="foo", blob_name="bar", snapshot="baz")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.container_name, "foo")
         self.assertEqual(service.blob_name, "bar")
         self.assertEqual(service.snapshot, "baz")
@@ -414,7 +414,7 @@ class StorageClientTest(StorageTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&'))
 
         service = BlobClient.from_blob_url("http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&query=value")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.container_name, "foo")
         self.assertEqual(service.blob_name, "bar")
         self.assertEqual(service.snapshot, "baz")

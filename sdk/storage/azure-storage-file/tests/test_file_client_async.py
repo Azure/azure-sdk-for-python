@@ -285,13 +285,13 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         
         service = FileServiceClient(account_url=custom_account_url)
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
 
         service = ShareClient(account_url=custom_account_url, share_name="foo", snapshot="snap")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.share_name, "foo")
         self.assertEqual(service.snapshot, "snap")
         self.assertEqual(service.credential, None)
@@ -299,17 +299,16 @@ class StorageFileClientTest(FileTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?sharesnapshot=snap&'))
 
         service = DirectoryClient(account_url=custom_account_url, share_name='foo', directory_path="bar/baz", snapshot="snap")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.share_name, "foo")
         self.assertEqual(service.directory_path, "bar/baz")
         self.assertEqual(service.snapshot, "snap")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
-        # TODO: Should directory path be URL-encoded here?
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar%2Fbaz?sharesnapshot=snap&'))
 
         service = DirectoryClient(account_url=custom_account_url, share_name='foo', directory_path="")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.share_name, "foo")
         self.assertEqual(service.directory_path, "")
         self.assertEqual(service.snapshot, None)
@@ -318,7 +317,7 @@ class StorageFileClientTest(FileTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
 
         service = FileClient(account_url=custom_account_url, share_name="foo", file_path="bar/baz/file", snapshot="snap")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.share_name, "foo")
         self.assertEqual(service.directory_path, "bar/baz")
         self.assertEqual(service.file_path, ["bar", "baz", "file"])
@@ -326,11 +325,10 @@ class StorageFileClientTest(FileTestCase):
         self.assertEqual(service.snapshot, "snap")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
-        # TODO: Should file path be URL-encoded here?
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar/baz/file?sharesnapshot=snap&'))
 
         service = FileClient(account_url=custom_account_url, share_name="foo", file_path="file")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.share_name, "foo")
         self.assertEqual(service.directory_path, "")
         self.assertEqual(service.file_path, ["file"])

@@ -374,20 +374,20 @@ class StorageQueueClientTestAsync(AsyncQueueTestCase):
             self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         
         service = QueueServiceClient(account_url=custom_account_url)
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
 
         service = QueueClient(account_url=custom_account_url, queue_name="foo")
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.queue_name, "foo")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
 
         service = QueueClient.from_queue_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        self.assertEqual(service.account_name, "local-machine:11002")
+        self.assertEqual(service.account_name, None)
         self.assertEqual(service.queue_name, "foo")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
