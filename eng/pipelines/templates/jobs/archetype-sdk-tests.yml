@@ -69,7 +69,8 @@ jobs:
       vmImage: $(OSVmImage)
 
     dependsOn:
-      - '${{ parameters.JobName }}_Linux_PyPy3'
+    - ${{ each entry in parameters.Matrix }}:
+      - "${{ parameters.JobName }} ${{ entry.key }}"
 
     steps:
       - template: ../steps/build-test-python38.yml
