@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import AdvancedFilter
+    from ._models_py3 import AzureFunctionEventSubscriptionDestination
     from ._models_py3 import BoolEqualsAdvancedFilter
     from ._models_py3 import DeadLetterDestination
     from ._models_py3 import Domain
@@ -26,6 +27,10 @@ try:
     from ._models_py3 import EventSubscriptionUpdateParameters
     from ._models_py3 import EventType
     from ._models_py3 import HybridConnectionEventSubscriptionDestination
+    from ._models_py3 import InputSchemaMapping
+    from ._models_py3 import JsonField
+    from ._models_py3 import JsonFieldWithDefault
+    from ._models_py3 import JsonInputSchemaMapping
     from ._models_py3 import NumberGreaterThanAdvancedFilter
     from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
     from ._models_py3 import NumberInAdvancedFilter
@@ -37,6 +42,7 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import RetryPolicy
     from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
+    from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
     from ._models_py3 import StorageBlobDeadLetterDestination
     from ._models_py3 import StorageQueueEventSubscriptionDestination
     from ._models_py3 import StringBeginsWithAdvancedFilter
@@ -53,6 +59,7 @@ try:
     from ._models_py3 import WebHookEventSubscriptionDestination
 except (SyntaxError, ImportError):
     from ._models import AdvancedFilter
+    from ._models import AzureFunctionEventSubscriptionDestination
     from ._models import BoolEqualsAdvancedFilter
     from ._models import DeadLetterDestination
     from ._models import Domain
@@ -68,6 +75,10 @@ except (SyntaxError, ImportError):
     from ._models import EventSubscriptionUpdateParameters
     from ._models import EventType
     from ._models import HybridConnectionEventSubscriptionDestination
+    from ._models import InputSchemaMapping
+    from ._models import JsonField
+    from ._models import JsonFieldWithDefault
+    from ._models import JsonInputSchemaMapping
     from ._models import NumberGreaterThanAdvancedFilter
     from ._models import NumberGreaterThanOrEqualsAdvancedFilter
     from ._models import NumberInAdvancedFilter
@@ -79,6 +90,7 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import RetryPolicy
     from ._models import ServiceBusQueueEventSubscriptionDestination
+    from ._models import ServiceBusTopicEventSubscriptionDestination
     from ._models import StorageBlobDeadLetterDestination
     from ._models import StorageQueueEventSubscriptionDestination
     from ._models import StringBeginsWithAdvancedFilter
@@ -102,8 +114,10 @@ from ._paged_models import TopicPaged
 from ._paged_models import TopicTypeInfoPaged
 from ._event_grid_management_client_enums import (
     DomainProvisioningState,
+    InputSchema,
     DomainTopicProvisioningState,
     EventSubscriptionProvisioningState,
+    EventDeliverySchema,
     TopicProvisioningState,
     ResourceRegionType,
     TopicTypeProvisioningState,
@@ -111,6 +125,7 @@ from ._event_grid_management_client_enums import (
 
 __all__ = [
     'AdvancedFilter',
+    'AzureFunctionEventSubscriptionDestination',
     'BoolEqualsAdvancedFilter',
     'DeadLetterDestination',
     'Domain',
@@ -126,6 +141,10 @@ __all__ = [
     'EventSubscriptionUpdateParameters',
     'EventType',
     'HybridConnectionEventSubscriptionDestination',
+    'InputSchemaMapping',
+    'JsonField',
+    'JsonFieldWithDefault',
+    'JsonInputSchemaMapping',
     'NumberGreaterThanAdvancedFilter',
     'NumberGreaterThanOrEqualsAdvancedFilter',
     'NumberInAdvancedFilter',
@@ -137,6 +156,7 @@ __all__ = [
     'Resource',
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
+    'ServiceBusTopicEventSubscriptionDestination',
     'StorageBlobDeadLetterDestination',
     'StorageQueueEventSubscriptionDestination',
     'StringBeginsWithAdvancedFilter',
@@ -159,8 +179,10 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'DomainProvisioningState',
+    'InputSchema',
     'DomainTopicProvisioningState',
     'EventSubscriptionProvisioningState',
+    'EventDeliverySchema',
     'TopicProvisioningState',
     'ResourceRegionType',
     'TopicTypeProvisioningState',

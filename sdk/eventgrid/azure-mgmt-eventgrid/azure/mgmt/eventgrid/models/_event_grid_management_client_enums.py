@@ -22,6 +22,13 @@ class DomainProvisioningState(str, Enum):
     failed = "Failed"
 
 
+class InputSchema(str, Enum):
+
+    event_grid_schema = "EventGridSchema"
+    custom_event_schema = "CustomEventSchema"
+    cloud_event_schema_v1_0 = "CloudEventSchemaV1_0"
+
+
 class DomainTopicProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -41,6 +48,13 @@ class EventSubscriptionProvisioningState(str, Enum):
     canceled = "Canceled"
     failed = "Failed"
     awaiting_manual_action = "AwaitingManualAction"
+
+
+class EventDeliverySchema(str, Enum):
+
+    event_grid_schema = "EventGridSchema"
+    custom_input_schema = "CustomInputSchema"
+    cloud_event_schema_v1_0 = "CloudEventSchemaV1_0"
 
 
 class TopicProvisioningState(str, Enum):

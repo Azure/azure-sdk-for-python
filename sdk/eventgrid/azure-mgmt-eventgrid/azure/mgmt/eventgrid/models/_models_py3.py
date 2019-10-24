@@ -57,6 +57,77 @@ class AdvancedFilter(Model):
         self.operator_type = None
 
 
+class EventSubscriptionDestination(Model):
+    """Information about the destination for an event subscription.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: WebHookEventSubscriptionDestination,
+    EventHubEventSubscriptionDestination,
+    StorageQueueEventSubscriptionDestination,
+    HybridConnectionEventSubscriptionDestination,
+    ServiceBusQueueEventSubscriptionDestination,
+    ServiceBusTopicEventSubscriptionDestination,
+    AzureFunctionEventSubscriptionDestination
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
+    :type endpoint_type: str
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination', 'ServiceBusQueue': 'ServiceBusQueueEventSubscriptionDestination', 'ServiceBusTopic': 'ServiceBusTopicEventSubscriptionDestination', 'AzureFunction': 'AzureFunctionEventSubscriptionDestination'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(EventSubscriptionDestination, self).__init__(**kwargs)
+        self.endpoint_type = None
+
+
+class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):
+    """Information about the azure function destination for an event subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
+    :type endpoint_type: str
+    :param resource_id: The Azure Resource Id that represents the endpoint of
+     the Azure Function destination of an event subscription.
+    :type resource_id: str
+    :param max_events_per_batch: Maximum number of events per batch.
+    :type max_events_per_batch: int
+    :param preferred_batch_size_in_kilobytes: Preferred batch size in
+     Kilobytes.
+    :type preferred_batch_size_in_kilobytes: int
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
+        'max_events_per_batch': {'key': 'properties.maxEventsPerBatch', 'type': 'int'},
+        'preferred_batch_size_in_kilobytes': {'key': 'properties.preferredBatchSizeInKilobytes', 'type': 'int'},
+    }
+
+    def __init__(self, *, resource_id: str=None, max_events_per_batch: int=None, preferred_batch_size_in_kilobytes: int=None, **kwargs) -> None:
+        super(AzureFunctionEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.max_events_per_batch = max_events_per_batch
+        self.preferred_batch_size_in_kilobytes = preferred_batch_size_in_kilobytes
+        self.endpoint_type = 'AzureFunction'
+
+
 class BoolEqualsAdvancedFilter(AdvancedFilter):
     """BoolEquals Advanced Filter.
 
@@ -134,11 +205,11 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
     """
 
@@ -169,15 +240,15 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource.
+    :param location: Required. Location of the resource
     :type location: str
-    :param tags: Tags of the resource.
+    :param tags: Tags of the resource
     :type tags: dict[str, str]
     """
 
@@ -210,15 +281,15 @@ class Domain(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource.
+    :param location: Required. Location of the resource
     :type location: str
-    :param tags: Tags of the resource.
+    :param tags: Tags of the resource
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the domain. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
@@ -227,6 +298,17 @@ class Domain(TrackedResource):
      ~azure.mgmt.eventgrid.models.DomainProvisioningState
     :ivar endpoint: Endpoint for the domain.
     :vartype endpoint: str
+    :param input_schema: This determines the format that Event Grid should
+     expect for incoming events published to the domain. Possible values
+     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventSchemaV1_0'.
+     Default value: "EventGridSchema" .
+    :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
+    :param input_schema_mapping: Information about the InputSchemaMapping
+     which specified the info about mapping event payload.
+    :type input_schema_mapping:
+     ~azure.mgmt.eventgrid.models.InputSchemaMapping
+    :ivar metric_resource_id: Metric resource id for the domain.
+    :vartype metric_resource_id: str
     """
 
     _validation = {
@@ -236,6 +318,7 @@ class Domain(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
+        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -246,12 +329,18 @@ class Domain(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
+        'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
+        'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, input_schema="EventGridSchema", input_schema_mapping=None, **kwargs) -> None:
         super(Domain, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.endpoint = None
+        self.input_schema = input_schema
+        self.input_schema_mapping = input_schema_mapping
+        self.metric_resource_id = None
 
 
 class DomainRegenerateKeyRequest(Model):
@@ -259,7 +348,7 @@ class DomainRegenerateKeyRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. Key name to regenerate key1 or key2.
+    :param key_name: Required. Key name to regenerate key1 or key2
     :type key_name: str
     """
 
@@ -302,11 +391,11 @@ class DomainTopic(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
     :param provisioning_state: Provisioning state of the domain topic.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
@@ -336,7 +425,7 @@ class DomainTopic(Resource):
 class DomainUpdateParameters(Model):
     """Properties of the Domain update.
 
-    :param tags: Tags of the domains resource.
+    :param tags: Tags of the domains resource
     :type tags: dict[str, str]
     """
 
@@ -347,39 +436,6 @@ class DomainUpdateParameters(Model):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(DomainUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
-
-
-class EventSubscriptionDestination(Model):
-    """Information about the destination for an event subscription.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebHookEventSubscriptionDestination,
-    EventHubEventSubscriptionDestination,
-    StorageQueueEventSubscriptionDestination,
-    HybridConnectionEventSubscriptionDestination,
-    ServiceBusQueueEventSubscriptionDestination
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param endpoint_type: Required. Constant filled by server.
-    :type endpoint_type: str
-    """
-
-    _validation = {
-        'endpoint_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination', 'StorageQueue': 'StorageQueueEventSubscriptionDestination', 'HybridConnection': 'HybridConnectionEventSubscriptionDestination', 'ServiceBusQueue': 'ServiceBusQueueEventSubscriptionDestination'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(EventSubscriptionDestination, self).__init__(**kwargs)
-        self.endpoint_type = None
 
 
 class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
@@ -415,11 +471,11 @@ class EventSubscription(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
     :ivar topic: Name of the topic of the event subscription.
     :vartype topic: str
@@ -438,6 +494,11 @@ class EventSubscription(Resource):
     :type labels: list[str]
     :param expiration_time_utc: Expiration time of the event subscription.
     :type expiration_time_utc: datetime
+    :param event_delivery_schema: The event delivery schema for the event
+     subscription. Possible values include: 'EventGridSchema',
+     'CustomInputSchema', 'CloudEventSchemaV1_0'
+    :type event_delivery_schema: str or
+     ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
      configure maximum number of delivery attempts and time to live for events.
     :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
@@ -465,11 +526,12 @@ class EventSubscription(Resource):
         'filter': {'key': 'properties.filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'expiration_time_utc': {'key': 'properties.expirationTimeUtc', 'type': 'iso-8601'},
+        'event_delivery_schema': {'key': 'properties.eventDeliverySchema', 'type': 'str'},
         'retry_policy': {'key': 'properties.retryPolicy', 'type': 'RetryPolicy'},
         'dead_letter_destination': {'key': 'properties.deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, event_delivery_schema=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscription, self).__init__(**kwargs)
         self.topic = None
         self.provisioning_state = None
@@ -477,6 +539,7 @@ class EventSubscription(Resource):
         self.filter = filter
         self.labels = labels
         self.expiration_time_utc = expiration_time_utc
+        self.event_delivery_schema = event_delivery_schema
         self.retry_policy = retry_policy
         self.dead_letter_destination = dead_letter_destination
 
@@ -554,6 +617,11 @@ class EventSubscriptionUpdateParameters(Model):
     :param expiration_time_utc: Information about the expiration time for the
      event subscription.
     :type expiration_time_utc: datetime
+    :param event_delivery_schema: The event delivery schema for the event
+     subscription. Possible values include: 'EventGridSchema',
+     'CustomInputSchema', 'CloudEventSchemaV1_0'
+    :type event_delivery_schema: str or
+     ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
      configure maximum number of delivery attempts and time to live for events.
     :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
@@ -568,16 +636,18 @@ class EventSubscriptionUpdateParameters(Model):
         'filter': {'key': 'filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'labels', 'type': '[str]'},
         'expiration_time_utc': {'key': 'expirationTimeUtc', 'type': 'iso-8601'},
+        'event_delivery_schema': {'key': 'eventDeliverySchema', 'type': 'str'},
         'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
         'dead_letter_destination': {'key': 'deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, event_delivery_schema=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscriptionUpdateParameters, self).__init__(**kwargs)
         self.destination = destination
         self.filter = filter
         self.labels = labels
         self.expiration_time_utc = expiration_time_utc
+        self.event_delivery_schema = event_delivery_schema
         self.retry_policy = retry_policy
         self.dead_letter_destination = dead_letter_destination
 
@@ -588,11 +658,11 @@ class EventType(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
     :param display_name: Display name of the event type.
     :type display_name: str
@@ -654,6 +724,142 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
         super(HybridConnectionEventSubscriptionDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.endpoint_type = 'HybridConnection'
+
+
+class InputSchemaMapping(Model):
+    """By default, Event Grid expects events to be in the Event Grid event schema.
+    Specifying an input schema mapping enables publishing to Event Grid using a
+    custom input schema. Currently, the only supported type of
+    InputSchemaMapping is 'JsonInputSchemaMapping'.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: JsonInputSchemaMapping
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param input_schema_mapping_type: Required. Constant filled by server.
+    :type input_schema_mapping_type: str
+    """
+
+    _validation = {
+        'input_schema_mapping_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_schema_mapping_type': {'key': 'inputSchemaMappingType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'input_schema_mapping_type': {'Json': 'JsonInputSchemaMapping'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(InputSchemaMapping, self).__init__(**kwargs)
+        self.input_schema_mapping_type = None
+
+
+class JsonField(Model):
+    """This is used to express the source of an input schema mapping for a single
+    target field in the Event Grid Event schema. This is currently used in the
+    mappings for the 'id', 'topic' and 'eventtime' properties. This represents
+    a field in the input event schema.
+
+    :param source_field: Name of a field in the input event schema that's to
+     be used as the source of a mapping.
+    :type source_field: str
+    """
+
+    _attribute_map = {
+        'source_field': {'key': 'sourceField', 'type': 'str'},
+    }
+
+    def __init__(self, *, source_field: str=None, **kwargs) -> None:
+        super(JsonField, self).__init__(**kwargs)
+        self.source_field = source_field
+
+
+class JsonFieldWithDefault(Model):
+    """This is used to express the source of an input schema mapping for a single
+    target field
+    in the Event Grid Event schema. This is currently used in the mappings for
+    the 'subject',
+    'eventtype' and 'dataversion' properties. This represents a field in the
+    input event schema
+    along with a default value to be used, and at least one of these two
+    properties should be provided.
+
+    :param source_field: Name of a field in the input event schema that's to
+     be used as the source of a mapping.
+    :type source_field: str
+    :param default_value: The default value to be used for mapping when a
+     SourceField is not provided or if there's no property with the specified
+     name in the published JSON event payload.
+    :type default_value: str
+    """
+
+    _attribute_map = {
+        'source_field': {'key': 'sourceField', 'type': 'str'},
+        'default_value': {'key': 'defaultValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, source_field: str=None, default_value: str=None, **kwargs) -> None:
+        super(JsonFieldWithDefault, self).__init__(**kwargs)
+        self.source_field = source_field
+        self.default_value = default_value
+
+
+class JsonInputSchemaMapping(InputSchemaMapping):
+    """This enables publishing to Event Grid using a custom input schema. This can
+    be used to map properties from a custom input JSON schema to the Event Grid
+    event schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param input_schema_mapping_type: Required. Constant filled by server.
+    :type input_schema_mapping_type: str
+    :param id: The mapping information for the Id property of the Event Grid
+     Event.
+    :type id: ~azure.mgmt.eventgrid.models.JsonField
+    :param topic: The mapping information for the Topic property of the Event
+     Grid Event.
+    :type topic: ~azure.mgmt.eventgrid.models.JsonField
+    :param event_time: The mapping information for the EventTime property of
+     the Event Grid Event.
+    :type event_time: ~azure.mgmt.eventgrid.models.JsonField
+    :param event_type: The mapping information for the EventType property of
+     the Event Grid Event.
+    :type event_type: ~azure.mgmt.eventgrid.models.JsonFieldWithDefault
+    :param subject: The mapping information for the Subject property of the
+     Event Grid Event.
+    :type subject: ~azure.mgmt.eventgrid.models.JsonFieldWithDefault
+    :param data_version: The mapping information for the DataVersion property
+     of the Event Grid Event.
+    :type data_version: ~azure.mgmt.eventgrid.models.JsonFieldWithDefault
+    """
+
+    _validation = {
+        'input_schema_mapping_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_schema_mapping_type': {'key': 'inputSchemaMappingType', 'type': 'str'},
+        'id': {'key': 'properties.id', 'type': 'JsonField'},
+        'topic': {'key': 'properties.topic', 'type': 'JsonField'},
+        'event_time': {'key': 'properties.eventTime', 'type': 'JsonField'},
+        'event_type': {'key': 'properties.eventType', 'type': 'JsonFieldWithDefault'},
+        'subject': {'key': 'properties.subject', 'type': 'JsonFieldWithDefault'},
+        'data_version': {'key': 'properties.dataVersion', 'type': 'JsonFieldWithDefault'},
+    }
+
+    def __init__(self, *, id=None, topic=None, event_time=None, event_type=None, subject=None, data_version=None, **kwargs) -> None:
+        super(JsonInputSchemaMapping, self).__init__(**kwargs)
+        self.id = id
+        self.topic = topic
+        self.event_time = event_time
+        self.event_type = event_type
+        self.subject = subject
+        self.data_version = data_version
+        self.input_schema_mapping_type = 'Json'
 
 
 class NumberGreaterThanAdvancedFilter(AdvancedFilter):
@@ -941,6 +1147,34 @@ class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
         self.endpoint_type = 'ServiceBusQueue'
 
 
+class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
+    """Information about the service bus topic destination for an event
+    subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
+    :type endpoint_type: str
+    :param resource_id: The Azure Resource Id that represents the endpoint of
+     the Service Bus Topic destination of an event subscription.
+    :type resource_id: str
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(ServiceBusTopicEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.endpoint_type = 'ServiceBusTopic'
+
+
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
     """Information about the storage blob based dead letter destination.
 
@@ -1163,15 +1397,15 @@ class Topic(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource.
+    :param location: Required. Location of the resource
     :type location: str
-    :param tags: Tags of the resource.
+    :param tags: Tags of the resource
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the topic. Possible values
      include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Canceled',
@@ -1180,6 +1414,19 @@ class Topic(TrackedResource):
      ~azure.mgmt.eventgrid.models.TopicProvisioningState
     :ivar endpoint: Endpoint for the topic.
     :vartype endpoint: str
+    :param input_schema: This determines the format that Event Grid should
+     expect for incoming events published to the topic. Possible values
+     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventSchemaV1_0'.
+     Default value: "EventGridSchema" .
+    :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
+    :param input_schema_mapping: This enables publishing using custom event
+     schemas. An InputSchemaMapping can be specified to map various properties
+     of a source schema to various required properties of the EventGridEvent
+     schema.
+    :type input_schema_mapping:
+     ~azure.mgmt.eventgrid.models.InputSchemaMapping
+    :ivar metric_resource_id: Metric resource id for the topic.
+    :vartype metric_resource_id: str
     """
 
     _validation = {
@@ -1189,6 +1436,7 @@ class Topic(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
+        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1199,12 +1447,18 @@ class Topic(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
+        'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
+        'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, input_schema="EventGridSchema", input_schema_mapping=None, **kwargs) -> None:
         super(Topic, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.endpoint = None
+        self.input_schema = input_schema
+        self.input_schema_mapping = input_schema_mapping
+        self.metric_resource_id = None
 
 
 class TopicRegenerateKeyRequest(Model):
@@ -1255,11 +1509,11 @@ class TopicTypeInfo(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource.
+    :ivar id: Fully qualified identifier of the resource
     :vartype id: str
-    :ivar name: Name of the resource.
+    :ivar name: Name of the resource
     :vartype name: str
-    :ivar type: Type of the resource.
+    :ivar type: Type of the resource
     :vartype type: str
     :param provider: Namespace of the provider of the topic type.
     :type provider: str
@@ -1341,6 +1595,15 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
     :ivar endpoint_base_url: The base URL that represents the endpoint of the
      destination of an event subscription.
     :vartype endpoint_base_url: str
+    :param max_events_per_batch: Maximum number of events per batch.
+    :type max_events_per_batch: int
+    :param preferred_batch_size_in_kilobytes: Preferred batch size in
+     Kilobytes.
+    :type preferred_batch_size_in_kilobytes: int
+    :param azure_active_directory_application_id_or_uri: The AAD application
+     ID or URI to get the access token that will be included as the bearer
+     token in delivery requests.
+    :type azure_active_directory_application_id_or_uri: str
     """
 
     _validation = {
@@ -1352,10 +1615,16 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'endpoint_url': {'key': 'properties.endpointUrl', 'type': 'str'},
         'endpoint_base_url': {'key': 'properties.endpointBaseUrl', 'type': 'str'},
+        'max_events_per_batch': {'key': 'properties.maxEventsPerBatch', 'type': 'int'},
+        'preferred_batch_size_in_kilobytes': {'key': 'properties.preferredBatchSizeInKilobytes', 'type': 'int'},
+        'azure_active_directory_application_id_or_uri': {'key': 'properties.azureActiveDirectoryApplicationIdOrUri', 'type': 'str'},
     }
 
-    def __init__(self, *, endpoint_url: str=None, **kwargs) -> None:
+    def __init__(self, *, endpoint_url: str=None, max_events_per_batch: int=None, preferred_batch_size_in_kilobytes: int=None, azure_active_directory_application_id_or_uri: str=None, **kwargs) -> None:
         super(WebHookEventSubscriptionDestination, self).__init__(**kwargs)
         self.endpoint_url = endpoint_url
         self.endpoint_base_url = None
+        self.max_events_per_batch = max_events_per_batch
+        self.preferred_batch_size_in_kilobytes = preferred_batch_size_in_kilobytes
+        self.azure_active_directory_application_id_or_uri = azure_active_directory_application_id_or_uri
         self.endpoint_type = 'WebHook'

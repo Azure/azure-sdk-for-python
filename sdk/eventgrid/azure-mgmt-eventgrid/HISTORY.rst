@@ -3,6 +3,23 @@
 Release History
 ===============
 
+2.3.0rc1 (2019-10-24)
++++++++++++++++++++++
+
+**Features**
+
+- Model Domain has a new parameter input_schema
+- Model Domain has a new parameter input_schema_mapping
+- Model Domain has a new parameter metric_resource_id
+- Model EventSubscription has a new parameter event_delivery_schema
+- Model Topic has a new parameter input_schema
+- Model Topic has a new parameter input_schema_mapping
+- Model Topic has a new parameter metric_resource_id
+- Model WebHookEventSubscriptionDestination has a new parameter preferred_batch_size_in_kilobytes
+- Model WebHookEventSubscriptionDestination has a new parameter azure_active_directory_application_id_or_uri
+- Model WebHookEventSubscriptionDestination has a new parameter max_events_per_batch
+- Model EventSubscriptionUpdateParameters has a new parameter event_delivery_schema
+
 2.1.0 (2019-05-22)
 ++++++++++++++++++
 
