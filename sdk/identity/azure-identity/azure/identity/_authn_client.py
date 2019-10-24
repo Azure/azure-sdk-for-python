@@ -4,7 +4,6 @@
 # ------------------------------------
 import abc
 import calendar
-import os
 import time
 
 from msal import TokenCache
@@ -19,7 +18,7 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     RetryPolicy,
-    DistributedTracingPolicy
+    DistributedTracingPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from azure.identity._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
@@ -227,15 +226,20 @@ class AuthnClient(AuthnClientBase):
 
         # if more than one account was returned, ensure that that they all have the same home_account_id. If so,
         # we'll treat them as equal, otherwise we can't know which one to pick, so we'll raise an error.
-        if len(accounts) > 1 and any(
-            account.get("home_account_id") != accounts[0].get("home_account_id") for account in accounts):
-            message = ("Multiple accounts were discovered in the shared token cache. To fix, set the AZURE_USERNAME "
-                       "environment variable to the preferred username, or specify it when constructing "
-                       "SharedTokenCacheCredential.  {}"
-                       "Discoverd accounts: {}").format(os.linesep, ', '.join({u.get("username") for u in accounts}))
+        if len(accounts) > 1 and len({account.get("home_account_id") for account in accounts}) != 1:
             if username:
-                message = ("Multiple entries found for the user account '{}' were found in the shared token cache. "
-                           "This is not currently supported by SharedTokenCacheCredential").format(username)
+                message = (
+                    "Multiple entries found for user '{}' were found in the shared token cache. "
+                    "This is not currently supported by SharedTokenCacheCredential."
+                ).format(username)
+            else:
+                # TODO: we could identify usernames associated with exactly one home account id
+                message = (
+                    "Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set "
+                    "the AZURE_USERNAME environment variable to the preferred username. Otherwise, specify it when "
+                    "constructing SharedTokenCacheCredential."
+                    "\nDiscovered accounts: {}"
+                ).format(", ".join({account.get("username") for account in accounts}))
             raise ClientAuthenticationError(message=message)
 
         for account in accounts:

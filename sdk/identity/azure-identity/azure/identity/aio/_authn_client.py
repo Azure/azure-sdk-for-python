@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 import time
 from typing import TYPE_CHECKING
 
@@ -80,15 +79,20 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
 
         # if more than one account was returned, ensure that that they all have the same home_account_id. If so,
         # we'll treat them as equal, otherwise we can't know which one to pick, so we'll raise an error.
-        if len(accounts) > 1 and any(
-            account.get("home_account_id") != accounts[0].get("home_account_id") for account in accounts):
-            message = ("Multiple accounts were discovered in the shared token cache. To fix, set the AZURE_USERNAME "
-                       "environment variable to the preferred username, or specify it when constructing "
-                       "SharedTokenCacheCredential.  {}"
-                       "Discoverd accounts: {}").format(os.linesep, ', '.join({u.get("username") for u in accounts}))
+        if len(accounts) > 1 and len({account.get("home_account_id") for account in accounts}) != 1:
             if username:
-                message = ("Multiple entries found for the user account '{}' were found in the shared token cache. "
-                           "This is not currently supported by SharedTokenCacheCredential").format(username)
+                message = (
+                    "Multiple entries found for user '{}' were found in the shared token cache. "
+                    "This is not currently supported by SharedTokenCacheCredential"
+                ).format(username)
+            else:
+                # TODO: we could identify usernames associated with exactly one home account id
+                message = (
+                    "Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set "
+                    "the AZURE_USERNAME environment variable to the preferred username. Otherwise, specify it when "
+                    "constructing SharedTokenCacheCredential."
+                    "\nDiscovered accounts: {}"
+                ).format(", ".join({account.get("username") for account in accounts}))
             raise ClientAuthenticationError(message=message)
 
         for account in accounts:
@@ -102,7 +106,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
 
                 request = self.get_refresh_token_grant_request(token, scopes)
                 request_time = int(time.time())
-                response = self._pipeline.run(request, stream=False)
+                response = await self._pipeline.run(request, stream=False)
                 try:
                     return self._deserialize_and_cache_token(
                         response=response, scopes=scopes, request_time=request_time
@@ -115,7 +119,6 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
             message += " for '{}'".format(username)
 
         raise ClientAuthenticationError(message=message)
-
 
     @staticmethod
     def _create_config(**kwargs: "Any") -> Configuration:
