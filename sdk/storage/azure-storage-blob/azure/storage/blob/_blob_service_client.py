@@ -35,6 +35,7 @@ from ._models import (
     CorsRule,
     RetentionPolicy,
     StaticWebsite,
+    service_stats_deserialize
 )
 
 if TYPE_CHECKING:
@@ -254,12 +255,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         try:
             stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
-            return {
-                'geo_replication': {
-                    'status': stats.geo_replication.status,
-                    'last_sync_time': stats.geo_replication.last_sync_time,
-                }
-            }
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 

@@ -1040,3 +1040,14 @@ class CustomerProvidedEncryptionKey(object):
         self.key_value = key_value
         self.key_hash = key_hash
         self.algorithm = 'AES256'
+
+
+def service_stats_deserialize(generated):
+    """Deserialize a ServiceStats objects into a dict.
+    """
+    return {
+        'geo_replication': {
+            'status': generated.geo_replication.status,
+            'last_sync_time': generated.geo_replication.last_sync_time,
+        }
+    }

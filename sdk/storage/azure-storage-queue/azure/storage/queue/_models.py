@@ -411,3 +411,14 @@ class QueueSasPermissions(object):
         parsed = cls(p_read, p_add, p_update, p_process)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
+
+
+def service_stats_deserialize(generated):
+    """Deserialize a ServiceStats objects into a dict.
+    """
+    return {
+        'geo_replication': {
+            'status': generated.geo_replication.status,
+            'last_sync_time': generated.geo_replication.last_sync_time,
+        }
+    }
