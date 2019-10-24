@@ -45,24 +45,6 @@ class FileServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific share, a client for that entity
     can also be retrieved using the :func:`get_share_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the file service endpoint, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the file storage account. Any other entities included
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
@@ -71,6 +53,8 @@ class FileServiceClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
 
     .. admonition:: Example:
 
