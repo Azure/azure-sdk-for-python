@@ -39,20 +39,21 @@ class DeviceCodeCredential(PublicClientCredential):
 
     :param str client_id: the application's ID
 
-    Keyword arguments
-        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
-        - **tenant_id** (str): an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
           authenticate work or school accounts. **Required for single-tenant applications.**
-        - **timeout** (int): seconds to wait for the user to authenticate. Defaults to the validity period of the
+    :keyword int timeout: seconds to wait for the user to authenticate. Defaults to the validity period of the
           device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
-        - **prompt_callback** (Callable[str, str, datetime.datetime]): A callback enabling control of how authentication
+    :keyword prompt_callback: A callback enabling control of how authentication
           instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
+
             - ``verification_uri`` (str) the URL the user must visit
             - ``user_code`` (str) the code the user must enter there
             - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
           If this argument isn't provided, the credential will print instructions to stdout.
+    :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
     """
 
     def __init__(self, client_id, **kwargs):
@@ -70,7 +71,7 @@ class DeviceCodeCredential(PublicClientCredential):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # MSAL requires scopes be a list
@@ -117,8 +118,7 @@ class SharedTokenCacheCredential(object):
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
 
-    Keyword arguments
-        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
     """
@@ -196,11 +196,10 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str username: the user's username (usually an email address)
     :param str password: the user's password
 
-    Keyword arguments
-        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
-        - **tenant_id** (str) - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+    :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
     """
 
@@ -217,7 +216,7 @@ class UsernamePasswordCredential(PublicClientCredential):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # MSAL requires scopes be a list
