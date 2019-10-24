@@ -7,58 +7,33 @@
 # --------------------------------------------------------------------------
 
 import os
+import asyncio
 from datetime import datetime, timedelta
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
-
+# set up
 SOURCE_FILE = 'SampleSource.txt'
+data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+with open(SOURCE_FILE, 'wb') as stream:
+    stream.write(data)
 
+class ContainerSamplesAsync(object):
+    connection_string = os.getenv(CONNECTION_STRING)
 
-class TestContainerSamples(StorageTestCase):
+    # --Begin Blob Samples-----------------------------------------------------------------
 
-    connection_string = settings.CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestContainerSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestContainerSamples, self).tearDown()
-
-    #--Begin Blob Samples-----------------------------------------------------------------
-
-    @record
-    def test_container_sample(self):
+    async def container_sample_async(self):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("mynewcontainer")
+        container_client = blob_service_client.get_container_client("mynewcontainerasync")
         # [END create_container_client_from_service]
 
         # [START create_container_client_sasurl]
-        from azure.storage.blob import ContainerClient
+        from azure.storage.blob.aio import ContainerClient
 
         sas_url = sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
         container = ContainerClient.from_container_url(sas_url)
@@ -66,86 +41,84 @@ class TestContainerSamples(StorageTestCase):
 
         try:
             # [START create_container]
-            container_client.create_container()
+            await container_client.create_container()
             # [END create_container]
 
             # [START get_container_properties]
-            properties = container_client.get_container_properties()
+            properties = await container_client.get_container_properties()
             # [END get_container_properties]
             assert properties is not None
 
         finally:
             # [START delete_container]
-            container_client.delete_container()
+            await container_client.delete_container()
             # [END delete_container]
 
-    @record
-    def test_acquire_lease_on_container(self):
+    async def acquire_lease_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("myleasecontainer")
+        container_client = blob_service_client.get_container_client("myleasecontainerasync")
 
         # Create new Container
-        container_client.create_container()
+        await container_client.create_container()
 
         # [START acquire_lease_on_container]
         # Acquire a lease on the container
-        lease = container_client.acquire_lease()
+        lease = await container_client.acquire_lease()
 
         # Delete container by passing in the lease
-        container_client.delete_container(lease=lease)
+        await container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @record
-    def test_set_metadata_on_container(self):
+    async def set_metadata_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("mymetadatacontainer")
+        container_client = blob_service_client.get_container_client("mymetadatacontainerasync")
 
         try:
             # Create new Container
-            container_client.create_container()
+            await container_client.create_container()
 
             # [START set_container_metadata]
             # Create key, value pairs for metadata
             metadata = {'type': 'test'}
 
             # Set metadata on the container
-            container_client.set_container_metadata(metadata=metadata)
+            await container_client.set_container_metadata(metadata=metadata)
             # [END set_container_metadata]
 
             # Get container properties
-            properties = container_client.get_container_properties().metadata
+            properties = (await container_client.get_container_properties()).metadata
 
             assert properties == metadata
 
         finally:
             # Delete container
-            container_client.delete_container()
+            await container_client.delete_container()
 
-    def test_container_access_policy(self):
+    async def container_access_policy_async(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("myaccesscontainer")
+        container_client = blob_service_client.get_container_client("myaccesscontainerasync")
 
         try:
             # Create new Container
-            container_client.create_container()
+            await container_client.create_container()
 
             # [START set_container_access_policy]
             # Create access policy
@@ -157,11 +130,11 @@ class TestContainerSamples(StorageTestCase):
             identifiers = {'test': access_policy}
 
             # Set the access policy on the container
-            container_client.set_container_access_policy(signed_identifiers=identifiers)
+            await container_client.set_container_access_policy(signed_identifiers=identifiers)
             # [END set_container_access_policy]
 
             # [START get_container_access_policy]
-            policy = container_client.get_container_access_policy()
+            policy = await container_client.get_container_access_policy()
             # [END get_container_access_policy]
 
             # [START generate_sas_token]
@@ -178,60 +151,58 @@ class TestContainerSamples(StorageTestCase):
 
             # Use the sas token to authenticate a new client
             # [START create_container_client_sastoken]
-            from azure.storage.blob import ContainerClient
+            from azure.storage.blob.aio import ContainerClient
             container = ContainerClient.from_container_url(
-                container_url="https://account.blob.core.windows.net/mycontainer",
-                credential=sas_token
+                container_url="https://account.blob.core.windows.net/mycontainerasync",
+                credential=sas_token,
             )
             # [END create_container_client_sastoken]
 
         finally:
             # Delete container
-            container_client.delete_container()
+            await container_client.delete_container()
 
-    @record
-    def test_list_blobs_in_container(self):
+    async def list_blobs_in_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("myblobscontainer")
+        container_client = blob_service_client.get_container_client("myblobscontainerasync")
 
         # Create new Container
-        container_client.create_container()
+        await container_client.create_container()
 
         # [START upload_blob_to_container]
         with open(SOURCE_FILE, "rb") as data:
-            blob_client = container_client.upload_blob(name="blobby", data=data)
-        
-        properties = blob_client.get_blob_properties()
+            blob_client = await container_client.upload_blob(name="blobby", data=data)
+
+        properties = await blob_client.get_blob_properties()
         # [END upload_blob_to_container]
 
         # [START list_blobs_in_container]
-        blobs_list = container_client.list_blobs()
-        for blob in blobs_list:
-            print(blob.name + '\n')
+        blobs_list = []
+        async for blob in container_client.list_blobs():
+            blobs_list.append(blob)
         # [END list_blobs_in_container]
 
         assert blobs_list is not None
 
         # Delete container
-        container_client.delete_container()
+        await container_client.delete_container()
 
-    @record
-    def test_get_blob_client_from_container(self):
+    async def get_blob_client_from_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
+        from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("blobcontainer")
+        container_client = blob_service_client.get_container_client("blobcontainerasync")
 
         # Create new Container
-        container_client.create_container()
+        await container_client.create_container()
 
         # [START get_blob_client]
         # Get the BlobClient from the ContainerClient to interact with a specific blob
@@ -239,4 +210,4 @@ class TestContainerSamples(StorageTestCase):
         # [END get_blob_client]
 
         # Delete container
-        container_client.delete_container()
+        await container_client.delete_container()

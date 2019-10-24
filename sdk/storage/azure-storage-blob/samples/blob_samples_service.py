@@ -7,24 +7,12 @@
 # --------------------------------------------------------------------------
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
+class BlobServiceSamples(object):
 
+    connection_string = os.getenv(CONNECTION_STRING)
 
-class TestBlobServiceSamples(StorageTestCase):
-
-    connection_string = settings.CONNECTION_STRING
-
-    @record
-    def test_get_storage_account_information(self):
+    def get_storage_account_information(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -36,8 +24,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_account_info]
         assert account_info is not None
 
-    @record
-    def test_blob_service_properties(self):
+    def blob_service_properties(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -68,8 +55,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_properties]
         assert properties is not None
 
-    @record
-    def test_blob_service_stats(self):
+    def blob_service_stats(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -80,8 +66,7 @@ class TestBlobServiceSamples(StorageTestCase):
         # [END get_blob_service_stats]
         assert stats is not None
 
-    @record
-    def test_container_operations(self):
+    def container_operations(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -118,8 +103,7 @@ class TestBlobServiceSamples(StorageTestCase):
                 print("Container already deleted.")
             # [END bsc_delete_container]
 
-    @record
-    def test_get_blob_and_container_clients(self):
+    def get_blob_and_container_clients(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
