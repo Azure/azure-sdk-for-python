@@ -6,6 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+
 class AuthSamples(object):
     oauth_url = "{}://{}.blob.core.windows.net".format(
         os.getenv("PROTOCOL"),
